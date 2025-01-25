@@ -16,7 +16,6 @@
 #include <cuzn/detail/SetUp.h>
 #include <cuzn/detail/Market.h>
 #include <cuzn/detail/Liquidate.h>
-#include <m2/game/Detail.h>
 #include "cuzn/object/Road.h"
 #include "cuzn/ui/Detail.h"
 #include <algorithm>
@@ -416,7 +415,6 @@ void m2g::Proxy::bot_handle_server_command(MAYBE const m2g::pb::ServerCommand& s
 void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_type) {
 	// Store the positions of the merchants
 	if (is_merchant_location(sprite_type)) {
-		// Object position has {0.5f, 0.5f} offset
 		auto merchant_cell_rect = m2::RectF{obj.position.x - 0.5f, obj.position.y - 0.5f, 2.0f, 2.0f};
 		merchant_positions[sprite_type] = std::make_tuple(obj.position, merchant_cell_rect, obj.id());
 		LOG_DEBUG("Merchant position", m2g::pb::SpriteType_Name(sprite_type), merchant_cell_rect);
@@ -428,7 +426,6 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 		if (sprite.Ppm() != sprite.Sheet().Pb().ppm()) {
 			throw M2_ERROR("Sprite ppm mismatch");
 		}
-		// Object position has {0.5f, 0.5f} offset
 		auto industry_cell_rect = m2::RectF{obj.position.x - 0.5f, obj.position.y - 0.5f, 2.0f, 2.0f};
 		industry_positions[sprite_type] = std::make_tuple(obj.position, industry_cell_rect, obj.id());
 		LOG_DEBUG("Industry position", m2g::pb::SpriteType_Name(sprite_type), industry_cell_rect);

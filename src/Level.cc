@@ -380,7 +380,7 @@ m2::void_expected m2::Level::InitAnyPlayer(
 					}
 
 					LOGF_TRACE("Creating tile from %d sprite at (%d,%d)...", sprite_type, x, y);
-					auto it = obj::create_tile(static_cast<BackgroundLayer>(l), VecF{x, y} + VecF{0.5f, 0.5f}, sprite_type);
+					auto it = obj::create_tile(static_cast<BackgroundLayer>(l), VecF{x, y}, sprite_type);
 					M2G_PROXY.post_tile_create(*it, sprite_type);
 					LOG_TRACE("Created tile", it.id());
 				}
@@ -392,7 +392,7 @@ m2::void_expected m2::Level::InitAnyPlayer(
 	for (const auto& fg_object : _lb->objects()) {
 		const auto objectPosition = fg_object.has_position_f()
 				? VecF{fg_object.position_f()}
-				: VecF{fg_object.position()} + VecF{0.5f, 0.5f};
+				: VecF{fg_object.position()};
 		LOG_TRACE("Loading foreground object", fg_object.type(), objectPosition);
 		auto it = create_object(objectPosition, fg_object.type());
 

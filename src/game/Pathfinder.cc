@@ -209,7 +209,7 @@ m2::Path m2::Pathfinder::smoothen_path(const Path& reverse_path, float max_dista
 }
 
 bool m2::Pathfinder::check_eyesight(const VecI& from, const VecI& to) {
-	return box2d::check_eyesight(*M2_LEVEL.world, VecF{from} + VecF{0.5f, 0.5f}, VecF{to} + VecF{0.5f, 0.5f}, box2d::FIXTURE_CATEGORY_OBSTACLE);
+	return box2d::check_eyesight(*M2_LEVEL.world, VecF{from}, VecF{to}, box2d::FIXTURE_CATEGORY_OBSTACLE);
 }
 
 void m2::Pathfinder::draw_path(const Path& path, SDL_Color color) {
