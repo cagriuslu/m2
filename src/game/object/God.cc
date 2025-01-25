@@ -127,8 +127,8 @@ namespace {
 	}
 }  // namespace
 
-m2::Id m2::obj::create_god() {
-	auto it = create_object({});
+Id obj::create_god() {
+	const auto it = create_object({});
 	it->impl = std::make_unique<God>();
 
 	it->add_physique().pre_step = [](MAYBE Physique& phy) {
@@ -151,24 +151,34 @@ m2::Id m2::obj::create_god() {
 		// Prevent God from going into negative quadrants
 		obj.position = obj.position.clamp(VecF{0.0f, 0.0f}, std::nullopt);
 
+		// Adjust zoom
+		if (M2_GAME.events.pop_key_press(Key::MINUS)) {
+			M2_GAME.SetScale(M2_GAME.Dimensions().Scale() / 1.5f);
+		}
+		if (M2_GAME.events.pop_key_press(Key::PLUS)) {
+			M2_GAME.SetScale(M2_GAME.Dimensions().Scale() * 1.5f);
+		}
+
 		handle_mouse_events(M2_GAME.MousePositionWorldM().iround(), M2_GAME.MousePositionWorldM().hround());
 	};
 
 	it->add_graphic().post_draw = [](MAYBE Graphic& gfx) {
 		// Check if level editor select mode is active
-		std::visit(
-		    overloaded{
+		std::visit(overloaded{
 		        [](ledit::State& le) {
-			        std::visit(
-			            overloaded{[](const ledit::State::SelectMode& mode) { mode.on_draw(); }, DEFAULT_OVERLOAD},
+			        std::visit(overloaded{
+			        		[](const ledit::State::SelectMode& mode) { mode.on_draw(); },
+			        		DEFAULT_OVERLOAD},
 			            le.mode);
 		        },
 		        [](sedit::State& se) {
-			        std::visit(
-			            overloaded{[](const auto& mode) { mode.on_draw(); }, [](MAYBE const std::monostate&) {}},
+			        std::visit(overloaded{
+			        		[](const auto& mode) { mode.on_draw(); },
+			        		[](MAYBE const std::monostate&) {}},
 			            se.mode);
 		        },
-		        [](bsedit::State& se) { se.on_draw(); }, DEFAULT_OVERLOAD},
+		        [](const bsedit::State& se) { se.on_draw(); },
+		    	DEFAULT_OVERLOAD},
 		    M2_LEVEL.stateVariant);
 	};
 
