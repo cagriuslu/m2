@@ -218,6 +218,6 @@ namespace m2 {
 
 	   private:
 		void ResetState();
-		void RecalculateMousePosition2() const;
+		void RecalculateMousePosition() const;
 	};
 }  // namespace m2

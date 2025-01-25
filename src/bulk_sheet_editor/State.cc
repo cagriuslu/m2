@@ -13,7 +13,7 @@ namespace {
 	constexpr SDL_Color CONFIRMED_SELECTION_COLOR = {0, 255, 0, 160};
 }  // namespace
 
-expected<bsedit::State> bsedit::State::create(const std::filesystem::path& sprite_sheets_path) {
+expected<bulk_sheet_editor::State> bulk_sheet_editor::State::create(const std::filesystem::path& sprite_sheets_path) {
 	// If path exists,
 	if (not std::filesystem::exists(sprite_sheets_path)) {
 		return make_unexpected("SpriteSheets not found");
@@ -24,16 +24,16 @@ expected<bsedit::State> bsedit::State::create(const std::filesystem::path& sprit
 		return make_unexpected(msg.error());
 	}
 
-	return bsedit::State{sprite_sheets_path};
+	return bulk_sheet_editor::State{sprite_sheets_path};
 }
 
-bsedit::State::~State() { Events::disable_primary_selection(); }
+bulk_sheet_editor::State::~State() { Events::disable_primary_selection(); }
 
-pb::SpriteSheets bsedit::State::sprite_sheets() const {
+pb::SpriteSheets bulk_sheet_editor::State::sprite_sheets() const {
 	return *pb::json_file_to_message<pb::SpriteSheets>(_sprite_sheets_path);
 }
 
-std::optional<pb::SpriteSheet> bsedit::State::selected_sprite_sheet() const {
+std::optional<pb::SpriteSheet> bulk_sheet_editor::State::selected_sprite_sheet() const {
 	auto spriteSheets = this->sprite_sheets();
 	// To find the selected resource in the sheets, iterate over sheets
 	for (const auto& spriteSheet : spriteSheets.sheets()) {
@@ -44,7 +44,7 @@ std::optional<pb::SpriteSheet> bsedit::State::selected_sprite_sheet() const {
 	return std::nullopt;  // Resource not yet selected
 }
 
-void bsedit::State::select_resource(const std::string& resource) {
+void bulk_sheet_editor::State::select_resource(const std::string& resource) {
 	const auto& spriteSheets = this->sprite_sheets();
 	// To find the selected resource in the sheets, iterate over sheets
 	for (const auto& spriteSheet : spriteSheets.sheets()) {
@@ -56,7 +56,7 @@ void bsedit::State::select_resource(const std::string& resource) {
 	throw M2_ERROR("Selected resource is not found in SpriteSheets");
 }
 
-bool bsedit::State::select() {
+bool bulk_sheet_editor::State::select() {
 	// Get rid of previously created pixels, lines, etc.
 	M2_LEVEL.ResetBulkSheetEditor();
 
@@ -93,7 +93,7 @@ bool bsedit::State::select() {
 	return false;
 }
 
-void bsedit::State::select_sprite(m2g::pb::SpriteType type) {
+void bulk_sheet_editor::State::select_sprite(m2g::pb::SpriteType type) {
 	const auto spriteSheet = *selected_sprite_sheet();
 	for (const auto& sprite : spriteSheet.sprites()) {
 		if (sprite.type() == type) {
@@ -107,11 +107,11 @@ void bsedit::State::select_sprite(m2g::pb::SpriteType type) {
 	throw M2_ERROR("Selected sprite has been removed from the SpriteSheet");
 }
 
-void bsedit::State::modify_selected_sprite(const std::function<void(pb::Sprite&)>& modifier) const {
-	sedit::modify_sprite_in_sheet(_sprite_sheets_path, _selected_sprite.first, modifier);
+void bulk_sheet_editor::State::modify_selected_sprite(const std::function<void(pb::Sprite&)>& modifier) const {
+	sheet_editor::modify_sprite_in_sheet(_sprite_sheets_path, _selected_sprite.first, modifier);
 }
 
-void bsedit::State::set_rect() {
+void bulk_sheet_editor::State::set_rect() {
 	auto selection_results = SelectionResult{M2_GAME.events};
 	// If rect is selected
 	if (selection_results.is_primary_selection_finished()) {
@@ -129,7 +129,7 @@ void bsedit::State::set_rect() {
 	}
 }
 
-void bsedit::State::reset() {
+void bulk_sheet_editor::State::reset() {
 	modify_selected_sprite([&](pb::Sprite& sprite) {
 		sprite.mutable_regular()->clear_rect();
 		sprite.mutable_regular()->clear_center_to_origin_vec_px();
@@ -138,7 +138,7 @@ void bsedit::State::reset() {
 	M2_GAME.events.reset_primary_selection();
 }
 
-void bsedit::State::on_draw() const {
+void bulk_sheet_editor::State::on_draw() const {
 	// Draw selection
 	if (auto positions = SelectionResult{M2_GAME.events}.primary_cell_selection_position_m(); positions) {
 		Graphic::color_rect(RectF::from_corners(positions->first, positions->second), SELECTION_COLOR);

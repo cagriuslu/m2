@@ -9,7 +9,7 @@
 #include "../sheet_editor/DynamicImageLoader.h"
 #include "../ui/UiPanel.h"
 
-namespace m2::sedit {
+namespace m2::sheet_editor {
 	struct State {
 		const std::filesystem::path _path;
 		mutable pb::SpriteSheets _sprite_sheets;
@@ -115,4 +115,4 @@ namespace m2::sedit {
 
 	void modify_sprite_in_sheet(
 	    const std::filesystem::path& path, m2g::pb::SpriteType type, const std::function<void(pb::Sprite&)>& modifier);
-}  // namespace m2::sedit
+}  // namespace m2::sheet_editor

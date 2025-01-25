@@ -58,16 +58,16 @@ namespace {
 	void handle_primary_button_press(const VecI& mouse_coordinates_i) {
 		std::visit(
 		    overloaded{
-		        [=](ledit::State& le) {
+		        [=](level_editor::State& le) {
 			        std::visit(
 			            overloaded{
-			                [=](ledit::State::PaintMode& v) { v.paint_sprite(mouse_coordinates_i); },
-			                [=](ledit::State::EraseMode& v) { v.erase_position(mouse_coordinates_i); },
-			                [=](ledit::State::PlaceMode& v) { v.place_object(mouse_coordinates_i); },
-			                [=](MAYBE ledit::State::RemoveMode& v) {
-				                ledit::State::RemoveMode::remove_object(mouse_coordinates_i);
+			                [=](level_editor::State::PaintMode& v) { v.paint_sprite(mouse_coordinates_i); },
+			                [=](level_editor::State::EraseMode& v) { v.erase_position(mouse_coordinates_i); },
+			                [=](level_editor::State::PlaceMode& v) { v.place_object(mouse_coordinates_i); },
+			                [=](MAYBE level_editor::State::RemoveMode& v) {
+				                level_editor::State::RemoveMode::remove_object(mouse_coordinates_i);
 			                },
-			                [=](ledit::State::PickMode& v) {
+			                [=](level_editor::State::PickMode& v) {
 				                if (v.pick_foreground) {
 					                if (const auto level_object = v.lookup_foreground_object(mouse_coordinates_i);
 					                    level_object) {
@@ -80,15 +80,15 @@ namespace {
 					                }
 				                }
 			                },
-			                [=](const ledit::State::ShiftMode& v) { v.shift(mouse_coordinates_i); }, DEFAULT_OVERLOAD},
+			                [=](const level_editor::State::ShiftMode& v) { v.shift(mouse_coordinates_i); }, DEFAULT_OVERLOAD},
 			            le.mode);
 		        },
-		        [=](pedit::State& pe) {
+		        [=](pixel_editor::State& pe) {
 			        std::visit(
 			            overloaded{
-			                [=](pedit::State::PaintMode& v) { v.paint_color(mouse_coordinates_i); },
-			                [=](pedit::State::EraseMode& v) { v.erase_color(mouse_coordinates_i); },
-			                [=](pedit::State::ColorPickerMode& v) { v.pick_color(mouse_coordinates_i); },
+			                [=](pixel_editor::State::PaintMode& v) { v.paint_color(mouse_coordinates_i); },
+			                [=](pixel_editor::State::EraseMode& v) { v.erase_color(mouse_coordinates_i); },
+			                [=](pixel_editor::State::ColorPickerMode& v) { v.pick_color(mouse_coordinates_i); },
 			                DEFAULT_OVERLOAD},
 			            pe.mode);
 		        },
@@ -99,13 +99,13 @@ namespace {
 	void handle_secondary_button_press(MAYBE const VecI& mouse_coordinates_i, const VecF& mouse_coordinates_h) {
 		std::visit(
 		    overloaded{
-		        [=](sedit::State& se) {
+		        [=](sheet_editor::State& se) {
 			        std::visit(
 			            overloaded{
-			                [=](sedit::State::ForegroundCompanionMode& v) {
+			                [=](sheet_editor::State::ForegroundCompanionMode& v) {
 				                v.secondary_selection_position = mouse_coordinates_h;
 			                },
-			                [=](sedit::State::RectMode& v) { v.secondary_selection_position = mouse_coordinates_h; },
+			                [=](sheet_editor::State::RectMode& v) { v.secondary_selection_position = mouse_coordinates_h; },
 			                DEFAULT_OVERLOAD},
 			            se.mode);
 		        },
@@ -113,7 +113,7 @@ namespace {
 		    M2_LEVEL.stateVariant);
 	}
 
-	void handle_mouse_events(const VecI& mouse_coordinates_i, const VecF& mouse_coordinates_h) {
+	void HandleMouseEvents(const VecI& mouse_coordinates_i, const VecF& mouse_coordinates_h) {
 		// Check if mouse is in positive quadrant
 		if (mouse_coordinates_i.is_negative()) {
 			return;
@@ -134,7 +134,7 @@ Id obj::create_god() {
 	it->add_physique().pre_step = [](MAYBE Physique& phy) {
 		auto& obj = phy.owner();
 
-		m2::VecF move_direction;
+		VecF move_direction;
 		if (M2_GAME.events.is_key_down(Key::UP)) {
 			move_direction.y -= 1.0f;
 		}
@@ -159,25 +159,25 @@ Id obj::create_god() {
 			M2_GAME.SetScale(M2_GAME.Dimensions().Scale() * 1.5f);
 		}
 
-		handle_mouse_events(M2_GAME.MousePositionWorldM().iround(), M2_GAME.MousePositionWorldM().hround());
+		HandleMouseEvents(M2_GAME.MousePositionWorldM().iround(), M2_GAME.MousePositionWorldM().hround());
 	};
 
 	it->add_graphic().post_draw = [](MAYBE Graphic& gfx) {
-		// Check if level editor select mode is active
+		// Check if selection is active
 		std::visit(overloaded{
-		        [](ledit::State& le) {
+		        [](level_editor::State& le) {
 			        std::visit(overloaded{
-			        		[](const ledit::State::SelectMode& mode) { mode.on_draw(); },
+			        		[](const level_editor::State::SelectMode& mode) { mode.on_draw(); },
 			        		DEFAULT_OVERLOAD},
 			            le.mode);
 		        },
-		        [](sedit::State& se) {
+		        [](sheet_editor::State& se) {
 			        std::visit(overloaded{
 			        		[](const auto& mode) { mode.on_draw(); },
 			        		[](MAYBE const std::monostate&) {}},
 			            se.mode);
 		        },
-		        [](const bsedit::State& se) { se.on_draw(); },
+		        [](const bulk_sheet_editor::State& se) { se.on_draw(); },
 		    	DEFAULT_OVERLOAD},
 		    M2_LEVEL.stateVariant);
 	};

@@ -420,11 +420,11 @@ void m2::Game::HandleMenuEvent() {
 		const UiPanelBlueprint* PauseMenuBlueprint{};
 		if (std::holds_alternative<splayer::State>(Level().stateVariant)) {
 			PauseMenuBlueprint = _proxy.PauseMenuBlueprint();
-		} else if (std::holds_alternative<ledit::State>(Level().stateVariant)) {
+		} else if (std::holds_alternative<level_editor::State>(Level().stateVariant)) {
 			PauseMenuBlueprint = &level_editor::menu;
-		} else if (std::holds_alternative<sedit::State>(Level().stateVariant)) {
+		} else if (std::holds_alternative<sheet_editor::State>(Level().stateVariant)) {
 			PauseMenuBlueprint = &sheet_editor_main_menu;
-		} else if (std::holds_alternative<bsedit::State>(Level().stateVariant)) {
+		} else if (std::holds_alternative<bulk_sheet_editor::State>(Level().stateVariant)) {
 			PauseMenuBlueprint = &bulk_sheet_editor_pause_menu;
 		}
 
@@ -722,20 +722,20 @@ namespace {
 	}
 }  // namespace
 void m2::Game::DrawBackground() {
-	if (std::holds_alternative<ledit::State>(_level->stateVariant)) {
-		const auto& le = std::get<ledit::State>(_level->stateVariant);
+	if (std::holds_alternative<level_editor::State>(_level->stateVariant)) {
+		const auto& le = std::get<level_editor::State>(_level->stateVariant);
 		std::visit(
 			overloaded{
-				[&](MAYBE const ledit::State::PaintMode& mode) {
+				[&](MAYBE const level_editor::State::PaintMode& mode) {
 					draw_one_background_layer(_level->terrainGraphics[I(le.selected_layer)]);
 				},
-				[&](MAYBE const ledit::State::EraseMode& mode) {
+				[&](MAYBE const level_editor::State::EraseMode& mode) {
 					draw_one_background_layer(_level->terrainGraphics[I(le.selected_layer)]);
 				},
-				[&](MAYBE const ledit::State::PickMode& mode) {
+				[&](MAYBE const level_editor::State::PickMode& mode) {
 					draw_one_background_layer(_level->terrainGraphics[I(le.selected_layer)]);
 				},
-				[&](MAYBE const ledit::State::SelectMode& mode) {
+				[&](MAYBE const level_editor::State::SelectMode& mode) {
 					draw_one_background_layer(_level->terrainGraphics[I(le.selected_layer)]);
 				},
 				[&](MAYBE const auto& mode) { draw_all_background_layers(*_level); },
@@ -889,14 +889,14 @@ void m2::Game::ForEachNamedItem(const std::function<bool(m2g::pb::ItemType, cons
 
 const m2::VecF& m2::Game::MousePositionWorldM() const {
 	if (not _mouse_position_world_m) {
-		RecalculateMousePosition2();
+		RecalculateMousePosition();
 	}
 	return *_mouse_position_world_m;
 }
 
 const m2::VecF& m2::Game::ScreenCenterToMousePositionM() const {
 	if (not _screen_center_to_mouse_position_m) {
-		RecalculateMousePosition2();
+		RecalculateMousePosition();
 	}
 	return *_screen_center_to_mouse_position_m;
 }
@@ -1004,7 +1004,7 @@ void m2::Game::ExecuteDeferredActions() {
 	}
 }
 
-void m2::Game::RecalculateMousePosition2() const {
+void m2::Game::RecalculateMousePosition() const {
 	const auto mouse_position = events.mouse_position();
 	const auto screen_center_to_mouse_position_px =
 		VecI{mouse_position.x - (Dimensions().WindowDimensions().x / 2), mouse_position.y - (Dimensions().WindowDimensions().y / 2)};

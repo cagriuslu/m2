@@ -26,12 +26,12 @@ m2::Id m2::obj::create_camera() {
 		// Move dynamic loaders if they exist
 		std::visit(
 		    overloaded{
-		        [](sedit::State& ss) {
+		        [](sheet_editor::State& ss) {
 			        if (auto* dil = ss.dynamic_image_loader()) {
 				        dil->move(M2_GAME.ViewportTo2dWorldRectM());
 			        }
 		        },
-		        [](bsedit::State& ss) {
+		        [](bulk_sheet_editor::State& ss) {
 			        if (auto* dil = ss.dynamic_sprite_sheet_loader()) {
 				        dil->move(M2_GAME.ViewportTo2dWorldRectM());
 			        }

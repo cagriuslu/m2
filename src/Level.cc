@@ -64,8 +64,8 @@ m2::void_expected m2::Level::InitMultiPlayerAsGuest(
 
 m2::void_expected m2::Level::InitLevelEditor(const std::filesystem::path& lb_path) {
 	_lbPath = lb_path;
-	stateVariant.emplace<ledit::State>();
-	auto& le_state = std::get<ledit::State>(stateVariant);
+	stateVariant.emplace<level_editor::State>();
+	auto& le_state = std::get<level_editor::State>(stateVariant);
 
 	// Create message box initially disabled
 	_messageBoxUiPanel.emplace(&DefaultMessageBoxBlueprint, DefaultMessageBoxArea);
@@ -114,8 +114,8 @@ m2::void_expected m2::Level::InitLevelEditor(const std::filesystem::path& lb_pat
 
 m2::void_expected m2::Level::InitPixelEditor(const std::filesystem::path& path, int x_offset, int y_offset) {
 	_lbPath = path;
-	stateVariant.emplace<pedit::State>();
-	auto& pe_state = std::get<pedit::State>(stateVariant);
+	stateVariant.emplace<pixel_editor::State>();
+	auto& pe_state = std::get<pixel_editor::State>(stateVariant);
 
 	pe_state.image_offset = VecI{x_offset, y_offset};
 
@@ -152,7 +152,7 @@ m2::void_expected m2::Level::InitPixelEditor(const std::filesystem::path& path, 
 				// Select color
 				pe_state.selected_color = color;
 				// Paint pixel
-				pedit::State::PaintMode::paint_color(VecI{x, y});
+				pixel_editor::State::PaintMode::paint_color(VecI{x, y});
 			}
 		}
 
@@ -176,9 +176,9 @@ m2::void_expected m2::Level::InitPixelEditor(const std::filesystem::path& path, 
 
 m2::void_expected m2::Level::InitSheetEditor(const std::filesystem::path& path) {
 	// Create state
-	auto state = sedit::State::create(path);
+	auto state = sheet_editor::State::create(path);
 	m2_reflect_unexpected(state);
-	stateVariant.emplace<sedit::State>(std::move(*state));
+	stateVariant.emplace<sheet_editor::State>(std::move(*state));
 
 	// Create message box initially disabled
 	_messageBoxUiPanel.emplace(&DefaultMessageBoxBlueprint, DefaultMessageBoxArea);
@@ -201,9 +201,9 @@ m2::void_expected m2::Level::InitSheetEditor(const std::filesystem::path& path) 
 
 m2::void_expected m2::Level::InitBulkSheetEditor(const std::filesystem::path& path) {
 	// Create state
-	auto state = bsedit::State::create(path);
+	auto state = bulk_sheet_editor::State::create(path);
 	m2_reflect_unexpected(state);
-	stateVariant.emplace<bsedit::State>(std::move(*state));
+	stateVariant.emplace<bulk_sheet_editor::State>(std::move(*state));
 
 	// Create message box initially disabled
 	_messageBoxUiPanel.emplace(&DefaultMessageBoxBlueprint, DefaultMessageBoxArea);

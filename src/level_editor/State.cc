@@ -10,7 +10,7 @@ namespace {
 	constexpr SDL_Color CONFIRMED_SELECTION_COLOR = {0, 255, 0, 80};
 }
 
-void m2::ledit::State::PaintMode::select_sprite_type(m2g::pb::SpriteType sprite_type) {
+void m2::level_editor::State::PaintMode::select_sprite_type(m2g::pb::SpriteType sprite_type) {
 	if (selected_sprite_ghost_id) {
 		M2_DEFER(m2::create_object_deleter(selected_sprite_ghost_id));
 	}
@@ -22,30 +22,30 @@ void m2::ledit::State::PaintMode::select_sprite_type(m2g::pb::SpriteType sprite_
 		M2_LEVEL.ShowMessage(sprite_name);
 	}
 }
-void m2::ledit::State::PaintMode::paint_sprite(const VecI& position) {
+void m2::level_editor::State::PaintMode::paint_sprite(const VecI& position) {
 	if (!position.is_negative()) {
 		// Delete previous placeholder
-		EraseMode::erase_position(position, std::get<ledit::State>(M2_LEVEL.stateVariant).selected_layer);
+		EraseMode::erase_position(position, std::get<level_editor::State>(M2_LEVEL.stateVariant).selected_layer);
 		// Create/Replace placeholder
-		std::get<ledit::State>(M2_LEVEL.stateVariant).bg_placeholders[I(std::get<ledit::State>(M2_LEVEL.stateVariant).selected_layer)][position] = std::make_pair(obj::create_background_placeholder(VecF{position}, selected_sprite_type, std::get<ledit::State>(M2_LEVEL.stateVariant).selected_layer), selected_sprite_type);
+		std::get<level_editor::State>(M2_LEVEL.stateVariant).bg_placeholders[I(std::get<level_editor::State>(M2_LEVEL.stateVariant).selected_layer)][position] = std::make_pair(obj::create_background_placeholder(VecF{position}, selected_sprite_type, std::get<level_editor::State>(M2_LEVEL.stateVariant).selected_layer), selected_sprite_type);
 	}
 }
-m2::ledit::State::PaintMode::~PaintMode() {
+m2::level_editor::State::PaintMode::~PaintMode() {
 	if (selected_sprite_ghost_id) {
 		M2_LEVEL.deferredActions.push(create_object_deleter(selected_sprite_ghost_id));
 	}
 }
-void m2::ledit::State::EraseMode::erase_position(const VecI& position) {
-	erase_position(position, std::get<ledit::State>(M2_LEVEL.stateVariant).selected_layer);
+void m2::level_editor::State::EraseMode::erase_position(const VecI& position) {
+	erase_position(position, std::get<level_editor::State>(M2_LEVEL.stateVariant).selected_layer);
 }
-void m2::ledit::State::EraseMode::erase_position(const VecI &position, BackgroundLayer layer) {
-	auto placeholders_it = std::get<ledit::State>(M2_LEVEL.stateVariant).bg_placeholders[I(layer)].find(position);
-	if (placeholders_it != std::get<ledit::State>(M2_LEVEL.stateVariant).bg_placeholders[I(layer)].end()) {
+void m2::level_editor::State::EraseMode::erase_position(const VecI &position, BackgroundLayer layer) {
+	auto placeholders_it = std::get<level_editor::State>(M2_LEVEL.stateVariant).bg_placeholders[I(layer)].find(position);
+	if (placeholders_it != std::get<level_editor::State>(M2_LEVEL.stateVariant).bg_placeholders[I(layer)].end()) {
 		M2_LEVEL.deferredActions.push(create_object_deleter(placeholders_it->second.first));
-		std::get<ledit::State>(M2_LEVEL.stateVariant).bg_placeholders[I(layer)].erase(placeholders_it);
+		std::get<level_editor::State>(M2_LEVEL.stateVariant).bg_placeholders[I(layer)].erase(placeholders_it);
 	}
 }
-void m2::ledit::State::PlaceMode::select_object_type(m2g::pb::ObjectType object_type) {
+void m2::level_editor::State::PlaceMode::select_object_type(m2g::pb::ObjectType object_type) {
 	if (selected_sprite_ghost_id) {
 		M2_DEFER(create_object_deleter(selected_sprite_ghost_id));
 	}
@@ -54,9 +54,9 @@ void m2::ledit::State::PlaceMode::select_object_type(m2g::pb::ObjectType object_
 		selected_sprite_ghost_id = obj::create_ghost(M2_GAME.object_main_sprites[object_type]);
 	}
 }
-void m2::ledit::State::PlaceMode::select_group_type(m2g::pb::GroupType group_type) { selected_group_type = group_type; }
-void m2::ledit::State::PlaceMode::select_group_instance(unsigned group_instance) { selected_group_instance = group_instance; }
-void m2::ledit::State::PlaceMode::place_object(const VecI& position) const {
+void m2::level_editor::State::PlaceMode::select_group_type(m2g::pb::GroupType group_type) { selected_group_type = group_type; }
+void m2::level_editor::State::PlaceMode::select_group_instance(unsigned group_instance) { selected_group_instance = group_instance; }
+void m2::level_editor::State::PlaceMode::place_object(const VecI& position) const {
 	if (!position.is_negative()) {
 		// Delete previous placeholder
 		RemoveMode::remove_object(position);
@@ -67,43 +67,43 @@ void m2::ledit::State::PlaceMode::place_object(const VecI& position) const {
 		level_object.set_type(selected_object_type);
 		level_object.mutable_group()->set_type(selected_group_type);
 		level_object.mutable_group()->set_instance(selected_group_instance);
-		std::get<ledit::State>(M2_LEVEL.stateVariant).fg_placeholders[position] = std::make_pair(obj::create_foreground_placeholder(VecF{position}, M2_GAME.object_main_sprites[selected_object_type]), level_object);
+		std::get<level_editor::State>(M2_LEVEL.stateVariant).fg_placeholders[position] = std::make_pair(obj::create_foreground_placeholder(VecF{position}, M2_GAME.object_main_sprites[selected_object_type]), level_object);
 	}
 }
-m2::ledit::State::PlaceMode::~PlaceMode() {
+m2::level_editor::State::PlaceMode::~PlaceMode() {
 	if (selected_sprite_ghost_id) {
 		M2_LEVEL.deferredActions.push(create_object_deleter(selected_sprite_ghost_id));
 	}
 }
-void m2::ledit::State::RemoveMode::remove_object(const VecI &position) {
-	auto placeholders_it = std::get<ledit::State>(M2_LEVEL.stateVariant).fg_placeholders.find(position);
-	if (placeholders_it != std::get<ledit::State>(M2_LEVEL.stateVariant).fg_placeholders.end()) {
+void m2::level_editor::State::RemoveMode::remove_object(const VecI &position) {
+	auto placeholders_it = std::get<level_editor::State>(M2_LEVEL.stateVariant).fg_placeholders.find(position);
+	if (placeholders_it != std::get<level_editor::State>(M2_LEVEL.stateVariant).fg_placeholders.end()) {
 		M2_LEVEL.deferredActions.push(create_object_deleter(placeholders_it->second.first));
-		std::get<ledit::State>(M2_LEVEL.stateVariant).fg_placeholders.erase(placeholders_it);
+		std::get<level_editor::State>(M2_LEVEL.stateVariant).fg_placeholders.erase(placeholders_it);
 	}
 }
-std::optional<m2g::pb::SpriteType> m2::ledit::State::PickMode::lookup_background_sprite(const VecI& position) {
-	auto it = std::get<ledit::State>(M2_LEVEL.stateVariant).bg_placeholders[I(std::get<ledit::State>(M2_LEVEL.stateVariant).selected_layer)].find(position);
-	if (it != std::get<ledit::State>(M2_LEVEL.stateVariant).bg_placeholders[I(std::get<ledit::State>(M2_LEVEL.stateVariant).selected_layer)].end()) {
+std::optional<m2g::pb::SpriteType> m2::level_editor::State::PickMode::lookup_background_sprite(const VecI& position) {
+	auto it = std::get<level_editor::State>(M2_LEVEL.stateVariant).bg_placeholders[I(std::get<level_editor::State>(M2_LEVEL.stateVariant).selected_layer)].find(position);
+	if (it != std::get<level_editor::State>(M2_LEVEL.stateVariant).bg_placeholders[I(std::get<level_editor::State>(M2_LEVEL.stateVariant).selected_layer)].end()) {
 		return it->second.second;
 	}
 	return {};
 }
-std::optional<m2::pb::LevelObject> m2::ledit::State::PickMode::lookup_foreground_object(const VecI& position) {
-	auto it = std::get<ledit::State>(M2_LEVEL.stateVariant).fg_placeholders.find(position);
-	if (it != std::get<ledit::State>(M2_LEVEL.stateVariant).fg_placeholders.end()) {
+std::optional<m2::pb::LevelObject> m2::level_editor::State::PickMode::lookup_foreground_object(const VecI& position) {
+	auto it = std::get<level_editor::State>(M2_LEVEL.stateVariant).fg_placeholders.find(position);
+	if (it != std::get<level_editor::State>(M2_LEVEL.stateVariant).fg_placeholders.end()) {
 		return it->second.second;
 	}
 	return {};
 }
-m2::ledit::State::SelectMode::SelectMode() {
+m2::level_editor::State::SelectMode::SelectMode() {
 	// Enable selection
 	Events::enable_primary_selection(RectI{M2_GAME.Dimensions().Game()});
 }
-m2::ledit::State::SelectMode::~SelectMode() {
+m2::level_editor::State::SelectMode::~SelectMode() {
 	Events::disable_primary_selection();
 }
-void m2::ledit::State::SelectMode::on_draw() const {
+void m2::level_editor::State::SelectMode::on_draw() const {
 	// Draw selection
 	if (auto positions = SelectionResult{M2_GAME.events}.primary_int_selection_position_m(); positions) {
 		positions->first.for_each_cell_in_between(positions->second, [=](const VecI& cell) {
@@ -117,92 +117,92 @@ void m2::ledit::State::SelectMode::on_draw() const {
 		});
 	}
 }
-void m2::ledit::State::SelectMode::shift_right() {
+void m2::level_editor::State::SelectMode::shift_right() {
 	if (auto selection_result = SelectionResult{M2_GAME.events}; selection_result.is_primary_selection_finished()) {
 		auto positions = selection_result.primary_int_selection_position_m();
 		auto min_x = positions->first.x;
 		auto min_y = positions->first.y;
 		auto max_y = positions->second.y;
 		auto shift_count = abs(positions->first.x - positions->second.x) + 1;
-		for (auto& placeholders : std::get<ledit::State>(M2_LEVEL.stateVariant).bg_placeholders) {
+		for (auto& placeholders : std::get<level_editor::State>(M2_LEVEL.stateVariant).bg_placeholders) {
 			level_editor::shift_placeholders(placeholders, M2_LEVEL.objects, min_x, INT32_MAX, min_y, max_y, shift_count, 0);
 		}
-		level_editor::shift_placeholders(std::get<ledit::State>(M2_LEVEL.stateVariant).fg_placeholders, M2_LEVEL.objects, min_x, INT32_MAX, min_y, max_y, shift_count, 0);
+		level_editor::shift_placeholders(std::get<level_editor::State>(M2_LEVEL.stateVariant).fg_placeholders, M2_LEVEL.objects, min_x, INT32_MAX, min_y, max_y, shift_count, 0);
 	}
 }
-void m2::ledit::State::SelectMode::shift_down() {
+void m2::level_editor::State::SelectMode::shift_down() {
 	if (auto selection_result = SelectionResult{M2_GAME.events}; selection_result.is_primary_selection_finished()) {
 		auto positions = selection_result.primary_int_selection_position_m();
 		auto min_x = positions->first.x;
 		auto max_x = positions->second.x;
 		auto min_y = positions->first.y;
 		auto shift_count = abs(positions->first.y - positions->second.y) + 1;
-		for (auto& placeholders : std::get<ledit::State>(M2_LEVEL.stateVariant).bg_placeholders) {
+		for (auto& placeholders : std::get<level_editor::State>(M2_LEVEL.stateVariant).bg_placeholders) {
 			level_editor::shift_placeholders(placeholders, M2_LEVEL.objects, min_x, max_x, min_y, INT32_MAX, 0, shift_count);
 		}
-		level_editor::shift_placeholders(std::get<ledit::State>(M2_LEVEL.stateVariant).fg_placeholders, M2_LEVEL.objects, min_x, max_x, min_y, INT32_MAX, 0, shift_count);
+		level_editor::shift_placeholders(std::get<level_editor::State>(M2_LEVEL.stateVariant).fg_placeholders, M2_LEVEL.objects, min_x, max_x, min_y, INT32_MAX, 0, shift_count);
 	}
 }
-void m2::ledit::State::SelectMode::copy() {
+void m2::level_editor::State::SelectMode::copy() {
 	if (auto selection_result = SelectionResult{M2_GAME.events}; selection_result.is_primary_selection_finished()) {
-		clipboard_layer = std::get<ledit::State>(M2_LEVEL.stateVariant).selected_layer;
+		clipboard_layer = std::get<level_editor::State>(M2_LEVEL.stateVariant).selected_layer;
 		auto positions = selection_result.primary_int_selection_position_m();
 		clipboard_position_1 = positions->first;
 		clipboard_position_2 = positions->second;
 		M2_GAME.events.reset_primary_selection();
 	}
 }
-void m2::ledit::State::SelectMode::paste_bg() {
+void m2::level_editor::State::SelectMode::paste_bg() {
 	if (auto selection_result = SelectionResult{M2_GAME.events}; selection_result.is_primary_selection_finished()) {
 		auto positions = selection_result.primary_int_selection_position_m();
 		if (clipboard_position_1 && clipboard_position_2) {
 			clipboard_position_1->for_each_cell_in_between(*clipboard_position_2, [&](const VecI& cell) {
-				auto it = std::get<ledit::State>(M2_LEVEL.stateVariant).bg_placeholders[I(*clipboard_layer)].find(cell);
-				if (it != std::get<ledit::State>(M2_LEVEL.stateVariant).bg_placeholders[I(*clipboard_layer)].end()) {
+				auto it = std::get<level_editor::State>(M2_LEVEL.stateVariant).bg_placeholders[I(*clipboard_layer)].find(cell);
+				if (it != std::get<level_editor::State>(M2_LEVEL.stateVariant).bg_placeholders[I(*clipboard_layer)].end()) {
 					auto new_position = positions->first + (cell - *clipboard_position_1);
 					auto sprite_type = it->second.second;
-					EraseMode::erase_position(new_position, std::get<ledit::State>(M2_LEVEL.stateVariant).selected_layer);
-					std::get<ledit::State>(M2_LEVEL.stateVariant).bg_placeholders[I(std::get<ledit::State>(M2_LEVEL.stateVariant).selected_layer)][new_position] = std::make_pair(obj::create_background_placeholder(VecF{new_position}, sprite_type, std::get<ledit::State>(M2_LEVEL.stateVariant).selected_layer), sprite_type);
+					EraseMode::erase_position(new_position, std::get<level_editor::State>(M2_LEVEL.stateVariant).selected_layer);
+					std::get<level_editor::State>(M2_LEVEL.stateVariant).bg_placeholders[I(std::get<level_editor::State>(M2_LEVEL.stateVariant).selected_layer)][new_position] = std::make_pair(obj::create_background_placeholder(VecF{new_position}, sprite_type, std::get<level_editor::State>(M2_LEVEL.stateVariant).selected_layer), sprite_type);
 				}
 			});
 		}
 	}
 }
-void m2::ledit::State::SelectMode::paste_fg() {
+void m2::level_editor::State::SelectMode::paste_fg() {
 	if (auto selection_result = SelectionResult{M2_GAME.events}; selection_result.is_primary_selection_finished()) {
 		auto positions = selection_result.primary_int_selection_position_m();
 		if (clipboard_position_1 && clipboard_position_2) {
 			clipboard_position_1->for_each_cell_in_between(*clipboard_position_2, [&](const VecI& cell) {
-				auto it = std::get<ledit::State>(M2_LEVEL.stateVariant).fg_placeholders.find(cell);
-				if (it != std::get<ledit::State>(M2_LEVEL.stateVariant).fg_placeholders.end()) {
+				auto it = std::get<level_editor::State>(M2_LEVEL.stateVariant).fg_placeholders.find(cell);
+				if (it != std::get<level_editor::State>(M2_LEVEL.stateVariant).fg_placeholders.end()) {
 					auto new_position = positions->first + (cell - *clipboard_position_1);
 					auto level_object = it->second.second;
 					level_object.mutable_position()->set_x(new_position.x);
 					level_object.mutable_position()->set_y(new_position.y);
 					RemoveMode::remove_object(new_position);
-					std::get<ledit::State>(M2_LEVEL.stateVariant).fg_placeholders[new_position] = std::make_pair(obj::create_foreground_placeholder(VecF{new_position}, M2_GAME.object_main_sprites[level_object.type()]), level_object);
+					std::get<level_editor::State>(M2_LEVEL.stateVariant).fg_placeholders[new_position] = std::make_pair(obj::create_foreground_placeholder(VecF{new_position}, M2_GAME.object_main_sprites[level_object.type()]), level_object);
 				}
 			});
 		}
 	}
 }
-void m2::ledit::State::SelectMode::erase() {
+void m2::level_editor::State::SelectMode::erase() {
 	if (auto selection_result = SelectionResult{M2_GAME.events}; selection_result.is_primary_selection_finished()) {
 		auto positions = selection_result.primary_int_selection_position_m();
 		positions->first.for_each_cell_in_between(positions->second, [&](const VecI& cell) {
-			ledit::State::EraseMode::erase_position(cell, std::get<ledit::State>(M2_LEVEL.stateVariant).selected_layer);
+			level_editor::State::EraseMode::erase_position(cell, std::get<level_editor::State>(M2_LEVEL.stateVariant).selected_layer);
 		});
 	}
 }
-void m2::ledit::State::SelectMode::remove() {
+void m2::level_editor::State::SelectMode::remove() {
 	if (auto selection_result = SelectionResult{M2_GAME.events}; selection_result.is_primary_selection_finished()) {
 		auto positions = selection_result.primary_int_selection_position_m();
 		positions->first.for_each_cell_in_between(positions->second, [](const VecI& cell) {
-			ledit::State::RemoveMode::remove_object(cell);
+			level_editor::State::RemoveMode::remove_object(cell);
 		});
 	}
 }
-m2::UiAction m2::ledit::State::SelectMode::rfill() {
+m2::UiAction m2::level_editor::State::SelectMode::rfill() {
 	if (auto selection_result = SelectionResult{M2_GAME.events}; selection_result.is_primary_selection_finished()) {
 		auto positions = selection_result.primary_int_selection_position_m();
 
@@ -211,10 +211,10 @@ m2::UiAction m2::ledit::State::SelectMode::rfill() {
 			positions->first.for_each_cell_in_between(positions->second, [&](const VecI& cell) {
 				auto index = rand(static_cast<uint32_t>(rfill_sprite_types.size()));
 				auto sprite_type = rfill_sprite_types[index];
-				EraseMode::erase_position(cell, std::get<ledit::State>(M2_LEVEL.stateVariant).selected_layer);
-				std::get<ledit::State>(M2_LEVEL.stateVariant)
-				    .bg_placeholders[I(std::get<ledit::State>(M2_LEVEL.stateVariant).selected_layer)][cell] = std::make_pair(
-							obj::create_background_placeholder(VecF{cell}, sprite_type, std::get<ledit::State>(M2_LEVEL.stateVariant).selected_layer),
+				EraseMode::erase_position(cell, std::get<level_editor::State>(M2_LEVEL.stateVariant).selected_layer);
+				std::get<level_editor::State>(M2_LEVEL.stateVariant)
+				    .bg_placeholders[I(std::get<level_editor::State>(M2_LEVEL.stateVariant).selected_layer)][cell] = std::make_pair(
+							obj::create_background_placeholder(VecF{cell}, sprite_type, std::get<level_editor::State>(M2_LEVEL.stateVariant).selected_layer),
 							sprite_type);
 			});
 		} else {
@@ -223,53 +223,53 @@ m2::UiAction m2::ledit::State::SelectMode::rfill() {
 	}
 	return MakeContinueAction();
 }
-void m2::ledit::State::ShiftMode::shift(MAYBE const VecI& position) const {
+void m2::level_editor::State::ShiftMode::shift(MAYBE const VecI& position) const {
 	if (shift_type == ShiftType::RIGHT) {
-		for (auto& placeholders : std::get<ledit::State>(M2_LEVEL.stateVariant).bg_placeholders) {
+		for (auto& placeholders : std::get<level_editor::State>(M2_LEVEL.stateVariant).bg_placeholders) {
 			level_editor::shift_placeholders(placeholders, M2_LEVEL.objects, position.x, INT32_MAX, INT32_MIN, INT32_MAX, 1, 0);
 		}
-		level_editor::shift_placeholders(std::get<ledit::State>(M2_LEVEL.stateVariant).fg_placeholders, M2_LEVEL.objects, position.x, INT32_MAX, INT32_MIN, INT32_MAX, 1, 0);
+		level_editor::shift_placeholders(std::get<level_editor::State>(M2_LEVEL.stateVariant).fg_placeholders, M2_LEVEL.objects, position.x, INT32_MAX, INT32_MIN, INT32_MAX, 1, 0);
 	} else if (shift_type == ShiftType::DOWN) {
-		for (auto& placeholders : std::get<ledit::State>(M2_LEVEL.stateVariant).bg_placeholders) {
+		for (auto& placeholders : std::get<level_editor::State>(M2_LEVEL.stateVariant).bg_placeholders) {
 			level_editor::shift_placeholders(placeholders, M2_LEVEL.objects, INT32_MIN, INT32_MAX, position.y, INT32_MAX, 0, 1);
 		}
-		level_editor::shift_placeholders(std::get<ledit::State>(M2_LEVEL.stateVariant).fg_placeholders, M2_LEVEL.objects, INT32_MIN, INT32_MAX, position.y, INT32_MAX, 0, 1);
+		level_editor::shift_placeholders(std::get<level_editor::State>(M2_LEVEL.stateVariant).fg_placeholders, M2_LEVEL.objects, INT32_MIN, INT32_MAX, position.y, INT32_MAX, 0, 1);
 	} else if (shift_type == ShiftType::RIGHT_N_DOWN) {
-		for (auto& placeholders : std::get<ledit::State>(M2_LEVEL.stateVariant).bg_placeholders) {
+		for (auto& placeholders : std::get<level_editor::State>(M2_LEVEL.stateVariant).bg_placeholders) {
 			level_editor::shift_placeholders(placeholders, M2_LEVEL.objects, position.x, INT32_MAX, position.y, INT32_MAX, 1, 1);
 		}
-		level_editor::shift_placeholders(std::get<ledit::State>(M2_LEVEL.stateVariant).fg_placeholders, M2_LEVEL.objects, position.x, INT32_MAX, position.y, INT32_MAX, 1, 1);
+		level_editor::shift_placeholders(std::get<level_editor::State>(M2_LEVEL.stateVariant).fg_placeholders, M2_LEVEL.objects, position.x, INT32_MAX, position.y, INT32_MAX, 1, 1);
 	}
 }
-void m2::ledit::State::deactivate_mode() {
+void m2::level_editor::State::deactivate_mode() {
 	mode.emplace<std::monostate>();
 }
-void m2::ledit::State::activate_paint_mode() {
+void m2::level_editor::State::activate_paint_mode() {
 	mode.emplace<PaintMode>();
 	std::get<PaintMode>(mode).select_sprite_type(M2_GAME.level_editor_background_sprites[0]);
 }
-void m2::ledit::State::activate_erase_mode() {
+void m2::level_editor::State::activate_erase_mode() {
 	mode.emplace<EraseMode>();
 }
-void m2::ledit::State::activate_place_mode() {
+void m2::level_editor::State::activate_place_mode() {
 	mode.emplace<PlaceMode>();
 	std::get<PlaceMode>(mode).select_object_type(M2_GAME.object_main_sprites.begin()->first);
 	std::get<PlaceMode>(mode).select_group_type(m2g::pb::GroupType::NO_GROUP);
 	std::get<PlaceMode>(mode).select_group_instance(0);
 }
-void m2::ledit::State::activate_remove_mode() {
+void m2::level_editor::State::activate_remove_mode() {
 	mode.emplace<RemoveMode>();
 }
-void m2::ledit::State::activate_pick_mode() {
+void m2::level_editor::State::activate_pick_mode() {
 	mode.emplace<PickMode>();
 }
-void m2::ledit::State::activate_select_mode() {
+void m2::level_editor::State::activate_select_mode() {
 	mode.emplace<SelectMode>();
 }
-void m2::ledit::State::activate_shift_mode() {
+void m2::level_editor::State::activate_shift_mode() {
 	mode.emplace<ShiftMode>();
 }
-m2::void_expected m2::ledit::State::save() {
+m2::void_expected m2::level_editor::State::save() {
 	pb::Level level;
 	// Start from the current level
 	if (auto lb = M2_LEVEL.LevelBlueprint(); lb) {
@@ -281,13 +281,13 @@ m2::void_expected m2::ledit::State::save() {
 	level.clear_objects();
 
 	for (int i = 0; i < I(BackgroundLayer::n); ++i) {
-		for (const auto& [position, pair] : std::get<ledit::State>(M2_LEVEL.stateVariant).bg_placeholders[i]) {
+		for (const auto& [position, pair] : std::get<level_editor::State>(M2_LEVEL.stateVariant).bg_placeholders[i]) {
 			pb::mutable_get_or_create(level.mutable_background_layers(), i);
 			auto* row = pb::mutable_get_or_create(level.mutable_background_layers(i)->mutable_background_rows(), position.y); // Get or create row
 			*(pb::mutable_get_or_create(row->mutable_items(), position.x)) = pair.second; // Set sprite type
 		}
 	}
-	for (const auto& [position, pair] : std::get<ledit::State>(M2_LEVEL.stateVariant).fg_placeholders) {
+	for (const auto& [position, pair] : std::get<level_editor::State>(M2_LEVEL.stateVariant).fg_placeholders) {
 		level.add_objects()->CopyFrom(pair.second);
 	}
 	return pb::message_to_json_file(level, *M2_LEVEL.Path());

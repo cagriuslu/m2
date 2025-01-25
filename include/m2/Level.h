@@ -80,7 +80,7 @@ namespace m2 {
 		std::optional<sdl::ticks_t> rootBlockingUiBeginTicks;  // Exists only if there is an ongoing blocking UI
 		std::queue<std::function<void()>> deferredActions;
 		std::variant<
-		    std::monostate, splayer::State, mplayer::State, ledit::State, pedit::State, sedit::State, bsedit::State>
+		    std::monostate, splayer::State, mplayer::State, level_editor::State, pixel_editor::State, sheet_editor::State, bulk_sheet_editor::State>
 		    stateVariant;
 		std::optional<DynamicGridLinesLoader> dynamicGridLinesLoader;
 		std::optional<DynamicGridLinesLoader> dynamicSheetGridLinesLoader;

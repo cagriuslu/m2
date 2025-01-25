@@ -3,7 +3,7 @@
 #include "../math/VecI.h"
 #include <SDL.h>
 
-namespace m2::pedit {
+namespace m2::pixel_editor {
 	struct State {
 		struct PaintMode {
 			static void paint_color(const VecI& position);

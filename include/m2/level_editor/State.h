@@ -2,7 +2,7 @@
 #include "../ui/UiAction.h"
 #include "Detail.h"
 
-namespace m2::ledit {
+namespace m2::level_editor {
 	struct State {
 		struct PaintMode {
 			m2g::pb::SpriteType selected_sprite_type{};
@@ -82,4 +82,4 @@ namespace m2::ledit {
 		void activate_shift_mode();
 		static void_expected save();
 	};
-}  // namespace m2::ledit
+}  // namespace m2::level_editor
