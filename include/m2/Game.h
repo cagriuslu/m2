@@ -32,7 +32,7 @@
 #define M2_DEFER(f) (M2_GAME.AddDeferredAction(f))
 #define M2G_PROXY (M2_GAME.Proxy())
 #define M2_LEVEL (M2_GAME.Level())
-#define M2_PLAYER (*M2_LEVEL.player())
+#define M2_PLAYER (*M2_LEVEL.Player())
 
 namespace m2 {
 	// Client server comes after server thread, thus during shutdown, it'll be killed before the ServerThread.

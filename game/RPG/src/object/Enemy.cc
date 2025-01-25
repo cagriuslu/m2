@@ -97,7 +97,7 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 						se.playbacks.emplace_back(playback_id);
 					} else {
 						// Playback finished, destroy self
-						M2_LEVEL.deferred_actions.push(m2::create_sound_emitter_deleter(obj.id()));
+						M2_LEVEL.deferredActions.push(m2::create_sound_emitter_deleter(obj.id()));
 					}
 				};
 			}

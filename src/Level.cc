@@ -25,7 +25,7 @@ m2::Level::~Level() {
 	// Custom destructor is provided because the order is important
 	characters.clear();
 	lights.clear();
-	for (auto& terrain : terrain_graphics) {
+	for (auto& terrain : terrainGraphics) {
 		terrain.clear();
 	}
 	graphics.clear();
@@ -33,15 +33,15 @@ m2::Level::~Level() {
 	objects.clear();
 	groups.clear();
 
-	delete contact_listener;
-	contact_listener = nullptr;
+	delete contactListener;
+	contactListener = nullptr;
 	delete world;
 	world = nullptr;
 }
 
 m2::void_expected m2::Level::InitSinglePlayer(
     const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name) {
-	type_state.emplace<splayer::State>();
+	stateVariant.emplace<splayer::State>();
 	return InitAnyPlayer(
 	    level_path_or_blueprint, name, true, &m2g::Proxy::pre_single_player_level_init, &m2g::Proxy::post_single_player_level_init);
 }
@@ -49,7 +49,7 @@ m2::void_expected m2::Level::InitSinglePlayer(
 m2::void_expected m2::Level::InitMultiPlayerAsHost(
     const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name) {
 	INFO_FN();
-	type_state.emplace<mplayer::State>();
+	stateVariant.emplace<mplayer::State>();
 	return InitAnyPlayer(
 	    level_path_or_blueprint, name, false, &m2g::Proxy::pre_multi_player_level_client_init, &m2g::Proxy::post_multi_player_level_client_init);
 }
@@ -57,15 +57,15 @@ m2::void_expected m2::Level::InitMultiPlayerAsHost(
 m2::void_expected m2::Level::InitMultiPlayerAsGuest(
     const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name) {
 	DEBUG_FN();
-	type_state.emplace<mplayer::State>();
+	stateVariant.emplace<mplayer::State>();
 	return InitAnyPlayer(
 	    level_path_or_blueprint, name, false, &m2g::Proxy::pre_multi_player_level_client_init, &m2g::Proxy::post_multi_player_level_client_init);
 }
 
 m2::void_expected m2::Level::InitLevelEditor(const std::filesystem::path& lb_path) {
 	_lbPath = lb_path;
-	type_state.emplace<ledit::State>();
-	auto& le_state = std::get<ledit::State>(type_state);
+	stateVariant.emplace<ledit::State>();
+	auto& le_state = std::get<ledit::State>(stateVariant);
 
 	// Create message box initially disabled
 	_messageBoxUiPanel.emplace(&DefaultMessageBoxBlueprint, DefaultMessageBoxArea);
@@ -98,7 +98,7 @@ m2::void_expected m2::Level::InitLevelEditor(const std::filesystem::path& lb_pat
 	}
 
 	// Create default objects
-	player_id = m2::obj::create_god();
+	playerId = m2::obj::create_god();
 	m2::obj::create_camera();
 	m2::obj::create_origin();
 
@@ -114,8 +114,8 @@ m2::void_expected m2::Level::InitLevelEditor(const std::filesystem::path& lb_pat
 
 m2::void_expected m2::Level::InitPixelEditor(const std::filesystem::path& path, int x_offset, int y_offset) {
 	_lbPath = path;
-	type_state.emplace<pedit::State>();
-	auto& pe_state = std::get<pedit::State>(type_state);
+	stateVariant.emplace<pedit::State>();
+	auto& pe_state = std::get<pedit::State>(stateVariant);
 
 	pe_state.image_offset = VecI{x_offset, y_offset};
 
@@ -161,7 +161,7 @@ m2::void_expected m2::Level::InitPixelEditor(const std::filesystem::path& path, 
 	}
 
 	// Create default objects
-	player_id = m2::obj::create_god();
+	playerId = m2::obj::create_god();
 	m2::obj::create_camera();
 	m2::obj::create_origin();
 
@@ -178,14 +178,14 @@ m2::void_expected m2::Level::InitSheetEditor(const std::filesystem::path& path) 
 	// Create state
 	auto state = sedit::State::create(path);
 	m2_reflect_unexpected(state);
-	type_state.emplace<sedit::State>(std::move(*state));
+	stateVariant.emplace<sedit::State>(std::move(*state));
 
 	// Create message box initially disabled
 	_messageBoxUiPanel.emplace(&DefaultMessageBoxBlueprint, DefaultMessageBoxArea);
 	_messageBoxUiPanel->enabled = false;
 
 	// Create default objects
-	player_id = m2::obj::create_god();
+	playerId = m2::obj::create_god();
 	m2::obj::create_camera();
 	m2::obj::create_origin();
 
@@ -203,14 +203,14 @@ m2::void_expected m2::Level::InitBulkSheetEditor(const std::filesystem::path& pa
 	// Create state
 	auto state = bsedit::State::create(path);
 	m2_reflect_unexpected(state);
-	type_state.emplace<bsedit::State>(std::move(*state));
+	stateVariant.emplace<bsedit::State>(std::move(*state));
 
 	// Create message box initially disabled
 	_messageBoxUiPanel.emplace(&DefaultMessageBoxBlueprint, DefaultMessageBoxArea);
 	_messageBoxUiPanel->enabled = false;
 
 	// Create default objects
-	player_id = m2::obj::create_god();
+	playerId = m2::obj::create_god();
 	m2::obj::create_camera();
 	m2::obj::create_origin();
 
@@ -228,7 +228,7 @@ m2::void_expected m2::Level::ResetSheetEditor() {
 	objects.clear();
 
 	// Create default objects
-	player_id = obj::create_god();
+	playerId = obj::create_god();
 	obj::create_camera();
 	obj::create_origin();
 
@@ -238,16 +238,16 @@ m2::void_expected m2::Level::ResetBulkSheetEditor() {
 	objects.clear();
 
 	// Create default objects
-	player_id = obj::create_god();
+	playerId = obj::create_god();
 	obj::create_camera();
 	obj::create_origin();
 
 	return {};
 }
 
-float m2::Level::horizontal_fov() const { return _lb ? _lb->horizontal_fov() : M2_GAME.Dimensions().GameM().x; }
+float m2::Level::HorizontalFov() const { return _lb ? _lb->horizontal_fov() : M2_GAME.Dimensions().GameM().x; }
 
-m2::sdl::ticks_t m2::Level::get_level_duration() const {
+m2::sdl::ticks_t m2::Level::GetLevelDuration() const {
 	return sdl::get_ticks_since(*_beginTicks, *_pauseTicks);
 }
 
@@ -354,9 +354,9 @@ m2::void_expected m2::Level::InitAnyPlayer(
 
 	if (physical_world) {
 		world = new b2World(M2G_PROXY.gravity ? b2Vec2{0.0f, 10.0f} : box2d::vec2_zero());
-		contact_listener = new m2::box2d::ContactListener(
+		contactListener = new m2::box2d::ContactListener(
 		    m2::Physique::default_begin_contact_cb, m2::Physique::default_end_contact_cb);
-		world->SetContactListener(contact_listener);
+		world->SetContactListener(contactListener);
 	}
 
 	// Create background tiles

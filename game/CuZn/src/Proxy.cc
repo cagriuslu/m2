@@ -617,9 +617,9 @@ std::optional<std::pair<m2g::Proxy::PlayerIndex, m2g::pb::ServerCommand>> m2g::P
 	}
 
 	// Gain incomes
-	for (const auto player_id : M2G_PROXY.multiPlayerObjectIds) {
+	for (const auto playerId : M2G_PROXY.multiPlayerObjectIds) {
 		// Lookup player
-		auto& player_character = M2_LEVEL.objects[player_id].character();
+		auto& player_character = M2_LEVEL.objects[playerId].character();
 		const auto incomePoints = m2::iround(player_character.get_attribute(pb::INCOME_POINTS));
 		const auto incomeLevel = IncomeLevelFromIncomePoints(incomePoints);
 		const auto playerMoney = m2::iround(player_character.get_resource(pb::MONEY));

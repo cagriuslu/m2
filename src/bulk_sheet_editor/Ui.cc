@@ -7,12 +7,12 @@ using namespace m2;
 
 const widget::TextBlueprint right_hud_set_rect_button = {
     .text = "Set Rect", .on_action = [](MAYBE const widget::Text& self) -> UiAction {
-	    std::get<bsedit::State>(M2_LEVEL.type_state).set_rect();
+	    std::get<bsedit::State>(M2_LEVEL.stateVariant).set_rect();
 	    return MakeContinueAction();
     }};
 const widget::TextBlueprint right_hud_reset_button = {
     .text = "Reset", .on_action = [](MAYBE const widget::Text& self) -> UiAction {
-	    std::get<bsedit::State>(M2_LEVEL.type_state).reset();
+	    std::get<bsedit::State>(M2_LEVEL.stateVariant).reset();
 	    return MakeContinueAction();
     }};
 const UiPanelBlueprint m2::bulk_sheet_editor_right_hud = {
@@ -28,7 +28,7 @@ const UiPanelBlueprint m2::bulk_sheet_editor_right_hud = {
             .h = 3,
             .variant = widget::TextSelectionBlueprint{
                 .on_create = [](MAYBE widget::TextSelection& self) {
-	                if (auto selected_ss = std::get<bsedit::State>(M2_LEVEL.type_state).selected_sprite_sheet()) {
+	                if (auto selected_ss = std::get<bsedit::State>(M2_LEVEL.stateVariant).selected_sprite_sheet()) {
 		                widget::TextSelectionBlueprint::Options options;
 		                for (const auto& sprite : selected_ss->sprites()) {
 			                options.emplace_back(
@@ -43,7 +43,7 @@ const UiPanelBlueprint m2::bulk_sheet_editor_right_hud = {
                 },
                 .on_action = [](widget::TextSelection& self) -> UiAction {
 	                if (auto selected_sprite_type = static_cast<m2g::pb::SpriteType>(std::get<int>(self.selections()[0]))) {
-		                std::get<bsedit::State>(M2_LEVEL.type_state).select_sprite(selected_sprite_type);
+		                std::get<bsedit::State>(M2_LEVEL.stateVariant).select_sprite(selected_sprite_type);
 		                return MakeContinueAction();
 	                }
 	                throw M2_ERROR("Implementation error: Unknown sprite type ended up in sprite selection list");
@@ -59,7 +59,7 @@ const UiPanelBlueprint m2::bulk_sheet_editor_left_hud = {
 
 const widget::TextSelectionBlueprint resource_selection = {
     .on_create = [](MAYBE widget::TextSelection& self) {
-	    const auto& pb_sheets = std::get<bsedit::State>(M2_LEVEL.type_state).sprite_sheets();
+	    const auto& pb_sheets = std::get<bsedit::State>(M2_LEVEL.stateVariant).sprite_sheets();
 	    // Gather the list of resources
 		widget::TextSelectionBlueprint::Options resources;
 	    std::for_each(pb_sheets.sheets().cbegin(), pb_sheets.sheets().cend(), [&resources](const auto& sheet) {
@@ -72,7 +72,7 @@ const widget::TextSelectionBlueprint resource_selection = {
 		self.set_options(std::move(resources));
     },
     .on_action = [](const widget::TextSelection& self) -> UiAction {
-	    std::get<bsedit::State>(M2_LEVEL.type_state).select_resource(std::get<std::string>(self.selections()[0]));
+	    std::get<bsedit::State>(M2_LEVEL.stateVariant).select_resource(std::get<std::string>(self.selections()[0]));
 	    return MakeContinueAction();
     }};
 const UiPanelBlueprint m2::bulk_sheet_editor_main_menu = {
@@ -108,7 +108,7 @@ const UiPanelBlueprint m2::bulk_sheet_editor_main_menu = {
                 .text = "SELECT",
                 .kb_shortcut = SDL_SCANCODE_RETURN,
                 .on_action = [](MAYBE const widget::Text& self) -> UiAction {
-	                if (std::get<bsedit::State>(M2_LEVEL.type_state).select()) {
+	                if (std::get<bsedit::State>(M2_LEVEL.stateVariant).select()) {
 		                M2_LEVEL.ReplaceRightHud(&bulk_sheet_editor_right_hud, M2_GAME.Dimensions().RightHud());
 		                // TODO return selection instead
 		                return MakeReturnAction();

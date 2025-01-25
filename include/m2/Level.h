@@ -63,27 +63,27 @@ namespace m2 {
 		// is using that component is created/destroyed very rapidly.
 		Pool<Object> objects;
 		std::map<GroupId, std::unique_ptr<Group>, GroupId::Less> groups;
-		DrawList draw_list;
+		DrawList drawList;
 		Pool<Physique> physics;
 		Pool<Graphic> graphics;
-		std::array<Pool<Graphic>, static_cast<int>(BackgroundLayer::n)> terrain_graphics;  // First pool is the front-most terrain
+		std::array<Pool<Graphic>, static_cast<int>(BackgroundLayer::n)> terrainGraphics;  // First pool is the front-most terrain
 		Pool<Light> lights;
-		Pool<SoundEmitter> sound_emitters;
+		Pool<SoundEmitter> soundEmitters;
 		Pool<CharacterVariant> characters;
 		b2World* world{};
-		World _world2;
-		box2d::ContactListener* contact_listener{};
-		Id camera_id{}, player_id{}, pointer_id{};
-		std::optional<SoundListener> left_listener, right_listener;
+		World world2;
+		box2d::ContactListener* contactListener{};
+		Id cameraId{}, playerId{}, pointer_id{};
+		std::optional<SoundListener> leftListener, rightListener;
 		std::optional<Pathfinder> pathfinder;
 
 		std::optional<sdl::ticks_t> rootBlockingUiBeginTicks;  // Exists only if there is an ongoing blocking UI
-		std::queue<std::function<void()>> deferred_actions;
+		std::queue<std::function<void()>> deferredActions;
 		std::variant<
 		    std::monostate, splayer::State, mplayer::State, ledit::State, pedit::State, sedit::State, bsedit::State>
-		    type_state;
-		std::optional<DynamicGridLinesLoader> dynamic_grid_lines_loader;
-		std::optional<DynamicGridLinesLoader> dynamic_sheet_grid_lines_loader;
+		    stateVariant;
+		std::optional<DynamicGridLinesLoader> dynamicGridLinesLoader;
+		std::optional<DynamicGridLinesLoader> dynamicSheetGridLinesLoader;
 
 		void_expected InitSinglePlayer(
 		    const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name);
@@ -101,30 +101,28 @@ namespace m2 {
 		// Accessors
 
 		[[nodiscard]] bool IsMarkedForDeletion() const { return _markedForDeletion; }
-		std::optional<std::filesystem::path> path() const { return _lbPath; }
-		std::optional<pb::Level> level_blueprint() const { return _lb; }
-		const std::string& name() const { return _name; }
-		World& World2() { return _world2; }
+		std::optional<std::filesystem::path> Path() const { return _lbPath; }
+		std::optional<pb::Level> LevelBlueprint() const { return _lb; }
+		const std::string& Name() const { return _name; }
+		World& World2() { return world2; }
 		/// Inclusive rectangle that contains all terrain graphics inside. The unit is meters.
 		[[nodiscard]] const RectI& BackgroundBoundary() const { return _backgroundBoundary; }
-		const std::string& identifier() const { return _lb ? _lb->identifier() : empty_string; }
+		const std::string& Identifier() const { return _lb ? _lb->identifier() : empty_string; }
 		pb::ProjectionType ProjectionType() const {
-			return ((std::holds_alternative<splayer::State>(type_state) ||
-			         std::holds_alternative<mplayer::State>(type_state)) &&
-			        _lb)
+			return (std::holds_alternative<splayer::State>(stateVariant) || std::holds_alternative<mplayer::State>(stateVariant)) && _lb
 			    ? _lb->projection_type()
 			    : pb::ProjectionType::PARALLEL;
 		}
-		m3::VecF camera_offset() const {
+		m3::VecF CameraOffset() const {
 			return _lb
 			    ? m3::VecF{ProjectionType() == pb::PERSPECTIVE_XYZ ? _lb->camera_offset() : 0.0f, _lb->camera_offset(), _lb->camera_z_offset()}
 			    : m3::VecF{};
 		}
-		float horizontal_fov() const;
-		Object* player() { return objects.get(player_id); }
-		Object* camera() { return objects.get(camera_id); }
+		float HorizontalFov() const;
+		Object* Player() { return objects.get(playerId); }
+		Object* Camera() { return objects.get(cameraId); }
 		const sdl::ticks_t* PauseTicksHandle() const { return &*_pauseTicks; }
-		sdl::ticks_t get_level_duration() const;
+		sdl::ticks_t GetLevelDuration() const;
 
 		// Modifiers
 

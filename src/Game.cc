@@ -418,13 +418,13 @@ void m2::Game::HandleMenuEvent() {
 	if (events.pop_key_press(Key::MENU)) {
 		// Select the correct pause menu
 		const UiPanelBlueprint* PauseMenuBlueprint{};
-		if (std::holds_alternative<splayer::State>(Level().type_state)) {
+		if (std::holds_alternative<splayer::State>(Level().stateVariant)) {
 			PauseMenuBlueprint = _proxy.PauseMenuBlueprint();
-		} else if (std::holds_alternative<ledit::State>(Level().type_state)) {
+		} else if (std::holds_alternative<ledit::State>(Level().stateVariant)) {
 			PauseMenuBlueprint = &level_editor::menu;
-		} else if (std::holds_alternative<sedit::State>(Level().type_state)) {
+		} else if (std::holds_alternative<sedit::State>(Level().stateVariant)) {
 			PauseMenuBlueprint = &sheet_editor_main_menu;
-		} else if (std::holds_alternative<bsedit::State>(Level().type_state)) {
+		} else if (std::holds_alternative<bsedit::State>(Level().stateVariant)) {
 			PauseMenuBlueprint = &bulk_sheet_editor_pause_menu;
 		}
 
@@ -591,7 +591,7 @@ void m2::Game::ExecuteStep() {
 				// Update draw list
 				object.position = m2::VecF{phy.body->GetPosition()};
 				if (old_pos != object.position) {
-					_level->draw_list.queue_update(phy.owner_id(), object.position);
+					_level->drawList.queue_update(phy.owner_id(), object.position);
 				}
 			} else if (phy.rigidBodyIndex) {
 				const auto& rigidBody = _level->World2().GetRigidBody(*phy.rigidBodyIndex);
@@ -601,7 +601,7 @@ void m2::Game::ExecuteStep() {
 				object.position.x = newPosition.X().ToFloat();
 				object.position.y = newPosition.Y().ToFloat();
 				if (oldPosition != object.position) {
-					_level->draw_list.queue_update(phy.owner_id(), object.position);
+					_level->drawList.queue_update(phy.owner_id(), object.position);
 				}
 				if (const auto gfxId = object.graphic_id()) {
 					_level->graphics[gfxId].draw_angle = rigidBody.OrientationAboutCenterOfMass().ToFloat();
@@ -610,7 +610,7 @@ void m2::Game::ExecuteStep() {
 		}
 	}
 	// Re-sort draw list
-	_level->draw_list.update();
+	_level->drawList.update();
 	if (not _proxy.world_is_static) {
 		// If the world is NOT static, the pathfinder's cache should be cleared, because the objects might have been
 		// moved
@@ -660,7 +660,7 @@ void m2::Game::ExecutePostStep() {
 }
 
 void m2::Game::UpdateSounds() {
-	for (auto& sound_emitter : _level->sound_emitters) {
+	for (auto& sound_emitter : _level->soundEmitters) {
 		IF(sound_emitter.update)(sound_emitter);
 	}
 }
@@ -706,8 +706,8 @@ void m2::Game::ClearBackBuffer() const {
 }
 
 namespace {
-	void draw_one_background_layer(m2::Pool<m2::Graphic>& terrain_graphics) {
-		for (auto& gfx : terrain_graphics) {
+	void draw_one_background_layer(m2::Pool<m2::Graphic>& terrainGraphics) {
+		for (auto& gfx : terrainGraphics) {
 			if (gfx.enabled && gfx.draw) {
 				IF(gfx.on_draw)(gfx);
 			}
@@ -716,27 +716,27 @@ namespace {
 
 	void draw_all_background_layers(m2::Level& level) {
 		// Draw all background layers
-		for (auto& terrain_graphics : std::ranges::reverse_view(level.terrain_graphics)) {
-			draw_one_background_layer(terrain_graphics);
+		for (auto& terrainGraphics : std::ranges::reverse_view(level.terrainGraphics)) {
+			draw_one_background_layer(terrainGraphics);
 		}
 	}
 }  // namespace
 void m2::Game::DrawBackground() {
-	if (std::holds_alternative<ledit::State>(_level->type_state)) {
-		const auto& le = std::get<ledit::State>(_level->type_state);
+	if (std::holds_alternative<ledit::State>(_level->stateVariant)) {
+		const auto& le = std::get<ledit::State>(_level->stateVariant);
 		std::visit(
 			overloaded{
 				[&](MAYBE const ledit::State::PaintMode& mode) {
-					draw_one_background_layer(_level->terrain_graphics[I(le.selected_layer)]);
+					draw_one_background_layer(_level->terrainGraphics[I(le.selected_layer)]);
 				},
 				[&](MAYBE const ledit::State::EraseMode& mode) {
-					draw_one_background_layer(_level->terrain_graphics[I(le.selected_layer)]);
+					draw_one_background_layer(_level->terrainGraphics[I(le.selected_layer)]);
 				},
 				[&](MAYBE const ledit::State::PickMode& mode) {
-					draw_one_background_layer(_level->terrain_graphics[I(le.selected_layer)]);
+					draw_one_background_layer(_level->terrainGraphics[I(le.selected_layer)]);
 				},
 				[&](MAYBE const ledit::State::SelectMode& mode) {
-					draw_one_background_layer(_level->terrain_graphics[I(le.selected_layer)]);
+					draw_one_background_layer(_level->terrainGraphics[I(le.selected_layer)]);
 				},
 				[&](MAYBE const auto& mode) { draw_all_background_layers(*_level); },
 			},
@@ -747,7 +747,7 @@ void m2::Game::DrawBackground() {
 }
 
 void m2::Game::DrawForeground() {
-	for (const auto& gfx_id : _level->draw_list) {
+	for (const auto& gfx_id : _level->drawList) {
 		auto& gfx = _level->graphics[gfx_id];
 		if (gfx.enabled && gfx.draw) {
 			IF(gfx.on_draw)(gfx);
@@ -832,8 +832,8 @@ void m2::Game::OnWindowResize() {
 		for (auto& gfx : _level->graphics) {
 			gfx.textLabelRect = {};
 		}
-		for (auto& terrain_graphics : std::ranges::reverse_view(_level->terrain_graphics)) {
-			for (auto& gfx : terrain_graphics) {
+		for (auto& terrainGraphics : std::ranges::reverse_view(_level->terrainGraphics)) {
+			for (auto& gfx : terrainGraphics) {
 				gfx.textLabelRect = {};
 			}
 		}
@@ -846,8 +846,8 @@ void m2::Game::SetScale(const float scale) {
 		for (auto& gfx : _level->graphics) {
 			gfx.textLabelRect = {};
 		}
-		for (auto& terrain_graphics : std::ranges::reverse_view(_level->terrain_graphics)) {
-			for (auto& gfx : terrain_graphics) {
+		for (auto& terrainGraphics : std::ranges::reverse_view(_level->terrainGraphics)) {
+			for (auto& gfx : terrainGraphics) {
 				gfx.textLabelRect = {};
 			}
 		}
@@ -860,8 +860,8 @@ void m2::Game::SetGameHeightM(const float heightM) {
 		for (auto& gfx : _level->graphics) {
 			gfx.textLabelRect = {};
 		}
-		for (auto& terrain_graphics : std::ranges::reverse_view(_level->terrain_graphics)) {
-			for (auto& gfx : terrain_graphics) {
+		for (auto& terrainGraphics : std::ranges::reverse_view(_level->terrainGraphics)) {
+			for (auto& gfx : terrainGraphics) {
 				gfx.textLabelRect = {};
 			}
 		}
@@ -906,7 +906,7 @@ m2::VecF m2::Game::PixelTo2dWorldM(const VecI& pixel_position) {
 		VecI{pixel_position.x - (Dimensions().WindowDimensions().x / 2), pixel_position.y - (Dimensions().WindowDimensions().y / 2)};
 	const auto screen_center_to_pixel_position_m = VecF{
 		F(screen_center_to_pixel_position_px.x) / Dimensions().OutputPixelsPerMeter(), F(screen_center_to_pixel_position_px.y) / Dimensions().OutputPixelsPerMeter()};
-	const auto camera_position = _level->objects[_level->camera_id].position;
+	const auto camera_position = _level->objects[_level->cameraId].position;
 	return screen_center_to_pixel_position_m + camera_position;
 }
 
@@ -919,8 +919,8 @@ m2::RectF m2::Game::ViewportTo2dWorldRectM() {
 
 m2::sdl::TextureUniquePtr m2::Game::DrawGameToTexture(m2::VecF camera_position) {
 	// Temporarily change camera position
-	auto prev_camera_position = Level().camera()->position;
-	Level().camera()->position = camera_position;
+	auto prev_camera_position = Level().Camera()->position;
+	Level().Camera()->position = camera_position;
 
 	// Create an empty render target
 	auto render_target = sdl::create_drawable_texture_of_screen_size();
@@ -939,7 +939,7 @@ m2::sdl::TextureUniquePtr m2::Game::DrawGameToTexture(m2::VecF camera_position) 
 	SDL_SetRenderTarget(renderer, prev_render_target);
 
 	// Reinstate old camera position
-	Level().camera()->position = prev_camera_position;
+	Level().Camera()->position = prev_camera_position;
 
 	return render_target;
 }
@@ -969,9 +969,9 @@ bool m2::Game::IsMouseOnAnyUiPanel() const {
 }
 
 void m2::Game::RecalculateDirectionalAudio() {
-	if (_level->left_listener || _level->right_listener) {
+	if (_level->leftListener || _level->rightListener) {
 		// Loop over sounds
-		for (auto& sound_emitter : _level->sound_emitters) {
+		for (auto& sound_emitter : _level->soundEmitters) {
 			const auto& sound_position = sound_emitter.owner().position;
 			// Loop over playbacks
 			for (const auto playback_id : sound_emitter.playbacks) {
@@ -980,11 +980,11 @@ void m2::Game::RecalculateDirectionalAudio() {
 				}
 				// Left listener
 				const auto left_volume =
-					_level->left_listener ? _level->left_listener->volume_of(sound_position) : 0.0f;
+					_level->leftListener ? _level->leftListener->volume_of(sound_position) : 0.0f;
 				audio_manager->set_playback_left_volume(playback_id, left_volume);
 				// Right listener
 				const auto right_volume =
-					_level->right_listener ? _level->right_listener->volume_of(sound_position) : 0.0f;
+					_level->rightListener ? _level->rightListener->volume_of(sound_position) : 0.0f;
 				audio_manager->set_playback_right_volume(playback_id, right_volume);
 			}
 		}
@@ -992,15 +992,15 @@ void m2::Game::RecalculateDirectionalAudio() {
 }
 
 void m2::Game::AddDeferredAction(const std::function<void(void)>& action) {
-	_level->deferred_actions.push(action);
+	_level->deferredActions.push(action);
 }
 
 void m2::Game::ExecuteDeferredActions() {
 	// Execute deferred actions one by one. A deferred action may insert another deferred action into the queue. Thus we
 	// cannot iterate over the queue, we must pop one by one.
-	while (not _level->deferred_actions.empty()) {
-		_level->deferred_actions.front()();
-		_level->deferred_actions.pop();
+	while (not _level->deferredActions.empty()) {
+		_level->deferredActions.front()();
+		_level->deferredActions.pop();
 	}
 }
 
@@ -1014,7 +1014,7 @@ void m2::Game::RecalculateMousePosition2() const {
 	if (is_projection_type_perspective(_level->ProjectionType())) {
 		// Mouse moves on the plane centered at the player looking towards the camera
 		// Find m3::VecF of the mouse position in the world starting from the player position
-		const auto sin_of_player_to_camera_angle = M2_LEVEL.camera_offset().z / M2_LEVEL.camera_offset().length();
+		const auto sin_of_player_to_camera_angle = M2_LEVEL.CameraOffset().z / M2_LEVEL.CameraOffset().length();
 		const auto cos_of_player_to_camera_angle =
 			sqrtf(1.0f - sin_of_player_to_camera_angle * sin_of_player_to_camera_angle);
 
@@ -1037,7 +1037,7 @@ void m2::Game::RecalculateMousePosition2() const {
 			_mouse_position_world_m = VecF{-intersection_point.x, -10000.0f};  // Infinity is 10KM
 		}
 	} else {
-		const auto camera_position = _level->objects[_level->camera_id].position;
+		const auto camera_position = _level->objects[_level->cameraId].position;
 		_mouse_position_world_m = *_screen_center_to_mouse_position_m + camera_position;
 	}
 }

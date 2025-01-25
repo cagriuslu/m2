@@ -113,13 +113,13 @@ m2::Graphic& m2::Object::graphic() const {
 	return M2_LEVEL.graphics[_graphic_id];
 }
 m2::Graphic& m2::Object::terrain_graphic() const {
-	return M2_LEVEL.terrain_graphics[I(_terrain_graphic_id.second)][_terrain_graphic_id.first];
+	return M2_LEVEL.terrainGraphics[I(_terrain_graphic_id.second)][_terrain_graphic_id.first];
 }
 m2::Light& m2::Object::light() const {
 	return M2_LEVEL.lights[_light_id];
 }
 m2::SoundEmitter& m2::Object::sound_emitter() const {
-	return M2_LEVEL.sound_emitters[_sound_emitter_id];
+	return M2_LEVEL.soundEmitters[_sound_emitter_id];
 }
 m2::Character& m2::Object::character() const {
     auto& it = M2_LEVEL.characters[_character_id];
@@ -140,25 +140,25 @@ m2::Physique& m2::Object::add_physique() {
 m2::Graphic& m2::Object::add_graphic() {
 	auto gfx = M2_LEVEL.graphics.emplace(id());
 	_graphic_id = gfx.id();
-	M2_LEVEL.draw_list.insert(id());
+	M2_LEVEL.drawList.insert(id());
     LOG_TRACE("Added graphic component", _graphic_id);
 	return *gfx;
 }
 m2::Graphic& m2::Object::add_graphic(const m2g::pb::SpriteType spriteType) {
 	auto gfx = M2_LEVEL.graphics.emplace(id(), M2_GAME.GetSpriteOrTextLabel(spriteType));
 	_graphic_id = gfx.id();
-	M2_LEVEL.draw_list.insert(id());
+	M2_LEVEL.drawList.insert(id());
 	LOG_TRACE("Added graphic component", _graphic_id);
 	return *gfx;
 }
 m2::Graphic& m2::Object::add_terrain_graphic(BackgroundLayer layer) {
-	auto terrain_gfx = M2_LEVEL.terrain_graphics[I(layer)].emplace(id());
+	auto terrain_gfx = M2_LEVEL.terrainGraphics[I(layer)].emplace(id());
 	_terrain_graphic_id = std::make_pair(terrain_gfx.id(), layer);
 	LOG_TRACE("Added terrain graphic component", _terrain_graphic_id);
 	return *terrain_gfx;
 }
 m2::Graphic& m2::Object::add_terrain_graphic(BackgroundLayer layer, const m2g::pb::SpriteType spriteType) {
-	auto terrain_gfx = M2_LEVEL.terrain_graphics[I(layer)].emplace(id(), M2_GAME.GetSpriteOrTextLabel(spriteType));
+	auto terrain_gfx = M2_LEVEL.terrainGraphics[I(layer)].emplace(id(), M2_GAME.GetSpriteOrTextLabel(spriteType));
 	_terrain_graphic_id = std::make_pair(terrain_gfx.id(), layer);
 	LOG_TRACE("Added terrain graphic component", _terrain_graphic_id);
 	return *terrain_gfx;
@@ -170,7 +170,7 @@ m2::Light& m2::Object::add_light() {
 	return *light;
 }
 m2::SoundEmitter& m2::Object::add_sound_emitter() {
-	auto sound = M2_LEVEL.sound_emitters.emplace(id());
+	auto sound = M2_LEVEL.soundEmitters.emplace(id());
 	_sound_emitter_id = sound.id();
 	LOG_TRACE("Added sound component", _sound_emitter_id);
 	return *sound;
@@ -196,14 +196,14 @@ void m2::Object::remove_physique() {
 }
 void m2::Object::remove_graphic() {
 	if (_graphic_id) {
-		M2_LEVEL.draw_list.remove(id());
+		M2_LEVEL.drawList.remove(id());
 		M2_LEVEL.graphics.free(_graphic_id);
 		_graphic_id = 0;
 	}
 }
 void m2::Object::remove_terrain_graphic() {
 	if (_terrain_graphic_id.first) {
-		M2_LEVEL.terrain_graphics[I(_terrain_graphic_id.second)].free(_terrain_graphic_id.first);
+		M2_LEVEL.terrainGraphics[I(_terrain_graphic_id.second)].free(_terrain_graphic_id.first);
 		_terrain_graphic_id = {};
 	}
 }
@@ -215,7 +215,7 @@ void m2::Object::remove_light() {
 }
 void m2::Object::remove_sound_emitter() {
 	if (_sound_emitter_id) {
-		M2_LEVEL.sound_emitters.free(_sound_emitter_id);
+		M2_LEVEL.soundEmitters.free(_sound_emitter_id);
 		_sound_emitter_id = 0;
 	}
 }

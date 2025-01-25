@@ -4,7 +4,7 @@
 #include <pinball/objects/Edge.h>
 
 m2::void_expected LoadPlayer(m2::Object& obj) {
-	M2_LEVEL.player_id = obj.id();
+	M2_LEVEL.playerId = obj.id();
 	obj.position = gLevelCenter;
 	M2_GAME.SetGameHeightM(gLevelDimensions.y);
 

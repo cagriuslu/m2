@@ -23,7 +23,7 @@ void m2g::Proxy::load_resources() {
 }
 
 void m2g::Proxy::post_single_player_level_init(MAYBE const std::string& name, const m2::pb::Level& level) {
-	const auto& id = level.identifier();
+	const auto& id = level.Identifier();
 	if (id == "WalkingTutorialClosed") {
 		M2_LEVEL.ShowMessage("Use W,A,S,D to walk.");
 	} else if (id == "WalkingTutorialOpen") {
@@ -183,7 +183,7 @@ const m2::UiPanelBlueprint* m2g::Proxy::generate_right_hud() {
 	    .variant = m2::widget::ProgressBarBlueprint{
 	        .bar_color = SDL_Color{0, 127, 255, 255},
 	        .on_update = [](MAYBE const m2::widget::ProgressBar& self) {
-		        if (auto *player = M2_LEVEL.player(); player) {
+		        if (auto *player = M2_LEVEL.Player(); player) {
 			        if (auto ammo = player->character().get_resource(
 			                m2g::pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO); ammo != 0.0f) {
 				        if (auto weapon = player->character().find_items(
@@ -214,7 +214,7 @@ const m2::UiPanelBlueprint* m2g::Proxy::you_died_menu() {
 	    .background_color = SDL_Color{127, 0, 0, 127}
 	};
 
-	auto lb_path = M2_LEVEL.path();
+	auto lb_path = M2_LEVEL.Path();
 	if (lb_path) {
 		_you_died_menu.widgets.emplace_back(m2::UiWidgetBlueprint{
 		    .x = 70, .y = 70, .w = 20, .h = 6,

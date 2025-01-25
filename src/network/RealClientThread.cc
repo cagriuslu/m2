@@ -98,7 +98,7 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::SequenceNo>> m2::netw
 			return make_unexpected("Server and local player count doesn't match");
 		}
 
-		if (M2_LEVEL.player_id != M2G_PROXY.multiPlayerObjectIds[server_update.receiver_index()]) {
+		if (M2_LEVEL.playerId != M2G_PROXY.multiPlayerObjectIds[server_update.receiver_index()]) {
 			return make_unexpected("Player ID doesn't match the ID found in local player list");
 		}
 

@@ -24,7 +24,7 @@ m2::void_expected rpg::init_finish_point(m2::Object& obj) {
 		if (M2G_PROXY.alive_enemy_count == 0) {
 			// Finish game
 			M2_DEFER([]() {
-				auto level_duration = M2_LEVEL.get_level_duration();
+				auto level_duration = M2_LEVEL.GetLevelDuration();
 				LOG_INFO("Level duration", level_duration);
 				M2G_PROXY.progress.mutable_level_completion_times()->operator[](M2_LEVEL.name()) = level_duration;
 				LOG_INFO("Saving progress...");

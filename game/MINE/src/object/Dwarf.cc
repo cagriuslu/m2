@@ -100,6 +100,6 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 		}
 	};
 
-	M2_LEVEL.player_id = obj.id();
+	M2_LEVEL.playerId = obj.id();
 	return {};
 }

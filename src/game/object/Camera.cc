@@ -10,7 +10,7 @@
 
 m2::Id m2::obj::create_camera() {
 	// Start at player's location
-	auto* player = M2_LEVEL.objects.get(M2_LEVEL.player_id);
+	auto* player = M2_LEVEL.objects.get(M2_LEVEL.playerId);
 	auto it = create_object(player ? player->position : VecF{});
 
 	// Create implementation
@@ -20,7 +20,7 @@ m2::Id m2::obj::create_camera() {
 	auto& phy = camera.add_physique();
 	phy.post_step = [&camera](MAYBE Physique& phy) {
 		//		auto* camera_data = dynamic_cast<m2::obj::Camera*>(camera.impl.get());
-		auto& player = M2_LEVEL.objects[M2_LEVEL.player_id];
+		auto& player = M2_LEVEL.objects[M2_LEVEL.playerId];
 		camera.position = player.position;
 
 		// Move dynamic loaders if they exist
@@ -37,9 +37,9 @@ m2::Id m2::obj::create_camera() {
 			        }
 		        },
 		        DEFAULT_OVERLOAD},
-		    M2_LEVEL.type_state);
-		IF(M2_LEVEL.dynamic_grid_lines_loader)->move(M2_GAME.ViewportTo2dWorldRectM());
-		IF(M2_LEVEL.dynamic_sheet_grid_lines_loader)->move(M2_GAME.ViewportTo2dWorldRectM());
+		    M2_LEVEL.stateVariant);
+		IF(M2_LEVEL.dynamicGridLinesLoader)->move(M2_GAME.ViewportTo2dWorldRectM());
+		IF(M2_LEVEL.dynamicSheetGridLinesLoader)->move(M2_GAME.ViewportTo2dWorldRectM());
 
 		// Mouse lookahead disabled temporarily
 		//		if (M2_GAME.level->type() == Level::Type::SINGLE_PLAYER) {
@@ -52,17 +52,17 @@ m2::Id m2::obj::create_camera() {
 		//		}
 
 		if (M2G_PROXY.camera_is_listener) {
-			M2_LEVEL.left_listener->position = camera.position;
-			M2_LEVEL.right_listener->position = camera.position;
+			M2_LEVEL.leftListener->position = camera.position;
+			M2_LEVEL.rightListener->position = camera.position;
 		}
 	};
 
 	if (M2G_PROXY.camera_is_listener) {
-		M2_LEVEL.left_listener =
+		M2_LEVEL.leftListener =
 		    SoundListener{.position = M2_PLAYER.position, .direction = PI, .listen_angle = PI_DIV2};
-		M2_LEVEL.right_listener =
+		M2_LEVEL.rightListener =
 		    SoundListener{.position = M2_PLAYER.position, .direction = 0.0f, .listen_angle = PI_DIV2};
 	}
 
-	return M2_LEVEL.camera_id = it.id();
+	return M2_LEVEL.cameraId = it.id();
 }

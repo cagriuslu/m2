@@ -27,8 +27,8 @@ int IsLiquidationNecessaryForPlayer(m2::Character& player_character) {
 
 std::optional<std::pair<m2g::Proxy::PlayerIndex, int>> IsLiquidationNecessary() {
 	for (int i = 0; i < m2::I(M2G_PROXY.multiPlayerObjectIds.size()); ++i) {
-		auto player_id = M2G_PROXY.multiPlayerObjectIds[i];
-		auto& player_character = M2_LEVEL.objects[player_id].character();
+		auto playerId = M2G_PROXY.multiPlayerObjectIds[i];
+		auto& player_character = M2_LEVEL.objects[playerId].character();
 		auto liquidation_amount = IsLiquidationNecessaryForPlayer(player_character);
 		if (0 < liquidation_amount) {
 			return std::make_pair(i, liquidation_amount);

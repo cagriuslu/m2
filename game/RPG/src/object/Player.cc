@@ -43,7 +43,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 
 	auto& chr = obj.add_full_character();
 	chr.add_named_item(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_DASH_2S));
-	if (M2_LEVEL.identifier() != "MeleeTutorialClosed") {
+	if (M2_LEVEL.Identifier() != "MeleeTutorialClosed") {
 		// 4th level is melee tutorial
 		chr.add_named_item(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_GUN));
 	}
@@ -182,6 +182,6 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 		DrawAddons(gfx, chr.get_resource(RESOURCE_HP));
 	};
 
-	M2_LEVEL.player_id = M2_LEVEL.objects.get_id(&obj);
+	M2_LEVEL.playerId = M2_LEVEL.objects.get_id(&obj);
 	return {};
 }

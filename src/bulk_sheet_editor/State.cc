@@ -75,7 +75,7 @@ bool bsedit::State::select() {
 				throw M2_ERROR("Failed to load the image: " + spriteSheet.resource());
 			}
 			_dynamic_sprite_sheet_loader.emplace(std::move(*image_loader));
-			M2_LEVEL.dynamic_grid_lines_loader.emplace(SDL_Color{127, 127, 255, 80});
+			M2_LEVEL.dynamicGridLinesLoader.emplace(SDL_Color{127, 127, 255, 80});
 
 			// Creates lines showing the boundaries of the sheet
 			obj::create_vertical_line(-0.5f, SDL_Color{255, 0, 0, 255});

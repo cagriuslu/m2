@@ -93,7 +93,7 @@ namespace {
 			            pe.mode);
 		        },
 		        DEFAULT_OVERLOAD},
-		    M2_LEVEL.type_state);
+		    M2_LEVEL.stateVariant);
 	}
 
 	void handle_secondary_button_press(MAYBE const VecI& mouse_coordinates_i, const VecF& mouse_coordinates_h) {
@@ -110,7 +110,7 @@ namespace {
 			            se.mode);
 		        },
 		        DEFAULT_OVERLOAD},
-		    M2_LEVEL.type_state);
+		    M2_LEVEL.stateVariant);
 	}
 
 	void handle_mouse_events(const VecI& mouse_coordinates_i, const VecF& mouse_coordinates_h) {
@@ -169,7 +169,7 @@ m2::Id m2::obj::create_god() {
 			            se.mode);
 		        },
 		        [](bsedit::State& se) { se.on_draw(); }, DEFAULT_OVERLOAD},
-		    M2_LEVEL.type_state);
+		    M2_LEVEL.stateVariant);
 	};
 
 	return it.id();

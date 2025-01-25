@@ -116,8 +116,8 @@ m2::pb::NetworkMessage m2::network::ServerThread::prepare_server_update(const bo
 	message.set_game_hash(M2_GAME.Hash());
 	message.set_sequence_no(_nextServerUpdateSequenceNo++);
 	message.mutable_server_update()->set_turn_holder_index(turn_holder_index());
-	for (const auto player_id : M2G_PROXY.multiPlayerObjectIds) {
-		message.mutable_server_update()->add_player_object_ids(player_id);
+	for (const auto playerId : M2G_PROXY.multiPlayerObjectIds) {
+		message.mutable_server_update()->add_player_object_ids(playerId);
 	}
 	for (auto& char_variant : M2_LEVEL.characters) { // Iterate over characters
 		auto* object_descriptor = message.mutable_server_update()->add_objects_with_character();

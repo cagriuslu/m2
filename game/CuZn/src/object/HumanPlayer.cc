@@ -166,7 +166,7 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj) {
 	};
 
 	// Set the player ID so that the camera can find this
-	M2_LEVEL.player_id = obj.id();
+	M2_LEVEL.playerId = obj.id();
 
 	return {};
 }

@@ -18,7 +18,7 @@ namespace m2 {
 		std::unordered_map<VecI, ApproachMap, VecIHash> _approach_from_cache;
 
 	public:
-		explicit Pathfinder(const pb::Level& level_blueprint);
+		explicit Pathfinder(const pb::Level& levelBlueprint);
 
 		/// Returns reverse path [to, to - 1, to - 2, ..., from + 1, from]
 		/// Returns empty vector if path not found

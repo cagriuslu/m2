@@ -40,7 +40,7 @@ Both on the server and the client side, after the level is initialized (usually 
 Proxy.multiPlayerObjectIds should contain the IDs of the objects that'll correspond to human players. The order of the
 IDs should reflect the order of the human players on the server, but the actual ID values doesn't need to be the same.
 This can be achieved by clients selecting the object ID at index ClientThread::receiver_index as the game player (by setting
-the Level::player_id).
+the Level::playerId).
 
 In turn based games, the physics world does not exist. The game state is stored in objects with Character, and their
 positions. A real life player is represented by an object, who might have child objects on the map.

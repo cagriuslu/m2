@@ -10,7 +10,7 @@ namespace {
 		static m3::VecF prev_camera_offset;
 		static float sin{};
 
-		if (const auto camera_offset = M2_LEVEL.camera_offset(); prev_camera_offset != camera_offset) {
+		if (const auto camera_offset = M2_LEVEL.CameraOffset(); prev_camera_offset != camera_offset) {
 			prev_camera_offset = camera_offset;
 
 			sin = camera_offset.z / camera_offset.length();
@@ -22,7 +22,7 @@ namespace {
 		static m3::VecF prev_camera_offset;
 		static float cos{};
 
-		if (const auto camera_offset = M2_LEVEL.camera_offset(); prev_camera_offset != camera_offset) {
+		if (const auto camera_offset = M2_LEVEL.CameraOffset(); prev_camera_offset != camera_offset) {
 			prev_camera_offset = camera_offset;
 
 			cos = sqrtf(1.0f - camera_sin() * camera_sin());
@@ -39,7 +39,7 @@ bool m2::is_projection_type_perspective(const pb::ProjectionType pt) {
 }
 
 m2::VecF m2::CameraToPositionVecM(const VecF& position) {
-	const auto* camera = M2_LEVEL.objects.get(M2_LEVEL.camera_id);
+	const auto* camera = M2_LEVEL.objects.get(M2_LEVEL.cameraId);
 	return position - camera->position;
 }
 m2::VecF m2::CameraToPositionVecPx(const VecF& position) {
@@ -51,9 +51,9 @@ m2::VecF m2::ScreenOriginToPositionVecPx(const VecF& position) {
 }
 
 m3::VecF m3::camera_position_m() {
-	const auto* camera = M2_LEVEL.objects.get(M2_LEVEL.camera_id);
+	const auto* camera = M2_LEVEL.objects.get(M2_LEVEL.cameraId);
 	const auto raw_camera_position = VecF{camera->position.x, camera->position.y, 0.0f};
-	const auto camera_position = raw_camera_position + M2_LEVEL.camera_offset();
+	const auto camera_position = raw_camera_position + M2_LEVEL.CameraOffset();
 	return camera_position;
 }
 m3::VecF m3::focus_position_m() {
@@ -65,11 +65,11 @@ float m3::visible_width_m() {
 	static auto prev_horizontal_fov = INFINITY;
 
 	static float visible_width{};
-	if (const auto camera_offset = M2_LEVEL.camera_offset(); prev_camera_offset != camera_offset || prev_horizontal_fov != M2_LEVEL.horizontal_fov()) {
+	if (const auto camera_offset = M2_LEVEL.CameraOffset(); prev_camera_offset != camera_offset || prev_horizontal_fov != M2_LEVEL.HorizontalFov()) {
 		prev_camera_offset = camera_offset;
-		prev_horizontal_fov = M2_LEVEL.horizontal_fov();
+		prev_horizontal_fov = M2_LEVEL.HorizontalFov();
 
-		const auto tan_of_half_horizontal_fov = tanf(m2::to_radians(M2_LEVEL.horizontal_fov()) / 2.0f);
+		const auto tan_of_half_horizontal_fov = tanf(m2::to_radians(M2_LEVEL.HorizontalFov()) / 2.0f);
 		visible_width = 2 * camera_offset.length() * tan_of_half_horizontal_fov;
 	}
 	return visible_width;
