@@ -92,12 +92,8 @@ m2::void_expected m2::Level::InitLevelEditor(const std::filesystem::path& lb_pat
 		}
 		// Create foreground objects
 		for (const auto& fg_object : lb->objects()) {
-			if (fg_object.has_position_f()) {
-				LOG_WARN("Unable to load object with floating position", VecF{fg_object.position_f()});
-			} else {
-				auto position = VecF{fg_object.position()};
-				le_state.fg_placeholders[position.iround()] = std::make_pair(obj::create_foreground_placeholder(position, M2_GAME.object_main_sprites[fg_object.type()]), fg_object);
-			}
+			auto position = VecF{fg_object.position()};
+			le_state.fg_placeholders[position.iround()] = std::make_pair(obj::create_foreground_placeholder(position, M2_GAME.object_main_sprites[fg_object.type()]), fg_object);
 		}
 	}
 
@@ -390,9 +386,7 @@ m2::void_expected m2::Level::InitAnyPlayer(
 	LOG_DEBUG("Background boundary", _backgroundBoundary);
 	// Create foreground objects
 	for (const auto& fg_object : _lb->objects()) {
-		const auto objectPosition = fg_object.has_position_f()
-				? VecF{fg_object.position_f()}
-				: VecF{fg_object.position()};
+		const auto objectPosition = VecF{fg_object.position()};
 		LOG_TRACE("Loading foreground object", fg_object.type(), objectPosition);
 		auto it = create_object(objectPosition, fg_object.type());
 

@@ -3,7 +3,6 @@ package m2.pb;
 
 import "m2g_GroupType.proto";
 import "m2g_ObjectType.proto";
-import "VecI.proto";
 import "VecF.proto";
 import "M2.proto";
 
@@ -13,12 +12,9 @@ message Group {
 }
 
 message LevelObject {
-  oneof position_type {
-    VecI position = 1;
-    VecF position_f = 2; // Not yet implemented by level editor
-  }
-  m2g.pb.ObjectType type = 3;
-  Group group = 4;
+  VecF position = 1;
+  m2g.pb.ObjectType type = 2;
+  Group group = 3;
 }
 
 message BackgroundLayer {
