@@ -27,6 +27,7 @@ namespace m2::widget {
 
 		// Accessors
 
+		[[nodiscard]] const std::vector<Option>& GetOptions() const { return _options; }
 		[[nodiscard]] std::vector<TextSelectionBlueprint::ReturnValue> selections() const;
 
 		// Modifiers

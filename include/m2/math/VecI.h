@@ -40,8 +40,6 @@ namespace m2 {
 		[[nodiscard]] inline int manhattan_distance(const VecI& other) const {
 			return abs(other.x - x) + abs(other.y - y);
 		}
-		/// Iterates over the cells in the rectangle between this and the other cell.
-		void for_each_cell_in_between(const VecI& other, const std::function<void(const VecI&)>& f) const;
 
 		// Immutable modifiers
 		/// Assuming that VecI represents dimensions, find the dimension with the same aspect ration, but the width is
@@ -58,18 +56,18 @@ namespace m2 {
 	};
 	struct VecICompareRightToLeft {
 		// Reverse sort based on x coordinate
-		inline bool operator()(const VecI& a, const VecI& b) { return b.x < a.x; }
+		bool operator()(const VecI& a, const VecI& b) const { return b.x < a.x; }
 	};
 	struct VecICompareBottomToTop {
 		// Reverse sort based on y coordinate
-		inline bool operator()(const VecI& a, const VecI& b) { return b.y < a.y; }
+		bool operator()(const VecI& a, const VecI& b) const { return b.y < a.y; }
 	};
 	struct VecICompareTopLeftToBottomRight {
 		// Forward sort based on first y, then x coordinate
-		inline bool operator()(const VecI& a, const VecI& b) { return a.y == b.y ? a.x < b.x : a.y < b.y; }
+		bool operator()(const VecI& a, const VecI& b) const { return a.y == b.y ? a.x < b.x : a.y < b.y; }
 	};
 	struct VecICompareBottomRightToTopLeft {
 		// Reverse sort based on first y, then x coordinate
-		inline bool operator()(const VecI& a, const VecI& b) { return a.y == b.y ? b.x < a.x : b.y < a.y; }
+		bool operator()(const VecI& a, const VecI& b) const { return a.y == b.y ? b.x < a.x : b.y < a.y; }
 	};
 }  // namespace m2

@@ -178,7 +178,9 @@ namespace m2 {
 		};
 	}
 
-	// MapF extends Pool privately. The items are stored in the inherited Pool.
+	/// MapF is a container that can store objects that occupy rectangle areas on a map. The map can store objects
+	/// anywhere, but only a predetermined area is "managed", meaning that a quad-tree is used to provide quick access
+	/// to the objects. MapF extends Pool privately. The items are stored in the inherited Pool.
 	template <typename T, uint64_t Capacity>
 	class MapF : private Pool<detail::MapPoolItemF<T>,Capacity> {
 		float _tolerance;
@@ -186,8 +188,8 @@ namespace m2 {
 		std::deque<detail::MapContainerItemF> _foreign_items; /// Items that at least partially lay outside the main plot
 
 	public:
-		explicit MapF(const RectF& area, float tolerance = 0.001f) : Pool<detail::MapPoolItemF<T>,Capacity>(), _tolerance(tolerance), _root_quadrant(*this, area, _tolerance) {}
-		MapF(float x, float y, float w, float h) : MapF(RectF{x, y, w, h}) {}
+		explicit MapF(const RectF& area, const float tolerance = 0.001f) : Pool<detail::MapPoolItemF<T>,Capacity>(), _tolerance(tolerance), _root_quadrant(*this, area, _tolerance) {}
+		MapF(const float x, const float y, const float w, const float h) : MapF(RectF{x, y, w, h}) {}
 
 		//<editor-fold desc="Accessors">
 		using Pool<detail::MapPoolItemF<T>,Capacity>::size;

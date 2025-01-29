@@ -15,7 +15,7 @@ m2::void_expected LoadBall(m2::Object& obj) {
 	bp.set_fixed_rotation(true);
 	bp.set_is_bullet(true);
 	phy.body = m2::box2d::create_body(*M2_LEVEL.world, obj.physique_id(), obj.position, bp);
-	phy.post_step = [](m2::Physique& phy_) {};
+	phy.post_step = [](MAYBE m2::Physique& phy_) {};
 
 	MAYBE auto& gfx = obj.add_graphic(m2g::pb::SPRITE_BASIC_BALL);
 

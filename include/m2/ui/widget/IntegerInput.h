@@ -17,11 +17,12 @@ namespace m2::widget {
 		void on_draw() override;
 
 		// Accessors
+
 		[[nodiscard]] int value() const { return _value; }
 
 		// Modifiers
-		void recreate();
-		UiAction trigger_action(int new_value);
+
+		void SetValue(int value);
 
 	private:
 		[[nodiscard]] const IntegerInputBlueprint& integer_selection_blueprint() const { return std::get<IntegerInputBlueprint>(blueprint->variant); }

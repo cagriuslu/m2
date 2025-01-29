@@ -3,446 +3,578 @@
 #include <m2/ui/widget/IntegerInput.h>
 #include <m2/ui/widget/Text.h>
 #include <m2/ui/widget/TextSelection.h>
+#include <m2/ui/widget/CheckboxWithTextBlueprint.h>
 #include <m2/protobuf/Detail.h>
-#include "m2/Game.h"
-#include "m2/game/object/Ghost.h"
+#include <m2/game/object/Ghost.h>
+#include <m2/Game.h>
+#include <m2/game/Selection.h>
+#include <m2/ui/widget/CheckboxWithText.h>
 
 using namespace m2;
+using namespace m2::widget;
 
-// Common widgets
-const widget::IntegerInputBlueprint layer_selection = {
-    .min_value = 0,
-    .max_value = 3,
-    .initial_value = 0,
-    .on_create = [](MAYBE const widget::IntegerInput& self) -> std::optional<int> {
-	    return I(std::get<level_editor::State>(M2_LEVEL.stateVariant).selected_layer);
-    },
-    .on_action = [](const widget::IntegerInput& self) -> UiAction {
-	    std::get<level_editor::State>(M2_LEVEL.stateVariant).selected_layer = static_cast<BackgroundLayer>(self.value());
-	    return MakeContinueAction();
-    }};
+namespace {
+	const UiPanelBlueprint gFillDialog = {
+		.name = "FillDialog",
+		.w = 32, .h = 18,
+		.background_color = {0, 0, 0, 255},
+		.widgets = {
+			UiWidgetBlueprint{
+				.name = "SpriteSelection",
+				.x = 1, .y = 1, .w = 30, .h = 14,
+				.variant = TextSelectionBlueprint{
+					.line_count = 10,
+					.allow_multiple_selection = true,
+					.on_create = [](TextSelection &self) {
+						TextSelectionBlueprint::Options options;
+						for (const auto& sprite : M2_GAME.level_editor_background_sprites) {
+							options.emplace_back(pb::enum_name(sprite), I(sprite));
+						}
+						self.set_options(std::move(options));
+					}
+				}
+			},
+			UiWidgetBlueprint{
+				.x = 1, .y = 16, .w = 30, .h = 1,
+				.variant = TextBlueprint {
+					.text = "Fill",
+					.on_action = [](MAYBE const Text& self) -> UiAction {
+						const auto* spriteSelectionWidget = self.parent().find_first_widget_by_name<TextSelection>("SpriteSelection");
+						std::vector<m2g::pb::SpriteType> selectedSprites;
+						for (const auto& selection : spriteSelectionWidget->selections()) {
+							selectedSprites.emplace_back(static_cast<m2g::pb::SpriteType>(std::get<int>(selection)));
+						}
+						return MakeReturnAction(std::move(selectedSprites));
+					}
+				}
+			}
+		}
+	};
 
-const widget::TextBlueprint paint_mode_title = {.text = "PAINT"};
-const widget::ImageSelectionBlueprint paint_mode_image_selection = {
-    .on_action = [](const widget::ImageSelection& self) -> UiAction {
-	    std::get<level_editor::State::PaintMode>(std::get<level_editor::State>(M2_LEVEL.stateVariant).mode)
-	        .select_sprite_type(self.selection());
-	    return MakeContinueAction();
-    }};
-UiPanelBlueprint paint_mode_right_hud = {
-	.name = "PaintModeRightHud",
-    .w = 19,
-    .h = 72,
-    .background_color = {50, 50, 50, 255},
-    .widgets = {
-        UiWidgetBlueprint{.x = 4, .y = 2, .w = 11, .h = 3, .border_width = 0.0f, .variant = paint_mode_title},
-        UiWidgetBlueprint{.x = 4, .y = 6, .w = 11, .h = 6, .variant = layer_selection},
-        UiWidgetBlueprint{
-            .x = 4, .y = 13, .w = 11, .h = 14, .variant = paint_mode_image_selection}}};
+	const UiPanelBlueprint gPaintBgRightHud = {
+		.name = "PaintBgRightHud",
+		.w = 19,
+		.h = 72,
+		.background_color = {25, 25, 25, 255},
+		.onDestroy = [] {
+			// Delete ghost
+			if (const auto& levelEditorState = std::get<level_editor::State>(M2_LEVEL.stateVariant); levelEditorState.ghostId) {
+				M2_LEVEL.deferredActions.push(create_object_deleter(levelEditorState.ghostId));
+			}
+		},
+		.widgets = {
+			UiWidgetBlueprint{
+				.x = 2,
+				.y = 2,
+				.w = 15,
+				.h = 4,
+				.border_width = 0,
+				.variant = TextBlueprint{
+					.text = "Paint Bg"
+				}
+			},
+			UiWidgetBlueprint{
+				.name = "SpriteTypeSelection",
+				.x = 2,
+				.y = 7,
+				.w = 15,
+				.h = 48,
+				.variant = TextSelectionBlueprint{
+					.line_count = 12,
+					.on_create = [](TextSelection& self) {
+						// Fill sprite type selector with background sprite types
+						TextSelectionBlueprint::Options options;
+						for (const auto &spriteType: M2_GAME.level_editor_background_sprites) {
+							options.emplace_back(SpriteType_Name(spriteType), I(spriteType));
+						}
+						self.set_options(std::move(options));
+						self.set_unique_selection(0);
+					},
+					.on_action = [](const TextSelection& self) {
+						// Create ghost
+						auto& levelEditorState = std::get<level_editor::State>(M2_LEVEL.stateVariant);
+						if (levelEditorState.ghostId) {
+							M2_LEVEL.deferredActions.push(create_object_deleter(levelEditorState.ghostId));
+						}
+						if (const auto selections = self.selections(); not selections.empty()) {
+							levelEditorState.ghostId = obj::create_ghost(
+									static_cast<m2g::pb::SpriteType>(std::get<int>(selections[0])), true);
+						}
+						return MakeContinueAction();
+					}
+				}
+			}
+		}
+	};
 
-const widget::TextBlueprint erase_mode_title = {.text = "ERASE"};
-const UiPanelBlueprint erase_mode_right_hud = {
-	.name = "EraseModeRightHud",
-    .w = 19,
-    .h = 72,
-    .background_color = {50, 50, 50, 255},
-    .widgets = {
-        UiWidgetBlueprint{.x = 4, .y = 2, .w = 11, .h = 3, .border_width = 0.0f, .variant = erase_mode_title},
-        UiWidgetBlueprint{.x = 4, .y = 6, .w = 11, .h = 6, .variant = layer_selection},
-    }};
+	const UiPanelBlueprint gSampleBgRightHud = {
+		.name = "SampleBgRightHud",
+		.w = 19,
+		.h = 72,
+		.background_color = {25, 25, 25, 255},
+		.widgets = {
+			UiWidgetBlueprint{
+				.x = 2,
+				.y = 2,
+				.w = 15,
+				.h = 4,
+				.border_width = 0,
+				.variant = TextBlueprint{
+					.text = "Sample Bg"
+				}
+			}
+		}
+	};
 
-const widget::TextBlueprint place_mode_title = {.text = "PLACE"};
-const widget::TextSelectionBlueprint place_mode_right_hud_object_type_selection = {
-    .on_action = [](widget::TextSelection& self) -> UiAction {
-	    auto object_type = static_cast<m2g::pb::ObjectType>(std::get<int>(self.selections()[0]));
-	    std::get<level_editor::State::PlaceMode>(std::get<level_editor::State>(M2_LEVEL.stateVariant).mode).select_object_type(object_type);
-	    return MakeContinueAction();
-    }};
-const widget::TextSelectionBlueprint place_mode_right_hud_group_type_selection = {
-    .on_action = [](widget::TextSelection& self) -> UiAction {
-	    auto group_type = static_cast<m2g::pb::GroupType>(std::get<int>(self.selections()[0]));
-	    std::get<level_editor::State::PlaceMode>(std::get<level_editor::State>(M2_LEVEL.stateVariant).mode).select_group_type(group_type);
-	    return MakeContinueAction();
-    }};
-const widget::IntegerInputBlueprint place_mode_right_hud_group_instance_selection = {
-    .min_value = 0, .max_value = 999, .initial_value = 0, .on_action = [](const widget::IntegerInput& self) -> UiAction {
-	    std::get<level_editor::State::PlaceMode>(std::get<level_editor::State>(M2_LEVEL.stateVariant).mode)
-	        .select_group_instance(self.value());
-	    return MakeContinueAction();
-    }};
-UiPanelBlueprint place_mode_right_hud = {
-	.name = "PlaceModeRightHud",
-    .w = 19,
-    .h = 72,
-    .background_color = {50, 50, 50, 255},
-    .widgets = {
-        UiWidgetBlueprint{.x = 4, .y = 2, .w = 11, .h = 3, .border_width = 0.0f, .variant = place_mode_title},
-        UiWidgetBlueprint{
-            .x = 4,
-            .y = 6,
-            .w = 11,
-            .h = 4,
-            .variant = place_mode_right_hud_object_type_selection},
-        UiWidgetBlueprint{
-            .x = 4,
-            .y = 11,
-            .w = 11,
-            .h = 4,
-            .variant = place_mode_right_hud_group_type_selection},
-        UiWidgetBlueprint{
-            .x = 4,
-            .y = 16,
-            .w = 11,
-            .h = 4,
-            .variant = place_mode_right_hud_group_instance_selection}}};
+	const UiPanelBlueprint gSelectBgRightHud = {
+		.name = "SelectBgRightHud",
+		.w = 19,
+		.h = 72,
+		.background_color = {25, 25, 25, 255},
+		.on_create = [](MAYBE UiPanel& self) {
+			Events::enable_primary_selection(RectI{M2_GAME.Dimensions().Game()});
+		},
+		.onDestroy = [] {
+			Events::disable_primary_selection();
+		},
+		.widgets = {
+			UiWidgetBlueprint{
+				.x = 2,
+				.y = 2,
+				.w = 15,
+				.h = 4,
+				.border_width = 0,
+				.variant = TextBlueprint{
+					.text = "Select Bg"
+				}
+			},
+			UiWidgetBlueprint{
+				.x = 2,
+				.y = 7,
+				.w = 15,
+				.h = 4,
+				.variant = TextBlueprint{
+					.text = "Copy",
+					.on_action = [](MAYBE const Text& self) -> UiAction {
+						if (const auto area = SelectionResult{M2_GAME.events}.PrimaryIntegerRoundedSelectionRectM()) {
+							std::get<level_editor::State>(M2_LEVEL.stateVariant).CopyBackground(*area);
+						}
+						return MakeContinueAction();
+					}
+				}
+			},
+			UiWidgetBlueprint{
+				.x = 2,
+				.y = 12,
+				.w = 15,
+				.h = 4,
+				.variant = TextBlueprint{
+					.text = "Paste",
+					.on_action = [](MAYBE const Text& self) -> UiAction {
+						if (const auto area = SelectionResult{M2_GAME.events}.PrimaryIntegerRoundedSelectionRectM()) {
+							std::get<level_editor::State>(M2_LEVEL.stateVariant).PasteBackground(area->top_left());
+						}
+						return MakeContinueAction();
+					}
+				}
+			},
+			UiWidgetBlueprint{
+				.x = 2,
+				.y = 17,
+				.w = 15,
+				.h = 4,
+				.variant = TextBlueprint{
+					.text = "Erase",
+					.on_action = [](MAYBE const Text& self) -> UiAction {
+						if (const auto area = SelectionResult{M2_GAME.events}.PrimaryIntegerRoundedSelectionRectM()) {
+							std::get<level_editor::State>(M2_LEVEL.stateVariant).EraseBackground(*area);
+						}
+						return MakeContinueAction();
+					}
+				}
+			},
+			UiWidgetBlueprint{
+				.x = 2,
+				.y = 22,
+				.w = 15,
+				.h = 4,
+				.variant = TextBlueprint{
+					.text = "Fill",
+					.on_action = [](MAYBE const Text& self) -> UiAction {
+						if (const auto selectionResult = SelectionResult{M2_GAME.events}; selectionResult.is_primary_selection_finished()) {
+							const auto area = selectionResult.PrimaryIntegerRoundedSelectionRectM();
+							const auto action = UiPanel::create_and_run_blocking(&gFillDialog, RectF{0.2f, 0.1f, 0.6f, 0.8f});
+							(void) action.IfReturn<std::vector<m2g::pb::SpriteType>>([&](const auto& selectedSprites) {
+								std::get<level_editor::State>(M2_LEVEL.stateVariant).RandomFillBackground(*area, selectedSprites);
+							});
+						}
+						return MakeContinueAction();
+					}
+				}
+			}
+		}
+	};
 
-const widget::TextBlueprint remove_mode_title = {.text = "REMOVE"};
-const UiPanelBlueprint remove_mode_right_hud = {
-	.name = "RemoveModeRightHud",
-    .w = 19,
-    .h = 72,
-    .background_color = {50, 50, 50, 255},
-    .widgets = {UiWidgetBlueprint{.x = 4, .y = 2, .w = 11, .h = 3, .border_width = 0.0f, .variant = remove_mode_title}}};
+	const UiPanelBlueprint gPlaceFgRightHud = {
+		.name = "PlaceFgRightHud",
+		.w = 19,
+		.h = 72,
+		.background_color = {25, 25, 25, 255},
+		.onDestroy = [] {
+			// Delete ghost
+			if (const auto& levelEditorState = std::get<level_editor::State>(M2_LEVEL.stateVariant); levelEditorState.ghostId) {
+				M2_LEVEL.deferredActions.push(create_object_deleter(levelEditorState.ghostId));
+			}
+		},
+		.widgets = {
+			UiWidgetBlueprint{
+				.x = 2,
+				.y = 2,
+				.w = 15,
+				.h = 4,
+				.border_width = 0,
+				.variant = TextBlueprint{
+					.text = "Place Fg"
+				}
+			},
+			UiWidgetBlueprint{
+				.name = "ObjectTypeSelection",
+				.x = 2,
+				.y = 7,
+				.w = 15,
+				.h = 48,
+				.variant = TextSelectionBlueprint{
+					.line_count = 12,
+					.on_create = [](TextSelection& self) {
+						// Fill object type selector with editor-enabled object types
+						TextSelectionBlueprint::Options options;
+						for (const auto &objType: M2_GAME.object_main_sprites | std::views::keys) {
+							options.emplace_back(ObjectType_Name(objType), I(objType));
+						}
+						self.set_options(std::move(options));
+						self.set_unique_selection(0);
+					},
+					.on_action = [](const TextSelection& self) {
+						// Delete previous ghost
+						auto& levelEditorState = std::get<level_editor::State>(M2_LEVEL.stateVariant);
+						if (levelEditorState.ghostId) {
+							M2_LEVEL.deferredActions.push(create_object_deleter(levelEditorState.ghostId));
+						}
+						// Create ghost
+						if (const auto selections = self.selections(); not selections.empty()) {
+							const auto snapToGrid = M2_LEVEL.LeftHud()->find_first_widget_by_name<CheckboxWithText>("SnapToGridCheckbox")->state();
+							levelEditorState.ghostId = obj::create_ghost(
+									M2_GAME.object_main_sprites[static_cast<m2g::pb::ObjectType>(std::get<int>(selections[0]))], snapToGrid);
+						}
+						return MakeContinueAction();
+					}
+				}
+			},
+			UiWidgetBlueprint{
+				.name = "GroupTypeSelection",
+				.x = 2,
+				.y = 56,
+				.w = 15,
+				.h = 4,
+				.variant = TextSelectionBlueprint{
+					.line_count = 0,
+					.on_create = [](TextSelection& self) {
+						// Fill group type selector
+						TextSelectionBlueprint::Options options;
+						for (int e = 0; e < pb::enum_value_count<m2g::pb::GroupType>(); ++e) {
+							options.emplace_back(pb::enum_name<m2g::pb::GroupType>(e), pb::enum_value<m2g::pb::GroupType>(e));
+						}
+						self.set_options(std::move(options));
+					}
+				}
+			},
+			UiWidgetBlueprint{
+				.name = "GroupInstanceSelection",
+				.x = 2,
+				.y = 61,
+				.w = 15,
+				.h = 4,
+				.variant = IntegerInputBlueprint{
+					.min_value = 0,
+					.max_value = 999,
+					.initial_value = 0
+				}
+			}
+		}
+	};
 
-const widget::TextBlueprint pick_mode_title = {.text = "PICK"};
-const widget::TextSelectionBlueprint pick_mode_right_hud_ground_selection = {
-    .options = {{"Background", "Background"}, {"Foreground", "Foreground"}},
-	.on_action = [](const widget::TextSelection& self) -> UiAction {
-	    if (auto selection = std::get<std::string>(self.selections()[0]); selection == "Background") {
-		    std::get<level_editor::State::PickMode>(std::get<level_editor::State>(M2_LEVEL.stateVariant).mode).pick_foreground = false;
-	    } else if (selection == "Foreground") {
-		    std::get<level_editor::State::PickMode>(std::get<level_editor::State>(M2_LEVEL.stateVariant).mode).pick_foreground = true;
-	    }
-	    return MakeContinueAction();
-    }};
-const UiPanelBlueprint pick_mode_right_hud = {
-	.name = "PickModeRightHud",
-    .w = 19,
-    .h = 72,
-    .background_color = {50, 50, 50, 255},
-    .widgets = {
-        UiWidgetBlueprint{.x = 4, .y = 2, .w = 11, .h = 3, .border_width = 0, .variant = pick_mode_title},
-        UiWidgetBlueprint{
-            .x = 4, .y = 6, .w = 11, .h = 4, .variant = pick_mode_right_hud_ground_selection},
-        UiWidgetBlueprint{.x = 4, .y = 11, .w = 11, .h = 6, .variant = layer_selection},
-    }};
+	const UiPanelBlueprint gSampleFgRightHud = {
+		.name = "SampleFgRightHud",
+		.w = 19,
+		.h = 72,
+		.background_color = {25, 25, 25, 255},
+		.widgets = {
+			UiWidgetBlueprint{
+				.x = 2,
+				.y = 2,
+				.w = 15,
+				.h = 4,
+				.border_width = 0,
+				.variant = TextBlueprint{
+					.text = "Sample Fg"
+				}
+			}
+		}
+	};
 
-const widget::TextBlueprint select_mode_title = {.text = "SELECT"};
-const widget::TextBlueprint select_mode_right_hud_shift_right_button = {
-    .text = "Shift Right", .on_action = [](MAYBE const widget::Text& self) -> UiAction {
-	    std::get<level_editor::State::SelectMode>(std::get<level_editor::State>(M2_LEVEL.stateVariant).mode).shift_right();
-	    return MakeContinueAction();
-    }};
-const widget::TextBlueprint select_mode_right_hud_shift_down_button = {
-    .text = "Shift Down", .on_action = [](MAYBE const widget::Text& self) -> UiAction {
-	    std::get<level_editor::State::SelectMode>(std::get<level_editor::State>(M2_LEVEL.stateVariant).mode).shift_down();
-	    return MakeContinueAction();
-    }};
-const widget::TextBlueprint select_mode_right_hud_copy_button = {
-    .text = "Copy", .on_action = [](MAYBE const widget::Text& self) -> UiAction {
-	    std::get<level_editor::State::SelectMode>(std::get<level_editor::State>(M2_LEVEL.stateVariant).mode).copy();
-	    return MakeContinueAction();
-    }};
-const widget::TextBlueprint select_mode_right_hud_paste_bg_button = {
-    .text = "Paste BG", .on_action = [](MAYBE const widget::Text& self) -> UiAction {
-	    std::get<level_editor::State::SelectMode>(std::get<level_editor::State>(M2_LEVEL.stateVariant).mode).paste_bg();
-	    return MakeContinueAction();
-    }};
-const widget::TextBlueprint select_mode_right_hud_paste_fg_button = {
-    .text = "Paste FG", .on_action = [](MAYBE const widget::Text& self) -> UiAction {
-	    std::get<level_editor::State::SelectMode>(std::get<level_editor::State>(M2_LEVEL.stateVariant).mode).paste_fg();
-	    return MakeContinueAction();
-    }};
-const widget::TextBlueprint select_mode_right_hud_erase_button = {
-    .text = "Erase", .on_action = [](MAYBE const widget::Text& self) -> UiAction {
-	    std::get<level_editor::State::SelectMode>(std::get<level_editor::State>(M2_LEVEL.stateVariant).mode).erase();
-	    return MakeContinueAction();
-    }};
-const widget::TextBlueprint select_mode_right_hud_remove_button = {
-    .text = "Remove", .on_action = [](MAYBE const widget::Text& self) -> UiAction {
-	    std::get<level_editor::State::SelectMode>(std::get<level_editor::State>(M2_LEVEL.stateVariant).mode).remove();
-	    return MakeContinueAction();
-    }};
-const UiPanelBlueprint m2::level_editor::fill_dialog = {
-	.name = "FillDialog",
-    .w = 160,
-    .h = 90,
-    .background_color = {0, 0, 0, 255},
-    .widgets = {
-        UiWidgetBlueprint{
-            .x = 5, .y = 5, .w = 150, .h = 70,
-            .variant = widget::TextSelectionBlueprint{
-                .line_count = 10,
-                .allow_multiple_selection = true,
-                .on_create = [](MAYBE widget::TextSelection &self) {
-					widget::TextSelectionBlueprint::Options options;
-	                for (auto sprite : M2_GAME.level_editor_background_sprites) {
-						options.emplace_back(widget::TextSelectionBlueprint::Option{pb::enum_name(sprite), I(sprite)});
-	                }
-					self.set_options(std::move(options));
-                }
-            }
-        },
-        UiWidgetBlueprint{
-            .x = 60, .y = 80, .w = 40, .h = 5,
-            .variant = widget::TextBlueprint {
-                .text = "Fill",
-                .on_action = [](MAYBE const widget::Text& self) -> UiAction {
-	                auto text_list_selection = self.parent().find_first_widget_of_type<widget::TextSelection>();
+	const UiPanelBlueprint gSelectFgRightHud = {
+		.name = "SelectFgRightHud",
+		.w = 19,
+		.h = 72,
+		.background_color = {25, 25, 25, 255},
+		.on_create = [](MAYBE UiPanel& self) {
+			Events::enable_primary_selection(RectI{M2_GAME.Dimensions().Game()});
+		},
+		.onDestroy = [] {
+			Events::disable_primary_selection();
+		},
+		.widgets = {
+			UiWidgetBlueprint{
+				.x = 2,
+				.y = 2,
+				.w = 15,
+				.h = 4,
+				.border_width = 0,
+				.variant = TextBlueprint{
+					.text = "Select Fg"
+				}
+			},
+			UiWidgetBlueprint{
+				.x = 2,
+				.y = 7,
+				.w = 15,
+				.h = 4,
+				.variant = TextBlueprint{
+					.text = "Copy",
+					.on_action = [](MAYBE const Text& self) -> UiAction {
+						if (SelectionResult{M2_GAME.events}.is_primary_selection_finished()) {
+							std::get<level_editor::State>(M2_LEVEL.stateVariant).CopyForeground();
+						}
+						return MakeContinueAction();
+					}
+				}
+			},
+			UiWidgetBlueprint{
+				.x = 2,
+				.y = 12,
+				.w = 15,
+				.h = 4,
+				.variant = TextBlueprint{
+					.text = "Paste",
+					.on_action = [](MAYBE const Text& self) -> UiAction {
+						if (SelectionResult{M2_GAME.events}.is_primary_selection_finished()) {
+							std::get<level_editor::State>(M2_LEVEL.stateVariant).PasteForeground();
+						}
+						return MakeContinueAction();
+					}
+				}
+			},
+			UiWidgetBlueprint{
+				.x = 2,
+				.y = 17,
+				.w = 15,
+				.h = 4,
+				.variant = TextBlueprint{
+					.text = "Remove",
+					.on_action = [](MAYBE const Text& self) -> UiAction {
+						if (SelectionResult{M2_GAME.events}.is_primary_selection_finished()) {
+							std::get<level_editor::State>(M2_LEVEL.stateVariant).RemoveForegroundObject();
+						}
+						return MakeContinueAction();
+					}
+				}
+			}
+		}
+	};
+}
 
-	                std::vector<m2g::pb::SpriteType> sprite_types;
-	                for (const auto& selection : text_list_selection->selections()) {
-						sprite_types.emplace_back(static_cast<m2g::pb::SpriteType>(std::get<int>(selection)));
-	                }
-	                std::get<level_editor::State::SelectMode>(std::get<level_editor::State>(M2_LEVEL.stateVariant).mode).rfill_sprite_types = sprite_types;
-
-	                return MakeReturnAction(); // TODO Return value
-                }
-            }
-        }
-    }
-};
-const widget::TextBlueprint select_mode_right_hud_fill_button = {
-    .text = "RFill",
-    .on_action = [](MAYBE const widget::Text& self) -> UiAction {
-	    return std::get<level_editor::State::SelectMode>(std::get<level_editor::State>(M2_LEVEL.stateVariant).mode).rfill();
-    }
-};
-const UiPanelBlueprint select_mode_right_hud = {
-	.name = "SelectModeRightHud",
-    .w = 19,
-    .h = 72,
-    .background_color = {50, 50, 50, 255},
-    .widgets = {
-        UiWidgetBlueprint{.x = 4, .y = 2, .w = 11, .h = 3, .border_width = 0, .variant = select_mode_title},
-        UiWidgetBlueprint{.x = 4, .y = 6, .w = 11, .h = 6, .variant = layer_selection},
-        UiWidgetBlueprint{
-            .x = 4,
-            .y = 13,
-            .w = 11,
-            .h = 3,
-            .variant = select_mode_right_hud_shift_right_button},
-        UiWidgetBlueprint{
-            .x = 4, .y = 17, .w = 11, .h = 3, .variant = select_mode_right_hud_shift_down_button},
-        UiWidgetBlueprint{
-            .x = 4, .y = 21, .w = 11, .h = 3, .variant = select_mode_right_hud_copy_button},
-        UiWidgetBlueprint{
-            .x = 4, .y = 25, .w = 11, .h = 3, .variant = select_mode_right_hud_paste_bg_button},
-        UiWidgetBlueprint{
-            .x = 4, .y = 29, .w = 11, .h = 3, .variant = select_mode_right_hud_paste_fg_button},
-        UiWidgetBlueprint{
-            .x = 4, .y = 33, .w = 11, .h = 3, .variant = select_mode_right_hud_erase_button},
-        UiWidgetBlueprint{
-            .x = 4, .y = 37, .w = 11, .h = 3, .variant = select_mode_right_hud_remove_button},
-        UiWidgetBlueprint{
-            .x = 4, .y = 41, .w = 11, .h = 3, .variant = select_mode_right_hud_fill_button}}};
-
-const widget::TextBlueprint shift_mode_title = {.text = "SHIFT"};
-const widget::TextSelectionBlueprint shift_mode_right_hud_shift_direction_selection = {
-    .options = {{"Right", "Right"}, {"Down", "Down"}, {"Right & Down", "Right & Down"}}, .on_action = [](const widget::TextSelection& self) -> UiAction {
-	    if (auto selection = std::get<std::string>(self.selections()[0]); selection == "Right") {
-		    std::get<level_editor::State::ShiftMode>(std::get<level_editor::State>(M2_LEVEL.stateVariant).mode).shift_type =
-		        level_editor::State::ShiftMode::ShiftType::RIGHT;
-	    } else if (selection == "Down") {
-		    std::get<level_editor::State::ShiftMode>(std::get<level_editor::State>(M2_LEVEL.stateVariant).mode).shift_type =
-		        level_editor::State::ShiftMode::ShiftType::DOWN;
-	    } else if (selection == "Right & Down") {
-		    std::get<level_editor::State::ShiftMode>(std::get<level_editor::State>(M2_LEVEL.stateVariant).mode).shift_type =
-		        level_editor::State::ShiftMode::ShiftType::RIGHT_N_DOWN;
-	    }
-	    return MakeContinueAction();
-    }};
-const UiPanelBlueprint shift_mode_right_hud = {
-	.name = "ShiftModeRightHud",
-    .w = 19,
-    .h = 72,
-    .background_color = {50, 50, 50, 255},
-    .widgets = {
-        UiWidgetBlueprint{.x = 4, .y = 2, .w = 11, .h = 3, .border_width = 0, .variant = shift_mode_title},
-        UiWidgetBlueprint{
-            .x = 4,
-            .y = 6,
-            .w = 11,
-            .h = 4,
-            .variant = shift_mode_right_hud_shift_direction_selection}}};
-
-const widget::TextBlueprint left_hud_paint_button = {
-    .text = std::string{level_editor::paint_button_label},
-    .kb_shortcut = SDL_SCANCODE_P,
-    .on_action = [](MAYBE const widget::Text& self) -> UiAction {
-	    std::get<level_editor::State>(M2_LEVEL.stateVariant).activate_paint_mode();
-	    // Fill tile selector with editor-enabled sprites
-	    auto& list = std::get<widget::ImageSelectionBlueprint>(paint_mode_right_hud.widgets[2].variant).list;
-	    std::copy(
-	        std::begin(M2_GAME.level_editor_background_sprites), std::end(M2_GAME.level_editor_background_sprites),
-	        std::back_inserter(list));
-
-	    M2_LEVEL.ReplaceRightHud(&paint_mode_right_hud, M2_GAME.Dimensions().RightHud());
-	    return MakeContinueAction();
-    }};
-const widget::TextBlueprint left_hud_erase_button = {
-    .text = "ERASE", .kb_shortcut = SDL_SCANCODE_E, .on_action = [](MAYBE const widget::Text& self) -> UiAction {
-	    std::get<level_editor::State>(M2_LEVEL.stateVariant).activate_erase_mode();
-	    M2_LEVEL.ReplaceRightHud(&erase_mode_right_hud, M2_GAME.Dimensions().RightHud());
-	    return MakeContinueAction();
-    }};
-const widget::TextBlueprint left_hud_place_button = {
-    .text = std::string{level_editor::place_button_label},
-    .kb_shortcut = SDL_SCANCODE_O,
-    .on_action = [](MAYBE const widget::Text& self) -> UiAction {
-	    std::get<level_editor::State>(M2_LEVEL.stateVariant).activate_place_mode();
-	    // Fill object type selector with editor-enabled object types
-	    auto& object_type_selection = std::get<widget::TextSelectionBlueprint>(place_mode_right_hud.widgets[1].variant);
-	    if (object_type_selection.options.empty()) {
-		    for (auto& [obj_type, spt] : M2_GAME.object_main_sprites) {
-			    object_type_selection.options.emplace_back(
-					widget::TextSelectionBlueprint::Option{m2g::pb::ObjectType_Name(obj_type), I(obj_type)});
-		    }
-	    }
-	    // Fill group type selector
-	    auto& group_type_selection = std::get<widget::TextSelectionBlueprint>(place_mode_right_hud.widgets[2].variant);
-	    if (group_type_selection.options.empty()) {
-		    for (int e = 0; e < pb::enum_value_count<m2g::pb::GroupType>(); ++e) {
-			    group_type_selection.options.emplace_back(
-					widget::TextSelectionBlueprint::Option{
-						pb::enum_name<m2g::pb::GroupType>(e), pb::enum_value<m2g::pb::GroupType>(e)});
-		    }
-	    }
-
-	    M2_LEVEL.ReplaceRightHud(&place_mode_right_hud, M2_GAME.Dimensions().RightHud());
-	    return MakeContinueAction();
-    }};
-const widget::TextBlueprint left_hud_remove_button = {
-    .text = "REMOVE", .kb_shortcut = SDL_SCANCODE_R, .on_action = [](MAYBE const widget::Text& self) -> UiAction {
-	    std::get<level_editor::State>(M2_LEVEL.stateVariant).activate_remove_mode();
-	    M2_LEVEL.ReplaceRightHud(&remove_mode_right_hud, M2_GAME.Dimensions().RightHud());
-	    return MakeContinueAction();
-    }};
-const widget::TextBlueprint left_hud_pick_button = {
-    .text = "PICK", .kb_shortcut = SDL_SCANCODE_R, .on_action = [](MAYBE const widget::Text& self) -> UiAction {
-	    std::get<level_editor::State>(M2_LEVEL.stateVariant).activate_pick_mode();
-	    M2_LEVEL.ReplaceRightHud(&pick_mode_right_hud, M2_GAME.Dimensions().RightHud());
-	    return MakeContinueAction();
-    }};
-const widget::TextBlueprint left_hud_select_button = {
-    .text = "SELECT", .on_action = [](MAYBE const widget::Text& self) -> UiAction {
-	    std::get<level_editor::State>(M2_LEVEL.stateVariant).activate_select_mode();
-	    M2_LEVEL.ReplaceRightHud(&select_mode_right_hud, M2_GAME.Dimensions().RightHud());
-	    return MakeContinueAction();
-    }};
-const widget::TextBlueprint left_hud_shift_button = {
-    .text = "SHIFT", .on_action = [](MAYBE const widget::Text& self) -> UiAction {
-	    std::get<level_editor::State>(M2_LEVEL.stateVariant).activate_shift_mode();
-	    M2_LEVEL.ReplaceRightHud(&shift_mode_right_hud, M2_GAME.Dimensions().RightHud());
-	    return MakeContinueAction();
-    }};
-const widget::TextBlueprint left_hud_cancel_button = {
-    .text = "CANCEL", .kb_shortcut = SDL_SCANCODE_X, .on_action = [](MAYBE const widget::Text& self) -> UiAction {
-	    std::get<level_editor::State>(M2_LEVEL.stateVariant).deactivate_mode();
-	    M2_LEVEL.ReplaceRightHud(&level_editor::RightHudBlueprint, M2_GAME.Dimensions().RightHud());
-	    return MakeContinueAction();
-    }};
-const widget::TextBlueprint left_hud_gridlines_button = {
-    .text = "GRID", .kb_shortcut = SDL_SCANCODE_G, .on_action = [](MAYBE const widget::Text& self) -> UiAction {
-	    if (M2_LEVEL.dynamicGridLinesLoader) {
-		    M2_LEVEL.dynamicGridLinesLoader.reset();
-	    } else {
-		    M2_LEVEL.dynamicGridLinesLoader.emplace(SDL_Color{127, 127, 255, 127});
-	    }
-	    return MakeContinueAction();
-    }};
-const widget::TextBlueprint left_hud_coordinates = {
-    .text = "0,0", .on_update = [](MAYBE widget::Text& self) {
-	    const auto mouse_position = M2_GAME.MousePositionWorldM().iround();
-		self.set_text(m2::ToString(mouse_position.x) + ',' + m2::ToString(mouse_position.y));
-	    return MakeContinueAction();
-    }};
-const UiPanelBlueprint level_editor::LeftHudBlueprint = {
+const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
 	.name = "LeftHud",
     .w = 19,
     .h = 72,
-    .background_color = {50, 50, 50, 255},
+    .background_color = {25, 25, 25, 255},
     .widgets = {
         UiWidgetBlueprint{
-            .x = 4,
+        	.name = "PaintBgButton",
+            .x = 2,
             .y = 2,
-            .w = 11,
-            .h = 3,
-            .variant = left_hud_paint_button},
+            .w = 15,
+            .h = 4,
+        	.variant = TextBlueprint{
+        		.text = "Paint Bg",
+				.on_action = [](MAYBE const Text& self) -> UiAction {
+					M2_LEVEL.ReplaceRightHud(&gPaintBgRightHud, M2_GAME.Dimensions().RightHud());
+					return MakeContinueAction();
+        		}
+        	}
+        },
         UiWidgetBlueprint{
-            .x = 4,
-            .y = 6,
-            .w = 11,
-            .h = 3,
-            .variant = left_hud_erase_button},
+            .x = 2,
+            .y = 7,
+            .w = 15,
+            .h = 4,
+        	.variant = TextBlueprint{
+        		.text = "Sample Bg",
+				.on_action = [](MAYBE const Text& self) -> UiAction {
+					M2_LEVEL.ReplaceRightHud(&gSampleBgRightHud, M2_GAME.Dimensions().RightHud());
+					return MakeContinueAction();
+        		}
+        	}
+        },
         UiWidgetBlueprint{
-            .x = 4,
-            .y = 10,
-            .w = 11,
-            .h = 3,
-            .variant = left_hud_place_button},
+            .x = 2,
+            .y = 12,
+            .w = 15,
+            .h = 4,
+        	.variant = TextBlueprint{
+        		.text = "Select Bg",
+				.on_action = [](MAYBE const Text& self) -> UiAction {
+					M2_LEVEL.ReplaceRightHud(&gSelectBgRightHud, M2_GAME.Dimensions().RightHud());
+					return MakeContinueAction();
+        		}
+        	}
+        },
         UiWidgetBlueprint{
-            .x = 4,
-            .y = 14,
-            .w = 11,
-            .h = 3,
-            .variant = left_hud_remove_button},
+        	.name = "PlaceFgButton",
+            .x = 2,
+            .y = 17,
+            .w = 15,
+            .h = 4,
+        	.variant = TextBlueprint{
+        		.text = "Place Fg",
+				.on_action = [](MAYBE const Text& self) -> UiAction {
+					M2_LEVEL.ReplaceRightHud(&gPlaceFgRightHud, M2_GAME.Dimensions().RightHud());
+					return MakeContinueAction();
+        		}
+        	}
+        },
         UiWidgetBlueprint{
-            .x = 4,
-            .y = 18,
-            .w = 11,
-            .h = 3,
-            .variant = left_hud_pick_button},
-        UiWidgetBlueprint{
-            .x = 4,
+            .x = 2,
             .y = 22,
-            .w = 11,
-            .h = 3,
-            .variant = left_hud_select_button},
+            .w = 15,
+            .h = 4,
+            .variant = TextBlueprint{
+				.text = "Sample Fg",
+				.on_action = [](MAYBE const Text& self) -> UiAction {
+					M2_LEVEL.ReplaceRightHud(&gSampleFgRightHud, M2_GAME.Dimensions().RightHud());
+					return MakeContinueAction();
+				}
+			}
+		},
         UiWidgetBlueprint{
-            .x = 4,
-            .y = 26,
-            .w = 11,
-            .h = 3,
-            .variant = left_hud_shift_button},
+            .x = 2,
+            .y = 27,
+            .w = 15,
+            .h = 4,
+        	.variant = TextBlueprint{
+        		.text = "Select Fg",
+				.on_action = [](MAYBE const Text& self) -> UiAction {
+					M2_LEVEL.ReplaceRightHud(&gSelectFgRightHud, M2_GAME.Dimensions().RightHud());
+					return MakeContinueAction();
+        		}
+        	}
+        },
+		UiWidgetBlueprint{
+			.name = "CancelButton",
+			.x = 2,
+			.y = 32,
+			.w = 15,
+			.h = 4,
+			.variant = TextBlueprint{
+				.text = "Cancel",
+				.on_action = [](MAYBE const Text& self) -> UiAction {
+					M2_LEVEL.ReplaceRightHud(&gRightHudBlueprint, M2_GAME.Dimensions().RightHud());
+					return MakeContinueAction();
+				}
+			}
+		},
+		UiWidgetBlueprint{
+			.name = "BackgroundLayerSelection",
+			.x = 2,
+			.y = 50,
+			.w = 15,
+			.h = 4,
+			.variant = TextSelectionBlueprint{
+				.options = {
+					TextSelectionBlueprint::Option{.text = "L0-Front", .return_value = I(BackgroundLayer::L0)},
+					TextSelectionBlueprint::Option{.text = "L1", .return_value = I(BackgroundLayer::L1)},
+					TextSelectionBlueprint::Option{.text = "L2", .return_value = I(BackgroundLayer::L2)},
+					TextSelectionBlueprint::Option{.text = "L3-Back", .return_value = I(BackgroundLayer::L3)}
+				},
+				.line_count = 0,
+				.allow_multiple_selection = false,
+				.show_scroll_bar = false,
+			}
+		},
+		UiWidgetBlueprint{
+			.name = "SnapToGridCheckbox",
+            .x = 2,
+            .y = 55,
+            .w = 15,
+            .h = 4,
+			.variant = CheckboxWithTextBlueprint{
+				.text = "Snap",
+				.initial_state = false,
+				.on_action = [](const CheckboxWithText& self) {
+					// Press the cancel button if PlaceFgRightHud is active because the Ghost needs to be recreated
+					if (M2_LEVEL.RightHud()->Name() == "PlaceFgRightHud") {
+						self.parent().find_first_widget_by_name<Text>("CancelButton")->trigger_action();
+					}
+					return MakeContinueAction();
+				}
+			}
+		},
+		UiWidgetBlueprint{
+			.name = "ShowGridCheckbox",
+			.x = 2,
+			.y = 60,
+			.w = 15,
+			.h = 4,
+			.variant = CheckboxWithTextBlueprint{
+				.text = "Grid",
+				.initial_state = false,
+			}
+		},
         UiWidgetBlueprint{
-            .x = 4,
-            .y = 30,
-            .w = 11,
-            .h = 3,
-            .variant = left_hud_cancel_button},
+            .x = 2,
+            .y = 65,
+            .w = 15,
+            .h = 4,
+            .variant = TextBlueprint{
+            	.text = "Save",
+            	.on_action = [](MAYBE const Text& self) -> UiAction {
+            		// TODO confirm
+            		if (auto success = std::get<State>(M2_LEVEL.stateVariant).Save(); not success) {
+            			M2_LEVEL.ShowMessage(success.error(), 8.0f);
+            		}
+            		return MakeContinueAction();
+            	}
+            }
+        },
         UiWidgetBlueprint{
-            .x = 4,
-            .y = 66,
-            .w = 11,
-            .h = 3,
-            .variant = left_hud_gridlines_button},
-        UiWidgetBlueprint{.x = 0, .y = 70, .w = 19, .h = 2, .border_width = 0, .variant = left_hud_coordinates}}};
+        	.x = 0,
+        	.y = 70,
+        	.w = 19,
+        	.h = 2,
+        	.border_width = 0,
+        	.variant = TextBlueprint{
+        		.text = "0:0",
+        		.on_update = [](MAYBE Text& self) {
+        			const auto mouse_position = M2_GAME.MousePositionWorldM().iround();
+        			self.set_text(ToString(mouse_position.x) + ':' + m2::ToString(mouse_position.y));
+        			return MakeContinueAction();
+        		}
+        	}
+        }
+    }
+};
 
-const UiPanelBlueprint level_editor::RightHudBlueprint = {
-	.name = "RightHud",
-    .w = 19, .h = 72, .background_color = {50, 50, 50, 255}, .widgets = {}};
-
-const widget::TextBlueprint save_button = {
-    .text = "Save", .kb_shortcut = SDL_SCANCODE_S, .on_action = [](MAYBE const widget::Text& self) -> UiAction {
-	    if (auto success = level_editor::State::save(); not success) {
-    		M2_LEVEL.ShowMessage(success.error(), 8.0f);
-    	}
-	    return MakeContinueAction();
-    }};
-const widget::TextBlueprint quit_button = {
-    .text = "Quit", .kb_shortcut = SDL_SCANCODE_Q, .on_action = [](MAYBE const widget::Text& self) -> UiAction {
-	    return MakeQuitAction();
-    }};
-const UiPanelBlueprint level_editor::menu = {
-	.name = "MainMenu",
-    .w = 160,
-    .h = 90,
-    .border_width = 0,
-    .background_color = {50, 50, 50, 255},
-    .cancellable = true,
-    .widgets = {
-        UiWidgetBlueprint{
-            .x = 70, .y = 40, .w = 20, .h = 10, .variant = save_button},
-        UiWidgetBlueprint{
-            .x = 70, .y = 70, .w = 20, .h = 10, .variant = quit_button}}};
+const UiPanelBlueprint level_editor::gRightHudBlueprint = {
+		.name = "RightHud",
+	    .w = 19, .h = 72,
+		.background_color = {25, 25, 25, 255}};

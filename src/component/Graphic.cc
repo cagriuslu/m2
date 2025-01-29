@@ -49,6 +49,27 @@ m2::VecF m2::CameraToPositionVecPx(const VecF& position) {
 m2::VecF m2::ScreenOriginToPositionVecPx(const VecF& position) {
 	return CameraToPositionVecPx(position) + VecF{M2_GAME.Dimensions().WindowDimensions().x / 2, M2_GAME.Dimensions().WindowDimensions().y / 2 };
 }
+m2::VecF m2::PixelToPositionVecM(const VecI& pixelPosition) {
+	if (M2_LEVEL.ProjectionType() != pb::PARALLEL) {
+		throw M2_ERROR("Unable to calculate pixel position for non-parallel projection");
+	}
+	const auto screenCenterToPixelPositionVectorInPixels =
+			VecI{pixelPosition.x - (M2_GAME.Dimensions().WindowDimensions().x / 2),
+				pixelPosition.y - (M2_GAME.Dimensions().WindowDimensions().y / 2)};
+	const auto screenCenterToPixelPositionVectorInMeters =
+			VecF{F(screenCenterToPixelPositionVectorInPixels.x) / M2_GAME.Dimensions().OutputPixelsPerMeter(),
+				F(screenCenterToPixelPositionVectorInPixels.y) / M2_GAME.Dimensions().OutputPixelsPerMeter()};
+	const auto camera_position = M2_LEVEL.objects[M2_LEVEL.cameraId].position;
+	return screenCenterToPixelPositionVectorInMeters + camera_position;
+}
+m2::RectF m2::ViewportM() {
+	if (M2_LEVEL.ProjectionType() != pb::PARALLEL) {
+		throw M2_ERROR("Unable to calculate viewport for non-parallel projection");
+	}
+	const auto top_left = PixelToPositionVecM(VecI{M2_GAME.Dimensions().Game().x, M2_GAME.Dimensions().Game().y});
+	const auto bottom_right = PixelToPositionVecM(VecI{M2_GAME.Dimensions().Game().x2(), M2_GAME.Dimensions().Game().y2()});
+	return RectF::from_corners(top_left, bottom_right);
+}
 
 m3::VecF m3::camera_position_m() {
 	const auto* camera = M2_LEVEL.objects.get(M2_LEVEL.cameraId);

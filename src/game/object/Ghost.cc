@@ -2,11 +2,16 @@
 
 #include "m2/Game.h"
 
-m2::Id m2::obj::create_ghost(const m2g::pb::SpriteType spriteType) {
-	const auto it = create_object(M2_GAME.MousePositionWorldM().round());
-	it->add_graphic(spriteType);
-	it->add_physique().pre_step = [](MAYBE const Physique& phy) {
-		phy.owner().position = M2_GAME.MousePositionWorldM().round();
-	};
+m2::Id m2::obj::create_ghost(const m2g::pb::SpriteType spriteType, const bool roundPositionToInteger) {
+	const auto it = create_object({});
+	if (roundPositionToInteger) {
+		it->add_graphic(spriteType).pre_draw = [](const Graphic& gfx) {
+			gfx.owner().position = M2_GAME.MousePositionWorldM().round();
+		};
+	} else {
+		it->add_graphic(spriteType).pre_draw = [](const Graphic& gfx) {
+			gfx.owner().position = M2_GAME.MousePositionWorldM();
+		};
+	}
 	return it.id();
 }

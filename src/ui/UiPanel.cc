@@ -289,6 +289,8 @@ UiAction UiPanel::create_and_run_blocking(std::variant<const UiPanelBlueprint*,
 }
 
 UiPanel::~UiPanel() {
+	IF(blueprint->onDestroy)();
+
 	clear_focus();
 
 	if (_prev_text_input_state) {

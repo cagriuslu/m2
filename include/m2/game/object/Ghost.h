@@ -4,5 +4,5 @@
 
 namespace m2::obj {
 	/// Creates an object that follows the mouse pointer around
-	Id create_ghost(m2g::pb::SpriteType spriteType);
+	Id create_ghost(m2g::pb::SpriteType spriteType, bool roundPositionToInteger);
 }

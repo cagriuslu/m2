@@ -3,6 +3,7 @@
 #include "../math/VecF.h"
 
 namespace m2 {
+	// TODO get rid of this class somehow, unnecessary
 	class SelectionResult {
 		VecF _mouse_position_m;
 		std::pair<std::optional<VecF>, std::optional<VecF>> _primary_selection_position_m;
@@ -11,12 +12,16 @@ namespace m2 {
 	public:
 		explicit SelectionResult(const Events& events);
 
-		[[nodiscard]] inline bool is_primary_selection_finished() const { return _primary_selection_position_m.first && _primary_selection_position_m.second; }
-		[[nodiscard]] inline bool is_secondary_selection_finished() const { return _secondary_selection_position_m.first && _secondary_selection_position_m.second; }
+		[[nodiscard]] bool is_primary_selection_finished() const { return _primary_selection_position_m.first && _primary_selection_position_m.second; }
+		[[nodiscard]] bool is_secondary_selection_finished() const { return _secondary_selection_position_m.first && _secondary_selection_position_m.second; }
+
+		// TODO return RectI/F from these instead
 
 		// Returns integer selection coordinates
 		[[nodiscard]] std::optional<std::pair<VecI, VecI>> primary_int_selection_position_m() const;
 		[[nodiscard]] std::optional<std::pair<VecI, VecI>> secondary_int_selection_position_m() const;
+		[[nodiscard]] std::optional<RectI> PrimaryIntegerRoundedSelectionRectM() const;
+		[[nodiscard]] std::optional<RectI> SecondaryIntegerRoundedSelectionRectM() const;
 		// Returns cell selection coordinates
 		// For example, the center cell is x:[-0.5,0.5] y:[-0.5,0.5].
 		[[nodiscard]] std::optional<std::pair<VecF, VecF>> primary_cell_selection_position_m() const;

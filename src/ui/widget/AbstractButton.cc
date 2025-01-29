@@ -24,7 +24,7 @@ UiAction AbstractButton::on_event(Events &events) {
 	const bool has_action_callback = std::visit(overloaded {
 			[](const TextBlueprint& v) -> bool { return (bool) v.on_action; },
 			[](const ImageBlueprint& v) -> bool { return (bool) v.on_action; },
-			[](const CheckboxWithTextBlueprint& v) -> bool { return (bool) v.on_action; },
+			[](MAYBE const CheckboxWithTextBlueprint& v) -> bool { return true; }, // Checkbox might change state even if there isn't an onAction callback.
 			[](MAYBE const auto& v) -> bool { return false; }
 	}, blueprint->variant);
 	if (!has_action_callback) {

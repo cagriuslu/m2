@@ -1,85 +1,51 @@
 #pragma once
 #include "../ui/UiAction.h"
-#include "Detail.h"
+#include "m2/containers/Pool.h"
+#include "m2/math/RectI.h"
+#include "m2/math/VecF.h"
+#include "m2/math/VecI.h"
 
 namespace m2::level_editor {
-	struct State {
-		struct PaintMode {
-			m2g::pb::SpriteType selected_sprite_type{};
-			Id selected_sprite_ghost_id{};
+	class State {
+		using BackgroundSpritePlaceholderMap = std::map<VecI, std::tuple<Id, m2g::pb::SpriteType>, VecICompareTopLeftToBottomRight>;
+		using BackgroundSpriteClipboardMap = std::map<VecI, m2g::pb::SpriteType, VecICompareTopLeftToBottomRight>;
+		using ForegroundObjectPlaceholderMap = std::multimap<VecF, std::tuple<Id, pb::LevelObject>, VecFCompareTopLeftToBottomRight>;
+		using ForegroundObjectClipboardMap = std::multimap<VecF, pb::LevelObject, VecFCompareTopLeftToBottomRight>;
 
-			void select_sprite_type(m2g::pb::SpriteType sprite_type);
-			void paint_sprite(const VecI& position);
-			~PaintMode();
-		};
-		struct EraseMode {
-			void erase_position(const VecI& position);
-			static void erase_position(const VecI& position, BackgroundLayer layer);
-		};
-		struct PlaceMode {
-			Id selected_sprite_ghost_id{};
-			m2g::pb::ObjectType selected_object_type{};
-			m2g::pb::GroupType selected_group_type{};
-			unsigned selected_group_instance{};
-			void select_object_type(m2g::pb::ObjectType object_type);
-			void select_group_type(m2g::pb::GroupType group_type);
-			void select_group_instance(unsigned group_instance);
-			void place_object(const VecI& position) const;
+		std::array<BackgroundSpritePlaceholderMap, gBackgroundLayerCount> _backgroundSpritePlaceholders;
+		ForegroundObjectPlaceholderMap _foregroundObjectPlaceholders;
+		BackgroundSpriteClipboardMap _backgroundSpriteClipboard;
+		ForegroundObjectClipboardMap _foregroundObjectClipboard;
 
-			~PlaceMode();
-		};
-		struct RemoveMode {
-			static void remove_object(const VecI& position);
-		};
-		struct PickMode {
-			bool pick_foreground{};
+	public:
+		Id ghostId{};
 
-			std::optional<m2g::pb::SpriteType> lookup_background_sprite(const VecI& position);
-			std::optional<m2::pb::LevelObject> lookup_foreground_object(const VecI& position);
-		};
-		struct SelectMode {
-			std::optional<BackgroundLayer> clipboard_layer;
-			std::optional<m2::VecI> clipboard_position_1, clipboard_position_2;  // TopLeft, BottomRight
+		// Accessors
 
-			SelectMode();
-			// Disable copy, default move
-			SelectMode(const SelectMode& other) = delete;
-			SelectMode& operator=(const SelectMode& other) = delete;
-			SelectMode(SelectMode&& other) = default;
-			SelectMode& operator=(SelectMode&& other) = default;
-			~SelectMode();
-			void on_draw() const;
+		BackgroundLayer GetSelectedBackgroundLayer() const;
+		bool GetSnapToGridStatus() const;
 
-			void shift_right();
-			void shift_down();
-			void copy();
-			void paste_bg();
-			void paste_fg();
-			void erase();
-			void remove();
-			std::vector<m2g::pb::SpriteType> rfill_sprite_types;  // Filled by UI
-			UiAction rfill();
-		};
-		struct ShiftMode {
-			enum class ShiftType { RIGHT, DOWN, RIGHT_N_DOWN } shift_type;
+		// Modifiers
 
-			void shift(const VecI& position) const;
-		};
+		void LoadLevelBlueprint(const pb::Level& lb);
 
-		std::variant<std::monostate, PaintMode, EraseMode, PlaceMode, RemoveMode, PickMode, SelectMode, ShiftMode> mode;
-		std::array<level_editor::BackgroundPlaceholderMap, static_cast<int>(BackgroundLayer::n)>
-		    bg_placeholders;  // TODO Map2i might be used instead
-		level_editor::ForegroundPlaceholderMap fg_placeholders;  // TODO Map2i might be used instead
-		BackgroundLayer selected_layer{};
+		void HandleMousePrimaryButton(const VecF& position);
 
-		void deactivate_mode();
-		void activate_paint_mode();
-		void activate_erase_mode();
-		void activate_place_mode();
-		void activate_remove_mode();
-		void activate_pick_mode();
-		void activate_select_mode();
-		void activate_shift_mode();
-		static void_expected save();
+		void EraseBackground(const RectI& area);
+		void CopyBackground(const RectI& area);
+		void PasteBackground(const VecI& position);
+		void RandomFillBackground(const RectI& area, const std::vector<m2g::pb::SpriteType>& spriteSet);
+
+		void RemoveForegroundObject();
+		void CopyForeground();
+		void PasteForeground();
+
+		void Draw() const;
+		void_expected Save() const;
+
+	private:
+		void PaintBackground(const VecI& position, m2g::pb::SpriteType spriteType);
+		void PlaceForeground(const VecF& position, m2g::pb::ObjectType objectType, m2g::pb::GroupType groupType, unsigned groupInstance);
+		RectF ForegroundSelectionArea() const;
 	};
-}  // namespace m2::level_editor
+}

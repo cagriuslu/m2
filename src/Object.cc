@@ -152,12 +152,18 @@ m2::Graphic& m2::Object::add_graphic(const m2g::pb::SpriteType spriteType) {
 	return *gfx;
 }
 m2::Graphic& m2::Object::add_terrain_graphic(BackgroundLayer layer) {
+	if (layer == BackgroundLayer::ALL) {
+		throw M2_ERROR("Invalid background layer");
+	}
 	auto terrain_gfx = M2_LEVEL.terrainGraphics[I(layer)].emplace(id());
 	_terrain_graphic_id = std::make_pair(terrain_gfx.id(), layer);
 	LOG_TRACE("Added terrain graphic component", _terrain_graphic_id);
 	return *terrain_gfx;
 }
 m2::Graphic& m2::Object::add_terrain_graphic(BackgroundLayer layer, const m2g::pb::SpriteType spriteType) {
+	if (layer == BackgroundLayer::ALL) {
+		throw M2_ERROR("Invalid background layer");
+	}
 	auto terrain_gfx = M2_LEVEL.terrainGraphics[I(layer)].emplace(id(), M2_GAME.GetSpriteOrTextLabel(spriteType));
 	_terrain_graphic_id = std::make_pair(terrain_gfx.id(), layer);
 	LOG_TRACE("Added terrain graphic component", _terrain_graphic_id);

@@ -7,29 +7,21 @@ using namespace m2::widget;
 CheckboxWithText::CheckboxWithText(UiPanel* parent, const UiWidgetBlueprint* blueprint)
     : AbstractButton(parent, blueprint), _state(std::get<CheckboxWithTextBlueprint>(blueprint->variant).initial_state) {
 	_textTexture = m2_move_or_throw_error(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font,
-			M2G_PROXY.default_font_size, std::get<CheckboxWithTextBlueprint>(blueprint->variant).text));
+			M2G_PROXY.default_font_size, std::get<CheckboxWithTextBlueprint>(blueprint->variant).text)); // TODO scale the text with the window
 }
 
 void CheckboxWithText::on_draw() {
 	// Background
 	draw_background_color();
-	// Checkbox
-	auto filled_dstrect = SDL_Rect{rect().x, rect().y, rect().h, rect().h};
-	SDL_SetRenderDrawColor(M2_GAME.renderer, 255, 255, 255, 255);
-	SDL_RenderFillRect(M2_GAME.renderer, &filled_dstrect);
-	if (!_state) {
-		auto empty_dstrect = SDL_Rect{rect().x + 1, rect().y + 1, rect().h - 2, rect().h - 2};
-		SDL_SetRenderDrawColor(
-		    M2_GAME.renderer, blueprint->background_color.r, blueprint->background_color.g, blueprint->background_color.b,
-		    blueprint->background_color.a);
-		SDL_RenderFillRect(M2_GAME.renderer, &empty_dstrect);
-	}
+
+	const auto accentColor = _state ? RGBA{127, 127, 127, 255} : RGBA{255, 255, 255, 255};
+
 	// Text
 	if (auto* texture = _textTexture.texture(); texture) {
-		const auto destinationRect = calculate_filled_text_rect(rect().trim_left(rect().h),
-				TextHorizontalAlignment::LEFT, I(utf8_codepoint_count(_textTexture.string().c_str())));
-		sdl::render_texture_with_color_mod(texture, destinationRect);
+		const auto destinationRect = calculate_filled_text_rect(rect(), TextHorizontalAlignment::CENTER, I(utf8_codepoint_count(_textTexture.string().c_str())));
+		sdl::render_texture_with_color_mod(texture, destinationRect, static_cast<RGB>(accentColor));
 	}
+
 	// Border
-	draw_border(rect(), vertical_border_width_px(), horizontal_border_width_px());
+	draw_border(rect(), vertical_border_width_px(), horizontal_border_width_px(), accentColor);
 }

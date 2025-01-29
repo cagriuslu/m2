@@ -16,7 +16,6 @@ namespace m2::widget {
 
 		// Modifiers
 		void recreate();
-		UiAction trigger_action(bool new_state);
 
 		friend struct AbstractButton;
 	};

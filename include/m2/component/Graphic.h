@@ -22,6 +22,10 @@ namespace m2 {
 	/// Returns a vector from screen origin (top-left corner) to given position in output pixels.
 	/// For meters to pixels conversion, Game Output PPM is used.
 	VecF ScreenOriginToPositionVecPx(const VecF& position);
+	/// Returns the corresponding position of a pixel in 2D world coordiantes. Only applicable to parallel projection.
+	VecF PixelToPositionVecM(const VecI& pixelPosition);
+	/// Returns the boundaries of the Game viewport in 2D world coordinates. Only applicable to parallel projection.
+	RectF ViewportM();
 }
 
 namespace m3 {

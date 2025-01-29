@@ -169,11 +169,9 @@ namespace m2 {
 		void ForEachNamedItem(const std::function<bool(m2g::pb::ItemType, const NamedItem&)>& op) const;
 		float DeltaTimeS() const { return _delta_time_s; }
 		[[nodiscard]] VecI MousePositionPx() const { return events.mouse_position(); }
-		const VecF& MousePositionWorldM() const;
-		const VecF& ScreenCenterToMousePositionM() const;
-		VecF PixelTo2dWorldM(const VecI& pixel_position);
-		RectF ViewportTo2dWorldRectM();
-		sdl::TextureUniquePtr DrawGameToTexture(m2::VecF camera_position);
+		const VecF& MousePositionWorldM() const; // TODO move into Level?
+		const VecF& ScreenCenterToMousePositionM() const; // TODO move into Level?
+		sdl::TextureUniquePtr DrawGameToTexture(m2::VecF camera_position); // TODO move into Level?
 		/// This function can be used to check if the mouse is resting on any UI panels. If not, the mouse must be
 		/// inside the game window.
 		[[nodiscard]] bool IsMouseOnAnyUiPanel() const;

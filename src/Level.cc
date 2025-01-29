@@ -65,7 +65,6 @@ m2::void_expected m2::Level::InitMultiPlayerAsGuest(
 m2::void_expected m2::Level::InitLevelEditor(const std::filesystem::path& lb_path) {
 	_lbPath = lb_path;
 	stateVariant.emplace<level_editor::State>();
-	auto& le_state = std::get<level_editor::State>(stateVariant);
 
 	// Create message box initially disabled
 	_messageBoxUiPanel.emplace(&DefaultMessageBoxBlueprint, DefaultMessageBoxArea);
@@ -75,26 +74,8 @@ m2::void_expected m2::Level::InitLevelEditor(const std::filesystem::path& lb_pat
 		auto lb = pb::json_file_to_message<pb::Level>(*_lbPath);
 		m2_reflect_unexpected(lb);
 		_lb.emplace(*lb);
-		// Create background tiles
-		for (int l = 0; l < lb->background_layers_size(); ++l) {
-			const auto& layer = lb->background_layers(l);
-			for (int y = 0; y < layer.background_rows_size(); ++y) {
-				for (int x = 0; x < layer.background_rows(y).items_size(); ++x) {
-					auto sprite_type = layer.background_rows(y).items(x);
-					if (sprite_type) {
-						auto position = VecF{x, y};
-						le_state.bg_placeholders[l][position.iround()] = std::make_pair(
-						    obj::create_background_placeholder(position, sprite_type, static_cast<BackgroundLayer>(l)),
-									sprite_type);
-					}
-				}
-			}
-		}
-		// Create foreground objects
-		for (const auto& fg_object : lb->objects()) {
-			auto position = VecF{fg_object.position()};
-			le_state.fg_placeholders[position.iround()] = std::make_pair(obj::create_foreground_placeholder(position, M2_GAME.object_main_sprites[fg_object.type()]), fg_object);
-		}
+
+		std::get<level_editor::State>(stateVariant).LoadLevelBlueprint(*_lb);
 	}
 
 	// Create default objects
@@ -103,9 +84,9 @@ m2::void_expected m2::Level::InitLevelEditor(const std::filesystem::path& lb_pat
 	m2::obj::create_origin();
 
 	// UI Hud
-	_leftHudUiPanel.emplace(&level_editor::LeftHudBlueprint, M2_GAME.Dimensions().LeftHud());
+	_leftHudUiPanel.emplace(&level_editor::gLeftHudBlueprint, M2_GAME.Dimensions().LeftHud());
 	_leftHudUiPanel->update_contents(0.0f);
-	_rightHudUiPanel.emplace(&level_editor::RightHudBlueprint, M2_GAME.Dimensions().RightHud());
+	_rightHudUiPanel.emplace(&level_editor::gRightHudBlueprint, M2_GAME.Dimensions().RightHud());
 	_rightHudUiPanel->update_contents(0.0f);
 	_messageBoxUiPanel->update_contents(0.0f);
 

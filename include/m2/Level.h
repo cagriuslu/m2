@@ -13,7 +13,6 @@
 #include "Meta.h"
 #include "Object.h"
 #include "bulk_sheet_editor/State.h"
-#include "level_editor/Detail.h"
 #include "level_editor/State.h"
 #include "m2/game/Pathfinder.h"
 #include "m3/VecF.h"
@@ -66,7 +65,7 @@ namespace m2 {
 		DrawList drawList;
 		Pool<Physique> physics;
 		Pool<Graphic> graphics;
-		std::array<Pool<Graphic>, static_cast<int>(BackgroundLayer::n)> terrainGraphics;  // First pool is the front-most terrain
+		std::array<Pool<Graphic>, gBackgroundLayerCount> terrainGraphics;
 		Pool<Light> lights;
 		Pool<SoundEmitter> soundEmitters;
 		Pool<CharacterVariant> characters;
@@ -82,8 +81,8 @@ namespace m2 {
 		std::variant<
 		    std::monostate, splayer::State, mplayer::State, level_editor::State, pixel_editor::State, sheet_editor::State, bulk_sheet_editor::State>
 		    stateVariant;
-		std::optional<DynamicGridLinesLoader> dynamicGridLinesLoader;
-		std::optional<DynamicGridLinesLoader> dynamicSheetGridLinesLoader;
+		std::optional<DynamicGridLinesLoader> dynamicGridLinesLoader; // TODO get rid of these, draw with the editor State
+		std::optional<DynamicGridLinesLoader> dynamicSheetGridLinesLoader; // TODO get rid of these, draw with the editor State
 
 		void_expected InitSinglePlayer(
 		    const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name);

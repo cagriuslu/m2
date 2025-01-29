@@ -262,7 +262,7 @@ void TextSelection::set_options(TextSelectionBlueprint::Options&& options) {
 		}
 	}
 }
-void TextSelection::set_unique_selection(int index) {
+void TextSelection::set_unique_selection(const int index) {
 	if (0 <= index && index < I(_options.size())) {
 		// Clear all selections
 		for (auto& option : _options) {

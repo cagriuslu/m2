@@ -97,3 +97,12 @@ void IntegerInput::on_draw() {
 
 	draw_border(rect(), vertical_border_width_px(), horizontal_border_width_px());
 }
+
+void IntegerInput::SetValue(const int value) {
+	if (integer_selection_blueprint().min_value <= value && value < integer_selection_blueprint().max_value) {
+		_value = value;
+		if (integer_selection_blueprint().on_action) {
+			integer_selection_blueprint().on_action(*this);
+		}
+	}
+}

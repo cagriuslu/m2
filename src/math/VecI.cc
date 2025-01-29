@@ -8,16 +8,6 @@
 
 m2::VecI::VecI(const m2::VecF& v) : VecI(v.x, v.y) {}
 
-void m2::VecI::for_each_cell_in_between(const VecI& other, const std::function<void(const VecI&)>& f) const {
-	auto to_right = (x <= other.x);
-	auto to_down = (y <= other.y);
-	for (int32_t yi = y; to_down ? yi <= other.y : other.y <= yi; to_down ? ++yi : --yi) {
-		for (int32_t xi = x; to_right ? xi <= other.x : other.x <= xi; to_right ? ++xi : --xi) {
-			f({xi, yi});
-		}
-	}
-}
-
 m2::VecI m2::VecI::aspect_ratio_dimensions(int w, int h) const {
 	// Simplify the w_ to h_ ratio
 	auto aspect_ratio = Rational{w, h}.simplify();

@@ -8,13 +8,16 @@
 namespace m2 {
 	extern const std::string empty_string;
 
+	/// Background layers are drawn from back to front. L0 is drawn the last, thus it's on the front.
 	enum class BackgroundLayer {
+		ALL = -1,
 		L0 = 0,
 		L1 = 1,
 		L2 = 2,
 		L3 = 3,
-		n
+		_n // End sentinel
 	};
+	constexpr int gBackgroundLayerCount = static_cast<int>(BackgroundLayer::_n);
 	std::string ToString(BackgroundLayer layer);
 
 	/// Returns the number of codepoints in a UTF-8 string.

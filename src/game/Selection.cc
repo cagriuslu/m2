@@ -8,6 +8,12 @@ SelectionResult::SelectionResult(const Events &events) : _mouse_position_m(M2_GA
 std::optional<std::pair<VecI, VecI>> SelectionResult::primary_int_selection_position_m() const {
 	return selection_position_int_m(_primary_selection_position_m);
 }
+std::optional<RectI> SelectionResult::PrimaryIntegerRoundedSelectionRectM() const {
+	if (const auto positions = primary_int_selection_position_m()) {
+		return RectI::from_corners(positions->first, positions->second);
+	}
+	return std::nullopt;
+}
 std::optional<std::pair<VecF, VecF>> SelectionResult::primary_cell_selection_position_m() const {
 	return selection_position_m(_primary_selection_position_m, RoundingType::CELL);
 }
@@ -19,6 +25,12 @@ std::optional<std::pair<VecF, VecF>> SelectionResult::primary_selection_position
 }
 std::optional<std::pair<VecI, VecI>> SelectionResult::secondary_int_selection_position_m() const {
 	return selection_position_int_m(_secondary_selection_position_m);
+}
+std::optional<RectI> SelectionResult::SecondaryIntegerRoundedSelectionRectM() const {
+	if (const auto positions = secondary_int_selection_position_m()) {
+		return RectI{positions->first.x, positions->first.y, positions->second.x - positions->first.x + 1, positions->second.y - positions->first.y + 1};
+	}
+	return std::nullopt;
 }
 std::optional<std::pair<VecF, VecF>> SelectionResult::secondary_cell_selection_position_m() const {
 	return selection_position_m(_secondary_selection_position_m, RoundingType::CELL);

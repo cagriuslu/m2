@@ -5,6 +5,10 @@
 #include "m2/box2d/Detail.h"
 
 m2::Pool<m2::Object>::Iterator m2::obj::create_tile(BackgroundLayer layer, const VecF& position, const m2g::pb::SpriteType spriteType) {
+	if (layer == BackgroundLayer::ALL) {
+		throw M2_ERROR("Invalid background layer");
+	}
+
     const auto it = create_object(position);
 	it->add_terrain_graphic(layer, spriteType);
 

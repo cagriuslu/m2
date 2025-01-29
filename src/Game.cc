@@ -421,7 +421,7 @@ void m2::Game::HandleMenuEvent() {
 		if (std::holds_alternative<splayer::State>(Level().stateVariant)) {
 			PauseMenuBlueprint = _proxy.PauseMenuBlueprint();
 		} else if (std::holds_alternative<level_editor::State>(Level().stateVariant)) {
-			PauseMenuBlueprint = &level_editor::menu;
+			PauseMenuBlueprint = nullptr;
 		} else if (std::holds_alternative<sheet_editor::State>(Level().stateVariant)) {
 			PauseMenuBlueprint = &sheet_editor_main_menu;
 		} else if (std::holds_alternative<bulk_sheet_editor::State>(Level().stateVariant)) {
@@ -721,26 +721,16 @@ namespace {
 		}
 	}
 }  // namespace
+
 void m2::Game::DrawBackground() {
 	if (std::holds_alternative<level_editor::State>(_level->stateVariant)) {
-		const auto& le = std::get<level_editor::State>(_level->stateVariant);
-		std::visit(
-			overloaded{
-				[&](MAYBE const level_editor::State::PaintMode& mode) {
-					draw_one_background_layer(_level->terrainGraphics[I(le.selected_layer)]);
-				},
-				[&](MAYBE const level_editor::State::EraseMode& mode) {
-					draw_one_background_layer(_level->terrainGraphics[I(le.selected_layer)]);
-				},
-				[&](MAYBE const level_editor::State::PickMode& mode) {
-					draw_one_background_layer(_level->terrainGraphics[I(le.selected_layer)]);
-				},
-				[&](MAYBE const level_editor::State::SelectMode& mode) {
-					draw_one_background_layer(_level->terrainGraphics[I(le.selected_layer)]);
-				},
-				[&](MAYBE const auto& mode) { draw_all_background_layers(*_level); },
-			},
-			le.mode);
+		if (const auto& rightHudName = _level->RightHud()->Name();
+				rightHudName == "PaintBgRightHud" || rightHudName == "SampleBgRightHud" || rightHudName == "SelectBgRightHud") {
+			const auto& levelEditorState = std::get<level_editor::State>(_level->stateVariant);
+			draw_one_background_layer(_level->terrainGraphics[I(levelEditorState.GetSelectedBackgroundLayer())]);
+		} else {
+			draw_all_background_layers(*_level);
+		}
 	} else {
 		draw_all_background_layers(*_level);
 	}
@@ -899,22 +889,6 @@ const m2::VecF& m2::Game::ScreenCenterToMousePositionM() const {
 		RecalculateMousePosition();
 	}
 	return *_screen_center_to_mouse_position_m;
-}
-
-m2::VecF m2::Game::PixelTo2dWorldM(const VecI& pixel_position) {
-	const auto screen_center_to_pixel_position_px =
-		VecI{pixel_position.x - (Dimensions().WindowDimensions().x / 2), pixel_position.y - (Dimensions().WindowDimensions().y / 2)};
-	const auto screen_center_to_pixel_position_m = VecF{
-		F(screen_center_to_pixel_position_px.x) / Dimensions().OutputPixelsPerMeter(), F(screen_center_to_pixel_position_px.y) / Dimensions().OutputPixelsPerMeter()};
-	const auto camera_position = _level->objects[_level->cameraId].position;
-	return screen_center_to_pixel_position_m + camera_position;
-}
-
-m2::RectF m2::Game::ViewportTo2dWorldRectM() {
-	const auto top_left = PixelTo2dWorldM(VecI{Dimensions().Game().x, Dimensions().Game().y});
-	const auto bottom_right =
-		PixelTo2dWorldM(VecI{Dimensions().Game().x + Dimensions().Game().w, Dimensions().Game().y + Dimensions().Game().h});
-	return RectF::from_corners(top_left, bottom_right);
 }
 
 m2::sdl::TextureUniquePtr m2::Game::DrawGameToTexture(m2::VecF camera_position) {

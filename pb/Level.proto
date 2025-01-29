@@ -48,6 +48,7 @@ message Level {
   float camera_z_offset = 4; // Z component of the camera in PERSPECTIVE projection in meters
   float horizontal_fov = 5; // Horizontal FOV of the camera in PERSPECTIVE projection in degrees
 
-  repeated BackgroundLayer background_layers = 6; // First element is the front-most background
+  // First layer is drawn the last, thus it's on the front.
+  repeated BackgroundLayer background_layers = 6;
   repeated LevelObject objects = 7;
 }
