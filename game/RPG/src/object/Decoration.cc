@@ -2,11 +2,12 @@
 #include <m2/Game.h>
 
 m2::void_expected rpg::create_decoration(m2::Object& obj, m2g::pb::SpriteType sprite_type) {
+	if (obj.object_type() == m2g::pb::FENCE_VERTICAL) {
+		obj.orientation = m2::PI_DIV2;
+	}
+
 	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(sprite_type));
 	auto& gfx = obj.add_graphic(sprite_type);
-	if (obj.object_type() == m2g::pb::FENCE_VERTICAL) {
-		gfx.draw_angle = m2::PI_DIV2;
-	}
 
 	if (sprite.BackgroundColliderType() == m2::box2d::ColliderType::RECTANGLE) {
 		m2::pb::BodyBlueprint bp;

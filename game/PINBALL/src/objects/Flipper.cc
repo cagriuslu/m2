@@ -27,9 +27,6 @@ m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
 				phy_.body->ApplyTorque(-1000.0f, true);
 			}
 		};
-		phy.post_step = [&gfx](m2::Physique& phy_) {
-			gfx.draw_angle = phy_.body->GetAngle();
-		};
 	}
 
 	return {};

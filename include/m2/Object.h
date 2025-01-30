@@ -30,6 +30,7 @@ namespace m2 {
 	/// Else => impl
 	struct Object final {
 		VecF position;
+		float orientation; /// In radians
 		// Custom Data
 		std::unique_ptr<ObjectImpl> impl;
 

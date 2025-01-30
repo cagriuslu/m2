@@ -35,6 +35,8 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& intend
 	auto direction = m2::VecF::from_angle(angle);
 	float ttl = m2::apply_accuracy(average_ttl, average_ttl, ttl_accuracy);
 
+	obj.orientation = angle;
+
 	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(ranged_weapon.game_sprite()));
 
 	// Add physics
@@ -51,7 +53,6 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& intend
 
 	// Add graphics
 	auto& gfx = obj.add_graphic(ranged_weapon.game_sprite());
-	gfx.draw_angle = angle;
 	gfx.z = 0.5f;
 
 	// Add character

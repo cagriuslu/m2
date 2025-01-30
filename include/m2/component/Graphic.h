@@ -89,7 +89,6 @@ namespace m2 {
 		/// Only applicable to text labels.
 		RectI textLabelRect{};
 
-		float draw_angle{}; // Rads
 		float z{};
 
 		Graphic() = default;

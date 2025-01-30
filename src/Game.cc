@@ -588,8 +588,9 @@ void m2::Game::ExecuteStep() {
 			if (phy.body) {
 				auto& object = phy.owner();
 				auto old_pos = object.position;
-				// Update draw list
 				object.position = m2::VecF{phy.body->GetPosition()};
+				object.orientation = phy.body->GetAngle();
+				// Update draw list
 				if (old_pos != object.position) {
 					_level->drawList.queue_update(phy.owner_id(), object.position);
 				}
@@ -600,11 +601,10 @@ void m2::Game::ExecuteStep() {
 				auto newPosition = rigidBody.PositionOfCenterOfMass();
 				object.position.x = newPosition.X().ToFloat();
 				object.position.y = newPosition.Y().ToFloat();
+				object.orientation = rigidBody.OrientationAboutCenterOfMass().ToFloat();
+				// Update draw list
 				if (oldPosition != object.position) {
 					_level->drawList.queue_update(phy.owner_id(), object.position);
-				}
-				if (const auto gfxId = object.graphic_id()) {
-					_level->graphics[gfxId].draw_angle = rigidBody.OrientationAboutCenterOfMass().ToFloat();
 				}
 			}
 		}

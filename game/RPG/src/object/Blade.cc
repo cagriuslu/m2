@@ -25,6 +25,8 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF &direction, 
 	const float start_angle = direction_angle + swing_angle / 2.0f;
 	const float swing_speed = swing_angle / average_ttl;
 
+	obj.orientation = start_angle;
+
 	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(melee_weapon.game_sprite()));
 
 	// Add physics
@@ -42,7 +44,6 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF &direction, 
 
 	// Add graphics
 	auto& gfx = obj.add_graphic(melee_weapon.game_sprite());
-	gfx.draw_angle = phy.body->GetAngle();
 	gfx.z = 0.5f;
 
 	// Add character
@@ -67,7 +68,6 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF &direction, 
 		if (auto* originator = obj.get_parent()) {
 			float curr_angle = phy.body->GetAngle();
 			phy.body->SetTransform(static_cast<b2Vec2>(originator->position), curr_angle);
-			obj.graphic().draw_angle = curr_angle;
 		} else {
 			// Originator died
 			M2_DEFER(m2::create_object_deleter(phy.owner_id()));

@@ -26,7 +26,7 @@ m2::void_expected rpg::init_finish_point(m2::Object& obj) {
 			M2_DEFER([]() {
 				auto level_duration = M2_LEVEL.GetLevelDuration();
 				LOG_INFO("Level duration", level_duration);
-				M2G_PROXY.progress.mutable_level_completion_times()->operator[](M2_LEVEL.name()) = level_duration;
+				M2G_PROXY.progress.mutable_level_completion_times()->operator[](M2_LEVEL.Name()) = level_duration;
 				LOG_INFO("Saving progress...");
 				M2G_PROXY.save_progress();
 				LOG_INFO("Progress saved");

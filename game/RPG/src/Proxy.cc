@@ -23,7 +23,7 @@ void m2g::Proxy::load_resources() {
 }
 
 void m2g::Proxy::post_single_player_level_init(MAYBE const std::string& name, const m2::pb::Level& level) {
-	const auto& id = level.Identifier();
+	const auto& id = level.identifier();
 	if (id == "WalkingTutorialClosed") {
 		M2_LEVEL.ShowMessage("Use W,A,S,D to walk.");
 	} else if (id == "WalkingTutorialOpen") {
@@ -222,7 +222,7 @@ const m2::UiPanelBlueprint* m2g::Proxy::you_died_menu() {
 		        .text = "Retry",
 		        .on_action = [=, this](MAYBE const m2::widget::Text &self) -> m2::UiAction {
 			        alive_enemy_count = 0;
-			        m2_succeed_or_throw_error(M2_GAME.LoadSinglePlayer(*lb_path, M2_LEVEL.name()));
+			        m2_succeed_or_throw_error(M2_GAME.LoadSinglePlayer(*lb_path, M2_LEVEL.Name()));
 			        return m2::MakeReturnAction();
 		        }
 		    }
