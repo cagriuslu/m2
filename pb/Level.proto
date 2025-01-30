@@ -13,8 +13,9 @@ message Group {
 
 message LevelObject {
   VecF position = 1;
-  m2g.pb.ObjectType type = 2;
-  Group group = 3;
+  float orientation = 2; // In radians
+  m2g.pb.ObjectType type = 3;
+  Group group = 4;
 }
 
 message BackgroundLayer {

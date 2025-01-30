@@ -6,8 +6,9 @@ m2::Id m2::obj::create_background_placeholder(const VecF& pos, m2g::pb::SpriteTy
 	return it.id();
 }
 
-m2::Id m2::obj::create_foreground_placeholder(const VecF& pos, m2g::pb::SpriteType spriteType) {
+m2::Id m2::obj::create_foreground_placeholder(const VecF& pos, float orientation, m2g::pb::SpriteType spriteType) {
 	auto it = create_object(pos);
+	it->orientation = orientation;
 	it->add_graphic(spriteType);
 	return it.id();
 }

@@ -238,9 +238,21 @@ namespace {
 				}
 			},
 			UiWidgetBlueprint{
-				.name = "ObjectTypeSelection",
+				.name = "OrientationInput",
 				.x = 2,
 				.y = 7,
+				.w = 15,
+				.h = 4,
+				.variant = IntegerInputBlueprint{
+					.min_value = 0,
+					.max_value = 359,
+					.initial_value = 0
+				}
+			},
+			UiWidgetBlueprint{
+				.name = "ObjectTypeSelection",
+				.x = 2,
+				.y = 12,
 				.w = 15,
 				.h = 48,
 				.variant = TextSelectionBlueprint{
@@ -273,7 +285,7 @@ namespace {
 			UiWidgetBlueprint{
 				.name = "GroupTypeSelection",
 				.x = 2,
-				.y = 56,
+				.y = 61,
 				.w = 15,
 				.h = 4,
 				.variant = TextSelectionBlueprint{
@@ -291,7 +303,7 @@ namespace {
 			UiWidgetBlueprint{
 				.name = "GroupInstanceSelection",
 				.x = 2,
-				.y = 61,
+				.y = 66,
 				.w = 15,
 				.h = 4,
 				.variant = IntegerInputBlueprint{

@@ -45,7 +45,7 @@ namespace m2::level_editor {
 
 	private:
 		void PaintBackground(const VecI& position, m2g::pb::SpriteType spriteType);
-		void PlaceForeground(const VecF& position, m2g::pb::ObjectType objectType, m2g::pb::GroupType groupType, unsigned groupInstance);
+		void PlaceForeground(const VecF& position, float orientation, m2g::pb::ObjectType objectType, m2g::pb::GroupType groupType, unsigned groupInstance);
 		RectF ForegroundSelectionArea() const;
 	};
 }

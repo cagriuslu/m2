@@ -36,7 +36,7 @@ void m2::level_editor::State::LoadLevelBlueprint(const pb::Level& lb) {
 	}
 	// Create foreground objects
 	for (const auto& fgObject : lb.objects()) {
-		PlaceForeground(VecF{fgObject.position()}, fgObject.type(), fgObject.group().type(), fgObject.group().instance());
+		PlaceForeground(VecF{fgObject.position()}, fgObject.orientation(), fgObject.type(), fgObject.group().type(), fgObject.group().instance());
 	}
 }
 
@@ -77,7 +77,8 @@ void m2::level_editor::State::HandleMousePrimaryButton(const VecF& position) {
 					std::get<int>(
 						M2_LEVEL.RightHud()->find_first_widget_by_name<widget::TextSelection>("GroupTypeSelection")->selections()[0]));
 			const auto selectedGroupInstance = M2_LEVEL.RightHud()->find_first_widget_by_name<widget::IntegerInput>("GroupInstanceSelection")->value();
-			PlaceForeground(GetSnapToGridStatus() ? position.round() : position, selectedObjectType, selectedGroupType, selectedGroupInstance);
+			const auto orientation = to_radians(M2_LEVEL.RightHud()->find_first_widget_by_name<widget::IntegerInput>("OrientationInput")->value());
+			PlaceForeground(GetSnapToGridStatus() ? position.round() : position, orientation, selectedObjectType, selectedGroupType, selectedGroupInstance);
 		}
 	} else if (M2_LEVEL.RightHud()->Name() == "SampleFgRightHud") {
 		auto foundIt = _foregroundObjectPlaceholders.end();
@@ -93,7 +94,14 @@ void m2::level_editor::State::HandleMousePrimaryButton(const VecF& position) {
 		if (foundIt != _foregroundObjectPlaceholders.end()) {
 			// Find and press the Place button
 			M2_LEVEL.LeftHud()->find_first_widget_by_name<widget::Text>("PlaceFgButton")->trigger_action();
+
 			// Find object properties and set it
+
+			const auto orientationDegreesUnbounded = iround(to_degrees(std::get<pb::LevelObject>(foundIt->second).orientation()));
+			const auto orientationDegrees = ((orientationDegreesUnbounded % 360) + 360) % 360;
+			auto* orientationInput = M2_LEVEL.RightHud()->find_first_widget_by_name<widget::IntegerInput>("OrientationInput");
+			orientationInput->SetValue(orientationDegrees);
+
 			const auto objectType = std::get<pb::LevelObject>(foundIt->second).type();
 			auto* objectTypeSelection = M2_LEVEL.RightHud()->find_first_widget_by_name<widget::TextSelection>("ObjectTypeSelection");
 			// Find the index of the option that corresponds to the object type
@@ -193,7 +201,7 @@ void m2::level_editor::State::PasteForeground() {
 	const auto selection = ForegroundSelectionArea();
 	for (const auto& [clipboardPosition, levelObject] : _foregroundObjectClipboard) {
 		const auto position = selection.top_left() + VecF{levelObject.position().x(), levelObject.position().y()};
-		PlaceForeground(position, levelObject.type(), levelObject.group().type(), levelObject.group().instance());
+		PlaceForeground(position, levelObject.orientation(), levelObject.type(), levelObject.group().type(), levelObject.group().instance());
 	}
 }
 
@@ -260,11 +268,12 @@ void m2::level_editor::State::PaintBackground(const VecI& position, m2g::pb::Spr
 	_backgroundSpritePlaceholders[I(GetSelectedBackgroundLayer())]
 			.emplace(position, std::make_tuple(bgPlaceholderId, spriteType));
 }
-void m2::level_editor::State::PlaceForeground(const VecF& position, m2g::pb::ObjectType objectType, m2g::pb::GroupType groupType, unsigned groupInstance) {
-	const auto fgPlaceholderId = obj::create_foreground_placeholder(position, M2_GAME.object_main_sprites[objectType]);
+void m2::level_editor::State::PlaceForeground(const VecF& position, float orientation, m2g::pb::ObjectType objectType, m2g::pb::GroupType groupType, unsigned groupInstance) {
+	const auto fgPlaceholderId = obj::create_foreground_placeholder(position, orientation, M2_GAME.object_main_sprites[objectType]);
 	m2::pb::LevelObject levelObject;
 	levelObject.mutable_position()->set_x(position.x);
 	levelObject.mutable_position()->set_y(position.y);
+	levelObject.set_orientation(orientation);
 	levelObject.set_type(objectType);
 	levelObject.mutable_group()->set_type(groupType);
 	levelObject.mutable_group()->set_instance(groupInstance);

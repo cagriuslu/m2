@@ -370,6 +370,7 @@ m2::void_expected m2::Level::InitAnyPlayer(
 		const auto objectPosition = VecF{fg_object.position()};
 		LOG_TRACE("Loading foreground object", fg_object.type(), objectPosition);
 		auto it = create_object(objectPosition, fg_object.type());
+		it->orientation = fg_object.orientation();
 
 		// Assign to group
 		if (fg_object.has_group() && fg_object.group().type() != m2g::pb::GroupType::NO_GROUP) {
