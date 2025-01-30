@@ -2,16 +2,31 @@
   "identifier": "001",
   "objects": [
     {
-      "type": "FLIPPER_RIGHT"
-    },
-    {
-      "type": "FLIPPER_LEFT"
-    },
-    {
-      "type": "BALL"
-    },
-    {
       "type": "PLAYER"
+    },
+    {
+      "position": {
+        "x": 5.69422722,
+        "y": 3.97078037
+      },
+      "type": "BALL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 8.34996414,
+        "y": 11.642911
+      },
+      "type": "FLIPPER_RIGHT",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 4.40324402,
+        "y": 11.6797962
+      },
+      "type": "FLIPPER_LEFT",
+      "group": {}
     }
   ]
 }

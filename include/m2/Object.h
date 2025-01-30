@@ -24,12 +24,12 @@ namespace m2 {
 	using CharacterId = Id;
 
 	/// Basis of all objects in the game.
-	/// How to decide if a component should reside in Pool or data?
+	/// How to decide if a component should reside in Pool or impl?
 	/// If the component is iterated by the Main Game Loop => Pool
 	/// If the component is created and destroyed rapidly => Pool
-	/// Else => Data
+	/// Else => impl
 	struct Object final {
-		m2::VecF position;
+		VecF position;
 		// Custom Data
 		std::unique_ptr<ObjectImpl> impl;
 
@@ -89,30 +89,33 @@ namespace m2 {
 		mutable std::optional<ObjectId> _id;
 		m2g::pb::ObjectType _object_type{};
 		ObjectId _parent_id{};
-		GroupId _group_id{};
+		GroupId _group_id{}; // TODO group isn't a common feature. make it part of some other component
 		IndexInGroup _index_in_group{};
 		// Components
 		PhysiqueId _physique_id{};
-		GraphicId _graphic_id{};
+		GraphicId _graphic_id{}; // TODO an object shouldn't have both foreground and background texture. should we infer the graphic id based on Pool Id?
 		std::pair<GraphicId, BackgroundLayer> _terrain_graphic_id{};
-		LightId _light_id{};
+		LightId _light_id{}; // TODO make part of another component?
 		SoundEmitterId _sound_emitter_id{};
 		CharacterId _character_id{};
 	};
 
 	Pool<Object>::Iterator create_object(const m2::VecF& position, m2g::pb::ObjectType type = {}, ObjectId parent_id = 0);
-	std::function<void(void)> create_object_deleter(ObjectId id);
-	std::function<void(void)> create_physique_deleter(ObjectId id);
-	std::function<void(void)> create_graphic_deleter(ObjectId id);
-	std::function<void(void)> create_terrain_graphic_deleter(ObjectId id);
-	std::function<void(void)> create_light_deleter(ObjectId id);
-	std::function<void(void)> create_sound_emitter_deleter(ObjectId id);
-	std::function<void(void)> create_character_deleter(ObjectId id);
+	std::function<void()> create_object_deleter(ObjectId id);
+	std::function<void()> create_physique_deleter(ObjectId id);
+	std::function<void()> create_graphic_deleter(ObjectId id);
+	std::function<void()> create_terrain_graphic_deleter(ObjectId id);
+	std::function<void()> create_light_deleter(ObjectId id);
+	std::function<void()> create_sound_emitter_deleter(ObjectId id);
+	std::function<void()> create_character_deleter(ObjectId id);
 
 	// Filters
+
 	// Filter Generators
 	std::function<bool(Object&)> is_object_in_area(const RectF& rect);
+
 	// Transformers
+
 	Object& to_object_of_id(ObjectId id);
 	inline Character& to_character_of_object_unsafe(Object* o) { return o->character(); }
 	inline Character& to_character_of_object(Object& o) { return o.character(); }
