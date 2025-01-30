@@ -16,10 +16,13 @@ namespace {
 TextInput::TextInput(UiPanel* parent, const UiWidgetBlueprint* blueprint) : UiWidget(parent, blueprint) {
 	const auto& te_blueprint = std::get<TextInputBlueprint>(blueprint->variant);
 	_text_input << te_blueprint.initial_text;
+	if (VariantBlueprint().onCreate) {
+		VariantBlueprint().onCreate(*this);
+	}
 }
 
-UiAction TextInput::on_event(Events& events) {
-	if (events.pop_mouse_button_press(MouseButton::PRIMARY, RectI{rect()})) {
+UiAction TextInput::HandleEvents(Events& events) {
+	if (events.pop_mouse_button_press(MouseButton::PRIMARY, RectI{Rect()})) {
 		LOG_INFO("Regaining focus");
 		return MakeContinueAction(true);
 	}
@@ -30,8 +33,8 @@ UiAction TextInput::on_event(Events& events) {
 
 	if (events.pop_key_press(Key::MENU)) {
 		return MakeContinueAction(false);
-	} else if (events.pop_key_press(Key::ENTER) && std::get<TextInputBlueprint>(blueprint->variant).on_action) {
-		auto [action, new_string] = std::get<TextInputBlueprint>(blueprint->variant).on_action(*this);
+	} else if (events.pop_key_press(Key::ENTER) && std::get<TextInputBlueprint>(blueprint->variant).onAction) {
+		auto [action, new_string] = std::get<TextInputBlueprint>(blueprint->variant).onAction(*this);
 		if (new_string) {
 			_text_input = std::stringstream{*new_string};
 		}
@@ -49,7 +52,7 @@ UiAction TextInput::on_event(Events& events) {
 	return MakeContinueAction();
 }
 
-void TextInput::on_focus_change() {
+void TextInput::HandleFocusChange() {
 	if (focused) {
 		LOG_DEBUG("Starting text input");
 		SDL_StartTextInput();
@@ -58,7 +61,7 @@ void TextInput::on_focus_change() {
 	}
 }
 
-void TextInput::on_draw() {
+void TextInput::Draw() {
 	draw_background_color();
 
 	auto str = _text_input.str();
@@ -80,5 +83,5 @@ void TextInput::on_draw() {
 	sdl::render_texture_with_color_mod(_text_texture_and_destination_cache->textTexture.texture(),
 		_text_texture_and_destination_cache->destinationRect);
 
-	draw_border(rect(), vertical_border_width_px(), horizontal_border_width_px());
+	draw_border(Rect(), vertical_border_width_px(), horizontal_border_width_px());
 }

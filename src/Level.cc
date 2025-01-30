@@ -85,10 +85,10 @@ m2::void_expected m2::Level::InitLevelEditor(const std::filesystem::path& lb_pat
 
 	// UI Hud
 	_leftHudUiPanel.emplace(&level_editor::gLeftHudBlueprint, M2_GAME.Dimensions().LeftHud());
-	_leftHudUiPanel->update_contents(0.0f);
+	_leftHudUiPanel->UpdateContents(0.0f);
 	_rightHudUiPanel.emplace(&level_editor::gRightHudBlueprint, M2_GAME.Dimensions().RightHud());
-	_rightHudUiPanel->update_contents(0.0f);
-	_messageBoxUiPanel->update_contents(0.0f);
+	_rightHudUiPanel->UpdateContents(0.0f);
+	_messageBoxUiPanel->UpdateContents(0.0f);
 
 	return {};
 }
@@ -148,9 +148,9 @@ m2::void_expected m2::Level::InitPixelEditor(const std::filesystem::path& path, 
 
 	// UI Hud
 	_leftHudUiPanel.emplace(&pixel_editor_left_hud, M2_GAME.Dimensions().LeftHud());
-	_leftHudUiPanel->update_contents(0.0f);
+	_leftHudUiPanel->UpdateContents(0.0f);
 	_rightHudUiPanel.emplace(&pixel_editor_right_hud, M2_GAME.Dimensions().RightHud());
-	_rightHudUiPanel->update_contents(0.0f);
+	_rightHudUiPanel->UpdateContents(0.0f);
 
 	return {};
 }
@@ -172,10 +172,10 @@ m2::void_expected m2::Level::InitSheetEditor(const std::filesystem::path& path) 
 
 	// UI Hud
 	_leftHudUiPanel.emplace(&sheet_editor_left_hud, M2_GAME.Dimensions().LeftHud());
-	_leftHudUiPanel->update_contents(0.0f);
+	_leftHudUiPanel->UpdateContents(0.0f);
 	_rightHudUiPanel.emplace(&sheet_editor_right_hud, M2_GAME.Dimensions().RightHud());
-	_rightHudUiPanel->update_contents(0.0f);
-	_messageBoxUiPanel->update_contents(0.0f);
+	_rightHudUiPanel->UpdateContents(0.0f);
+	_messageBoxUiPanel->UpdateContents(0.0f);
 
 	return {};
 }
@@ -197,10 +197,10 @@ m2::void_expected m2::Level::InitBulkSheetEditor(const std::filesystem::path& pa
 
 	// UI Hud
 	_leftHudUiPanel.emplace(&bulk_sheet_editor_left_hud, M2_GAME.Dimensions().LeftHud());
-	_leftHudUiPanel->update_contents(0.0f);
+	_leftHudUiPanel->UpdateContents(0.0f);
 	_rightHudUiPanel.emplace(&bulk_sheet_editor_right_hud, M2_GAME.Dimensions().RightHud());
-	_rightHudUiPanel->update_contents(0.0f);
-	_messageBoxUiPanel->update_contents(0.0f);
+	_rightHudUiPanel->UpdateContents(0.0f);
+	_messageBoxUiPanel->UpdateContents(0.0f);
 
 	return {};
 }
@@ -413,7 +413,7 @@ m2::void_expected m2::Level::InitAnyPlayer(
 
 m2::VecI m2::Level::CalculateMouseHoverUiPanelTopLeftPosition() const {
 	// Check the height of the panel
-	const auto panelHeight = _mouseHoverUiPanel->rect_px().h;
+	const auto panelHeight = _mouseHoverUiPanel->Rect().h;
 	// Check if there's enough space below the mouse
 	const auto heightUnderMouse = M2_GAME.Dimensions().GameAndHud().y2() - M2_GAME.MousePositionPx().y;
 	int finalY;
@@ -426,7 +426,7 @@ m2::VecI m2::Level::CalculateMouseHoverUiPanelTopLeftPosition() const {
 	}
 
 	// Check the width of the panel
-	const auto panelWidth = _mouseHoverUiPanel->rect_px().w;
+	const auto panelWidth = _mouseHoverUiPanel->Rect().w;
 	// Check if there's enough space to the right of the mouse
 	const auto widthLeftOfTheMouse = M2_GAME.Dimensions().GameAndHud().x2() - M2_GAME.MousePositionPx().x;
 	int finalX;

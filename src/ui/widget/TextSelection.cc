@@ -5,23 +5,23 @@ using namespace m2;
 using namespace m2::widget;
 
 TextSelection::TextSelection(UiPanel* parent, const UiWidgetBlueprint* blueprint) : UiWidget(parent, blueprint) {
-	set_options(text_list_selection_blueprint().options);
-	if (text_list_selection_blueprint().on_create) {
-		text_list_selection_blueprint().on_create(*this);
+	set_options(VariantBlueprint().options);
+	if (VariantBlueprint().onCreate) {
+		VariantBlueprint().onCreate(*this);
 	}
 }
 
-UiAction TextSelection::on_update() {
-	if (text_list_selection_blueprint().on_update) {
-		return text_list_selection_blueprint().on_update(*this);
+UiAction TextSelection::UpdateContent() {
+	if (VariantBlueprint().onUpdate) {
+		return VariantBlueprint().onUpdate(*this);
 	}
 	return MakeContinueAction();
 }
 
-UiAction TextSelection::on_event(Events& events) {
+UiAction TextSelection::HandleEvents(Events& events) {
 	// +/- selection
-	if (auto line_count = text_list_selection_blueprint().line_count; line_count == 0) {
-		auto buttons_rect = rect().trim_left(rect().w - rect().h / 2);
+	if (auto line_count = VariantBlueprint().line_count; line_count == 0) {
+		auto buttons_rect = Rect().trim_left(Rect().w - Rect().h / 2);
 		auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2);
 		auto dec_button_rect = buttons_rect.trim_top(buttons_rect.h / 2);
 		if (!_plus_depressed && events.pop_mouse_button_press(MouseButton::PRIMARY, inc_button_rect)) {
@@ -38,7 +38,7 @@ UiAction TextSelection::on_event(Events& events) {
 			return decrement_selection();
 		} else {
 			// Check if scrolled
-			if (auto scroll_amount = events.pop_mouse_wheel_vertical_scroll(rect()); 0 < scroll_amount) {
+			if (auto scroll_amount = events.pop_mouse_wheel_vertical_scroll(Rect()); 0 < scroll_amount) {
 				m2_repeat(scroll_amount) {
 					if (auto action = increment_selection(); not action.IsContinue()) {
 						return action;
@@ -59,10 +59,10 @@ UiAction TextSelection::on_event(Events& events) {
 		throw M2_ERROR("Not yet implemented");
 	} else {
 		// Scrollable selection
-		auto scroll_bar_rect = rect().trim_left(rect().w - rect().h / I(text_list_selection_blueprint().line_count));
-		auto up_arrow_rect = scroll_bar_rect.horizontal_split(I(text_list_selection_blueprint().line_count), 0);
-		auto down_button_rect = scroll_bar_rect.horizontal_split(I(text_list_selection_blueprint().line_count),
-			I(text_list_selection_blueprint().line_count) - 1);
+		auto scroll_bar_rect = Rect().trim_left(Rect().w - Rect().h / I(VariantBlueprint().line_count));
+		auto up_arrow_rect = scroll_bar_rect.horizontal_split(I(VariantBlueprint().line_count), 0);
+		auto down_button_rect = scroll_bar_rect.horizontal_split(I(VariantBlueprint().line_count),
+			I(VariantBlueprint().line_count) - 1);
 
 		// Check if scroll buttons are pressed
 		if (events.pop_mouse_button_press(MouseButton::PRIMARY, up_arrow_rect)) {
@@ -70,13 +70,13 @@ UiAction TextSelection::on_event(Events& events) {
 				_top_index--;
 			}
 		} else if (events.pop_mouse_button_press(MouseButton::PRIMARY, down_button_rect)) {
-			if (_top_index + text_list_selection_blueprint().line_count < I(_options.size())) {
+			if (_top_index + VariantBlueprint().line_count < I(_options.size())) {
 				_top_index++;
 			}
 		} else {
 			// Check if scrolled via mouse
-			if (auto scroll_amount = events.pop_mouse_wheel_vertical_scroll(rect()); 0 < scroll_amount) {
-				auto min_scroll_amount = std::min(static_cast<size_t>(scroll_amount), _options.size() - _top_index - text_list_selection_blueprint().line_count);
+			if (auto scroll_amount = events.pop_mouse_wheel_vertical_scroll(Rect()); 0 < scroll_amount) {
+				auto min_scroll_amount = std::min(static_cast<size_t>(scroll_amount), _options.size() - _top_index - VariantBlueprint().line_count);
 				if (min_scroll_amount) {
 					_top_index += I(min_scroll_amount);
 				}
@@ -89,29 +89,29 @@ UiAction TextSelection::on_event(Events& events) {
 		}
 
 		// Check line items
-		for (auto i = 0; i < text_list_selection_blueprint().line_count; ++i) {
+		for (auto i = 0; i < VariantBlueprint().line_count; ++i) {
 			// If the entry is in window
 			if (_top_index + i < I(_options.size())) {
-				auto text_rect = rect().horizontal_split(text_list_selection_blueprint().line_count, i).trim_right(scroll_bar_rect.w);
+				auto text_rect = Rect().horizontal_split(VariantBlueprint().line_count, i).trim_right(scroll_bar_rect.w);
 				if (events.pop_mouse_button_press(MouseButton::PRIMARY, text_rect)) {
 					int pressed_item = _top_index + i;
 					if (_options[pressed_item].is_selected) {
 						// If already selected
 						_options[pressed_item].is_selected = false; // Deselect
-						if (text_list_selection_blueprint().on_action) {
-							return text_list_selection_blueprint().on_action(*this);
+						if (VariantBlueprint().onAction) {
+							return VariantBlueprint().onAction(*this);
 						}
 					} else {
 						// Clear selection if necessary
-						if (not text_list_selection_blueprint().allow_multiple_selection) {
+						if (not VariantBlueprint().allow_multiple_selection) {
 							// Clear all selections
 							for (auto& option : _options) {
 								option.is_selected = false;
 							}
 						}
 						_options[pressed_item].is_selected = true; // Select
-						if (text_list_selection_blueprint().on_action) {
-							return text_list_selection_blueprint().on_action(*this);
+						if (VariantBlueprint().onAction) {
+							return VariantBlueprint().onAction(*this);
 						}
 					}
 				}
@@ -121,16 +121,16 @@ UiAction TextSelection::on_event(Events& events) {
 	return MakeContinueAction();
 }
 
-void TextSelection::on_draw() {
+void TextSelection::Draw() {
 	draw_background_color();
 
 	// +/- selection
-	if (auto line_count = text_list_selection_blueprint().line_count; line_count == 0) {
+	if (auto line_count = VariantBlueprint().line_count; line_count == 0) {
 		// Selected option's text
 		if (auto current_selection = std::ranges::find_if(_options, [](const auto& o) { return o.is_selected == true; });
 			current_selection != _options.end()) {
 			if (not current_selection->text_texture_and_destination) {
-				auto drawable_area = rect().trim_right(rect().h / 2);
+				auto drawable_area = Rect().trim_right(Rect().h / 2);
 				auto fontSize = calculate_filled_text_rect(drawable_area, TextHorizontalAlignment::LEFT, I(m2::utf8_codepoint_count(current_selection->blueprint_option.text.c_str()))).h;
 				auto textTexture = m2_move_or_throw_error(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, fontSize, current_selection->blueprint_option.text));
 				auto destination_rect = calculate_filled_text_rect(drawable_area, TextHorizontalAlignment::LEFT, I(m2::utf8_codepoint_count(current_selection->blueprint_option.text.c_str())));
@@ -140,7 +140,7 @@ void TextSelection::on_draw() {
 				current_selection->text_texture_and_destination->destinationRect, current_selection->blueprint_option.text_color);
 		}
 		// + button
-		auto buttons_rect = rect().trim_left(rect().w - rect().h / 2);
+		auto buttons_rect = Rect().trim_left(Rect().w - Rect().h / 2);
 		{
 			auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2);
 			if (not _plus_texture) {
@@ -171,10 +171,10 @@ void TextSelection::on_draw() {
 		throw M2_ERROR("Not yet implemented");
 	} else {
 		// Scrollable selection
-		for (auto i = 0; i < text_list_selection_blueprint().line_count; ++i) {
+		for (auto i = 0; i < VariantBlueprint().line_count; ++i) {
 			// If the entry is in window
 			if (_top_index + i < I(_options.size())) {
-				auto text_rect = rect().horizontal_split(text_list_selection_blueprint().line_count, i);
+				auto text_rect = Rect().horizontal_split(VariantBlueprint().line_count, i);
 				// If selected
 				if (_options[_top_index + i].is_selected) {
 					draw_rectangle(text_rect, {0, 0, 255, 127});
@@ -195,13 +195,13 @@ void TextSelection::on_draw() {
 			}
 		}
 		// Scroll bar
-		if (text_list_selection_blueprint().show_scroll_bar) {
-			auto scroll_bar_rect = rect().trim_left(rect().w - rect().h / text_list_selection_blueprint().line_count);
+		if (VariantBlueprint().show_scroll_bar) {
+			auto scroll_bar_rect = Rect().trim_left(Rect().w - Rect().h / VariantBlueprint().line_count);
 			draw_rectangle(scroll_bar_rect, {0, 0, 0, 255});
 			draw_border(scroll_bar_rect, vertical_border_width_px(), horizontal_border_width_px());
 			// Up arrow
 			{
-				auto up_arrow_rect = scroll_bar_rect.horizontal_split(text_list_selection_blueprint().line_count, 0);
+				auto up_arrow_rect = scroll_bar_rect.horizontal_split(VariantBlueprint().line_count, 0);
 				if (not _up_arrow_texture) {
 					auto fontSize = up_arrow_rect.h;
 					auto textTexture = m2_move_or_throw_error(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, fontSize, "^"));
@@ -214,8 +214,8 @@ void TextSelection::on_draw() {
 			}
 			// Down arrow
 			{
-				auto down_button_rect = scroll_bar_rect.horizontal_split(text_list_selection_blueprint().line_count,
-					text_list_selection_blueprint().line_count - 1);
+				auto down_button_rect = scroll_bar_rect.horizontal_split(VariantBlueprint().line_count,
+					VariantBlueprint().line_count - 1);
 				if (not _down_arrow_texture) {
 					auto fontSize = down_button_rect.h;
 					auto textTexture = m2_move_or_throw_error(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, fontSize, "v"));
@@ -229,7 +229,7 @@ void TextSelection::on_draw() {
 		}
 	}
 
-	draw_border(rect(), vertical_border_width_px(), horizontal_border_width_px());
+	draw_border(Rect(), vertical_border_width_px(), horizontal_border_width_px());
 }
 
 std::vector<TextSelectionBlueprint::ReturnValue> TextSelection::selections() const {
@@ -253,11 +253,11 @@ void TextSelection::set_options(TextSelectionBlueprint::Options&& options) {
 		_options[i].blueprint_option = std::move(options[i]);
 	}
 	// Applicable to +/- selection and dropdown, select the first item
-	if (text_list_selection_blueprint().line_count == 0 || text_list_selection_blueprint().line_count == 1) {
+	if (VariantBlueprint().line_count == 0 || VariantBlueprint().line_count == 1) {
 		if (not _options.empty()) {
 			_options[0].is_selected = true;
-			if (text_list_selection_blueprint().on_action) {
-				text_list_selection_blueprint().on_action(*this);
+			if (VariantBlueprint().onAction) {
+				VariantBlueprint().onAction(*this);
 			}
 		}
 	}
@@ -270,13 +270,13 @@ void TextSelection::set_unique_selection(const int index) {
 		}
 		// Select the given option
 		_options[index].is_selected = true;
-		if (text_list_selection_blueprint().on_action) {
-			text_list_selection_blueprint().on_action(*this);
+		if (VariantBlueprint().onAction) {
+			VariantBlueprint().onAction(*this);
 		}
 	}
 }
 
-void TextSelection::on_resize(MAYBE const RectI& oldRect, MAYBE const RectI& newRect) {
+void TextSelection::HandleResize(MAYBE const RectI& oldRect, MAYBE const RectI& newRect) {
 	// Invalidate every font texture cache
 	for (auto& option : _options) {
 		option.text_texture_and_destination.reset();
@@ -287,18 +287,14 @@ void TextSelection::on_resize(MAYBE const RectI& oldRect, MAYBE const RectI& new
 	_down_arrow_texture.reset();
 }
 
-const TextSelectionBlueprint& TextSelection::text_list_selection_blueprint() const {
-	return std::get<TextSelectionBlueprint>(blueprint->variant);
-}
-
 UiAction TextSelection::increment_selection() {
 	if (auto current_selection = std::ranges::find_if(_options, [](auto& o) { return o.is_selected == true; });
 		current_selection != _options.end()) {
 		if (auto next_selection = std::next(current_selection); next_selection != _options.end()) {
 			current_selection->is_selected = false;
 			next_selection->is_selected = true;
-			if (text_list_selection_blueprint().on_action) {
-				return text_list_selection_blueprint().on_action(*this);
+			if (VariantBlueprint().onAction) {
+				return VariantBlueprint().onAction(*this);
 			}
 		}
 	}
@@ -311,8 +307,8 @@ UiAction TextSelection::decrement_selection() {
 		if (auto prev_selection = std::next(current_selection); prev_selection != _options.rend()) {
 			current_selection->is_selected = false;
 			prev_selection->is_selected = true;
-			if (text_list_selection_blueprint().on_action) {
-				return text_list_selection_blueprint().on_action(*this);
+			if (VariantBlueprint().onAction) {
+				return VariantBlueprint().onAction(*this);
 			}
 		}
 	}

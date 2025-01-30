@@ -31,7 +31,7 @@ void display_game_result() {
 					.text = "OK",
 					.wrapped_font_size_in_units = 0.8f,
 					.kb_shortcut = SDL_SCANCODE_RETURN,
-					.on_action = [](MAYBE const widget::Text& self) -> UiAction { return MakeReturnAction(); }
+					.onAction = [](MAYBE const widget::Text& self) -> UiAction { return MakeReturnAction(); }
 				}
 			}
 		}

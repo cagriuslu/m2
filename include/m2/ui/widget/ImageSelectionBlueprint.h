@@ -10,6 +10,7 @@ namespace m2::widget {
 	struct ImageSelectionBlueprint {
 		std::vector<m2g::pb::SpriteType> list;
 
-		std::function<UiAction(const ImageSelection& self)> on_action{};
+		std::function<void(ImageSelection& self)> onCreate{};
+		std::function<UiAction(ImageSelection& self)> onAction{};
 	};
 }

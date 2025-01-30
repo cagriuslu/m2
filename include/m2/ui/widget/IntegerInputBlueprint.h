@@ -10,8 +10,8 @@ namespace m2::widget {
 		int min_value{}, max_value{}; /// Values are inclusive
 		int initial_value{};
 
-		std::function<std::optional<int>(const IntegerInput& self)> on_create{};
-		std::function<std::optional<int>(const IntegerInput& self)> on_update{};
-		std::function<UiAction(const IntegerInput& self)> on_action{};
+		std::function<std::optional<int>(const IntegerInput& self)> onCreate{};
+		std::function<std::optional<int>(const IntegerInput& self)> onUpdate{};
+		std::function<UiAction(const IntegerInput& self)> onAction{};
 	};
 }

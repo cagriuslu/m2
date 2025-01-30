@@ -27,8 +27,8 @@ namespace m2::widget {
 
 		SDL_Scancode kb_shortcut{};
 
-		std::function<void(Text& self)> on_create{};
-		std::function<UiAction(Text& self)> on_update{};
-		std::function<UiAction(const Text& self)> on_action{};
+		std::function<void(Text& self)> onCreate{};
+		std::function<UiAction(Text& self)> onUpdate{};
+		std::function<UiAction(const Text& self)> onAction{};
 	};
 }  // namespace m2::widget

@@ -9,13 +9,14 @@ namespace m2::widget {
 
 	public:
 		explicit CheckboxWithText(UiPanel* parent, const UiWidgetBlueprint* blueprint);
-		void on_draw() override;
+		void Draw() override;
 
 		// Accessors
-		bool state() const { return _state; }
 
-		// Modifiers
-		void recreate();
+		[[nodiscard]] bool GetState() const { return _state; }
+
+	private:
+		[[nodiscard]] const CheckboxWithTextBlueprint& VariantBlueprint() const { return std::get<CheckboxWithTextBlueprint>(blueprint->variant); }
 
 		friend struct AbstractButton;
 	};

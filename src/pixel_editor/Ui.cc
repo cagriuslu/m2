@@ -8,7 +8,7 @@ using namespace m2;
 const widget::TextBlueprint pixel_editor_left_hud_paint_button = {
 		.text = "Paint",
 		.kb_shortcut = SDL_SCANCODE_P,
-		.on_action = [](MAYBE const widget::Text &self) -> UiAction {
+		.onAction = [](MAYBE const widget::Text &self) -> UiAction {
 			std::get<pixel_editor::State>(M2_LEVEL.stateVariant).activate_paint_mode();
 			return MakeContinueAction();
 		}
@@ -16,7 +16,7 @@ const widget::TextBlueprint pixel_editor_left_hud_paint_button = {
 const widget::TextBlueprint pixel_editor_left_hud_erase_button = {
 		.text = "Erase",
 		.kb_shortcut = SDL_SCANCODE_E,
-		.on_action = [](MAYBE const widget::Text &self) -> UiAction {
+		.onAction = [](MAYBE const widget::Text &self) -> UiAction {
 			std::get<pixel_editor::State>(M2_LEVEL.stateVariant).activate_erase_mode();
 			return MakeContinueAction();
 		}
@@ -24,7 +24,7 @@ const widget::TextBlueprint pixel_editor_left_hud_erase_button = {
 const widget::TextBlueprint pixel_editor_left_hud_color_picker_button = {
 		.text = "Pick",
 		.kb_shortcut = SDL_SCANCODE_C,
-		.on_action = [](MAYBE const widget::Text &self) -> UiAction {
+		.onAction = [](MAYBE const widget::Text &self) -> UiAction {
 			std::get<pixel_editor::State>(M2_LEVEL.stateVariant).activate_color_picker_mode();
 			return MakeContinueAction();
 		}
@@ -32,7 +32,7 @@ const widget::TextBlueprint pixel_editor_left_hud_color_picker_button = {
 const widget::TextBlueprint pixel_editor_left_hud_cancel_button = {
 		.text = "Cancel",
 		.kb_shortcut = SDL_SCANCODE_X,
-		.on_action = [](MAYBE const widget::Text &self) -> UiAction {
+		.onAction = [](MAYBE const widget::Text &self) -> UiAction {
 			std::get<pixel_editor::State>(M2_LEVEL.stateVariant).deactivate_mode();
 			return MakeContinueAction();
 		}
@@ -40,7 +40,7 @@ const widget::TextBlueprint pixel_editor_left_hud_cancel_button = {
 const widget::TextBlueprint pixel_editor_left_hud_gridlines_button = {
 		.text = "Grid",
 		.kb_shortcut = SDL_SCANCODE_G,
-		.on_action = [](MAYBE const widget::Text &self) -> UiAction {
+		.onAction = [](MAYBE const widget::Text &self) -> UiAction {
 			if (M2_LEVEL.dynamicGridLinesLoader) {
 				M2_LEVEL.dynamicGridLinesLoader.reset();
 			} else {
@@ -51,7 +51,7 @@ const widget::TextBlueprint pixel_editor_left_hud_gridlines_button = {
 };
 const widget::TextBlueprint pixel_editor_left_hud_save_button = {
 		.text = "Save",
-		.on_action = [](MAYBE const widget::Text &self) -> UiAction {
+		.onAction = [](MAYBE const widget::Text &self) -> UiAction {
 			//execute_blocking(&level_editor_save_confirmation);
 			// TODO
 			return MakeContinueAction();
@@ -92,10 +92,10 @@ const widget::IntegerInputBlueprint pixel_editor_right_hud_red_selection = {
 		.min_value = 0,
 		.max_value = 255,
 		.initial_value = 0,
-		.on_update = [](MAYBE const widget::IntegerInput& self) -> std::optional<int> {
+		.onUpdate = [](MAYBE const widget::IntegerInput& self) -> std::optional<int> {
 			return (int) std::get<pixel_editor::State>(M2_LEVEL.stateVariant).selected_color.r;
 		},
-		.on_action = [](const widget::IntegerInput& self) -> UiAction {
+		.onAction = [](const widget::IntegerInput& self) -> UiAction {
 			std::get<pixel_editor::State>(M2_LEVEL.stateVariant).select_color(SDL_Color{
 					.r = (uint8_t) self.value(),
 					.g = std::get<pixel_editor::State>(M2_LEVEL.stateVariant).selected_color.g,
@@ -108,10 +108,10 @@ const widget::IntegerInputBlueprint pixel_editor_right_hud_green_selection = {
 		.min_value = 0,
 		.max_value = 255,
 		.initial_value = 0,
-		.on_update = [](MAYBE const widget::IntegerInput& self) -> std::optional<int> {
+		.onUpdate = [](MAYBE const widget::IntegerInput& self) -> std::optional<int> {
 			return (int) std::get<pixel_editor::State>(M2_LEVEL.stateVariant).selected_color.g;
 		},
-		.on_action = [](const widget::IntegerInput& self) -> UiAction {
+		.onAction = [](const widget::IntegerInput& self) -> UiAction {
 			std::get<pixel_editor::State>(M2_LEVEL.stateVariant).select_color(SDL_Color{
 					.r = std::get<pixel_editor::State>(M2_LEVEL.stateVariant).selected_color.r,
 					.g = (uint8_t) self.value(),
@@ -124,10 +124,10 @@ const widget::IntegerInputBlueprint pixel_editor_right_hud_blue_selection = {
 		.min_value = 0,
 		.max_value = 255,
 		.initial_value = 0,
-		.on_update = [](MAYBE const widget::IntegerInput& self) -> std::optional<int> {
+		.onUpdate = [](MAYBE const widget::IntegerInput& self) -> std::optional<int> {
 			return (int) std::get<pixel_editor::State>(M2_LEVEL.stateVariant).selected_color.b;
 		},
-		.on_action = [](const widget::IntegerInput& self) -> UiAction {
+		.onAction = [](const widget::IntegerInput& self) -> UiAction {
 			std::get<pixel_editor::State>(M2_LEVEL.stateVariant).select_color(SDL_Color{
 					.r = std::get<pixel_editor::State>(M2_LEVEL.stateVariant).selected_color.r,
 					.g = std::get<pixel_editor::State>(M2_LEVEL.stateVariant).selected_color.g,
@@ -140,10 +140,10 @@ const widget::IntegerInputBlueprint pixel_editor_right_hud_alpha_selection = {
 		.min_value = 0,
 		.max_value = 255,
 		.initial_value = 0,
-		.on_update = [](MAYBE const widget::IntegerInput& self) -> std::optional<int> {
+		.onUpdate = [](MAYBE const widget::IntegerInput& self) -> std::optional<int> {
 			return (int) std::get<pixel_editor::State>(M2_LEVEL.stateVariant).selected_color.a;
 		},
-		.on_action = [](const widget::IntegerInput& self) -> UiAction {
+		.onAction = [](const widget::IntegerInput& self) -> UiAction {
 			std::get<pixel_editor::State>(M2_LEVEL.stateVariant).select_color(SDL_Color{
 					.r = std::get<pixel_editor::State>(M2_LEVEL.stateVariant).selected_color.r,
 					.g = std::get<pixel_editor::State>(M2_LEVEL.stateVariant).selected_color.g,

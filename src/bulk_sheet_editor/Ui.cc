@@ -6,12 +6,12 @@ using namespace m2;
 using namespace m2;
 
 const widget::TextBlueprint right_hud_set_rect_button = {
-    .text = "Set Rect", .on_action = [](MAYBE const widget::Text& self) -> UiAction {
+    .text = "Set Rect", .onAction = [](MAYBE const widget::Text& self) -> UiAction {
 	    std::get<bulk_sheet_editor::State>(M2_LEVEL.stateVariant).set_rect();
 	    return MakeContinueAction();
     }};
 const widget::TextBlueprint right_hud_reset_button = {
-    .text = "Reset", .on_action = [](MAYBE const widget::Text& self) -> UiAction {
+    .text = "Reset", .onAction = [](MAYBE const widget::Text& self) -> UiAction {
 	    std::get<bulk_sheet_editor::State>(M2_LEVEL.stateVariant).reset();
 	    return MakeContinueAction();
     }};
@@ -27,7 +27,7 @@ const UiPanelBlueprint m2::bulk_sheet_editor_right_hud = {
             .w = 15,
             .h = 3,
             .variant = widget::TextSelectionBlueprint{
-                .on_create = [](MAYBE widget::TextSelection& self) {
+                .onCreate = [](MAYBE widget::TextSelection& self) {
 	                if (auto selected_ss = std::get<bulk_sheet_editor::State>(M2_LEVEL.stateVariant).selected_sprite_sheet()) {
 		                widget::TextSelectionBlueprint::Options options;
 		                for (const auto& sprite : selected_ss->sprites()) {
@@ -41,7 +41,7 @@ const UiPanelBlueprint m2::bulk_sheet_editor_right_hud = {
 						self.set_options(std::move(options));
 	                }
                 },
-                .on_action = [](widget::TextSelection& self) -> UiAction {
+                .onAction = [](widget::TextSelection& self) -> UiAction {
 	                if (auto selected_sprite_type = static_cast<m2g::pb::SpriteType>(std::get<int>(self.selections()[0]))) {
 		                std::get<bulk_sheet_editor::State>(M2_LEVEL.stateVariant).select_sprite(selected_sprite_type);
 		                return MakeContinueAction();
@@ -58,7 +58,7 @@ const UiPanelBlueprint m2::bulk_sheet_editor_left_hud = {
     .w = 19, .h = 72, .background_color = {0, 0, 0, 255}, .widgets = {}};
 
 const widget::TextSelectionBlueprint resource_selection = {
-    .on_create = [](MAYBE widget::TextSelection& self) {
+    .onCreate = [](MAYBE widget::TextSelection& self) {
 	    const auto& pb_sheets = std::get<bulk_sheet_editor::State>(M2_LEVEL.stateVariant).sprite_sheets();
 	    // Gather the list of resources
 		widget::TextSelectionBlueprint::Options resources;
@@ -71,7 +71,7 @@ const widget::TextSelectionBlueprint resource_selection = {
 	    std::sort(resources.begin(), resources.end(), widget::TextSelectionBlueprint::OptionsSorter);
 		self.set_options(std::move(resources));
     },
-    .on_action = [](const widget::TextSelection& self) -> UiAction {
+    .onAction = [](const widget::TextSelection& self) -> UiAction {
 	    std::get<bulk_sheet_editor::State>(M2_LEVEL.stateVariant).select_resource(std::get<std::string>(self.selections()[0]));
 	    return MakeContinueAction();
     }};
@@ -97,7 +97,7 @@ const UiPanelBlueprint m2::bulk_sheet_editor_main_menu = {
                 widget::TextBlueprint{
                     .text = "QUIT",
                     .kb_shortcut = SDL_SCANCODE_Q,
-                    .on_action = [](MAYBE const widget::Text& self) -> UiAction { return MakeQuitAction(); },
+                    .onAction = [](MAYBE const widget::Text& self) -> UiAction { return MakeQuitAction(); },
                 }},
         UiWidgetBlueprint{
             .x = 85,
@@ -107,7 +107,7 @@ const UiPanelBlueprint m2::bulk_sheet_editor_main_menu = {
             .variant = widget::TextBlueprint{
                 .text = "SELECT",
                 .kb_shortcut = SDL_SCANCODE_RETURN,
-                .on_action = [](MAYBE const widget::Text& self) -> UiAction {
+                .onAction = [](MAYBE const widget::Text& self) -> UiAction {
 	                if (std::get<bulk_sheet_editor::State>(M2_LEVEL.stateVariant).select()) {
 		                M2_LEVEL.ReplaceRightHud(&bulk_sheet_editor_right_hud, M2_GAME.Dimensions().RightHud());
 		                // TODO return selection instead
@@ -131,5 +131,5 @@ const UiPanelBlueprint m2::bulk_sheet_editor_pause_menu = {
         .variant = widget::TextBlueprint{
             .text = "QUIT",
             .kb_shortcut = SDL_SCANCODE_Q,
-            .on_action = [](MAYBE const widget::Text& self) -> UiAction { return MakeQuitAction(); },
+            .onAction = [](MAYBE const widget::Text& self) -> UiAction { return MakeQuitAction(); },
         }}}};

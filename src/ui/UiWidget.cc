@@ -3,16 +3,16 @@
 
 using namespace m2;
 
-void UiWidget::set_rect(const RectI& rect_px) {
+void UiWidget::SetRect(const RectI& rect_px) {
 	const auto oldRect = _rect_px;
 	_rect_px = rect_px;
-	on_resize(oldRect, _rect_px);
+	HandleResize(oldRect, _rect_px);
 }
 
 void m2::UiWidget::draw_background_color() const {
 	const auto& color = blueprint->background_color;
 	if (color.r || color.g || color.b || color.a) {
-		draw_rectangle(rect(), color);
+		draw_rectangle(Rect(), color);
 	}
 }
 
@@ -51,7 +51,7 @@ int m2::UiWidget::horizontal_padding_width_px() const {
 m2::RectI m2::UiWidget::drawable_area() const {
 	auto vertical_excess = vertical_border_width_px() + vertical_padding_width_px();
 	auto horizontal_excess = horizontal_border_width_px() + horizontal_padding_width_px();
-	return rect().trim_left(vertical_excess).trim_right(vertical_excess).trim_top(horizontal_excess).trim_bottom(horizontal_excess);
+	return Rect().trim_left(vertical_excess).trim_right(vertical_excess).trim_top(horizontal_excess).trim_bottom(horizontal_excess);
 }
 
 m2::RectI m2::UiWidget::calculate_wrapped_text_rect(SDL_Texture* text_texture, RectI drawable_area, TextHorizontalAlignment align_h, TextVerticalAlignment align_v) {

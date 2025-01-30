@@ -43,7 +43,7 @@ m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
 	}
 	phy.body = m2::box2d::BodyUniquePtr{body};
 
-	auto& gfx = obj.add_graphic(m2g::pb::SPRITE_BASIC_FLIPPER);
+	MAYBE auto& gfx = obj.add_graphic(m2g::pb::SPRITE_BASIC_FLIPPER);
 
 	if (not rightFlipper) {
 		phy.pre_step = [](m2::Physique& phy_) {

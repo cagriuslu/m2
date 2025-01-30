@@ -7,10 +7,10 @@ namespace m2::widget {
 		bool depressed;
 
 		explicit AbstractButton(UiPanel* parent, const UiWidgetBlueprint* blueprint);
-		UiAction on_event(Events& events) final;
+		UiAction HandleEvents(Events& events) final;
 
 		// Modifiers
-		void recreate();
+
 		UiAction trigger_action();
 	};
 }

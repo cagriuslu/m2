@@ -40,7 +40,7 @@ void display_action_notification(const m2g::pb::ServerCommand::ActionNotificatio
 				.variant = widget::TextBlueprint{
 					.text = "Close",
 					.wrapped_font_size_in_units = 3.0f,
-					.on_action = [](MAYBE const widget::Text& self) -> UiAction {
+					.onAction = [](MAYBE const widget::Text& self) -> UiAction {
 						return MakeReturnAction();
 					}
 				}

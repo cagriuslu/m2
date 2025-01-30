@@ -13,14 +13,15 @@ namespace m2::widget {
 
 	public:
 		explicit ImageSelection(UiPanel* parent, const UiWidgetBlueprint* blueprint);
-		UiAction on_event(Events& events) override;
+		UiAction HandleEvents(Events& events) override;
 		UiAction select(unsigned index);
-		void on_draw() override;
+		void Draw() override;
 
-		// Modifiers
-		void recreate();
-		UiAction trigger_action(unsigned new_selection);
+		// Accessors
 
-		[[nodiscard]] inline m2g::pb::SpriteType selection() const { return std::get<ImageSelectionBlueprint>(blueprint->variant).list[_selection]; }
+		[[nodiscard]] m2g::pb::SpriteType selection() const { return VariantBlueprint().list[_selection]; }
+
+	private:
+		[[nodiscard]] const ImageSelectionBlueprint& VariantBlueprint() const { return std::get<ImageSelectionBlueprint>(blueprint->variant); }
 	};
 }

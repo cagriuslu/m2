@@ -11,10 +11,10 @@ namespace m2::widget {
 
 	public:
 		explicit IntegerInput(UiPanel* parent, const UiWidgetBlueprint* blueprint);
-		UiAction on_event(Events& events) override;
+		UiAction HandleEvents(Events& events) override;
 		UiAction select(int value);
-		UiAction on_update() override;
-		void on_draw() override;
+		UiAction UpdateContent() override;
+		void Draw() override;
 
 		// Accessors
 
@@ -25,6 +25,6 @@ namespace m2::widget {
 		void SetValue(int value);
 
 	private:
-		[[nodiscard]] const IntegerInputBlueprint& integer_selection_blueprint() const { return std::get<IntegerInputBlueprint>(blueprint->variant); }
+		[[nodiscard]] const IntegerInputBlueprint& VariantBlueprint() const { return std::get<IntegerInputBlueprint>(blueprint->variant); }
 	};
 }

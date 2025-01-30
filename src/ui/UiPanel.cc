@@ -28,7 +28,7 @@ namespace {
 	constexpr auto is_widget_enabled = [](const auto &w) { return w->enabled; };
 	constexpr auto is_widget_focused = [](const auto &w) { return w->focused; };
 	// Actions
-	constexpr auto draw_widget = [](const auto &w) { w->on_draw(); };
+	constexpr auto draw_widget = [](const auto &w) { w->Draw(); };
 
 	UiAction handle_console_command(const std::string &command) {
 		M2_GAME.console_output.emplace_back(">> " + command);
@@ -131,7 +131,7 @@ UiAction UiPanel::run_blocking() {
 	}
 
 	// Update initial contents
-	if (auto return_value = update_contents(0.0f); not return_value.IsContinue()) {
+	if (auto return_value = UpdateContents(0.0f); not return_value.IsContinue()) {
 		LOG_DEBUG("Update action is not continue");
 		return return_value;
 	}
@@ -175,7 +175,7 @@ UiAction UiPanel::run_blocking() {
 			if (const auto window_resize = events.pop_window_resize(); window_resize) {
 				M2_GAME.OnWindowResize();
 				// TODO what about the other sync panels in the stack?
-				update_positions();
+				RecalculateRects();
 			}
 
 			// Handle events
@@ -190,7 +190,7 @@ UiAction UiPanel::run_blocking() {
 		/////////////////////////////// GRAPHICS ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 		// Update contents
-		if (auto return_value = update_contents(delta_time_s); not return_value.IsContinue()) {
+		if (auto return_value = UpdateContents(delta_time_s); not return_value.IsContinue()) {
 			return return_value;
 		}
 
@@ -200,7 +200,7 @@ UiAction UiPanel::run_blocking() {
 		SDL_RenderCopy(M2_GAME.renderer, _background_texture.get(), nullptr, nullptr);
 
 		// Draw UI elements
-		draw();
+		Draw();
 		M2_GAME.DrawEnvelopes();
 
 		// Present
@@ -260,9 +260,9 @@ UiPanel::UiPanel(std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBl
 	}
 
 	// Update initial positions
-	update_positions();
+	RecalculateRects();
 
-	IF(blueprint->on_create)(*this);
+	IF(blueprint->onCreate)(*this);
 }
 
 UiAction UiPanel::create_and_run_blocking(std::variant<const UiPanelBlueprint*,
@@ -309,7 +309,7 @@ bool UiPanel::IsKilled() const {
 const AnyReturnContainer* UiPanel::PeekReturnValueContainer() const {
 	return IsKilled() ? &*_returnValueContainer : nullptr;
 }
-RectI UiPanel::rect_px() const {
+RectI UiPanel::Rect() const {
 	const auto& game_and_hud_dims = M2_GAME.Dimensions().GameAndHud();
 	return RectI{
 		iround(F(game_and_hud_dims.x) + _relation_to_game_and_hud_dims.x * F(game_and_hud_dims.w)),
@@ -332,7 +332,7 @@ void UiPanel::SetTopLeftPosition(const VecI& newPosition) {
 			F(newPosition.y) / F(game_and_hud_dims.h),
 			_relation_to_game_and_hud_dims.w,
 			_relation_to_game_and_hud_dims.h};
-	update_positions();
+	RecalculateRects();
 }
 void UiPanel::SetTimeout(const float timeoutS) {
 	if (timeoutS < 0.0f) {
@@ -344,13 +344,13 @@ void UiPanel::ClearTimeout() {
 	_timeout_s.reset();
 }
 
-void UiPanel::update_positions() {
-	auto rect = rect_px();
+void UiPanel::RecalculateRects() {
+	auto rect = Rect();
 	for (const auto &widget_state : widgets) {
 		auto widget_rect = CalculateWidgetRect(
 		    rect, blueprint->w, blueprint->h, widget_state->blueprint->x, widget_state->blueprint->y,
 		    widget_state->blueprint->w, widget_state->blueprint->h);
-		widget_state->set_rect(widget_rect);
+		widget_state->SetRect(widget_rect);
 	}
 }
 
@@ -372,14 +372,14 @@ UiAction UiPanel::HandleEvents(Events& events, bool IsPanning) {
 	std::optional<UiAction> action;
 
 	// First, deliver the event to the panel
-	if (blueprint->on_event) {
-		action = blueprint->on_event(*this, events);
+	if (blueprint->OnEvent) {
+		action = blueprint->OnEvent(*this, events);
 	}
 
 	if (not action || action->IsContinue()) {
 		// Then, deliver the event to the widgets
 		for (auto &widget : widgets | std::views::filter(is_widget_enabled)) {
-			action = widget->on_event(events);
+			action = widget->HandleEvents(events);
 			action->IfContinueWithFocusState(
 					[&](const bool focus_state) {
 						set_widget_focus_state(*widget, focus_state);
@@ -393,7 +393,7 @@ UiAction UiPanel::HandleEvents(Events& events, bool IsPanning) {
 
 	// Clear mouse events if the mouse is inside the UI element so that it isn't delivered to game objects. This
 	// behavior can partially be overwritten with Game::EnablePanning().
-	const auto rect = rect_px();
+	const auto rect = Rect();
 	events.clear_mouse_button_presses(rect);
 	events.clear_mouse_button_releases(rect);
 	events.clear_mouse_wheel_scrolls(rect);
@@ -407,7 +407,7 @@ UiAction UiPanel::HandleEvents(Events& events, bool IsPanning) {
 	return std::move(*action);
 }
 
-UiAction UiPanel::update_contents(float delta_time_s) {
+UiAction UiPanel::UpdateContents(float delta_time_s) {
 	// Return if UiPanel not enabled
 	if (IsKilled() || not enabled) {
 		return MakeContinueAction();
@@ -419,13 +419,13 @@ UiAction UiPanel::update_contents(float delta_time_s) {
 		return MakeContinueAction();
 	}
 
-	if (blueprint->on_update) {
-		if (auto action = blueprint->on_update(*this); not action.IsContinue()) {
+	if (blueprint->onUpdate) {
+		if (auto action = blueprint->onUpdate(*this); not action.IsContinue()) {
 			return action;
 		}
 	}
 	for (const auto &widget : widgets | std::views::filter(is_widget_enabled)) {
-		if (auto action = widget->on_update(); not action.IsContinue()) {
+		if (auto action = widget->UpdateContent(); not action.IsContinue()) {
 			return action;
 		} else {
 			continue;
@@ -440,12 +440,12 @@ UiAction UiPanel::update_contents(float delta_time_s) {
 	return MakeContinueAction();
 }
 
-void UiPanel::draw() {
+void UiPanel::Draw() {
 	if (IsKilled() || not enabled) {
 		return;
 	}
 
-	auto rect = rect_px();
+	auto rect = Rect();
 	UiWidget::draw_rectangle(rect, blueprint->background_color);
 	std::ranges::for_each(widgets | std::views::filter(is_widget_enabled), draw_widget);
 	UiWidget::draw_border(rect, vertical_border_width_px(), horizontal_border_width_px());
@@ -456,7 +456,7 @@ int UiPanel::vertical_border_width_px() const {
 		return 0;
 	} else {
 		// Pixels per unit
-		float pixel_pitch = F(rect_px().w) / F(blueprint->w);
+		float pixel_pitch = F(Rect().w) / F(blueprint->w);
 		return std::max(1, iround(pixel_pitch * blueprint->border_width));
 	}
 }
@@ -466,7 +466,7 @@ int UiPanel::horizontal_border_width_px() const {
 		return 0;
 	} else {
 		// Pixels per unit
-		float pixel_pitch = F(rect_px().h) / F(blueprint->h);
+		float pixel_pitch = F(Rect().h) / F(blueprint->h);
 		return std::max(1, iround(pixel_pitch * blueprint->border_width));
 	}
 }
@@ -507,13 +507,13 @@ void UiPanel::set_widget_focus_state(UiWidget &w, const bool state) {
 			clear_focus();
 			// Set focus
 			w.focused = true;
-			w.on_focus_change();
+			w.HandleFocusChange();
 		}
 	} else {
 		// Reset focus
 		if (w.focused) {
 			w.focused = false;
-			w.on_focus_change();
+			w.HandleFocusChange();
 		}
 	}
 }
@@ -556,7 +556,7 @@ widget::TextBlueprint command_output_variant() {
 	return {
 	    .text = "",
 	    .horizontal_alignment = TextHorizontalAlignment::LEFT,
-	    .on_update = [](MAYBE widget::Text &self) {
+	    .onUpdate = [](MAYBE widget::Text &self) {
 			self.set_text(INDEX < M2_GAME.console_output.size()
 				? M2_GAME.console_output[M2_GAME.console_output.size() - INDEX - 1]
 				: std::string());
@@ -628,7 +628,7 @@ UiPanelBlueprint m2::console_ui = {
             .background_color = SDL_Color{27, 27, 27, 255},
             .variant = widget::TextInputBlueprint{
                 .initial_text = "", // May be overriden with console_command on startup
-                .on_action = [](const widget::TextInput &self) -> std::pair<UiAction, std::optional<std::string>> {
+                .onAction = [](const widget::TextInput &self) -> std::pair<UiAction, std::optional<std::string>> {
 	                const auto &command = self.text_input();
 	                return std::make_pair(handle_console_command(command), std::string{});
                 }}}}};

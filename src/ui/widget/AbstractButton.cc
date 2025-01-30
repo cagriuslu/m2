@@ -19,11 +19,11 @@ AbstractButton::AbstractButton(UiPanel* parent, const UiWidgetBlueprint *bluepri
 		),
 		depressed(false) {}
 
-UiAction AbstractButton::on_event(Events &events) {
+UiAction AbstractButton::HandleEvents(Events &events) {
 	// Return early if there is no action callback
 	const bool has_action_callback = std::visit(overloaded {
-			[](const TextBlueprint& v) -> bool { return (bool) v.on_action; },
-			[](const ImageBlueprint& v) -> bool { return (bool) v.on_action; },
+			[](const TextBlueprint& v) -> bool { return (bool) v.onAction; },
+			[](const ImageBlueprint& v) -> bool { return (bool) v.onAction; },
 			[](MAYBE const CheckboxWithTextBlueprint& v) -> bool { return true; }, // Checkbox might change state even if there isn't an onAction callback.
 			[](MAYBE const auto& v) -> bool { return false; }
 	}, blueprint->variant);
@@ -37,12 +37,12 @@ UiAction AbstractButton::on_event(Events &events) {
 	} else {
 		if (not depressed) {
 			// Check if mouse pressed inside the rect
-			if (events.pop_mouse_button_press(MouseButton::PRIMARY, rect())) {
+			if (events.pop_mouse_button_press(MouseButton::PRIMARY, Rect())) {
 				depressed = true;
 			}
 		} else {
 			// Check if mouse released inside the rect
-			if (events.pop_mouse_button_release(MouseButton::PRIMARY, rect())) {
+			if (events.pop_mouse_button_release(MouseButton::PRIMARY, Rect())) {
 				depressed = false;
 				run_action = true;
 			} else if (events.pop_mouse_button_release(MouseButton::PRIMARY)) {
@@ -57,13 +57,13 @@ UiAction AbstractButton::on_event(Events &events) {
 
 UiAction AbstractButton::trigger_action() {
 	return std::visit(overloaded {
-			[&](const TextBlueprint& v) { return v.on_action ? v.on_action(dynamic_cast<const Text&>(*this)) : MakeContinueAction(); },
-			[&](const ImageBlueprint& v) { return v.on_action ? v.on_action(dynamic_cast<const Image&>(*this)) : MakeContinueAction(); },
+			[&](const TextBlueprint& v) { return v.onAction ? v.onAction(dynamic_cast<const Text&>(*this)) : MakeContinueAction(); },
+			[&](const ImageBlueprint& v) { return v.onAction ? v.onAction(dynamic_cast<const Image&>(*this)) : MakeContinueAction(); },
 			[&](const CheckboxWithTextBlueprint& v) {
 				// Overloading HandleEvents for CheckboxWithText is too much work, do it here
 				auto& checkbox_with_text_state = dynamic_cast<CheckboxWithText&>(*this);
 				checkbox_with_text_state._state = !checkbox_with_text_state._state;
-				return v.on_action ? v.on_action(checkbox_with_text_state) : MakeContinueAction();
+				return v.onAction ? v.onAction(checkbox_with_text_state) : MakeContinueAction();
 			},
 			[](MAYBE const auto& v) { return MakeContinueAction(); }
 	}, blueprint->variant);

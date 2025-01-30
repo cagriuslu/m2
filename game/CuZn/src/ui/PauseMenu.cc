@@ -18,7 +18,7 @@ const UiPanelBlueprint pause_menu_blueprint = {
 		UiWidgetBlueprint{
 			.x = 45, .y = 35, .w = 10, .h = 10,
 			.variant = TextBlueprint{
-				.text = "RESUME", .on_action = [](MAYBE const widget::Text& self) {
+				.text = "RESUME", .onAction = [](MAYBE const widget::Text& self) {
 					return MakeReturnAction();  // TODO Return value
 				}
 			}
@@ -31,7 +31,7 @@ const UiPanelBlueprint pause_menu_blueprint = {
 			.variant = TextBlueprint{
 				.text = "QUIT",
 				.kb_shortcut = SDL_SCANCODE_Q,
-				.on_action = quit_button_action,
+				.onAction = quit_button_action,
 			}
 		}
 	}

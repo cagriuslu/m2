@@ -13,7 +13,7 @@ static TextBlueprint client_status = {
 	.text = "CONNECTING",
 	.horizontal_alignment = m2::TextHorizontalAlignment::LEFT,
 	.wrapped_font_size_in_units = 5.0f,
-	.on_update = [](MAYBE Text& self) {
+	.onUpdate = [](MAYBE Text& self) {
 		if (M2_GAME.RealClientThread().is_connected()) {
 			self.set_text("CONNECTED");
 		} else if (M2_GAME.RealClientThread().is_ready()) {
@@ -37,7 +37,7 @@ static TextBlueprint client_status = {
 static TextBlueprint ready_button = {
 	.text = "...",
 	.wrapped_font_size_in_units = 5.0f,
-	.on_update = [](MAYBE Text& self) {
+	.onUpdate = [](MAYBE Text& self) {
 		if (M2_GAME.RealClientThread().is_connected()) {
 			self.set_text("SET READY");
 		} else if (M2_GAME.RealClientThread().is_ready()) {
@@ -47,7 +47,7 @@ static TextBlueprint ready_button = {
 		}
 		return MakeContinueAction();
 	},
-	.on_action = [](MAYBE const Text& self) -> UiAction {
+	.onAction = [](MAYBE const Text& self) -> UiAction {
 		if (M2_GAME.RealClientThread().is_connected()) {
 			M2_GAME.RealClientThread().set_ready(true);
 		} else if (M2_GAME.RealClientThread().is_ready()) {
@@ -86,7 +86,7 @@ static const UiPanelBlueprint client_lobby = {
 			.variant = TextBlueprint{
 				.text = "CANCEL",
 				.wrapped_font_size_in_units = 5.0f,
-				.on_action = [](MAYBE const Text& self) -> UiAction {
+				.onAction = [](MAYBE const Text& self) -> UiAction {
 					M2_GAME.LeaveGame();
 					return MakeReturnAction();
 				}
@@ -124,8 +124,8 @@ const UiPanelBlueprint ip_port_form = {
 				.text = "CONNECT",
 				.wrapped_font_size_in_units = 5.0f,
 				.kb_shortcut = SDL_SCANCODE_RETURN,
-				.on_action = [](MAYBE const widget::Text& self) {
-					auto* ip_input_widget = self.parent().find_first_widget_of_type<TextInput>();
+				.onAction = [](MAYBE const widget::Text& self) {
+					auto* ip_input_widget = self.Parent().find_first_widget_of_type<TextInput>();
 					M2_GAME.JoinGame(m2::mplayer::Type::TurnBased, ip_input_widget->text_input());
 					return m2::UiPanel::create_and_run_blocking(&client_lobby);
 				}
@@ -136,7 +136,7 @@ const UiPanelBlueprint ip_port_form = {
 			.variant = TextBlueprint{
 				.text = "CANCEL",
 				.wrapped_font_size_in_units = 5.0f,
-				.on_action = [](MAYBE const Text& self) -> UiAction { return MakeReturnAction(); }
+				.onAction = [](MAYBE const Text& self) -> UiAction { return MakeReturnAction(); }
 			}
 		}
 	}

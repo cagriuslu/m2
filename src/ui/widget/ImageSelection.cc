@@ -10,10 +10,13 @@ ImageSelection::ImageSelection(UiPanel* parent, const UiWidgetBlueprint* bluepri
       _plus_texture(m2_move_or_throw_error(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "+"))),
       _minus_texture(m2_move_or_throw_error(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "-"))) {
 	select(0);
+	if (VariantBlueprint().onCreate) {
+		VariantBlueprint().onCreate(*this);
+	}
 }
 
-UiAction ImageSelection::on_event(Events& events) {
-	auto buttons_rect = rect().trim_top(rect().w);
+UiAction ImageSelection::HandleEvents(Events& events) {
+	auto buttons_rect = Rect().trim_top(Rect().w);
 	auto inc_button_rect = buttons_rect.trim_left(buttons_rect.w / 2);
 	auto dec_button_rect = buttons_rect.trim_right(buttons_rect.w / 2);
 
@@ -37,7 +40,7 @@ UiAction ImageSelection::on_event(Events& events) {
 		}
 	} else {
 		// Check if scrolled
-		if (auto scroll_amount = events.pop_mouse_wheel_vertical_scroll(rect()); 0 < scroll_amount) {
+		if (auto scroll_amount = events.pop_mouse_wheel_vertical_scroll(Rect()); 0 < scroll_amount) {
 			auto min_scroll_amount =
 			    std::min(static_cast<size_t>(scroll_amount), image_selection.list.size() - _selection - 1);
 			if (min_scroll_amount) {
@@ -58,7 +61,7 @@ UiAction ImageSelection::select(unsigned index) {
 
 	const auto& image_selection = std::get<ImageSelectionBlueprint>(blueprint->variant);
 	if (!image_selection.list.empty()) {
-		const auto& action_callback = image_selection.on_action;
+		const auto& action_callback = image_selection.onAction;
 		if (action_callback) {
 			return action_callback(*this);
 		}
@@ -66,16 +69,16 @@ UiAction ImageSelection::select(unsigned index) {
 	return MakeContinueAction();
 }
 
-void ImageSelection::on_draw() {
+void ImageSelection::Draw() {
 	draw_background_color();
 
 	const auto& image_selection = std::get<ImageSelectionBlueprint>(blueprint->variant);
 	if (!image_selection.list.empty()) {
-		const auto image_rect = rect().trim_bottom(rect().h - rect().w);
+		const auto image_rect = Rect().trim_bottom(Rect().h - Rect().w);
 		DrawSpriteOrTextLabel(M2_GAME.GetSpriteOrTextLabel(image_selection.list[_selection]), image_rect);
 	}
 
-	auto buttons_rect = rect().trim_top(rect().w);
+	auto buttons_rect = Rect().trim_top(Rect().w);
 	auto inc_button_rect = buttons_rect.trim_left(buttons_rect.w / 2);
 	sdl::render_texture_with_color_mod(_plus_texture.texture(),
 			calculate_filled_text_rect(inc_button_rect, TextHorizontalAlignment::LEFT, I(utf8_codepoint_count(_plus_texture.string().c_str()))));
@@ -86,5 +89,5 @@ void ImageSelection::on_draw() {
 			calculate_filled_text_rect(dec_button_rect, TextHorizontalAlignment::LEFT, I(utf8_codepoint_count(_minus_texture.string().c_str()))));
 	draw_border(dec_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 
-	draw_border(rect(), vertical_border_width_px(), horizontal_border_width_px());
+	draw_border(Rect(), vertical_border_width_px(), horizontal_border_width_px());
 }

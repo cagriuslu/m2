@@ -29,8 +29,8 @@ namespace m2::widget {
 		bool allow_multiple_selection{};
 		bool show_scroll_bar{true};
 
-		std::function<void(TextSelection& self)> on_create{};
-		std::function<UiAction(TextSelection& self)> on_update{};
-		std::function<UiAction(TextSelection& self)> on_action{};
+		std::function<void(TextSelection& self)> onCreate{};
+		std::function<UiAction(TextSelection& self)> onUpdate{};
+		std::function<UiAction(TextSelection& self)> onAction{};
 	};
 }  // namespace m2::widget

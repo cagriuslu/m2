@@ -93,7 +93,7 @@ UiPanelBlueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType
 					.line_count = 8,
 					.allow_multiple_selection = false,
 					.show_scroll_bar = false,
-					.on_create = [=](MAYBE TextSelection& self) {
+					.onCreate = [=](MAYBE TextSelection& self) {
 						self.set_options(list_cards_as_selection_options(exclude_card_1, exclude_card_2));
 					}
 				}
@@ -106,9 +106,9 @@ UiPanelBlueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType
 				.variant = TextBlueprint{
 					.text = blocking_window ? "OK" : "Close",
 					.kb_shortcut = SDL_SCANCODE_RETURN,
-					.on_action = [](const Text& self) -> UiAction {
+					.onAction = [](const Text& self) -> UiAction {
 						// Find the other blueprint
-						if (auto* card_selection = self.parent().find_first_widget_by_name<TextSelection>("CardSelection")) {
+						if (auto* card_selection = self.Parent().find_first_widget_by_name<TextSelection>("CardSelection")) {
 							if (auto selections = card_selection->selections(); not selections.empty()) {
 								auto item_type = static_cast<m2g::pb::ItemType>(std::get<int>(selections[0]));
 								return MakeReturnAction<m2g::pb::ItemType>(item_type);
@@ -130,7 +130,7 @@ UiPanelBlueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType
 				.h = 2,
 				.variant = TextBlueprint{
 					.text = "Cancel",
-					.on_action = [](MAYBE const Text& self) -> UiAction {
+					.onAction = [](MAYBE const Text& self) -> UiAction {
 						// Return empty return
 						return MakeReturnAction();
 					}

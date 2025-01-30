@@ -54,7 +54,7 @@ namespace m2 {
 		[[nodiscard]] bool IsKilled() const;
 		/// Peek the return value contained inside the killed panel
 		[[nodiscard]] const AnyReturnContainer* PeekReturnValueContainer() const;
-		[[nodiscard]] RectI rect_px() const;
+		[[nodiscard]] RectI Rect() const;
 
 		// Modifiers
 
@@ -68,12 +68,12 @@ namespace m2 {
 
 		// Lifecycle Management
 
-        void update_positions();
+        void RecalculateRects();
 		/// Handle the events. If `IsPanning` is true, the mouse state (button states) are not cleared after the
 		/// handling so that the game objects can still observe that the mouse buttons are down.
         UiAction HandleEvents(Events& events, bool IsPanning = false);
-        UiAction update_contents(float delta_time_s);
-        void draw();
+        UiAction UpdateContents(float delta_time_s);
+        void Draw();
 
 	private:
 		[[nodiscard]] int vertical_border_width_px() const;

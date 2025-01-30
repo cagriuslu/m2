@@ -7,10 +7,10 @@ namespace m2::widget {
 
 	public:
 		explicit ProgressBar(UiPanel* parent, const UiWidgetBlueprint* blueprint);
-		UiAction on_update() override;
-		void on_draw() override;
+		UiAction UpdateContent() override;
+		void Draw() override;
 
-		// Modifiers
-		void recreate();
+	private:
+		[[nodiscard]] const ProgressBarBlueprint& VariantBlueprint() const { return std::get<ProgressBarBlueprint>(blueprint->variant); }
 	};
 }

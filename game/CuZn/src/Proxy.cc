@@ -318,7 +318,7 @@ void m2g::Proxy::handle_server_command(const pb::ServerCommand& server_command) 
 						.variant = widget::TextBlueprint{
 							.text = "Close",
 							.wrapped_font_size_in_units = 3.0f,
-							.on_action = [](MAYBE const widget::Text& self) -> UiAction {
+							.onAction = [](MAYBE const widget::Text& self) -> UiAction {
 								return MakeReturnAction();
 							}
 						}
@@ -588,7 +588,7 @@ void m2g::Proxy::SendClientCommandAndWaitForServerUpdate(const pb::ClientCommand
 			.name = "WaitingForServerUpdate",
 			.w = 1, .h = 1,
 			.background_color = {0, 0, 0, 255},
-			.on_create = [&cc](UiPanel&) {
+			.onCreate = [&cc](UiPanel&) {
 				M2_GAME.QueueClientCommand(cc);
 			},
 			.widgets = {

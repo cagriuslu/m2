@@ -15,7 +15,7 @@ using namespace m2g::pb;
 static TextBlueprint client_count = {
 	.text = "0",
 	.wrapped_font_size_in_units = 5.0f,
-	.on_update = [](MAYBE Text& self) {
+	.onUpdate = [](MAYBE Text& self) {
 		auto ccount = M2_GAME.ServerThread().client_count();
 		auto ready_client_count = M2_GAME.ServerThread().ready_client_count();
 		auto text = m2::ToString(ready_client_count) + "/" + m2::ToString(ccount);
@@ -27,7 +27,7 @@ static TextBlueprint client_count = {
 
 		return MakeContinueAction();
 	},
-	.on_action = [](MAYBE const Text& self) -> UiAction {
+	.onAction = [](MAYBE const Text& self) -> UiAction {
 		if (2 <= M2_GAME.ServerThread().client_count()) {
 			LOG_INFO("Enough clients have connected");
 			if (M2_GAME.ServerThread().close_lobby()) {
@@ -65,7 +65,7 @@ const UiPanelBlueprint server_lobby = {
 				.horizontal_alignment = m2::TextHorizontalAlignment::LEFT,
 				.vertical_alignment = m2::TextVerticalAlignment::CENTER,
 				.wrapped_font_size_in_units = 5.0f,
-				.on_create = [](Text& self) {
+				.onCreate = [](Text& self) {
 					if (auto addresses = m2::network::get_ip_addresses()) {
 						auto addresses_str = std::accumulate(addresses->begin(), addresses->end(), std::string{}, [](std::string&& ss, const std::string& s) {
 							return ss.empty() ? s : (ss + " " + s);
@@ -93,7 +93,7 @@ const UiPanelBlueprint server_lobby = {
 			.variant = TextBlueprint{
 				.text = "ADD BOT",
 				.wrapped_font_size_in_units = 5.0f,
-				.on_action = [](MAYBE const m2::widget::Text& self) -> m2::UiAction {
+				.onAction = [](MAYBE const m2::widget::Text& self) -> m2::UiAction {
 					M2_GAME.AddBot();
 					return MakeContinueAction();
 				}
@@ -104,7 +104,7 @@ const UiPanelBlueprint server_lobby = {
 			.variant = TextBlueprint{
 				.text = "CANCEL",
 				.wrapped_font_size_in_units = 5.0f,
-				.on_action = [](MAYBE const Text& self) -> UiAction {
+				.onAction = [](MAYBE const Text& self) -> UiAction {
 					M2_GAME.LeaveGame();
 					// TODO kill bots if any
 					return MakeReturnAction();

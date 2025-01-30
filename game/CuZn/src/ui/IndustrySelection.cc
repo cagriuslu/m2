@@ -18,7 +18,7 @@ std::optional<m2g::pb::ItemType> ask_for_industry_selection(m2g::pb::ItemType in
 				.x = 57, .y = 0, .w = 3, .h = 3,
 				.variant = TextBlueprint{
 					.text = "X",
-					.on_action = [](MAYBE const Text& self) -> UiAction {
+					.onAction = [](MAYBE const Text& self) -> UiAction {
 						return MakeReturnAction();
 					}
 				}
@@ -27,7 +27,7 @@ std::optional<m2g::pb::ItemType> ask_for_industry_selection(m2g::pb::ItemType in
 				.x = 5, .y = 14, .w = 50, .h = 5,
 				.variant = TextBlueprint{
 					.text = M2_GAME.GetNamedItem(industry_1).in_game_name(),
-					.on_action = [industry_1](MAYBE const Text& self) -> UiAction {
+					.onAction = [industry_1](MAYBE const Text& self) -> UiAction {
 						return MakeReturnAction<m2g::pb::ItemType>(industry_1);
 					}
 				}
@@ -36,7 +36,7 @@ std::optional<m2g::pb::ItemType> ask_for_industry_selection(m2g::pb::ItemType in
 				.x = 5, .y = 21, .w = 50, .h = 5,
 				.variant = TextBlueprint{
 					.text = M2_GAME.GetNamedItem(industry_2).in_game_name(),
-					.on_action = [industry_2](MAYBE const Text& self) -> UiAction {
+					.onAction = [industry_2](MAYBE const Text& self) -> UiAction {
 						return MakeReturnAction<m2g::pb::ItemType>(industry_2);
 					}
 				}

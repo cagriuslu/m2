@@ -11,8 +11,8 @@ namespace m2::widget {
 		m2g::pb::SpriteType initial_sprite{};
 		SDL_Scancode kb_shortcut{};
 
-		std::function<void(Image& self)> on_create{};
-		std::function<std::pair<UiAction,std::optional<m2g::pb::SpriteType>>(const Image& self)> on_update{};
-		std::function<UiAction(const Image& self)> on_action{};
+		std::function<void(Image& self)> onCreate{};
+		std::function<std::pair<UiAction,std::optional<m2g::pb::SpriteType>>(const Image& self)> onUpdate{};
+		std::function<UiAction(const Image& self)> onAction{};
 	};
 }

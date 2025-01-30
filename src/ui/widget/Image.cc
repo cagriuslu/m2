@@ -5,16 +5,16 @@ using namespace m2;
 using namespace m2::widget;
 
 Image::Image(UiPanel* parent, const UiWidgetBlueprint* blueprint) : AbstractButton(parent, blueprint),
-		_spriteType(image_blueprint().initial_sprite) {
-	if (image_blueprint().on_create) {
-		image_blueprint().on_create(*this);
+		_spriteType(VariantBlueprint().initial_sprite) {
+	if (VariantBlueprint().onCreate) {
+		VariantBlueprint().onCreate(*this);
 	}
 }
 
-UiAction Image::on_update() {
+UiAction Image::UpdateContent() {
 	auto& image_blueprint = std::get<ImageBlueprint>(blueprint->variant);
-	if (image_blueprint.on_update) {
-		auto[action, opt_sprite] = image_blueprint.on_update(*this);
+	if (image_blueprint.onUpdate) {
+		auto[action, opt_sprite] = image_blueprint.onUpdate(*this);
 		if (action.IsContinue() && opt_sprite) {
 			_spriteType = *opt_sprite;
 		}
@@ -24,14 +24,14 @@ UiAction Image::on_update() {
 	}
 }
 
-void Image::on_draw() {
+void Image::Draw() {
 	draw_background_color();
 	if (_spriteType) {
-		DrawSpriteOrTextLabel(M2_GAME.GetSpriteOrTextLabel(_spriteType), rect());
+		DrawSpriteOrTextLabel(M2_GAME.GetSpriteOrTextLabel(_spriteType), Rect());
 	}
-	draw_border(rect(), vertical_border_width_px(), horizontal_border_width_px(), depressed ? SDL_Color{127, 127, 127, 255} : SDL_Color{255, 255, 255, 255});
+	draw_border(Rect(), vertical_border_width_px(), horizontal_border_width_px(), depressed ? SDL_Color{127, 127, 127, 255} : SDL_Color{255, 255, 255, 255});
 }
 
-void Image::set_sprite(const m2g::pb::SpriteType s) {
+void Image::SetSpriteType(const m2g::pb::SpriteType s) {
 	_spriteType = s;
 }

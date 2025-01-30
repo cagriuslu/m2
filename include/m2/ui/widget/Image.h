@@ -8,12 +8,14 @@ namespace m2::widget {
 
 	public:
 		explicit Image(UiPanel* parent, const UiWidgetBlueprint* blueprint);
-		UiAction on_update() override;
-		void on_draw() override;
+		UiAction UpdateContent() override;
+		void Draw() override;
 
-		void set_sprite(m2g::pb::SpriteType);
+		// Modifiers
+
+		void SetSpriteType(m2g::pb::SpriteType);
 
 	private:
-		[[nodiscard]] const ImageBlueprint& image_blueprint() const { return std::get<ImageBlueprint>(blueprint->variant); }
+		[[nodiscard]] const ImageBlueprint& VariantBlueprint() const { return std::get<ImageBlueprint>(blueprint->variant); }
 	};
 }

@@ -135,7 +135,7 @@ const m2::UiPanelBlueprint* m2g::Proxy::generate_main_menu() {
 		    .w = x_button_width, .h = y_button_width,
 		    .variant = m2::widget::TextBlueprint{
 		        .text = level_display_name,
-		        .on_action = [=, this](MAYBE const m2::widget::Text &self) {
+		        .onAction = [=, this](MAYBE const m2::widget::Text &self) {
 			        alive_enemy_count = 0;
 			        m2_succeed_or_throw_error(M2_GAME.LoadSinglePlayer(level_json, level_name));
 			        M2_GAME.audio_manager->play(&M2_GAME.songs[m2g::pb::SONG_MAIN_THEME],
@@ -152,7 +152,7 @@ const m2::UiPanelBlueprint* m2g::Proxy::generate_main_menu() {
 	    .variant = m2::widget::TextBlueprint{
 	        .text = "Quit",
 	        .kb_shortcut = SDL_SCANCODE_Q,
-	        .on_action = [](MAYBE const m2::widget::Text &self) {
+	        .onAction = [](MAYBE const m2::widget::Text &self) {
 		        return m2::MakeQuitAction();
 	        }
 	    }
@@ -182,7 +182,7 @@ const m2::UiPanelBlueprint* m2g::Proxy::generate_right_hud() {
 	    .x = 2, .y = 68, .w = 15, .h = 2,
 	    .variant = m2::widget::ProgressBarBlueprint{
 	        .bar_color = SDL_Color{0, 127, 255, 255},
-	        .on_update = [](MAYBE const m2::widget::ProgressBar& self) {
+	        .onUpdate = [](MAYBE const m2::widget::ProgressBar& self) {
 		        if (auto *player = M2_LEVEL.Player(); player) {
 			        if (auto ammo = player->character().get_resource(
 			                m2g::pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO); ammo != 0.0f) {
@@ -220,7 +220,7 @@ const m2::UiPanelBlueprint* m2g::Proxy::you_died_menu() {
 		    .x = 70, .y = 70, .w = 20, .h = 6,
 		    .variant = m2::widget::TextBlueprint{
 		        .text = "Retry",
-		        .on_action = [=, this](MAYBE const m2::widget::Text &self) -> m2::UiAction {
+		        .onAction = [=, this](MAYBE const m2::widget::Text &self) -> m2::UiAction {
 			        alive_enemy_count = 0;
 			        m2_succeed_or_throw_error(M2_GAME.LoadSinglePlayer(*lb_path, M2_LEVEL.Name()));
 			        return m2::MakeReturnAction();
@@ -233,7 +233,7 @@ const m2::UiPanelBlueprint* m2g::Proxy::you_died_menu() {
 	    .x = 55, .y = 80, .w = 20, .h = 6,
 	    .variant = m2::widget::TextBlueprint{
 	        .text = "Main Menu",
-	        .on_action = [&](MAYBE const m2::widget::Text &self) {
+	        .onAction = [&](MAYBE const m2::widget::Text &self) {
 		        return m2::UiPanel::create_and_run_blocking(&_main_menu);
 	        }
 	    }
@@ -243,7 +243,7 @@ const m2::UiPanelBlueprint* m2g::Proxy::you_died_menu() {
 	    .x = 85, .y = 80, .w = 20, .h = 6,
 	    .variant = m2::widget::TextBlueprint{
 	        .text = "Quit",
-	        .on_action = [](MAYBE const m2::widget::Text &self) {
+	        .onAction = [](MAYBE const m2::widget::Text &self) {
 		        return m2::MakeQuitAction();
 	        }
 	    }

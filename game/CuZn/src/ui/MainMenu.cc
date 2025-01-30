@@ -23,7 +23,7 @@ const UiPanelBlueprint main_menu_blueprint = {
 			.variant = TextBlueprint{
 				.text = "JOIN",
 				.wrapped_font_size_in_units = 5.0f,
-				.on_action = [](MAYBE const widget::Text& self) {
+				.onAction = [](MAYBE const widget::Text& self) {
 					if (auto action = m2::UiPanel::create_and_run_blocking(&ip_port_form); action.IsReturn()) {
 						// If the sub menu has returned, stay at main menu
 						return MakeContinueAction();
@@ -39,7 +39,7 @@ const UiPanelBlueprint main_menu_blueprint = {
 			.variant = TextBlueprint{
 				.text = "HOST",
 				.wrapped_font_size_in_units = 5.0f,
-				.on_action = [](MAYBE const widget::Text& self) {
+				.onAction = [](MAYBE const widget::Text& self) {
 					M2_GAME.HostGame(m2::mplayer::Type::TurnBased, 4);
 					if (auto action = m2::UiPanel::create_and_run_blocking(&server_lobby); action.IsReturn()) {
 						// If the sub menu has returned, stay at main menu
@@ -56,7 +56,7 @@ const UiPanelBlueprint main_menu_blueprint = {
 			.variant = TextBlueprint{
 				.text = "QUIT",
 				.wrapped_font_size_in_units = 5.0f,
-				.kb_shortcut = SDL_SCANCODE_Q, .on_action = quit_button_action
+				.kb_shortcut = SDL_SCANCODE_Q, .onAction = quit_button_action
 			}
 		}
 	}

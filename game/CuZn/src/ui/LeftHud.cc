@@ -19,7 +19,7 @@ namespace {
 	const auto build_button = TextBlueprint{
 		.text = "Build",
 		.wrapped_font_size_in_units = 1.75f,
-		.on_action = [](MAYBE const Text& self) -> UiAction {
+		.onAction = [](MAYBE const Text& self) -> UiAction {
 			if (auto build_prerequisite = CanPlayerAttemptToBuild(M2_PLAYER.character())) {
 				m2g::Proxy::get_instance().main_journeys.emplace(std::in_place_type<BuildJourney>); // Avoid a temporary
 			} else {
@@ -32,7 +32,7 @@ namespace {
 	const auto develop_button = TextBlueprint{
 		.text = "Develop",
 		.wrapped_font_size_in_units = 1.75f,
-		.on_action = [](MAYBE const Text& self) -> UiAction {
+		.onAction = [](MAYBE const Text& self) -> UiAction {
 			if (auto develop_prerequisite = CanPlayerAttemptToDevelop(M2_PLAYER.character())) {
 				m2g::Proxy::get_instance().main_journeys.emplace(std::in_place_type<DevelopJourney>);
 			} else {
@@ -45,7 +45,7 @@ namespace {
 	const auto loan_button = TextBlueprint{
 		.text = "Loan",
 		.wrapped_font_size_in_units = 1.75f,
-		.on_action = [](MAYBE const m2::widget::Text& self) -> m2::UiAction {
+		.onAction = [](MAYBE const m2::widget::Text& self) -> m2::UiAction {
 			if (auto loan_prerequisite = CanPlayerAttemptToLoan(M2_PLAYER.character())) {
 				ExecuteLoanJourney();
 			} else {
@@ -58,7 +58,7 @@ namespace {
 	const auto network_button = TextBlueprint{
 		.text = "Network",
 		.wrapped_font_size_in_units = 1.75f,
-		.on_action = [](MAYBE const Text& self) -> UiAction {
+		.onAction = [](MAYBE const Text& self) -> UiAction {
 			if (auto network_prerequisite = CanPlayerAttemptToNetwork(M2_PLAYER.character())) {
 				m2g::Proxy::get_instance().main_journeys.emplace(std::in_place_type<NetworkJourney>);
 			} else {
@@ -71,7 +71,7 @@ namespace {
 	const auto pass_button = TextBlueprint{
 		.text = "Pass",
 		.wrapped_font_size_in_units = 1.75f,
-		.on_action = [](MAYBE const m2::widget::Text& self) -> m2::UiAction {
+		.onAction = [](MAYBE const m2::widget::Text& self) -> m2::UiAction {
 			if (M2_GAME.IsOurTurn()) {
 				ExecutePassJourney();
 			}
@@ -82,7 +82,7 @@ namespace {
 	const auto scout_button = TextBlueprint{
 		.text = "Scout",
 		.wrapped_font_size_in_units = 1.75f,
-		.on_action = [](MAYBE const m2::widget::Text& self) -> m2::UiAction {
+		.onAction = [](MAYBE const m2::widget::Text& self) -> m2::UiAction {
 			if (auto scout_prerequisite = CanPlayerAttemptToScout(M2_PLAYER.character())) {
 				ExecuteScoutJourney();
 			} else {
@@ -95,7 +95,7 @@ namespace {
 	const auto sell_button = TextBlueprint{
 		.text = "Sell",
 		.wrapped_font_size_in_units = 1.75f,
-		.on_action = [](MAYBE const Text& self) -> UiAction {
+		.onAction = [](MAYBE const Text& self) -> UiAction {
 			if (auto sell_prerequisite = CanPlayerAttemptToSell(M2_PLAYER.character())) {
 				m2g::Proxy::get_instance().main_journeys.emplace(std::in_place_type<SellJourney>);
 			} else {
@@ -127,7 +127,7 @@ const UiPanelBlueprint left_hud_blueprint = {
 			.border_width = 0,
 			.variant = TextBlueprint{
 				.wrapped_font_size_in_units = 2.5f,
-				.on_create = [](MAYBE Text& self) {
+				.onCreate = [](MAYBE Text& self) {
 					auto text = generate_player_name(M2_GAME.SelfIndex());
 					self.set_text(text);
 					self.set_color(generate_player_color(M2_GAME.SelfIndex()));
@@ -141,7 +141,7 @@ const UiPanelBlueprint left_hud_blueprint = {
 			.variant = TextBlueprint{
 				.horizontal_alignment = m2::TextHorizontalAlignment::CENTER,
 				.wrapped_font_size_in_units = 1.25f,
-				.on_update = [](MAYBE Text& self) {
+				.onUpdate = [](MAYBE Text& self) {
 					if (M2_GAME.IsOurTurn()) {
 						if (m2::is_one(M2G_PROXY.game_state_tracker().get_resource(m2g::pb::IS_LAST_ACTION_OF_PLAYER), 0.001f)) {
 							self.set_text("Take your\nlast action\nof this turn");

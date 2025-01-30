@@ -78,9 +78,9 @@ m2::UiPanelBlueprint generate_market_window() {
 				.w = 4,
 				.h = 6,
 				.variant = ImageBlueprint{
-					.on_create = [](Image& img) {
+					.onCreate = [](Image& img) {
 						if (1 <= M2G_PROXY.market_coal_count()) {
-							img.set_sprite(m2g::pb::COAL_CUBE);
+							img.SetSpriteType(m2g::pb::COAL_CUBE);
 						}
 					}
 				}
@@ -91,9 +91,9 @@ m2::UiPanelBlueprint generate_market_window() {
 				.w = 4,
 				.h = 6,
 				.variant = ImageBlueprint{
-					.on_create = [](Image& img) {
+					.onCreate = [](Image& img) {
 						if (2 <= M2G_PROXY.market_coal_count()) {
-							img.set_sprite(m2g::pb::COAL_CUBE);
+							img.SetSpriteType(m2g::pb::COAL_CUBE);
 						}
 					}
 				}
@@ -112,9 +112,9 @@ m2::UiPanelBlueprint generate_market_window() {
 				.w = 4,
 				.h = 6,
 				.variant = ImageBlueprint{
-					.on_create = [](Image& img) {
+					.onCreate = [](Image& img) {
 						if (3 <= M2G_PROXY.market_coal_count()) {
-							img.set_sprite(m2g::pb::COAL_CUBE);
+							img.SetSpriteType(m2g::pb::COAL_CUBE);
 						}
 					}
 				}
@@ -125,9 +125,9 @@ m2::UiPanelBlueprint generate_market_window() {
 				.w = 4,
 				.h = 6,
 				.variant = ImageBlueprint{
-					.on_create = [](Image& img) {
+					.onCreate = [](Image& img) {
 						if (4 <= M2G_PROXY.market_coal_count()) {
-							img.set_sprite(m2g::pb::COAL_CUBE);
+							img.SetSpriteType(m2g::pb::COAL_CUBE);
 						}
 					}
 				}
@@ -154,9 +154,9 @@ m2::UiPanelBlueprint generate_market_window() {
 				.w = 4,
 				.h = 6,
 				.variant = ImageBlueprint{
-					.on_create = [](Image& img) {
+					.onCreate = [](Image& img) {
 						if (5 <= M2G_PROXY.market_coal_count()) {
-							img.set_sprite(m2g::pb::COAL_CUBE);
+							img.SetSpriteType(m2g::pb::COAL_CUBE);
 						}
 					}
 				}
@@ -167,9 +167,9 @@ m2::UiPanelBlueprint generate_market_window() {
 				.w = 4,
 				.h = 6,
 				.variant = ImageBlueprint{
-					.on_create = [](Image& img) {
+					.onCreate = [](Image& img) {
 						if (6 <= M2G_PROXY.market_coal_count()) {
-							img.set_sprite(m2g::pb::COAL_CUBE);
+							img.SetSpriteType(m2g::pb::COAL_CUBE);
 						}
 					}
 				}
@@ -180,9 +180,9 @@ m2::UiPanelBlueprint generate_market_window() {
 				.w = 4,
 				.h = 6,
 				.variant = ImageBlueprint{
-					.on_create = [](Image& img) {
+					.onCreate = [](Image& img) {
 						if (1 <= M2G_PROXY.market_iron_count()) {
-							img.set_sprite(m2g::pb::IRON_CUBE);
+							img.SetSpriteType(m2g::pb::IRON_CUBE);
 						}
 					}
 				}
@@ -193,9 +193,9 @@ m2::UiPanelBlueprint generate_market_window() {
 				.w = 4,
 				.h = 6,
 				.variant = ImageBlueprint{
-					.on_create = [](Image& img) {
+					.onCreate = [](Image& img) {
 						if (2 <= M2G_PROXY.market_iron_count()) {
-							img.set_sprite(m2g::pb::IRON_CUBE);
+							img.SetSpriteType(m2g::pb::IRON_CUBE);
 						}
 					}
 				}
@@ -214,9 +214,9 @@ m2::UiPanelBlueprint generate_market_window() {
 				.w = 4,
 				.h = 6,
 				.variant = ImageBlueprint{
-					.on_create = [](Image& img) {
+					.onCreate = [](Image& img) {
 						if (7 <= M2G_PROXY.market_coal_count()) {
-							img.set_sprite(m2g::pb::COAL_CUBE);
+							img.SetSpriteType(m2g::pb::COAL_CUBE);
 						}
 					}
 				}
@@ -227,9 +227,9 @@ m2::UiPanelBlueprint generate_market_window() {
 				.w = 4,
 				.h = 6,
 				.variant = ImageBlueprint{
-					.on_create = [](Image& img) {
+					.onCreate = [](Image& img) {
 						if (8 <= M2G_PROXY.market_coal_count()) {
-							img.set_sprite(m2g::pb::COAL_CUBE);
+							img.SetSpriteType(m2g::pb::COAL_CUBE);
 						}
 					}
 				}
@@ -240,9 +240,9 @@ m2::UiPanelBlueprint generate_market_window() {
 				.w = 4,
 				.h = 6,
 				.variant = ImageBlueprint{
-					.on_create = [](Image& img) {
+					.onCreate = [](Image& img) {
 						if (3 <= M2G_PROXY.market_iron_count()) {
-							img.set_sprite(m2g::pb::IRON_CUBE);
+							img.SetSpriteType(m2g::pb::IRON_CUBE);
 						}
 					}
 				}
@@ -253,9 +253,9 @@ m2::UiPanelBlueprint generate_market_window() {
 				.w = 4,
 				.h = 6,
 				.variant = ImageBlueprint{
-					.on_create = [](Image& img) {
+					.onCreate = [](Image& img) {
 						if (4 <= M2G_PROXY.market_iron_count()) {
-							img.set_sprite(m2g::pb::IRON_CUBE);
+							img.SetSpriteType(m2g::pb::IRON_CUBE);
 						}
 					}
 				}
@@ -274,9 +274,9 @@ m2::UiPanelBlueprint generate_market_window() {
 				.w = 4,
 				.h = 6,
 				.variant = ImageBlueprint{
-					.on_create = [](Image& img) {
+					.onCreate = [](Image& img) {
 						if (9 <= M2G_PROXY.market_coal_count()) {
-							img.set_sprite(m2g::pb::COAL_CUBE);
+							img.SetSpriteType(m2g::pb::COAL_CUBE);
 						}
 					}
 				}
@@ -287,9 +287,9 @@ m2::UiPanelBlueprint generate_market_window() {
 				.w = 4,
 				.h = 6,
 				.variant = ImageBlueprint{
-					.on_create = [](Image& img) {
+					.onCreate = [](Image& img) {
 						if (10 <= M2G_PROXY.market_coal_count()) {
-							img.set_sprite(m2g::pb::COAL_CUBE);
+							img.SetSpriteType(m2g::pb::COAL_CUBE);
 						}
 					}
 				}
@@ -300,9 +300,9 @@ m2::UiPanelBlueprint generate_market_window() {
 				.w = 4,
 				.h = 6,
 				.variant = ImageBlueprint{
-					.on_create = [](Image& img) {
+					.onCreate = [](Image& img) {
 						if (5 <= M2G_PROXY.market_iron_count()) {
-							img.set_sprite(m2g::pb::IRON_CUBE);
+							img.SetSpriteType(m2g::pb::IRON_CUBE);
 						}
 					}
 				}
@@ -313,9 +313,9 @@ m2::UiPanelBlueprint generate_market_window() {
 				.w = 4,
 				.h = 6,
 				.variant = ImageBlueprint{
-					.on_create = [](Image& img) {
+					.onCreate = [](Image& img) {
 						if (6 <= M2G_PROXY.market_iron_count()) {
-							img.set_sprite(m2g::pb::IRON_CUBE);
+							img.SetSpriteType(m2g::pb::IRON_CUBE);
 						}
 					}
 				}
@@ -334,9 +334,9 @@ m2::UiPanelBlueprint generate_market_window() {
 				.w = 4,
 				.h = 6,
 				.variant = ImageBlueprint{
-					.on_create = [](Image& img) {
+					.onCreate = [](Image& img) {
 						if (11 <= M2G_PROXY.market_coal_count()) {
-							img.set_sprite(m2g::pb::COAL_CUBE);
+							img.SetSpriteType(m2g::pb::COAL_CUBE);
 						}
 					}
 				}
@@ -347,9 +347,9 @@ m2::UiPanelBlueprint generate_market_window() {
 				.w = 4,
 				.h = 6,
 				.variant = ImageBlueprint{
-					.on_create = [](Image& img) {
+					.onCreate = [](Image& img) {
 						if (12 <= M2G_PROXY.market_coal_count()) {
-							img.set_sprite(m2g::pb::COAL_CUBE);
+							img.SetSpriteType(m2g::pb::COAL_CUBE);
 						}
 					}
 				}
@@ -360,9 +360,9 @@ m2::UiPanelBlueprint generate_market_window() {
 				.w = 4,
 				.h = 6,
 				.variant = ImageBlueprint{
-					.on_create = [](Image& img) {
+					.onCreate = [](Image& img) {
 						if (7 <= M2G_PROXY.market_iron_count()) {
-							img.set_sprite(m2g::pb::IRON_CUBE);
+							img.SetSpriteType(m2g::pb::IRON_CUBE);
 						}
 					}
 				}
@@ -373,9 +373,9 @@ m2::UiPanelBlueprint generate_market_window() {
 				.w = 4,
 				.h = 6,
 				.variant = ImageBlueprint{
-					.on_create = [](Image& img) {
+					.onCreate = [](Image& img) {
 						if (8 <= M2G_PROXY.market_iron_count()) {
-							img.set_sprite(m2g::pb::IRON_CUBE);
+							img.SetSpriteType(m2g::pb::IRON_CUBE);
 						}
 					}
 				}
@@ -394,9 +394,9 @@ m2::UiPanelBlueprint generate_market_window() {
 				.w = 4,
 				.h = 6,
 				.variant = ImageBlueprint{
-					.on_create = [](Image& img) {
+					.onCreate = [](Image& img) {
 						if (13 <= M2G_PROXY.market_coal_count()) {
-							img.set_sprite(m2g::pb::COAL_CUBE);
+							img.SetSpriteType(m2g::pb::COAL_CUBE);
 						}
 					}
 				}
@@ -407,9 +407,9 @@ m2::UiPanelBlueprint generate_market_window() {
 				.w = 4,
 				.h = 6,
 				.variant = ImageBlueprint{
-					.on_create = [](Image& img) {
+					.onCreate = [](Image& img) {
 						if (14 <= M2G_PROXY.market_coal_count()) {
-							img.set_sprite(m2g::pb::COAL_CUBE);
+							img.SetSpriteType(m2g::pb::COAL_CUBE);
 						}
 					}
 				}
@@ -420,9 +420,9 @@ m2::UiPanelBlueprint generate_market_window() {
 				.w = 4,
 				.h = 6,
 				.variant = ImageBlueprint{
-					.on_create = [](Image& img) {
+					.onCreate = [](Image& img) {
 						if (9 <= M2G_PROXY.market_iron_count()) {
-							img.set_sprite(m2g::pb::IRON_CUBE);
+							img.SetSpriteType(m2g::pb::IRON_CUBE);
 						}
 					}
 				}
@@ -433,9 +433,9 @@ m2::UiPanelBlueprint generate_market_window() {
 				.w = 4,
 				.h = 6,
 				.variant = ImageBlueprint{
-					.on_create = [](Image& img) {
+					.onCreate = [](Image& img) {
 						if (10 <= M2G_PROXY.market_iron_count()) {
-							img.set_sprite(m2g::pb::IRON_CUBE);
+							img.SetSpriteType(m2g::pb::IRON_CUBE);
 						}
 					}
 				}
@@ -448,7 +448,7 @@ m2::UiPanelBlueprint generate_market_window() {
 				.variant = TextBlueprint{
 					.text = "Dismiss",
 					.kb_shortcut = SDL_SCANCODE_RETURN,
-					.on_action = [](MAYBE const Text& self) -> UiAction {
+					.onAction = [](MAYBE const Text& self) -> UiAction {
 						return MakeReturnAction();
 					}
 				}

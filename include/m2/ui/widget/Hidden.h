@@ -5,11 +5,10 @@ namespace m2::widget {
     class Hidden final : public UiWidget {
     public:
         Hidden(UiPanel* parent, const UiWidgetBlueprint* blueprint);
-
-        UiAction on_event(Events& events) override;
-        UiAction on_update() override;
+        UiAction HandleEvents(Events& events) override;
+        UiAction UpdateContent() override;
 
     private:
-        [[nodiscard]] const HiddenBlueprint& hidden_blueprint() const { return std::get<HiddenBlueprint>(blueprint->variant); }
+        [[nodiscard]] const HiddenBlueprint& VariantBlueprint() const { return std::get<HiddenBlueprint>(blueprint->variant); }
     };
 }

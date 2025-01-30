@@ -15,7 +15,7 @@ namespace {
 				.background_color = {0, 0, 0, 255},
 				.variant = widget::TextBlueprint{
 					.text = "Cancel",
-					.on_action = [](MAYBE const widget::Text& self) -> UiAction {
+					.onAction = [](MAYBE const widget::Text& self) -> UiAction {
 						// Create and send a cancel signal to the current user journey
 						if (M2G_PROXY.main_journeys) {
 							std::visit(m2::overloaded{

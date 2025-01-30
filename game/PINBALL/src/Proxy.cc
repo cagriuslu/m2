@@ -15,7 +15,7 @@ namespace {
 				.background_color = {35, 35, 35, 255},
 				.variant = m2::widget::TextBlueprint{
 					.text = "Start",
-					.on_action = [](MAYBE const m2::widget::Text& text) -> m2::UiAction {
+					.onAction = [](MAYBE const m2::widget::Text& text) -> m2::UiAction {
 						M2_GAME.LoadSinglePlayer(M2_GAME.levels_dir / "001.json", "001");
 						return m2::MakeReturnAction();
 					}

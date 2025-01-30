@@ -8,7 +8,7 @@ using namespace m2;
 static widget::TextBlueprint resume_button = {
 		.text = "Resume",
 		.kb_shortcut = SDL_SCANCODE_R,
-		.on_action = [](MAYBE const widget::Text &self) {
+		.onAction = [](MAYBE const widget::Text &self) {
 			LOG_DEBUG("Resume button pressed");
 			return MakeReturnAction(); // TODO Return value
 		}
@@ -16,7 +16,7 @@ static widget::TextBlueprint resume_button = {
 static widget::TextBlueprint quit_button = {
 		.text = "Quit",
 		.kb_shortcut = SDL_SCANCODE_Q,
-		.on_action = [](MAYBE const widget::Text &self) {
+		.onAction = [](MAYBE const widget::Text &self) {
 			return MakeQuitAction();
 		}
 };
@@ -43,7 +43,7 @@ static widget::TextBlueprint hp_label = {
 static widget::ProgressBarBlueprint hp_progress_bar = {
 		.initial_progress = 1.0f,
 		.bar_color = SDL_Color{255, 0, 0, 255},
-		.on_update = [](MAYBE const widget::ProgressBar& self) -> float {
+		.onUpdate = [](MAYBE const widget::ProgressBar& self) -> float {
 			if (M2_LEVEL.Player()) {
 				return M2_PLAYER.character().get_resource(m2g::pb::RESOURCE_HP);
 			}
@@ -56,7 +56,7 @@ static widget::TextBlueprint dash_label = {
 static widget::ProgressBarBlueprint dash_progress_bar = {
 		.initial_progress = 1.0f,
 		.bar_color = SDL_Color{255, 255, 0, 255},
-		.on_update = [](MAYBE const widget::ProgressBar& self) {
+		.onUpdate = [](MAYBE const widget::ProgressBar& self) {
 			if (M2_LEVEL.Player()) {
 				// Check if player has DASH capability
 				if (M2_PLAYER.character().has_item(m2g::pb::ITEM_REUSABLE_DASH_2S)) {

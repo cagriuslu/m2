@@ -30,26 +30,28 @@ namespace m2 {
 		virtual ~UiWidget() = default;
 
 		// Accessors
-		[[nodiscard]] UiPanel& parent() const { return *_parent; }
-		[[nodiscard]] const RectI& rect() const { return _rect_px; }
+
+		[[nodiscard]] UiPanel& Parent() const { return *_parent; }
+		[[nodiscard]] const RectI& Rect() const { return _rect_px; }
 
 		// Modifiers
-		void set_rect(const RectI& rect_px);
-		virtual UiAction on_event(MAYBE Events& events) { return MakeContinueAction(); }
-		virtual void on_focus_change() {}
-		virtual UiAction on_update() { return MakeContinueAction(); }
-		virtual void on_draw() {}
+
+		void SetRect(const RectI& rect_px);
+		virtual UiAction HandleEvents(MAYBE Events& events) { return MakeContinueAction(); }
+		virtual void HandleFocusChange() {}
+		virtual UiAction UpdateContent() { return MakeContinueAction(); }
+		virtual void Draw() {}
 
 	protected:
 		// Virtual functions for children to implement
-		virtual void on_resize(MAYBE const RectI& oldRect, MAYBE const RectI& newRect) {}
+		virtual void HandleResize(MAYBE const RectI& oldRect, MAYBE const RectI& newRect) {}
 
 		// Utilities for child classes to use
 
 		void draw_background_color() const;
 
-		[[nodiscard]] float horizontal_pixels_per_unit() const { return F(rect().w) / F(blueprint->w); }
-		[[nodiscard]] float vertical_pixels_per_unit() const { return F(rect().h) / F(blueprint->h); }
+		[[nodiscard]] float horizontal_pixels_per_unit() const { return F(Rect().w) / F(blueprint->w); }
+		[[nodiscard]] float vertical_pixels_per_unit() const { return F(Rect().h) / F(blueprint->h); }
 		[[nodiscard]] int vertical_border_width_px() const;
 		[[nodiscard]] int horizontal_border_width_px() const;
 		[[nodiscard]] int vertical_padding_width_px() const;

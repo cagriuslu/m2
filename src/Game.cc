@@ -675,11 +675,11 @@ void m2::Game::ExecutePreDraw() {
 
 void m2::Game::UpdateHudContents() {
 	// TODO handle returned actions
-	IF(_level->_leftHudUiPanel)->update_contents(_delta_time_s);
-	IF(_level->_rightHudUiPanel)->update_contents(_delta_time_s);
-	IF(_level->_messageBoxUiPanel)->update_contents(_delta_time_s);
+	IF(_level->_leftHudUiPanel)->UpdateContents(_delta_time_s);
+	IF(_level->_rightHudUiPanel)->UpdateContents(_delta_time_s);
+	IF(_level->_messageBoxUiPanel)->UpdateContents(_delta_time_s);
 	for (auto &panel : _level->_customNonblockingUiPanels) {
-		auto action{panel.update_contents(_delta_time_s)};
+		auto action{panel.UpdateContents(_delta_time_s)};
 		action.IfQuit([this]() { quit = true; });
 		if (auto anyReturnContainer = action.ExtractAnyReturnContainer()) {
 			// If UI returned, kill the panel. We cannot delete it yet, the iterator is held by the client, but we
@@ -687,9 +687,9 @@ void m2::Game::UpdateHudContents() {
 			panel.KillWithReturnValue(std::move(*anyReturnContainer));
 		}
 	}
-	IF(_level->_mouseHoverUiPanel)->update_contents(_delta_time_s);
+	IF(_level->_mouseHoverUiPanel)->UpdateContents(_delta_time_s);
 	if (_level->_semiBlockingUiPanel) {
-		_level->_semiBlockingUiPanel->update_contents(_delta_time_s)
+		_level->_semiBlockingUiPanel->UpdateContents(_delta_time_s)
 				.IfQuit([this]() {
 					quit = true;
 				})
@@ -780,14 +780,14 @@ void m2::Game::DebugDraw() {
 }
 
 void m2::Game::DrawHud() {
-	IF(_level->_leftHudUiPanel)->draw();
-	IF(_level->_rightHudUiPanel)->draw();
-	IF(_level->_messageBoxUiPanel)->draw();
+	IF(_level->_leftHudUiPanel)->Draw();
+	IF(_level->_rightHudUiPanel)->Draw();
+	IF(_level->_messageBoxUiPanel)->Draw();
 	for (auto &panel : _level->_customNonblockingUiPanels) {
-		panel.draw();
+		panel.Draw();
 	}
-	IF(_level->_mouseHoverUiPanel)->draw();
-	IF(_level->_semiBlockingUiPanel)->draw();
+	IF(_level->_mouseHoverUiPanel)->Draw();
+	IF(_level->_semiBlockingUiPanel)->Draw();
 }
 
 void m2::Game::DrawEnvelopes() const {
@@ -809,14 +809,14 @@ void m2::Game::FlipBuffers() const { SDL_RenderPresent(renderer); }
 void m2::Game::OnWindowResize() {
 	_dimensionsManager->OnWindowResize();
 	if (_level) {
-		IF(_level->_leftHudUiPanel)->update_positions();
-		IF(_level->_rightHudUiPanel)->update_positions();
-		IF(_level->_messageBoxUiPanel)->update_positions();
+		IF(_level->_leftHudUiPanel)->RecalculateRects();
+		IF(_level->_rightHudUiPanel)->RecalculateRects();
+		IF(_level->_messageBoxUiPanel)->RecalculateRects();
 		for (auto &panel : _level->_customNonblockingUiPanels) {
-			panel.update_positions();
+			panel.RecalculateRects();
 		}
-		IF(_level->_mouseHoverUiPanel)->update_positions();
-		IF (_level->_semiBlockingUiPanel)->update_positions();
+		IF(_level->_mouseHoverUiPanel)->RecalculateRects();
+		IF (_level->_semiBlockingUiPanel)->RecalculateRects();
 
 		// Clear text label rectangles so that they are regenerated with new size
 		for (auto& gfx : _level->graphics) {
@@ -924,17 +924,17 @@ bool m2::Game::IsMouseOnAnyUiPanel() const {
 	}
 	// Otherwise, check if the mouse is on top of the other UI panels known to Level
 	const auto mouse_position = events.mouse_position();
-	if (_level->_leftHudUiPanel && _level->_leftHudUiPanel->rect_px().contains(mouse_position)) {
+	if (_level->_leftHudUiPanel && _level->_leftHudUiPanel->Rect().contains(mouse_position)) {
 		return true;
 	}
-	if (_level->_rightHudUiPanel && _level->_rightHudUiPanel->rect_px().contains(mouse_position)) {
+	if (_level->_rightHudUiPanel && _level->_rightHudUiPanel->Rect().contains(mouse_position)) {
 		return true;
 	}
-	if (_level->_messageBoxUiPanel && _level->_messageBoxUiPanel->rect_px().contains(mouse_position)) {
+	if (_level->_messageBoxUiPanel && _level->_messageBoxUiPanel->Rect().contains(mouse_position)) {
 		return true;
 	}
 	for (auto &panel : _level->_customNonblockingUiPanels) {
-		if (panel.rect_px().contains(mouse_position)) {
+		if (panel.Rect().contains(mouse_position)) {
 			return true;
 		}
 	}

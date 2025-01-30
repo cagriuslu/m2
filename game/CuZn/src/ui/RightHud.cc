@@ -31,7 +31,7 @@ const UiPanelBlueprint right_hud_blueprint = {
 			TextBlueprint{
 				.horizontal_alignment = TextHorizontalAlignment::LEFT,
 				.wrapped_font_size_in_units = 1.25f,
-				.on_update = [](MAYBE Text& self) {
+				.onUpdate = [](MAYBE Text& self) {
 					auto vp = m2::iround(M2_PLAYER.character().get_resource(VICTORY_POINTS));
 					self.set_text(std::string{"Victory Points: "} + m2::ToString(vp));
 					return MakeContinueAction();
@@ -48,7 +48,7 @@ const UiPanelBlueprint right_hud_blueprint = {
 			TextBlueprint{
 				.horizontal_alignment = TextHorizontalAlignment::LEFT,
 				.wrapped_font_size_in_units = 1.25f,
-				.on_update = [](MAYBE Text& self) {
+				.onUpdate = [](MAYBE Text& self) {
 					auto vp = m2::iround(M2_PLAYER.character().get_attribute(INCOME_POINTS));
 					self.set_text(std::string{"Income Points: "} + m2::ToString(vp));
 					return MakeContinueAction();
@@ -65,7 +65,7 @@ const UiPanelBlueprint right_hud_blueprint = {
 			TextBlueprint{
 				.horizontal_alignment = TextHorizontalAlignment::LEFT,
 				.wrapped_font_size_in_units = 1.25f,
-				.on_update = [](MAYBE Text& self) {
+				.onUpdate = [](MAYBE Text& self) {
 					const auto income_points = m2::iround(M2_PLAYER.character().get_attribute(INCOME_POINTS));
 					const auto income_level = IncomeLevelFromIncomePoints(income_points);
 					self.set_text(std::string{"Income: £"} + m2::ToString(income_level));
@@ -83,7 +83,7 @@ const UiPanelBlueprint right_hud_blueprint = {
 			TextBlueprint{
 				.horizontal_alignment = TextHorizontalAlignment::LEFT,
 				.wrapped_font_size_in_units = 1.25f,
-				.on_update = [](MAYBE Text& self) {
+				.onUpdate = [](MAYBE Text& self) {
 					auto money = m2::iround(M2_PLAYER.character().get_resource(MONEY));
 					self.set_text(std::string{"Cash: £"} + m2::ToString(money));
 					return MakeContinueAction();
@@ -100,7 +100,7 @@ const UiPanelBlueprint right_hud_blueprint = {
 				.text = "Cards",
 				.horizontal_alignment = m2::TextHorizontalAlignment::CENTER,
 				.wrapped_font_size_in_units = 1.75f,
-				.on_action = [](MAYBE const Text& self) -> UiAction {
+				.onAction = [](MAYBE const Text& self) -> UiAction {
 					// Check if the panel is still active
 					if (M2G_PROXY.cards_panel) {
 						if ((*M2G_PROXY.cards_panel)->IsKilled()) {
@@ -131,7 +131,7 @@ const UiPanelBlueprint right_hud_blueprint = {
 				.text = "Tiles",
 				.horizontal_alignment = m2::TextHorizontalAlignment::CENTER,
 				.wrapped_font_size_in_units = 1.75f,
-				.on_action = [](MAYBE const Text& self) -> UiAction {
+				.onAction = [](MAYBE const Text& self) -> UiAction {
 					M2_LEVEL.ShowSemiBlockingUiPanel(tiles_window_ratio(), std::make_unique<UiPanelBlueprint>(generate_tiles_window("Tiles")));
 					return MakeContinueAction();
 				}
@@ -146,7 +146,7 @@ const UiPanelBlueprint right_hud_blueprint = {
 				.text = "Market",
 				.horizontal_alignment = m2::TextHorizontalAlignment::CENTER,
 				.wrapped_font_size_in_units = 1.75f,
-				.on_action = [](MAYBE const Text& self) -> UiAction {
+				.onAction = [](MAYBE const Text& self) -> UiAction {
 					M2_LEVEL.ShowSemiBlockingUiPanel(market_window_ratio(), std::make_unique<UiPanelBlueprint>(generate_market_window()));
 					return MakeContinueAction();
 				}
@@ -162,7 +162,7 @@ const UiPanelBlueprint right_hud_blueprint = {
 			TextBlueprint{
 				.horizontal_alignment = m2::TextHorizontalAlignment::CENTER,
 				.wrapped_font_size_in_units = 1.25f,
-				.on_update = [](MAYBE Text& self) {
+				.onUpdate = [](MAYBE Text& self) {
 					auto dds = m2::iround(M2G_PROXY.game_state_tracker().get_resource(DRAW_DECK_SIZE));
 					self.set_text(std::string{"Cards Left in Deck: "} + m2::ToString(dds));
 					return MakeContinueAction();

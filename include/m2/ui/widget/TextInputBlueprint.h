@@ -9,6 +9,8 @@ namespace m2::widget {
 
 	struct TextInputBlueprint {
 		std::string initial_text;
-		std::function<std::pair<UiAction,std::optional<std::string>>(const TextInput& self)> on_action{};
+
+		std::function<void(TextInput& self)> onCreate{};
+		std::function<std::pair<UiAction,std::optional<std::string>>(TextInput& self)> onAction{};
 	};
 }

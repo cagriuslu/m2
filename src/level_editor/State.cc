@@ -19,7 +19,7 @@ m2::BackgroundLayer m2::level_editor::State::GetSelectedBackgroundLayer() const 
 				M2_LEVEL.LeftHud()->find_first_widget_by_name<widget::TextSelection>("BackgroundLayerSelection")->selections()[0]));
 }
 bool m2::level_editor::State::GetSnapToGridStatus() const {
-	return M2_LEVEL.LeftHud()->find_first_widget_by_name<widget::CheckboxWithText>("SnapToGridCheckbox")->state();
+	return M2_LEVEL.LeftHud()->find_first_widget_by_name<widget::CheckboxWithText>("SnapToGridCheckbox")->GetState();
 }
 
 void m2::level_editor::State::LoadLevelBlueprint(const pb::Level& lb) {
@@ -226,7 +226,7 @@ void m2::level_editor::State::Draw() const {
 	}
 
 	// Draw grid if enabled
-	if (M2_LEVEL.LeftHud()->find_first_widget_by_name<widget::CheckboxWithText>("ShowGridCheckbox")->state()) {
+	if (M2_LEVEL.LeftHud()->find_first_widget_by_name<widget::CheckboxWithText>("ShowGridCheckbox")->GetState()) {
 		const auto viewport = ViewportM();
 		for (auto x = floorf(viewport.x) - 1.0f; x <= ceilf(viewport.X2()); x += 1.0f) {
 			Graphic::draw_vertical_line(x + 0.5f, {127, 127, 255, 80});

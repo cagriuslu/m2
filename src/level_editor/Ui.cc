@@ -25,7 +25,7 @@ namespace {
 				.variant = TextSelectionBlueprint{
 					.line_count = 10,
 					.allow_multiple_selection = true,
-					.on_create = [](TextSelection &self) {
+					.onCreate = [](TextSelection &self) {
 						TextSelectionBlueprint::Options options;
 						for (const auto& sprite : M2_GAME.level_editor_background_sprites) {
 							options.emplace_back(pb::enum_name(sprite), I(sprite));
@@ -38,8 +38,8 @@ namespace {
 				.x = 1, .y = 16, .w = 30, .h = 1,
 				.variant = TextBlueprint {
 					.text = "Fill",
-					.on_action = [](MAYBE const Text& self) -> UiAction {
-						const auto* spriteSelectionWidget = self.parent().find_first_widget_by_name<TextSelection>("SpriteSelection");
+					.onAction = [](MAYBE const Text& self) -> UiAction {
+						const auto* spriteSelectionWidget = self.Parent().find_first_widget_by_name<TextSelection>("SpriteSelection");
 						std::vector<m2g::pb::SpriteType> selectedSprites;
 						for (const auto& selection : spriteSelectionWidget->selections()) {
 							selectedSprites.emplace_back(static_cast<m2g::pb::SpriteType>(std::get<int>(selection)));
@@ -81,7 +81,7 @@ namespace {
 				.h = 48,
 				.variant = TextSelectionBlueprint{
 					.line_count = 12,
-					.on_create = [](TextSelection& self) {
+					.onCreate = [](TextSelection& self) {
 						// Fill sprite type selector with background sprite types
 						TextSelectionBlueprint::Options options;
 						for (const auto &spriteType: M2_GAME.level_editor_background_sprites) {
@@ -90,7 +90,7 @@ namespace {
 						self.set_options(std::move(options));
 						self.set_unique_selection(0);
 					},
-					.on_action = [](const TextSelection& self) {
+					.onAction = [](const TextSelection& self) {
 						// Create ghost
 						auto& levelEditorState = std::get<level_editor::State>(M2_LEVEL.stateVariant);
 						if (levelEditorState.ghostId) {
@@ -131,7 +131,7 @@ namespace {
 		.w = 19,
 		.h = 72,
 		.background_color = {25, 25, 25, 255},
-		.on_create = [](MAYBE UiPanel& self) {
+		.onCreate = [](MAYBE UiPanel& self) {
 			Events::enable_primary_selection(RectI{M2_GAME.Dimensions().Game()});
 		},
 		.onDestroy = [] {
@@ -155,7 +155,7 @@ namespace {
 				.h = 4,
 				.variant = TextBlueprint{
 					.text = "Copy",
-					.on_action = [](MAYBE const Text& self) -> UiAction {
+					.onAction = [](MAYBE const Text& self) -> UiAction {
 						if (const auto area = SelectionResult{M2_GAME.events}.PrimaryIntegerRoundedSelectionRectM()) {
 							std::get<level_editor::State>(M2_LEVEL.stateVariant).CopyBackground(*area);
 						}
@@ -170,7 +170,7 @@ namespace {
 				.h = 4,
 				.variant = TextBlueprint{
 					.text = "Paste",
-					.on_action = [](MAYBE const Text& self) -> UiAction {
+					.onAction = [](MAYBE const Text& self) -> UiAction {
 						if (const auto area = SelectionResult{M2_GAME.events}.PrimaryIntegerRoundedSelectionRectM()) {
 							std::get<level_editor::State>(M2_LEVEL.stateVariant).PasteBackground(area->top_left());
 						}
@@ -185,7 +185,7 @@ namespace {
 				.h = 4,
 				.variant = TextBlueprint{
 					.text = "Erase",
-					.on_action = [](MAYBE const Text& self) -> UiAction {
+					.onAction = [](MAYBE const Text& self) -> UiAction {
 						if (const auto area = SelectionResult{M2_GAME.events}.PrimaryIntegerRoundedSelectionRectM()) {
 							std::get<level_editor::State>(M2_LEVEL.stateVariant).EraseBackground(*area);
 						}
@@ -200,7 +200,7 @@ namespace {
 				.h = 4,
 				.variant = TextBlueprint{
 					.text = "Fill",
-					.on_action = [](MAYBE const Text& self) -> UiAction {
+					.onAction = [](MAYBE const Text& self) -> UiAction {
 						if (const auto selectionResult = SelectionResult{M2_GAME.events}; selectionResult.is_primary_selection_finished()) {
 							const auto area = selectionResult.PrimaryIntegerRoundedSelectionRectM();
 							const auto action = UiPanel::create_and_run_blocking(&gFillDialog, RectF{0.2f, 0.1f, 0.6f, 0.8f});
@@ -257,7 +257,7 @@ namespace {
 				.h = 48,
 				.variant = TextSelectionBlueprint{
 					.line_count = 12,
-					.on_create = [](TextSelection& self) {
+					.onCreate = [](TextSelection& self) {
 						// Fill object type selector with editor-enabled object types
 						TextSelectionBlueprint::Options options;
 						for (const auto &objType: M2_GAME.object_main_sprites | std::views::keys) {
@@ -266,7 +266,7 @@ namespace {
 						self.set_options(std::move(options));
 						self.set_unique_selection(0);
 					},
-					.on_action = [](const TextSelection& self) {
+					.onAction = [](const TextSelection& self) {
 						// Delete previous ghost
 						auto& levelEditorState = std::get<level_editor::State>(M2_LEVEL.stateVariant);
 						if (levelEditorState.ghostId) {
@@ -274,7 +274,7 @@ namespace {
 						}
 						// Create ghost
 						if (const auto selections = self.selections(); not selections.empty()) {
-							const auto snapToGrid = M2_LEVEL.LeftHud()->find_first_widget_by_name<CheckboxWithText>("SnapToGridCheckbox")->state();
+							const auto snapToGrid = M2_LEVEL.LeftHud()->find_first_widget_by_name<CheckboxWithText>("SnapToGridCheckbox")->GetState();
 							levelEditorState.ghostId = obj::create_ghost(
 									M2_GAME.object_main_sprites[static_cast<m2g::pb::ObjectType>(std::get<int>(selections[0]))], snapToGrid);
 						}
@@ -290,7 +290,7 @@ namespace {
 				.h = 4,
 				.variant = TextSelectionBlueprint{
 					.line_count = 0,
-					.on_create = [](TextSelection& self) {
+					.onCreate = [](TextSelection& self) {
 						// Fill group type selector
 						TextSelectionBlueprint::Options options;
 						for (int e = 0; e < pb::enum_value_count<m2g::pb::GroupType>(); ++e) {
@@ -339,7 +339,7 @@ namespace {
 		.w = 19,
 		.h = 72,
 		.background_color = {25, 25, 25, 255},
-		.on_create = [](MAYBE UiPanel& self) {
+		.onCreate = [](MAYBE UiPanel& self) {
 			Events::enable_primary_selection(RectI{M2_GAME.Dimensions().Game()});
 		},
 		.onDestroy = [] {
@@ -363,7 +363,7 @@ namespace {
 				.h = 4,
 				.variant = TextBlueprint{
 					.text = "Copy",
-					.on_action = [](MAYBE const Text& self) -> UiAction {
+					.onAction = [](MAYBE const Text& self) -> UiAction {
 						if (SelectionResult{M2_GAME.events}.is_primary_selection_finished()) {
 							std::get<level_editor::State>(M2_LEVEL.stateVariant).CopyForeground();
 						}
@@ -378,7 +378,7 @@ namespace {
 				.h = 4,
 				.variant = TextBlueprint{
 					.text = "Paste",
-					.on_action = [](MAYBE const Text& self) -> UiAction {
+					.onAction = [](MAYBE const Text& self) -> UiAction {
 						if (SelectionResult{M2_GAME.events}.is_primary_selection_finished()) {
 							std::get<level_editor::State>(M2_LEVEL.stateVariant).PasteForeground();
 						}
@@ -393,7 +393,7 @@ namespace {
 				.h = 4,
 				.variant = TextBlueprint{
 					.text = "Remove",
-					.on_action = [](MAYBE const Text& self) -> UiAction {
+					.onAction = [](MAYBE const Text& self) -> UiAction {
 						if (SelectionResult{M2_GAME.events}.is_primary_selection_finished()) {
 							std::get<level_editor::State>(M2_LEVEL.stateVariant).RemoveForegroundObject();
 						}
@@ -419,7 +419,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
             .h = 4,
         	.variant = TextBlueprint{
         		.text = "Paint Bg",
-				.on_action = [](MAYBE const Text& self) -> UiAction {
+				.onAction = [](MAYBE const Text& self) -> UiAction {
 					M2_LEVEL.ReplaceRightHud(&gPaintBgRightHud, M2_GAME.Dimensions().RightHud());
 					return MakeContinueAction();
         		}
@@ -432,7 +432,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
             .h = 4,
         	.variant = TextBlueprint{
         		.text = "Sample Bg",
-				.on_action = [](MAYBE const Text& self) -> UiAction {
+				.onAction = [](MAYBE const Text& self) -> UiAction {
 					M2_LEVEL.ReplaceRightHud(&gSampleBgRightHud, M2_GAME.Dimensions().RightHud());
 					return MakeContinueAction();
         		}
@@ -445,7 +445,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
             .h = 4,
         	.variant = TextBlueprint{
         		.text = "Select Bg",
-				.on_action = [](MAYBE const Text& self) -> UiAction {
+				.onAction = [](MAYBE const Text& self) -> UiAction {
 					M2_LEVEL.ReplaceRightHud(&gSelectBgRightHud, M2_GAME.Dimensions().RightHud());
 					return MakeContinueAction();
         		}
@@ -459,7 +459,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
             .h = 4,
         	.variant = TextBlueprint{
         		.text = "Place Fg",
-				.on_action = [](MAYBE const Text& self) -> UiAction {
+				.onAction = [](MAYBE const Text& self) -> UiAction {
 					M2_LEVEL.ReplaceRightHud(&gPlaceFgRightHud, M2_GAME.Dimensions().RightHud());
 					return MakeContinueAction();
         		}
@@ -472,7 +472,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
             .h = 4,
             .variant = TextBlueprint{
 				.text = "Sample Fg",
-				.on_action = [](MAYBE const Text& self) -> UiAction {
+				.onAction = [](MAYBE const Text& self) -> UiAction {
 					M2_LEVEL.ReplaceRightHud(&gSampleFgRightHud, M2_GAME.Dimensions().RightHud());
 					return MakeContinueAction();
 				}
@@ -485,7 +485,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
             .h = 4,
         	.variant = TextBlueprint{
         		.text = "Select Fg",
-				.on_action = [](MAYBE const Text& self) -> UiAction {
+				.onAction = [](MAYBE const Text& self) -> UiAction {
 					M2_LEVEL.ReplaceRightHud(&gSelectFgRightHud, M2_GAME.Dimensions().RightHud());
 					return MakeContinueAction();
         		}
@@ -499,7 +499,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
 			.h = 4,
 			.variant = TextBlueprint{
 				.text = "Cancel",
-				.on_action = [](MAYBE const Text& self) -> UiAction {
+				.onAction = [](MAYBE const Text& self) -> UiAction {
 					M2_LEVEL.ReplaceRightHud(&gRightHudBlueprint, M2_GAME.Dimensions().RightHud());
 					return MakeContinueAction();
 				}
@@ -532,10 +532,10 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
 			.variant = CheckboxWithTextBlueprint{
 				.text = "Snap",
 				.initial_state = false,
-				.on_action = [](const CheckboxWithText& self) {
+				.onAction = [](const CheckboxWithText& self) {
 					// Press the cancel button if PlaceFgRightHud is active because the Ghost needs to be recreated
 					if (M2_LEVEL.RightHud()->Name() == "PlaceFgRightHud") {
-						self.parent().find_first_widget_by_name<Text>("CancelButton")->trigger_action();
+						self.Parent().find_first_widget_by_name<Text>("CancelButton")->trigger_action();
 					}
 					return MakeContinueAction();
 				}
@@ -559,7 +559,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
             .h = 4,
             .variant = TextBlueprint{
             	.text = "Save",
-            	.on_action = [](MAYBE const Text& self) -> UiAction {
+            	.onAction = [](MAYBE const Text& self) -> UiAction {
             		// TODO confirm
             		if (auto success = std::get<State>(M2_LEVEL.stateVariant).Save(); not success) {
             			M2_LEVEL.ShowMessage(success.error(), 8.0f);
@@ -576,7 +576,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
         	.border_width = 0,
         	.variant = TextBlueprint{
         		.text = "0:0",
-        		.on_update = [](MAYBE Text& self) {
+        		.onUpdate = [](MAYBE Text& self) {
         			const auto mouse_position = M2_GAME.MousePositionWorldM().iround();
         			self.set_text(ToString(mouse_position.x) + ':' + m2::ToString(mouse_position.y));
         			return MakeContinueAction();

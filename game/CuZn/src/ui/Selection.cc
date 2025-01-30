@@ -31,7 +31,7 @@ bool ask_for_confirmation(const std::string& question1, const std::string& quest
 				.x = 5, .y = 30, .w = 15, .h = 5,
 				.variant = TextBlueprint{
 					.text = decline_text,
-					.on_action = [](MAYBE const Text& self) -> UiAction {
+					.onAction = [](MAYBE const Text& self) -> UiAction {
 						return MakeReturnAction<bool>(false);
 					}
 				}
@@ -41,7 +41,7 @@ bool ask_for_confirmation(const std::string& question1, const std::string& quest
 				.variant = TextBlueprint{
 					.text = accept_text,
 					.kb_shortcut = SDL_SCANCODE_RETURN,
-					.on_action = [](MAYBE const Text& self) -> UiAction {
+					.onAction = [](MAYBE const Text& self) -> UiAction {
 						return MakeReturnAction<bool>(true);
 					}
 				}
@@ -79,7 +79,7 @@ std::optional<bool> ask_for_confirmation_with_cancellation(const std::string& qu
 					.text = accept_text,
 					.wrapped_font_size_in_units = 3.0f,
 					.kb_shortcut = SDL_SCANCODE_RETURN,
-					.on_action = [](MAYBE const Text& self) -> UiAction {
+					.onAction = [](MAYBE const Text& self) -> UiAction {
 						return MakeReturnAction<bool>(true);
 					}
 				}
@@ -89,7 +89,7 @@ std::optional<bool> ask_for_confirmation_with_cancellation(const std::string& qu
 				.variant = TextBlueprint{
 					.text = decline_text,
 					.wrapped_font_size_in_units = 3.0f,
-					.on_action = [](MAYBE const Text& self) -> UiAction {
+					.onAction = [](MAYBE const Text& self) -> UiAction {
 						return MakeReturnAction<bool>(false);
 					}
 				}
@@ -99,7 +99,7 @@ std::optional<bool> ask_for_confirmation_with_cancellation(const std::string& qu
 				.variant = TextBlueprint{
 					.text = "Cancel",
 					.wrapped_font_size_in_units = 3.0f,
-					.on_action = [](MAYBE const Text& self) -> UiAction {
+					.onAction = [](MAYBE const Text& self) -> UiAction {
 						return MakeReturnAction();
 					}
 				}
@@ -133,7 +133,7 @@ bool ask_for_confirmation_bottom(const std::string& question, const std::string&
 				.x = 34, .y = 1, .w = 4, .h = 10,
 				.variant = TextBlueprint{
 					.text = decline_text,
-					.on_action = [](MAYBE const Text& self) -> UiAction {
+					.onAction = [](MAYBE const Text& self) -> UiAction {
 						return MakeReturnAction<bool>(false);
 					}
 				}
@@ -143,7 +143,7 @@ bool ask_for_confirmation_bottom(const std::string& question, const std::string&
 				.variant = TextBlueprint{
 					.text = accept_text,
 					.kb_shortcut = SDL_SCANCODE_RETURN,
-					.on_action = [](MAYBE const Text& self) -> UiAction {
+					.onAction = [](MAYBE const Text& self) -> UiAction {
 						return MakeReturnAction<bool>(true);
 					}
 				}
