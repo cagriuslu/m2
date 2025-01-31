@@ -12,11 +12,11 @@
     },
     {
       "type": "FLIPPER_LEFT",
-      "mainSprite": "SPRITE_BASIC_FLIPPER"
+      "mainSprite": "SPRITE_BASIC_FLIPPER_LEFT"
     },
     {
       "type": "FLIPPER_RIGHT",
-      "mainSprite": "SPRITE_BASIC_FLIPPER"
+      "mainSprite": "SPRITE_BASIC_FLIPPER_RIGHT"
     }
   ]
 }

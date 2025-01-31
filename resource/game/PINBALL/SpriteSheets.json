@@ -18,7 +18,7 @@
           }
         },
         {
-          "type": "SPRITE_BASIC_FLIPPER",
+          "type": "SPRITE_BASIC_FLIPPER_LEFT",
           "regular": {
             "rect": {
               "x": 32,
@@ -31,6 +31,29 @@
             "foregroundCollider": {
               "originToOriginVecPx": {
                 "x": 23.5
+              },
+              "rectDimsPx": {
+                "w": 64,
+                "h": 18
+              }
+            }
+          }
+        },
+        {
+          "type": "SPRITE_BASIC_FLIPPER_RIGHT",
+          "regular": {
+            "rect": {
+              "x": 32,
+              "w": 64,
+              "h": 32
+            },
+            "originalRotation": 1,
+            "centerToOriginVecPx": {
+              "x": 23.5
+            },
+            "foregroundCollider": {
+              "originToOriginVecPx": {
+                "x": -23.5
               },
               "rectDimsPx": {
                 "w": 64,

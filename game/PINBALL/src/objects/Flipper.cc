@@ -4,7 +4,7 @@
 #include <m2/box2d/Detail.h>
 
 m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
-	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(m2g::pb::SPRITE_BASIC_FLIPPER));
+	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(rightFlipper ? m2g::pb::SPRITE_BASIC_FLIPPER_RIGHT : m2g::pb::SPRITE_BASIC_FLIPPER_LEFT));
 
 	auto& phy = obj.add_physique();
 	b2BodyDef bodyDef;
@@ -43,12 +43,18 @@ m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
 	}
 	phy.body = m2::box2d::BodyUniquePtr{body};
 
-	MAYBE auto& gfx = obj.add_graphic(m2g::pb::SPRITE_BASIC_FLIPPER);
+	MAYBE auto& gfx = obj.add_graphic(rightFlipper ? m2g::pb::SPRITE_BASIC_FLIPPER_RIGHT : m2g::pb::SPRITE_BASIC_FLIPPER_LEFT);
 
-	if (not rightFlipper) {
+	if (rightFlipper) {
+		phy.pre_step = [](m2::Physique& phy_) {
+			if (M2_GAME.events.pop_key_press(m2::Key::RIGHT)) {
+				phy_.body->SetAngularVelocity(2);
+			}
+		};
+	} else {
 		phy.pre_step = [](m2::Physique& phy_) {
 			if (M2_GAME.events.pop_key_press(m2::Key::LEFT)) {
-				phy_.body->SetAngularVelocity(-10);
+				phy_.body->SetAngularVelocity(-2);
 			}
 		};
 	}

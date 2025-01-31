@@ -72,10 +72,12 @@ message RegularSprite {
   // Positive value means the sprite is rotated clockwise in the sheet.
   // Example: If the sprite points towards top-left on the sheet, it's original rotation is -0.75.
   // The graphics system will rotate the sprite back before drawing.
-  // Collider parameters should assume the sprite is already rotated.
+  // Collider parameters and other offsets should assume the sprite is already rotated while filling in the values.
+  // For example, center_to_origin_vec_px should contain the vector to origin as-if the sprite is ALREADY rotated.
+  // TODO this is quite difficult
   float original_rotation = 4;
 
-  // Override the PPm value of the sheet with this value if given.
+  // Override the PPM value of the sheet with this value if given.
   int32 override_ppm = 5;
 
   // Vector from the center of the (rect) to the position that should be the origin
