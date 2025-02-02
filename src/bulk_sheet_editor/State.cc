@@ -3,8 +3,8 @@
 #include <m2/math/RectF.h>
 #include <m2/bulk_sheet_editor/State.h>
 #include <m2/game/Selection.h>
-#include <m2/game/object/Line.h>
 #include <m2/protobuf/Detail.h>
+#include <SDL2/SDL_image.h>
 
 using namespace m2;
 
@@ -57,9 +57,6 @@ void bulk_sheet_editor::State::select_resource(const std::string& resource) {
 }
 
 bool bulk_sheet_editor::State::select() {
-	// Get rid of previously created pixels, lines, etc.
-	M2_LEVEL.ResetBulkSheetEditor();
-
 	const auto& spriteSheets = this->sprite_sheets();
 	// To find the selected resource in the sheets, iterate over sheets
 	for (const auto& spriteSheet : spriteSheets.sheets()) {
@@ -69,19 +66,20 @@ bool bulk_sheet_editor::State::select() {
 				return false;
 			}
 
-			// Reload dynamic image loader with the resource
-			auto image_loader = DynamicSpriteSheetLoader::create(spriteSheet.resource(), spriteSheet.ppm());
-			if (!image_loader) {
-				throw M2_ERROR("Failed to load the image: " + spriteSheet.resource());
+			// Load image
+			const auto resourcePath = spriteSheet.resource();
+			sdl::SurfaceUniquePtr surface(IMG_Load(resourcePath.c_str()));
+			if (!surface) {
+				LOG_ERROR("Unable to load image", resourcePath, IMG_GetError());
+				return false;
 			}
-			_dynamic_sprite_sheet_loader.emplace(std::move(*image_loader));
-
-			// Creates lines showing the boundaries of the sheet
-			obj::create_vertical_line(-0.5f, {255, 0, 0, 255});
-			obj::create_horizontal_line(-0.5f, {255, 0, 0, 255});
-			const auto image_size = _dynamic_sprite_sheet_loader->image_size();
-			obj::create_vertical_line(F(image_size.x / spriteSheet.ppm()) - 0.5f, {255, 0, 0, 255});
-			obj::create_horizontal_line(F(image_size.y / spriteSheet.ppm()) - 0.5f, {255, 0, 0, 255});
+			_texture = sdl::TextureUniquePtr{SDL_CreateTextureFromSurface(M2_GAME.renderer, surface.get())};
+			if (!_texture) {
+				LOG_ERROR("Unable to create texture from surface", SDL_GetError());
+				return false;
+			}
+			_textureDimensions = {surface->w, surface->h};
+			_ppm = spriteSheet.ppm();
 
 			// Enable selection
 			Events::enable_primary_selection(M2_GAME.Dimensions().Game());
@@ -152,5 +150,22 @@ void bulk_sheet_editor::State::Draw() const {
 		Graphic::color_rect(world_coordinates_m.shift({-0.5f, -0.5f}), CONFIRMED_SELECTION_COLOR);
 	}
 
+	// Draw texture
+	const auto offset = VecF{-0.5f, -0.5f};
+	const auto textureTopLeftOutputPosition = ScreenOriginToPositionVecPx(offset);
+	const auto textureBottomRightOutputPosition = ScreenOriginToPositionVecPx(static_cast<VecF>(_textureDimensions) + offset);
+	const SDL_Rect dstRect = {
+			iround(textureTopLeftOutputPosition.x), iround(textureTopLeftOutputPosition.y),
+			iround(textureBottomRightOutputPosition.x - textureTopLeftOutputPosition.x),
+			iround(textureBottomRightOutputPosition.y - textureTopLeftOutputPosition.y)};
+	SDL_RenderCopy(M2_GAME.renderer, _texture.get(), nullptr, &dstRect);
+	// Draw pixel grid lines
 	Graphic::DrawGridLines({127, 127, 255, 80});
+	// Draw PPM grid lines
+	Graphic::DrawGridLines({255, 255, 255, 255}, 0, _ppm);
+	// Draw sheet boundaries
+	Graphic::draw_vertical_line(-0.5f, {255, 0, 0, 255});
+	Graphic::draw_horizontal_line(-0.5f, {255, 0, 0, 255});
+	Graphic::draw_vertical_line(F(_textureDimensions.x) - 0.5f, {255, 0, 0, 255});
+	Graphic::draw_horizontal_line(F(_textureDimensions.y) - 0.5f, {255, 0, 0, 255});
 }

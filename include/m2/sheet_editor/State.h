@@ -6,7 +6,6 @@
 
 #include "../math/CircF.h"
 #include "../Meta.h"
-#include "../sheet_editor/DynamicImageLoader.h"
 #include "../ui/UiPanel.h"
 
 namespace m2::sheet_editor {
@@ -14,8 +13,9 @@ namespace m2::sheet_editor {
 		const std::filesystem::path _path;
 		mutable pb::SpriteSheets _sprite_sheets;
 		m2g::pb::SpriteType _selected_sprite_type{};
-		std::optional<DynamicImageLoader> _dynamic_image_loader;
-		unsigned _ppm;
+		sdl::TextureUniquePtr _texture;
+		VecI _textureDimensions;
+		int _ppm;
 
 		struct ForegroundCompanionMode {
 			// Secondary mouse button sets the center
@@ -97,7 +97,6 @@ namespace m2::sheet_editor {
 		RectI selected_sprite_rect() const;  // This function re-reads the file every time it's called.
 		VecF selected_sprite_center() const;  // This function re-reads the file every time it's called.
 		VecF selected_sprite_origin() const;  // This function re-reads the file every time it's called.
-		DynamicImageLoader* dynamic_image_loader() { return _dynamic_image_loader ? &*_dynamic_image_loader : nullptr; }
 
 		// To be used by the main menu
 		void set_sprite_type(m2g::pb::SpriteType);

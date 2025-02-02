@@ -23,22 +23,6 @@ m2::Id m2::obj::create_camera() {
 		auto& player = M2_LEVEL.objects[M2_LEVEL.playerId];
 		camera.position = player.position;
 
-		// Move dynamic loaders if they exist
-		std::visit(
-		    overloaded{
-		        [](sheet_editor::State& ss) {
-			        if (auto* dil = ss.dynamic_image_loader()) {
-				        dil->move(ViewportM());
-			        }
-		        },
-		        [](bulk_sheet_editor::State& ss) {
-			        if (auto* dil = ss.dynamic_sprite_sheet_loader()) {
-				        dil->move(ViewportM());
-			        }
-		        },
-		        DEFAULT_OVERLOAD},
-		    M2_LEVEL.stateVariant);
-
 		// Mouse lookahead disabled temporarily
 		//		if (M2_GAME.level->type() == Level::Type::SINGLE_PLAYER) {
 		//			// Give an offset to the camera's location based on the position of the mouse

@@ -2,14 +2,15 @@
 #include <filesystem>
 
 #include "../Meta.h"
-#include "../bulk_sheet_editor/DynamicSpriteSheetLoader.h"
 
 namespace m2::bulk_sheet_editor {
 	struct State {
 		std::filesystem::path _sprite_sheets_path;
 		std::pair<std::string, int> _selected_resource;  // and ppm
 		std::pair<m2g::pb::SpriteType, RectI> _selected_sprite;
-		std::optional<DynamicSpriteSheetLoader> _dynamic_sprite_sheet_loader;
+		sdl::TextureUniquePtr _texture;
+		VecI _textureDimensions;
+		int _ppm;
 
 		static expected<State> create(const std::filesystem::path& sprite_sheets_path);
 		State(const State& other) = delete;
@@ -20,9 +21,6 @@ namespace m2::bulk_sheet_editor {
 
 		[[nodiscard]] pb::SpriteSheets sprite_sheets() const;
 		[[nodiscard]] std::optional<pb::SpriteSheet> selected_sprite_sheet() const;
-		DynamicSpriteSheetLoader* dynamic_sprite_sheet_loader() {
-			return _dynamic_sprite_sheet_loader ? &*_dynamic_sprite_sheet_loader : nullptr;
-		}
 
 		// Used by UI
 		void select_resource(const std::string& resource);

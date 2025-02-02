@@ -18,7 +18,6 @@
 #include "multi_player/State.h"
 #include "multi_player/Type.h"
 #include "pixel_editor/State.h"
-#include "sheet_editor/DynamicImageLoader.h"
 #include "sheet_editor/State.h"
 #include "single_player/State.h"
 #include "ui/UiPanel.h"

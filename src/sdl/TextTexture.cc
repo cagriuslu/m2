@@ -15,7 +15,8 @@ namespace {
 
 	SDL_Texture* create_texture_with_linear_filtering(SDL_Renderer* renderer, SDL_Surface* surface) {
 		// Store previous render quality
-		const char* prev_render_quality = SDL_GetHint(SDL_HINT_RENDER_SCALE_QUALITY);
+		const char* prev_render_quality_ptr = SDL_GetHint(SDL_HINT_RENDER_SCALE_QUALITY);
+		const auto prevRenderScaleQuality = prev_render_quality_ptr ? std::string{prev_render_quality_ptr} : std::string{};
 		// Linear filtering is less crisp, but more readable when small
 		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 		// Create texture
@@ -26,7 +27,9 @@ namespace {
 			error = SDL_GetError();
 		}
 		// Reinstate previous render quality
-		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, prev_render_quality);
+		if (not prevRenderScaleQuality.empty()) {
+			SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, prevRenderScaleQuality.c_str());
+		}
 		// Reinstate error
 		if (error) {
 			SDL_SetError("%s", error);

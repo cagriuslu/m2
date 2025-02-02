@@ -4,6 +4,7 @@
 #include <m2/game/Selection.h>
 #include <m2/game/object/Line.h>
 #include <m2/protobuf/Detail.h>
+#include <SDL2/SDL_image.h>
 
 using namespace m2;
 using namespace m2::sheet_editor;
@@ -396,9 +397,6 @@ VecF m2::sheet_editor::State::selected_sprite_origin() const {
 void m2::sheet_editor::State::set_sprite_type(m2g::pb::SpriteType sprite_type) { _selected_sprite_type = sprite_type; }
 
 void m2::sheet_editor::State::select() {
-	// Get rid of previously created pixels, lines, etc.
-	M2_LEVEL.ResetSheetEditor();
-
 	const auto& spriteSheets = this->sprite_sheets();
 	// Reload dynamic image loader with the resource
 	// To find sprite in the sheet, iterate over sheets
@@ -406,19 +404,18 @@ void m2::sheet_editor::State::select() {
 		// Iterate over sprites
 		for (const auto& sprite : spriteSheet.sprites()) {
 			if (sprite.type() == _selected_sprite_type) {
-				auto image_loader = DynamicImageLoader::create(spriteSheet.resource());
-				if (!image_loader) {
-					throw M2_ERROR("Failed to load the image: " + spriteSheet.resource());
+				// Load image
+				const auto resourcePath = spriteSheet.resource();
+				sdl::SurfaceUniquePtr surface(IMG_Load(resourcePath.c_str()));
+				if (!surface) {
+					throw M2_ERROR("Unable to load image: " + resourcePath + ", " + IMG_GetError());
 				}
-				_dynamic_image_loader.emplace(std::move(*image_loader));
+				_texture = sdl::TextureUniquePtr{SDL_CreateTextureFromSurface(M2_GAME.renderer, surface.get())};
+				if (!_texture) {
+					throw M2_ERROR("Unable to create texture from surface: " + std::string{SDL_GetError()});
+				}
+				_textureDimensions = {surface->w, surface->h};
 				_ppm = spriteSheet.ppm();
-
-				// Creates lines showing the boundaries of the sheet
-				obj::create_vertical_line(-0.5f, {255, 0, 0, 255});
-				obj::create_horizontal_line(-0.5f, {255, 0, 0, 255});
-				const auto image_size = _dynamic_image_loader->image_size();
-				obj::create_vertical_line(F(image_size.x) - 0.5f, {255, 0, 0, 255});
-				obj::create_horizontal_line(F(image_size.y) - 0.5f, {255, 0, 0, 255});
 
 				// Move God to center if rect is already selected
 				M2_PLAYER.position = selected_sprite_center();
@@ -440,13 +437,30 @@ void m2::sheet_editor::State::activate_background_collider_mode() { mode.emplace
 void m2::sheet_editor::State::activate_foreground_collider_mode() { mode.emplace<ForegroundColliderMode>(); }
 
 void State::Draw() const {
+	// Draw texture
+	const auto offset = VecF{-0.5f, -0.5f};
+	const auto textureTopLeftOutputPosition = ScreenOriginToPositionVecPx(offset);
+	const auto textureBottomRightOutputPosition = ScreenOriginToPositionVecPx(static_cast<VecF>(_textureDimensions) + offset);
+	const SDL_Rect dstRect = {
+		iround(textureTopLeftOutputPosition.x), iround(textureTopLeftOutputPosition.y),
+		iround(textureBottomRightOutputPosition.x - textureTopLeftOutputPosition.x),
+		iround(textureBottomRightOutputPosition.y - textureTopLeftOutputPosition.y)};
+	SDL_RenderCopy(M2_GAME.renderer, _texture.get(), nullptr, &dstRect);
+
 	std::visit(overloaded{
 			[](const auto& mode) { mode.on_draw(); },
 			[](MAYBE const std::monostate&) {}},
 			mode);
 
+	// Draw pixel grid lines
 	Graphic::DrawGridLines({127, 127, 255, 80});
+	// Draw PPM grid lines
 	Graphic::DrawGridLines({255, 255, 255, 255}, 0, _ppm);
+	// Draw sheet boundaries
+	Graphic::draw_vertical_line(-0.5f, {255, 0, 0, 255});
+	Graphic::draw_horizontal_line(-0.5f, {255, 0, 0, 255});
+	Graphic::draw_vertical_line(F(_textureDimensions.x) - 0.5f, {255, 0, 0, 255});
+	Graphic::draw_horizontal_line(F(_textureDimensions.y) - 0.5f, {255, 0, 0, 255});
 }
 
 void m2::sheet_editor::modify_sprite_in_sheet(
