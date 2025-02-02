@@ -72,14 +72,9 @@ Id obj::create_god() {
 
 	it->add_graphic().post_draw = [](MAYBE Graphic& gfx) {
 		std::visit(overloaded{
-		        [](level_editor::State& le) { le.Draw(); },
-		        [](sheet_editor::State& se) {
-			        std::visit(overloaded{
-			        		[](const auto& mode) { mode.on_draw(); },
-			        		[](MAYBE const std::monostate&) {}},
-			            se.mode);
-		        },
-		        [](const bulk_sheet_editor::State& se) { se.on_draw(); },
+		        [](const level_editor::State& le) { le.Draw(); },
+		        [](const sheet_editor::State& se) { se.Draw(); },
+		        [](const bulk_sheet_editor::State& se) { se.Draw(); },
 		    	DEFAULT_OVERLOAD},
 		    M2_LEVEL.stateVariant);
 	};

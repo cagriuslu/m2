@@ -411,7 +411,6 @@ void m2::sheet_editor::State::select() {
 					throw M2_ERROR("Failed to load the image: " + spriteSheet.resource());
 				}
 				_dynamic_image_loader.emplace(std::move(*image_loader));
-				M2_LEVEL.dynamicGridLinesLoader.emplace(SDL_Color{127, 127, 255, 80});
 				M2_LEVEL.dynamicSheetGridLinesLoader.emplace(SDL_Color{255, 255, 255, 80}, spriteSheet.ppm());
 
 				// Creates lines showing the boundaries of the sheet
@@ -439,6 +438,22 @@ void m2::sheet_editor::State::activate_rect_mode() { mode.emplace<RectMode>(); }
 void m2::sheet_editor::State::activate_background_collider_mode() { mode.emplace<BackgroundColliderMode>(); }
 
 void m2::sheet_editor::State::activate_foreground_collider_mode() { mode.emplace<ForegroundColliderMode>(); }
+
+void State::Draw() const {
+	std::visit(overloaded{
+			[](const auto& mode) { mode.on_draw(); },
+			[](MAYBE const std::monostate&) {}},
+			mode);
+
+	// Draw grid lines
+	const auto viewport = ViewportM();
+	for (auto x = floorf(viewport.x) - 1.0f; x <= ceilf(viewport.X2()); x += 1.0f) {
+		Graphic::draw_vertical_line(x + 0.5f, {127, 127, 255, 80});
+	}
+	for (auto y = floorf(viewport.y) - 1.0f; y <= ceilf(viewport.Y2()); y += 1.0f) {
+		Graphic::draw_horizontal_line(y + 0.5f, {127, 127, 255, 80});
+	}
+}
 
 void m2::sheet_editor::modify_sprite_in_sheet(
     const std::filesystem::path& path, m2g::pb::SpriteType type, const std::function<void(pb::Sprite&)>& modifier) {

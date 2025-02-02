@@ -138,7 +138,7 @@ void bulk_sheet_editor::State::reset() {
 	M2_GAME.events.reset_primary_selection();
 }
 
-void bulk_sheet_editor::State::on_draw() const {
+void bulk_sheet_editor::State::Draw() const {
 	// Draw selection
 	if (auto positions = SelectionResult{M2_GAME.events}.primary_cell_selection_position_m(); positions) {
 		Graphic::color_rect(RectF::from_corners(positions->first, positions->second), SELECTION_COLOR);

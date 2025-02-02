@@ -109,6 +109,8 @@ namespace m2::sheet_editor {
 		void activate_background_collider_mode();
 		void activate_foreground_collider_mode();
 
+		void Draw() const;
+
 	   private:
 		inline explicit State(std::filesystem::path path) : _path(std::move(path)) {}
 	};

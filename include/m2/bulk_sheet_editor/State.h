@@ -32,8 +32,7 @@ namespace m2::bulk_sheet_editor {
 		void set_rect();
 		void reset();
 
-		// Used by God
-		void on_draw() const;
+		void Draw() const;
 
 	   private:
 		explicit State(std::filesystem::path sprite_sheets_path) : _sprite_sheets_path(std::move(sprite_sheets_path)) {}
