@@ -1,6 +1,6 @@
 #include "m2/game/object/Line.h"
 
-m2::Id m2::obj::create_vertical_line(float x, SDL_Color color) {
+m2::Id m2::obj::create_vertical_line(float x, const RGBA& color) {
 	auto it = create_object(VecF{x, 0.0f});
 
 	auto& gfx = it->add_graphic();
@@ -11,7 +11,7 @@ m2::Id m2::obj::create_vertical_line(float x, SDL_Color color) {
 	return it.id();
 }
 
-m2::Id m2::obj::create_horizontal_line(float y, SDL_Color color) {
+m2::Id m2::obj::create_horizontal_line(float y, const RGBA& color) {
 	auto it = create_object(VecF{0.0f, y});
 
 	auto& gfx = it->add_graphic();

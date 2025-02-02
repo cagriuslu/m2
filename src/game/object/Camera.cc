@@ -38,8 +38,6 @@ m2::Id m2::obj::create_camera() {
 		        },
 		        DEFAULT_OVERLOAD},
 		    M2_LEVEL.stateVariant);
-		IF(M2_LEVEL.dynamicGridLinesLoader)->move(ViewportM());
-		IF(M2_LEVEL.dynamicSheetGridLinesLoader)->move(ViewportM());
 
 		// Mouse lookahead disabled temporarily
 		//		if (M2_GAME.level->type() == Level::Type::SINGLE_PLAYER) {

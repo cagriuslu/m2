@@ -1,7 +1,6 @@
 #pragma once
 #include <Level.pb.h>
 #include <box2d/b2_world.h>
-#include <m2/game/DynamicGridLinesLoader.h>
 #include <m2g/Proxy.h>
 #include <m2/Log.h>
 #include <functional>
@@ -81,8 +80,9 @@ namespace m2 {
 		std::variant<
 		    std::monostate, splayer::State, mplayer::State, level_editor::State, pixel_editor::State, sheet_editor::State, bulk_sheet_editor::State>
 		    stateVariant;
-		std::optional<DynamicGridLinesLoader> dynamicGridLinesLoader; // TODO get rid of these, draw with the editor State
-		std::optional<DynamicGridLinesLoader> dynamicSheetGridLinesLoader; // TODO get rid of these, draw with the editor State
+
+		// TODO get rid of this
+		//std::optional<DynamicGridLinesLoader> dynamicSheetGridLinesLoader; // TODO get rid of these, draw with the editor State
 
 		void_expected InitSinglePlayer(
 		    const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name);

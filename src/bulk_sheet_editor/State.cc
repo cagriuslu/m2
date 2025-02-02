@@ -75,14 +75,13 @@ bool bulk_sheet_editor::State::select() {
 				throw M2_ERROR("Failed to load the image: " + spriteSheet.resource());
 			}
 			_dynamic_sprite_sheet_loader.emplace(std::move(*image_loader));
-			M2_LEVEL.dynamicGridLinesLoader.emplace(SDL_Color{127, 127, 255, 80});
 
 			// Creates lines showing the boundaries of the sheet
-			obj::create_vertical_line(-0.5f, SDL_Color{255, 0, 0, 255});
-			obj::create_horizontal_line(-0.5f, SDL_Color{255, 0, 0, 255});
+			obj::create_vertical_line(-0.5f, {255, 0, 0, 255});
+			obj::create_horizontal_line(-0.5f, {255, 0, 0, 255});
 			const auto image_size = _dynamic_sprite_sheet_loader->image_size();
-			obj::create_vertical_line(F(image_size.x / spriteSheet.ppm()) - 0.5f, SDL_Color{255, 0, 0, 255});
-			obj::create_horizontal_line(F(image_size.y / spriteSheet.ppm()) - 0.5f, SDL_Color{255, 0, 0, 255});
+			obj::create_vertical_line(F(image_size.x / spriteSheet.ppm()) - 0.5f, {255, 0, 0, 255});
+			obj::create_horizontal_line(F(image_size.y / spriteSheet.ppm()) - 0.5f, {255, 0, 0, 255});
 
 			// Enable selection
 			Events::enable_primary_selection(M2_GAME.Dimensions().Game());
@@ -152,4 +151,6 @@ void bulk_sheet_editor::State::Draw() const {
 		    F(_selected_sprite.second.h) / F(_selected_resource.second)};
 		Graphic::color_rect(world_coordinates_m.shift({-0.5f, -0.5f}), CONFIRMED_SELECTION_COLOR);
 	}
+
+	Graphic::DrawGridLines({127, 127, 255, 80});
 }

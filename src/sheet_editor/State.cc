@@ -411,14 +411,14 @@ void m2::sheet_editor::State::select() {
 					throw M2_ERROR("Failed to load the image: " + spriteSheet.resource());
 				}
 				_dynamic_image_loader.emplace(std::move(*image_loader));
-				M2_LEVEL.dynamicSheetGridLinesLoader.emplace(SDL_Color{255, 255, 255, 80}, spriteSheet.ppm());
+				_ppm = spriteSheet.ppm();
 
 				// Creates lines showing the boundaries of the sheet
-				obj::create_vertical_line(-0.5f, SDL_Color{255, 0, 0, 255});
-				obj::create_horizontal_line(-0.5f, SDL_Color{255, 0, 0, 255});
+				obj::create_vertical_line(-0.5f, {255, 0, 0, 255});
+				obj::create_horizontal_line(-0.5f, {255, 0, 0, 255});
 				const auto image_size = _dynamic_image_loader->image_size();
-				obj::create_vertical_line(F(image_size.x) - 0.5f, SDL_Color{255, 0, 0, 255});
-				obj::create_horizontal_line(F(image_size.y) - 0.5f, SDL_Color{255, 0, 0, 255});
+				obj::create_vertical_line(F(image_size.x) - 0.5f, {255, 0, 0, 255});
+				obj::create_horizontal_line(F(image_size.y) - 0.5f, {255, 0, 0, 255});
 
 				// Move God to center if rect is already selected
 				M2_PLAYER.position = selected_sprite_center();
@@ -445,14 +445,8 @@ void State::Draw() const {
 			[](MAYBE const std::monostate&) {}},
 			mode);
 
-	// Draw grid lines
-	const auto viewport = ViewportM();
-	for (auto x = floorf(viewport.x) - 1.0f; x <= ceilf(viewport.X2()); x += 1.0f) {
-		Graphic::draw_vertical_line(x + 0.5f, {127, 127, 255, 80});
-	}
-	for (auto y = floorf(viewport.y) - 1.0f; y <= ceilf(viewport.Y2()); y += 1.0f) {
-		Graphic::draw_horizontal_line(y + 0.5f, {127, 127, 255, 80});
-	}
+	Graphic::DrawGridLines({127, 127, 255, 80});
+	Graphic::DrawGridLines({255, 255, 255, 255}, 0, _ppm);
 }
 
 void m2::sheet_editor::modify_sprite_in_sheet(

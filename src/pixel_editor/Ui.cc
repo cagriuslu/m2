@@ -41,11 +41,6 @@ const widget::TextBlueprint pixel_editor_left_hud_gridlines_button = {
 		.text = "Grid",
 		.kb_shortcut = SDL_SCANCODE_G,
 		.onAction = [](MAYBE const widget::Text &self) -> UiAction {
-			if (M2_LEVEL.dynamicGridLinesLoader) {
-				M2_LEVEL.dynamicGridLinesLoader.reset();
-			} else {
-				M2_LEVEL.dynamicGridLinesLoader.emplace(SDL_Color{127, 127, 255, 127});
-			}
 			return MakeContinueAction();
 		}
 };

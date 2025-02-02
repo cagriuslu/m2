@@ -227,13 +227,7 @@ void m2::level_editor::State::Draw() const {
 
 	// Draw grid if enabled
 	if (M2_LEVEL.LeftHud()->find_first_widget_by_name<widget::CheckboxWithText>("ShowGridCheckbox")->GetState()) {
-		const auto viewport = ViewportM();
-		for (auto x = floorf(viewport.x) - 1.0f; x <= ceilf(viewport.X2()); x += 1.0f) {
-			Graphic::draw_vertical_line(x + 0.5f, {127, 127, 255, 80});
-		}
-		for (auto y = floorf(viewport.y) - 1.0f; y <= ceilf(viewport.Y2()); y += 1.0f) {
-			Graphic::draw_horizontal_line(y + 0.5f, {127, 127, 255, 80});
-		}
+		Graphic::DrawGridLines({127, 127, 255, 80});
 	}
 }
 m2::void_expected m2::level_editor::State::Save() const {

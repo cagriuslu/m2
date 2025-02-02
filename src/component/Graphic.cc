@@ -265,7 +265,6 @@ void m2::Graphic::color_cell(const VecI& cell, SDL_Color color) {
 	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
 	SDL_RenderFillRect(M2_GAME.renderer, &rect);
 }
-
 void m2::Graphic::color_rect(const RectF& world_coordinates_m, const SDL_Color color) {
 	const auto screen_origin_to_top_left_px = ScreenOriginToPositionVecPx(world_coordinates_m.top_left());
 	const auto screen_origin_to_bottom_right_px = ScreenOriginToPositionVecPx(world_coordinates_m.bottom_right());
@@ -290,20 +289,17 @@ void m2::Graphic::color_rect(const RectF& world_coordinates_m, const RGB& color)
 void m2::Graphic::color_rect(const RectF& world_coordinates_m, const RGBA& color) {
 	color_rect(world_coordinates_m, SDL_Color{color.r, color.g, color.b, color.a});
 }
-
 void m2::Graphic::color_disk(const VecF& center_position_m, const float radius_m, const SDL_Color& color) {
 	const auto center_position_px = ScreenOriginToPositionVecPx(center_position_m);
 	const auto radius_px = radius_m * M2_GAME.Dimensions().OutputPixelsPerMeter();
 	sdl::draw_disk(M2_GAME.renderer, center_position_px, color, radius_px, color);
 }
-
 void m2::Graphic::draw_cross(const VecF& world_position, SDL_Color color) {
 	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
 	const auto draw_position = VecI{ScreenOriginToPositionVecPx(world_position)};
 	SDL_RenderDrawLine(M2_GAME.renderer, draw_position.x - 9, draw_position.y - 9, draw_position.x + 10, draw_position.y + 10);
 	SDL_RenderDrawLine(M2_GAME.renderer, draw_position.x - 9, draw_position.y + 9, draw_position.x + 10, draw_position.y - 10);
 }
-
 void m2::Graphic::draw_line(const VecF& world_position_1, const VecF& world_position_2, SDL_Color color) {
 	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
 	if (is_projection_type_parallel(M2_LEVEL.ProjectionType())) {
@@ -318,17 +314,29 @@ void m2::Graphic::draw_line(const VecF& world_position_1, const VecF& world_posi
 		}
 	}
 }
-
-void m2::Graphic::draw_vertical_line(float x, SDL_Color color) {
+void m2::Graphic::draw_vertical_line(float x, const RGBA& color) {
 	const auto x_px = static_cast<int>(roundf(ScreenOriginToPositionVecPx(VecF{x, 0.0f}).x));
 	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
 	SDL_RenderDrawLine(M2_GAME.renderer, x_px, M2_GAME.Dimensions().Game().y, x_px, M2_GAME.Dimensions().Game().y + M2_GAME.Dimensions().Game().h);
 }
-
-void m2::Graphic::draw_horizontal_line(float y, SDL_Color color) {
+void m2::Graphic::draw_horizontal_line(float y, const RGBA& color) {
 	const auto y_px = static_cast<int>(roundf(ScreenOriginToPositionVecPx(VecF{0.0f, y}).y));
 	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
 	SDL_RenderDrawLine(M2_GAME.renderer, M2_GAME.Dimensions().Game().x, y_px, M2_GAME.Dimensions().Game().x + M2_GAME.Dimensions().Game().w, y_px);
+}
+void m2::Graphic::DrawGridLines(const RGBA& color, const unsigned startFrom, const unsigned frequency) {
+	// Draw grid lines
+	const auto viewport = ViewportM();
+	for (auto x = floorf(viewport.x); x <= ceilf(viewport.X2()); x += 1.0f) {
+		if (const auto xInt = iround(x); ((xInt % frequency) + frequency - startFrom) % frequency == 0) {
+			draw_vertical_line(x - 0.5f, color);
+		}
+	}
+	for (auto y = floorf(viewport.y); y <= ceilf(viewport.Y2()); y += 1.0f) {
+		if (const auto yInt = iround(y); ((yInt % frequency) + frequency - startFrom) % frequency == 0) {
+			draw_horizontal_line(y - 0.5f, color);
+		}
+	}
 }
 
 bool m2::Graphic::dim_rendering_if_necessary(Id object_id, SDL_Texture* texture) {

@@ -15,6 +15,7 @@ namespace m2::sheet_editor {
 		mutable pb::SpriteSheets _sprite_sheets;
 		m2g::pb::SpriteType _selected_sprite_type{};
 		std::optional<DynamicImageLoader> _dynamic_image_loader;
+		unsigned _ppm;
 
 		struct ForegroundCompanionMode {
 			// Secondary mouse button sets the center
