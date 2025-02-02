@@ -7,7 +7,6 @@
 #include "Meta.h"
 #include "Object.h"
 #include "Proxy.h"
-#include "Shape.h"
 #include "Song.h"
 #include <m2/video/Sprite.h>
 #include "game/Animation.h"
@@ -96,7 +95,6 @@ namespace m2 {
 		std::optional<SpriteEffectsSheet> spriteEffectsSheet;
 		std::vector<m2g::pb::SpriteType> level_editor_background_sprites;
 		std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> object_main_sprites;
-		std::optional<ShapesSheet> shapes_sheet;
 		pb::LUT<m2::pb::Item, NamedItem> named_items;
 		pb::LUT<m2::pb::Animation, Animation> animations;
 		pb::LUT<m2::pb::Song, Song> songs;

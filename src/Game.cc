@@ -124,7 +124,6 @@ m2::Game::Game() {
 
 	audio_manager.emplace();
 	spriteEffectsSheet = SpriteEffectsSheet{renderer};
-	shapes_sheet = ShapesSheet{renderer};
 
 	// Load game resources
 	resource_dir = resource_path() / "game" / _proxy.game_identifier;

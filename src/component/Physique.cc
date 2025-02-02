@@ -1,7 +1,6 @@
 #include "m2/component/Physique.h"
 #include <m2/box2d/Detail.h>
 #include <m2/Game.h>
-#include <m2/Shape.h>
 #include <box2d/b2_contact.h>
 #include <box2d/b2_shape.h>
 #include <box2d/b2_polygon_shape.h>
@@ -103,21 +102,16 @@ void m2::Physique::default_debug_draw(Physique& phy) {
 				auto radius = circumference / 2.0f;
 
 				if (is_projection_type_parallel(M2_LEVEL.ProjectionType())) {
-					// Calculate circumference in pixels
-					int R = I(roundf(circumference * F(M2_GAME.Dimensions().OutputPixelsPerMeter())));
-					auto [texture, src_rect] = M2_GAME.shapes_sheet->get_circle(color, static_cast<uint16_t>(R), static_cast<uint16_t>(R), 16);
-					// Calculate destination Rect
-					auto screen_origin_to_sprite_center_px = ScreenOriginToPositionVecPx(position + center_offset_m);
-					auto dst_rect = SDL_Rect{
-							I(roundf(screen_origin_to_sprite_center_px.x)) - (src_rect.w / 2),
-							I(roundf(screen_origin_to_sprite_center_px.y)) - (src_rect.h / 2),
-							src_rect.w,
-							src_rect.h
-					};
-					// Render shape
-					if (SDL_RenderCopy(M2_GAME.renderer, texture, &src_rect, &dst_rect)) {
-						throw M2_ERROR("SDL error while drawing: " + std::string(SDL_GetError()));
-					}
+					const int r = iround(M2_GAME.Dimensions().OutputPixelsPerMeter() * radius);
+					const auto srcRect = static_cast<SDL_Rect>(M2_GAME.ShapeCache().Create(std::make_shared<Circle>(r)));
+					auto* texture = M2_GAME.ShapeCache().Texture();
+					auto screenOriginToSpriteCenter = ScreenOriginToPositionVecPx(position + center_offset_m);
+					auto dstRect = SDL_Rect{
+							iround(screenOriginToSpriteCenter.x) - (srcRect.w / 2),
+							iround(screenOriginToSpriteCenter.y) - (srcRect.h / 2),
+							srcRect.w,
+							srcRect.h};
+					SDL_RenderCopy(M2_GAME.renderer, texture, &srcRect, &dstRect);
 				} else {
 					auto center_position_2d = position + center_offset_m;
 					auto center_position = m3::VecF{center_position_2d};

@@ -97,20 +97,6 @@ m2::VecI m2::sdl::mouse_position() {
 	return p;
 }
 
-int m2::sdl::draw_circle(SDL_Renderer* renderer, SDL_Color color, SDL_Rect* dst_rect, unsigned piece_count) {
-	std::vector<SDL_Point> points{piece_count + 1};
-	for (unsigned i = 0; i < piece_count; ++i) {
-		int x = (int) std::roundf(cosf(m2::PI_MUL2 * (float)i / (float)piece_count) * (float)dst_rect->w / 2.0f);
-		int y = (int) std::roundf(sinf(m2::PI_MUL2 * (float)i / (float)piece_count) * (float)dst_rect->h / 2.0f);
-		points[i].x = dst_rect->x + dst_rect->w / 2 + x;
-		points[i].y = dst_rect->y + dst_rect->h / 2 + y;
-	}
-	points[piece_count] = points[0]; // Last point
-
-	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-	return SDL_RenderDrawLines(renderer, points.data(), (int) points.size());
-}
-
 int m2::sdl::draw_disk(SDL_Renderer* renderer, const VecF& center_position_px, const SDL_Color& center_color, float radius_px, const SDL_Color& edge_color, unsigned steps) {
 	std::vector<SDL_Vertex> vertices(steps * 3);
 	// The vector that'll be rotated for the edges
