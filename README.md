@@ -5,8 +5,8 @@
 ## Features
 
 * Windows, macOS, and Linux support
-* 2D physics in single player mode (top down or side scroller)
-* Turn based multi-player (LAN) mode (UiAction multi-player mode is planned)
+* 2D physics in single player mode (top down or side scroller modes)
+* Turn based (LAN) multi-player mode without physics (Physics will be added in future releases)
 * Multi-layer sprite-based graphics (4 background, 1 foreground layers)
 * Optional dynamic lightning
 * Optional, 3D-like sprite "figurine" graphics (ex. Paper Mario)
@@ -14,13 +14,13 @@
 * Fast arena allocator for game objects and their components
 * A* Pathfinder
 * Declarative UI subsystem
-* Protobuf-backed game resources and enums
+* Protobuf-based game resources and enums
 * Level editor, sprite sheet editor, bulk sprite sheet editor
 
 ## Overview
 
-m2 is a game engine written completely in C++.
-It is designed for desktop computers, to develop games that use mouse and keyboard.
+m2 is a game engine written in C++.
+It is designed for desktop computers, to develop games that use a mouse and a keyboard.
 
 ### Project Status
 
@@ -31,22 +31,22 @@ I try to fix every instability and bug I encounter.
 
 * Sensibly-optimized. Readability is as important as performance.
 * Sensibly-modern C++. Not over-engineered, not blatantly unsafe, somewhere in the middle.
-* No opengl, directx, or metal pass-through. I don't have time to learn these.
-* Game engine is neither super generic nor super specific to a game genre. 
+* No opengl, directx, or metal pass-through.
+* The engine is neither super generic nor super specific to a game genre. 
 
 The repo contains some game prototypes to showcase the capabilities of the engine.
 
 ### Included Games
 
-* RPG - Simulates a 2D UiAction RPG game
+* RPG - Simulates a 2D Action RPG game
 * MINE - Simulates a side-scroller game
 * CuZn - Simulates a multi-player turn based top-down board game
 
 ### Provided Tooling
 
 * Level editor - allows you to build a level using objects and sprites
-* Sprite editor - allows you to specify the details of a sprite. Details such as the physics components, origin of the graphics, etc.
-* Bulk Sprite Sheet editor - allows you to specify the boundaries of each sprite given a sprite sheet
+* Sprite editor - allows you to specify the details of a sprite; the physics components, origin of the graphics, etc.
+* Bulk Sprite Sheet editor - allows you to specify the boundaries of each sprite in a sprite sheet
 
 ## How to build
 
@@ -84,5 +84,5 @@ The following dependencies are included in the repo, and built automatically by 
 
 ## Who am I?
 
-Çağrı Uslu (pronounced Cha-ry). Amsterdam based Electronics and Computer Engineer (MSc), GameDev enthusiast, Photography enthusiast,
+Çağrı Uslu (pronounced Cha-ry). Amsterdam based Electronics and Computer Engineer (MSc), GameDev and Photography enthusiast,
 working in Embedded systems since 2016.
