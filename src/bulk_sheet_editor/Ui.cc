@@ -116,20 +116,3 @@ const UiPanelBlueprint m2::bulk_sheet_editor_main_menu = {
 		                return MakeContinueAction();
 	                }
                 }}}}};
-
-const UiPanelBlueprint m2::bulk_sheet_editor_pause_menu = {
-	.name = "PauseMenu",
-    .w = 160,
-    .h = 90,
-    .border_width = 0,
-    .background_color = {0, 0, 0, 255},
-    .widgets = {UiWidgetBlueprint{
-        .x = 60,
-        .y = 40,
-        .w = 40,
-        .h = 10,
-        .variant = widget::TextBlueprint{
-            .text = "QUIT",
-            .kb_shortcut = SDL_SCANCODE_Q,
-            .onAction = [](MAYBE const widget::Text& self) -> UiAction { return MakeQuitAction(); },
-        }}}};

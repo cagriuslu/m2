@@ -424,7 +424,7 @@ void m2::Game::HandleMenuEvent() {
 		} else if (std::holds_alternative<sheet_editor::State>(Level().stateVariant)) {
 			PauseMenuBlueprint = &sheet_editor_main_menu;
 		} else if (std::holds_alternative<bulk_sheet_editor::State>(Level().stateVariant)) {
-			PauseMenuBlueprint = &bulk_sheet_editor_pause_menu;
+			PauseMenuBlueprint = nullptr;
 		}
 
 		// Execute pause menu if found, exit if QUIT is returned
