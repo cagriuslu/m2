@@ -76,7 +76,7 @@ namespace {
 			auto load_result = M2_GAME.LoadBulkSheetEditor();
 			if (load_result) {
 				// Execute main menu the first time the bulk sheet editor is run
-				auto main_menu_result = UiPanel::create_and_run_blocking(&m2::bulk_sheet_editor_main_menu);
+				auto main_menu_result = UiPanel::create_and_run_blocking(&m2::bulk_sheet_editor::gMainMenu);
 				return main_menu_result.IsReturn() ? MakeClearStackAction() : std::move(main_menu_result);
 			}
 			M2_GAME.console_output.emplace_back(load_result.error());

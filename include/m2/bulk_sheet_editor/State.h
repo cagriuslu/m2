@@ -4,35 +4,38 @@
 #include "../Meta.h"
 
 namespace m2::bulk_sheet_editor {
-	struct State {
+	class State {
 		std::filesystem::path _sprite_sheets_path;
 		std::pair<std::string, int> _selected_resource;  // and ppm
-		std::pair<m2g::pb::SpriteType, RectI> _selected_sprite;
+		std::pair<m2g::pb::SpriteType, RectI> _selected_sprite; // TODO get from HUD
 		sdl::TextureUniquePtr _texture;
 		VecI _textureDimensions;
 		int _ppm;
 
-		static expected<State> create(const std::filesystem::path& sprite_sheets_path);
+		explicit State(std::filesystem::path sprite_sheets_path) : _sprite_sheets_path(std::move(sprite_sheets_path)) {}
+
+	public:
+		static expected<State> Create(const std::filesystem::path& sprite_sheets_path);
 		State(const State& other) = delete;
 		State& operator=(const State& other) = delete;
 		State(State&& other) = default;
 		State& operator=(State&& other) = default;
 		~State();
 
-		[[nodiscard]] pb::SpriteSheets sprite_sheets() const;
-		[[nodiscard]] std::optional<pb::SpriteSheet> selected_sprite_sheet() const;
+		// Accessors
 
-		// Used by UI
-		void select_resource(const std::string& resource);
-		bool select();
-		void select_sprite(m2g::pb::SpriteType type);
-		void modify_selected_sprite(const std::function<void(pb::Sprite&)>& modifier) const;
+		[[nodiscard]] pb::SpriteSheets ReadSpriteSheetsFromFile() const;
+		[[nodiscard]] std::optional<pb::SpriteSheet> ReadSelectedSpriteSheetFromFile() const;
+
+		// Modifiers
+
+		bool SelectSpriteSheetResource(const std::string& resource);
+		void SelectSpriteType(m2g::pb::SpriteType type); // TODO get from HUD
+		void ModifySelectedSprite(const std::function<void(pb::Sprite&)>& modifier) const;
 		void set_rect();
 		void reset();
 
 		void Draw() const;
 
-	   private:
-		explicit State(std::filesystem::path sprite_sheets_path) : _sprite_sheets_path(std::move(sprite_sheets_path)) {}
 	};
 }  // namespace m2::bulk_sheet_editor

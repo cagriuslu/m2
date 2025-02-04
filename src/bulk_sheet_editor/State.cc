@@ -13,7 +13,7 @@ namespace {
 	constexpr SDL_Color CONFIRMED_SELECTION_COLOR = {0, 255, 0, 160};
 }  // namespace
 
-expected<bulk_sheet_editor::State> bulk_sheet_editor::State::create(const std::filesystem::path& sprite_sheets_path) {
+expected<bulk_sheet_editor::State> bulk_sheet_editor::State::Create(const std::filesystem::path& sprite_sheets_path) {
 	// If path exists,
 	if (not std::filesystem::exists(sprite_sheets_path)) {
 		return make_unexpected("SpriteSheets not found");
@@ -29,12 +29,12 @@ expected<bulk_sheet_editor::State> bulk_sheet_editor::State::create(const std::f
 
 bulk_sheet_editor::State::~State() { Events::disable_primary_selection(); }
 
-pb::SpriteSheets bulk_sheet_editor::State::sprite_sheets() const {
+pb::SpriteSheets bulk_sheet_editor::State::ReadSpriteSheetsFromFile() const {
 	return *pb::json_file_to_message<pb::SpriteSheets>(_sprite_sheets_path);
 }
 
-std::optional<pb::SpriteSheet> bulk_sheet_editor::State::selected_sprite_sheet() const {
-	auto spriteSheets = this->sprite_sheets();
+std::optional<pb::SpriteSheet> bulk_sheet_editor::State::ReadSelectedSpriteSheetFromFile() const {
+	auto spriteSheets = this->ReadSpriteSheetsFromFile();
 	// To find the selected resource in the sheets, iterate over sheets
 	for (const auto& spriteSheet : spriteSheets.sheets()) {
 		if (spriteSheet.resource() == _selected_resource.first) {
@@ -44,31 +44,19 @@ std::optional<pb::SpriteSheet> bulk_sheet_editor::State::selected_sprite_sheet()
 	return std::nullopt;  // Resource not yet selected
 }
 
-void bulk_sheet_editor::State::select_resource(const std::string& resource) {
-	const auto& spriteSheets = this->sprite_sheets();
+bool bulk_sheet_editor::State::SelectSpriteSheetResource(const std::string& resource) {
+	const auto& spriteSheets = this->ReadSpriteSheetsFromFile();
 	// To find the selected resource in the sheets, iterate over sheets
 	for (const auto& spriteSheet : spriteSheets.sheets()) {
 		if (spriteSheet.resource() == resource) {
-			_selected_resource = std::make_pair(resource, spriteSheet.ppm());
-			return;
-		}
-	}
-	throw M2_ERROR("Selected resource is not found in SpriteSheets");
-}
-
-bool bulk_sheet_editor::State::select() {
-	const auto& spriteSheets = this->sprite_sheets();
-	// To find the selected resource in the sheets, iterate over sheets
-	for (const auto& spriteSheet : spriteSheets.sheets()) {
-		if (spriteSheet.resource() == _selected_resource.first) {
 			if (spriteSheet.sprites().empty()) {
 				LOG_ERROR("Selected sprite sheet has no sprites");
 				return false;
 			}
 
 			// Load image
-			const auto resourcePath = spriteSheet.resource();
-			sdl::SurfaceUniquePtr surface(IMG_Load(resourcePath.c_str()));
+			const auto& resourcePath = spriteSheet.resource();
+			const sdl::SurfaceUniquePtr surface(IMG_Load(resourcePath.c_str()));
 			if (!surface) {
 				LOG_ERROR("Unable to load image", resourcePath, IMG_GetError());
 				return false;
@@ -80,6 +68,7 @@ bool bulk_sheet_editor::State::select() {
 			}
 			_textureDimensions = {surface->w, surface->h};
 			_ppm = spriteSheet.ppm();
+			_selected_resource = std::make_pair(resource, spriteSheet.ppm());
 
 			// Enable selection
 			Events::enable_primary_selection(M2_GAME.Dimensions().Game());
@@ -90,8 +79,8 @@ bool bulk_sheet_editor::State::select() {
 	return false;
 }
 
-void bulk_sheet_editor::State::select_sprite(m2g::pb::SpriteType type) {
-	const auto spriteSheet = *selected_sprite_sheet();
+void bulk_sheet_editor::State::SelectSpriteType(m2g::pb::SpriteType type) {
+	const auto spriteSheet = *ReadSelectedSpriteSheetFromFile();
 	for (const auto& sprite : spriteSheet.sprites()) {
 		if (sprite.type() == type) {
 			_selected_sprite = std::make_pair(type, RectI{sprite.regular().rect()});
@@ -104,7 +93,7 @@ void bulk_sheet_editor::State::select_sprite(m2g::pb::SpriteType type) {
 	throw M2_ERROR("Selected sprite has been removed from the SpriteSheet");
 }
 
-void bulk_sheet_editor::State::modify_selected_sprite(const std::function<void(pb::Sprite&)>& modifier) const {
+void bulk_sheet_editor::State::ModifySelectedSprite(const std::function<void(pb::Sprite&)>& modifier) const {
 	sheet_editor::modify_sprite_in_sheet(_sprite_sheets_path, _selected_sprite.first, modifier);
 }
 
@@ -115,23 +104,23 @@ void bulk_sheet_editor::State::set_rect() {
 		LOG_DEBUG("Primary selection");
 		auto positions = selection_results.primary_int_selection_position_m();
 		auto rect = RectI::from_corners(positions->first, positions->second);  // wrt sprite coordinates
-		modify_selected_sprite([&](pb::Sprite& sprite) {
+		ModifySelectedSprite([&](pb::Sprite& sprite) {
 			sprite.mutable_regular()->mutable_rect()->set_x(rect.x * _selected_resource.second);
 			sprite.mutable_regular()->mutable_rect()->set_y(rect.y * _selected_resource.second);
 			sprite.mutable_regular()->mutable_rect()->set_w(rect.w * _selected_resource.second);
 			sprite.mutable_regular()->mutable_rect()->set_h(rect.h * _selected_resource.second);
 		});
-		select_sprite(_selected_sprite.first);  // Reset rect
+		SelectSpriteType(_selected_sprite.first);  // Reset rect
 		M2_GAME.events.reset_primary_selection();
 	}
 }
 
 void bulk_sheet_editor::State::reset() {
-	modify_selected_sprite([&](pb::Sprite& sprite) {
+	ModifySelectedSprite([&](pb::Sprite& sprite) {
 		sprite.mutable_regular()->clear_rect();
 		sprite.mutable_regular()->clear_center_to_origin_vec_px();
 	});
-	select_sprite(_selected_sprite.first);  // Reset rect
+	SelectSpriteType(_selected_sprite.first);  // Reset rect
 	M2_GAME.events.reset_primary_selection();
 }
 

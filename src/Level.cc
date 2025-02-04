@@ -182,7 +182,7 @@ m2::void_expected m2::Level::InitSheetEditor(const std::filesystem::path& path) 
 
 m2::void_expected m2::Level::InitBulkSheetEditor(const std::filesystem::path& path) {
 	// Create state
-	auto state = bulk_sheet_editor::State::create(path);
+	auto state = bulk_sheet_editor::State::Create(path);
 	m2_reflect_unexpected(state);
 	stateVariant.emplace<bulk_sheet_editor::State>(std::move(*state));
 
@@ -196,9 +196,9 @@ m2::void_expected m2::Level::InitBulkSheetEditor(const std::filesystem::path& pa
 	m2::obj::create_origin();
 
 	// UI Hud
-	_leftHudUiPanel.emplace(&bulk_sheet_editor_left_hud, M2_GAME.Dimensions().LeftHud());
+	_leftHudUiPanel.emplace(&bulk_sheet_editor::gLeftHud, M2_GAME.Dimensions().LeftHud());
 	_leftHudUiPanel->UpdateContents(0.0f);
-	_rightHudUiPanel.emplace(&bulk_sheet_editor_right_hud, M2_GAME.Dimensions().RightHud());
+	_rightHudUiPanel.emplace(&bulk_sheet_editor::gRightHud, M2_GAME.Dimensions().RightHud());
 	_rightHudUiPanel->UpdateContents(0.0f);
 	_messageBoxUiPanel->UpdateContents(0.0f);
 
