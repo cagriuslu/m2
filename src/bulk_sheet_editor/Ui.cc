@@ -2,67 +2,91 @@
 #include <m2/bulk_sheet_editor/Ui.h>
 #include <m2/ui/widget/Text.h>
 #include <m2/ui/widget/TextSelection.h>
+#include <m2/game/Selection.h>
 
 using namespace m2;
-using namespace m2;
 
-const widget::TextBlueprint right_hud_set_rect_button = {
-    .text = "Set Rect", .onAction = [](MAYBE const widget::Text& self) -> UiAction {
-	    std::get<bulk_sheet_editor::State>(M2_LEVEL.stateVariant).set_rect();
-	    return MakeContinueAction();
-    }
-};
-const widget::TextBlueprint right_hud_reset_button = {
-    .text = "Reset", .onAction = [](MAYBE const widget::Text& self) -> UiAction {
-	    std::get<bulk_sheet_editor::State>(M2_LEVEL.stateVariant).reset();
-	    return MakeContinueAction();
-    }
-};
-const UiPanelBlueprint m2::bulk_sheet_editor::gRightHud = {
-	.name = "RightHud",
-    .w = 19,
-    .h = 72,
-    .background_color = {0, 0, 0, 255},
-    .widgets = {
-        UiWidgetBlueprint{
-            .x = 2,
-            .y = 2,
-            .w = 15,
-            .h = 3,
-            .variant = widget::TextSelectionBlueprint{
-                .onCreate = [](MAYBE widget::TextSelection& self) {
-	                if (auto selected_ss = std::get<bulk_sheet_editor::State>(M2_LEVEL.stateVariant).ReadSelectedSpriteSheetFromFile()) {
-		                widget::TextSelectionBlueprint::Options options;
-		                for (const auto& sprite : selected_ss->sprites()) {
-			                options.emplace_back(
-								widget::TextSelectionBlueprint::Option{
-									pb::enum_name<>(sprite.type()),
-									widget::TextSelectionBlueprint::ReturnValue{I(sprite.type())}
-								}
-							);
-		                }
-						self.set_options(std::move(options));
-	                }
-                },
-                .onAction = [](widget::TextSelection& self) -> UiAction {
-	                if (auto selected_sprite_type = static_cast<m2g::pb::SpriteType>(std::get<int>(self.selections()[0]))) {
-		                std::get<bulk_sheet_editor::State>(M2_LEVEL.stateVariant).SelectSpriteType(selected_sprite_type);
-		                return MakeContinueAction();
-	                }
-                	return MakeContinueAction();
-	                // throw M2_ERROR("Implementation error: Unknown sprite type ended up in sprite selection list");
-                }
+namespace {
+	std::optional<m2g::pb::SpriteType> SelectedSprite() {
+		if (const auto selections = M2_LEVEL.LeftHud()->find_first_widget_by_name<widget::TextSelection>("SpriteTypeSelection")->selections();
+				not selections.empty()) {
+			return static_cast<m2g::pb::SpriteType>(std::get<int>(selections[0]));
+		}
+		return std::nullopt;
+	}
+
+	const UiPanelBlueprint gRightHud = {
+		.name = "RightHud",
+		.w = 19,
+		.h = 72,
+		.background_color = {0, 0, 0, 255},
+		.widgets = {
+			UiWidgetBlueprint{
+				.x = 2, .y = 6, .w = 15, .h = 4,
+				.variant = widget::TextBlueprint{
+					.text = "Set Rect", .onAction = [](MAYBE const widget::Text& self) -> UiAction {
+						const auto selectedSprite = SelectedSprite();
+						if (const auto selectionResult = SelectionResult{M2_GAME.events};
+								selectedSprite && selectionResult.is_primary_selection_finished()) {
+							std::get<bulk_sheet_editor::State>(M2_LEVEL.stateVariant).SetRect(*selectedSprite, *selectionResult.PrimaryIntegerRoundedSelectionRectM());
+							std::get<bulk_sheet_editor::State>(M2_LEVEL.stateVariant).LookUpAndSetSavedSpriteRect(*selectedSprite);
+						}
+						return MakeContinueAction();
+					}
+				}
+			},
+			UiWidgetBlueprint{
+				.x = 2, .y = 11, .w = 15, .h = 4,
+				.variant = widget::TextBlueprint{
+					.text = "Reset", .onAction = [](MAYBE const widget::Text& self) -> UiAction {
+						if (const auto selectedSprite = SelectedSprite(); selectedSprite) {
+							std::get<bulk_sheet_editor::State>(M2_LEVEL.stateVariant).Reset(*selectedSprite);
+							std::get<bulk_sheet_editor::State>(M2_LEVEL.stateVariant).LookUpAndSetSavedSpriteRect(*selectedSprite);
+						}
+						return MakeContinueAction();
+					}
+				}
 			}
-		},
-        UiWidgetBlueprint{.x = 2, .y = 6, .w = 15, .h = 4, .variant = right_hud_set_rect_button},
-        UiWidgetBlueprint{.x = 2, .y = 11, .w = 15, .h = 4, .variant = right_hud_reset_button}
-    }
-};
+		}
+	};
 
-const UiPanelBlueprint m2::bulk_sheet_editor::gLeftHud = {
-	.name = "LeftHud",
-    .w = 19, .h = 72, .background_color = {0, 0, 0, 255}, .widgets = {}
-};
+	UiPanelBlueprint GenerateLeftHud(const pb::SpriteSheet& sheet) {
+		return UiPanelBlueprint{
+			.name = "LeftHud",
+			.w = 19, .h = 72,
+			.background_color = {0, 0, 0, 255},
+			.widgets = {
+				UiWidgetBlueprint{
+					.name = "SpriteTypeSelection",
+					.x = 0, .y = 0, .w = 19, .h = 72,
+					.variant = widget::TextSelectionBlueprint{
+						.line_count = 18,
+						.onCreate = [=](MAYBE widget::TextSelection& self) {
+							widget::TextSelectionBlueprint::Options options;
+							for (const auto& sprite : sheet.sprites()) {
+								if (sprite.type()) {
+									options.emplace_back(pb::enum_name<>(sprite.type()), I(sprite.type()));
+								}
+							}
+							self.set_options(std::move(options));
+						},
+						.onAction = [](const widget::TextSelection& self) -> UiAction {
+							if (const auto selections = self.selections(); not selections.empty()) {
+								const auto selectedSpriteType = static_cast<m2g::pb::SpriteType>(std::get<int>(selections[0]));
+								std::get<bulk_sheet_editor::State>(M2_LEVEL.stateVariant).LookUpAndSetSavedSpriteRect(selectedSpriteType);
+								const auto sprite_name = pb::enum_name(selectedSpriteType);
+								M2_LEVEL.ShowMessage(sprite_name);
+							} else {
+								std::get<bulk_sheet_editor::State>(M2_LEVEL.stateVariant).LookUpAndSetSavedSpriteRect(std::nullopt);
+							}
+							return MakeContinueAction();
+						}
+					}
+				}
+			}
+		};
+	}
+}
 
 const UiPanelBlueprint m2::bulk_sheet_editor::gMainMenu = {
 	.name = "MainMenu",
@@ -73,14 +97,11 @@ const UiPanelBlueprint m2::bulk_sheet_editor::gMainMenu = {
     .widgets = {
         UiWidgetBlueprint{
         	.name = "ResourceSelection",
-            .x = 1,
-            .y = 1,
-            .w = 14,
-            .h = 5,
+            .x = 1, .y = 1, .w = 14, .h = 5,
         	.variant = widget::TextSelectionBlueprint{
         		.line_count = 5,
         		.onCreate = [](widget::TextSelection& self) {
-        			const auto& sheets = std::get<bulk_sheet_editor::State>(M2_LEVEL.stateVariant).ReadSpriteSheetsFromFile();
+        			const auto& sheets = std::get<State>(M2_LEVEL.stateVariant).ReadSpriteSheetsFromFile();
         			widget::TextSelectionBlueprint::Options resources;
         			std::ranges::for_each(sheets.sheets(), [&resources](const auto& sheet) {
 						if (!sheet.resource().empty()) {
@@ -93,18 +114,15 @@ const UiPanelBlueprint m2::bulk_sheet_editor::gMainMenu = {
         	}
         },
         UiWidgetBlueprint{
-            .x = 1,
-            .y = 7,
-            .w = 14,
-            .h = 1,
+            .x = 1, .y = 7, .w = 14, .h = 1,
             .variant = widget::TextBlueprint{
                 .text = "SELECT",
                 .kb_shortcut = SDL_SCANCODE_RETURN,
                 .onAction = [](MAYBE const widget::Text& self) -> UiAction {
 	                if (const auto selections = self.Parent().find_first_widget_by_name<widget::TextSelection>("ResourceSelection")->selections();
 	                		not selections.empty()) {
-		                if (const auto& selectedResource = std::get<std::string>(selections[0]);
-		                		std::get<bulk_sheet_editor::State>(M2_LEVEL.stateVariant).SelectSpriteSheetResource(selectedResource)) {
+		                if (const auto spriteSheet = std::get<State>(M2_LEVEL.stateVariant).SelectResource(std::get<std::string>(selections[0]))) {
+		                	M2_LEVEL.ReplaceLeftHud(std::make_unique<UiPanelBlueprint>(GenerateLeftHud(*spriteSheet)), M2_GAME.Dimensions().LeftHud());
 	                		M2_LEVEL.ReplaceRightHud(&gRightHud, M2_GAME.Dimensions().RightHud());
 	                		return MakeReturnAction();
 	                	}

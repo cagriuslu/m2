@@ -196,10 +196,6 @@ m2::void_expected m2::Level::InitBulkSheetEditor(const std::filesystem::path& pa
 	m2::obj::create_origin();
 
 	// UI Hud
-	_leftHudUiPanel.emplace(&bulk_sheet_editor::gLeftHud, M2_GAME.Dimensions().LeftHud());
-	_leftHudUiPanel->UpdateContents(0.0f);
-	_rightHudUiPanel.emplace(&bulk_sheet_editor::gRightHud, M2_GAME.Dimensions().RightHud());
-	_rightHudUiPanel->UpdateContents(0.0f);
 	_messageBoxUiPanel->UpdateContents(0.0f);
 
 	return {};

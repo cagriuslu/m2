@@ -4,13 +4,14 @@
 #include <m2/bulk_sheet_editor/State.h>
 #include <m2/game/Selection.h>
 #include <m2/protobuf/Detail.h>
+#include <m2/ui/widget/TextSelection.h>
 #include <SDL2/SDL_image.h>
 
 using namespace m2;
 
 namespace {
 	constexpr SDL_Color SELECTION_COLOR = {0, 127, 255, 180};
-	constexpr SDL_Color CONFIRMED_SELECTION_COLOR = {0, 255, 0, 160};
+	constexpr SDL_Color CONFIRMED_SELECTION_COLOR = {0, 255, 0, 80};
 }  // namespace
 
 expected<bulk_sheet_editor::State> bulk_sheet_editor::State::Create(const std::filesystem::path& sprite_sheets_path) {
@@ -24,7 +25,7 @@ expected<bulk_sheet_editor::State> bulk_sheet_editor::State::Create(const std::f
 		return make_unexpected(msg.error());
 	}
 
-	return bulk_sheet_editor::State{sprite_sheets_path};
+	return State{sprite_sheets_path};
 }
 
 bulk_sheet_editor::State::~State() { Events::disable_primary_selection(); }
@@ -33,25 +34,14 @@ pb::SpriteSheets bulk_sheet_editor::State::ReadSpriteSheetsFromFile() const {
 	return *pb::json_file_to_message<pb::SpriteSheets>(_sprite_sheets_path);
 }
 
-std::optional<pb::SpriteSheet> bulk_sheet_editor::State::ReadSelectedSpriteSheetFromFile() const {
-	auto spriteSheets = this->ReadSpriteSheetsFromFile();
-	// To find the selected resource in the sheets, iterate over sheets
-	for (const auto& spriteSheet : spriteSheets.sheets()) {
-		if (spriteSheet.resource() == _selected_resource.first) {
-			return spriteSheet;
-		}
-	}
-	return std::nullopt;  // Resource not yet selected
-}
-
-bool bulk_sheet_editor::State::SelectSpriteSheetResource(const std::string& resource) {
-	const auto& spriteSheets = this->ReadSpriteSheetsFromFile();
+std::optional<pb::SpriteSheet> bulk_sheet_editor::State::SelectResource(const std::string& resource) {
+	const auto& spriteSheets = ReadSpriteSheetsFromFile();
 	// To find the selected resource in the sheets, iterate over sheets
 	for (const auto& spriteSheet : spriteSheets.sheets()) {
 		if (spriteSheet.resource() == resource) {
 			if (spriteSheet.sprites().empty()) {
 				LOG_ERROR("Selected sprite sheet has no sprites");
-				return false;
+				return std::nullopt;
 			}
 
 			// Load image
@@ -59,86 +49,58 @@ bool bulk_sheet_editor::State::SelectSpriteSheetResource(const std::string& reso
 			const sdl::SurfaceUniquePtr surface(IMG_Load(resourcePath.c_str()));
 			if (!surface) {
 				LOG_ERROR("Unable to load image", resourcePath, IMG_GetError());
-				return false;
+				return std::nullopt;
 			}
 			_texture = sdl::TextureUniquePtr{SDL_CreateTextureFromSurface(M2_GAME.renderer, surface.get())};
 			if (!_texture) {
 				LOG_ERROR("Unable to create texture from surface", SDL_GetError());
-				return false;
+				return std::nullopt;
 			}
 			_textureDimensions = {surface->w, surface->h};
 			_ppm = spriteSheet.ppm();
-			_selected_resource = std::make_pair(resource, spriteSheet.ppm());
+			_selected_resource = resource;
 
 			// Enable selection
 			Events::enable_primary_selection(M2_GAME.Dimensions().Game());
 
-			return true;
+			return spriteSheet;
 		}
 	}
-	return false;
+	return std::nullopt;
 }
-
-void bulk_sheet_editor::State::SelectSpriteType(m2g::pb::SpriteType type) {
-	const auto spriteSheet = *ReadSelectedSpriteSheetFromFile();
-	for (const auto& sprite : spriteSheet.sprites()) {
-		if (sprite.type() == type) {
-			_selected_sprite = std::make_pair(type, RectI{sprite.regular().rect()});
-
-			const auto sprite_name = pb::enum_name(type);
-			M2_LEVEL.ShowMessage(sprite_name);
-			return;
+void bulk_sheet_editor::State::LookUpAndSetSavedSpriteRect(std::optional<m2g::pb::SpriteType> sprite) {
+	if (sprite) {
+		for (const auto& spriteSheets = this->ReadSpriteSheetsFromFile(); const auto& spriteSheet : spriteSheets.sheets()) {
+			if (spriteSheet.resource() == _selected_resource) {
+				for (const auto& spriteObj : spriteSheet.sprites()) {
+					if (spriteObj.has_regular() && spriteObj.type() == *sprite) {
+						_savedSpriteRect = RectI{spriteObj.regular().rect()};
+						return;
+					}
+				}
+			}
 		}
 	}
-	throw M2_ERROR("Selected sprite has been removed from the SpriteSheet");
+	_savedSpriteRect = std::nullopt;
 }
-
-void bulk_sheet_editor::State::ModifySelectedSprite(const std::function<void(pb::Sprite&)>& modifier) const {
-	sheet_editor::modify_sprite_in_sheet(_sprite_sheets_path, _selected_sprite.first, modifier);
-}
-
-void bulk_sheet_editor::State::set_rect() {
-	auto selection_results = SelectionResult{M2_GAME.events};
-	// If rect is selected
-	if (selection_results.is_primary_selection_finished()) {
-		LOG_DEBUG("Primary selection");
-		auto positions = selection_results.primary_int_selection_position_m();
-		auto rect = RectI::from_corners(positions->first, positions->second);  // wrt sprite coordinates
-		ModifySelectedSprite([&](pb::Sprite& sprite) {
-			sprite.mutable_regular()->mutable_rect()->set_x(rect.x * _selected_resource.second);
-			sprite.mutable_regular()->mutable_rect()->set_y(rect.y * _selected_resource.second);
-			sprite.mutable_regular()->mutable_rect()->set_w(rect.w * _selected_resource.second);
-			sprite.mutable_regular()->mutable_rect()->set_h(rect.h * _selected_resource.second);
-		});
-		SelectSpriteType(_selected_sprite.first);  // Reset rect
-		M2_GAME.events.reset_primary_selection();
-	}
-}
-
-void bulk_sheet_editor::State::reset() {
-	ModifySelectedSprite([&](pb::Sprite& sprite) {
-		sprite.mutable_regular()->clear_rect();
-		sprite.mutable_regular()->clear_center_to_origin_vec_px();
+void bulk_sheet_editor::State::SetRect(const m2g::pb::SpriteType sprite, const RectI& rect) {
+	sheet_editor::modify_sprite_in_sheet(_sprite_sheets_path, sprite, [&](pb::Sprite& sprite_) {
+		sprite_.mutable_regular()->mutable_rect()->set_x(rect.x);
+		sprite_.mutable_regular()->mutable_rect()->set_y(rect.y);
+		sprite_.mutable_regular()->mutable_rect()->set_w(rect.w);
+		sprite_.mutable_regular()->mutable_rect()->set_h(rect.h);
 	});
-	SelectSpriteType(_selected_sprite.first);  // Reset rect
+	M2_GAME.events.reset_primary_selection();
+}
+void bulk_sheet_editor::State::Reset(const m2g::pb::SpriteType sprite) {
+	sheet_editor::modify_sprite_in_sheet(_sprite_sheets_path, sprite, [&](pb::Sprite& sprite_) {
+		sprite_.mutable_regular()->clear_rect();
+		sprite_.mutable_regular()->clear_center_to_origin_vec_px();
+	});
 	M2_GAME.events.reset_primary_selection();
 }
 
 void bulk_sheet_editor::State::Draw() const {
-	// Draw selection
-	if (auto positions = SelectionResult{M2_GAME.events}.primary_cell_selection_position_m(); positions) {
-		Graphic::color_rect(RectF::from_corners(positions->first, positions->second), SELECTION_COLOR);
-	}
-	// Draw currectly selected sprite's rect
-	if (_selected_sprite.second) {
-		auto world_coordinates_m = RectF{
-		    F(_selected_sprite.second.x) / F(_selected_resource.second),
-		    F(_selected_sprite.second.y) / F(_selected_resource.second),
-		    F(_selected_sprite.second.w) / F(_selected_resource.second),
-		    F(_selected_sprite.second.h) / F(_selected_resource.second)};
-		Graphic::color_rect(world_coordinates_m.shift({-0.5f, -0.5f}), CONFIRMED_SELECTION_COLOR);
-	}
-
 	// Draw texture
 	const auto offset = VecF{-0.5f, -0.5f};
 	const auto textureTopLeftOutputPosition = ScreenOriginToPositionVecPx(offset);
@@ -148,6 +110,19 @@ void bulk_sheet_editor::State::Draw() const {
 			iround(textureBottomRightOutputPosition.x - textureTopLeftOutputPosition.x),
 			iround(textureBottomRightOutputPosition.y - textureTopLeftOutputPosition.y)};
 	SDL_RenderCopy(M2_GAME.renderer, _texture.get(), nullptr, &dstRect);
+	// Draw currectly selected sprite's rect
+	if (_savedSpriteRect) {
+		auto world_coordinates_m = RectF{
+			F(_savedSpriteRect->x),
+			F(_savedSpriteRect->y),
+			F(_savedSpriteRect->w),
+			F(_savedSpriteRect->h)};
+		Graphic::color_rect(world_coordinates_m.shift({-0.5f, -0.5f}), CONFIRMED_SELECTION_COLOR);
+	}
+	// Draw selection
+	if (const auto selection = SelectionResult{M2_GAME.events}.primary_cell_selection_position_m(); selection) {
+		Graphic::color_rect(RectF::from_corners(selection->first, selection->second), SELECTION_COLOR);
+	}
 	// Draw pixel grid lines
 	Graphic::DrawGridLines({127, 127, 255, 80});
 	// Draw PPM grid lines

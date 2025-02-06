@@ -6,11 +6,11 @@
 namespace m2::bulk_sheet_editor {
 	class State {
 		std::filesystem::path _sprite_sheets_path;
-		std::pair<std::string, int> _selected_resource;  // and ppm
-		std::pair<m2g::pb::SpriteType, RectI> _selected_sprite; // TODO get from HUD
+		std::string _selected_resource;
 		sdl::TextureUniquePtr _texture;
 		VecI _textureDimensions;
-		int _ppm;
+		int _ppm{};
+		std::optional<RectI> _savedSpriteRect;
 
 		explicit State(std::filesystem::path sprite_sheets_path) : _sprite_sheets_path(std::move(sprite_sheets_path)) {}
 
@@ -25,17 +25,14 @@ namespace m2::bulk_sheet_editor {
 		// Accessors
 
 		[[nodiscard]] pb::SpriteSheets ReadSpriteSheetsFromFile() const;
-		[[nodiscard]] std::optional<pb::SpriteSheet> ReadSelectedSpriteSheetFromFile() const;
 
 		// Modifiers
 
-		bool SelectSpriteSheetResource(const std::string& resource);
-		void SelectSpriteType(m2g::pb::SpriteType type); // TODO get from HUD
-		void ModifySelectedSprite(const std::function<void(pb::Sprite&)>& modifier) const;
-		void set_rect();
-		void reset();
+		std::optional<pb::SpriteSheet> SelectResource(const std::string& resource);
+		void LookUpAndSetSavedSpriteRect(std::optional<m2g::pb::SpriteType>);
+		void SetRect(m2g::pb::SpriteType, const RectI&);
+		void Reset(m2g::pb::SpriteType sprite);
 
 		void Draw() const;
-
 	};
 }  // namespace m2::bulk_sheet_editor
