@@ -25,11 +25,11 @@ namespace m2 {
 		VecF _centerToOriginVecPx;
 		VecF _centerToOriginVecM;
 		box2d::ColliderType _backgroundColliderType{box2d::ColliderType::NONE};
-		VecF _backgroundColliderOriginToOriginVecM;
+		VecF _originToBackgroundColliderOriginVecM;
 		VecF _backgroundColliderRectDimsM;
 		float _backgroundColliderCircRadiusM{};
 		box2d::ColliderType _foregroundColliderType{box2d::ColliderType::NONE};
-		VecF _foregroundColliderOriginToOriginVecM;
+		VecF _originToForegroundColliderOriginVecM;
 		VecF _foregroundColliderRectDimsM;
 		float _foregroundColliderCircRadiusM{};
 		bool _isBackgroundTile{};
@@ -58,11 +58,11 @@ namespace m2 {
 		[[nodiscard]] const VecF& CenterToOriginVecPx() const { return _centerToOriginVecPx; }
 		[[nodiscard]] const VecF& CenterToOriginVecM() const { return _centerToOriginVecM; }
 		[[nodiscard]] box2d::ColliderType BackgroundColliderType() const { return _backgroundColliderType; }
-		[[nodiscard]] VecF BackgroundColliderOriginToOriginVecM() const { return _backgroundColliderOriginToOriginVecM; }
+		[[nodiscard]] VecF OriginToBackgroundColliderOriginVecM() const { return _originToBackgroundColliderOriginVecM; }
 		[[nodiscard]] VecF BackgroundColliderRectDimsM() const { return _backgroundColliderRectDimsM; }
 		[[nodiscard]] float BackgroundColliderCircRadiusM() const { return _backgroundColliderCircRadiusM; }
 		[[nodiscard]] box2d::ColliderType ForegroundColliderType() const { return _foregroundColliderType; }
-		[[nodiscard]] VecF ForegroundColliderOriginToOriginVecM() const { return _foregroundColliderOriginToOriginVecM; }
+		[[nodiscard]] VecF OriginToForegroundColliderOriginVecM() const { return _originToForegroundColliderOriginVecM; }
 		[[nodiscard]] VecF ForegroundColliderRectDimsM() const { return _foregroundColliderRectDimsM; }
 		[[nodiscard]] float ForegroundColliderCircRadiusM() const { return _foregroundColliderCircRadiusM; }
 		[[nodiscard]] bool IsBackgroundTile() const { return _isBackgroundTile; }

@@ -23,9 +23,9 @@ m2::Pool<m2::Object>::Iterator m2::obj::create_tile(BackgroundLayer layer, const
 				bp.mutable_background_fixture()->mutable_rect()->mutable_dims()->set_w(sprite.BackgroundColliderRectDimsM().x);
 				bp.mutable_background_fixture()->mutable_rect()->mutable_dims()->set_h(sprite.BackgroundColliderRectDimsM().y);
 	            bp.mutable_background_fixture()->mutable_rect()->mutable_center_offset()->set_x(
-				    sprite.BackgroundColliderOriginToOriginVecM().x);
+				    sprite.OriginToBackgroundColliderOriginVecM().x);
 	            bp.mutable_background_fixture()->mutable_rect()->mutable_center_offset()->set_y(
-				    sprite.BackgroundColliderOriginToOriginVecM().y);
+				    sprite.OriginToBackgroundColliderOriginVecM().y);
 				bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::OBSTACLE_BACKGROUND);
 			} else if (sprite.BackgroundColliderType() == box2d::ColliderType::CIRCLE) {
 				throw M2_ERROR("Circular tile background_collider unimplemented");
@@ -34,8 +34,8 @@ m2::Pool<m2::Object>::Iterator m2::obj::create_tile(BackgroundLayer layer, const
 	        if (sprite.ForegroundColliderType() == box2d::ColliderType::RECTANGLE) {
 	            bp.mutable_foreground_fixture()->mutable_rect()->mutable_dims()->set_w(sprite.ForegroundColliderRectDimsM().x);
 	            bp.mutable_foreground_fixture()->mutable_rect()->mutable_dims()->set_h(sprite.ForegroundColliderRectDimsM().y);
-	            bp.mutable_foreground_fixture()->mutable_rect()->mutable_center_offset()->set_x(sprite.ForegroundColliderOriginToOriginVecM().x);
-	            bp.mutable_foreground_fixture()->mutable_rect()->mutable_center_offset()->set_y(sprite.ForegroundColliderOriginToOriginVecM().y);
+	            bp.mutable_foreground_fixture()->mutable_rect()->mutable_center_offset()->set_x(sprite.OriginToForegroundColliderOriginVecM().x);
+	            bp.mutable_foreground_fixture()->mutable_rect()->mutable_center_offset()->set_y(sprite.OriginToForegroundColliderOriginVecM().y);
 	            bp.mutable_foreground_fixture()->set_category(m2::pb::FixtureCategory::OBSTACLE_BACKGROUND);
 	        } else if (sprite.ForegroundColliderType() == box2d::ColliderType::CIRCLE) {
 	            throw M2_ERROR("Circular tile foreground_collider unimplemented");

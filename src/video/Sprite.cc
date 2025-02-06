@@ -41,8 +41,8 @@ m2::Sprite::Sprite(const std::vector<SpriteSheet>& spriteSheets, const SpriteShe
 	    ? (original_sprite->regular().background_collider().has_rect_dims_px() ? box2d::ColliderType::RECTANGLE
 	                                                                           : box2d::ColliderType::CIRCLE)
 	    : box2d::ColliderType::NONE;
-	_backgroundColliderOriginToOriginVecM =
-	    VecF{original_sprite->regular().background_collider().origin_to_origin_vec_px()} / static_cast<float>(_ppm);
+	_originToBackgroundColliderOriginVecM =
+	    VecF{original_sprite->regular().background_collider().sprite_origin_to_collider_origin_vec_px()} / static_cast<float>(_ppm);
 
 	_backgroundColliderRectDimsM =
 	    VecF{original_sprite->regular().background_collider().rect_dims_px()} / static_cast<float>(_ppm);
@@ -52,8 +52,8 @@ m2::Sprite::Sprite(const std::vector<SpriteSheet>& spriteSheets, const SpriteShe
 	    ? (original_sprite->regular().foreground_collider().has_rect_dims_px() ? box2d::ColliderType::RECTANGLE
 	                                                                           : box2d::ColliderType::CIRCLE)
 	    : box2d::ColliderType::NONE;
-	_foregroundColliderOriginToOriginVecM =
-	    VecF{original_sprite->regular().foreground_collider().origin_to_origin_vec_px()} / static_cast<float>(_ppm);
+	_originToForegroundColliderOriginVecM =
+	    VecF{original_sprite->regular().foreground_collider().sprite_origin_to_collider_origin_vec_px()} / static_cast<float>(_ppm);
 	_foregroundColliderRectDimsM =
 	    VecF{original_sprite->regular().foreground_collider().rect_dims_px()} / static_cast<float>(_ppm);
 	_foregroundColliderCircRadiusM =

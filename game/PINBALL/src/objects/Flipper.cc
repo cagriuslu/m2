@@ -29,7 +29,7 @@ m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
 		b2PolygonShape polygonShape;
 		polygonShape.SetAsBox(sprite.ForegroundColliderRectDimsM().x / 2.0f,
 				sprite.ForegroundColliderRectDimsM().y / 2.0f,
-				static_cast<b2Vec2>(sprite.ForegroundColliderOriginToOriginVecM()),
+				static_cast<b2Vec2>(sprite.OriginToForegroundColliderOriginVecM()),
 				obj.orientation);
 		fixtureDef.shape = &polygonShape;
 		fixtureDef.friction = 0.1f;

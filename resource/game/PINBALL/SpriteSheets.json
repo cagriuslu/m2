@@ -29,7 +29,7 @@
               "x": -23.5
             },
             "foregroundCollider": {
-              "originToOriginVecPx": {
+              "spriteOriginToColliderOriginVecPx": {
                 "x": 23.5
               },
               "rectDimsPx": {
@@ -52,7 +52,7 @@
               "x": 23.5
             },
             "foregroundCollider": {
-              "originToOriginVecPx": {
+              "spriteOriginToColliderOriginVecPx": {
                 "x": -23.5
               },
               "rectDimsPx": {

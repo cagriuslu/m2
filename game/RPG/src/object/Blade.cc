@@ -34,8 +34,8 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF &direction, 
 	auto bp = m2::box2d::example_bullet_body_blueprint();
 	bp.mutable_foreground_fixture()->mutable_rect()->mutable_dims()->set_w(sprite.ForegroundColliderRectDimsM().x);
 	bp.mutable_foreground_fixture()->mutable_rect()->mutable_dims()->set_h(sprite.ForegroundColliderRectDimsM().y);
-	bp.mutable_foreground_fixture()->mutable_rect()->mutable_center_offset()->set_x(sprite.ForegroundColliderOriginToOriginVecM().x);
-	bp.mutable_foreground_fixture()->mutable_rect()->mutable_center_offset()->set_y(sprite.ForegroundColliderOriginToOriginVecM().y);
+	bp.mutable_foreground_fixture()->mutable_rect()->mutable_center_offset()->set_x(sprite.OriginToForegroundColliderOriginVecM().x);
+	bp.mutable_foreground_fixture()->mutable_rect()->mutable_center_offset()->set_y(sprite.OriginToForegroundColliderOriginVecM().y);
 	bp.mutable_foreground_fixture()->set_is_sensor(true);
 	bp.mutable_foreground_fixture()->set_category(is_friend ? m2::pb::FixtureCategory::FRIEND_OFFENSE_ON_FOREGROUND : m2::pb::FixtureCategory::FOE_OFFENSE_ON_FOREGROUND);
 	phy.body = m2::box2d::create_body(*M2_LEVEL.world, obj.physique_id(), obj.position, bp);

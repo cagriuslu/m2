@@ -14,9 +14,9 @@ m2::void_expected rpg::create_decoration(m2::Object& obj, m2g::pb::SpriteType sp
 		bp.set_type(m2::pb::BodyType::STATIC);
 		bp.set_allow_sleep(true);
 		bp.mutable_background_fixture()->mutable_rect()->mutable_center_offset()->set_x(
-		    sprite.BackgroundColliderOriginToOriginVecM().x);
+		    sprite.OriginToBackgroundColliderOriginVecM().x);
 		bp.mutable_background_fixture()->mutable_rect()->mutable_center_offset()->set_y(
-		    sprite.BackgroundColliderOriginToOriginVecM().y);
+		    sprite.OriginToBackgroundColliderOriginVecM().y);
 		bp.mutable_background_fixture()->mutable_rect()->mutable_dims()->set_w(sprite.BackgroundColliderRectDimsM().x);
 		bp.mutable_background_fixture()->mutable_rect()->mutable_dims()->set_h(sprite.BackgroundColliderRectDimsM().y);
 		if (obj.object_type() == m2g::pb::FENCE_VERTICAL) {
@@ -31,9 +31,9 @@ m2::void_expected rpg::create_decoration(m2::Object& obj, m2g::pb::SpriteType sp
 		bp.set_type(m2::pb::BodyType::STATIC);
 		bp.set_allow_sleep(true);
 		bp.mutable_background_fixture()->mutable_circ()->mutable_center_offset()->set_x(
-		    sprite.BackgroundColliderOriginToOriginVecM().x);
+		    sprite.OriginToBackgroundColliderOriginVecM().x);
 		bp.mutable_background_fixture()->mutable_circ()->mutable_center_offset()->set_y(
-		    sprite.BackgroundColliderOriginToOriginVecM().y);
+		    sprite.OriginToBackgroundColliderOriginVecM().y);
 		bp.mutable_background_fixture()->mutable_circ()->set_radius(sprite.BackgroundColliderCircRadiusM());
 		bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::OBSTACLE_BACKGROUND);
 

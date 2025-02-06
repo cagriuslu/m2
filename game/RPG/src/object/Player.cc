@@ -31,8 +31,8 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 	bp.mutable_background_fixture()->mutable_circ()->set_radius(mainSprite.BackgroundColliderCircRadiusM());
 	bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_ON_BACKGROUND);
 	bp.mutable_foreground_fixture()->mutable_circ()->set_radius(mainSprite.ForegroundColliderCircRadiusM());
-	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_x(mainSprite.ForegroundColliderOriginToOriginVecM().x);
-	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_y(mainSprite.ForegroundColliderOriginToOriginVecM().y);
+	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_x(mainSprite.OriginToForegroundColliderOriginVecM().x);
+	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_y(mainSprite.OriginToForegroundColliderOriginVecM().y);
 	bp.mutable_foreground_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_ON_FOREGROUND);
 	bp.set_mass(PLAYER_MASS);
 	bp.set_linear_damping(PLAYER_LINEAR_DAMPING);

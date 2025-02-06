@@ -13,7 +13,7 @@
             "rect": {"x": 0, "y": 0, "w": 162, "h": 176},
             "centerToOriginVecPx" : {"x": -40, "y": 53},
             "backgroundCollider": {
-              "originToOriginVecPx": {"x": -40, "y": 53},
+              "spriteOriginToColliderOriginVecPx": {"x": -40, "y": 53},
               "circRadiusPx": 35
             }
           }
