@@ -54,18 +54,17 @@ const widget::TextBlueprint right_hud_reset_button = {
 		}
 };
 
-const widget::TextBlueprint foreground_companion_mode_title = {
-		.text = "FComp"
-};
 UiPanelBlueprint sheet_editor_foreground_companion_mode_right_hud = {
 	.name = "ForegroundCompanionModeRightHud",
 		.w = 19, .h = 72,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
 				UiWidgetBlueprint{
-						.x = 4, .y = 2, .w = 11, .h = 3,
-						.border_width = 0,
-						.variant = foreground_companion_mode_title
+					.x = 4, .y = 2, .w = 11, .h = 3,
+					.border_width = 0,
+					.variant = widget::TextBlueprint{
+						.text = "FComp"
+					}
 				},
 				UiWidgetBlueprint{
 						.x = 4, .y = 6, .w = 11, .h = 4,
@@ -82,18 +81,17 @@ UiPanelBlueprint sheet_editor_foreground_companion_mode_right_hud = {
 		}
 };
 
-const widget::TextBlueprint rect_mode_title = {
-		.text = "Rect"
-};
 UiPanelBlueprint sheet_editor_rect_mode_right_hud = {
 	.name = "RectModeRightHud",
 		.w = 19, .h = 72,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
 				UiWidgetBlueprint{
-						.x = 4, .y = 2, .w = 11, .h = 3,
-						.border_width = 0,
-						.variant = rect_mode_title
+					.x = 4, .y = 2, .w = 11, .h = 3,
+					.border_width = 0,
+					.variant = widget::TextBlueprint{
+						.text = "Rect"
+					}
 				},
 				UiWidgetBlueprint{
 						.x = 4, .y = 6, .w = 11, .h = 4,
@@ -110,18 +108,17 @@ UiPanelBlueprint sheet_editor_rect_mode_right_hud = {
 		}
 };
 
-const widget::TextBlueprint background_collider_mode_title = {
-		.text = "BColl"
-};
 UiPanelBlueprint sheet_editor_background_collider_mode_right_hud = {
 	.name = "BackgroundColliderModeRightHud",
 		.w = 19, .h = 72,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
 				UiWidgetBlueprint{
-						.x = 4, .y = 2, .w = 11, .h = 3,
-						.border_width = 0,
-						.variant = background_collider_mode_title
+					.x = 4, .y = 2, .w = 11, .h = 3,
+					.border_width = 0,
+					.variant = widget::TextBlueprint{
+						.text = "BColl"
+					}
 				},
 				UiWidgetBlueprint{
 						.x = 4, .y = 6, .w = 11, .h = 4,
@@ -134,18 +131,17 @@ UiPanelBlueprint sheet_editor_background_collider_mode_right_hud = {
 		}
 };
 
-const widget::TextBlueprint foreground_collider_mode_title = {
-		.text = "FColl"
-};
 UiPanelBlueprint sheet_editor_foreground_collider_mode_right_hud = {
 	.name = "ForegroundColliderModeRightHud",
 		.w = 19, .h = 72,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
 				UiWidgetBlueprint{
-						.x = 4, .y = 2, .w = 11, .h = 3,
-						.border_width = 0,
-						.variant = foreground_collider_mode_title
+					.x = 4, .y = 2, .w = 11, .h = 3,
+					.border_width = 0,
+					.variant = widget::TextBlueprint{
+						.text = "FColl"
+					}
 				},
 				UiWidgetBlueprint{
 						.x = 4, .y = 6, .w = 11, .h = 4,
@@ -165,59 +161,6 @@ const UiPanelBlueprint m2::sheet_editor_right_hud = {
 		.widgets = {}
 };
 
-const widget::TextBlueprint left_hud_foreground_companion_button = {
-		.text = "FComp",
-		.onAction = [](MAYBE const widget::Text& self) -> UiAction {
-			std::get<sheet_editor::State>(M2_LEVEL.stateVariant).activate_foreground_companion_mode();
-
-			M2_LEVEL.ReplaceRightHud(&sheet_editor_foreground_companion_mode_right_hud, M2_GAME.Dimensions().RightHud());
-			return MakeContinueAction();
-		}
-};
-const widget::TextBlueprint left_hud_rect_button = {
-		.text = "Rect",
-		.onAction = [](MAYBE const widget::Text& self) -> UiAction {
-			std::get<sheet_editor::State>(M2_LEVEL.stateVariant).activate_rect_mode();
-
-			M2_LEVEL.ReplaceRightHud(&sheet_editor_rect_mode_right_hud, M2_GAME.Dimensions().RightHud());
-			return MakeContinueAction();
-		}
-};
-const widget::TextBlueprint left_hud_background_collider_button = {
-		.text = "BColl",
-		.onAction = [](MAYBE const widget::Text& self) -> UiAction {
-			std::get<sheet_editor::State>(M2_LEVEL.stateVariant).activate_background_collider_mode();
-
-			M2_LEVEL.ReplaceRightHud(&sheet_editor_background_collider_mode_right_hud, M2_GAME.Dimensions().RightHud());
-			return MakeContinueAction();
-		}
-};
-const widget::TextBlueprint left_hud_foreground_collider_button = {
-		.text = "FColl",
-		.onAction = [](MAYBE const widget::Text& self) -> UiAction {
-			std::get<sheet_editor::State>(M2_LEVEL.stateVariant).activate_foreground_collider_mode();
-
-			M2_LEVEL.ReplaceRightHud(&sheet_editor_foreground_collider_mode_right_hud, M2_GAME.Dimensions().RightHud());
-			return MakeContinueAction();
-		}
-};
-const widget::TextBlueprint left_hud_cancel_button = {
-		.text = "Cancel",
-		.onAction = [](MAYBE const widget::Text& self) -> UiAction {
-			std::get<sheet_editor::State>(M2_LEVEL.stateVariant).deactivate_mode();
-
-			M2_LEVEL.ReplaceRightHud(&sheet_editor_right_hud, M2_GAME.Dimensions().RightHud());
-			return MakeContinueAction();
-		}
-};
-const widget::TextBlueprint left_hud_coordinates = {
-		.text = "0.0:0.0",
-		.onUpdate = [](MAYBE widget::Text& self) {
-			auto mouse_position = M2_GAME.MousePositionWorldM().hround();
-			self.set_text(m2::ToString(mouse_position.x, 1) + ':' + m2::ToString(mouse_position.y, 1));
-			return MakeContinueAction();
-		}
-};
 const UiPanelBlueprint m2::sheet_editor_left_hud = {
 	.name = "LeftHud",
 		.w = 19, .h = 72,
@@ -225,66 +168,79 @@ const UiPanelBlueprint m2::sheet_editor_left_hud = {
 		.widgets = {
 				UiWidgetBlueprint{
 					.x = 4, .y = 2, .w = 11, .h = 3,
-					.variant = left_hud_foreground_companion_button
+					.variant = widget::TextBlueprint{
+						.text = "FComp",
+						.onAction = [](MAYBE const widget::Text& self) -> UiAction {
+							std::get<sheet_editor::State>(M2_LEVEL.stateVariant).activate_foreground_companion_mode();
+
+							M2_LEVEL.ReplaceRightHud(&sheet_editor_foreground_companion_mode_right_hud, M2_GAME.Dimensions().RightHud());
+							return MakeContinueAction();
+						}
+					}
 				},
 				UiWidgetBlueprint{
-						.x = 4, .y = 6, .w = 11, .h = 3,
-						.variant = left_hud_rect_button
+					.x = 4, .y = 6, .w = 11, .h = 3,
+					.variant = widget::TextBlueprint{
+						.text = "Rect",
+						.onAction = [](MAYBE const widget::Text& self) -> UiAction {
+							std::get<sheet_editor::State>(M2_LEVEL.stateVariant).activate_rect_mode();
+
+							M2_LEVEL.ReplaceRightHud(&sheet_editor_rect_mode_right_hud, M2_GAME.Dimensions().RightHud());
+							return MakeContinueAction();
+						}
+					}
 				},
 				UiWidgetBlueprint{
-						.x = 4, .y = 10, .w = 11, .h = 3,
-						.variant = left_hud_background_collider_button
+					.x = 4, .y = 10, .w = 11, .h = 3,
+					.variant = widget::TextBlueprint{
+						.text = "BColl",
+						.onAction = [](MAYBE const widget::Text& self) -> UiAction {
+							std::get<sheet_editor::State>(M2_LEVEL.stateVariant).activate_background_collider_mode();
+
+							M2_LEVEL.ReplaceRightHud(&sheet_editor_background_collider_mode_right_hud, M2_GAME.Dimensions().RightHud());
+							return MakeContinueAction();
+						}
+					}
 				},
 				UiWidgetBlueprint{
-						.x = 4, .y = 14, .w = 11, .h = 3,
-						.variant = left_hud_foreground_collider_button
+					.x = 4, .y = 14, .w = 11, .h = 3,
+					.variant = widget::TextBlueprint{
+						.text = "FColl",
+						.onAction = [](MAYBE const widget::Text& self) -> UiAction {
+							std::get<sheet_editor::State>(M2_LEVEL.stateVariant).activate_foreground_collider_mode();
+
+							M2_LEVEL.ReplaceRightHud(&sheet_editor_foreground_collider_mode_right_hud, M2_GAME.Dimensions().RightHud());
+							return MakeContinueAction();
+						}
+					}
 				},
 				UiWidgetBlueprint{
-						.x = 4, .y = 18, .w = 11, .h = 3,
-						.variant = left_hud_cancel_button
+					.x = 4, .y = 18, .w = 11, .h = 3,
+					.variant = widget::TextBlueprint{
+						.text = "Cancel",
+						.onAction = [](MAYBE const widget::Text& self) -> UiAction {
+							std::get<sheet_editor::State>(M2_LEVEL.stateVariant).deactivate_mode();
+
+							M2_LEVEL.ReplaceRightHud(&sheet_editor_right_hud, M2_GAME.Dimensions().RightHud());
+							return MakeContinueAction();
+						}
+					}
 				},
 				UiWidgetBlueprint{
-						.x = 0, .y = 70, .w = 19, .h = 2,
-						.border_width = 0,
-						.variant = left_hud_coordinates
+					.x = 0, .y = 70, .w = 19, .h = 2,
+					.border_width = 0,
+					.variant = widget::TextBlueprint{
+						.text = "0.0:0.0",
+						.onUpdate = [](MAYBE widget::Text& self) {
+							auto mouse_position = M2_GAME.MousePositionWorldM().hround();
+							self.set_text(m2::ToString(mouse_position.x, 1) + ':' + m2::ToString(mouse_position.y, 1));
+							return MakeContinueAction();
+						}
+					}
 				}
 		}
 };
 
-widget::ImageBlueprint sprite_display = {
-		.onUpdate = [](const widget::Image& self) -> std::pair<UiAction,std::optional<m2g::pb::SpriteType>> {
-			auto* text_selection_widget = self.Parent().find_first_widget_of_blueprint_type<widget::TextSelectionBlueprint>();
-			m2g::pb::SpriteType selected_sprite_type = static_cast<m2g::pb::SpriteType>(
-				std::get<int>(
-					dynamic_cast<widget::TextSelection*>(text_selection_widget)->selections()[0]));
-			return std::make_pair(MakeContinueAction(), selected_sprite_type);
-		}
-};
-const widget::TextSelectionBlueprint sprite_selection = {
-		.onCreate = [](MAYBE widget::TextSelection& self) {
-			const auto& pb_sheets = std::get<sheet_editor::State>(M2_LEVEL.stateVariant).sprite_sheets();
-			// Gather the list of sprites
-			std::vector<m2g::pb::SpriteType> sprite_types;
-			std::for_each(pb_sheets.sheets().cbegin(), pb_sheets.sheets().cend(), [&sprite_types](const auto& sheet) {
-				std::for_each(sheet.sprites().cbegin(), sheet.sprites().cend(), [&sprite_types](const auto& sprite) {
-					sprite_types.emplace_back(sprite.type());
-				});
-			});
-			// Sort the list
-			std::sort(sprite_types.begin(), sprite_types.end());
-			// Transform to sprite type names
-			widget::TextSelectionBlueprint::Options options;
-			std::transform(sprite_types.begin(), sprite_types.end(), std::back_inserter(options), [](const auto& sprite_type) {
-				return widget::TextSelectionBlueprint::Option{m2g::pb::SpriteType_Name(sprite_type), static_cast<int>(sprite_type)};
-			});
-			self.set_options(std::move(options));
-		},
-		.onAction = [](widget::TextSelection& self) -> UiAction {
-			std::get<sheet_editor::State>(M2_LEVEL.stateVariant).set_sprite_type(
-				static_cast<m2g::pb::SpriteType>(std::get<int>(self.selections()[0])));
-			return MakeContinueAction();
-		}
-};
 const UiPanelBlueprint m2::sheet_editor_main_menu = {
 	.name = "MainMenu",
 		.w = 160, .h = 90,
@@ -293,11 +249,42 @@ const UiPanelBlueprint m2::sheet_editor_main_menu = {
 		.widgets = {
 				UiWidgetBlueprint{
 					.x = 60, .y = 10, .w = 40, .h = 40,
-					.variant = sprite_display
+					.variant = widget::ImageBlueprint{
+						.onUpdate = [](const widget::Image& self) -> std::pair<UiAction,std::optional<m2g::pb::SpriteType>> {
+							auto* text_selection_widget = self.Parent().find_first_widget_of_blueprint_type<widget::TextSelectionBlueprint>();
+							m2g::pb::SpriteType selected_sprite_type = static_cast<m2g::pb::SpriteType>(
+								std::get<int>(dynamic_cast<widget::TextSelection*>(text_selection_widget)->selections()[0]));
+							return std::make_pair(MakeContinueAction(), selected_sprite_type);
+						}
+					}
 				},
 				UiWidgetBlueprint{
-						.x = 35 , .y = 55, .w = 90, .h = 10,
-						.variant = sprite_selection
+					.x = 35 , .y = 55, .w = 90, .h = 10,
+					.variant = widget::TextSelectionBlueprint{
+						.onCreate = [](MAYBE widget::TextSelection& self) {
+							const auto& pb_sheets = std::get<sheet_editor::State>(M2_LEVEL.stateVariant).sprite_sheets();
+							// Gather the list of sprites
+							std::vector<m2g::pb::SpriteType> sprite_types;
+							std::for_each(pb_sheets.sheets().cbegin(), pb_sheets.sheets().cend(), [&sprite_types](const auto& sheet) {
+								std::for_each(sheet.sprites().cbegin(), sheet.sprites().cend(), [&sprite_types](const auto& sprite) {
+									sprite_types.emplace_back(sprite.type());
+								});
+							});
+							// Sort the list
+							std::sort(sprite_types.begin(), sprite_types.end());
+							// Transform to sprite type names
+							widget::TextSelectionBlueprint::Options options;
+							std::transform(sprite_types.begin(), sprite_types.end(), std::back_inserter(options), [](const auto& sprite_type) {
+								return widget::TextSelectionBlueprint::Option{m2g::pb::SpriteType_Name(sprite_type), static_cast<int>(sprite_type)};
+							});
+							self.set_options(std::move(options));
+						},
+						.onAction = [](widget::TextSelection& self) -> UiAction {
+							std::get<sheet_editor::State>(M2_LEVEL.stateVariant).set_sprite_type(
+								static_cast<m2g::pb::SpriteType>(std::get<int>(self.selections()[0])));
+							return MakeContinueAction();
+						}
+					}
 				},
 				UiWidgetBlueprint{
 						.x = 35, .y = 70, .w = 40, .h = 10,
