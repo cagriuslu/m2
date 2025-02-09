@@ -3,44 +3,33 @@
 #include "../math/VecF.h"
 
 namespace m2 {
-	// TODO get rid of this class somehow, unnecessary
-	class SelectionResult {
-		VecF _mouse_position_m;
-		std::pair<std::optional<VecF>, std::optional<VecF>> _primary_selection_position_m;
-		std::pair<std::optional<VecF>, std::optional<VecF>> _secondary_selection_position_m;
+	class Selection {
+		RectI _screenBoundaryPx;
+		std::pair<std::optional<VecF>, std::optional<VecF>> _positionM;
 
 	public:
-		explicit SelectionResult(const Events& events);
+		explicit Selection(const RectI& screenBoundaryPx) : _screenBoundaryPx(screenBoundaryPx) {}
 
-		[[nodiscard]] bool is_primary_selection_finished() const { return _primary_selection_position_m.first && _primary_selection_position_m.second; }
-		[[nodiscard]] bool is_secondary_selection_finished() const { return _secondary_selection_position_m.first && _secondary_selection_position_m.second; }
+		// Accessors
 
-		// TODO return RectI/F from these instead
+		[[nodiscard]] const RectI& ScreenBoundaryPx() const { return _screenBoundaryPx; }
+		[[nodiscard]] bool IsComplete() const { return _positionM.first && _positionM.second; }
+		[[nodiscard]] std::optional<RectI> IntegerSelectionRectM() const;
+		/// Returns cell selection where the cells are centered at integer positions, and the width/height are 1 meter,
+		/// which leads to corners being at -0.5 and +0.5.
+		[[nodiscard]] std::optional<RectF> CellSelectionRectM() const;
+		/// Returns half-cell selection where the corners are either at 0.5 steps, or integer steps.
+		[[nodiscard]] std::optional<RectF> HalfCellSelectionRectM() const;
+		/// Returns raw selection.
+		[[nodiscard]] std::optional<RectF> SelectionRectM() const;
 
-		// Returns integer selection coordinates
-		[[nodiscard]] std::optional<std::pair<VecI, VecI>> primary_int_selection_position_m() const;
-		[[nodiscard]] std::optional<std::pair<VecI, VecI>> secondary_int_selection_position_m() const;
-		[[nodiscard]] std::optional<RectI> PrimaryIntegerRoundedSelectionRectM() const;
-		[[nodiscard]] std::optional<RectI> SecondaryIntegerRoundedSelectionRectM() const;
-		// Returns cell selection coordinates
-		// For example, the center cell is x:[-0.5,0.5] y:[-0.5,0.5].
-		[[nodiscard]] std::optional<std::pair<VecF, VecF>> primary_cell_selection_position_m() const;
-		[[nodiscard]] std::optional<std::pair<VecF, VecF>> secondary_cell_selection_position_m() const;
-		// Returns half cell selection coordinates
-		// For example, x:[0,0.5] y:[0,0.5] is a cell.
-		[[nodiscard]] std::optional<std::pair<VecF, VecF>> primary_halfcell_selection_position_m() const;
-		[[nodiscard]] std::optional<std::pair<VecF, VecF>> secondary_halfcell_selection_position_m() const;
-		// Returns selection coordinates
-		[[nodiscard]] std::optional<std::pair<VecF, VecF>> primary_selection_position_m() const;
-		[[nodiscard]] std::optional<std::pair<VecF, VecF>> secondary_selection_position_m() const;
+		// Modifiers
+
+		void Reset() { _positionM = {}; }
+		void SetFirstAndClearSecondPositionM(VecF positionM) { _positionM.first = std::move(positionM); _positionM.second.reset(); }
+		void SetSecondPositionIfFirstSetM(VecF positionM) { if (_positionM.first) { _positionM.second = std::move(positionM); } }
 
 	private:
-		enum class RoundingType {
-			CELL,
-			HALF_CELL,
-			CONTINUOUS
-		};
-		[[nodiscard]] std::optional<std::pair<VecI, VecI>> selection_position_int_m(const std::pair<std::optional<VecF>, std::optional<VecF>>& raw_selection_position_m) const;
-		[[nodiscard]] std::optional<std::pair<VecF, VecF>> selection_position_m(const std::pair<std::optional<VecF>, std::optional<VecF>>& raw_selection_position_m, RoundingType rounding_type) const;
+		[[nodiscard]] VecF SecondPosition() const;
 	};
 }

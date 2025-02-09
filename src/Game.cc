@@ -436,7 +436,7 @@ void m2::Game::HandleMenuEvent() {
 
 void m2::Game::HandleHudEvents() {
 	if (_level->_semiBlockingUiPanel) {
-		_level->_semiBlockingUiPanel->HandleEvents(events, _level->IsPanning())
+		_level->_semiBlockingUiPanel->HandleEvents(events, _level->isPanning)
 				.IfQuit([this]() {
 					quit = true;
 				})
@@ -454,7 +454,7 @@ void m2::Game::HandleHudEvents() {
 
 		// The order of event handling is the reverse of the drawing order
 		for (auto &panel : std::ranges::reverse_view(_level->_customNonblockingUiPanels)) {
-			auto action{panel.HandleEvents(events, _level->IsPanning())};
+			auto action{panel.HandleEvents(events, _level->isPanning)};
 			action.IfQuit([this]() { quit = true; });
 			if (auto anyReturnContainer = action.ExtractAnyReturnContainer()) {
 				// If UI returned, kill the panel. We cannot delete it yet, the iterator is held by the client, but we
@@ -462,9 +462,9 @@ void m2::Game::HandleHudEvents() {
 				panel.KillWithReturnValue(std::move(*anyReturnContainer));
 			}
 		}
-		IF(_level->_messageBoxUiPanel)->HandleEvents(events, _level->IsPanning());
-		IF(_level->_rightHudUiPanel)->HandleEvents(events, _level->IsPanning());
-		IF(_level->_leftHudUiPanel)->HandleEvents(events, _level->IsPanning());
+		IF(_level->_messageBoxUiPanel)->HandleEvents(events, _level->isPanning);
+		IF(_level->_rightHudUiPanel)->HandleEvents(events, _level->isPanning);
+		IF(_level->_leftHudUiPanel)->HandleEvents(events, _level->isPanning);
 	}
 }
 

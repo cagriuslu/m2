@@ -22,23 +22,27 @@ namespace m2 {
 		static RectF from_corners(const VecF& corner1, const VecF& corner2);
 
 		// Operator
+
 		explicit operator bool() const;
 		explicit operator SDL_FRect() const;
 		explicit operator SDL_Rect() const;
 
 		// Accessors
+
 		[[nodiscard]] float X2() const { return x + w; }
 		[[nodiscard]] float Y2() const { return y + h; }
 		[[nodiscard]] VecF top_left() const { return VecF{x, y}; }
 		[[nodiscard]] VecF top_right() const { return VecF{x + w, y}; }
 		[[nodiscard]] VecF bottom_left() const { return VecF{x, y + h}; }
 		[[nodiscard]] VecF bottom_right() const { return VecF{x + w, y + h}; }
+		[[nodiscard]] float DiagonalLength() const { return sqrtf(w * w + h * h); }
 		[[nodiscard]] float area() const;
 		[[nodiscard]] bool equals(const RectF& other, float tolerance = 0.001f) const;
 		[[nodiscard]] bool contains(const VecF&, float tolerance = 0.001f) const;
 		[[nodiscard]] bool contains(const RectF&, float tolerance = 0.001f) const;
 
 		// Immutable modifiers
+
 		[[nodiscard]] RectF shift(const VecF& direction) const; // Shifts the rect
 		[[nodiscard]] RectF shift_origin(const VecF& direction) const; // Shifts the origin of the coordinate system
 		[[nodiscard]] RectF expand(float amount) const;

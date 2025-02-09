@@ -26,9 +26,8 @@ namespace {
 				.variant = widget::TextBlueprint{
 					.text = "Set Rect", .onAction = [](MAYBE const widget::Text& self) -> UiAction {
 						const auto selectedSprite = SelectedSprite();
-						if (const auto selectionResult = SelectionResult{M2_GAME.events};
-								selectedSprite && selectionResult.is_primary_selection_finished()) {
-							std::get<bulk_sheet_editor::State>(M2_LEVEL.stateVariant).SetRect(*selectedSprite, *selectionResult.PrimaryIntegerRoundedSelectionRectM());
+						if (const auto* selection = M2_LEVEL.PrimarySelection(); selection->IsComplete()) {
+							std::get<bulk_sheet_editor::State>(M2_LEVEL.stateVariant).SetRect(*selectedSprite, *selection->IntegerSelectionRectM());
 							std::get<bulk_sheet_editor::State>(M2_LEVEL.stateVariant).LookUpAndStoreSpriteRect(*selectedSprite);
 						}
 						return MakeContinueAction();

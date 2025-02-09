@@ -19,7 +19,7 @@ namespace {
 }  // namespace
 
 State::ForegroundCompanionMode::ForegroundCompanionMode() {
-	const auto& sprite = std::get<sheet_editor::State>(M2_LEVEL.stateVariant).selected_sprite();
+	const auto& sprite = std::get<State>(M2_LEVEL.stateVariant).selected_sprite();
 	if (sprite.has_regular() && sprite.regular().foreground_companion_rects_size()) {
 		// Iterate over rects
 		for (const auto& rect : sprite.regular().foreground_companion_rects()) {
@@ -28,14 +28,13 @@ State::ForegroundCompanionMode::ForegroundCompanionMode() {
 		// Set center
 		current_center = VecF{sprite.regular().foreground_companion_center_to_origin_vec_px()};
 	}
-	// Enable selection
-	Events::enable_primary_selection(RectI{M2_GAME.Dimensions().Game()});
+	M2_LEVEL.EnablePrimarySelection(M2_GAME.Dimensions().Game());
 }
-State::ForegroundCompanionMode::~ForegroundCompanionMode() { Events::disable_primary_selection(); }
+State::ForegroundCompanionMode::~ForegroundCompanionMode() { M2_LEVEL.DisablePrimarySelection(); }
 void State::ForegroundCompanionMode::on_draw() const {
 	// Draw selection
-	if (auto positions = SelectionResult{M2_GAME.events}.primary_cell_selection_position_m(); positions) {
-		Graphic::color_rect(RectF::from_corners(positions->first, positions->second), SELECTION_COLOR);
+	if (const auto cellSelection = M2_LEVEL.PrimarySelection()->CellSelectionRectM()) {
+		Graphic::color_rect(*cellSelection, SELECTION_COLOR);
 	}
 	// Draw center selection
 	if (secondary_selection_position) {
@@ -46,33 +45,30 @@ void State::ForegroundCompanionMode::on_draw() const {
 		Graphic::color_rect(RectF{rect}.shift({-0.5f, -0.5f}), CONFIRMED_SELECTION_COLOR);
 	}
 	if (current_center) {
-		auto sprite_center = std::get<sheet_editor::State>(M2_LEVEL.stateVariant).selected_sprite_center();
+		auto sprite_center = std::get<State>(M2_LEVEL.stateVariant).selected_sprite_center();
 		Graphic::draw_cross(sprite_center + *current_center, CONFIRMED_CROSS_COLOR);
 	}
 }
 void State::ForegroundCompanionMode::add_rect() {
-	auto selection_results = SelectionResult{M2_GAME.events};
-	// If rect is selected
-	if (selection_results.is_primary_selection_finished()) {
-		auto positions = selection_results.primary_int_selection_position_m();
-		auto rect = RectI::from_corners(positions->first, positions->second);  // wrt sprite coordinates
-		std::get<sheet_editor::State>(M2_LEVEL.stateVariant).modify_selected_sprite([&](pb::Sprite& sprite) {
+	if (auto* selection = M2_LEVEL.PrimarySelection(); selection->IsComplete()) {
+		const auto intSelection = selection->IntegerSelectionRectM();
+		std::get<State>(M2_LEVEL.stateVariant).modify_selected_sprite([&](pb::Sprite& sprite) {
 			auto* new_rect = sprite.mutable_regular()->add_foreground_companion_rects();
-			new_rect->set_x(rect.x);
-			new_rect->set_y(rect.y);
-			new_rect->set_w(rect.w);
-			new_rect->set_h(rect.h);
+			new_rect->set_x(intSelection->x);
+			new_rect->set_y(intSelection->y);
+			new_rect->set_w(intSelection->w);
+			new_rect->set_h(intSelection->h);
 		});
-		current_rects.emplace_back(rect);
-		M2_GAME.events.reset_primary_selection();
+		current_rects.emplace_back(*intSelection);
+		selection->Reset();
 	}
 }
 void State::ForegroundCompanionMode::set_center() {
 	// Store center selection
 	if (secondary_selection_position) {
 		auto center_offset = *secondary_selection_position -
-		    std::get<sheet_editor::State>(M2_LEVEL.stateVariant).selected_sprite_center();  // new offset from sprite center
-		std::get<sheet_editor::State>(M2_LEVEL.stateVariant).modify_selected_sprite([&](pb::Sprite& sprite) {
+		    std::get<State>(M2_LEVEL.stateVariant).selected_sprite_center();  // new offset from sprite center
+		std::get<State>(M2_LEVEL.stateVariant).modify_selected_sprite([&](pb::Sprite& sprite) {
 			sprite.mutable_regular()->mutable_foreground_companion_center_to_origin_vec_px()->set_x(center_offset.x);
 			sprite.mutable_regular()->mutable_foreground_companion_center_to_origin_vec_px()->set_y(center_offset.y);
 		});
@@ -81,30 +77,29 @@ void State::ForegroundCompanionMode::set_center() {
 	}
 }
 void State::ForegroundCompanionMode::reset() {
-	std::get<sheet_editor::State>(M2_LEVEL.stateVariant).modify_selected_sprite([&](pb::Sprite& sprite) {
+	std::get<State>(M2_LEVEL.stateVariant).modify_selected_sprite([&](pb::Sprite& sprite) {
 		sprite.mutable_regular()->clear_foreground_companion_center_to_origin_vec_px();
 		sprite.mutable_regular()->clear_foreground_companion_rects();
 	});
 	current_rects.clear();
 	current_center = std::nullopt;
-	M2_GAME.events.reset_primary_selection();
+	M2_LEVEL.PrimarySelection()->Reset();
 	secondary_selection_position = std::nullopt;
 }
 
 State::RectMode::RectMode() {
-	const auto& sprite = std::get<sheet_editor::State>(M2_LEVEL.stateVariant).selected_sprite();
+	const auto& sprite = std::get<State>(M2_LEVEL.stateVariant).selected_sprite();
 	// Set rect
 	current_rect = RectI{sprite.regular().rect()};
 	// Set center
 	current_center = VecF{sprite.regular().center_to_origin_vec_px()};
-	// Enable selection
-	Events::enable_primary_selection(M2_GAME.Dimensions().Game());
+	M2_LEVEL.EnablePrimarySelection(M2_GAME.Dimensions().Game());
 }
-State::RectMode::~RectMode() { Events::disable_primary_selection(); }
+State::RectMode::~RectMode() { M2_LEVEL.DisablePrimarySelection(); }
 void State::RectMode::on_draw() const {
 	// Draw selection
-	if (const auto positions = SelectionResult{M2_GAME.events}.primary_cell_selection_position_m(); positions) {
-		Graphic::color_rect(RectF::from_corners(positions->first, positions->second), SELECTION_COLOR);
+	if (const auto cellSelection = M2_LEVEL.PrimarySelection()->CellSelectionRectM()) {
+		Graphic::color_rect(*cellSelection, SELECTION_COLOR);
 	}
 	// Draw center selection
 	if (secondary_selection_position) {
@@ -115,33 +110,29 @@ void State::RectMode::on_draw() const {
 		Graphic::color_rect(RectF{*current_rect}.shift({-0.5f, -0.5f}), CONFIRMED_SELECTION_COLOR);
 	}
 	if (current_center) {
-		auto sprite_center = std::get<sheet_editor::State>(M2_LEVEL.stateVariant).selected_sprite_center();
+		auto sprite_center = std::get<State>(M2_LEVEL.stateVariant).selected_sprite_center();
 		Graphic::draw_cross(sprite_center + *current_center, CONFIRMED_CROSS_COLOR);
 	}
 }
 void State::RectMode::set_rect() {
-	auto selection_results = SelectionResult{M2_GAME.events};
-	// If rect is selected
-	if (selection_results.is_primary_selection_finished()) {
-		LOG_DEBUG("Primary selection");
-		auto positions = selection_results.primary_int_selection_position_m();
-		auto rect = RectI::from_corners(positions->first, positions->second);  // wrt sprite coordinates
-		std::get<sheet_editor::State>(M2_LEVEL.stateVariant).modify_selected_sprite([&](pb::Sprite& sprite) {
-			sprite.mutable_regular()->mutable_rect()->set_x(rect.x);
-			sprite.mutable_regular()->mutable_rect()->set_y(rect.y);
-			sprite.mutable_regular()->mutable_rect()->set_w(rect.w);
-			sprite.mutable_regular()->mutable_rect()->set_h(rect.h);
+	if (auto* selection = M2_LEVEL.PrimarySelection(); selection->IsComplete()) {
+		const auto intSelection = selection->IntegerSelectionRectM();
+		std::get<State>(M2_LEVEL.stateVariant).modify_selected_sprite([&](pb::Sprite& sprite) {
+			sprite.mutable_regular()->mutable_rect()->set_x(intSelection->x);
+			sprite.mutable_regular()->mutable_rect()->set_y(intSelection->y);
+			sprite.mutable_regular()->mutable_rect()->set_w(intSelection->w);
+			sprite.mutable_regular()->mutable_rect()->set_h(intSelection->h);
 		});
-		current_rect = rect;
-		M2_GAME.events.reset_primary_selection();
+		current_rect = intSelection;
+		selection->Reset();
 	}
 }
 void State::RectMode::set_center() {
 	// Store center selection
 	if (secondary_selection_position) {
 		auto center_offset = *secondary_selection_position -
-		    std::get<sheet_editor::State>(M2_LEVEL.stateVariant).selected_sprite_center();  // new offset from sprite center
-		std::get<sheet_editor::State>(M2_LEVEL.stateVariant).modify_selected_sprite([&](pb::Sprite& sprite) {
+		    std::get<State>(M2_LEVEL.stateVariant).selected_sprite_center();  // new offset from sprite center
+		std::get<State>(M2_LEVEL.stateVariant).modify_selected_sprite([&](pb::Sprite& sprite) {
 			sprite.mutable_regular()->mutable_center_to_origin_vec_px()->set_x(center_offset.x);
 			sprite.mutable_regular()->mutable_center_to_origin_vec_px()->set_y(center_offset.y);
 		});
@@ -150,18 +141,18 @@ void State::RectMode::set_center() {
 	}
 }
 void State::RectMode::reset() {
-	std::get<sheet_editor::State>(M2_LEVEL.stateVariant).modify_selected_sprite([&](pb::Sprite& sprite) {
+	std::get<State>(M2_LEVEL.stateVariant).modify_selected_sprite([&](pb::Sprite& sprite) {
 		sprite.mutable_regular()->clear_rect();
 		sprite.mutable_regular()->clear_center_to_origin_vec_px();
 	});
 	current_rect = std::nullopt;
 	current_center = std::nullopt;
-	M2_GAME.events.reset_primary_selection();
+	M2_LEVEL.PrimarySelection()->Reset();
 	secondary_selection_position = std::nullopt;
 }
 
 State::BackgroundColliderMode::BackgroundColliderMode() {
-	const auto& sprite = std::get<sheet_editor::State>(M2_LEVEL.stateVariant).selected_sprite();
+	const auto& sprite = std::get<State>(M2_LEVEL.stateVariant).selected_sprite();
 	if (sprite.regular().has_background_collider()) {
 		auto collider_origin =
 		    VecF{sprite.regular().center_to_origin_vec_px()} + VecF{sprite.regular().background_collider().sprite_origin_to_collider_origin_vec_px()};
@@ -172,74 +163,66 @@ State::BackgroundColliderMode::BackgroundColliderMode() {
 			current_circ = CircF{collider_origin, radius};
 		}
 	}
-	// Enable selection
-	Events::enable_primary_selection(RectI{M2_GAME.Dimensions().Game()});
-	Events::enable_secondary_selection(RectI{M2_GAME.Dimensions().Game()});
+	M2_LEVEL.EnablePrimarySelection(M2_GAME.Dimensions().Game());
+	M2_LEVEL.EnableSecondarySelection(M2_GAME.Dimensions().Game());
 }
 State::BackgroundColliderMode::~BackgroundColliderMode() {
-	Events::disable_primary_selection();
-	Events::disable_secondary_selection();
+	M2_LEVEL.DisablePrimarySelection();
+	M2_LEVEL.DisableSecondarySelection();
 }
 void State::BackgroundColliderMode::on_draw() const {
 	// Draw rect selection
-	if (auto positions = SelectionResult{M2_GAME.events}.primary_halfcell_selection_position_m(); positions) {
-		Graphic::color_rect(RectF::from_corners(positions->first, positions->second), YELLOW_SELECTION_COLOR);
+	if (const auto halfCellSelection = M2_LEVEL.PrimarySelection()->HalfCellSelectionRectM()) {
+		Graphic::color_rect(*halfCellSelection, YELLOW_SELECTION_COLOR);
 	}
 	// Draw circ selection
-	if (auto positions = SelectionResult{M2_GAME.events}.secondary_halfcell_selection_position_m(); positions) {
-		Graphic::color_disk(positions->first, positions->first.distance(positions->second), RED_SELECTION_COLOR);
+	if (const auto halfCellSelection = M2_LEVEL.SecondarySelection()->HalfCellSelectionRectM()) {
+		Graphic::color_disk(halfCellSelection->top_left(), halfCellSelection->DiagonalLength(), RED_SELECTION_COLOR);
 	}
 
 	if (current_rect) {
-		auto sprite_center = std::get<sheet_editor::State>(M2_LEVEL.stateVariant).selected_sprite_center();
+		auto sprite_center = std::get<State>(M2_LEVEL.stateVariant).selected_sprite_center();
 		auto rect = current_rect->shift(sprite_center);
 		Graphic::color_rect(rect, CONFIRMED_SELECTION_COLOR);
 		Graphic::draw_cross(rect.center(), CONFIRMED_CROSS_COLOR);
 	}
 	if (current_circ) {
 		// Find location of the circle
-		auto sprite_center = std::get<sheet_editor::State>(M2_LEVEL.stateVariant).selected_sprite_center();
+		auto sprite_center = std::get<State>(M2_LEVEL.stateVariant).selected_sprite_center();
 		auto circ = CircF{current_circ->center + sprite_center, current_circ->r};
 		Graphic::color_disk(circ.center, circ.r, CONFIRMED_SELECTION_COLOR);
 		Graphic::draw_cross(circ.center, CONFIRMED_CROSS_COLOR);
 	}
 }
 void State::BackgroundColliderMode::set() {
-	auto selection_results = SelectionResult{M2_GAME.events};
-	// If rect is selected
-	if (selection_results.is_primary_selection_finished()) {
-		LOG_DEBUG("Primary selection");
-		auto positions = selection_results.primary_halfcell_selection_position_m();
-		auto rect = RectF::from_corners(positions->first, positions->second);  // wrt sprite coordinates
-
-		auto offset = rect.center() -
-		    std::get<sheet_editor::State>(M2_LEVEL.stateVariant).selected_sprite_origin();  // new offset from sprite origin
-		auto dims = VecF{rect.w, rect.h};  // new dims
-		std::get<sheet_editor::State>(M2_LEVEL.stateVariant).modify_selected_sprite([&](pb::Sprite& sprite) {
+	if (M2_LEVEL.PrimarySelection()->IsComplete()) {
+		const auto halfCellSelection = M2_LEVEL.PrimarySelection()->HalfCellSelectionRectM();
+		auto offset = halfCellSelection->center() -
+		    std::get<State>(M2_LEVEL.stateVariant).selected_sprite_origin();  // new offset from sprite origin
+		auto dims = VecF{halfCellSelection->w, halfCellSelection->h};  // new dims
+		std::get<State>(M2_LEVEL.stateVariant).modify_selected_sprite([&](pb::Sprite& sprite) {
 			sprite.mutable_regular()->mutable_background_collider()->mutable_sprite_origin_to_collider_origin_vec_px()->set_x(offset.x);
 			sprite.mutable_regular()->mutable_background_collider()->mutable_sprite_origin_to_collider_origin_vec_px()->set_y(offset.y);
 			sprite.mutable_regular()->mutable_background_collider()->mutable_rect_dims_px()->set_w(dims.x);
 			sprite.mutable_regular()->mutable_background_collider()->mutable_rect_dims_px()->set_h(dims.y);
 		});
-		current_rect = rect.shift_origin(std::get<sheet_editor::State>(M2_LEVEL.stateVariant).selected_sprite_center());
+		current_rect = halfCellSelection->shift_origin(std::get<State>(M2_LEVEL.stateVariant).selected_sprite_center());
 		current_circ = std::nullopt;
-		M2_GAME.events.reset_primary_selection();
-	} else if (selection_results.is_secondary_selection_finished()) {
-		LOG_DEBUG("Secondary selection");
-		// If circ is selected
-		auto positions = selection_results.secondary_halfcell_selection_position_m();
-		auto center = positions->first;
-		auto radius = positions->first.distance(positions->second);
+		M2_LEVEL.PrimarySelection()->Reset();
+	} else if (M2_LEVEL.SecondarySelection()->IsComplete()) {
+		const auto halfCellSelection = M2_LEVEL.SecondarySelection()->HalfCellSelectionRectM();
+		auto center = halfCellSelection->top_left();
+		auto radius = halfCellSelection->DiagonalLength();
 		auto offset = center -
-		    std::get<sheet_editor::State>(M2_LEVEL.stateVariant).selected_sprite_origin();  // new offset from sprite origin
-		std::get<sheet_editor::State>(M2_LEVEL.stateVariant).modify_selected_sprite([&](pb::Sprite& sprite) {
+		    std::get<State>(M2_LEVEL.stateVariant).selected_sprite_origin();  // new offset from sprite origin
+		std::get<State>(M2_LEVEL.stateVariant).modify_selected_sprite([&](pb::Sprite& sprite) {
 			sprite.mutable_regular()->mutable_background_collider()->mutable_sprite_origin_to_collider_origin_vec_px()->set_x(offset.x);
 			sprite.mutable_regular()->mutable_background_collider()->mutable_sprite_origin_to_collider_origin_vec_px()->set_y(offset.y);
 			sprite.mutable_regular()->mutable_background_collider()->set_circ_radius_px(radius);
 		});
 		current_rect = std::nullopt;
-		current_circ = CircF{center - std::get<sheet_editor::State>(M2_LEVEL.stateVariant).selected_sprite_center(), radius};
-		M2_GAME.events.reset_secondary_selection();
+		current_circ = CircF{center - std::get<State>(M2_LEVEL.stateVariant).selected_sprite_center(), radius};
+		M2_LEVEL.SecondarySelection()->Reset();
 	}
 }
 void State::BackgroundColliderMode::reset() {
@@ -248,12 +231,12 @@ void State::BackgroundColliderMode::reset() {
 	});
 	current_rect = std::nullopt;
 	current_circ = std::nullopt;
-	M2_GAME.events.reset_primary_selection();
-	M2_GAME.events.reset_secondary_selection();
+	M2_LEVEL.PrimarySelection()->Reset();
+	M2_LEVEL.SecondarySelection()->Reset();
 }
 
 State::ForegroundColliderMode::ForegroundColliderMode() {
-	const auto& sprite = std::get<sheet_editor::State>(M2_LEVEL.stateVariant).selected_sprite();
+	const auto& sprite = std::get<State>(M2_LEVEL.stateVariant).selected_sprite();
 	if (sprite.regular().has_foreground_collider()) {
 		auto collider_origin =
 		    VecF{sprite.regular().center_to_origin_vec_px()} + VecF{sprite.regular().foreground_collider().sprite_origin_to_collider_origin_vec_px()};
@@ -265,71 +248,65 @@ State::ForegroundColliderMode::ForegroundColliderMode() {
 		}
 	}
 	// Enable selection
-	Events::enable_primary_selection(RectI{M2_GAME.Dimensions().Game()});
-	Events::enable_secondary_selection(RectI{M2_GAME.Dimensions().Game()});
+	M2_LEVEL.EnablePrimarySelection(M2_GAME.Dimensions().Game());
+	M2_LEVEL.EnableSecondarySelection(M2_GAME.Dimensions().Game());
 }
 State::ForegroundColliderMode::~ForegroundColliderMode() {
-	Events::disable_primary_selection();
-	Events::disable_secondary_selection();
+	M2_LEVEL.DisablePrimarySelection();
+	M2_LEVEL.DisableSecondarySelection();
 }
 void State::ForegroundColliderMode::on_draw() const {
 	// Draw rect selection
-	if (auto positions = SelectionResult{M2_GAME.events}.primary_halfcell_selection_position_m(); positions) {
-		Graphic::color_rect(RectF::from_corners(positions->first, positions->second), YELLOW_SELECTION_COLOR);
+	if (const auto halfCellSelection = M2_LEVEL.PrimarySelection()->HalfCellSelectionRectM()) {
+		Graphic::color_rect(*halfCellSelection, YELLOW_SELECTION_COLOR);
 	}
 	// Draw circ selection
-	if (auto positions = SelectionResult{M2_GAME.events}.secondary_halfcell_selection_position_m(); positions) {
-		Graphic::color_disk(positions->first, positions->first.distance(positions->second), RED_SELECTION_COLOR);
+	if (const auto halfCellSelection = M2_LEVEL.SecondarySelection()->HalfCellSelectionRectM()) {
+		Graphic::color_disk(halfCellSelection->top_left(), halfCellSelection->DiagonalLength(), RED_SELECTION_COLOR);
 	}
 
 	if (current_rect) {
-		auto sprite_center = std::get<sheet_editor::State>(M2_LEVEL.stateVariant).selected_sprite_center();
+		auto sprite_center = std::get<State>(M2_LEVEL.stateVariant).selected_sprite_center();
 		auto rect = current_rect->shift(sprite_center);
 		Graphic::color_rect(rect, CONFIRMED_SELECTION_COLOR);
 		Graphic::draw_cross(rect.center(), CONFIRMED_CROSS_COLOR);
 	}
 	if (current_circ) {
-		auto sprite_center = std::get<sheet_editor::State>(M2_LEVEL.stateVariant).selected_sprite_center();
+		auto sprite_center = std::get<State>(M2_LEVEL.stateVariant).selected_sprite_center();
 		auto circ = CircF{current_circ->center + sprite_center, current_circ->r};
 		Graphic::color_disk(circ.center, circ.r, CONFIRMED_SELECTION_COLOR);
 		Graphic::draw_cross(circ.center, CONFIRMED_CROSS_COLOR);
 	}
 }
 void State::ForegroundColliderMode::set() {
-	auto selection_results = SelectionResult{M2_GAME.events};
-	// If rect is selected
-	if (selection_results.is_primary_selection_finished()) {
-		LOG_DEBUG("Primary selection");
-		auto positions = selection_results.primary_halfcell_selection_position_m();
-		auto rect = RectF::from_corners(positions->first, positions->second);  // wrt sprite coordinates
-		auto offset = rect.center() -
-		    std::get<sheet_editor::State>(M2_LEVEL.stateVariant).selected_sprite_origin();  // new offset from sprite origin
-		auto dims = VecF{rect.w, rect.h};  // new dims
-		std::get<sheet_editor::State>(M2_LEVEL.stateVariant).modify_selected_sprite([&](pb::Sprite& sprite) {
+	if (M2_LEVEL.PrimarySelection()->IsComplete()) {
+		const auto halfCellSelection = M2_LEVEL.PrimarySelection()->HalfCellSelectionRectM();
+		auto offset = halfCellSelection->center() -
+		    std::get<State>(M2_LEVEL.stateVariant).selected_sprite_origin();  // new offset from sprite origin
+		auto dims = VecF{halfCellSelection->w, halfCellSelection->h};  // new dims
+		std::get<State>(M2_LEVEL.stateVariant).modify_selected_sprite([&](pb::Sprite& sprite) {
 			sprite.mutable_regular()->mutable_foreground_collider()->mutable_sprite_origin_to_collider_origin_vec_px()->set_x(offset.x);
 			sprite.mutable_regular()->mutable_foreground_collider()->mutable_sprite_origin_to_collider_origin_vec_px()->set_y(offset.y);
 			sprite.mutable_regular()->mutable_foreground_collider()->mutable_rect_dims_px()->set_w(dims.x);
 			sprite.mutable_regular()->mutable_foreground_collider()->mutable_rect_dims_px()->set_h(dims.y);
 		});
-		current_rect = rect.shift_origin(std::get<sheet_editor::State>(M2_LEVEL.stateVariant).selected_sprite_center());
+		current_rect = halfCellSelection->shift_origin(std::get<State>(M2_LEVEL.stateVariant).selected_sprite_center());
 		current_circ = std::nullopt;
-		M2_GAME.events.reset_primary_selection();
-	} else if (selection_results.is_secondary_selection_finished()) {
-		LOG_DEBUG("Secondary selection");
-		// If circ is selected
-		auto positions = selection_results.secondary_halfcell_selection_position_m();
-		auto center = positions->first;
-		auto radius = positions->first.distance(positions->second);
+		M2_LEVEL.PrimarySelection()->Reset();
+	} else if (M2_LEVEL.SecondarySelection()->IsComplete()) {
+		const auto halfCellSelection = M2_LEVEL.SecondarySelection()->HalfCellSelectionRectM();
+		auto center = halfCellSelection->top_left();
+		auto radius = halfCellSelection->DiagonalLength();
 		auto offset = center -
-		    std::get<sheet_editor::State>(M2_LEVEL.stateVariant).selected_sprite_origin();  // new offset from sprite origin
-		std::get<sheet_editor::State>(M2_LEVEL.stateVariant).modify_selected_sprite([&](pb::Sprite& sprite) {
+		    std::get<State>(M2_LEVEL.stateVariant).selected_sprite_origin();  // new offset from sprite origin
+		std::get<State>(M2_LEVEL.stateVariant).modify_selected_sprite([&](pb::Sprite& sprite) {
 			sprite.mutable_regular()->mutable_foreground_collider()->mutable_sprite_origin_to_collider_origin_vec_px()->set_x(offset.x);
 			sprite.mutable_regular()->mutable_foreground_collider()->mutable_sprite_origin_to_collider_origin_vec_px()->set_y(offset.y);
 			sprite.mutable_regular()->mutable_foreground_collider()->set_circ_radius_px(radius);
 		});
 		current_rect = std::nullopt;
-		current_circ = CircF{center - std::get<sheet_editor::State>(M2_LEVEL.stateVariant).selected_sprite_center(), radius};
-		M2_GAME.events.reset_secondary_selection();
+		current_circ = CircF{center - std::get<State>(M2_LEVEL.stateVariant).selected_sprite_center(), radius};
+		M2_LEVEL.SecondarySelection()->Reset();
 	}
 }
 void State::ForegroundColliderMode::reset() {
@@ -338,8 +315,8 @@ void State::ForegroundColliderMode::reset() {
 	});
 	current_rect = std::nullopt;
 	current_circ = std::nullopt;
-	M2_GAME.events.reset_primary_selection();
-	M2_GAME.events.reset_secondary_selection();
+	M2_LEVEL.PrimarySelection()->Reset();
+	M2_LEVEL.SecondarySelection()->Reset();
 }
 
 expected<m2::sheet_editor::State> m2::sheet_editor::State::create(const std::filesystem::path& path) {

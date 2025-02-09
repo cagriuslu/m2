@@ -22,6 +22,7 @@
 #include "single_player/State.h"
 #include "ui/UiPanel.h"
 #include <queue>
+#include <m2/game/Selection.h>
 
 namespace m2 {
 	// Forward declarations
@@ -38,7 +39,7 @@ namespace m2 {
 		// Special properties effecting the simulation
 
 		std::optional<std::set<ObjectId>> _dimmingExceptions;
-		bool _isPanning{};
+		std::optional<Selection> _primarySelection, _secondarySelection;
 
 		// UI panels (the order is significant)
 
@@ -80,8 +81,9 @@ namespace m2 {
 		    std::monostate, splayer::State, mplayer::State, level_editor::State, pixel_editor::State, sheet_editor::State, bulk_sheet_editor::State>
 		    stateVariant;
 
-		// TODO get rid of this
-		//std::optional<DynamicGridLinesLoader> dynamicSheetGridLinesLoader; // TODO get rid of these, draw with the editor State
+		/// In panning mode, mouse states are not cleared by UI elements so that panning the map is possible even
+		/// thought the mouse spills into UI elements.
+		bool isPanning{};
 
 		void_expected InitSinglePlayer(
 		    const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name);
@@ -135,6 +137,13 @@ namespace m2 {
 		void EnableDimmingWithExceptions(std::set<ObjectId>&& exceptions);
 		void DisableDimmingWithExceptions();
 
+		void EnablePrimarySelection(RectI screenBoundaryPx) { _primarySelection.emplace(std::move(screenBoundaryPx)); }
+		void EnableSecondarySelection(RectI screenBoundaryPx) { _secondarySelection.emplace(std::move(screenBoundaryPx)); }
+		Selection* PrimarySelection() { return _primarySelection ? &*_primarySelection : nullptr; }
+		Selection* SecondarySelection() { return _secondarySelection ? &*_secondarySelection : nullptr; }
+		void DisablePrimarySelection() { _primarySelection.reset(); }
+		void DisableSecondarySelection() { _secondarySelection.reset(); }
+
 		/// Show the HUD UI elements. HUD is set to be shown at start of the game.
 		void EnableHud();
 		/// Hides the HUD UI elements. UI elements would get disabled, thus they won't receive any events or updates.
@@ -182,12 +191,6 @@ namespace m2 {
 		UiPanel* SemiBlockingUiPanel() { return _semiBlockingUiPanel ? &*_semiBlockingUiPanel : nullptr; }
 		void DismissSemiBlockingUiPanel(); // Should not be called from the custom UI itself
 		void DismissSemiBlockingUiPanelDeferred(); // Can be called from the custom UI itself
-
-		/// In panning mode, mouse states are not cleared by UI elements so that panning the map is possible even
-		/// thought the mouse spills into UI elements.
-		bool IsPanning() const {  return _isPanning; }
-		void EnablePanning() { _isPanning = true; }
-		void DisablePanning() { _isPanning = false; }
 
 	   private:
 		void_expected InitAnyPlayer(

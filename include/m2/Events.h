@@ -82,16 +82,5 @@ namespace m2 {
 		bool is_mouse_button_down(MouseButton mb) const;
 		void clear_mouse_button_down(const RectI& rect);
 		VecI mouse_position() const;
-
-		// Selection
-		std::pair<std::optional<VecF>, std::optional<VecF>> primary_selection_position_m() const;
-		std::pair<std::optional<VecF>, std::optional<VecF>> secondary_selection_position_m() const;
-		// Selection management
-		static void enable_primary_selection(const RectI& screen_rect);
-		static void enable_secondary_selection(const RectI& screen_rect);
-		static void reset_primary_selection();
-		static void reset_secondary_selection();
-		static void disable_primary_selection();
-		static void disable_secondary_selection();
 	};
 }

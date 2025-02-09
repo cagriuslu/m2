@@ -5,16 +5,10 @@
 
 using namespace m2;
 
-namespace {
-	// Global state
-	std::optional<RectI> primary_selection_screen_rect_px, secondary_selection_screen_rect_px;
-	std::optional<VecF> primary_selection_position_1_m, primary_selection_position_2_m;
-	std::optional<VecF> secondary_selection_position_1_m, secondary_selection_position_2_m;
-}  // namespace
-
 void Events::clear() { *this = Events(); }
 
 bool Events::gather() {
+	// Set the mouse position first because below calculations may call MousePositionWorldM(), which reads _mouse_position.
 	const uint32_t mouseStateBitmask = SDL_GetMouseState(&_mouse_position.x, &_mouse_position.y);
 	mouse_buttons_down[u(MouseButton::PRIMARY)] = mouseStateBitmask & SDL_BUTTON(SDL_BUTTON_LEFT);
 	mouse_buttons_down[u(MouseButton::SECONDARY)] = mouseStateBitmask & SDL_BUTTON(SDL_BUTTON_RIGHT);
@@ -70,35 +64,37 @@ bool Events::gather() {
 			case SDL_MOUSEBUTTONDOWN:
 				mouse_button_press_count++;
 				mouse_buttons_pressed[u(button_to_mouse_button(e.button.button))]++;
-				if (primary_selection_screen_rect_px &&
-				    peek_mouse_button_press(MouseButton::PRIMARY, *primary_selection_screen_rect_px)) {
-					primary_selection_position_1_m = M2_GAME.MousePositionWorldM();
-					primary_selection_position_2_m = std::nullopt;
-					secondary_selection_position_1_m = std::nullopt;
-					secondary_selection_position_2_m = std::nullopt;
+				if (auto* primarySelection = M2_LEVEL.PrimarySelection();
+						primarySelection && peek_mouse_button_press(MouseButton::PRIMARY, primarySelection->ScreenBoundaryPx())) {
+					primarySelection->SetFirstAndClearSecondPositionM(M2_GAME.MousePositionWorldM());
+					if (auto* secondarySelection = M2_LEVEL.SecondarySelection()) {
+						secondarySelection->Reset();
+					}
 				}
-				if (secondary_selection_screen_rect_px &&
-				    peek_mouse_button_press(MouseButton::SECONDARY, *secondary_selection_screen_rect_px)) {
-					primary_selection_position_1_m = std::nullopt;
-					primary_selection_position_2_m = std::nullopt;
-					secondary_selection_position_1_m = M2_GAME.MousePositionWorldM();
-					secondary_selection_position_2_m = std::nullopt;
+				if (auto* secondarySelection = M2_LEVEL.SecondarySelection();
+						secondarySelection && peek_mouse_button_press(MouseButton::SECONDARY, secondarySelection->ScreenBoundaryPx())) {
+					secondarySelection->SetFirstAndClearSecondPositionM(M2_GAME.MousePositionWorldM());
+					if (auto* primarySelection = M2_LEVEL.PrimarySelection()) {
+						primarySelection->Reset();
+					}
 				}
 				goto postponeFutureEvents; // Read the note above the while loop
 			case SDL_MOUSEBUTTONUP:
 				mouse_button_release_count++;
 				mouse_buttons_released[u(button_to_mouse_button(e.button.button))]++;
-				if (primary_selection_screen_rect_px &&
-				    peek_mouse_button_release(MouseButton::PRIMARY, *primary_selection_screen_rect_px)) {
-					primary_selection_position_2_m = M2_GAME.MousePositionWorldM();
-					secondary_selection_position_1_m = std::nullopt;
-					secondary_selection_position_2_m = std::nullopt;
+				if (auto* primarySelection = M2_LEVEL.PrimarySelection();
+						primarySelection && peek_mouse_button_release(MouseButton::PRIMARY)) {
+					primarySelection->SetSecondPositionIfFirstSetM(M2_GAME.MousePositionWorldM());
+					if (auto* secondarySelection = M2_LEVEL.SecondarySelection()) {
+						secondarySelection->Reset();
+					}
 				}
-				if (secondary_selection_screen_rect_px &&
-				    peek_mouse_button_release(MouseButton::SECONDARY, *secondary_selection_screen_rect_px)) {
-					primary_selection_position_1_m = std::nullopt;
-					primary_selection_position_2_m = std::nullopt;
-					secondary_selection_position_2_m = M2_GAME.MousePositionWorldM();
+				if (auto* secondarySelection = M2_LEVEL.SecondarySelection();
+						secondarySelection && peek_mouse_button_release(MouseButton::SECONDARY)) {
+					secondarySelection->SetSecondPositionIfFirstSetM(M2_GAME.MousePositionWorldM());
+					if (auto* primarySelection = M2_LEVEL.PrimarySelection()) {
+						primarySelection->Reset();
+					}
 				}
 				goto postponeFutureEvents; // Read the note above the while loop
 			case SDL_MOUSEWHEEL:
@@ -295,39 +291,3 @@ void Events::clear_mouse_button_down(const RectI& rect) {
 	}
 }
 VecI Events::mouse_position() const { return _mouse_position; }
-
-std::pair<std::optional<VecF>, std::optional<VecF>> Events::primary_selection_position_m() const {
-	return std::make_pair(primary_selection_position_1_m, primary_selection_position_2_m);
-}
-std::pair<std::optional<VecF>, std::optional<VecF>> Events::secondary_selection_position_m() const {
-	return std::make_pair(secondary_selection_position_1_m, secondary_selection_position_2_m);
-}
-
-void Events::enable_primary_selection(const RectI& screen_rect) {
-	LOG_DEBUG("Enabling primary selection");
-	primary_selection_screen_rect_px = screen_rect;
-	reset_primary_selection();
-}
-void Events::enable_secondary_selection(const RectI& screen_rect) {
-	LOG_DEBUG("Enabling secondary selection");
-	secondary_selection_screen_rect_px = screen_rect;
-	reset_secondary_selection();
-}
-void Events::reset_primary_selection() {
-	primary_selection_position_1_m = std::nullopt;
-	primary_selection_position_2_m = std::nullopt;
-}
-void Events::reset_secondary_selection() {
-	secondary_selection_position_1_m = std::nullopt;
-	secondary_selection_position_2_m = std::nullopt;
-}
-void Events::disable_primary_selection() {
-	LOG_DEBUG("Disabling primary selection");
-	primary_selection_screen_rect_px = std::nullopt;
-	reset_primary_selection();
-}
-void Events::disable_secondary_selection() {
-	LOG_DEBUG("Disabling secondary selection");
-	secondary_selection_screen_rect_px = std::nullopt;
-	reset_secondary_selection();
-}

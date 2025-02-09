@@ -50,11 +50,11 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj) {
 		if (M2_GAME.events.pop_mouse_button_press(m2::MouseButton::PRIMARY, M2_GAME.Dimensions().Game())) {
 			LOG_TRACE("Begin panning");
 			impl.mouse_click_prev_position = std::make_pair(M2_GAME.events.mouse_position(), M2_GAME.MousePositionWorldM());
-			M2_LEVEL.EnablePanning();
+			M2_LEVEL.isPanning = true;
 		} else if (impl.mouse_click_prev_position && not M2_GAME.events.is_mouse_button_down(m2::MouseButton::PRIMARY)) {
 			LOG_TRACE("End panning");
 			impl.mouse_click_prev_position.reset();
-			M2_LEVEL.DisablePanning();
+			M2_LEVEL.isPanning = false;
 		}
 		// Map movement is enabled
 		if (impl.mouse_click_prev_position && impl.mouse_click_prev_position->first != M2_GAME.events.mouse_position()) {

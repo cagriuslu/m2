@@ -132,10 +132,10 @@ namespace {
 		.h = 72,
 		.background_color = {25, 25, 25, 255},
 		.onCreate = [](MAYBE UiPanel& self) {
-			Events::enable_primary_selection(RectI{M2_GAME.Dimensions().Game()});
+			M2_LEVEL.EnablePrimarySelection(M2_GAME.Dimensions().Game());
 		},
 		.onDestroy = [] {
-			Events::disable_primary_selection();
+			M2_LEVEL.DisablePrimarySelection();
 		},
 		.widgets = {
 			UiWidgetBlueprint{
@@ -156,8 +156,8 @@ namespace {
 				.variant = TextBlueprint{
 					.text = "Copy",
 					.onAction = [](MAYBE const Text& self) -> UiAction {
-						if (const auto area = SelectionResult{M2_GAME.events}.PrimaryIntegerRoundedSelectionRectM()) {
-							std::get<level_editor::State>(M2_LEVEL.stateVariant).CopyBackground(*area);
+						if (const auto integerSelection = M2_LEVEL.PrimarySelection()->IntegerSelectionRectM()) {
+							std::get<level_editor::State>(M2_LEVEL.stateVariant).CopyBackground(*integerSelection);
 						}
 						return MakeContinueAction();
 					}
@@ -171,8 +171,8 @@ namespace {
 				.variant = TextBlueprint{
 					.text = "Paste",
 					.onAction = [](MAYBE const Text& self) -> UiAction {
-						if (const auto area = SelectionResult{M2_GAME.events}.PrimaryIntegerRoundedSelectionRectM()) {
-							std::get<level_editor::State>(M2_LEVEL.stateVariant).PasteBackground(area->top_left());
+						if (const auto integerSelection = M2_LEVEL.PrimarySelection()->IntegerSelectionRectM()) {
+							std::get<level_editor::State>(M2_LEVEL.stateVariant).PasteBackground(integerSelection->top_left());
 						}
 						return MakeContinueAction();
 					}
@@ -186,8 +186,8 @@ namespace {
 				.variant = TextBlueprint{
 					.text = "Erase",
 					.onAction = [](MAYBE const Text& self) -> UiAction {
-						if (const auto area = SelectionResult{M2_GAME.events}.PrimaryIntegerRoundedSelectionRectM()) {
-							std::get<level_editor::State>(M2_LEVEL.stateVariant).EraseBackground(*area);
+						if (const auto integerSelection = M2_LEVEL.PrimarySelection()->IntegerSelectionRectM()) {
+							std::get<level_editor::State>(M2_LEVEL.stateVariant).EraseBackground(*integerSelection);
 						}
 						return MakeContinueAction();
 					}
@@ -201,8 +201,8 @@ namespace {
 				.variant = TextBlueprint{
 					.text = "Fill",
 					.onAction = [](MAYBE const Text& self) -> UiAction {
-						if (const auto selectionResult = SelectionResult{M2_GAME.events}; selectionResult.is_primary_selection_finished()) {
-							const auto area = selectionResult.PrimaryIntegerRoundedSelectionRectM();
+						if (const auto* selection = M2_LEVEL.PrimarySelection(); selection->IsComplete()) {
+							const auto area = selection->IntegerSelectionRectM();
 							const auto action = UiPanel::create_and_run_blocking(&gFillDialog, RectF{0.2f, 0.1f, 0.6f, 0.8f});
 							(void) action.IfReturn<std::vector<m2g::pb::SpriteType>>([&](const auto& selectedSprites) {
 								std::get<level_editor::State>(M2_LEVEL.stateVariant).RandomFillBackground(*area, selectedSprites);
@@ -340,10 +340,10 @@ namespace {
 		.h = 72,
 		.background_color = {25, 25, 25, 255},
 		.onCreate = [](MAYBE UiPanel& self) {
-			Events::enable_primary_selection(RectI{M2_GAME.Dimensions().Game()});
+			M2_LEVEL.EnablePrimarySelection(M2_GAME.Dimensions().Game());
 		},
 		.onDestroy = [] {
-			Events::disable_primary_selection();
+			M2_LEVEL.DisablePrimarySelection();
 		},
 		.widgets = {
 			UiWidgetBlueprint{
@@ -364,7 +364,7 @@ namespace {
 				.variant = TextBlueprint{
 					.text = "Copy",
 					.onAction = [](MAYBE const Text& self) -> UiAction {
-						if (SelectionResult{M2_GAME.events}.is_primary_selection_finished()) {
+						if (M2_LEVEL.PrimarySelection()->IsComplete()) {
 							std::get<level_editor::State>(M2_LEVEL.stateVariant).CopyForeground();
 						}
 						return MakeContinueAction();
@@ -379,7 +379,7 @@ namespace {
 				.variant = TextBlueprint{
 					.text = "Paste",
 					.onAction = [](MAYBE const Text& self) -> UiAction {
-						if (SelectionResult{M2_GAME.events}.is_primary_selection_finished()) {
+						if (M2_LEVEL.PrimarySelection()->IsComplete()) {
 							std::get<level_editor::State>(M2_LEVEL.stateVariant).PasteForeground();
 						}
 						return MakeContinueAction();
@@ -394,7 +394,7 @@ namespace {
 				.variant = TextBlueprint{
 					.text = "Remove",
 					.onAction = [](MAYBE const Text& self) -> UiAction {
-						if (SelectionResult{M2_GAME.events}.is_primary_selection_finished()) {
+						if (M2_LEVEL.PrimarySelection()->IsComplete()) {
 							std::get<level_editor::State>(M2_LEVEL.stateVariant).RemoveForegroundObject();
 						}
 						return MakeContinueAction();

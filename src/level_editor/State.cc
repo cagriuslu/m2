@@ -207,10 +207,12 @@ void m2::level_editor::State::PasteForeground() {
 
 void m2::level_editor::State::Draw() const {
 	const auto drawGridSelectionIfActive = [] {
-		if (const auto area = SelectionResult{M2_GAME.events}.PrimaryIntegerRoundedSelectionRectM()) {
-			area->for_each_cell([=](const VecI& cell) {
-				Graphic::color_cell(cell, SELECTION_COLOR);
-			});
+		if (const auto* selection = M2_LEVEL.PrimarySelection()) {
+			if (const auto integerSelection = selection->IntegerSelectionRectM()) {
+				integerSelection->for_each_cell([=](const VecI& cell) {
+					Graphic::color_cell(cell, SELECTION_COLOR);
+				});
+			}
 		}
 	};
 	if (M2_LEVEL.RightHud()->Name() == "SelectBgRightHud") {
@@ -219,8 +221,10 @@ void m2::level_editor::State::Draw() const {
 		if (GetSnapToGridStatus()) {
 			drawGridSelectionIfActive();
 		} else {
-			if (const auto area = SelectionResult{M2_GAME.events}.primary_selection_position_m()) {
-				Graphic::color_rect(RectF::from_corners(area->first, area->second), SELECTION_COLOR);
+			if (const auto* selection = M2_LEVEL.PrimarySelection()) {
+				if (const auto rawSelection = selection->SelectionRectM()) {
+					Graphic::color_rect(*rawSelection, SELECTION_COLOR);
+				}
 			}
 		}
 	}
@@ -274,12 +278,10 @@ void m2::level_editor::State::PlaceForeground(const VecF& position, float orient
 	_foregroundObjectPlaceholders.emplace(position, std::make_tuple(fgPlaceholderId, levelObject));
 }
 m2::RectF m2::level_editor::State::ForegroundSelectionArea() const {
-	const auto selectionResult = SelectionResult{M2_GAME.events};
+	const auto* selection = M2_LEVEL.PrimarySelection();
 	if (GetSnapToGridStatus()) {
-		const auto area = *selectionResult.PrimaryIntegerRoundedSelectionRectM();
-		return RectF::from_corners(VecF{area.top_left()} - 0.5f, VecF{area.bottom_right()} - 0.5f);
+		return *selection->CellSelectionRectM();
 	} else {
-		const auto [tl, br] = *selectionResult.primary_selection_position_m();
-		return RectF::from_corners(tl, br);
+		return *selection->SelectionRectM();
 	}
 }

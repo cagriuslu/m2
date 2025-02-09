@@ -28,7 +28,7 @@ expected<bulk_sheet_editor::State> bulk_sheet_editor::State::Create(const std::f
 	return State{sprite_sheets_path};
 }
 
-bulk_sheet_editor::State::~State() { Events::disable_primary_selection(); }
+bulk_sheet_editor::State::~State() { M2_LEVEL.DisablePrimarySelection(); }
 
 pb::SpriteSheets bulk_sheet_editor::State::ReadSpriteSheetsFromFile() const {
 	return *pb::json_file_to_message<pb::SpriteSheets>(_sprite_sheets_path);
@@ -61,7 +61,7 @@ std::optional<pb::SpriteSheet> bulk_sheet_editor::State::SelectResource(const st
 			_selected_resource = resource;
 
 			// Enable selection
-			Events::enable_primary_selection(M2_GAME.Dimensions().Game());
+			M2_LEVEL.EnablePrimarySelection(M2_GAME.Dimensions().Game());
 
 			return spriteSheet;
 		}
@@ -90,14 +90,14 @@ void bulk_sheet_editor::State::SetRect(const m2g::pb::SpriteType sprite, const R
 		sprite_.mutable_regular()->mutable_rect()->set_w(rect.w);
 		sprite_.mutable_regular()->mutable_rect()->set_h(rect.h);
 	});
-	M2_GAME.events.reset_primary_selection();
+	IF(M2_LEVEL.PrimarySelection())->Reset();
 }
 void bulk_sheet_editor::State::Reset(const m2g::pb::SpriteType sprite) {
 	sheet_editor::modify_sprite_in_sheet(_sprite_sheets_path, sprite, [&](pb::Sprite& sprite_) {
 		sprite_.mutable_regular()->clear_rect();
 		sprite_.mutable_regular()->clear_center_to_origin_vec_px();
 	});
-	M2_GAME.events.reset_primary_selection();
+	IF(M2_LEVEL.PrimarySelection())->Reset();
 }
 
 void bulk_sheet_editor::State::Draw() const {
@@ -120,8 +120,10 @@ void bulk_sheet_editor::State::Draw() const {
 		Graphic::color_rect(world_coordinates_m.shift({-0.5f, -0.5f}), CONFIRMED_SELECTION_COLOR);
 	}
 	// Draw selection
-	if (const auto selection = SelectionResult{M2_GAME.events}.primary_cell_selection_position_m(); selection) {
-		Graphic::color_rect(RectF::from_corners(selection->first, selection->second), SELECTION_COLOR);
+	if (const auto* selection = M2_LEVEL.PrimarySelection(); selection) {
+		if (const auto cellSelection = selection->CellSelectionRectM()) {
+			Graphic::color_rect(*cellSelection, SELECTION_COLOR);
+		}
 	}
 	// Draw pixel grid lines
 	Graphic::DrawGridLines({127, 127, 255, 80});
