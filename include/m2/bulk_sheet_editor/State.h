@@ -29,7 +29,7 @@ namespace m2::bulk_sheet_editor {
 		// Modifiers
 
 		std::optional<pb::SpriteSheet> SelectResource(const std::string& resource);
-		void LookUpAndSetSavedSpriteRect(std::optional<m2g::pb::SpriteType>);
+		void LookUpAndStoreSpriteRect(std::optional<m2g::pb::SpriteType>);
 		void SetRect(m2g::pb::SpriteType, const RectI&);
 		void Reset(m2g::pb::SpriteType sprite);
 

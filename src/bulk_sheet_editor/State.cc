@@ -68,7 +68,7 @@ std::optional<pb::SpriteSheet> bulk_sheet_editor::State::SelectResource(const st
 	}
 	return std::nullopt;
 }
-void bulk_sheet_editor::State::LookUpAndSetSavedSpriteRect(std::optional<m2g::pb::SpriteType> sprite) {
+void bulk_sheet_editor::State::LookUpAndStoreSpriteRect(std::optional<m2g::pb::SpriteType> sprite) {
 	if (sprite) {
 		for (const auto& spriteSheets = this->ReadSpriteSheetsFromFile(); const auto& spriteSheet : spriteSheets.sheets()) {
 			if (spriteSheet.resource() == _selected_resource) {

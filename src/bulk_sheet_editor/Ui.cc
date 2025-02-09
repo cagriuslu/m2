@@ -29,7 +29,7 @@ namespace {
 						if (const auto selectionResult = SelectionResult{M2_GAME.events};
 								selectedSprite && selectionResult.is_primary_selection_finished()) {
 							std::get<bulk_sheet_editor::State>(M2_LEVEL.stateVariant).SetRect(*selectedSprite, *selectionResult.PrimaryIntegerRoundedSelectionRectM());
-							std::get<bulk_sheet_editor::State>(M2_LEVEL.stateVariant).LookUpAndSetSavedSpriteRect(*selectedSprite);
+							std::get<bulk_sheet_editor::State>(M2_LEVEL.stateVariant).LookUpAndStoreSpriteRect(*selectedSprite);
 						}
 						return MakeContinueAction();
 					}
@@ -41,7 +41,7 @@ namespace {
 					.text = "Reset", .onAction = [](MAYBE const widget::Text& self) -> UiAction {
 						if (const auto selectedSprite = SelectedSprite(); selectedSprite) {
 							std::get<bulk_sheet_editor::State>(M2_LEVEL.stateVariant).Reset(*selectedSprite);
-							std::get<bulk_sheet_editor::State>(M2_LEVEL.stateVariant).LookUpAndSetSavedSpriteRect(*selectedSprite);
+							std::get<bulk_sheet_editor::State>(M2_LEVEL.stateVariant).LookUpAndStoreSpriteRect(*selectedSprite);
 						}
 						return MakeContinueAction();
 					}
@@ -73,11 +73,11 @@ namespace {
 						.onAction = [](const widget::TextSelection& self) -> UiAction {
 							if (const auto selections = self.selections(); not selections.empty()) {
 								const auto selectedSpriteType = static_cast<m2g::pb::SpriteType>(std::get<int>(selections[0]));
-								std::get<bulk_sheet_editor::State>(M2_LEVEL.stateVariant).LookUpAndSetSavedSpriteRect(selectedSpriteType);
+								std::get<bulk_sheet_editor::State>(M2_LEVEL.stateVariant).LookUpAndStoreSpriteRect(selectedSpriteType);
 								const auto sprite_name = pb::enum_name(selectedSpriteType);
 								M2_LEVEL.ShowMessage(sprite_name);
 							} else {
-								std::get<bulk_sheet_editor::State>(M2_LEVEL.stateVariant).LookUpAndSetSavedSpriteRect(std::nullopt);
+								std::get<bulk_sheet_editor::State>(M2_LEVEL.stateVariant).LookUpAndStoreSpriteRect(std::nullopt);
 							}
 							return MakeContinueAction();
 						}
