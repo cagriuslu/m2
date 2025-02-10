@@ -41,7 +41,7 @@ namespace m2::level_editor {
 		void PasteForeground();
 
 		void Draw() const;
-		void_expected Save() const;
+		[[nodiscard]] void_expected Save() const;
 
 	private:
 		void PaintBackground(const VecI& position, m2g::pb::SpriteType spriteType);

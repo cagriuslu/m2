@@ -34,7 +34,11 @@ const widget::TextBlueprint right_hud_set_center_button = {
 		.onAction = [](MAYBE const widget::Text& self) -> UiAction {
 			std::visit(m2::overloaded {
 					[](sheet_editor::State::ForegroundCompanionMode& mode) { mode.set_center(); },
-					[](sheet_editor::State::RectMode& mode) { mode.set_center(); },
+					[](sheet_editor::State::RectMode& mode) {
+						if (const auto centerSelection = M2_LEVEL.SecondarySelection()->HalfCellSelectionRectM()) {
+							mode.set_center(centerSelection->top_left());
+						}
+					},
 					[](const auto&) {},
 			}, std::get<sheet_editor::State>(M2_LEVEL.stateVariant).mode);
 			return MakeContinueAction();
@@ -83,29 +87,37 @@ UiPanelBlueprint sheet_editor_foreground_companion_mode_right_hud = {
 
 UiPanelBlueprint sheet_editor_rect_mode_right_hud = {
 	.name = "RectModeRightHud",
-		.w = 19, .h = 72,
-		.background_color = {0, 0, 0, 255},
-		.widgets = {
-				UiWidgetBlueprint{
-					.x = 4, .y = 2, .w = 11, .h = 3,
-					.border_width = 0,
-					.variant = widget::TextBlueprint{
-						.text = "Rect"
-					}
-				},
-				UiWidgetBlueprint{
-						.x = 4, .y = 6, .w = 11, .h = 4,
-						.variant = right_hud_set_rect_button
-				},
-				UiWidgetBlueprint{
-						.x = 4, .y = 11, .w = 11, .h = 4,
-						.variant = right_hud_set_center_button
-				},
-				UiWidgetBlueprint{
-						.x = 4, .y = 16, .w = 11, .h = 4,
-						.variant = right_hud_reset_button
-				}
+	.w = 19, .h = 72,
+	.background_color = {0, 0, 0, 255},
+	.onCreate = [](UiPanel&) {
+		M2_LEVEL.EnablePrimarySelection(M2_GAME.Dimensions().Game());
+		M2_LEVEL.EnableSecondarySelection(M2_GAME.Dimensions().Game());
+	},
+	.onDestroy = [] {
+		M2_LEVEL.DisablePrimarySelection();
+		M2_LEVEL.DisableSecondarySelection();
+	},
+	.widgets = {
+		UiWidgetBlueprint{
+			.x = 4, .y = 2, .w = 11, .h = 3,
+			.border_width = 0,
+			.variant = widget::TextBlueprint{
+				.text = "Rect"
+			}
+		},
+		UiWidgetBlueprint{
+			.x = 4, .y = 6, .w = 11, .h = 4,
+			.variant = right_hud_set_rect_button
+		},
+		UiWidgetBlueprint{
+			.x = 4, .y = 11, .w = 11, .h = 4,
+			.variant = right_hud_set_center_button
+		},
+		UiWidgetBlueprint{
+			.x = 4, .y = 16, .w = 11, .h = 4,
+			.variant = right_hud_reset_button
 		}
+	}
 };
 
 UiPanelBlueprint sheet_editor_background_collider_mode_right_hud = {
@@ -247,67 +259,70 @@ const UiPanelBlueprint m2::sheet_editor_main_menu = {
 		.border_width = 0,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
-				UiWidgetBlueprint{
-					.x = 60, .y = 10, .w = 40, .h = 40,
-					.variant = widget::ImageBlueprint{
-						.onUpdate = [](const widget::Image& self) -> std::pair<UiAction,std::optional<m2g::pb::SpriteType>> {
-							auto* text_selection_widget = self.Parent().find_first_widget_of_blueprint_type<widget::TextSelectionBlueprint>();
-							m2g::pb::SpriteType selected_sprite_type = static_cast<m2g::pb::SpriteType>(
-								std::get<int>(dynamic_cast<widget::TextSelection*>(text_selection_widget)->selections()[0]));
-							return std::make_pair(MakeContinueAction(), selected_sprite_type);
-						}
-					}
-				},
-				UiWidgetBlueprint{
-					.x = 35 , .y = 55, .w = 90, .h = 10,
-					.variant = widget::TextSelectionBlueprint{
-						.onCreate = [](MAYBE widget::TextSelection& self) {
-							const auto& pb_sheets = std::get<sheet_editor::State>(M2_LEVEL.stateVariant).sprite_sheets();
-							// Gather the list of sprites
-							std::vector<m2g::pb::SpriteType> sprite_types;
-							std::for_each(pb_sheets.sheets().cbegin(), pb_sheets.sheets().cend(), [&sprite_types](const auto& sheet) {
-								std::for_each(sheet.sprites().cbegin(), sheet.sprites().cend(), [&sprite_types](const auto& sprite) {
-									sprite_types.emplace_back(sprite.type());
-								});
+			UiWidgetBlueprint{
+				.name = "SpriteDisplay",
+				.x = 60, .y = 10, .w = 40, .h = 40,
+				.variant = widget::ImageBlueprint{}
+			},
+			UiWidgetBlueprint{
+				.name = "SpriteTypeSelection",
+				.x = 35 , .y = 55, .w = 90, .h = 10,
+				.variant = widget::TextSelectionBlueprint{
+					.onCreate = [](widget::TextSelection& self) {
+						const auto& pb_sheets = std::get<sheet_editor::State>(M2_LEVEL.stateVariant).SpriteSheets();
+						// Gather the list of sprites
+						std::vector<m2g::pb::SpriteType> sprite_types;
+						std::ranges::for_each(pb_sheets.sheets(), [&sprite_types](const auto& sheet) {
+							std::for_each(sheet.sprites().cbegin(), sheet.sprites().cend(), [&sprite_types](const auto& sprite) {
+								sprite_types.emplace_back(sprite.type());
 							});
-							// Sort the list
-							std::sort(sprite_types.begin(), sprite_types.end());
-							// Transform to sprite type names
-							widget::TextSelectionBlueprint::Options options;
-							std::transform(sprite_types.begin(), sprite_types.end(), std::back_inserter(options), [](const auto& sprite_type) {
-								return widget::TextSelectionBlueprint::Option{m2g::pb::SpriteType_Name(sprite_type), static_cast<int>(sprite_type)};
-							});
-							self.set_options(std::move(options));
-						},
-						.onAction = [](widget::TextSelection& self) -> UiAction {
-							std::get<sheet_editor::State>(M2_LEVEL.stateVariant).set_sprite_type(
-								static_cast<m2g::pb::SpriteType>(std::get<int>(self.selections()[0])));
-							return MakeContinueAction();
+						});
+						// Sort the list
+						std::ranges::sort(sprite_types);
+						// Transform to sprite type names
+						widget::TextSelectionBlueprint::Options options;
+						std::ranges::transform(sprite_types, std::back_inserter(options), [](const auto& sprite_type) {
+							return widget::TextSelectionBlueprint::Option{m2g::pb::SpriteType_Name(sprite_type), static_cast<int>(sprite_type)};
+						});
+						self.set_options(std::move(options));
+					},
+					.onAction = [](widget::TextSelection& self) {
+						if (const auto selections = self.selections(); not selections.empty()) {
+							const auto selectedSprite = static_cast<m2g::pb::SpriteType>(std::get<int>(selections[0]));
+							self.Parent().find_first_widget_by_name<widget::Image>("SpriteDisplay")->SetSpriteType(selectedSprite);
 						}
+						return MakeContinueAction();
 					}
-				},
-				UiWidgetBlueprint{
-						.x = 35, .y = 70, .w = 40, .h = 10,
-						.variant = widget::TextBlueprint{
-								.text = "QUIT",
-								.kb_shortcut = SDL_SCANCODE_Q,
-								.onAction = [](MAYBE const widget::Text& self) -> UiAction { return MakeQuitAction(); },
-						}
-				},
-				UiWidgetBlueprint{
-						.x = 85, .y = 70, .w = 40, .h = 10,
-						.variant = widget::TextBlueprint{
-								.text = "SELECT",
-								.kb_shortcut = SDL_SCANCODE_RETURN,
-								.onAction = [](MAYBE const widget::Text& self) -> UiAction {
-									if (not std::holds_alternative<std::monostate>(std::get<sheet_editor::State>(M2_LEVEL.stateVariant).mode)) {
-										std::get<sheet_editor::State>(M2_LEVEL.stateVariant).deactivate_mode();
-										M2_LEVEL.ReplaceRightHud(&sheet_editor_right_hud, M2_GAME.Dimensions().RightHud());
-									}
-									std::get<sheet_editor::State>(M2_LEVEL.stateVariant).select();
-									return MakeReturnAction(); // TODO Return value
-								}
-						}
 				}
+			},
+			UiWidgetBlueprint{
+				.x = 35, .y = 70, .w = 40, .h = 10,
+				.variant = widget::TextBlueprint{
+					.text = "QUIT",
+					.kb_shortcut = SDL_SCANCODE_Q,
+					.onAction = [](MAYBE const widget::Text& self) -> UiAction { return MakeQuitAction(); },
+				}
+			},
+			UiWidgetBlueprint{
+				.x = 85, .y = 70, .w = 40, .h = 10,
+				.variant = widget::TextBlueprint{
+					.text = "SELECT",
+					.kb_shortcut = SDL_SCANCODE_RETURN,
+					.onAction = [](MAYBE const widget::Text& self) -> UiAction {
+						if (const auto selections = self.Parent().find_first_widget_by_name<widget::TextSelection>("SpriteTypeSelection")->selections();
+								not selections.empty()) {
+							if (not std::holds_alternative<std::monostate>(std::get<sheet_editor::State>(M2_LEVEL.stateVariant).mode)) {
+								std::get<sheet_editor::State>(M2_LEVEL.stateVariant).deactivate_mode();
+								M2_LEVEL.ReplaceRightHud(&sheet_editor_right_hud, M2_GAME.Dimensions().RightHud());
+							}
+
+							const auto selectedSprite = static_cast<m2g::pb::SpriteType>(std::get<int>(selections[0]));
+							std::get<sheet_editor::State>(M2_LEVEL.stateVariant).Select(selectedSprite);
+							return MakeReturnAction();
+						}
+						return MakeContinueAction();
+					}
+				}
+			}
 		}
 };

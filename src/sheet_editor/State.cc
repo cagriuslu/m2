@@ -93,17 +93,15 @@ State::RectMode::RectMode() {
 	current_rect = RectI{sprite.regular().rect()};
 	// Set center
 	current_center = VecF{sprite.regular().center_to_origin_vec_px()};
-	M2_LEVEL.EnablePrimarySelection(M2_GAME.Dimensions().Game());
 }
-State::RectMode::~RectMode() { M2_LEVEL.DisablePrimarySelection(); }
 void State::RectMode::on_draw() const {
 	// Draw selection
 	if (const auto cellSelection = M2_LEVEL.PrimarySelection()->CellSelectionRectM()) {
 		Graphic::color_rect(*cellSelection, SELECTION_COLOR);
 	}
 	// Draw center selection
-	if (secondary_selection_position) {
-		Graphic::draw_cross(*secondary_selection_position, CROSS_COLOR);
+	if (const auto centerSelection = M2_LEVEL.SecondarySelection()->HalfCellSelectionRectM()) {
+		Graphic::draw_cross(centerSelection->top_left(), CROSS_COLOR);
 	}
 
 	if (current_rect) {
@@ -127,18 +125,13 @@ void State::RectMode::set_rect() {
 		selection->Reset();
 	}
 }
-void State::RectMode::set_center() {
-	// Store center selection
-	if (secondary_selection_position) {
-		auto center_offset = *secondary_selection_position -
-		    std::get<State>(M2_LEVEL.stateVariant).selected_sprite_center();  // new offset from sprite center
-		std::get<State>(M2_LEVEL.stateVariant).modify_selected_sprite([&](pb::Sprite& sprite) {
-			sprite.mutable_regular()->mutable_center_to_origin_vec_px()->set_x(center_offset.x);
-			sprite.mutable_regular()->mutable_center_to_origin_vec_px()->set_y(center_offset.y);
-		});
-		current_center = center_offset;
-		secondary_selection_position = std::nullopt;
-	}
+void State::RectMode::set_center(const VecF& center) {
+	auto center_offset = center - std::get<State>(M2_LEVEL.stateVariant).selected_sprite_center();
+	std::get<State>(M2_LEVEL.stateVariant).modify_selected_sprite([&](pb::Sprite& sprite) {
+		sprite.mutable_regular()->mutable_center_to_origin_vec_px()->set_x(center_offset.x);
+		sprite.mutable_regular()->mutable_center_to_origin_vec_px()->set_y(center_offset.y);
+	});
+	current_center = center_offset;
 }
 void State::RectMode::reset() {
 	std::get<State>(M2_LEVEL.stateVariant).modify_selected_sprite([&](pb::Sprite& sprite) {
@@ -148,7 +141,7 @@ void State::RectMode::reset() {
 	current_rect = std::nullopt;
 	current_center = std::nullopt;
 	M2_LEVEL.PrimarySelection()->Reset();
-	secondary_selection_position = std::nullopt;
+	M2_LEVEL.SecondarySelection()->Reset();
 }
 
 State::BackgroundColliderMode::BackgroundColliderMode() {
@@ -327,25 +320,15 @@ expected<m2::sheet_editor::State> m2::sheet_editor::State::create(const std::fil
 			return make_unexpected(msg.error());
 		}
 	}
-	return State{path};
+	if (auto persistentSpriteSheets = pb::PersistentObject<pb::SpriteSheets>::LoadFile(path)) {
+		return State{std::move(*persistentSpriteSheets)};
+	} else {
+		return make_unexpected(persistentSpriteSheets.error());
+	}
 }
 
-const m2::pb::SpriteSheets& m2::sheet_editor::State::sprite_sheets() const {
-	// If path exists,
-	if (std::filesystem::exists(_path)) {
-		// Check if the file is a valid pb::SpriteSheets
-		if (auto msg = pb::json_file_to_message<pb::SpriteSheets>(_path); msg) {
-			_sprite_sheets = *msg;
-		} else {
-			throw M2_ERROR("File is not a valid m2::pb::SpriteSheets: " + _path.string());
-		}
-	} else {
-		_sprite_sheets = {};
-	}
-	return _sprite_sheets;
-}
 const pb::Sprite& m2::sheet_editor::State::selected_sprite() const {
-	const auto& sheets = sprite_sheets();
+	const auto& sheets = SpriteSheets();
 	for (const auto& sheet : sheets.sheets()) {
 		for (const auto& sprite : sheet.sprites()) {
 			if (sprite.type() == _selected_sprite_type) {
@@ -357,7 +340,7 @@ const pb::Sprite& m2::sheet_editor::State::selected_sprite() const {
 }
 
 void m2::sheet_editor::State::modify_selected_sprite(const std::function<void(pb::Sprite&)>& modifier) {
-	modify_sprite_in_sheet(_path, _selected_sprite_type, modifier);
+	ModifySpriteInSheets(_persistentSpriteSheets, _selected_sprite_type, modifier);
 }
 
 RectI m2::sheet_editor::State::selected_sprite_rect() const { return RectI{selected_sprite().regular().rect()}; }
@@ -372,16 +355,12 @@ VecF m2::sheet_editor::State::selected_sprite_origin() const {
 	return selected_sprite_center() + VecF{selected_sprite().regular().center_to_origin_vec_px()};
 }
 
-void m2::sheet_editor::State::set_sprite_type(m2g::pb::SpriteType sprite_type) { _selected_sprite_type = sprite_type; }
-
-void m2::sheet_editor::State::select() {
-	const auto& spriteSheets = this->sprite_sheets();
-	// Reload dynamic image loader with the resource
-	// To find sprite in the sheet, iterate over sheets
+void m2::sheet_editor::State::Select(m2g::pb::SpriteType spriteType) {
+	const auto& spriteSheets = this->SpriteSheets();
 	for (const auto& spriteSheet : spriteSheets.sheets()) {
-		// Iterate over sprites
 		for (const auto& sprite : spriteSheet.sprites()) {
-			if (sprite.type() == _selected_sprite_type) {
+			if (sprite.type() == spriteType) {
+				_selected_sprite_type = spriteType;
 				// Load image
 				const auto& resourcePath = spriteSheet.resource();
 				sdl::SurfaceUniquePtr surface(IMG_Load(resourcePath.c_str()));
@@ -464,5 +443,21 @@ void m2::sheet_editor::modify_sprite_in_sheet(
 		}
 	} else {
 		throw M2_ERROR("Can't modify nonexistent file");
+	}
+}
+void sheet_editor::ModifySpriteInSheets(pb::PersistentObject<pb::SpriteSheets>& persistentObject,
+		const m2g::pb::SpriteType spriteType, const std::function<void(pb::Sprite&)>& modifier) {
+	auto expectSuccess = persistentObject.Mutate([&](pb::SpriteSheets& sheets) {
+		for (auto& sheet : *sheets.mutable_sheets()) {
+			for (auto& sprite : *sheet.mutable_sprites()) {
+				if (sprite.type() == spriteType) {
+					modifier(sprite);
+					return;
+				}
+			}
+		}
+	});
+	if (not expectSuccess) {
+		throw M2_ERROR("Unable to mutate sprite sheets: " + expectSuccess.error());
 	}
 }

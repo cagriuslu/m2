@@ -24,7 +24,6 @@ namespace {
 		if (std::holds_alternative<sheet_editor::State>(M2_LEVEL.stateVariant)) {
 			std::visit(overloaded{
 					[=](sheet_editor::State::ForegroundCompanionMode& v) { v.secondary_selection_position = mousePosition.hround(); },
-					[=](sheet_editor::State::RectMode& v) { v.secondary_selection_position = mousePosition.hround(); },
 					DEFAULT_OVERLOAD}, std::get<sheet_editor::State>(M2_LEVEL.stateVariant).mode);
 		}
 	}

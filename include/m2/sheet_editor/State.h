@@ -1,7 +1,7 @@
 #pragma once
 #include <Sprite.pb.h>
 #include <m2g_SpriteType.pb.h>
-
+#include <m2/protobuf/PersistentObject.h>
 #include <filesystem>
 
 #include "../math/CircF.h"
@@ -10,12 +10,12 @@
 
 namespace m2::sheet_editor {
 	struct State {
-		const std::filesystem::path _path;
-		mutable pb::SpriteSheets _sprite_sheets;
+		pb::PersistentObject<pb::SpriteSheets> _persistentSpriteSheets;
+
 		m2g::pb::SpriteType _selected_sprite_type{};
 		sdl::TextureUniquePtr _texture;
 		VecI _textureDimensions;
-		int _ppm;
+		int _ppm{};
 
 		struct ForegroundCompanionMode {
 			// Secondary mouse button sets the center
@@ -37,21 +37,17 @@ namespace m2::sheet_editor {
 			void reset();
 		};
 		struct RectMode {
-			// Secondary mouse button sets the center
-			std::optional<m2::VecF> secondary_selection_position;
-
 			RectMode();
 			// Disable copy, default move
 			RectMode(const RectMode& other) = delete;
 			RectMode& operator=(const RectMode& other) = delete;
 			RectMode(RectMode&& other) = default;
 			RectMode& operator=(RectMode&& other) = default;
-			~RectMode();
 			void on_draw() const;
 
 			void set_rect();
 			std::optional<m2::RectI> current_rect;
-			void set_center();
+			void set_center(const VecF&);
 			std::optional<m2::VecF> current_center;
 			void reset();
 		};
@@ -90,19 +86,21 @@ namespace m2::sheet_editor {
 
 		static m2::expected<State> create(const std::filesystem::path& path);
 
-		const pb::SpriteSheets& sprite_sheets() const;  // This function re-reads the file every time it's called.
+		// Accessors
+
+		const pb::SpriteSheets& SpriteSheets() const { return _persistentSpriteSheets.Cache(); }
 		const pb::Sprite& selected_sprite() const;  // This function re-reads the file every time it's called.
-		void modify_selected_sprite(const std::function<void(pb::Sprite&)>&
-		                                modifier);  // This function re-reads the file every time it's called.
+		void modify_selected_sprite(const std::function<void(pb::Sprite&)>& modifier);  // This function re-reads the file every time it's called.
 		RectI selected_sprite_rect() const;  // This function re-reads the file every time it's called.
 		VecF selected_sprite_center() const;  // This function re-reads the file every time it's called.
 		VecF selected_sprite_origin() const;  // This function re-reads the file every time it's called.
 
 		// To be used by the main menu
-		void set_sprite_type(m2g::pb::SpriteType);
-		void select();
+
+		void Select(m2g::pb::SpriteType);
 
 		// To be used by left hud
+
 		void deactivate_mode();
 		void activate_foreground_companion_mode();
 		void activate_rect_mode();
@@ -112,9 +110,12 @@ namespace m2::sheet_editor {
 		void Draw() const;
 
 	   private:
-		inline explicit State(std::filesystem::path path) : _path(std::move(path)) {}
+		explicit State(pb::PersistentObject<pb::SpriteSheets>&& persistentSpriteSheets)
+				: _persistentSpriteSheets(std::move(persistentSpriteSheets)) {}
 	};
 
 	void modify_sprite_in_sheet(
-	    const std::filesystem::path& path, m2g::pb::SpriteType type, const std::function<void(pb::Sprite&)>& modifier);
+	    const std::filesystem::path& path, m2g::pb::SpriteType type, const std::function<void(pb::Sprite&)>& modifier); // TODO remove and use ModifySpriteInSheets
+	void ModifySpriteInSheets(pb::PersistentObject<pb::SpriteSheets>& persistentObject, m2g::pb::SpriteType spriteType,
+			const std::function<void(pb::Sprite&)>& modifier);
 }  // namespace m2::sheet_editor
