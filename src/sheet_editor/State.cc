@@ -87,63 +87,6 @@ void State::ForegroundCompanionMode::reset() {
 	secondary_selection_position = std::nullopt;
 }
 
-State::RectMode::RectMode() {
-	const auto& sprite = std::get<State>(M2_LEVEL.stateVariant).selected_sprite();
-	// Set rect
-	current_rect = RectI{sprite.regular().rect()};
-	// Set center
-	current_center = VecF{sprite.regular().center_to_origin_vec_px()};
-}
-void State::RectMode::on_draw() const {
-	// Draw selection
-	if (const auto cellSelection = M2_LEVEL.PrimarySelection()->CellSelectionRectM()) {
-		Graphic::color_rect(*cellSelection, SELECTION_COLOR);
-	}
-	// Draw center selection
-	if (const auto centerSelection = M2_LEVEL.SecondarySelection()->HalfCellSelectionRectM()) {
-		Graphic::draw_cross(centerSelection->top_left(), CROSS_COLOR);
-	}
-
-	if (current_rect) {
-		Graphic::color_rect(RectF{*current_rect}.shift({-0.5f, -0.5f}), CONFIRMED_SELECTION_COLOR);
-	}
-	if (current_center) {
-		auto sprite_center = std::get<State>(M2_LEVEL.stateVariant).selected_sprite_center();
-		Graphic::draw_cross(sprite_center + *current_center, CONFIRMED_CROSS_COLOR);
-	}
-}
-void State::RectMode::set_rect() {
-	if (auto* selection = M2_LEVEL.PrimarySelection(); selection->IsComplete()) {
-		const auto intSelection = selection->IntegerSelectionRectM();
-		std::get<State>(M2_LEVEL.stateVariant).modify_selected_sprite([&](pb::Sprite& sprite) {
-			sprite.mutable_regular()->mutable_rect()->set_x(intSelection->x);
-			sprite.mutable_regular()->mutable_rect()->set_y(intSelection->y);
-			sprite.mutable_regular()->mutable_rect()->set_w(intSelection->w);
-			sprite.mutable_regular()->mutable_rect()->set_h(intSelection->h);
-		});
-		current_rect = intSelection;
-		selection->Reset();
-	}
-}
-void State::RectMode::set_center(const VecF& center) {
-	auto center_offset = center - std::get<State>(M2_LEVEL.stateVariant).selected_sprite_center();
-	std::get<State>(M2_LEVEL.stateVariant).modify_selected_sprite([&](pb::Sprite& sprite) {
-		sprite.mutable_regular()->mutable_center_to_origin_vec_px()->set_x(center_offset.x);
-		sprite.mutable_regular()->mutable_center_to_origin_vec_px()->set_y(center_offset.y);
-	});
-	current_center = center_offset;
-}
-void State::RectMode::reset() {
-	std::get<State>(M2_LEVEL.stateVariant).modify_selected_sprite([&](pb::Sprite& sprite) {
-		sprite.mutable_regular()->clear_rect();
-		sprite.mutable_regular()->clear_center_to_origin_vec_px();
-	});
-	current_rect = std::nullopt;
-	current_center = std::nullopt;
-	M2_LEVEL.PrimarySelection()->Reset();
-	M2_LEVEL.SecondarySelection()->Reset();
-}
-
 State::BackgroundColliderMode::BackgroundColliderMode() {
 	const auto& sprite = std::get<State>(M2_LEVEL.stateVariant).selected_sprite();
 	if (sprite.regular().has_background_collider()) {
@@ -387,11 +330,42 @@ void m2::sheet_editor::State::deactivate_mode() { mode.emplace<std::monostate>()
 
 void m2::sheet_editor::State::activate_foreground_companion_mode() { mode.emplace<ForegroundCompanionMode>(); }
 
-void m2::sheet_editor::State::activate_rect_mode() { mode.emplace<RectMode>(); }
-
 void m2::sheet_editor::State::activate_background_collider_mode() { mode.emplace<BackgroundColliderMode>(); }
 
 void m2::sheet_editor::State::activate_foreground_collider_mode() { mode.emplace<ForegroundColliderMode>(); }
+
+void State::SetSpriteRect(const RectI& rect) {
+	modify_selected_sprite([&](pb::Sprite& sprite) {
+		sprite.mutable_regular()->mutable_rect()->set_x(rect.x);
+		sprite.mutable_regular()->mutable_rect()->set_y(rect.y);
+		sprite.mutable_regular()->mutable_rect()->set_w(rect.w);
+		sprite.mutable_regular()->mutable_rect()->set_h(rect.h);
+	});
+}
+void State::SetSpriteOrigin(const VecF& origin) {
+	const auto rect = RectI{selected_sprite().regular().rect()};
+	const auto rectCenter = RectF{rect}.shift({-0.5f, -0.5f}).center();
+	const auto centerToOrigin = origin - rectCenter;
+	modify_selected_sprite([&](pb::Sprite& sprite) {
+		sprite.mutable_regular()->mutable_center_to_origin_vec_px()->set_x(centerToOrigin.x);
+		sprite.mutable_regular()->mutable_center_to_origin_vec_px()->set_y(centerToOrigin.y);
+	});
+}
+void State::ResetSpriteRectAndOrigin() {
+	modify_selected_sprite([&](pb::Sprite& sprite) {
+		sprite.mutable_regular()->clear_rect();
+		sprite.mutable_regular()->clear_center_to_origin_vec_px();
+	});
+}
+void State::AddForegroundCompanionRect(const RectI& rect) {}
+void State::SetForegroundCompanionCenter(const VecF& center) {}
+void State::RemoveForegroundCompanion() {}
+void State::AddRectangleBackgroundCollider(const RectF& rect) {}
+void State::AddCircleBackgroundCollider(const VecF& center, float radius) {}
+void State::RemoveBackgroundColliders() {}
+void State::AddRectangleForegroundCollider(const RectF& rect) {}
+void State::AddCircleForegroundCollider(const VecF& center, float radius) {}
+void State::RemoveForegroundColliders() {}
 
 void State::Draw() const {
 	// Draw texture
@@ -404,10 +378,29 @@ void State::Draw() const {
 		iround(textureBottomRightOutputPosition.y - textureTopLeftOutputPosition.y)};
 	SDL_RenderCopy(M2_GAME.renderer, _texture.get(), nullptr, &dstRect);
 
-	std::visit(overloaded{
+	if (M2_LEVEL.RightHud()->Name() == "RectModeRightHud") {
+		// Draw rect selection
+		if (const auto cellSelection = M2_LEVEL.PrimarySelection()->CellSelectionRectM()) {
+			Graphic::color_rect(*cellSelection, SELECTION_COLOR);
+		}
+		// Draw origin selection
+		if (const auto centerSelection = M2_LEVEL.SecondarySelection()->HalfCellSelectionRectM()) {
+			Graphic::draw_cross(centerSelection->top_left(), CROSS_COLOR);
+		}
+		const auto& sprite = selected_sprite();
+		const auto rect = RectI{sprite.regular().rect()};
+		if (rect) {
+			Graphic::color_rect(RectF{rect}.shift({-0.5f, -0.5f}), CONFIRMED_SELECTION_COLOR);
+		}
+		const auto rectCenter = RectF{rect}.shift({-0.5f, -0.5f}).center();
+		const auto centerToOriginVecPx = VecF{sprite.regular().center_to_origin_vec_px()};
+		Graphic::draw_cross(rectCenter + centerToOriginVecPx, CONFIRMED_CROSS_COLOR);
+	} else {
+		std::visit(overloaded{
 			[](const auto& mode) { mode.on_draw(); },
 			[](MAYBE const std::monostate&) {}},
 			mode);
+	}
 
 	// Draw pixel grid lines
 	Graphic::DrawGridLines({127, 127, 255, 80});

@@ -83,14 +83,14 @@ bool Events::gather() {
 				mouse_button_release_count++;
 				mouse_buttons_released[u(button_to_mouse_button(e.button.button))]++;
 				if (auto* primarySelection = M2_LEVEL.PrimarySelection();
-						primarySelection && peek_mouse_button_release(MouseButton::PRIMARY)) {
+						primarySelection && peek_mouse_button_release(MouseButton::PRIMARY, primarySelection->ScreenBoundaryPx())) {
 					primarySelection->SetSecondPositionIfFirstSetM(M2_GAME.MousePositionWorldM());
 					if (auto* secondarySelection = M2_LEVEL.SecondarySelection()) {
 						secondarySelection->Reset();
 					}
 				}
 				if (auto* secondarySelection = M2_LEVEL.SecondarySelection();
-						secondarySelection && peek_mouse_button_release(MouseButton::SECONDARY)) {
+						secondarySelection && peek_mouse_button_release(MouseButton::SECONDARY, secondarySelection->ScreenBoundaryPx())) {
 					secondarySelection->SetSecondPositionIfFirstSetM(M2_GAME.MousePositionWorldM());
 					if (auto* primarySelection = M2_LEVEL.PrimarySelection()) {
 						primarySelection->Reset();

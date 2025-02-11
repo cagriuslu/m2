@@ -36,21 +36,6 @@ namespace m2::sheet_editor {
 			std::optional<m2::VecF> current_center;
 			void reset();
 		};
-		struct RectMode {
-			RectMode();
-			// Disable copy, default move
-			RectMode(const RectMode& other) = delete;
-			RectMode& operator=(const RectMode& other) = delete;
-			RectMode(RectMode&& other) = default;
-			RectMode& operator=(RectMode&& other) = default;
-			void on_draw() const;
-
-			void set_rect();
-			std::optional<m2::RectI> current_rect;
-			void set_center(const VecF&);
-			std::optional<m2::VecF> current_center;
-			void reset();
-		};
 		struct BackgroundColliderMode {
 			BackgroundColliderMode();
 			// Disable copy, default move
@@ -81,7 +66,7 @@ namespace m2::sheet_editor {
 			std::optional<CircF> current_circ;  // wrt sprite center
 			void reset();
 		};
-		std::variant<std::monostate, ForegroundCompanionMode, RectMode, BackgroundColliderMode, ForegroundColliderMode>
+		std::variant<std::monostate, ForegroundCompanionMode, BackgroundColliderMode, ForegroundColliderMode>
 		    mode;
 
 		static m2::expected<State> create(const std::filesystem::path& path);
@@ -89,11 +74,11 @@ namespace m2::sheet_editor {
 		// Accessors
 
 		const pb::SpriteSheets& SpriteSheets() const { return _persistentSpriteSheets.Cache(); }
-		const pb::Sprite& selected_sprite() const;  // This function re-reads the file every time it's called.
+		const pb::Sprite& selected_sprite() const;
 		void modify_selected_sprite(const std::function<void(pb::Sprite&)>& modifier);  // This function re-reads the file every time it's called.
-		RectI selected_sprite_rect() const;  // This function re-reads the file every time it's called.
-		VecF selected_sprite_center() const;  // This function re-reads the file every time it's called.
-		VecF selected_sprite_origin() const;  // This function re-reads the file every time it's called.
+		RectI selected_sprite_rect() const;  // This function re-reads the file every time it's called. // TODO is it necessary
+		VecF selected_sprite_center() const;  // This function re-reads the file every time it's called. // TODO is it necessary
+		VecF selected_sprite_origin() const;  // This function re-reads the file every time it's called. // TODO is it necessary
 
 		// To be used by the main menu
 
@@ -103,9 +88,23 @@ namespace m2::sheet_editor {
 
 		void deactivate_mode();
 		void activate_foreground_companion_mode();
-		void activate_rect_mode();
 		void activate_background_collider_mode();
 		void activate_foreground_collider_mode();
+
+		// Modifiers
+
+		void SetSpriteRect(const RectI& rect);
+		void SetSpriteOrigin(const VecF& origin);
+		void ResetSpriteRectAndOrigin();
+		void AddForegroundCompanionRect(const RectI& rect);
+		void SetForegroundCompanionCenter(const VecF& center);
+		void RemoveForegroundCompanion();
+		void AddRectangleBackgroundCollider(const RectF& rect);
+		void AddCircleBackgroundCollider(const VecF& center, float radius);
+		void RemoveBackgroundColliders();
+		void AddRectangleForegroundCollider(const RectF& rect);
+		void AddCircleForegroundCollider(const VecF& center, float radius);
+		void RemoveForegroundColliders();
 
 		void Draw() const;
 

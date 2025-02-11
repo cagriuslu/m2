@@ -23,7 +23,6 @@ const widget::TextBlueprint right_hud_set_rect_button = {
 		.onAction = [](MAYBE const widget::Text& self) -> UiAction {
 			std::visit(m2::overloaded {
 					[](sheet_editor::State::ForegroundCompanionMode& mode) { mode.add_rect(); },
-					[](sheet_editor::State::RectMode& mode) { mode.set_rect(); },
 					[](const auto&) {},
 			}, std::get<sheet_editor::State>(M2_LEVEL.stateVariant).mode);
 			return MakeContinueAction();
@@ -34,11 +33,6 @@ const widget::TextBlueprint right_hud_set_center_button = {
 		.onAction = [](MAYBE const widget::Text& self) -> UiAction {
 			std::visit(m2::overloaded {
 					[](sheet_editor::State::ForegroundCompanionMode& mode) { mode.set_center(); },
-					[](sheet_editor::State::RectMode& mode) {
-						if (const auto centerSelection = M2_LEVEL.SecondarySelection()->HalfCellSelectionRectM()) {
-							mode.set_center(centerSelection->top_left());
-						}
-					},
 					[](const auto&) {},
 			}, std::get<sheet_editor::State>(M2_LEVEL.stateVariant).mode);
 			return MakeContinueAction();
@@ -49,7 +43,6 @@ const widget::TextBlueprint right_hud_reset_button = {
 		.onAction = [](MAYBE const widget::Text& self) -> UiAction {
 			std::visit(m2::overloaded {
 				[](sheet_editor::State::ForegroundCompanionMode& mode) { mode.reset(); },
-				[](sheet_editor::State::RectMode& mode) { mode.reset(); },
 				[](sheet_editor::State::BackgroundColliderMode& mode) { mode.reset(); },
 				[](sheet_editor::State::ForegroundColliderMode& mode) { mode.reset(); },
 				[](const auto&) {},
@@ -107,15 +100,43 @@ UiPanelBlueprint sheet_editor_rect_mode_right_hud = {
 		},
 		UiWidgetBlueprint{
 			.x = 4, .y = 6, .w = 11, .h = 4,
-			.variant = right_hud_set_rect_button
+			.variant = widget::TextBlueprint{
+				.text = "Set Rect",
+				.onAction = [](MAYBE const widget::Text& self) -> UiAction {
+					if (auto* selection = M2_LEVEL.PrimarySelection(); selection->IsComplete()) {
+						const auto intSelection = selection->IntegerSelectionRectM();
+						std::get<sheet_editor::State>(M2_LEVEL.stateVariant).SetSpriteRect(*intSelection);
+						selection->Reset();
+					}
+					return MakeContinueAction();
+				}
+			}
 		},
 		UiWidgetBlueprint{
 			.x = 4, .y = 11, .w = 11, .h = 4,
-			.variant = right_hud_set_center_button
+			.variant = widget::TextBlueprint{
+				.text = "Set Center",
+				.onAction = [](MAYBE const widget::Text& self) -> UiAction {
+					if (auto* selection = M2_LEVEL.SecondarySelection(); selection->IsComplete()) {
+						const auto originSelection = selection->HalfCellSelectionRectM();
+						std::get<sheet_editor::State>(M2_LEVEL.stateVariant).SetSpriteOrigin(originSelection->top_left());
+						selection->Reset();
+					}
+					return MakeContinueAction();
+				}
+			}
 		},
 		UiWidgetBlueprint{
 			.x = 4, .y = 16, .w = 11, .h = 4,
-			.variant = right_hud_reset_button
+			.variant = widget::TextBlueprint{
+				.text = "Reset",
+				.onAction = [](MAYBE const widget::Text& self) -> UiAction {
+					std::get<sheet_editor::State>(M2_LEVEL.stateVariant).ResetSpriteRectAndOrigin();
+					M2_LEVEL.PrimarySelection()->Reset();
+					M2_LEVEL.SecondarySelection()->Reset();
+					return MakeContinueAction();
+				}
+			}
 		}
 	}
 };
@@ -195,8 +216,6 @@ const UiPanelBlueprint m2::sheet_editor_left_hud = {
 					.variant = widget::TextBlueprint{
 						.text = "Rect",
 						.onAction = [](MAYBE const widget::Text& self) -> UiAction {
-							std::get<sheet_editor::State>(M2_LEVEL.stateVariant).activate_rect_mode();
-
 							M2_LEVEL.ReplaceRightHud(&sheet_editor_rect_mode_right_hud, M2_GAME.Dimensions().RightHud());
 							return MakeContinueAction();
 						}
