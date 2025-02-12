@@ -16,6 +16,7 @@ namespace m2::sheet_editor {
 		sdl::TextureUniquePtr _texture;
 		VecI _textureDimensions;
 		int _ppm{};
+
 		struct BackgroundColliderMode {
 			BackgroundColliderMode();
 			// Disable copy, default move
@@ -31,25 +32,9 @@ namespace m2::sheet_editor {
 			std::optional<CircF> current_circ;  // wrt sprite center
 			void reset();
 		};
-		struct ForegroundColliderMode {
-			ForegroundColliderMode();
-			// Disable copy, default move
-			ForegroundColliderMode(const ForegroundColliderMode& other) = delete;
-			ForegroundColliderMode& operator=(const ForegroundColliderMode& other) = delete;
-			ForegroundColliderMode(ForegroundColliderMode&& other) = default;
-			ForegroundColliderMode& operator=(ForegroundColliderMode&& other) = default;
-			~ForegroundColliderMode();
-			void on_draw() const;
+		std::variant<std::monostate, BackgroundColliderMode> mode;
 
-			void set();
-			std::optional<m2::RectF> current_rect;  // wrt sprite center
-			std::optional<CircF> current_circ;  // wrt sprite center
-			void reset();
-		};
-		std::variant<std::monostate, BackgroundColliderMode, ForegroundColliderMode>
-		    mode;
-
-		static m2::expected<State> create(const std::filesystem::path& path);
+		static expected<State> create(const std::filesystem::path& path);
 
 		// Accessors
 
@@ -68,7 +53,6 @@ namespace m2::sheet_editor {
 
 		void deactivate_mode();
 		void activate_background_collider_mode();
-		void activate_foreground_collider_mode();
 
 		// Modifiers
 
