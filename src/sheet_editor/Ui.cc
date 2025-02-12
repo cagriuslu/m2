@@ -18,31 +18,10 @@ const widget::TextBlueprint right_hud_set_button = {
 			return MakeContinueAction();
 		}
 };
-const widget::TextBlueprint right_hud_set_rect_button = {
-		.text = "Set Rect",
-		.onAction = [](MAYBE const widget::Text& self) -> UiAction {
-			std::visit(m2::overloaded {
-					[](sheet_editor::State::ForegroundCompanionMode& mode) { mode.add_rect(); },
-					[](const auto&) {},
-			}, std::get<sheet_editor::State>(M2_LEVEL.stateVariant).mode);
-			return MakeContinueAction();
-		}
-};
-const widget::TextBlueprint right_hud_set_center_button = {
-		.text = "Set Center",
-		.onAction = [](MAYBE const widget::Text& self) -> UiAction {
-			std::visit(m2::overloaded {
-					[](sheet_editor::State::ForegroundCompanionMode& mode) { mode.set_center(); },
-					[](const auto&) {},
-			}, std::get<sheet_editor::State>(M2_LEVEL.stateVariant).mode);
-			return MakeContinueAction();
-		}
-};
 const widget::TextBlueprint right_hud_reset_button = {
 		.text = "Reset",
 		.onAction = [](MAYBE const widget::Text& self) -> UiAction {
 			std::visit(m2::overloaded {
-				[](sheet_editor::State::ForegroundCompanionMode& mode) { mode.reset(); },
 				[](sheet_editor::State::BackgroundColliderMode& mode) { mode.reset(); },
 				[](sheet_editor::State::ForegroundColliderMode& mode) { mode.reset(); },
 				[](const auto&) {},
@@ -53,29 +32,65 @@ const widget::TextBlueprint right_hud_reset_button = {
 
 UiPanelBlueprint sheet_editor_foreground_companion_mode_right_hud = {
 	.name = "ForegroundCompanionModeRightHud",
-		.w = 19, .h = 72,
-		.background_color = {0, 0, 0, 255},
-		.widgets = {
-				UiWidgetBlueprint{
-					.x = 4, .y = 2, .w = 11, .h = 3,
-					.border_width = 0,
-					.variant = widget::TextBlueprint{
-						.text = "FComp"
+	.w = 19, .h = 72,
+	.background_color = {0, 0, 0, 255},
+	.onCreate = [](UiPanel&) {
+		M2_LEVEL.EnablePrimarySelection(M2_GAME.Dimensions().Game());
+		M2_LEVEL.EnableSecondarySelection(M2_GAME.Dimensions().Game());
+	},
+	.onDestroy = [] {
+		M2_LEVEL.DisablePrimarySelection();
+		M2_LEVEL.DisableSecondarySelection();
+	},
+	.widgets = {
+		UiWidgetBlueprint{
+			.x = 4, .y = 2, .w = 11, .h = 3,
+			.border_width = 0,
+			.variant = widget::TextBlueprint{
+				.text = "FComp"
+			}
+		},
+		UiWidgetBlueprint{
+			.x = 4, .y = 6, .w = 11, .h = 4,
+			.variant = widget::TextBlueprint{
+				.text = "Set Rect",
+				.onAction = [](MAYBE const widget::Text& self) -> UiAction {
+					if (auto* selection = M2_LEVEL.PrimarySelection(); selection->IsComplete()) {
+						const auto intSelection = selection->IntegerSelectionRectM();
+						std::get<sheet_editor::State>(M2_LEVEL.stateVariant).AddForegroundCompanionRect(*intSelection);
+						selection->Reset();
 					}
-				},
-				UiWidgetBlueprint{
-						.x = 4, .y = 6, .w = 11, .h = 4,
-						.variant = right_hud_set_rect_button
-				},
-				UiWidgetBlueprint{
-						.x = 4, .y = 11, .w = 11, .h = 4,
-						.variant = right_hud_set_center_button
-				},
-				UiWidgetBlueprint{
-						.x = 4, .y = 16, .w = 11, .h = 4,
-						.variant = right_hud_reset_button
+					return MakeContinueAction();
 				}
+			}
+		},
+		UiWidgetBlueprint{
+			.x = 4, .y = 11, .w = 11, .h = 4,
+			.variant = widget::TextBlueprint{
+				.text = "Set Center",
+				.onAction = [](MAYBE const widget::Text& self) -> UiAction {
+					if (auto* selection = M2_LEVEL.SecondarySelection(); selection->IsComplete()) {
+						const auto originSelection = selection->HalfCellSelectionRectM();
+						std::get<sheet_editor::State>(M2_LEVEL.stateVariant).SetForegroundCompanionOrigin(originSelection->top_left());
+						selection->Reset();
+					}
+					return MakeContinueAction();
+				}
+			}
+		},
+		UiWidgetBlueprint{
+			.x = 4, .y = 16, .w = 11, .h = 4,
+			.variant = widget::TextBlueprint{
+				.text = "Reset",
+				.onAction = [](MAYBE const widget::Text& self) -> UiAction {
+					std::get<sheet_editor::State>(M2_LEVEL.stateVariant).ResetForegroundCompanion();
+					M2_LEVEL.PrimarySelection()->Reset();
+					M2_LEVEL.SecondarySelection()->Reset();
+					return MakeContinueAction();
+				}
+			}
 		}
+	}
 };
 
 UiPanelBlueprint sheet_editor_rect_mode_right_hud = {
@@ -204,8 +219,6 @@ const UiPanelBlueprint m2::sheet_editor_left_hud = {
 					.variant = widget::TextBlueprint{
 						.text = "FComp",
 						.onAction = [](MAYBE const widget::Text& self) -> UiAction {
-							std::get<sheet_editor::State>(M2_LEVEL.stateVariant).activate_foreground_companion_mode();
-
 							M2_LEVEL.ReplaceRightHud(&sheet_editor_foreground_companion_mode_right_hud, M2_GAME.Dimensions().RightHud());
 							return MakeContinueAction();
 						}

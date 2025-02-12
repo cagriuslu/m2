@@ -19,14 +19,6 @@ namespace {
 		        DEFAULT_OVERLOAD},
 		    M2_LEVEL.stateVariant);
 	}
-
-	void handle_secondary_button_press(const VecF& mousePosition) {
-		if (std::holds_alternative<sheet_editor::State>(M2_LEVEL.stateVariant)) {
-			std::visit(overloaded{
-					[=](sheet_editor::State::ForegroundCompanionMode& v) { v.secondary_selection_position = mousePosition.hround(); },
-					DEFAULT_OVERLOAD}, std::get<sheet_editor::State>(M2_LEVEL.stateVariant).mode);
-		}
-	}
 }  // namespace
 
 Id obj::create_god() {
@@ -63,8 +55,6 @@ Id obj::create_god() {
 		if (const auto& mousePosition = M2_GAME.MousePositionWorldM(); not mousePosition.is_negative()) {
 			if (M2_GAME.events.pop_mouse_button_press(MouseButton::PRIMARY)) {
 				handle_primary_button_press(mousePosition);
-			} else if (M2_GAME.events.pop_mouse_button_press(MouseButton::SECONDARY)) {
-				handle_secondary_button_press(mousePosition);
 			}
 		}
 	};

@@ -16,26 +16,6 @@ namespace m2::sheet_editor {
 		sdl::TextureUniquePtr _texture;
 		VecI _textureDimensions;
 		int _ppm{};
-
-		struct ForegroundCompanionMode {
-			// Secondary mouse button sets the center
-			std::optional<m2::VecF> secondary_selection_position;
-
-			ForegroundCompanionMode();
-			// Disable copy, default move
-			ForegroundCompanionMode(const ForegroundCompanionMode& other) = delete;
-			ForegroundCompanionMode& operator=(const ForegroundCompanionMode& other) = delete;
-			ForegroundCompanionMode(ForegroundCompanionMode&& other) = default;
-			ForegroundCompanionMode& operator=(ForegroundCompanionMode&& other) = default;
-			~ForegroundCompanionMode();
-			void on_draw() const;
-
-			void add_rect();
-			std::vector<m2::RectI> current_rects;
-			void set_center();
-			std::optional<m2::VecF> current_center;
-			void reset();
-		};
 		struct BackgroundColliderMode {
 			BackgroundColliderMode();
 			// Disable copy, default move
@@ -66,7 +46,7 @@ namespace m2::sheet_editor {
 			std::optional<CircF> current_circ;  // wrt sprite center
 			void reset();
 		};
-		std::variant<std::monostate, ForegroundCompanionMode, BackgroundColliderMode, ForegroundColliderMode>
+		std::variant<std::monostate, BackgroundColliderMode, ForegroundColliderMode>
 		    mode;
 
 		static m2::expected<State> create(const std::filesystem::path& path);
@@ -87,7 +67,6 @@ namespace m2::sheet_editor {
 		// To be used by left hud
 
 		void deactivate_mode();
-		void activate_foreground_companion_mode();
 		void activate_background_collider_mode();
 		void activate_foreground_collider_mode();
 
@@ -97,14 +76,14 @@ namespace m2::sheet_editor {
 		void SetSpriteOrigin(const VecF& origin);
 		void ResetSpriteRectAndOrigin();
 		void AddForegroundCompanionRect(const RectI& rect);
-		void SetForegroundCompanionCenter(const VecF& center);
-		void RemoveForegroundCompanion();
+		void SetForegroundCompanionOrigin(const VecF& origin);
+		void ResetForegroundCompanion();
 		void AddRectangleBackgroundCollider(const RectF& rect);
 		void AddCircleBackgroundCollider(const VecF& center, float radius);
-		void RemoveBackgroundColliders();
+		void ResetBackgroundColliders();
 		void AddRectangleForegroundCollider(const RectF& rect);
 		void AddCircleForegroundCollider(const VecF& center, float radius);
-		void RemoveForegroundColliders();
+		void ResetForegroundColliders();
 
 		void Draw() const;
 

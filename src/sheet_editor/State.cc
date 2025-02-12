@@ -16,75 +16,6 @@ namespace {
 	constexpr SDL_Color CONFIRMED_SELECTION_COLOR = {0, 255, 0, 80};
 	constexpr SDL_Color CROSS_COLOR = {0, 127, 255, 255};
 	constexpr SDL_Color CONFIRMED_CROSS_COLOR = {0, 255, 0, 255};
-}  // namespace
-
-State::ForegroundCompanionMode::ForegroundCompanionMode() {
-	const auto& sprite = std::get<State>(M2_LEVEL.stateVariant).selected_sprite();
-	if (sprite.has_regular() && sprite.regular().foreground_companion_rects_size()) {
-		// Iterate over rects
-		for (const auto& rect : sprite.regular().foreground_companion_rects()) {
-			current_rects.emplace_back(rect);
-		}
-		// Set center
-		current_center = VecF{sprite.regular().foreground_companion_center_to_origin_vec_px()};
-	}
-	M2_LEVEL.EnablePrimarySelection(M2_GAME.Dimensions().Game());
-}
-State::ForegroundCompanionMode::~ForegroundCompanionMode() { M2_LEVEL.DisablePrimarySelection(); }
-void State::ForegroundCompanionMode::on_draw() const {
-	// Draw selection
-	if (const auto cellSelection = M2_LEVEL.PrimarySelection()->CellSelectionRectM()) {
-		Graphic::color_rect(*cellSelection, SELECTION_COLOR);
-	}
-	// Draw center selection
-	if (secondary_selection_position) {
-		Graphic::draw_cross(*secondary_selection_position, CROSS_COLOR);
-	}
-
-	for (const auto& rect : current_rects) {
-		Graphic::color_rect(RectF{rect}.shift({-0.5f, -0.5f}), CONFIRMED_SELECTION_COLOR);
-	}
-	if (current_center) {
-		auto sprite_center = std::get<State>(M2_LEVEL.stateVariant).selected_sprite_center();
-		Graphic::draw_cross(sprite_center + *current_center, CONFIRMED_CROSS_COLOR);
-	}
-}
-void State::ForegroundCompanionMode::add_rect() {
-	if (auto* selection = M2_LEVEL.PrimarySelection(); selection->IsComplete()) {
-		const auto intSelection = selection->IntegerSelectionRectM();
-		std::get<State>(M2_LEVEL.stateVariant).modify_selected_sprite([&](pb::Sprite& sprite) {
-			auto* new_rect = sprite.mutable_regular()->add_foreground_companion_rects();
-			new_rect->set_x(intSelection->x);
-			new_rect->set_y(intSelection->y);
-			new_rect->set_w(intSelection->w);
-			new_rect->set_h(intSelection->h);
-		});
-		current_rects.emplace_back(*intSelection);
-		selection->Reset();
-	}
-}
-void State::ForegroundCompanionMode::set_center() {
-	// Store center selection
-	if (secondary_selection_position) {
-		auto center_offset = *secondary_selection_position -
-		    std::get<State>(M2_LEVEL.stateVariant).selected_sprite_center();  // new offset from sprite center
-		std::get<State>(M2_LEVEL.stateVariant).modify_selected_sprite([&](pb::Sprite& sprite) {
-			sprite.mutable_regular()->mutable_foreground_companion_center_to_origin_vec_px()->set_x(center_offset.x);
-			sprite.mutable_regular()->mutable_foreground_companion_center_to_origin_vec_px()->set_y(center_offset.y);
-		});
-		current_center = center_offset;
-		secondary_selection_position = std::nullopt;
-	}
-}
-void State::ForegroundCompanionMode::reset() {
-	std::get<State>(M2_LEVEL.stateVariant).modify_selected_sprite([&](pb::Sprite& sprite) {
-		sprite.mutable_regular()->clear_foreground_companion_center_to_origin_vec_px();
-		sprite.mutable_regular()->clear_foreground_companion_rects();
-	});
-	current_rects.clear();
-	current_center = std::nullopt;
-	M2_LEVEL.PrimarySelection()->Reset();
-	secondary_selection_position = std::nullopt;
 }
 
 State::BackgroundColliderMode::BackgroundColliderMode() {
@@ -328,8 +259,6 @@ void m2::sheet_editor::State::Select(m2g::pb::SpriteType spriteType) {
 
 void m2::sheet_editor::State::deactivate_mode() { mode.emplace<std::monostate>(); }
 
-void m2::sheet_editor::State::activate_foreground_companion_mode() { mode.emplace<ForegroundCompanionMode>(); }
-
 void m2::sheet_editor::State::activate_background_collider_mode() { mode.emplace<BackgroundColliderMode>(); }
 
 void m2::sheet_editor::State::activate_foreground_collider_mode() { mode.emplace<ForegroundColliderMode>(); }
@@ -357,15 +286,36 @@ void State::ResetSpriteRectAndOrigin() {
 		sprite.mutable_regular()->clear_center_to_origin_vec_px();
 	});
 }
-void State::AddForegroundCompanionRect(const RectI& rect) {}
-void State::SetForegroundCompanionCenter(const VecF& center) {}
-void State::RemoveForegroundCompanion() {}
+void State::AddForegroundCompanionRect(const RectI& rect) {
+	modify_selected_sprite([&](pb::Sprite& sprite) {
+		auto* newRect = sprite.mutable_regular()->add_foreground_companion_rects();
+		newRect->set_x(rect.x);
+		newRect->set_y(rect.y);
+		newRect->set_w(rect.w);
+		newRect->set_h(rect.h);
+	});
+}
+void State::SetForegroundCompanionOrigin(const VecF& origin) {
+	const auto rect = RectI{selected_sprite().regular().rect()};
+	const auto rectCenter = RectF{rect}.shift({-0.5f, -0.5f}).center();
+	const auto centerToOrigin = origin - rectCenter;
+	modify_selected_sprite([&](pb::Sprite& sprite) {
+		sprite.mutable_regular()->mutable_foreground_companion_center_to_origin_vec_px()->set_x(centerToOrigin.x);
+		sprite.mutable_regular()->mutable_foreground_companion_center_to_origin_vec_px()->set_y(centerToOrigin.y);
+	});
+}
+void State::ResetForegroundCompanion() {
+	modify_selected_sprite([&](pb::Sprite& sprite) {
+		sprite.mutable_regular()->clear_foreground_companion_rects();
+		sprite.mutable_regular()->clear_foreground_companion_center_to_origin_vec_px();
+	});
+}
 void State::AddRectangleBackgroundCollider(const RectF& rect) {}
 void State::AddCircleBackgroundCollider(const VecF& center, float radius) {}
-void State::RemoveBackgroundColliders() {}
+void State::ResetBackgroundColliders() {}
 void State::AddRectangleForegroundCollider(const RectF& rect) {}
 void State::AddCircleForegroundCollider(const VecF& center, float radius) {}
-void State::RemoveForegroundColliders() {}
+void State::ResetForegroundColliders() {}
 
 void State::Draw() const {
 	// Draw texture
@@ -395,6 +345,23 @@ void State::Draw() const {
 		const auto rectCenter = RectF{rect}.shift({-0.5f, -0.5f}).center();
 		const auto centerToOriginVecPx = VecF{sprite.regular().center_to_origin_vec_px()};
 		Graphic::draw_cross(rectCenter + centerToOriginVecPx, CONFIRMED_CROSS_COLOR);
+	} else if (M2_LEVEL.RightHud()->Name() == "ForegroundCompanionModeRightHud") {
+		// Draw rect selection
+		if (const auto cellSelection = M2_LEVEL.PrimarySelection()->CellSelectionRectM()) {
+			Graphic::color_rect(*cellSelection, SELECTION_COLOR);
+		}
+		// Draw origin selection
+		if (const auto centerSelection = M2_LEVEL.SecondarySelection()->HalfCellSelectionRectM()) {
+			Graphic::draw_cross(centerSelection->top_left(), CROSS_COLOR);
+		}
+		const auto& sprite = selected_sprite();
+		for (const auto& rect : sprite.regular().foreground_companion_rects()) {
+			Graphic::color_rect(RectF{rect}.shift({-0.5f, -0.5f}), CONFIRMED_SELECTION_COLOR);
+		}
+		const auto rect = RectI{sprite.regular().rect()};
+		const auto rectCenter = RectF{rect}.shift({-0.5f, -0.5f}).center();
+		const auto fCompCenterToOriginVecPx = VecF{sprite.regular().foreground_companion_center_to_origin_vec_px()};
+		Graphic::draw_cross(rectCenter + fCompCenterToOriginVecPx, CONFIRMED_CROSS_COLOR);
 	} else {
 		std::visit(overloaded{
 			[](const auto& mode) { mode.on_draw(); },
