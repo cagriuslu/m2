@@ -9,7 +9,7 @@
 #include "../ui/UiPanel.h"
 
 namespace m2::sheet_editor {
-	struct State {
+	class State {
 		pb::PersistentObject<pb::SpriteSheets> _persistentSpriteSheets;
 
 		m2g::pb::SpriteType _selected_sprite_type{};
@@ -17,63 +17,39 @@ namespace m2::sheet_editor {
 		VecI _textureDimensions;
 		int _ppm{};
 
-		struct BackgroundColliderMode {
-			BackgroundColliderMode();
-			// Disable copy, default move
-			BackgroundColliderMode(const BackgroundColliderMode& other) = delete;
-			BackgroundColliderMode& operator=(const BackgroundColliderMode& other) = delete;
-			BackgroundColliderMode(BackgroundColliderMode&& other) = default;
-			BackgroundColliderMode& operator=(BackgroundColliderMode&& other) = default;
-			~BackgroundColliderMode();
-			void on_draw() const;
-
-			void set();
-			std::optional<m2::RectF> current_rect;  // wrt sprite center
-			std::optional<CircF> current_circ;  // wrt sprite center
-			void reset();
-		};
-		std::variant<std::monostate, BackgroundColliderMode> mode;
-
+	public:
 		static expected<State> create(const std::filesystem::path& path);
 
 		// Accessors
 
 		const pb::SpriteSheets& SpriteSheets() const { return _persistentSpriteSheets.Cache(); }
-		const pb::Sprite& selected_sprite() const;
-		void modify_selected_sprite(const std::function<void(pb::Sprite&)>& modifier);  // This function re-reads the file every time it's called.
-		RectI selected_sprite_rect() const;  // This function re-reads the file every time it's called. // TODO is it necessary
-		VecF selected_sprite_center() const;  // This function re-reads the file every time it's called. // TODO is it necessary
-		VecF selected_sprite_origin() const;  // This function re-reads the file every time it's called. // TODO is it necessary
-
-		// To be used by the main menu
-
-		void Select(m2g::pb::SpriteType);
-
-		// To be used by left hud
-
-		void deactivate_mode();
-		void activate_background_collider_mode();
 
 		// Modifiers
 
+		void Select(m2g::pb::SpriteType);
 		void SetSpriteRect(const RectI& rect);
 		void SetSpriteOrigin(const VecF& origin);
 		void ResetSpriteRectAndOrigin();
 		void AddForegroundCompanionRect(const RectI& rect);
 		void SetForegroundCompanionOrigin(const VecF& origin);
 		void ResetForegroundCompanion();
-		void AddRectangleBackgroundCollider(const RectF& rect);
-		void AddCircleBackgroundCollider(const VecF& center, float radius);
-		void ResetBackgroundColliders();
-		void AddRectangleForegroundCollider(const RectF& rect);
-		void AddCircleForegroundCollider(const VecF& center, float radius);
-		void ResetForegroundColliders();
+		void AddRectangleFixture(bool foreground, const RectF& rect);
+		void AddCircleFixture(bool foreground, const VecF& center, float radius);
+		void AddChainFixturePoint(bool foreground, const VecF& point);
+		void ResetRectangleFixtures(bool foreground);
+		void ResetCircleFixtures(bool foreground);
+		void ResetChainFixturePoints(bool foreground);
 
 		void Draw() const;
 
 	   private:
 		explicit State(pb::PersistentObject<pb::SpriteSheets>&& persistentSpriteSheets)
 				: _persistentSpriteSheets(std::move(persistentSpriteSheets)) {}
+
+		const pb::Sprite& SelectedSprite() const;
+		void ModifySelectedSprite(const std::function<void(pb::Sprite&)>& modifier);
+		VecF SelectedSpriteCenter() const;
+		VecF SelectedSpriteOrigin() const;
 	};
 
 	void modify_sprite_in_sheet(

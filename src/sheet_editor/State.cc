@@ -2,109 +2,24 @@
 #include <m2/Log.h>
 #include <m2/Game.h>
 #include <m2/game/Selection.h>
-#include <m2/game/object/Line.h>
 #include <m2/protobuf/Detail.h>
+#include <m2/ui/widget/TextSelection.h>
 #include <SDL2/SDL_image.h>
+#include <m2/sheet_editor/Ui.h>
 
 using namespace m2;
 using namespace m2::sheet_editor;
 
 namespace {
 	constexpr SDL_Color SELECTION_COLOR = {0, 127, 255, 180};
-	constexpr SDL_Color YELLOW_SELECTION_COLOR = {127, 127, 0, 180};
-	constexpr SDL_Color RED_SELECTION_COLOR = {255, 0, 0, 180};
 	constexpr SDL_Color CONFIRMED_SELECTION_COLOR = {0, 255, 0, 80};
 	constexpr SDL_Color CROSS_COLOR = {0, 127, 255, 255};
 	constexpr SDL_Color CONFIRMED_CROSS_COLOR = {0, 255, 0, 255};
 }
 
-State::BackgroundColliderMode::BackgroundColliderMode() {
-	const auto& sprite = std::get<State>(M2_LEVEL.stateVariant).selected_sprite();
-	if (sprite.regular().has_background_collider()) {
-		auto collider_origin =
-		    VecF{sprite.regular().center_to_origin_vec_px()} + VecF{sprite.regular().background_collider().sprite_origin_to_collider_origin_vec_px()};
-		if (sprite.regular().background_collider().has_rect_dims_px()) {
-			current_rect = RectF::centered_around(collider_origin, VecF{sprite.regular().background_collider().rect_dims_px()});
-		} else if (sprite.regular().background_collider().has_circ_radius_px()) {
-			auto radius = sprite.regular().background_collider().circ_radius_px();
-			current_circ = CircF{collider_origin, radius};
-		}
-	}
-	M2_LEVEL.EnablePrimarySelection(M2_GAME.Dimensions().Game());
-	M2_LEVEL.EnableSecondarySelection(M2_GAME.Dimensions().Game());
-}
-State::BackgroundColliderMode::~BackgroundColliderMode() {
-	M2_LEVEL.DisablePrimarySelection();
-	M2_LEVEL.DisableSecondarySelection();
-}
-void State::BackgroundColliderMode::on_draw() const {
-	// Draw rect selection
-	if (const auto halfCellSelection = M2_LEVEL.PrimarySelection()->HalfCellSelectionRectM()) {
-		Graphic::color_rect(*halfCellSelection, YELLOW_SELECTION_COLOR);
-	}
-	// Draw circ selection
-	if (const auto halfCellSelection = M2_LEVEL.SecondarySelection()->HalfCellSelectionRectM()) {
-		Graphic::color_disk(halfCellSelection->top_left(), halfCellSelection->DiagonalLength(), RED_SELECTION_COLOR);
-	}
-
-	if (current_rect) {
-		auto sprite_center = std::get<State>(M2_LEVEL.stateVariant).selected_sprite_center();
-		auto rect = current_rect->shift(sprite_center);
-		Graphic::color_rect(rect, CONFIRMED_SELECTION_COLOR);
-		Graphic::draw_cross(rect.center(), CONFIRMED_CROSS_COLOR);
-	}
-	if (current_circ) {
-		// Find location of the circle
-		auto sprite_center = std::get<State>(M2_LEVEL.stateVariant).selected_sprite_center();
-		auto circ = CircF{current_circ->center + sprite_center, current_circ->r};
-		Graphic::color_disk(circ.center, circ.r, CONFIRMED_SELECTION_COLOR);
-		Graphic::draw_cross(circ.center, CONFIRMED_CROSS_COLOR);
-	}
-}
-void State::BackgroundColliderMode::set() {
-	if (M2_LEVEL.PrimarySelection()->IsComplete()) {
-		const auto halfCellSelection = M2_LEVEL.PrimarySelection()->HalfCellSelectionRectM();
-		auto offset = halfCellSelection->center() -
-		    std::get<State>(M2_LEVEL.stateVariant).selected_sprite_origin();  // new offset from sprite origin
-		auto dims = VecF{halfCellSelection->w, halfCellSelection->h};  // new dims
-		std::get<State>(M2_LEVEL.stateVariant).modify_selected_sprite([&](pb::Sprite& sprite) {
-			sprite.mutable_regular()->mutable_background_collider()->mutable_sprite_origin_to_collider_origin_vec_px()->set_x(offset.x);
-			sprite.mutable_regular()->mutable_background_collider()->mutable_sprite_origin_to_collider_origin_vec_px()->set_y(offset.y);
-			sprite.mutable_regular()->mutable_background_collider()->mutable_rect_dims_px()->set_w(dims.x);
-			sprite.mutable_regular()->mutable_background_collider()->mutable_rect_dims_px()->set_h(dims.y);
-		});
-		current_rect = halfCellSelection->shift_origin(std::get<State>(M2_LEVEL.stateVariant).selected_sprite_center());
-		current_circ = std::nullopt;
-		M2_LEVEL.PrimarySelection()->Reset();
-	} else if (M2_LEVEL.SecondarySelection()->IsComplete()) {
-		const auto halfCellSelection = M2_LEVEL.SecondarySelection()->HalfCellSelectionRectM();
-		auto center = halfCellSelection->top_left();
-		auto radius = halfCellSelection->DiagonalLength();
-		auto offset = center -
-		    std::get<State>(M2_LEVEL.stateVariant).selected_sprite_origin();  // new offset from sprite origin
-		std::get<State>(M2_LEVEL.stateVariant).modify_selected_sprite([&](pb::Sprite& sprite) {
-			sprite.mutable_regular()->mutable_background_collider()->mutable_sprite_origin_to_collider_origin_vec_px()->set_x(offset.x);
-			sprite.mutable_regular()->mutable_background_collider()->mutable_sprite_origin_to_collider_origin_vec_px()->set_y(offset.y);
-			sprite.mutable_regular()->mutable_background_collider()->set_circ_radius_px(radius);
-		});
-		current_rect = std::nullopt;
-		current_circ = CircF{center - std::get<State>(M2_LEVEL.stateVariant).selected_sprite_center(), radius};
-		M2_LEVEL.SecondarySelection()->Reset();
-	}
-}
-void State::BackgroundColliderMode::reset() {
-	std::get<sheet_editor::State>(M2_LEVEL.stateVariant).modify_selected_sprite([&](pb::Sprite& sprite) {
-		sprite.mutable_regular()->clear_background_collider();
-	});
-	current_rect = std::nullopt;
-	current_circ = std::nullopt;
-	M2_LEVEL.PrimarySelection()->Reset();
-	M2_LEVEL.SecondarySelection()->Reset();
-}
-
-expected<m2::sheet_editor::State> m2::sheet_editor::State::create(const std::filesystem::path& path) {
+expected<State> State::create(const std::filesystem::path& path) {
 	// If path exists,
-	if (std::filesystem::exists(path)) {
+	if (exists(path)) {
 		// Check if the file is a valid pb::SpriteSheets
 		if (auto msg = pb::json_file_to_message<pb::SpriteSheets>(path); !msg) {
 			return make_unexpected(msg.error());
@@ -117,43 +32,14 @@ expected<m2::sheet_editor::State> m2::sheet_editor::State::create(const std::fil
 	}
 }
 
-const pb::Sprite& m2::sheet_editor::State::selected_sprite() const {
-	const auto& sheets = SpriteSheets();
-	for (const auto& sheet : sheets.sheets()) {
-		for (const auto& sprite : sheet.sprites()) {
-			if (sprite.type() == _selected_sprite_type) {
-				return sprite;
-			}
-		}
-	}
-	throw M2_ERROR("Sprite sheet does not contain selected sprite");
-}
-
-void m2::sheet_editor::State::modify_selected_sprite(const std::function<void(pb::Sprite&)>& modifier) {
-	ModifySpriteInSheets(_persistentSpriteSheets, _selected_sprite_type, modifier);
-}
-
-RectI m2::sheet_editor::State::selected_sprite_rect() const { return RectI{selected_sprite().regular().rect()}; }
-
-VecF m2::sheet_editor::State::selected_sprite_center() const {
-	// Rect needs to be shifted to fit into cells
-	auto rect = RectF{selected_sprite_rect()}.shift({-0.5f, -0.5f});
-	return rect.center();
-}
-
-VecF m2::sheet_editor::State::selected_sprite_origin() const {
-	return selected_sprite_center() + VecF{selected_sprite().regular().center_to_origin_vec_px()};
-}
-
-void m2::sheet_editor::State::Select(m2g::pb::SpriteType spriteType) {
-	const auto& spriteSheets = this->SpriteSheets();
-	for (const auto& spriteSheet : spriteSheets.sheets()) {
+void State::Select(const m2g::pb::SpriteType spriteType) {
+	for (const auto& spriteSheets = this->SpriteSheets(); const auto& spriteSheet : spriteSheets.sheets()) {
 		for (const auto& sprite : spriteSheet.sprites()) {
 			if (sprite.type() == spriteType) {
 				_selected_sprite_type = spriteType;
 				// Load image
 				const auto& resourcePath = spriteSheet.resource();
-				sdl::SurfaceUniquePtr surface(IMG_Load(resourcePath.c_str()));
+				const sdl::SurfaceUniquePtr surface(IMG_Load(resourcePath.c_str()));
 				if (!surface) {
 					throw M2_ERROR("Unable to load image: " + resourcePath + ", " + IMG_GetError());
 				}
@@ -165,7 +51,7 @@ void m2::sheet_editor::State::Select(m2g::pb::SpriteType spriteType) {
 				_ppm = spriteSheet.ppm();
 
 				// Move God to center if rect is already selected
-				M2_PLAYER.position = selected_sprite_center();
+				M2_PLAYER.position = SelectedSpriteCenter();
 
 				return;
 			}
@@ -173,12 +59,8 @@ void m2::sheet_editor::State::Select(m2g::pb::SpriteType spriteType) {
 	}
 }
 
-void m2::sheet_editor::State::deactivate_mode() { mode.emplace<std::monostate>(); }
-
-void m2::sheet_editor::State::activate_background_collider_mode() { mode.emplace<BackgroundColliderMode>(); }
-
 void State::SetSpriteRect(const RectI& rect) {
-	modify_selected_sprite([&](pb::Sprite& sprite) {
+	ModifySelectedSprite([&](pb::Sprite& sprite) {
 		sprite.mutable_regular()->mutable_rect()->set_x(rect.x);
 		sprite.mutable_regular()->mutable_rect()->set_y(rect.y);
 		sprite.mutable_regular()->mutable_rect()->set_w(rect.w);
@@ -186,22 +68,22 @@ void State::SetSpriteRect(const RectI& rect) {
 	});
 }
 void State::SetSpriteOrigin(const VecF& origin) {
-	const auto rect = RectI{selected_sprite().regular().rect()};
+	const auto rect = RectI{SelectedSprite().regular().rect()};
 	const auto rectCenter = RectF{rect}.shift({-0.5f, -0.5f}).center();
 	const auto centerToOrigin = origin - rectCenter;
-	modify_selected_sprite([&](pb::Sprite& sprite) {
+	ModifySelectedSprite([&](pb::Sprite& sprite) {
 		sprite.mutable_regular()->mutable_center_to_origin_vec_px()->set_x(centerToOrigin.x);
 		sprite.mutable_regular()->mutable_center_to_origin_vec_px()->set_y(centerToOrigin.y);
 	});
 }
 void State::ResetSpriteRectAndOrigin() {
-	modify_selected_sprite([&](pb::Sprite& sprite) {
+	ModifySelectedSprite([&](pb::Sprite& sprite) {
 		sprite.mutable_regular()->clear_rect();
 		sprite.mutable_regular()->clear_center_to_origin_vec_px();
 	});
 }
 void State::AddForegroundCompanionRect(const RectI& rect) {
-	modify_selected_sprite([&](pb::Sprite& sprite) {
+	ModifySelectedSprite([&](pb::Sprite& sprite) {
 		auto* newRect = sprite.mutable_regular()->add_foreground_companion_rects();
 		newRect->set_x(rect.x);
 		newRect->set_y(rect.y);
@@ -210,26 +92,82 @@ void State::AddForegroundCompanionRect(const RectI& rect) {
 	});
 }
 void State::SetForegroundCompanionOrigin(const VecF& origin) {
-	const auto rect = RectI{selected_sprite().regular().rect()};
+	const auto rect = RectI{SelectedSprite().regular().rect()};
 	const auto rectCenter = RectF{rect}.shift({-0.5f, -0.5f}).center();
 	const auto centerToOrigin = origin - rectCenter;
-	modify_selected_sprite([&](pb::Sprite& sprite) {
+	ModifySelectedSprite([&](pb::Sprite& sprite) {
 		sprite.mutable_regular()->mutable_foreground_companion_center_to_origin_vec_px()->set_x(centerToOrigin.x);
 		sprite.mutable_regular()->mutable_foreground_companion_center_to_origin_vec_px()->set_y(centerToOrigin.y);
 	});
 }
 void State::ResetForegroundCompanion() {
-	modify_selected_sprite([&](pb::Sprite& sprite) {
+	ModifySelectedSprite([&](pb::Sprite& sprite) {
 		sprite.mutable_regular()->clear_foreground_companion_rects();
 		sprite.mutable_regular()->clear_foreground_companion_center_to_origin_vec_px();
 	});
 }
-void State::AddRectangleBackgroundCollider(const RectF& rect) {}
-void State::AddCircleBackgroundCollider(const VecF& center, float radius) {}
-void State::ResetBackgroundColliders() {}
-void State::AddRectangleForegroundCollider(const RectF& rect) {}
-void State::AddCircleForegroundCollider(const VecF& center, float radius) {}
-void State::ResetForegroundColliders() {}
+void State::AddRectangleFixture(const bool foreground, const RectF& rect) {
+	const auto rectCenter = rect.center();
+	const auto spriteOrigin = SelectedSpriteOrigin();
+	const auto spriteOriginToRectCenter = rectCenter - spriteOrigin;
+	const auto dimensions = VecF{rect.w, rect.h};
+	ModifySelectedSprite([&](pb::Sprite& sprite) {
+		auto* fixtures = foreground ? sprite.mutable_regular()->mutable_foreground_fixtures() : sprite.mutable_regular()->mutable_background_fixtures();
+		auto* rectangle = fixtures->add_rectangle_fixtures();
+		rectangle->mutable_sprite_origin_to_rectangle_center_vec_px()->set_x(spriteOriginToRectCenter.x);
+		rectangle->mutable_sprite_origin_to_rectangle_center_vec_px()->set_y(spriteOriginToRectCenter.y);
+		rectangle->mutable_rectangle_dimensions_px()->set_w(dimensions.x);
+		rectangle->mutable_rectangle_dimensions_px()->set_h(dimensions.y);
+	});
+}
+void State::AddCircleFixture(const bool foreground, const VecF& center, const float radius) {
+	const auto spriteOrigin = SelectedSpriteOrigin();
+	const auto spriteOriginToRectCenter = center - spriteOrigin;
+	ModifySelectedSprite([&](pb::Sprite& sprite) {
+		auto* fixtures = foreground ? sprite.mutable_regular()->mutable_foreground_fixtures() : sprite.mutable_regular()->mutable_background_fixtures();
+		auto* circle = fixtures->add_circle_fixtures();
+		circle->mutable_sprite_origin_to_circle_center_vec_px()->set_x(spriteOriginToRectCenter.x);
+		circle->mutable_sprite_origin_to_circle_center_vec_px()->set_y(spriteOriginToRectCenter.y);
+		circle->set_circle_radius_px(radius);
+	});
+}
+void State::AddChainFixturePoint(const bool foreground, const VecF& point) {
+	const auto spriteOrigin = SelectedSpriteOrigin();
+	const auto spriteOriginToPoint = point - spriteOrigin;
+	ModifySelectedSprite([&](pb::Sprite& sprite) {
+		auto* fixtures = foreground ? sprite.mutable_regular()->mutable_foreground_fixtures() : sprite.mutable_regular()->mutable_background_fixtures();
+		auto* point_ = fixtures->mutable_chain_fixture()->add_points();
+		point_->set_x(spriteOriginToPoint.x);
+		point_->set_y(spriteOriginToPoint.y);
+	});
+}
+void State::ResetRectangleFixtures(const bool foreground) {
+	ModifySelectedSprite([&](pb::Sprite& sprite) {
+		if (foreground) {
+			sprite.mutable_regular()->mutable_foreground_fixtures()->clear_rectangle_fixtures();
+		} else {
+			sprite.mutable_regular()->mutable_background_fixtures()->clear_rectangle_fixtures();
+		}
+	});
+}
+void State::ResetCircleFixtures(const bool foreground) {
+	ModifySelectedSprite([&](pb::Sprite& sprite) {
+		if (foreground) {
+			sprite.mutable_regular()->mutable_foreground_fixtures()->clear_circle_fixtures();
+		} else {
+			sprite.mutable_regular()->mutable_background_fixtures()->clear_circle_fixtures();
+		}
+	});
+}
+void State::ResetChainFixturePoints(const bool foreground) {
+	ModifySelectedSprite([&](pb::Sprite& sprite) {
+		if (foreground) {
+			sprite.mutable_regular()->mutable_foreground_fixtures()->clear_chain_fixture();
+		} else {
+			sprite.mutable_regular()->mutable_background_fixtures()->clear_chain_fixture();
+		}
+	});
+}
 
 void State::Draw() const {
 	// Draw texture
@@ -242,16 +180,18 @@ void State::Draw() const {
 		iround(textureBottomRightOutputPosition.y - textureTopLeftOutputPosition.y)};
 	SDL_RenderCopy(M2_GAME.renderer, _texture.get(), nullptr, &dstRect);
 
+	const auto& sprite = SelectedSprite();
+	auto spriteOrigin = SelectedSpriteOrigin();
+
 	if (M2_LEVEL.RightHud()->Name() == "RectModeRightHud") {
-		// Draw rect selection
+		// Draw selection
 		if (const auto cellSelection = M2_LEVEL.PrimarySelection()->CellSelectionRectM()) {
 			Graphic::color_rect(*cellSelection, SELECTION_COLOR);
 		}
-		// Draw origin selection
-		if (const auto centerSelection = M2_LEVEL.SecondarySelection()->HalfCellSelectionRectM()) {
-			Graphic::draw_cross(centerSelection->top_left(), CROSS_COLOR);
+		if (const auto centerSelection = M2_LEVEL.SecondarySelection()->HalfCellSelectionsM()) {
+			Graphic::draw_cross(centerSelection->first, CROSS_COLOR);
 		}
-		const auto& sprite = selected_sprite();
+		// Draw already existing
 		const auto rect = RectI{sprite.regular().rect()};
 		if (rect) {
 			Graphic::color_rect(RectF{rect}.shift({-0.5f, -0.5f}), CONFIRMED_SELECTION_COLOR);
@@ -260,15 +200,14 @@ void State::Draw() const {
 		const auto centerToOriginVecPx = VecF{sprite.regular().center_to_origin_vec_px()};
 		Graphic::draw_cross(rectCenter + centerToOriginVecPx, CONFIRMED_CROSS_COLOR);
 	} else if (M2_LEVEL.RightHud()->Name() == "ForegroundCompanionModeRightHud") {
-		// Draw rect selection
+		// Draw selection
 		if (const auto cellSelection = M2_LEVEL.PrimarySelection()->CellSelectionRectM()) {
 			Graphic::color_rect(*cellSelection, SELECTION_COLOR);
 		}
-		// Draw origin selection
-		if (const auto centerSelection = M2_LEVEL.SecondarySelection()->HalfCellSelectionRectM()) {
-			Graphic::draw_cross(centerSelection->top_left(), CROSS_COLOR);
+		if (const auto centerSelection = M2_LEVEL.SecondarySelection()->HalfCellSelectionsM()) {
+			Graphic::draw_cross(centerSelection->first, CROSS_COLOR);
 		}
-		const auto& sprite = selected_sprite();
+		// Draw already existing
 		for (const auto& rect : sprite.regular().foreground_companion_rects()) {
 			Graphic::color_rect(RectF{rect}.shift({-0.5f, -0.5f}), CONFIRMED_SELECTION_COLOR);
 		}
@@ -276,11 +215,52 @@ void State::Draw() const {
 		const auto rectCenter = RectF{rect}.shift({-0.5f, -0.5f}).center();
 		const auto fCompCenterToOriginVecPx = VecF{sprite.regular().foreground_companion_center_to_origin_vec_px()};
 		Graphic::draw_cross(rectCenter + fCompCenterToOriginVecPx, CONFIRMED_CROSS_COLOR);
-	} else {
-		std::visit(overloaded{
-			[](const auto& mode) { mode.on_draw(); },
-			[](MAYBE const std::monostate&) {}},
-			mode);
+	} else if (M2_LEVEL.RightHud()->Name() == "FixtureModeRightHud") {
+		const auto foreground = std::get<int>(M2_LEVEL.RightHud()->find_first_widget_by_name<widget::TextSelection>("LayerSelection")->selections()[0]) == FIXTURE_LAYER_SELECTION_FOREGROUND_OPTION;
+		const auto& fixtures = foreground ? sprite.regular().foreground_fixtures() : sprite.regular().background_fixtures();
+		// Draw selection
+		if (const auto shape = std::get<int>(M2_LEVEL.RightHud()->find_first_widget_by_name<widget::TextSelection>("ShapeSelection")->selections()[0]);
+				shape == FIXTURE_SHAPE_SELECTION_RECTANGLE) {
+			if (const auto halfCellSelection = M2_LEVEL.PrimarySelection()->HalfCellSelectionRectM()) {
+				Graphic::color_rect(*halfCellSelection, SELECTION_COLOR);
+			}
+		} else if (shape == FIXTURE_SHAPE_SELECTION_CIRCLE) {
+			if (const auto halfCellSelection = M2_LEVEL.PrimarySelection()->HalfCellSelectionsM()) {
+				const auto center = halfCellSelection->first;
+				const auto radius = center.distance(halfCellSelection->second);
+				Graphic::color_disk(center, radius, SELECTION_COLOR);
+			}
+		} else if (shape == FIXTURE_SHAPE_SELECTION_CHAIN_POINT) {
+			if (const auto halfCellSelection = M2_LEVEL.PrimarySelection()->HalfCellSelectionsM()) {
+				const auto point = halfCellSelection->first;
+				// Find the last chain point
+				if (fixtures.chain_fixture().points_size()) {
+					const auto& lastPoint = fixtures.chain_fixture().points(fixtures.chain_fixture().points_size() - 1);
+					Graphic::draw_line(spriteOrigin + VecF{lastPoint}, point, CROSS_COLOR);
+				} else {
+					// Draw only first point
+					Graphic::draw_cross(point, CROSS_COLOR);
+				}
+			}
+		}
+		// Draw already existing
+		for (const auto& rect : fixtures.rectangle_fixtures()) {
+			const auto rectF = RectF::centered_around(spriteOrigin + VecF{rect.sprite_origin_to_rectangle_center_vec_px()},
+					rect.rectangle_dimensions_px().w(), rect.rectangle_dimensions_px().h());
+			Graphic::color_rect(rectF, CONFIRMED_SELECTION_COLOR);
+		}
+		for (const auto& circ : fixtures.circle_fixtures()) {
+			const auto center = spriteOrigin + VecF{circ.sprite_origin_to_circle_center_vec_px()};
+			Graphic::color_disk(center, circ.circle_radius_px(), CONFIRMED_SELECTION_COLOR);
+		}
+		if (fixtures.chain_fixture().points().size() == 1) {
+			Graphic::draw_cross(spriteOrigin + VecF{fixtures.chain_fixture().points(0)}, CONFIRMED_CROSS_COLOR);
+		} else if (1 < fixtures.chain_fixture().points().size()) {
+			auto end = fixtures.chain_fixture().points().cend() - 1;
+			for (auto it = fixtures.chain_fixture().points().cbegin(); it != end; ++it) {
+				Graphic::draw_line(spriteOrigin + VecF{*it}, spriteOrigin + VecF{*(it+1)}, CONFIRMED_CROSS_COLOR);
+			}
+		}
 	}
 
 	// Draw pixel grid lines
@@ -294,17 +274,42 @@ void State::Draw() const {
 	Graphic::draw_horizontal_line(F(_textureDimensions.y) - 0.5f, {255, 0, 0, 255});
 }
 
-void m2::sheet_editor::modify_sprite_in_sheet(
-    const std::filesystem::path& path, m2g::pb::SpriteType type, const std::function<void(pb::Sprite&)>& modifier) {
+const pb::Sprite& State::SelectedSprite() const {
+	for (const auto& sheets = SpriteSheets(); const auto& sheet : sheets.sheets()) {
+		for (const auto& sprite : sheet.sprites()) {
+			if (sprite.type() == _selected_sprite_type) {
+				return sprite;
+			}
+		}
+	}
+	throw M2_ERROR("Sprite sheet does not contain selected sprite");
+}
+
+void State::ModifySelectedSprite(const std::function<void(pb::Sprite&)>& modifier) {
+	ModifySpriteInSheets(_persistentSpriteSheets, _selected_sprite_type, modifier);
+}
+
+VecF State::SelectedSpriteCenter() const {
+	// Rect needs to be shifted to fit into cells
+	const auto rect = RectI{SelectedSprite().regular().rect()};
+	const auto rectF = RectF{rect}.shift({-0.5f, -0.5f});
+	return rectF.center();
+}
+
+VecF State::SelectedSpriteOrigin() const {
+	return SelectedSpriteCenter() + VecF{SelectedSprite().regular().center_to_origin_vec_px()};
+}
+
+void sheet_editor::modify_sprite_in_sheet(
+    const std::filesystem::path& path, const m2g::pb::SpriteType type, const std::function<void(pb::Sprite&)>& modifier) {
 	// If path exists,
-	if (std::filesystem::exists(path)) {
+	if (exists(path)) {
 		// Check if the file is a valid pb::SpriteSheets
 		if (auto spriteSheets = pb::json_file_to_message<pb::SpriteSheets>(path); spriteSheets) {
 			for (int i = 0; i < spriteSheets->sheets_size(); ++i) {
 				auto* mutable_sheet = spriteSheets->mutable_sheets(i);
 				for (int j = 0; j < mutable_sheet->sprites_size(); ++j) {
-					auto* mutable_sprite = mutable_sheet->mutable_sprites(j);
-					if (mutable_sprite->type() == type) {
+					if (auto* mutable_sprite = mutable_sheet->mutable_sprites(j); mutable_sprite->type() == type) {
 						modifier(*mutable_sprite);
 						message_to_json_file(*spriteSheets, path);
 						return;
@@ -312,12 +317,10 @@ void m2::sheet_editor::modify_sprite_in_sheet(
 				}
 			}
 			throw M2_ERROR("Sprite not found in SpriteSheets");
-		} else {
-			throw M2_ERROR("File is not a valid m2::pb::SpriteSheets: " + path.string());
 		}
-	} else {
-		throw M2_ERROR("Can't modify nonexistent file");
+		throw M2_ERROR("File is not a valid m2::pb::SpriteSheets: " + path.string());
 	}
+	throw M2_ERROR("Can't modify nonexistent file");
 }
 void sheet_editor::ModifySpriteInSheets(pb::PersistentObject<pb::SpriteSheets>& persistentObject,
 		const m2g::pb::SpriteType spriteType, const std::function<void(pb::Sprite&)>& modifier) {

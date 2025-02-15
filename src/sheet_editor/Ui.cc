@@ -6,9 +6,6 @@
 
 using namespace m2;
 
-constexpr int COLLIDER_SELECTION_BACKGROUND_OPTION = 0;
-constexpr int COLLIDER_SELECTION_FOREGROUND_OPTION = 1;
-
 namespace {
 	const UiPanelBlueprint rectModeRightHud = {
 		.name = "RectModeRightHud",
@@ -50,8 +47,8 @@ namespace {
 					.text = "Set Center",
 					.onAction = [](MAYBE const widget::Text& self) -> UiAction {
 						if (auto* selection = M2_LEVEL.SecondarySelection(); selection->IsComplete()) {
-							const auto originSelection = selection->HalfCellSelectionRectM();
-							std::get<sheet_editor::State>(M2_LEVEL.stateVariant).SetSpriteOrigin(originSelection->top_left());
+							const auto originSelection = selection->HalfCellSelectionsM();
+							std::get<sheet_editor::State>(M2_LEVEL.stateVariant).SetSpriteOrigin(originSelection->first);
 							selection->Reset();
 						}
 						return MakeContinueAction();
@@ -113,8 +110,8 @@ namespace {
 					.text = "Set Center",
 					.onAction = [](MAYBE const widget::Text& self) -> UiAction {
 						if (auto* selection = M2_LEVEL.SecondarySelection(); selection->IsComplete()) {
-							const auto originSelection = selection->HalfCellSelectionRectM();
-							std::get<sheet_editor::State>(M2_LEVEL.stateVariant).SetForegroundCompanionOrigin(originSelection->top_left());
+							const auto originSelection = selection->HalfCellSelectionsM();
+							std::get<sheet_editor::State>(M2_LEVEL.stateVariant).SetForegroundCompanionOrigin(originSelection->first);
 							selection->Reset();
 						}
 						return MakeContinueAction();
@@ -136,53 +133,89 @@ namespace {
 		}
 	};
 
-	UiPanelBlueprint colliderModeRightHud = {
-		.name = "BackgroundColliderModeRightHud",
-			.w = 19, .h = 72,
-			.background_color = {0, 0, 0, 255},
-			.widgets = {
+	UiPanelBlueprint fixtureModeRightHud = {
+		.name = "FixtureModeRightHud",
+		.w = 19, .h = 72,
+		.background_color = {0, 0, 0, 255},
+		.onCreate = [](UiPanel&) {
+			M2_LEVEL.EnablePrimarySelection(M2_GAME.Dimensions().Game());
+		},
+		.onDestroy = [] {
+			M2_LEVEL.DisablePrimarySelection();
+		},
+		.widgets = {
 			UiWidgetBlueprint{
 				.x = 1, .y = 2, .w = 17, .h = 3,
 				.border_width = 0,
 				.variant = widget::TextBlueprint{
-					.text = "Collider"
+					.text = "Fixture"
 				}
 			},
 			UiWidgetBlueprint{
+				.name = "LayerSelection",
 				.x = 1, .y = 6, .w = 17, .h = 3,
 				.variant = widget::TextSelectionBlueprint{
 					.options = {
-						{.text = "Background", .return_value = COLLIDER_SELECTION_BACKGROUND_OPTION},
-						{.text = "Foreground", .return_value = COLLIDER_SELECTION_FOREGROUND_OPTION}}
+						{.text = "Background", .return_value = FIXTURE_LAYER_SELECTION_BACKGROUND_OPTION},
+						{.text = "Foreground", .return_value = FIXTURE_LAYER_SELECTION_FOREGROUND_OPTION}}
 				}
 			},
 			UiWidgetBlueprint{
-				.x = 1, .y = 10, .w = 17, .h = 4,
+				.name = "ShapeSelection",
+				.x = 1, .y = 10, .w = 17, .h = 3,
+				.variant = widget::TextSelectionBlueprint{
+					.options = {
+						{.text = "Rectangle", .return_value = FIXTURE_SHAPE_SELECTION_RECTANGLE},
+						{.text = "Circle", .return_value = FIXTURE_SHAPE_SELECTION_CIRCLE},
+						{.text = "Chain Point", .return_value = FIXTURE_SHAPE_SELECTION_CHAIN_POINT}}
+				}
+			},
+			UiWidgetBlueprint{
+				.x = 1, .y = 14, .w = 17, .h = 4,
 				.variant = widget::TextBlueprint{
-					.text = "Set",
-					.onAction = [](MAYBE const widget::Text& self) -> UiAction {
-						std::visit(m2::overloaded {
-								[](sheet_editor::State::BackgroundColliderMode& mode) { mode.set(); },
-								[](const auto&) {},
-						}, std::get<sheet_editor::State>(M2_LEVEL.stateVariant).mode);
+					.text = "Add",
+					.onAction = [](const widget::Text& self) -> UiAction {
+						if (auto* selection = M2_LEVEL.PrimarySelection(); selection->IsComplete()) {
+							const auto foreground = std::get<int>(self.Parent().find_first_widget_by_name<widget::TextSelection>("LayerSelection")->selections()[0]) == FIXTURE_LAYER_SELECTION_FOREGROUND_OPTION;
+							if (const auto shape = std::get<int>(self.Parent().find_first_widget_by_name<widget::TextSelection>("ShapeSelection")->selections()[0]);
+									shape == FIXTURE_SHAPE_SELECTION_RECTANGLE) {
+								const auto halfCellSelection = M2_LEVEL.PrimarySelection()->HalfCellSelectionRectM();
+								std::get<sheet_editor::State>(M2_LEVEL.stateVariant).AddRectangleFixture(foreground, *halfCellSelection);
+							} else if (shape == FIXTURE_SHAPE_SELECTION_CIRCLE) {
+								const auto halfCellSelection = M2_LEVEL.PrimarySelection()->HalfCellSelectionsM();
+								const auto center = halfCellSelection->first;
+								const auto radius = center.distance(halfCellSelection->second);
+								std::get<sheet_editor::State>(M2_LEVEL.stateVariant).AddCircleFixture(foreground, center, radius);
+							} else if (shape == FIXTURE_SHAPE_SELECTION_CHAIN_POINT) {
+								const auto halfCellSelection = M2_LEVEL.PrimarySelection()->HalfCellSelectionsM();
+								std::get<sheet_editor::State>(M2_LEVEL.stateVariant).AddChainFixturePoint(foreground, halfCellSelection->first);
+							}
+							selection->Reset();
+						}
 						return MakeContinueAction();
 					}
 				}
 			},
 			UiWidgetBlueprint{
-				.x = 1, .y = 15, .w = 17, .h = 4,
+				.x = 1, .y = 19, .w = 17, .h = 4,
 				.variant = widget::TextBlueprint{
 					.text = "Reset",
 					.onAction = [](MAYBE const widget::Text& self) -> UiAction {
-						std::visit(m2::overloaded {
-							[](sheet_editor::State::BackgroundColliderMode& mode) { mode.reset(); },
-							[](const auto&) {},
-						}, std::get<sheet_editor::State>(M2_LEVEL.stateVariant).mode);
+						const auto foreground = std::get<int>(self.Parent().find_first_widget_by_name<widget::TextSelection>("LayerSelection")->selections()[0]) == FIXTURE_LAYER_SELECTION_FOREGROUND_OPTION;
+						if (const auto shape = std::get<int>(self.Parent().find_first_widget_by_name<widget::TextSelection>("ShapeSelection")->selections()[0]);
+								shape == FIXTURE_SHAPE_SELECTION_RECTANGLE) {
+							std::get<sheet_editor::State>(M2_LEVEL.stateVariant).ResetRectangleFixtures(foreground);
+						} else if (shape == FIXTURE_SHAPE_SELECTION_CIRCLE) {
+							std::get<sheet_editor::State>(M2_LEVEL.stateVariant).ResetCircleFixtures(foreground);
+						} else if (shape == FIXTURE_SHAPE_SELECTION_CHAIN_POINT) {
+							std::get<sheet_editor::State>(M2_LEVEL.stateVariant).ResetChainFixturePoints(foreground);
+						}
+						M2_LEVEL.PrimarySelection()->Reset();
 						return MakeContinueAction();
 					}
 				}
 			}
-			}
+		}
 	};
 }
 
@@ -223,10 +256,10 @@ const UiPanelBlueprint m2::sheet_editor_left_hud = {
 		UiWidgetBlueprint{
 			.x = 1, .y = 20, .w = 17, .h = 8,
 			.variant = widget::TextBlueprint{
-				.text = "Collider",
+				.text = "Fixture",
 				.wrapped_font_size_in_units = 2.4f,
 				.onAction = [](MAYBE const widget::Text& self) -> UiAction {
-					M2_LEVEL.ReplaceRightHud(&colliderModeRightHud, M2_GAME.Dimensions().RightHud());
+					M2_LEVEL.ReplaceRightHud(&fixtureModeRightHud, M2_GAME.Dimensions().RightHud());
 					return MakeContinueAction();
 				}
 			}
@@ -249,7 +282,7 @@ const UiPanelBlueprint m2::sheet_editor_left_hud = {
 				.text = "0.0:0.0",
 				.onUpdate = [](MAYBE widget::Text& self) {
 					const auto mouse_position = M2_GAME.MousePositionWorldM().hround();
-					self.set_text(m2::ToString(mouse_position.x, 1) + ':' + m2::ToString(mouse_position.y, 1));
+					self.set_text(ToString(mouse_position.x, 1) + ':' + ToString(mouse_position.y, 1));
 					return MakeContinueAction();
 				}
 			}
@@ -290,7 +323,7 @@ const UiPanelBlueprint m2::sheet_editor_main_menu = {
 					});
 					self.set_options(std::move(options));
 				},
-				.onAction = [](widget::TextSelection& self) {
+				.onAction = [](const widget::TextSelection& self) {
 					if (const auto selections = self.selections(); not selections.empty()) {
 						const auto selectedSprite = static_cast<m2g::pb::SpriteType>(std::get<int>(selections[0]));
 						self.Parent().find_first_widget_by_name<widget::Image>("SpriteDisplay")->SetSpriteType(selectedSprite);
@@ -315,11 +348,7 @@ const UiPanelBlueprint m2::sheet_editor_main_menu = {
 				.onAction = [](MAYBE const widget::Text& self) -> UiAction {
 					if (const auto selections = self.Parent().find_first_widget_by_name<widget::TextSelection>("SpriteTypeSelection")->selections();
 							not selections.empty()) {
-						if (not std::holds_alternative<std::monostate>(std::get<sheet_editor::State>(M2_LEVEL.stateVariant).mode)) {
-							std::get<sheet_editor::State>(M2_LEVEL.stateVariant).deactivate_mode();
-							M2_LEVEL.ReplaceRightHud(&sheet_editor_right_hud, M2_GAME.Dimensions().RightHud());
-						}
-
+						M2_LEVEL.ReplaceRightHud(&sheet_editor_right_hud, M2_GAME.Dimensions().RightHud());
 						const auto selectedSprite = static_cast<m2g::pb::SpriteType>(std::get<int>(selections[0]));
 						std::get<sheet_editor::State>(M2_LEVEL.stateVariant).Select(selectedSprite);
 						return MakeReturnAction();

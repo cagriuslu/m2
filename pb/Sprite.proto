@@ -44,12 +44,6 @@ message SpriteEffect {
   }
 }
 
-message ChainLoopColliderParams {
-  // The points are with respect to the origin of the collider. They are automatically completed into a loop. At least
-  // 3 points should be given.
-  repeated VecF points = 1;
-}
-
 message Collider {
   // Vector from origin of the sprite to the position that should be the origin of this collider piece.
   VecF sprite_origin_to_collider_origin_vec_px = 1;
@@ -57,8 +51,27 @@ message Collider {
   oneof collider_variant {
     Dim2f rect_dims_px = 11;
     float circ_radius_px = 12;
-    ChainLoopColliderParams chain_loop_params = 13;
   }
+}
+
+message Fixtures {
+  message RectangleFixture {
+    VecF sprite_origin_to_rectangle_center_vec_px = 1;
+    Dim2f rectangle_dimensions_px = 2;
+  }
+  message CircleFixture {
+    VecF sprite_origin_to_circle_center_vec_px = 1;
+    float circle_radius_px = 2;
+  }
+  message ChainFixture {
+    // The points are with respect to the origin of the sprite. They are automatically completed into a loop. At least
+    // 3 points should be given.
+    repeated VecF points = 1;
+  }
+
+  repeated RectangleFixture rectangle_fixtures = 1;
+  repeated CircleFixture circle_fixtures = 2;
+  ChainFixture chain_fixture = 3;
 }
 
 message RegularSprite {
@@ -93,8 +106,8 @@ message RegularSprite {
   // Colliders are not automatically loaded. Sprite editor can be used to draw colliders on the sprite itself.
   Collider background_collider = 7;
   Collider foreground_collider = 8;
-  repeated Collider background_colliders = 13;
-  repeated Collider foreground_colliders = 14;
+  Fixtures background_fixtures = 13;
+  Fixtures foreground_fixtures = 14;
 
   // If the tile is a background tile, it'll show up in the PAINT list of the level editor.
   bool is_background_tile = 9;
