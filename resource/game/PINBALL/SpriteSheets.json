@@ -36,6 +36,42 @@
                 "w": 64,
                 "h": 18
               }
+            },
+            "foregroundFixtures": {
+              "circleFixtures": [
+                {
+                  "spriteOriginToCircleCenterVecPx": {
+                    "x": 1.5
+                  },
+                  "circleRadiusPx": 9.01387787
+                },
+                {
+                  "spriteOriginToCircleCenterVecPx": {
+                    "x": 50.5
+                  },
+                  "circleRadiusPx": 5
+                }
+              ],
+              "chainFixture": {
+                "points": [
+                  {
+                    "x": 50.5,
+                    "y": 5
+                  },
+                  {
+                    "x": 1.5,
+                    "y": 9
+                  },
+                  {
+                    "x": 1.5,
+                    "y": -9
+                  },
+                  {
+                    "x": 50.5,
+                    "y": -5
+                  }
+                ]
+              }
             }
           }
         },
@@ -47,9 +83,8 @@
               "w": 64,
               "h": 32
             },
-            "originalRotation": 1,
             "centerToOriginVecPx": {
-              "x": 23.5
+              "x": -23.5
             },
             "foregroundCollider": {
               "spriteOriginToColliderOriginVecPx": {
@@ -58,6 +93,42 @@
               "rectDimsPx": {
                 "w": 64,
                 "h": 18
+              }
+            },
+            "foregroundFixtures": {
+              "circleFixtures": [
+                {
+                  "spriteOriginToCircleCenterVecPx": {
+                    "x": 1.5
+                  },
+                  "circleRadiusPx": 9
+                },
+                {
+                  "spriteOriginToCircleCenterVecPx": {
+                    "x": 50.5
+                  },
+                  "circleRadiusPx": 5
+                }
+              ],
+              "chainFixture": {
+                "points": [
+                  {
+                    "x": 50.5,
+                    "y": 5
+                  },
+                  {
+                    "x": 1.5,
+                    "y": 9
+                  },
+                  {
+                    "x": 1.5,
+                    "y": -9
+                  },
+                  {
+                    "x": 50.5,
+                    "y": -5
+                  }
+                ]
               }
             }
           }
