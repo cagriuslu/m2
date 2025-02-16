@@ -314,6 +314,9 @@ void m2::Graphic::draw_line(const VecF& world_position_1, const VecF& world_posi
 		}
 	}
 }
+void m2::Graphic::DrawLine(const VecF& worldPosition1M, const VecF& worldPosition2M, const RGBA& color) {
+	draw_line(worldPosition1M, worldPosition2M, SDL_Color{color.r, color.g, color.b, color.a});
+}
 void m2::Graphic::draw_vertical_line(float x, const RGBA& color) {
 	const auto x_px = static_cast<int>(roundf(ScreenOriginToPositionVecPx(VecF{x, 0.0f}).x));
 	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
@@ -323,6 +326,16 @@ void m2::Graphic::draw_horizontal_line(float y, const RGBA& color) {
 	const auto y_px = static_cast<int>(roundf(ScreenOriginToPositionVecPx(VecF{0.0f, y}).y));
 	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
 	SDL_RenderDrawLine(M2_GAME.renderer, M2_GAME.Dimensions().Game().x, y_px, M2_GAME.Dimensions().Game().x + M2_GAME.Dimensions().Game().w, y_px);
+}
+void m2::Graphic::DrawRectangle(const VecF& center, float width, float height, float orientationRads, const RGBA& color) {
+	const auto topLeft = center + VecF{-width / 2.0f, -height / 2.0f}.rotate(orientationRads);
+	const auto topRight = center + VecF{width / 2.0f, -height / 2.0f}.rotate(orientationRads);
+	const auto bottomLeft = center + VecF{-width / 2.0f, height / 2.0f}.rotate(orientationRads);
+	const auto bottomRight = center + VecF{width / 2.0f, height / 2.0f}.rotate(orientationRads);
+	DrawLine(topLeft, topRight, color);
+	DrawLine(topRight, bottomRight, color);
+	DrawLine(bottomRight, bottomLeft, color);
+	DrawLine(bottomLeft, topLeft, color);
 }
 void m2::Graphic::DrawGridLines(const RGBA& color, const unsigned startFrom, const unsigned frequency) {
 	// Draw grid lines

@@ -16,6 +16,7 @@ namespace m2 {
 
 		RGBA(const uint8_t _r, const uint8_t _g, const uint8_t _b, const uint8_t _a) : r(_r), g(_g), b(_b), a(_a) {}
 		explicit RGBA(const pb::Color& c) : r(static_cast<uint8_t>(c.r())), g(static_cast<uint8_t>(c.g())), b(static_cast<uint8_t>(c.b())), a(static_cast<uint8_t>(c.a())) {}
+		explicit RGBA(const SDL_Color& c) : r(c.r), g(c.g), b(c.b), a(c.a) {}
 		explicit operator RGB() const { return RGB{r, g, b}; }
 		explicit operator SDL_Color() const { return SDL_Color{r, g, b, a}; }
 

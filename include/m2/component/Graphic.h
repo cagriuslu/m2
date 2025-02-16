@@ -107,8 +107,10 @@ namespace m2 {
 		static void color_disk(const VecF& center_position_m, float radius_m, const SDL_Color& color);
 		static void draw_cross(const VecF& world_position, SDL_Color color);
 		static void draw_line(const VecF& world_position_1, const VecF& world_position_2, SDL_Color color);
+		static void DrawLine(const VecF& worldPosition1M, const VecF& worldPosition2M, const RGBA& color);
 		static void draw_vertical_line(float x, const RGBA& color);
 		static void draw_horizontal_line(float y, const RGBA& color);
+		static void DrawRectangle(const VecF& center, float width, float height, float orientationRads, const RGBA& color);
 		static void DrawGridLines(const RGBA& color, unsigned startFrom = 0, unsigned frequency = 1);
 
 		// Global Modifiers
