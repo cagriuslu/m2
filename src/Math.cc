@@ -76,3 +76,30 @@ bool m2::is_negative(float a, float tolerance) {
 bool m2::is_one(float a, float tolerance) {
 	return is_equal(a, 1.0f, tolerance);
 }
+
+float m2::ClampRadiansTo2Pi(const float rads) {
+	if (const auto firstMod = std::fmodf(rads, PI_MUL2); firstMod < 0.0f) {
+		return firstMod + PI_MUL2;
+	} else {
+		return firstMod;
+	}
+}
+float m2::ClampRadiansToPi(const float rads) {
+	const auto clamped = ClampRadiansTo2Pi(rads);
+	if (PI < clamped) {
+		return clamped - PI_MUL2;
+	}
+	return clamped;
+}
+float m2::AngleAbsoluteDifference(const float rads1, const float rads2) {
+	const auto clamped1 = ClampRadiansTo2Pi(rads1);
+	const auto clamped2 = ClampRadiansTo2Pi(rads2);
+	const auto smaller = std::min(clamped1, clamped2);
+	const auto bigger = std::max(clamped1, clamped2);
+	const auto diff1 = bigger - smaller;
+	const auto diff2 = (smaller + PI_MUL2) - bigger;
+	return std::min(diff1, diff2);
+}
+float m2::AngleDifference(const float rads1, const float rads2) {
+	return ClampRadiansToPi(rads1 - rads2);
+}

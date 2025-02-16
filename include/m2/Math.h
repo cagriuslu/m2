@@ -29,7 +29,16 @@ namespace m2 {
 	bool is_negative(float a, float tolerance);
 	bool is_one(float a, float tolerance);
 
-	constexpr float to_radians(float degrees) { return degrees * ::m2::PI / 180.0f; }
-	constexpr float to_radians(int degrees) { return to_radians(static_cast<float>(degrees)); }
-	constexpr float to_degrees(float radians) { return radians / ::m2::PI * 180.0f; }
+	constexpr float to_radians(const float degrees) { return degrees * PI / 180.0f; }
+	constexpr float to_radians(const int degrees) { return to_radians(static_cast<float>(degrees)); }
+	constexpr float to_degrees(const float radians) { return radians / ::m2::PI * 180.0f; }
+	/// Returned value is in-between [0, 2*PI).
+	float ClampRadiansTo2Pi(float rads);
+	/// Returned value is in-between [-PI, PI).
+	float ClampRadiansToPi(float rads);
+	/// Returns the smaller angle (in radians, always positive) between the two given angles. The given angles will be
+	/// clamped before difference calculation.
+	float AngleAbsoluteDifference(float rads1, float rads2);
+	/// Returns rads1 - rads2, clamped to [-PI, PI). The given angles will be clamped before difference calculation.
+	float AngleDifference(float rads1, float rads2);
 }
