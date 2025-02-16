@@ -5,7 +5,8 @@
 
 m2::Sprite::Sprite(const std::vector<SpriteSheet>& spriteSheets, const SpriteSheet& spriteSheet,
 		SpriteEffectsSheet& spriteEffectsSheet, const pb::Sprite& sprite, const bool lightning)
-		: _spriteSheet(&spriteSheet), _effectsSheet(&spriteEffectsSheet), _type(sprite.type()) {
+		: _spriteSheet(&spriteSheet), _effectsSheet(&spriteEffectsSheet), _pb(&sprite),
+		_type(sprite.type()) {
 	const pb::Sprite* original_sprite{};
 	if (sprite.has_duplicate()) {
 		// Lookup original sprite

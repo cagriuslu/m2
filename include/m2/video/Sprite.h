@@ -11,6 +11,7 @@ namespace m2 {
 	class Sprite final {
 		const SpriteSheet* _spriteSheet{};
 		const SpriteEffectsSheet* _effectsSheet{};
+		const pb::Sprite* _pb{};
 
 		m2g::pb::SpriteType _type{};
 		std::optional<m2g::pb::SpriteType> _originalType;
@@ -44,6 +45,7 @@ namespace m2 {
 
 		[[nodiscard]] const SpriteSheet& Sheet() const { return *_spriteSheet; }
 		[[nodiscard]] const SpriteEffectsSheet* EffectsSheet() const { return _effectsSheet; }
+		[[nodiscard]] const pb::Sprite& Pb() const { return *_pb; }
 		[[nodiscard]] m2g::pb::SpriteType Type() const { return _type; }
 		[[nodiscard]] std::optional<m2g::pb::SpriteType> OriginalType() const { return _originalType; }
 		[[nodiscard]] SDL_Texture* EffectsTexture() const { return _effectsSheet ? _effectsSheet->Texture() : nullptr; }

@@ -2,6 +2,7 @@
 #include <m2/Game.h>
 #include <box2d/b2_polygon_shape.h>
 #include <m2/box2d/Detail.h>
+#include <m2/box2d/Shape.h>
 
 m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
 	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(rightFlipper ? m2g::pb::SPRITE_BASIC_FLIPPER_RIGHT : m2g::pb::SPRITE_BASIC_FLIPPER_LEFT));
@@ -24,14 +25,22 @@ m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
 	bodyDef.gravityScale = 0.0f;
 	b2Body* body = M2_LEVEL.world->CreateBody(&bodyDef);
 	{
-		// Top edge
 		b2FixtureDef fixtureDef;
-		b2PolygonShape polygonShape;
-		polygonShape.SetAsBox(sprite.ForegroundColliderRectDimsM().x / 2.0f,
-				sprite.ForegroundColliderRectDimsM().y / 2.0f,
-				static_cast<b2Vec2>(sprite.OriginToForegroundColliderOriginVecM()),
-				obj.orientation);
-		fixtureDef.shape = &polygonShape;
+		const auto chain = m2::box2d::GenerateChainShape(sprite.Pb().regular().foreground_fixtures().chain_fixture(), sprite.Ppm());
+		fixtureDef.shape = &chain;
+		fixtureDef.friction = 0.1f;
+		fixtureDef.restitution = 1.0f;
+		fixtureDef.restitutionThreshold = 0.0f;
+		fixtureDef.density = 0.0f; // Kinematic object doesn't need mass
+		fixtureDef.isSensor = false;
+		fixtureDef.filter.categoryBits = m2::box2d::FIXTURE_CATEGORY_FRIEND_ON_FOREGROUND;
+		fixtureDef.filter.maskBits = 0xFFFF; // Collide with everything
+		body->CreateFixture(&fixtureDef);
+	}
+	for (const auto& circ : sprite.Pb().regular().foreground_fixtures().circle_fixtures()) {
+		b2FixtureDef fixtureDef;
+		const auto circle = m2::box2d::GenerateCircleShape(circ, sprite.Ppm());
+		fixtureDef.shape = &circle;
 		fixtureDef.friction = 0.1f;
 		fixtureDef.restitution = 1.0f;
 		fixtureDef.restitutionThreshold = 0.0f;
