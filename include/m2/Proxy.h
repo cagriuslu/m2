@@ -162,5 +162,11 @@ namespace m2 {
 
 		/// Create Group for the given type
 		m2::Group* create_group(MAYBE m2g::pb::GroupType group_type) { return nullptr; }
+
+		/// A callback that's called every pre-step. Since this callback is not tied to any object, object creating and
+		/// destruction can be done here safely.
+		void OnPreStep() {}
+		/// A callback that's called every pre-step.
+		void OnPostStep() {}
 	};
 }

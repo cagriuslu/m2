@@ -514,6 +514,7 @@ void m2::Game::HandleNetworkEvents() {
 }
 
 void m2::Game::ExecutePreStep() {
+	_proxy.OnPreStep();
 	for (auto& phy : _level->physics) {
 		IF(phy.pre_step)(phy);
 	}
@@ -653,6 +654,7 @@ void m2::Game::ExecutePostStep() {
 		}
 	}
 
+	_proxy.OnPostStep();
 	for (auto& phy : _level->physics) {
 		IF(phy.post_step)(phy);
 	}
