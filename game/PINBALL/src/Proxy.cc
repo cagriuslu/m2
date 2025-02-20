@@ -26,11 +26,13 @@ namespace {
 	const m2::UiPanelBlueprint pauseMenuBlueprint = {};
 	const m2::UiPanelBlueprint leftHudBlueprint = {
 		.name = "LeftHud",
-		.border_width = 0.0f,
+		.w = 16, .h = 27,
+		.border_width = 0.0001f,
 	};
 	const m2::UiPanelBlueprint rightHudBlueprint = {
 		.name = "RightHud",
-		.border_width = 0.0f,};
+		.w = 16, .h = 27,
+		.border_width = 0.0001f,};
 }
 
 const m2::UiPanelBlueprint* m2g::Proxy::MainMenuBlueprint() {
