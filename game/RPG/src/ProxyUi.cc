@@ -2,6 +2,7 @@
 #include <m2/Log.h>
 #include <m2/Game.h>
 #include <m2/M2.h>
+#include <m2/ui/widget/ProgressBar.h>
 
 using namespace m2;
 
@@ -43,11 +44,11 @@ static widget::TextBlueprint hp_label = {
 static widget::ProgressBarBlueprint hp_progress_bar = {
 		.initial_progress = 1.0f,
 		.bar_color = SDL_Color{255, 0, 0, 255},
-		.onUpdate = [](MAYBE const widget::ProgressBar& self) -> float {
+		.onUpdate = [](widget::ProgressBar& self) {
 			if (M2_LEVEL.Player()) {
-				return M2_PLAYER.character().get_resource(m2g::pb::RESOURCE_HP);
+				self.SetProgress(M2_PLAYER.character().get_resource(m2g::pb::RESOURCE_HP));
 			}
-			return 0.0f;
+			self.SetProgress(0.0f);
 		}
 };
 static widget::TextBlueprint dash_label = {
@@ -56,17 +57,17 @@ static widget::TextBlueprint dash_label = {
 static widget::ProgressBarBlueprint dash_progress_bar = {
 		.initial_progress = 1.0f,
 		.bar_color = SDL_Color{255, 255, 0, 255},
-		.onUpdate = [](MAYBE const widget::ProgressBar& self) {
+		.onUpdate = [](widget::ProgressBar& self) {
 			if (M2_LEVEL.Player()) {
 				// Check if player has DASH capability
 				if (M2_PLAYER.character().has_item(m2g::pb::ITEM_REUSABLE_DASH_2S)) {
 					float counter = M2_PLAYER.character().get_resource(m2g::pb::RESOURCE_DASH_ENERGY);
 					float cooldown = 2.0f;
 					counter = (cooldown <= counter) ? cooldown : counter;
-					return counter / cooldown;
+					self.SetProgress(counter / cooldown);
 				}
 			}
-			return 0.0f;
+			self.SetProgress(0.0f);
 		}
 };
 const UiPanelBlueprint left_hud_blueprint = {

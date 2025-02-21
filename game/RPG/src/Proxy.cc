@@ -7,6 +7,7 @@
 #include <m2/Game.h>
 #include <rpg/Defs.h>
 #include <m2/protobuf/Detail.h>
+#include <m2/ui/widget/ProgressBar.h>
 #include <rpg/Defs.h>
 
 void m2g::Proxy::load_resources() {
@@ -182,18 +183,15 @@ const m2::UiPanelBlueprint* m2g::Proxy::generate_right_hud() {
 	    .x = 2, .y = 68, .w = 15, .h = 2,
 	    .variant = m2::widget::ProgressBarBlueprint{
 	        .bar_color = SDL_Color{0, 127, 255, 255},
-	        .onUpdate = [](MAYBE const m2::widget::ProgressBar& self) {
-		        if (auto *player = M2_LEVEL.Player(); player) {
-			        if (auto ammo = player->character().get_resource(
-			                m2g::pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO); ammo != 0.0f) {
-				        if (auto weapon = player->character().find_items(
-				                m2g::pb::ITEM_CATEGORY_SPECIAL_RANGED_WEAPON); weapon) {
-					        return ammo /
-					            weapon->get_acquire_benefit(m2g::pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO);
+	        .onUpdate = [](m2::widget::ProgressBar& self) {
+		        if (const auto *player = M2_LEVEL.Player(); player) {
+			        if (const auto ammo = player->character().get_resource(pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO); ammo != 0.0f) {
+				        if (const auto weapon = player->character().find_items(pb::ITEM_CATEGORY_SPECIAL_RANGED_WEAPON); weapon) {
+					        self.SetProgress(ammo / weapon->get_acquire_benefit(pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO));
 				        }
 			        }
 		        }
-		        return 0.0f;
+	        	self.SetProgress(0.0f);
 	        }
 	    }
 	});

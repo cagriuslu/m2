@@ -13,7 +13,7 @@ ProgressBar::ProgressBar(UiPanel* parent, const UiWidgetBlueprint* blueprint) : 
 UiAction ProgressBar::UpdateContent() {
 	auto& pb_blueprint = std::get<ProgressBarBlueprint>(blueprint->variant);
 	if (pb_blueprint.onUpdate) {
-		_progress = pb_blueprint.onUpdate(*this);
+		pb_blueprint.onUpdate(*this);
 	}
 	return MakeContinueAction();
 }

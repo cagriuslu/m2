@@ -11,6 +11,6 @@ namespace m2::widget {
 		SDL_Color bar_color{};
 
 		std::function<void(ProgressBar& self)> onCreate{};
-		std::function<float(ProgressBar& self)> onUpdate{};
+		std::function<void(ProgressBar& self)> onUpdate{};
 	};
 }
