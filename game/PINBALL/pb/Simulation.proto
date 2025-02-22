@@ -1,0 +1,41 @@
+syntax = "proto3";
+package pinball.pb;
+
+message Animal {
+  enum Type {
+    HERBIVORE = 0;
+    CARNIVORE = 1;
+  }
+
+  int64 id = 1;
+  Type type = 2;
+  float mass = 3;
+  float health = 4; // [0,1]
+  int64 reproduction_count_down = 5; // In ticks
+}
+
+message SimulationState {
+  int64 passed_tick_count = 1;
+
+  // Includes both healthy and zombie bacteria
+  float bacteria_mass = 2;
+  float zombie_bacteria_percentage = 3;
+  // Includes both healthy and diseased plant
+  float plant_mass = 4; // TODO
+  float diseased_plant_percentage = 5; // TODO
+  repeated Animal animals = 6; // TODO
+
+  float temperature = 11;
+  // Waste is decomposed by bacteria into nutrients
+  float waste_mass = 12; // TODO
+  // Nutrients are used by plants to trap light and build mass
+  float nutrient_mass = 13; // TODO
+  // Water is used by all organisms
+  float water_mass = 14; // TODO
+}
+
+message SimulationInputs {
+  bool light = 1;
+  float extra_water = 2;
+  bool heat = 3;
+}
