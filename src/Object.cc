@@ -63,7 +63,7 @@ m2::Object::~Object() {
 m2::ObjectId m2::Object::id() const {
 	if (!_id) {
 		// Looking up the id of the object itself is not very common
-		_id = M2_LEVEL.objects.get_id(this);
+		_id = M2_LEVEL.objects.GetId(this);
 	}
 	return *_id;
 }
@@ -93,14 +93,14 @@ m2::CharacterId m2::Object::character_id() const {
 }
 
 m2::Character* m2::Object::get_character() const {
-	auto* character_variant = M2_LEVEL.characters.get(_character_id);
+	auto* character_variant = M2_LEVEL.characters.Get(_character_id);
 	if (not character_variant) {
 		return nullptr;
 	}
-	return &to_character_base(*character_variant);
+	return &ToCharacterBase(*character_variant);
 }
 m2::Object* m2::Object::get_parent() const {
-    return _parent_id ? M2_LEVEL.objects.get(_parent_id) : nullptr;
+    return _parent_id ? M2_LEVEL.objects.Get(_parent_id) : nullptr;
 }
 m2::Group* m2::Object::get_group() const {
 	return _group_id ? M2_LEVEL.groups[_group_id].get() : nullptr;
@@ -123,7 +123,7 @@ m2::SoundEmitter& m2::Object::sound_emitter() const {
 }
 m2::Character& m2::Object::character() const {
     auto& it = M2_LEVEL.characters[_character_id];
-    return to_character_base(it);
+    return ToCharacterBase(it);
 }
 
 void m2::Object::set_group(const GroupId& group_id, IndexInGroup group_index) {
@@ -132,22 +132,22 @@ void m2::Object::set_group(const GroupId& group_id, IndexInGroup group_index) {
 }
 
 m2::Physique& m2::Object::add_physique() {
-	auto phy = M2_LEVEL.physics.emplace(id());
-	_physique_id = phy.id();
+	auto phy = M2_LEVEL.physics.Emplace(id());
+	_physique_id = phy.Id();
     LOG_TRACE("Added physique component", _physique_id);
 	return *phy;
 }
 m2::Graphic& m2::Object::add_graphic() {
-	auto gfx = M2_LEVEL.graphics.emplace(id());
-	_graphic_id = gfx.id();
-	M2_LEVEL.drawList.insert(id());
+	auto gfx = M2_LEVEL.graphics.Emplace(id());
+	_graphic_id = gfx.Id();
+	M2_LEVEL.drawList.Insert(id());
     LOG_TRACE("Added graphic component", _graphic_id);
 	return *gfx;
 }
 m2::Graphic& m2::Object::add_graphic(const m2g::pb::SpriteType spriteType) {
-	auto gfx = M2_LEVEL.graphics.emplace(id(), M2_GAME.GetSpriteOrTextLabel(spriteType));
-	_graphic_id = gfx.id();
-	M2_LEVEL.drawList.insert(id());
+	auto gfx = M2_LEVEL.graphics.Emplace(id(), M2_GAME.GetSpriteOrTextLabel(spriteType));
+	_graphic_id = gfx.Id();
+	M2_LEVEL.drawList.Insert(id());
 	LOG_TRACE("Added graphic component", _graphic_id);
 	return *gfx;
 }
@@ -155,8 +155,8 @@ m2::Graphic& m2::Object::add_terrain_graphic(BackgroundLayer layer) {
 	if (layer == BackgroundLayer::ALL) {
 		throw M2_ERROR("Invalid background layer");
 	}
-	auto terrain_gfx = M2_LEVEL.terrainGraphics[I(layer)].emplace(id());
-	_terrain_graphic_id = std::make_pair(terrain_gfx.id(), layer);
+	auto terrain_gfx = M2_LEVEL.terrainGraphics[I(layer)].Emplace(id());
+	_terrain_graphic_id = std::make_pair(terrain_gfx.Id(), layer);
 	LOG_TRACE("Added terrain graphic component", _terrain_graphic_id);
 	return *terrain_gfx;
 }
@@ -164,120 +164,120 @@ m2::Graphic& m2::Object::add_terrain_graphic(BackgroundLayer layer, const m2g::p
 	if (layer == BackgroundLayer::ALL) {
 		throw M2_ERROR("Invalid background layer");
 	}
-	auto terrain_gfx = M2_LEVEL.terrainGraphics[I(layer)].emplace(id(), M2_GAME.GetSpriteOrTextLabel(spriteType));
-	_terrain_graphic_id = std::make_pair(terrain_gfx.id(), layer);
+	auto terrain_gfx = M2_LEVEL.terrainGraphics[I(layer)].Emplace(id(), M2_GAME.GetSpriteOrTextLabel(spriteType));
+	_terrain_graphic_id = std::make_pair(terrain_gfx.Id(), layer);
 	LOG_TRACE("Added terrain graphic component", _terrain_graphic_id);
 	return *terrain_gfx;
 }
 m2::Light& m2::Object::add_light() {
-	auto light = M2_LEVEL.lights.emplace(id());
-	_light_id = light.id();
+	auto light = M2_LEVEL.lights.Emplace(id());
+	_light_id = light.Id();
     LOG_TRACE("Added light component", _light_id);
 	return *light;
 }
 m2::SoundEmitter& m2::Object::add_sound_emitter() {
-	auto sound = M2_LEVEL.soundEmitters.emplace(id());
-	_sound_emitter_id = sound.id();
+	auto sound = M2_LEVEL.soundEmitters.Emplace(id());
+	_sound_emitter_id = sound.Id();
 	LOG_TRACE("Added sound component", _sound_emitter_id);
 	return *sound;
 }
 m2::Character& m2::Object::add_tiny_character() {
-    auto character = M2_LEVEL.characters.emplace(std::in_place_type<TinyCharacter>, id());
-    _character_id = character.id();
+    auto character = M2_LEVEL.characters.Emplace(std::in_place_type<TinyCharacter>, id());
+    _character_id = character.Id();
     LOG_TRACE("Added tiny character", _character_id);
     return std::get<TinyCharacter>(*character);
 }
 m2::Character& m2::Object::add_full_character() {
-    auto character = M2_LEVEL.characters.emplace(std::in_place_type<FullCharacter>, id());
-    _character_id = character.id();
+    auto character = M2_LEVEL.characters.Emplace(std::in_place_type<FullCharacter>, id());
+    _character_id = character.Id();
     LOG_TRACE("Added full character", _character_id);
     return std::get<FullCharacter>(*character);
 }
 
 void m2::Object::remove_physique() {
 	if (_physique_id) {
-		M2_LEVEL.physics.free(_physique_id);
+		M2_LEVEL.physics.Free(_physique_id);
 		_physique_id = 0;
 	}
 }
 void m2::Object::remove_graphic() {
 	if (_graphic_id) {
-		M2_LEVEL.drawList.remove(id());
-		M2_LEVEL.graphics.free(_graphic_id);
+		M2_LEVEL.drawList.Remove(id());
+		M2_LEVEL.graphics.Free(_graphic_id);
 		_graphic_id = 0;
 	}
 }
 void m2::Object::remove_terrain_graphic() {
 	if (_terrain_graphic_id.first) {
-		M2_LEVEL.terrainGraphics[I(_terrain_graphic_id.second)].free(_terrain_graphic_id.first);
+		M2_LEVEL.terrainGraphics[I(_terrain_graphic_id.second)].Free(_terrain_graphic_id.first);
 		_terrain_graphic_id = {};
 	}
 }
 void m2::Object::remove_light() {
 	if (_light_id) {
-		M2_LEVEL.lights.free(_light_id);
+		M2_LEVEL.lights.Free(_light_id);
 		_light_id = 0;
 	}
 }
 void m2::Object::remove_sound_emitter() {
 	if (_sound_emitter_id) {
-		M2_LEVEL.soundEmitters.free(_sound_emitter_id);
+		M2_LEVEL.soundEmitters.Free(_sound_emitter_id);
 		_sound_emitter_id = 0;
 	}
 }
 void m2::Object::remove_character() {
 	if (_character_id) {
-		M2_LEVEL.characters.free(_character_id);
+		M2_LEVEL.characters.Free(_character_id);
 		_character_id = 0;
 	}
 }
 
 m2::Pool<m2::Object>::Iterator m2::create_object(const m2::VecF &position, m2g::pb::ObjectType type, ObjectId parent_id) {
-    return M2_LEVEL.objects.emplace(position, type, parent_id);
+    return M2_LEVEL.objects.Emplace(position, type, parent_id);
 }
 std::function<void(void)> m2::create_object_deleter(ObjectId id) {
 	return [id]() {
-		M2_LEVEL.objects.free(id);
+		M2_LEVEL.objects.Free(id);
 	};
 }
 std::function<void(void)> m2::create_physique_deleter(ObjectId id) {
 	return [id]() {
-		if (auto* object = M2_LEVEL.objects.get(id); object) {
+		if (auto* object = M2_LEVEL.objects.Get(id); object) {
 			object->remove_physique();
 		}
 	};
 }
 std::function<void(void)> m2::create_graphic_deleter(ObjectId id) {
 	return [id]() {
-		if (auto* object = M2_LEVEL.objects.get(id); object) {
+		if (auto* object = M2_LEVEL.objects.Get(id); object) {
 			object->remove_graphic();
 		}
 	};
 }
 std::function<void(void)> m2::create_terrain_graphic_deleter(ObjectId id) {
 	return [id]() {
-		if (auto* object = M2_LEVEL.objects.get(id); object) {
+		if (auto* object = M2_LEVEL.objects.Get(id); object) {
 			object->remove_terrain_graphic();
 		}
 	};
 }
 std::function<void(void)> m2::create_light_deleter(ObjectId id) {
 	return [id]() {
-		if (auto* object = M2_LEVEL.objects.get(id); object) {
+		if (auto* object = M2_LEVEL.objects.Get(id); object) {
 			object->remove_light();
 		}
 	};
 }
 std::function<void(void)> m2::create_sound_emitter_deleter(ObjectId id) {
 	return [id]() {
-		if (auto* object = M2_LEVEL.objects.get(id); object) {
+		if (auto* object = M2_LEVEL.objects.Get(id); object) {
 			object->remove_sound_emitter();
 		}
 	};
 }
 std::function<void(void)> m2::create_character_deleter(ObjectId id) {
 	return [id]() {
-		if (auto* object = M2_LEVEL.objects.get(id); object) {
+		if (auto* object = M2_LEVEL.objects.Get(id); object) {
 			object->remove_character();
 		}
 	};

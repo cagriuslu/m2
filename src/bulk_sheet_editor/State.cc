@@ -117,12 +117,12 @@ void bulk_sheet_editor::State::Draw() const {
 			F(_savedSpriteRect->y),
 			F(_savedSpriteRect->w),
 			F(_savedSpriteRect->h)};
-		Graphic::color_rect(world_coordinates_m.shift({-0.5f, -0.5f}), CONFIRMED_SELECTION_COLOR);
+		Graphic::ColorRect(world_coordinates_m.shift({-0.5f, -0.5f}), CONFIRMED_SELECTION_COLOR);
 	}
 	// Draw selection
 	if (const auto* selection = M2_LEVEL.PrimarySelection(); selection) {
 		if (const auto cellSelection = selection->CellSelectionRectM()) {
-			Graphic::color_rect(*cellSelection, SELECTION_COLOR);
+			Graphic::ColorRect(*cellSelection, SELECTION_COLOR);
 		}
 	}
 	// Draw pixel grid lines
@@ -130,8 +130,8 @@ void bulk_sheet_editor::State::Draw() const {
 	// Draw PPM grid lines
 	Graphic::DrawGridLines({255, 255, 255, 255}, 0, _ppm);
 	// Draw sheet boundaries
-	Graphic::draw_vertical_line(-0.5f, {255, 0, 0, 255});
-	Graphic::draw_horizontal_line(-0.5f, {255, 0, 0, 255});
-	Graphic::draw_vertical_line(F(_textureDimensions.x) - 0.5f, {255, 0, 0, 255});
-	Graphic::draw_horizontal_line(F(_textureDimensions.y) - 0.5f, {255, 0, 0, 255});
+	Graphic::DrawVerticalLine(-0.5f, {255, 0, 0, 255});
+	Graphic::DrawHorizontalLine(-0.5f, {255, 0, 0, 255});
+	Graphic::DrawVerticalLine(F(_textureDimensions.x) - 0.5f, {255, 0, 0, 255});
+	Graphic::DrawHorizontalLine(F(_textureDimensions.y) - 0.5f, {255, 0, 0, 255});
 }

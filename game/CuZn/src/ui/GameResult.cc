@@ -40,7 +40,7 @@ void display_game_result() {
 		auto id = M2G_PROXY.multiPlayerObjectIds[i];
 		auto& player_obj = M2_LEVEL.objects[id];
 		auto& player_chr = player_obj.character();
-		auto victory_points = iround(player_chr.get_resource(m2g::pb::VICTORY_POINTS));
+		auto victory_points = iround(player_chr.GetResource(m2g::pb::VICTORY_POINTS));
 
 		blueprint.widgets.emplace_back(
 			UiWidgetBlueprint{

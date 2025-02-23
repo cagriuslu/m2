@@ -24,7 +24,7 @@ namespace {
 Id obj::create_god() {
 	const auto it = create_object({});
 
-	it->add_physique().pre_step = [](MAYBE Physique& phy) {
+	it->add_physique().preStep = [](MAYBE Physique& phy) {
 		auto& obj = phy.owner();
 
 		VecF move_direction;
@@ -59,7 +59,7 @@ Id obj::create_god() {
 		}
 	};
 
-	it->add_graphic().post_draw = [](MAYBE Graphic& gfx) {
+	it->add_graphic().postDraw = [](MAYBE Graphic& gfx) {
 		std::visit(overloaded{
 		        [](const level_editor::State& le) { le.Draw(); },
 		        [](const sheet_editor::State& se) { se.Draw(); },
@@ -68,5 +68,5 @@ Id obj::create_god() {
 		    M2_LEVEL.stateVariant);
 	};
 
-	return it.id();
+	return it.Id();
 }

@@ -46,7 +46,7 @@ m2::void_expected LoadBall(m2::Object& obj) {
 	body->SetMassData(&massData);
 	phy.body = m2::box2d::BodyUniquePtr{body};
 
-	phy.post_step = [](MAYBE m2::Physique& phy_) {};
+	phy.postStep = [](MAYBE m2::Physique& phy_) {};
 
 	MAYBE auto& gfx = obj.add_graphic(m2g::pb::SPRITE_BASIC_BALL);
 

@@ -25,8 +25,8 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj) {
 	obj.impl = std::make_unique<HumanPlayer>();
 
 	auto& chr = obj.add_full_character();
-	chr.set_resource(m2g::pb::MONEY, 17.0f);
-	chr.set_attribute(m2g::pb::INCOME_POINTS, 0.0f);
+	chr.SetResource(m2g::pb::MONEY, 17.0f);
+	chr.SetAttribute(m2g::pb::INCOME_POINTS, 0.0f);
 
 	// Add industry tiles
 	for (auto industry_tile = m2g::pb::COTTON_MILL_TILE_I;
@@ -34,17 +34,17 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj) {
 	     industry_tile = static_cast<m2g::pb::ItemType>(m2::I(industry_tile) + 1)) {
 		// Lookup possession count
 		const auto& item = M2_GAME.GetNamedItem(industry_tile);
-		auto possession_limit = m2::I(item.get_attribute(m2g::pb::POSSESSION_LIMIT));
-		m2_repeat(possession_limit) { chr.add_named_item(item); }
+		auto possession_limit = m2::I(item.GetAttribute(m2g::pb::POSSESSION_LIMIT));
+		m2_repeat(possession_limit) { chr.AddNamedItem(item); }
 	}
 
 	// Add connection tiles
 	const auto& road_item = M2_GAME.GetNamedItem(m2g::pb::ROAD_TILE);
-	auto road_possession_limit = m2::I(road_item.get_attribute(m2g::pb::POSSESSION_LIMIT));
-	m2_repeat(road_possession_limit) { chr.add_named_item(road_item); }
+	auto road_possession_limit = m2::I(road_item.GetAttribute(m2g::pb::POSSESSION_LIMIT));
+	m2_repeat(road_possession_limit) { chr.AddNamedItem(road_item); }
 
 	auto& phy = obj.add_physique();
-	phy.pre_step = [&o = obj](MAYBE m2::Physique& _) {
+	phy.preStep = [&o = obj](MAYBE m2::Physique& _) {
 		auto& impl = dynamic_cast<HumanPlayer&>(*o.impl);
 		// Start map movement with mouse
 		if (M2_GAME.events.pop_mouse_button_press(m2::MouseButton::PRIMARY, M2_GAME.Dimensions().Game())) {
@@ -178,8 +178,8 @@ m2::void_expected PlayerInitOtherInstance(m2::Object& obj) {
 	// TODO check if the following is really necessary. If the ServerUpdate is verified, it's necessary.
 	// TODO Otherwise, we don't need to fill the character with items and resources.
 
-	chr.set_resource(m2g::pb::MONEY, 17.0f);
-	chr.set_attribute(m2g::pb::INCOME_POINTS, 0.0f);
+	chr.SetResource(m2g::pb::MONEY, 17.0f);
+	chr.SetAttribute(m2g::pb::INCOME_POINTS, 0.0f);
 
 	// Add industry tiles
 	for (auto industry_tile = m2g::pb::COTTON_MILL_TILE_I;
@@ -187,26 +187,26 @@ m2::void_expected PlayerInitOtherInstance(m2::Object& obj) {
 		 industry_tile = static_cast<m2g::pb::ItemType>(m2::I(industry_tile) + 1)) {
 		// Lookup possession count
 		const auto& item = M2_GAME.GetNamedItem(industry_tile);
-		auto possession_limit = m2::I(item.get_attribute(m2g::pb::POSSESSION_LIMIT));
-		m2_repeat(possession_limit) { chr.add_named_item(item); }
+		auto possession_limit = m2::I(item.GetAttribute(m2g::pb::POSSESSION_LIMIT));
+		m2_repeat(possession_limit) { chr.AddNamedItem(item); }
 		 }
 
 	// Add connection tiles
 	const auto& road_item = M2_GAME.GetNamedItem(m2g::pb::ROAD_TILE);
-	auto road_possession_limit = m2::I(road_item.get_attribute(m2g::pb::POSSESSION_LIMIT));
-	m2_repeat(road_possession_limit) { chr.add_named_item(road_item); }
+	auto road_possession_limit = m2::I(road_item.GetAttribute(m2g::pb::POSSESSION_LIMIT));
+	m2_repeat(road_possession_limit) { chr.AddNamedItem(road_item); }
 
 	return {};
 }
 
 size_t PlayerCardCount(const m2::Character& player) {
-	return player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_CITY_CARD)
-	+ player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_WILD_CARD)
-	+ player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_INDUSTRY_CARD);
+	return player.CountItem(m2g::pb::ItemCategory::ITEM_CATEGORY_CITY_CARD)
+	+ player.CountItem(m2g::pb::ItemCategory::ITEM_CATEGORY_WILD_CARD)
+	+ player.CountItem(m2g::pb::ItemCategory::ITEM_CATEGORY_INDUSTRY_CARD);
 }
 std::list<Card> PlayerCards(const m2::Character& player) {
 	std::list<Card> card_list;
-	for (auto it = player.begin_items(); it != player.end_items(); ++it) {
+	for (auto it = player.BeginItems(); it != player.EndItems(); ++it) {
 		if (it->category() == m2g::pb::ItemCategory::ITEM_CATEGORY_CITY_CARD
 			|| it->category() == m2g::pb::ItemCategory::ITEM_CATEGORY_WILD_CARD
 			|| it->category() == m2g::pb::ItemCategory::ITEM_CATEGORY_INDUSTRY_CARD) {
@@ -218,7 +218,7 @@ std::list<Card> PlayerCards(const m2::Character& player) {
 
 int PlayerLinkCount(const m2::Character& player) {
 	auto road_characters = M2_LEVEL.characters
-			| std::views::transform(m2::to_character_base)
+			| std::views::transform(m2::ToCharacterBase)
 			| std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
 			| std::views::filter(IsRoadCharacter);
 	return std::accumulate(road_characters.begin(), road_characters.end(), 0, [](int acc, m2::Character& road_char) -> int {
@@ -227,37 +227,37 @@ int PlayerLinkCount(const m2::Character& player) {
 }
 int PlayerEstimatedVictoryPoints(const m2::Character& player) {
 	auto soldFactories = M2_LEVEL.characters
-			| std::views::transform(m2::to_character_base)
+			| std::views::transform(m2::ToCharacterBase)
 			| std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
 			| std::views::filter(IsFactoryCharacter)
 			| std::views::filter(IsFactorySold);
 	return std::accumulate(soldFactories.begin(), soldFactories.end(), 0, [](int acc, m2::Character& factoryCharacter) -> int {
 		const auto& industryTileItem = M2_GAME.GetNamedItem(ToIndustryTileOfFactoryCharacter(factoryCharacter));
-		return acc + m2::iround(industryTileItem.get_attribute(m2g::pb::VICTORY_POINTS_BONUS));
+		return acc + m2::iround(industryTileItem.GetAttribute(m2g::pb::VICTORY_POINTS_BONUS));
 	});
 }
 int PlayerVictoryPoints(const m2::Character& player) {
-	return m2::iround(player.get_resource(m2g::pb::VICTORY_POINTS));
+	return m2::iround(player.GetResource(m2g::pb::VICTORY_POINTS));
 }
 int PlayerIncomePoints(const m2::Character& player) {
-	return m2::iround(player.get_attribute(m2g::pb::INCOME_POINTS));
+	return m2::iround(player.GetAttribute(m2g::pb::INCOME_POINTS));
 }
 int PlayerMoney(const m2::Character& player) {
-	return m2::iround(player.get_resource(m2g::pb::MONEY));
+	return m2::iround(player.GetResource(m2g::pb::MONEY));
 }
 
 size_t PlayerIndustryTileCount(const m2::Character& player) {
-	return player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_COAL_MINE_TILE)
-		+ player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_IRON_WORKS_TILE)
-		+ player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_BREWERY_TILE)
-		+ player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_COTTON_MILL_TILE)
-		+ player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_MANUFACTURED_GOODS_TILE)
-		+ player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_POTTERY_TILE);
+	return player.CountItem(m2g::pb::ItemCategory::ITEM_CATEGORY_COAL_MINE_TILE)
+		+ player.CountItem(m2g::pb::ItemCategory::ITEM_CATEGORY_IRON_WORKS_TILE)
+		+ player.CountItem(m2g::pb::ItemCategory::ITEM_CATEGORY_BREWERY_TILE)
+		+ player.CountItem(m2g::pb::ItemCategory::ITEM_CATEGORY_COTTON_MILL_TILE)
+		+ player.CountItem(m2g::pb::ItemCategory::ITEM_CATEGORY_MANUFACTURED_GOODS_TILE)
+		+ player.CountItem(m2g::pb::ItemCategory::ITEM_CATEGORY_POTTERY_TILE);
 }
 std::optional<m2g::pb::ItemType> PlayerNextIndustryTileOfCategory(const m2::Character& player, const m2g::pb::ItemCategory tile_category) {
 	// Find the item with the category with the smallest integer value
 	auto tile_item = m2g::pb::ItemType_MAX;
-	for (auto item_it = player.find_items(tile_category); item_it != player.end_items(); ++item_it) {
+	for (auto item_it = player.FindItems(tile_category); item_it != player.EndItems(); ++item_it) {
 		tile_item = std::min(tile_item, item_it->type());
 	}
 
@@ -272,14 +272,14 @@ std::optional<m2g::pb::ItemType> PlayerNextIndustryTileOfIndustry(const m2::Char
 }
 size_t PlayerBuiltFactoryCount(const m2::Character& player) {
 	auto factories_view = M2_LEVEL.characters
-		| std::views::transform(m2::to_character_base)
+		| std::views::transform(m2::ToCharacterBase)
 		| std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
 		| std::views::filter(IsFactoryCharacter);
 	return std::distance(factories_view.begin(), factories_view.end());
 }
 std::set<IndustryLocation> PlayerBuiltFactoryLocations(const m2::Character& player) {
 	auto factories_view = M2_LEVEL.characters
-		| std::views::transform(m2::to_character_base)
+		| std::views::transform(m2::ToCharacterBase)
 		| std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
 		| std::views::filter(IsFactoryCharacter)
 		| std::views::transform(ToIndustryLocationOfFactoryCharacter);
@@ -287,7 +287,7 @@ std::set<IndustryLocation> PlayerBuiltFactoryLocations(const m2::Character& play
 }
 std::set<IndustryLocation> PlayerSellableFactoryLocations(const m2::Character& player) {
 	auto factories_view = M2_LEVEL.characters
-		| std::views::transform(m2::to_character_base)
+		| std::views::transform(m2::ToCharacterBase)
 		| std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
 		| std::views::filter(IsFactoryCharacter)
 		| std::views::filter(IsFactoryNotSold)
@@ -337,14 +337,14 @@ std::set<m2g::pb::ItemType> PlayerCitiesInNetwork(const m2::Character& player) {
 	std::set<m2g::pb::ItemType> cities;
 
 	auto cities_view = M2_LEVEL.characters
-		| std::views::transform(m2::to_character_base)
+		| std::views::transform(m2::ToCharacterBase)
 		| std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
 		| std::views::filter(IsFactoryCharacter)
 		| std::views::transform(ToCityOfFactoryCharacter);
 	cities.insert(cities_view.begin(), cities_view.end());
 
 	auto roads_view = M2_LEVEL.characters
-		| std::views::transform(m2::to_character_base)
+		| std::views::transform(m2::ToCharacterBase)
 		| std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
 		| std::views::filter(IsRoadCharacter)
 		| std::views::transform(ToCitiesOfRoadCharacter);

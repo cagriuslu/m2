@@ -21,7 +21,7 @@ constexpr auto ToCitiesOfRoadCharacter = [](const m2::Character& chr) -> std::se
 		throw M2_ERROR("Character doesn't belong to canal or railroad");
 	}
 	std::set<m2g::pb::ItemType> city_cards;
-	for (auto it = chr.find_items(m2g::pb::ITEM_CATEGORY_CITY_CARD); it != chr.end_items(); ++it) {
+	for (auto it = chr.FindItems(m2g::pb::ITEM_CATEGORY_CITY_CARD); it != chr.EndItems(); ++it) {
 		city_cards.insert(it->type());
 	}
 	return city_cards;

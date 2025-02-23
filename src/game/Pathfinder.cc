@@ -182,7 +182,7 @@ m2::Path m2::Pathfinder::smoothen_path(const Path& reverse_path, float max_dista
 	for (auto point2_it = reverse_path.begin() + 1; point2_it != reverse_path.end(); ++point2_it) {
 		auto* point2 = &(*point2_it);
 
-		bool eyesight = m2::box2d::check_eyesight(*M2_LEVEL.world, m2::VecF{*point1}, m2::VecF{*point2}, m2::box2d::FIXTURE_CATEGORY_OBSTACLE);
+		bool eyesight = m2::box2d::CheckEyesight(*M2_LEVEL.world, m2::VecF{*point1}, m2::VecF{*point2}, m2::box2d::FIXTURE_CATEGORY_OBSTACLE);
 		if (point2_it == std::prev(reverse_path.end(), 1)) {
 			if (not eyesight) {
 				// If we are processing the last point AND there is no eyesight, add the previous point
@@ -209,11 +209,11 @@ m2::Path m2::Pathfinder::smoothen_path(const Path& reverse_path, float max_dista
 }
 
 bool m2::Pathfinder::check_eyesight(const VecI& from, const VecI& to) {
-	return box2d::check_eyesight(*M2_LEVEL.world, VecF{from}, VecF{to}, box2d::FIXTURE_CATEGORY_OBSTACLE);
+	return box2d::CheckEyesight(*M2_LEVEL.world, VecF{from}, VecF{to}, box2d::FIXTURE_CATEGORY_OBSTACLE);
 }
 
 void m2::Pathfinder::draw_path(const Path& path, SDL_Color color) {
 	for_each_adjacent_pair(path.begin(), path.end(), [color](const VecI& p1, const VecI& p2) {
-		Graphic::draw_line(static_cast<VecF>(p1), static_cast<VecF>(p2), color);
+		Graphic::DrawLine(static_cast<VecF>(p1), static_cast<VecF>(p2), color);
 	});
 }

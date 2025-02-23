@@ -48,7 +48,7 @@ m2::void_expected CanPlayerLoan(m2::Character& player, const m2g::pb::ClientComm
 	}
 
 	// Check if the player holds the selected card
-	if (player.find_items(loan_action.card()) == player.end_items()) {
+	if (player.FindItems(loan_action.card()) == player.EndItems()) {
 		return m2::make_unexpected("Player does not have the selected card: " + m2::pb::enum_name(loan_action.card()));
 	}
 
@@ -60,7 +60,7 @@ Card ExecuteLoanAction(m2::Character& player, const ClientCommand_LoanAction& lo
 	const auto currIncomeLevel = IncomeLevelFromIncomePoints(currIncomePoints);
 	const auto newIncomeLevel = ClampIncomeLevel(currIncomeLevel - 3);
 	const auto newIncomePoints = HighestIncomePointsOfLevel(newIncomeLevel);
-	player.set_attribute(INCOME_POINTS, m2::F(ClampIncomePoints(newIncomePoints)));
-	player.add_resource(MONEY, 30.0f);
+	player.SetAttribute(INCOME_POINTS, m2::F(ClampIncomePoints(newIncomePoints)));
+	player.AddResource(MONEY, 30.0f);
 	return loan_action.card();
 }

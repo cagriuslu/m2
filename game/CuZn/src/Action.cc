@@ -19,9 +19,9 @@ m2::void_expected HandleActionWhileLiquidating(m2::Character& turnHolderCharacte
 	if (auto expectFactoriesAndGain = CanPlayerLiquidateFactories(turnHolderCharacter, clientCommand.liquidate_action())) {
 		LOG_INFO("Liquidating factories and gaining money", expectFactoriesAndGain->first.size(), expectFactoriesAndGain->second);
 		for (const auto* factory : expectFactoriesAndGain->first) {
-			M2_LEVEL.objects.free(factory->id());
+			M2_LEVEL.objects.Free(factory->id());
 		}
-		turnHolderCharacter.add_resource(m2g::pb::MONEY, m2::F(expectFactoriesAndGain->second));
+		turnHolderCharacter.AddResource(m2g::pb::MONEY, m2::F(expectFactoriesAndGain->second));
 		return {}; // Liquidation successful
 	} else {
 		return m2::make_unexpected(expectFactoriesAndGain.error());
@@ -105,12 +105,12 @@ m2::expected<int> HandleActionWhileNotLiquidating(m2::Character& turnHolderChara
 	// Discard card from player
 	if (cardToDiscard) {
 		LOG_INFO("Discard card from player", M2_GAME.GetNamedItem(cardToDiscard).in_game_name());
-		const auto card_it = turnHolderCharacter.find_items(cardToDiscard);
-		turnHolderCharacter.remove_item(card_it);
+		const auto card_it = turnHolderCharacter.FindItems(cardToDiscard);
+		turnHolderCharacter.RemoveItem(card_it);
 	}
 	// Deduct money from player
 	LOG_INFO("Deducting money from player", moneySpent);
-	turnHolderCharacter.remove_resource(m2g::pb::MONEY, m2::F(moneySpent));
+	turnHolderCharacter.RemoveResource(m2g::pb::MONEY, m2::F(moneySpent));
 
 	return moneySpent;
 }

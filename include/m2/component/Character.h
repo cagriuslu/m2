@@ -12,20 +12,20 @@ namespace m2 {
 	namespace internal {
 		class ResourceAmount {
 			float _amount{};
-			float _max_amount{INFINITY};
+			float _maxAmount{INFINITY};
 		public:
-			explicit ResourceAmount(float amount = 0.0f, float max_amount = INFINITY) { set_max_amount(max_amount); set_amount(amount); }
+			explicit ResourceAmount(const float amount = 0.0f, const float max_amount = INFINITY) { SetMaxAmount(max_amount); SetAmount(amount); }
 
-			[[nodiscard]] float amount() const { return _amount; }
-			[[nodiscard]] bool has_amount() const { return 0.0f < _amount; }
+			[[nodiscard]] float Amount() const { return _amount; }
+			[[nodiscard]] bool HasAmount() const { return 0.0f < _amount; }
 
-			float set_amount(float amount) { return _amount = std::clamp(amount, 0.0f, _max_amount); }
-			float add_amount(float amount) { return set_amount(_amount + amount); }
-			float remove_amount(float amount) { return set_amount(_amount - amount); }
-			void clear_amount() { _amount = 0.0f; }
+			float SetAmount(const float amount) { return _amount = std::clamp(amount, 0.0f, _maxAmount); }
+			float AddAmount(const float amount) { return SetAmount(_amount + amount); }
+			float RemoveAmount(const float amount) { return SetAmount(_amount - amount); }
+			void ClearAmount() { _amount = 0.0f; }
 
-			[[nodiscard]] float max_amount() const { return _max_amount; }
-			float set_max_amount(float max_amount);
+			[[nodiscard]] float MaxAmount() const { return _maxAmount; }
+			float SetMaxAmount(float max_amount);
 		};
 	}
 
@@ -58,53 +58,53 @@ namespace m2 {
 			const Item& operator*() const { return *_item_ptr; }
 			const Item* operator->() const { return _item_ptr; }
 
-			[[nodiscard]] const Character& character() const { return _character; }
-			[[nodiscard]] Filter get_filter() const { return _filter; }
-			[[nodiscard]] const Item* get() const { return _item_ptr; }
-			void set(const Item* ptr) { _item_ptr = ptr; }
-			[[nodiscard]] size_t get_index() const { return _index; }
-			void set_index(size_t index) { _index = index; }
+			[[nodiscard]] const Character& Character() const { return _character; }
+			[[nodiscard]] Filter GetFilter() const { return _filter; }
+			[[nodiscard]] const Item* Get() const { return _item_ptr; }
+			void Set(const Item* ptr) { _item_ptr = ptr; }
+			[[nodiscard]] size_t GetIndex() const { return _index; }
+			void SetIndex(const size_t index) { _index = index; }
 		};
 
 		Character() = default;
 		explicit Character(uint64_t object_id);
 
-		virtual void automatic_update() = 0;
-		std::optional<m2g::pb::InteractionData> execute_interaction(Character& initiator, const m2g::pb::InteractionData& data);
-		std::optional<m2g::pb::InteractionData> execute_interaction(const m2g::pb::InteractionData& data);
+		virtual void AutomaticUpdate() = 0;
+		std::optional<m2g::pb::InteractionData> ExecuteInteraction(Character& initiator, const m2g::pb::InteractionData& data);
+		std::optional<m2g::pb::InteractionData> ExecuteInteraction(const m2g::pb::InteractionData& data);
 
-		[[nodiscard]] bool has_item(m2g::pb::ItemType item_type) const;
-		[[nodiscard]] bool has_item(m2g::pb::ItemCategory item_cat) const;
-		[[nodiscard]] size_t count_item(m2g::pb::ItemType item_type) const;
-		[[nodiscard]] size_t count_item(m2g::pb::ItemCategory item_cat) const;
-		[[nodiscard]] virtual Iterator find_items(m2g::pb::ItemType item_type) const = 0;
-		[[nodiscard]] virtual Iterator find_items(m2g::pb::ItemCategory item_cat) const = 0;
-		[[nodiscard]] virtual Iterator begin_items() const = 0;
-		[[nodiscard]] virtual Iterator end_items() const = 0;
-		[[nodiscard]] std::vector<m2g::pb::ItemType> named_item_types() const;
-		[[nodiscard]] std::vector<m2g::pb::ItemType> named_item_types(m2g::pb::ItemCategory item_cat) const;
-		virtual void add_unnamed_item(std::unique_ptr<const UnnamedItem>&& item) = 0; // Item is moved
-		virtual void add_named_item(const NamedItem& item) = 0;
-		virtual void add_named_item_no_benefits(const NamedItem& item) = 0;
-		bool use_item(const Iterator& item_it, float resource_multiplier = 1.0f);
-		virtual void remove_item(const Iterator& item) = 0;
-		virtual void clear_items() = 0;
+		[[nodiscard]] bool HasItem(m2g::pb::ItemType item_type) const;
+		[[nodiscard]] bool HasItem(m2g::pb::ItemCategory item_cat) const;
+		[[nodiscard]] size_t CountItem(m2g::pb::ItemType item_type) const;
+		[[nodiscard]] size_t CountItem(m2g::pb::ItemCategory item_cat) const;
+		[[nodiscard]] virtual Iterator FindItems(m2g::pb::ItemType item_type) const = 0;
+		[[nodiscard]] virtual Iterator FindItems(m2g::pb::ItemCategory item_cat) const = 0;
+		[[nodiscard]] virtual Iterator BeginItems() const = 0;
+		[[nodiscard]] virtual Iterator EndItems() const = 0;
+		[[nodiscard]] std::vector<m2g::pb::ItemType> NamedItemTypes() const;
+		[[nodiscard]] std::vector<m2g::pb::ItemType> NamedItemTypes(m2g::pb::ItemCategory item_cat) const;
+		virtual void AddUnnamedItem(std::unique_ptr<const UnnamedItem>&& item) = 0; // Item is moved
+		virtual void AddNamedItem(const NamedItem& item) = 0;
+		virtual void AddNamedItemWithoutBenefits(const NamedItem& item) = 0;
+		bool UseItem(const Iterator& item_it, float resource_multiplier = 1.0f);
+		virtual void RemoveItem(const Iterator& item) = 0;
+		virtual void ClearItems() = 0;
 
-		[[nodiscard]] virtual bool has_resource(m2g::pb::ResourceType resource_type) const = 0;
-		[[nodiscard]] virtual float get_resource(m2g::pb::ResourceType resource_type) const = 0;
-		[[nodiscard]] virtual float get_max_resource(m2g::pb::ResourceType resource_type) const = 0;
-		virtual void set_max_resource(m2g::pb::ResourceType resource_type, float max) = 0;
-		virtual float set_resource(m2g::pb::ResourceType resource_type, float amount) = 0;
-		virtual float add_resource(m2g::pb::ResourceType resource_type, float amount) = 0;
-		virtual float remove_resource(m2g::pb::ResourceType resource_type, float amount) = 0;
-		virtual void clear_resource(m2g::pb::ResourceType resource_type) = 0;
-		virtual void clear_resources() = 0;
+		[[nodiscard]] virtual bool HasResource(m2g::pb::ResourceType resource_type) const = 0;
+		[[nodiscard]] virtual float GetResource(m2g::pb::ResourceType resource_type) const = 0;
+		[[nodiscard]] virtual float GetMaxResource(m2g::pb::ResourceType resource_type) const = 0;
+		virtual void SetMaxResource(m2g::pb::ResourceType resource_type, float max) = 0;
+		virtual float SetResource(m2g::pb::ResourceType resource_type, float amount) = 0;
+		virtual float AddResource(m2g::pb::ResourceType resource_type, float amount) = 0;
+		virtual float RemoveResource(m2g::pb::ResourceType resource_type, float amount) = 0;
+		virtual void ClearResource(m2g::pb::ResourceType resource_type) = 0;
+		virtual void ClearResources() = 0;
 
-		[[nodiscard]] virtual bool has_attribute(m2g::pb::AttributeType attribute_type) const = 0;
-		[[nodiscard]] virtual float get_attribute(m2g::pb::AttributeType attribute_type) const = 0;
-		virtual float set_attribute(m2g::pb::AttributeType attribute_type, float value) = 0;
-		virtual void clear_attribute(m2g::pb::AttributeType attribute_type) = 0;
-		virtual void clear_attributes() = 0;
+		[[nodiscard]] virtual bool HasAttribute(m2g::pb::AttributeType attribute_type) const = 0;
+		[[nodiscard]] virtual float GetAttribute(m2g::pb::AttributeType attribute_type) const = 0;
+		virtual float SetAttribute(m2g::pb::AttributeType attribute_type, float value) = 0;
+		virtual void ClearAttribute(m2g::pb::AttributeType attribute_type) = 0;
+		virtual void ClearAttributes() = 0;
 	};
 
 	/// TinyCharacter can hold only one unnamed item, one named item, and can have only one resource
@@ -117,33 +117,33 @@ namespace m2 {
 		TinyCharacter() = default;
 		explicit TinyCharacter(uint64_t object_id);
 
-		void automatic_update() override;
+		void AutomaticUpdate() override;
 
-		[[nodiscard]] Iterator find_items(m2g::pb::ItemType item_type) const override;
-		[[nodiscard]] Iterator find_items(m2g::pb::ItemCategory item_cat) const override;
-		[[nodiscard]] Iterator begin_items() const override;
-		[[nodiscard]] Iterator end_items() const override;
-		void add_unnamed_item(std::unique_ptr<const UnnamedItem>&& item) override;
-		void add_named_item(const NamedItem& item) override;
-		void add_named_item_no_benefits(const NamedItem& item) override;
-		void remove_item(const Iterator& item) override;
-		void clear_items() override;
+		[[nodiscard]] Iterator FindItems(m2g::pb::ItemType item_type) const override;
+		[[nodiscard]] Iterator FindItems(m2g::pb::ItemCategory item_cat) const override;
+		[[nodiscard]] Iterator BeginItems() const override;
+		[[nodiscard]] Iterator EndItems() const override;
+		void AddUnnamedItem(std::unique_ptr<const UnnamedItem>&& item) override;
+		void AddNamedItem(const NamedItem& item) override;
+		void AddNamedItemWithoutBenefits(const NamedItem& item) override;
+		void RemoveItem(const Iterator& item) override;
+		void ClearItems() override;
 
-		[[nodiscard]] bool has_resource(m2g::pb::ResourceType resource_type) const override;
-		[[nodiscard]] float get_resource(m2g::pb::ResourceType resource_type) const override;
-		[[nodiscard]] float get_max_resource(m2g::pb::ResourceType resource_type) const override;
-		void set_max_resource(m2g::pb::ResourceType resource_type, float max) override;
-		float set_resource(m2g::pb::ResourceType resource_type, float amount) override;
-		float add_resource(m2g::pb::ResourceType resource_type, float amount) override;
-		float remove_resource(m2g::pb::ResourceType resource_type, float amount) override;
-		void clear_resource(m2g::pb::ResourceType resource_type) override;
-		void clear_resources() override;
+		[[nodiscard]] bool HasResource(m2g::pb::ResourceType resource_type) const override;
+		[[nodiscard]] float GetResource(m2g::pb::ResourceType resource_type) const override;
+		[[nodiscard]] float GetMaxResource(m2g::pb::ResourceType resource_type) const override;
+		void SetMaxResource(m2g::pb::ResourceType resource_type, float max) override;
+		float SetResource(m2g::pb::ResourceType resource_type, float amount) override;
+		float AddResource(m2g::pb::ResourceType resource_type, float amount) override;
+		float RemoveResource(m2g::pb::ResourceType resource_type, float amount) override;
+		void ClearResource(m2g::pb::ResourceType resource_type) override;
+		void ClearResources() override;
 
-		[[nodiscard]] bool has_attribute(m2g::pb::AttributeType attribute_type) const override;
-		[[nodiscard]] float get_attribute(m2g::pb::AttributeType attribute_type) const override;
-		float set_attribute(m2g::pb::AttributeType attribute_type, float value) override;
-		void clear_attribute(m2g::pb::AttributeType attribute_type) override;
-		void clear_attributes() override;
+		[[nodiscard]] bool HasAttribute(m2g::pb::AttributeType attribute_type) const override;
+		[[nodiscard]] float GetAttribute(m2g::pb::AttributeType attribute_type) const override;
+		float SetAttribute(m2g::pb::AttributeType attribute_type, float value) override;
+		void ClearAttribute(m2g::pb::AttributeType attribute_type) override;
+		void ClearAttributes() override;
 	};
 
 	/// FullCharacter can hold any number of items, and can have any Resource
@@ -156,47 +156,47 @@ namespace m2 {
 		FullCharacter() = default;
 		explicit FullCharacter(uint64_t object_id);
 
-		void automatic_update() override;
+		void AutomaticUpdate() override;
 
-		[[nodiscard]] Iterator find_items(m2g::pb::ItemType item_type) const override;
-		[[nodiscard]] Iterator find_items(m2g::pb::ItemCategory item_cat) const override;
-		[[nodiscard]] Iterator begin_items() const override;
-		[[nodiscard]] Iterator end_items() const override;
-		void add_unnamed_item(std::unique_ptr<const UnnamedItem>&& item) override;
-		void add_named_item(const NamedItem& item) override;
-		void add_named_item_no_benefits(const NamedItem& item) override;
-		void remove_item(const Iterator& item) override;
-		void clear_items() override;
+		[[nodiscard]] Iterator FindItems(m2g::pb::ItemType item_type) const override;
+		[[nodiscard]] Iterator FindItems(m2g::pb::ItemCategory item_cat) const override;
+		[[nodiscard]] Iterator BeginItems() const override;
+		[[nodiscard]] Iterator EndItems() const override;
+		void AddUnnamedItem(std::unique_ptr<const UnnamedItem>&& item) override;
+		void AddNamedItem(const NamedItem& item) override;
+		void AddNamedItemWithoutBenefits(const NamedItem& item) override;
+		void RemoveItem(const Iterator& item) override;
+		void ClearItems() override;
 
-		[[nodiscard]] bool has_resource(m2g::pb::ResourceType resource_type) const override;
-		[[nodiscard]] float get_resource(m2g::pb::ResourceType resource_type) const override;
-		[[nodiscard]] float get_max_resource(m2g::pb::ResourceType resource_type) const override;
-		void set_max_resource(m2g::pb::ResourceType resource_type, float max) override;
-		float set_resource(m2g::pb::ResourceType resource_type, float amount) override;
-		float add_resource(m2g::pb::ResourceType resource_type, float amount) override;
-		float remove_resource(m2g::pb::ResourceType resource_type, float amount) override;
-		void clear_resource(m2g::pb::ResourceType resource_type) override;
-		void clear_resources() override;
+		[[nodiscard]] bool HasResource(m2g::pb::ResourceType resource_type) const override;
+		[[nodiscard]] float GetResource(m2g::pb::ResourceType resource_type) const override;
+		[[nodiscard]] float GetMaxResource(m2g::pb::ResourceType resource_type) const override;
+		void SetMaxResource(m2g::pb::ResourceType resource_type, float max) override;
+		float SetResource(m2g::pb::ResourceType resource_type, float amount) override;
+		float AddResource(m2g::pb::ResourceType resource_type, float amount) override;
+		float RemoveResource(m2g::pb::ResourceType resource_type, float amount) override;
+		void ClearResource(m2g::pb::ResourceType resource_type) override;
+		void ClearResources() override;
 
-		[[nodiscard]] bool has_attribute(m2g::pb::AttributeType attribute_type) const override;
-		[[nodiscard]] float get_attribute(m2g::pb::AttributeType attribute_type) const override;
-		float set_attribute(m2g::pb::AttributeType attribute_type, float value) override;
-		void clear_attribute(m2g::pb::AttributeType attribute_type) override;
-		void clear_attributes() override;
+		[[nodiscard]] bool HasAttribute(m2g::pb::AttributeType attribute_type) const override;
+		[[nodiscard]] float GetAttribute(m2g::pb::AttributeType attribute_type) const override;
+		float SetAttribute(m2g::pb::AttributeType attribute_type, float value) override;
+		void ClearAttribute(m2g::pb::AttributeType attribute_type) override;
+		void ClearAttributes() override;
 
 	private:
-		static int resource_type_index(m2g::pb::ResourceType resource_type);
-		static int attribute_type_index(m2g::pb::AttributeType attribute_type);
-		friend void full_character_iterator_incrementor(Character::Iterator& it);
+		static int ResourceTypeIndex(m2g::pb::ResourceType resource_type);
+		static int AttributeTypeIndex(m2g::pb::AttributeType attribute_type);
+		friend void FullCharacterIteratorIncrementor(Character::Iterator& it);
 	};
 
 	using CharacterVariant = std::variant<TinyCharacter,FullCharacter>;
 
 	// Filters
-	constexpr auto has_item_of_type(m2g::pb::ItemType it) { return [it](const Character& c) { return c.has_item(it); }; }
-	std::function<std::vector<m2g::pb::ItemType>(Character&)> generate_named_item_types_filter(m2g::pb::ItemCategory item_category);
-	std::function<std::vector<m2g::pb::ItemType>(Character&)> generate_named_item_types_filter(std::initializer_list<m2g::pb::ItemCategory> categoriesToFilter);
+	constexpr auto HasItemOfType(m2g::pb::ItemType it) { return [it](const Character& c) { return c.HasItem(it); }; }
+	std::function<std::vector<m2g::pb::ItemType>(Character&)> GenerateNamedItemTypesFilter(m2g::pb::ItemCategory item_category);
+	std::function<std::vector<m2g::pb::ItemType>(Character&)> GenerateNamedItemTypesFilter(std::initializer_list<m2g::pb::ItemCategory> categoriesToFilter);
 	// Transformers
-	Character& to_character_base(CharacterVariant& v);
-	inline Object& to_owner_of_character(const Character& chr) { return chr.owner(); }
+	Character& ToCharacterBase(CharacterVariant& v);
+	inline Object& ToOwnerOfCharacter(const Character& chr) { return chr.owner(); }
 }

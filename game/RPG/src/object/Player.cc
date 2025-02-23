@@ -37,35 +37,35 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 	bp.set_mass(PLAYER_MASS);
 	bp.set_linear_damping(PLAYER_LINEAR_DAMPING);
 	bp.set_fixed_rotation(true);
-	phy.body = m2::box2d::create_body(*M2_LEVEL.world, obj.physique_id(), obj.position, bp);
+	phy.body = m2::box2d::CreateBody(*M2_LEVEL.world, obj.physique_id(), obj.position, bp);
 
 	auto& gfx = obj.add_graphic(main_sprite_type);
 
 	auto& chr = obj.add_full_character();
-	chr.add_named_item(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_DASH_2S));
+	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_DASH_2S));
 	if (M2_LEVEL.Identifier() != "MeleeTutorialClosed") {
 		// 4th level is melee tutorial
-		chr.add_named_item(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_GUN));
+		chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_GUN));
 	}
-	chr.add_named_item(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_SWORD));
-	chr.add_named_item(M2_GAME.GetNamedItem(m2g::pb::ITEM_AUTOMATIC_DASH_ENERGY));
-	chr.add_named_item(M2_GAME.GetNamedItem(m2g::pb::ITEM_AUTOMATIC_RANGED_ENERGY));
-	chr.add_named_item(M2_GAME.GetNamedItem(m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY));
-	chr.add_resource(m2g::pb::RESOURCE_HP, 1.0f);
-	chr.set_max_resource(m2g::pb::RESOURCE_HP, 1.0f);
-	chr.add_resource(m2g::pb::RESOURCE_DASH_ENERGY, 2.0f);
+	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_SWORD));
+	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_AUTOMATIC_DASH_ENERGY));
+	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_AUTOMATIC_RANGED_ENERGY));
+	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY));
+	chr.AddResource(m2g::pb::RESOURCE_HP, 1.0f);
+	chr.SetMaxResource(m2g::pb::RESOURCE_HP, 1.0f);
+	chr.AddResource(m2g::pb::RESOURCE_DASH_ENERGY, 2.0f);
 
 	obj.impl = std::make_unique<rpg::Player>(obj);
 	auto& impl = dynamic_cast<Player&>(*obj.impl);
 
-	phy.pre_step = [&, id=id](m2::Physique& phy) {
+	phy.preStep = [&, id=id](m2::Physique& phy) {
 		auto& chr = obj.character();
 		auto vector_to_mouse = (M2_GAME.MousePositionWorldM() - obj.position).normalize();
 
 		auto [direction_enum, direction_vector] = m2::calculate_character_movement(m2::Key::LEFT, m2::Key::RIGHT, m2::Key::UP, m2::Key::DOWN);
 		float move_force;
 		// Check if dash
-		if (direction_vector && M2_GAME.events.pop_key_press(m2::Key::DASH) && chr.use_item(chr.find_items(m2g::pb::ITEM_REUSABLE_DASH_2S))) {
+		if (direction_vector && M2_GAME.events.pop_key_press(m2::Key::DASH) && chr.UseItem(chr.FindItems(m2g::pb::ITEM_REUSABLE_DASH_2S))) {
 			move_force = PLAYER_DASH_FORCE;
 		} else {
 			// Character movement
@@ -88,15 +88,15 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 			};
 
 			// Check if there is a special ranged weapon and try to use the item
-			auto special_it = chr.find_items(m2g::pb::ITEM_CATEGORY_SPECIAL_RANGED_WEAPON);
+			auto special_it = chr.FindItems(m2g::pb::ITEM_CATEGORY_SPECIAL_RANGED_WEAPON);
 			if (special_it) {
-				if (chr.use_item(special_it)) {
+				if (chr.UseItem(special_it)) {
 					shoot(*special_it);
 				}
 			} else {
 				// Find default weapon and try to use it
-				auto default_it = chr.find_items(m2g::pb::ITEM_CATEGORY_DEFAULT_RANGED_WEAPON);
-				if (default_it && chr.use_item(default_it)) {
+				auto default_it = chr.FindItems(m2g::pb::ITEM_CATEGORY_DEFAULT_RANGED_WEAPON);
+				if (default_it && chr.UseItem(default_it)) {
 					shoot(*default_it);
 				}
 			}
@@ -110,16 +110,16 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 			};
 
 			// Check if there is a special melee weapon and try to use the item
-			auto special_it = chr.find_items(m2g::pb::ITEM_CATEGORY_SPECIAL_MELEE_WEAPON);
+			auto special_it = chr.FindItems(m2g::pb::ITEM_CATEGORY_SPECIAL_MELEE_WEAPON);
 			if (special_it) {
 				// Try to use the weapon
-				if (chr.use_item(special_it)) {
+				if (chr.UseItem(special_it)) {
 					slash(*special_it);
 				}
 			} else {
 				// Find default melee weapon and try to use it
-				auto default_it = chr.find_items(m2g::pb::ITEM_CATEGORY_DEFAULT_MELEE_WEAPON);
-				if (default_it && chr.use_item(default_it)) {
+				auto default_it = chr.FindItems(m2g::pb::ITEM_CATEGORY_DEFAULT_MELEE_WEAPON);
+				if (default_it && chr.UseItem(default_it)) {
 					slash(*default_it);
 				}
 			}
@@ -127,32 +127,32 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 	};
 	chr.update = [](MAYBE m2::Character& chr) {
 		// Check if died
-		if (not chr.has_resource(m2g::pb::RESOURCE_HP)) {
+		if (not chr.HasResource(m2g::pb::RESOURCE_HP)) {
 			LOG_INFO("You died");
 			if (m2::UiPanel::create_and_run_blocking(M2G_PROXY.you_died_menu()).IsQuit()) {
 				M2_GAME.quit = true;
 			}
 		}
 		// Check if special ammo finished
-		if (auto special_it = chr.find_items(m2g::pb::ITEM_CATEGORY_SPECIAL_RANGED_WEAPON);
-			special_it && !chr.has_resource(m2g::pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO)) {
+		if (auto special_it = chr.FindItems(m2g::pb::ITEM_CATEGORY_SPECIAL_RANGED_WEAPON);
+			special_it && !chr.HasResource(m2g::pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO)) {
 			// Remove weapon if no ammo left
-			chr.remove_item(special_it);
+			chr.RemoveItem(special_it);
 		}
 		// Show/hide ammo display
-		M2G_PROXY.set_ammo_display_state((bool) chr.find_items(m2g::pb::ITEM_CATEGORY_SPECIAL_RANGED_WEAPON));
+		M2G_PROXY.set_ammo_display_state((bool) chr.FindItems(m2g::pb::ITEM_CATEGORY_SPECIAL_RANGED_WEAPON));
 	};
-	phy.on_collision = [](MAYBE m2::Physique& me, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
+	phy.onCollision = [](MAYBE m2::Physique& me, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
 		if (auto* other_char = other.owner().get_character(); other_char && 10.0f < m2::VecF{me.body->GetLinearVelocity()}.length()) {
 			InteractionData data;
 			data.set_stun_duration(2.0f);
-			other_char->execute_interaction(data);
+			other_char->ExecuteInteraction(data);
 		}
 	};
 	chr.on_interaction = [](m2::Character& self, MAYBE m2::Character* other, const InteractionData& data) -> std::optional<m2g::pb::InteractionData> {
 		if (data.has_hit_damage()) {
 			// Get hit by an enemy
-			self.remove_resource(m2g::pb::RESOURCE_HP, data.hit_damage());
+			self.RemoveResource(m2g::pb::RESOURCE_HP, data.hit_damage());
 		} else if (data.has_item_type()) {
 			const auto& item = M2_GAME.GetNamedItem(data.item_type());
 			// Player can hold only one special weapon of certain type, get rid of the previous one
@@ -160,28 +160,28 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 			constexpr std::array<ResourceType, 2> special_ammo_type = {RESOURCE_SPECIAL_RANGED_WEAPON_AMMO, NO_RESOURCE};
 			for (size_t i = 0; i < special_categories.size(); ++i) {
 				if (auto sp = special_categories[i]; sp == item.category()) {
-					if (auto it = self.find_items(sp); it) {
-						self.remove_item(it); // Remove weapon
-						self.clear_resource(special_ammo_type[i]); // Also remove any ammo
+					if (auto it = self.FindItems(sp); it) {
+						self.RemoveItem(it); // Remove weapon
+						self.ClearResource(special_ammo_type[i]); // Also remove any ammo
 					}
 					break;
 				}
 			}
 			// Add item
-			self.add_named_item(item);
+			self.AddNamedItem(item);
 		}
 		return std::nullopt;
 	};
-	gfx.pre_draw = [&](MAYBE m2::Graphic& gfx) {
+	gfx.preDraw = [&](MAYBE m2::Graphic& gfx) {
 		impl.animation_fsm.time(M2_GAME.DeltaTimeS());
 	};
-	gfx.on_draw = [&](m2::Graphic& gfx) {
+	gfx.onDraw = [&](m2::Graphic& gfx) {
 		// Draw the sprite itself
 		m2::Graphic::DefaultDrawCallback(gfx);
 		// Draw the HP addon
-		DrawAddons(gfx, chr.get_resource(RESOURCE_HP));
+		DrawAddons(gfx, chr.GetResource(RESOURCE_HP));
 	};
 
-	M2_LEVEL.playerId = M2_LEVEL.objects.get_id(&obj);
+	M2_LEVEL.playerId = M2_LEVEL.objects.GetId(&obj);
 	return {};
 }

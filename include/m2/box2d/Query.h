@@ -12,9 +12,9 @@ namespace m2::box2d {
     using PhysiqueQueryCallback = std::function<bool(Physique&)>;
     using FixtureQueryCallback = std::function<bool(b2Fixture&)>;
 	/// Query the given world for physics objects
-    void query(b2World& world, const Aabb& aabb, PhysiqueQueryCallback&& query_callback);
-    void query(b2World& world, const Aabb& aabb, FixtureQueryCallback&& query_callback);
+    void Query(b2World& world, const Aabb& aabb, PhysiqueQueryCallback&& query_callback);
+    void Query(b2World& world, const Aabb& aabb, FixtureQueryCallback&& query_callback);
 
 	/// Query the default world for physics objects near a position under the mouse
-	void find_objects_near_position_under_mouse(VecF position, float max_distance, PhysiqueQueryCallback&& query_callback);
+	void FindObjectsNearPositionUnderMouse(VecF position, float max_distance, PhysiqueQueryCallback&& query_callback);
 }

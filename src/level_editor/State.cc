@@ -210,7 +210,7 @@ void m2::level_editor::State::Draw() const {
 		if (const auto* selection = M2_LEVEL.PrimarySelection()) {
 			if (const auto integerSelection = selection->IntegerSelectionRectM()) {
 				integerSelection->for_each_cell([=](const VecI& cell) {
-					Graphic::color_cell(cell, SELECTION_COLOR);
+					Graphic::ColorCell(cell, SELECTION_COLOR);
 				});
 			}
 		}
@@ -223,7 +223,7 @@ void m2::level_editor::State::Draw() const {
 		} else {
 			if (const auto* selection = M2_LEVEL.PrimarySelection()) {
 				if (const auto rawSelection = selection->SelectionRectM()) {
-					Graphic::color_rect(*rawSelection, SELECTION_COLOR);
+					Graphic::ColorRect(*rawSelection, SELECTION_COLOR);
 				}
 			}
 		}

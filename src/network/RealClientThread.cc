@@ -6,19 +6,19 @@ namespace {
 	template <typename NamedItemListT, typename ResourceListT, typename AttributeListT>
 	void update_character(m2::Character* c, const NamedItemListT& named_items, const ResourceListT& resources, const AttributeListT& attributes) {
 		// Update items
-		c->clear_items();
+		c->ClearItems();
 		for (auto named_item_type : named_items) {
-			c->add_named_item_no_benefits(M2_GAME.GetNamedItem(static_cast<m2g::pb::ItemType>(named_item_type)));
+			c->AddNamedItemWithoutBenefits(M2_GAME.GetNamedItem(static_cast<m2g::pb::ItemType>(named_item_type)));
 		}
 		// Update resources
-		c->clear_resources();
+		c->ClearResources();
 		for (const auto& resource : resources) {
-			c->add_resource(resource.type(), m2::get_resource_amount(resource));
+			c->AddResource(resource.type(), m2::get_resource_amount(resource));
 		}
 		// Update attributes
-		c->clear_attributes();
+		c->ClearAttributes();
 		for (const auto& attribute : attributes) {
-			c->set_attribute(attribute.type(), attribute.amount());
+			c->SetAttribute(attribute.type(), attribute.amount());
 		}
 	}
 }
@@ -102,7 +102,7 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::SequenceNo>> m2::netw
 			return make_unexpected("Player ID doesn't match the ID found in local player list");
 		}
 
-		if (M2_LEVEL.characters.size() != Z(server_update.objects_with_character_size())) {
+		if (M2_LEVEL.characters.Size() != Z(server_update.objects_with_character_size())) {
 			return make_unexpected("Server and local have different number of characters");
 		}
 
@@ -117,7 +117,7 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::SequenceNo>> m2::netw
 					if (v.owner().object_type() != server_character.object_type()) {
 						return make_unexpected("Server and local object type mismatch");
 					}
-					if (std::distance(v.begin_items(), v.end_items()) != server_character.named_items_size()) {
+					if (std::distance(v.BeginItems(), v.EndItems()) != server_character.named_items_size()) {
 						return make_unexpected("Server and local item count mismatch");
 					}
 					// TODO other checks
@@ -179,7 +179,7 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::SequenceNo>> m2::netw
 		if (auto it = _server_to_local_map.find(object_desc.object_id()); it != _server_to_local_map.end()) {
 			LOG_TRACE("Server object is still alive", object_desc.object_id(), it->first);
 			// Update the character
-			auto* character = M2_LEVEL.objects.get(it->second.first)->get_character();
+			auto* character = M2_LEVEL.objects.Get(it->second.first)->get_character();
 			update_character(character, object_desc.named_items(), object_desc.resources(), object_desc.attributes());
 			// Mark object as visited
 			it->second.second = true;
@@ -219,7 +219,7 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::SequenceNo>> m2::netw
 				auto* character = obj_it->get_character();
 				update_character(character, it->named_items, it->resources, it->attributes);
 				// Add object to the map, marked as visited
-				_server_to_local_map[it->server_object_id] = std::make_pair(obj_it.id(), true);
+				_server_to_local_map[it->server_object_id] = std::make_pair(obj_it.Id(), true);
 				// Delete the object details from the objects_to_be_created vector
 				it = objects_to_be_created.erase(it);
 			} else if (auto parent_it = _server_to_local_map.find(it->server_object_parent_id); parent_it != _server_to_local_map.end()) {
@@ -232,7 +232,7 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::SequenceNo>> m2::netw
 				auto* character = obj_it->get_character();
 				update_character(character, it->named_items, it->resources, it->attributes);
 				// Add object to the map, marked as visited
-				_server_to_local_map[it->server_object_id] = std::make_pair(obj_it.id(), true);
+				_server_to_local_map[it->server_object_id] = std::make_pair(obj_it.Id(), true);
 				// Delete the object details from the objects_to_be_created vector
 				it = objects_to_be_created.erase(it);
 			} else {

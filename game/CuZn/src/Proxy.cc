@@ -55,7 +55,7 @@ void m2g::Proxy::post_multi_player_level_client_init(MAYBE const std::string& na
 			auto client_init_result = PlayerInitOtherInstance(*it);
 			m2_succeed_or_throw_error(client_init_result);
 		}
-		multiPlayerObjectIds.emplace_back(it.id());
+		multiPlayerObjectIds.emplace_back(it.Id());
 		player_colors.emplace_back(generate_player_color(i));
 	}
 
@@ -65,13 +65,13 @@ void m2g::Proxy::post_multi_player_level_client_init(MAYBE const std::string& na
 		auto it = m2::create_object(std::get<m2::VecF>(merchant_positions[merchant_sprite]), m2g::pb::ObjectType::MERCHANT);
 		init_merchant(*it);
 		// Store for later
-		merchant_object_ids[merchant_sprite] = it.id();
+		merchant_object_ids[merchant_sprite] = it.Id();
 	}
 
 	// Add Game State Tracker object
 	auto it = m2::create_object(m2::VecF{}, m2g::pb::ObjectType::GAME_STATE_TRACKER);
 	InitGameStateTracker(*it);
-	_game_state_tracker_id = it.id();
+	_game_state_tracker_id = it.Id();
 
 	// Add status bar panel to the level
 	_status_bar_panel = M2_LEVEL.AddCustomNonblockingUiPanel(
@@ -99,8 +99,8 @@ void m2g::Proxy::multi_player_level_server_populate(MAYBE const std::string& nam
 				auto merchant_object_id = merchant_object_ids[possibly_active_merchant_loc];
 				auto& merchant_char = M2_LEVEL.objects[merchant_object_id].character();
 				LOG_DEBUG("Adding license to merchant", m2g::pb::ItemType_Name(license));
-				merchant_char.add_named_item(M2_GAME.GetNamedItem(license));
-				merchant_char.add_resource(pb::BEER_BARREL_COUNT, 1.0f);
+				merchant_char.AddNamedItem(M2_GAME.GetNamedItem(license));
+				merchant_char.AddResource(pb::BEER_BARREL_COUNT, 1.0f);
 			}
 		}
 	}
@@ -110,7 +110,7 @@ void m2g::Proxy::multi_player_level_server_populate(MAYBE const std::string& nam
 	m2_repeat(client_count) { draw_deck.pop_back(); } // In the canal era, we discard client_count number of cards from the deck
 	Give8CardsToEachPlayer(draw_deck);
 	_draw_deck = std::move(draw_deck);
-	game_state_tracker().set_resource(pb::DRAW_DECK_SIZE, m2::F(_draw_deck.size()));
+	game_state_tracker().SetResource(pb::DRAW_DECK_SIZE, m2::F(_draw_deck.size()));
 
 	// Don't put the first player on the list
 	for (int i = 1; i < M2_GAME.ServerThread().client_count(); ++i) {
@@ -118,17 +118,17 @@ void m2g::Proxy::multi_player_level_server_populate(MAYBE const std::string& nam
 	}
 	// Now that the player order is determined, fill the game state tracker with the order
 	{
-		game_state_tracker().set_attribute(pb::FIRST_PLAYER_INDEX, 0.0f);
+		game_state_tracker().SetAttribute(pb::FIRST_PLAYER_INDEX, 0.0f);
 		auto waitingPlayersCopy = _waiting_players;
 		for (auto order = pb::SECOND_PLAYER_INDEX;
 				order <= pb::FORTH_PLAYER_INDEX;
 				order = static_cast<pb::AttributeType>(I(order) + 1)) {
 			if (not waitingPlayersCopy.empty()) {
-				game_state_tracker().set_attribute(order, F(waitingPlayersCopy.front()));
+				game_state_tracker().SetAttribute(order, F(waitingPlayersCopy.front()));
 				waitingPlayersCopy.pop_front();
 				continue;
 			}
-			game_state_tracker().set_attribute(order, F(-1));
+			game_state_tracker().SetAttribute(order, F(-1));
 		}
 	}
 }
@@ -182,11 +182,11 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		// Save spent money to game state tracker so that it's shared among clients
 		for (int i = 0; i < M2_GAME.TotalPlayerCount(); ++i) {
 			auto money_spent_by_player_enum = static_cast<pb::ResourceType>(pb::MONEY_SPENT_BY_PLAYER_0 + i);
-			game_state_tracker().set_resource(money_spent_by_player_enum, 0.0f);
+			game_state_tracker().SetResource(money_spent_by_player_enum, 0.0f);
 		}
 		for (auto [player_index, spent_money] : _played_players) {
 			auto money_spent_by_player_enum = static_cast<pb::ResourceType>(pb::MONEY_SPENT_BY_PLAYER_0 + player_index);
-			game_state_tracker().set_resource(money_spent_by_player_enum, m2::F(spent_money));
+			game_state_tracker().SetResource(money_spent_by_player_enum, m2::F(spent_money));
 		}
 	}
 
@@ -209,14 +209,14 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		// Give card to player
 		auto card = _draw_deck.back();
 		_draw_deck.pop_back();
-		game_state_tracker().set_resource(pb::DRAW_DECK_SIZE, m2::F(_draw_deck.size()));
-		turn_holder_character.add_named_item(M2_GAME.GetNamedItem(card));
+		game_state_tracker().SetResource(pb::DRAW_DECK_SIZE, m2::F(_draw_deck.size()));
+		turn_holder_character.AddNamedItem(M2_GAME.GetNamedItem(card));
 
 		// Check if first turn finished for all players
 		if (_waiting_players.empty()) {
 			LOG_INFO("First turn ended");
 			_is_first_turn = false;
-			game_state_tracker().set_resource(pb::IS_LAST_ACTION_OF_PLAYER, 0.0f);
+			game_state_tracker().SetResource(pb::IS_LAST_ACTION_OF_PLAYER, 0.0f);
 			liquidation_necessary = prepare_next_round();
 		} else {
 			// Otherwise, just fetch the next player from _waiting_players
@@ -226,18 +226,18 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		// If there are odd number of cards, the turn holder does not change
 		// Push to the front of the waiting players, so that it's popped first below.
 		_waiting_players.push_front(turn_holder_index);
-		game_state_tracker().set_resource(pb::IS_LAST_ACTION_OF_PLAYER, 1.0f);
+		game_state_tracker().SetResource(pb::IS_LAST_ACTION_OF_PLAYER, 1.0f);
 		LOG_INFO("Continuing with the same player");
 	} else { // not is_first_turn() && (card_count % 2) == 0
 		// If there are even number of cards, the turn holder changes. Give cards to player
 		while (not _draw_deck.empty() && PlayerCardCount(turn_holder_character) < 8) {
 			auto card = _draw_deck.back();
 			_draw_deck.pop_back();
-			game_state_tracker().set_resource(pb::DRAW_DECK_SIZE, m2::F(_draw_deck.size()));
-			turn_holder_character.add_named_item(M2_GAME.GetNamedItem(card));
+			game_state_tracker().SetResource(pb::DRAW_DECK_SIZE, m2::F(_draw_deck.size()));
+			turn_holder_character.AddNamedItem(M2_GAME.GetNamedItem(card));
 		}
 
-		game_state_tracker().set_resource(pb::IS_LAST_ACTION_OF_PLAYER, 0.0f);
+		game_state_tracker().SetResource(pb::IS_LAST_ACTION_OF_PLAYER, 0.0f);
 
 		// Try to prepare the next round.
 		if (_waiting_players.empty()) {
@@ -260,16 +260,16 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		for (auto order = pb::FIRST_PLAYER_INDEX; order <= pb::FORTH_PLAYER_INDEX;
 				order = static_cast<pb::AttributeType>(I(order) + 1)) {
 			if (not playedPlayersCopy.empty()) {
-				game_state_tracker().set_attribute(order, F(playedPlayersCopy.front().first));
+				game_state_tracker().SetAttribute(order, F(playedPlayersCopy.front().first));
 				playedPlayersCopy.pop_front();
 				continue;
 			}
 			if (not waitingPlayersCopy.empty()) {
-				game_state_tracker().set_attribute(order, F(waitingPlayersCopy.front()));
+				game_state_tracker().SetAttribute(order, F(waitingPlayersCopy.front()));
 				waitingPlayersCopy.pop_front();
 				continue;
 			}
-			game_state_tracker().set_attribute(order, F(-1));
+			game_state_tracker().SetAttribute(order, F(-1));
 		}
 	}
 
@@ -326,7 +326,7 @@ void m2g::Proxy::handle_server_command(const pb::ServerCommand& server_command) 
 				}
 			};
 			// Play sound
-			M2_GAME.audio_manager->play(&M2_GAME.songs[m2g::pb::SONG_NOTIFICATION_SOUND], m2::AudioManager::ONCE);
+			M2_GAME.audio_manager->Play(&M2_GAME.songs[m2g::pb::SONG_NOTIFICATION_SOUND], m2::AudioManager::ONCE);
 			// Show screen
 			M2_LEVEL.ShowSemiBlockingUiPanel(RectF{0.3f, 0.3f, 0.4f, 0.4f}, std::make_unique<m2::UiPanelBlueprint>(blueprint));
 		} else {
@@ -510,43 +510,43 @@ int m2g::Proxy::total_card_count() const {
 	const auto player_card_lists = M2G_PROXY.multiPlayerObjectIds
 		| std::views::transform(m2::to_object_of_id)
 		| std::views::transform(m2::to_character_of_object)
-		| std::views::transform(m2::generate_named_item_types_filter({pb::ITEM_CATEGORY_CITY_CARD, pb::ITEM_CATEGORY_INDUSTRY_CARD, pb::ITEM_CATEGORY_WILD_CARD}));
+		| std::views::transform(m2::GenerateNamedItemTypesFilter({pb::ITEM_CATEGORY_CITY_CARD, pb::ITEM_CATEGORY_INDUSTRY_CARD, pb::ITEM_CATEGORY_WILD_CARD}));
 	const auto card_count = std::accumulate(player_card_lists.begin(), player_card_lists.end(), 0, [](const int sum, const std::vector<Card>& card_list) { return sum + I(card_list.size()); });
-	return card_count + m2::iround(game_state_tracker().get_resource(pb::DRAW_DECK_SIZE));
+	return card_count + m2::iround(game_state_tracker().GetResource(pb::DRAW_DECK_SIZE));
 }
 bool m2g::Proxy::is_last_action_of_player() const {
-	return m2::is_equal(game_state_tracker().get_resource(pb::IS_LAST_ACTION_OF_PLAYER), 1.0f, 0.001f);
+	return m2::is_equal(game_state_tracker().GetResource(pb::IS_LAST_ACTION_OF_PLAYER), 1.0f, 0.001f);
 }
 bool m2g::Proxy::is_canal_era() const {
-	return m2::is_equal(game_state_tracker().get_resource(pb::IS_RAILROAD_ERA), 0.0f, 0.001f);
+	return m2::is_equal(game_state_tracker().GetResource(pb::IS_RAILROAD_ERA), 0.0f, 0.001f);
 }
 bool m2g::Proxy::is_railroad_era() const {
-	return m2::is_equal(game_state_tracker().get_resource(pb::IS_RAILROAD_ERA), 1.0f, 0.001f);
+	return m2::is_equal(game_state_tracker().GetResource(pb::IS_RAILROAD_ERA), 1.0f, 0.001f);
 }
 int m2g::Proxy::market_coal_count() const {
-	return m2::iround(game_state_tracker().get_resource(m2g::pb::COAL_CUBE_COUNT));
+	return m2::iround(game_state_tracker().GetResource(m2g::pb::COAL_CUBE_COUNT));
 }
 int m2g::Proxy::market_iron_count() const {
-	return m2::iround(game_state_tracker().get_resource(m2g::pb::IRON_CUBE_COUNT));
+	return m2::iround(game_state_tracker().GetResource(m2g::pb::IRON_CUBE_COUNT));
 }
 int m2g::Proxy::market_coal_cost(int coal_count) const {
-	auto current_coal_count = m2::iround(game_state_tracker().get_resource(m2g::pb::COAL_CUBE_COUNT));
+	auto current_coal_count = m2::iround(game_state_tracker().GetResource(m2g::pb::COAL_CUBE_COUNT));
 	return CalculateCost(COAL_MARKET_CAPACITY, current_coal_count, coal_count);
 }
 int m2g::Proxy::market_iron_cost(int iron_count) const {
-	auto current_iron_count = m2::iround(game_state_tracker().get_resource(m2g::pb::IRON_CUBE_COUNT));
+	auto current_iron_count = m2::iround(game_state_tracker().GetResource(m2g::pb::IRON_CUBE_COUNT));
 	return CalculateCost(IRON_MARKET_CAPACITY, current_iron_count, iron_count);
 }
 int m2g::Proxy::player_spent_money(int player_index) const {
 	auto money_spent_by_player_enum = static_cast<pb::ResourceType>(pb::MONEY_SPENT_BY_PLAYER_0 + player_index);
-	return m2::iround(game_state_tracker().get_resource(money_spent_by_player_enum));
+	return m2::iround(game_state_tracker().GetResource(money_spent_by_player_enum));
 }
 std::pair<int,int> m2g::Proxy::market_coal_revenue(int count) const {
-	auto current_coal_count = m2::iround(game_state_tracker().get_resource(m2g::pb::COAL_CUBE_COUNT));
+	auto current_coal_count = m2::iround(game_state_tracker().GetResource(m2g::pb::COAL_CUBE_COUNT));
 	return CalculateRevenue(COAL_MARKET_CAPACITY, current_coal_count, count);
 }
 std::pair<int,int> m2g::Proxy::market_iron_revenue(int count) const {
-	auto current_iron_count = m2::iround(game_state_tracker().get_resource(m2g::pb::IRON_CUBE_COUNT));
+	auto current_iron_count = m2::iround(game_state_tracker().GetResource(m2g::pb::IRON_CUBE_COUNT));
 	return CalculateRevenue(IRON_MARKET_CAPACITY, current_iron_count, count);
 }
 
@@ -620,16 +620,16 @@ std::optional<std::pair<m2g::Proxy::PlayerIndex, m2g::pb::ServerCommand>> m2g::P
 	for (const auto playerId : M2G_PROXY.multiPlayerObjectIds) {
 		// Lookup player
 		auto& player_character = M2_LEVEL.objects[playerId].character();
-		const auto incomePoints = m2::iround(player_character.get_attribute(pb::INCOME_POINTS));
+		const auto incomePoints = m2::iround(player_character.GetAttribute(pb::INCOME_POINTS));
 		const auto incomeLevel = IncomeLevelFromIncomePoints(incomePoints);
-		const auto playerMoney = m2::iround(player_character.get_resource(pb::MONEY));
+		const auto playerMoney = m2::iround(player_character.GetResource(pb::MONEY));
 		LOG_DEBUG("Player gained money", incomeLevel);
 		const auto newPlayerMoney = playerMoney + incomeLevel;
 		if (newPlayerMoney < 0) {
 			LOG_INFO("Player doesn't have enough money to pay its loan, they'll lose victory points", newPlayerMoney);
-			player_character.add_resource(pb::VICTORY_POINTS, m2::F(newPlayerMoney));
+			player_character.AddResource(pb::VICTORY_POINTS, m2::F(newPlayerMoney));
 		}
-		player_character.set_resource(pb::MONEY, m2::F(std::clamp(newPlayerMoney, 0, INT32_MAX)));
+		player_character.SetResource(pb::MONEY, m2::F(std::clamp(newPlayerMoney, 0, INT32_MAX)));
 	}
 
 	// Determine player orders
@@ -677,7 +677,7 @@ m2g::Proxy::LiquidationDetails m2g::Proxy::prepare_railroad_era() {
 		| std::views::transform(m2::to_character_of_object),
 		[&](const m2::Character& human_player) {
 			canal_era_result_command.mutable_canal_era_result()->add_victory_points(
-				m2::iround(human_player.get_resource(pb::VICTORY_POINTS)));
+				m2::iround(human_player.GetResource(pb::VICTORY_POINTS)));
 		});
 	LOG_INFO("Sending CanalEraResult to clients");
 	M2_GAME.ServerThread().send_server_command(canal_era_result_command, -1);
@@ -685,8 +685,8 @@ m2g::Proxy::LiquidationDetails m2g::Proxy::prepare_railroad_era() {
 	// Reset merchant beer
 	for (const auto& merchantObjId: merchant_object_ids | std::views::values) {
 		auto& merchantChr = M2_LEVEL.objects[merchantObjId].character();
-		if (merchantChr.has_item(pb::ITEM_CATEGORY_MERCHANT_LICENSE)) {
-			merchantChr.set_resource(pb::BEER_BARREL_COUNT, 1.0f);
+		if (merchantChr.HasItem(pb::ITEM_CATEGORY_MERCHANT_LICENSE)) {
+			merchantChr.SetResource(pb::BEER_BARREL_COUNT, 1.0f);
 		}
 	}
 
@@ -694,38 +694,38 @@ m2g::Proxy::LiquidationDetails m2g::Proxy::prepare_railroad_era() {
 	auto draw_deck = PrepareDrawDeck(M2_GAME.ServerThread().client_count());
 	Give8CardsToEachPlayer(draw_deck);
 	_draw_deck = std::move(draw_deck);
-	game_state_tracker().set_resource(pb::DRAW_DECK_SIZE, m2::F(_draw_deck.size()));
+	game_state_tracker().SetResource(pb::DRAW_DECK_SIZE, m2::F(_draw_deck.size()));
 
 	// Give roads to players
 	const auto& road_item = M2_GAME.GetNamedItem(pb::ROAD_TILE);
-	auto road_possession_limit = m2::zround(road_item.get_attribute(pb::POSSESSION_LIMIT));
+	auto road_possession_limit = m2::zround(road_item.GetAttribute(pb::POSSESSION_LIMIT));
 	std::ranges::for_each(M2G_PROXY.multiPlayerObjectIds
 		| std::views::transform(m2::to_object_of_id)
 		| std::views::transform(m2::to_character_of_object),
 		[&](m2::Character& human_player) {
-			while (human_player.count_item(pb::ROAD_TILE) < road_possession_limit) {
-				human_player.add_named_item(road_item);
+			while (human_player.CountItem(pb::ROAD_TILE) < road_possession_limit) {
+				human_player.AddNamedItem(road_item);
 			}
 		});
 
-	game_state_tracker().set_resource(pb::IS_RAILROAD_ERA, 1.0f);
-	game_state_tracker().set_resource(pb::IS_LAST_ACTION_OF_PLAYER, 0.0f);
+	game_state_tracker().SetResource(pb::IS_RAILROAD_ERA, 1.0f);
+	game_state_tracker().SetResource(pb::IS_LAST_ACTION_OF_PLAYER, 0.0f);
 	LOG_INFO("Switch to railroad era and next player");
 	return std::nullopt;
 }
 
 void m2g::Proxy::buy_coal_from_market() {
-	game_state_tracker().remove_resource(pb::COAL_CUBE_COUNT, 1.0f);
+	game_state_tracker().RemoveResource(pb::COAL_CUBE_COUNT, 1.0f);
 }
 
 void m2g::Proxy::buy_iron_from_market() {
-	game_state_tracker().remove_resource(pb::IRON_CUBE_COUNT, 1.0f);
+	game_state_tracker().RemoveResource(pb::IRON_CUBE_COUNT, 1.0f);
 }
 
 void m2g::Proxy::sell_coal_to_market(int count) {
-	game_state_tracker().add_resource(pb::COAL_CUBE_COUNT, m2::F(count));
+	game_state_tracker().AddResource(pb::COAL_CUBE_COUNT, m2::F(count));
 }
 
 void m2g::Proxy::sell_iron_to_market(int count) {
-	game_state_tracker().add_resource(pb::IRON_CUBE_COUNT, m2::F(count));
+	game_state_tracker().AddResource(pb::IRON_CUBE_COUNT, m2::F(count));
 }

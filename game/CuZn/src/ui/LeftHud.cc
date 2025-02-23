@@ -143,13 +143,13 @@ const UiPanelBlueprint left_hud_blueprint = {
 				.wrapped_font_size_in_units = 1.25f,
 				.onUpdate = [](MAYBE Text& self) {
 					if (M2_GAME.IsOurTurn()) {
-						if (m2::is_one(M2G_PROXY.game_state_tracker().get_resource(m2g::pb::IS_LAST_ACTION_OF_PLAYER), 0.001f)) {
+						if (m2::is_one(M2G_PROXY.game_state_tracker().GetResource(m2g::pb::IS_LAST_ACTION_OF_PLAYER), 0.001f)) {
 							self.set_text("Take your\nlast action\nof this turn");
 						} else {
 							self.set_text("Take your\nfirst action\nof this turn");
 						}
 					} else {
-						if (m2::is_one(M2G_PROXY.game_state_tracker().get_resource(m2g::pb::IS_LAST_ACTION_OF_PLAYER), 0.001f)) {
+						if (m2::is_one(M2G_PROXY.game_state_tracker().GetResource(m2g::pb::IS_LAST_ACTION_OF_PLAYER), 0.001f)) {
 							self.set_text("Current\nplayer will\ntake their\nlast action\nof this turn");
 						} else {
 							self.set_text("Current\nplayer will\ntake their\nfirst action\nof this turn");

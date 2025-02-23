@@ -23,23 +23,23 @@ namespace m2 {
 	public:
 		Map2i() : Pool<Map2iItem<T>, Capacity>() {}
 
-		std::pair<T&,Map2iID> alloc(const VecI& pos) {
-			auto it = Pool<Map2iItem<T>,Capacity>::emplace();
+		std::pair<T&,Map2iID> Allocate(const VecI& pos) {
+			auto it = Pool<Map2iItem<T>,Capacity>::Emplace();
 			it->pos = pos;
-			_map.insert({pos.x, {pos.y, it.id()}});
-			return {it->obj, it.id()};
+			_map.insert({pos.x, {pos.y, it.Id()}});
+			return {it->obj, it.Id()};
 		}
-		using Pool<Map2iItem<T>,Capacity>::free;
-		using Pool<Map2iItem<T>,Capacity>::clear;
+		using Pool<Map2iItem<T>,Capacity>::Free;
+		using Pool<Map2iItem<T>,Capacity>::Clear;
 
-		using Pool<Map2iItem<T>,Capacity>::size;
-		using Pool<Map2iItem<T>,Capacity>::contains;
+		using Pool<Map2iItem<T>,Capacity>::Size;
+		using Pool<Map2iItem<T>,Capacity>::Contains;
 
 		using Pool<Map2iItem<T>,Capacity>::operator[];
-		using Pool<Map2iItem<T>,Capacity>::get;
-		using Pool<Map2iItem<T>,Capacity>::get_id;
+		using Pool<Map2iItem<T>,Capacity>::Get;
+		using Pool<Map2iItem<T>,Capacity>::GetId;
 
-		std::vector<Map2iID> find_ids(const VecI& pos, int32_t radius) {
+		std::vector<Map2iID> FindIds(const VecI& pos, int32_t radius) {
 			std::vector<Map2iID> items;
 			for (auto it = _map.lower_bound(pos.x - radius); it != _map.end() && it->first <= pos.x + radius; it++) {
 				y_pos y = it->second.first;
@@ -49,25 +49,25 @@ namespace m2 {
 			}
 			return items;
 		}
-		std::vector<Map2iID> find_ids(Map2iID id, int32_t radius) {
-			auto* item = get(id);
+		std::vector<Map2iID> FindIds(Map2iID id, int32_t radius) {
+			auto* item = Get(id);
 			if (item) {
-				return find_ids(item->pos, radius);
+				return FindIds(item->pos, radius);
 			}
 			return {};
 		}
-		std::vector<T*> find_objects(const VecI& pos, int32_t radius) {
-			auto ids = find_ids(pos, radius);
+		std::vector<T*> FindObjects(const VecI& pos, int32_t radius) {
+			auto ids = FindIds(pos, radius);
 			std::vector<T*> objects;
 			std::transform(ids.cbegin(), ids.cend(), std::back_inserter(objects), [=](Map2iID id) {
-				return &get(id)->obj;
+				return &Get(id)->obj;
 			});
 			return objects;
 		}
-		std::vector<T*> find_objects(Map2iID id, int32_t radius) {
-			auto* item = get(id);
+		std::vector<T*> FindObjects(Map2iID id, int32_t radius) {
+			auto* item = Get(id);
 			if (item) {
-				return find_objects(item->pos, radius);
+				return FindObjects(item->pos, radius);
 			}
 			return {};
 		}

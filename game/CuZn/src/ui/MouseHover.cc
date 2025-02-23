@@ -361,9 +361,9 @@ std::pair<UiPanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluep
 
 std::pair<UiPanelBlueprint,RectF> GenerateMerchantLocationMouseHoverUiBlueprint(const MerchantLocation loc) {
 	const auto* merchant = find_merchant_at_location(loc);
-	const std::string merchantBenefit = merchant->character().has_resource(m2g::pb::BEER_BARREL_COUNT)
+	const std::string merchantBenefit = merchant->character().HasResource(m2g::pb::BEER_BARREL_COUNT)
 			? "Available" : "Exhausted";
-	const auto merchantBenefitBackgroundColor = merchant->character().has_resource(m2g::pb::BEER_BARREL_COUNT)
+	const auto merchantBenefitBackgroundColor = merchant->character().HasResource(m2g::pb::BEER_BARREL_COUNT)
 			? SDL_Color{0, 0, 0, 255} : SDL_Color{180, 0, 0, 255};
 
 	return std::make_pair(

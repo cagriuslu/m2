@@ -41,7 +41,7 @@ void m2::DrawTextLabelBackgroundIn2dWorld(const pb::TextLabel& tl, const RectI& 
 	// Push the text label
 	rect.x += tl.push_dimensions().x();
 	rect.y += tl.push_dimensions().y();
-	Graphic::color_rect(rect, trueBackgroundColor);
+	Graphic::ColorRect(rect, trueBackgroundColor);
 }
 void m2::DrawTextLabelIn2dWorld(const pb::TextLabel& tl, const RectI& sourceRect, const VecF& position, const float angle, MAYBE bool is_foreground, MAYBE float z) {
 	const auto sourceRectSdl = static_cast<SDL_Rect>(sourceRect);

@@ -55,7 +55,7 @@ void display_action_notification(const m2g::pb::ServerCommand::ActionNotificatio
 			0.4f};
 
 	// Play sound
-	M2_GAME.audio_manager->play(&M2_GAME.songs[m2g::pb::SONG_NOTIFICATION_SOUND], m2::AudioManager::ONCE);
+	M2_GAME.audio_manager->Play(&M2_GAME.songs[m2g::pb::SONG_NOTIFICATION_SOUND], m2::AudioManager::ONCE);
 
 	// Remove panel if already created (or created and killed)
 	if (M2G_PROXY.actionNotificationPanel) {

@@ -10,7 +10,7 @@ float m2::box2d::RayCastCallback::ReportFixture(b2Fixture* fixture, const b2Vec2
     return 1.0f;
 }
 
-bool m2::box2d::check_eyesight(b2World& world, m2::VecF from, m2::VecF to, uint16_t category_bits) {
+bool m2::box2d::CheckEyesight(b2World& world, m2::VecF from, m2::VecF to, uint16_t category_bits) {
     if (from == to) {
         return true;
     } else {
@@ -24,7 +24,7 @@ bool m2::box2d::check_eyesight(b2World& world, m2::VecF from, m2::VecF to, uint1
     }
 }
 
-float m2::box2d::check_distance(b2World& world, VecF from, VecF to, uint16_t category_bits) {
+float m2::box2d::CheckDistance(b2World& world, VecF from, VecF to, uint16_t category_bits) {
 	VecF poi{to};
 	RayCastCallback rccb([&poi](MAYBE b2Fixture* fixture, VecF point, MAYBE VecF normal, MAYBE float fraction) -> float {
 		poi = point;

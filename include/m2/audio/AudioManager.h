@@ -17,32 +17,32 @@ namespace m2 {
 		struct Playback {
 			const Song* song{};
 			float volume{1.0f};
-			PlayPolicy play_policy{};
-			size_t next_sample{};
-			float left_volume{1.0f}, right_volume{1.0f};
+			PlayPolicy playPolicy{};
+			size_t nextSample{};
+			float leftVolume{1.0f}, rightVolume{1.0f};
 
 			Playback() = default;
 			Playback(const Song* _song, float _volume, PlayPolicy _play_policy);
 		};
 
 	public:
-		SDL_AudioDeviceID sdl_audio_device_id{};
-		SDL_AudioSpec sdl_audio_spec{};
+		SDL_AudioDeviceID sdlAudioDeviceId{};
+		SDL_AudioSpec sdlAudioSpec{};
 		Pool<Playback, 32> playbacks;
-		std::mutex playbacks_mutex;
+		std::mutex playbacksMutex;
 
 		AudioManager();
 		~AudioManager();
 
-		PlaybackId play(const Song* song, PlayPolicy policy, float volume = 1.0f);
-		void stop(PlaybackId id);
+		PlaybackId Play(const Song* song, PlayPolicy policy, float volume = 1.0f);
+		void Stop(PlaybackId id);
 
-		bool has_playback(PlaybackId id);
-		void set_playback_volume(PlaybackId id, float volume);
-		void set_playback_left_volume(PlaybackId id, float volume);
-		void set_playback_right_volume(PlaybackId id, float volume);
+		bool HasPlayback(PlaybackId id);
+		void SetPlaybackVolume(PlaybackId id, float volume);
+		void SetPlaybackLeftVolume(PlaybackId id, float volume);
+		void SetPlaybackRightVolume(PlaybackId id, float volume);
 
 	private:
-		static void audio_callback(void* count, uint8_t* stream, int length);
+		static void AudioCallback(void* count, uint8_t* stream, int length);
 	};
 }

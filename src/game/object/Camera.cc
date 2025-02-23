@@ -10,7 +10,7 @@
 
 m2::Id m2::obj::create_camera() {
 	// Start at player's location
-	auto* player = M2_LEVEL.objects.get(M2_LEVEL.playerId);
+	auto* player = M2_LEVEL.objects.Get(M2_LEVEL.playerId);
 	auto it = create_object(player ? player->position : VecF{});
 
 	// Create implementation
@@ -18,7 +18,7 @@ m2::Id m2::obj::create_camera() {
 	camera.impl = std::make_unique<m2::obj::Camera>();
 
 	auto& phy = camera.add_physique();
-	phy.post_step = [&camera](MAYBE Physique& phy) {
+	phy.postStep = [&camera](MAYBE Physique& phy) {
 		//		auto* camera_data = dynamic_cast<m2::obj::Camera*>(camera.impl.get());
 		auto& player = M2_LEVEL.objects[M2_LEVEL.playerId];
 		camera.position = player.position;
@@ -41,10 +41,10 @@ m2::Id m2::obj::create_camera() {
 
 	if (M2G_PROXY.camera_is_listener) {
 		M2_LEVEL.leftListener =
-		    SoundListener{.position = M2_PLAYER.position, .direction = PI, .listen_angle = PI_DIV2};
+		    SoundListener{.position = M2_PLAYER.position, .direction = PI, .listenAngle = PI_DIV2};
 		M2_LEVEL.rightListener =
-		    SoundListener{.position = M2_PLAYER.position, .direction = 0.0f, .listen_angle = PI_DIV2};
+		    SoundListener{.position = M2_PLAYER.position, .direction = 0.0f, .listenAngle = PI_DIV2};
 	}
 
-	return M2_LEVEL.cameraId = it.id();
+	return M2_LEVEL.cameraId = it.Id();
 }

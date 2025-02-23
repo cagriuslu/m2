@@ -115,7 +115,7 @@ UiPanelBlueprint generate_custom_hud_blueprint() {
 	for (auto order = m2g::pb::FIRST_PLAYER_INDEX;
 			order <= m2g::pb::FORTH_PLAYER_INDEX;
 			order = static_cast<m2g::pb::AttributeType>(I(order) + 1), ++i) {
-		if (const auto playerIndexOfOrder = iround(M2G_PROXY.game_state_tracker().get_attribute(order)); -1 < playerIndexOfOrder) {
+		if (const auto playerIndexOfOrder = iround(M2G_PROXY.game_state_tracker().GetAttribute(order)); -1 < playerIndexOfOrder) {
 			const auto x = 3 + (4 - M2_GAME.TotalPlayerCount()) + i;
 
 			// Add player names

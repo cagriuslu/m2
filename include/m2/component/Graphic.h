@@ -11,8 +11,8 @@
 #include <m2/video/Color.h>
 
 namespace m2 {
-	bool is_projection_type_parallel(pb::ProjectionType pt);
-	bool is_projection_type_perspective(pb::ProjectionType pt);
+	bool IsProjectionTypeParallel(pb::ProjectionType pt);
+	bool IsProjectionTypePerspective(pb::ProjectionType pt);
 
 	/// Returns a vector from camera to given position in meters.
 	VecF CameraToPositionVecM(const VecF& position);
@@ -30,44 +30,44 @@ namespace m2 {
 
 namespace m3 {
 	/// Returns the position of the camera in 3D.
-	VecF camera_position_m();
+	VecF CameraPositionM();
 
 	/// Returns the position of the focus in 3D.
 	/// Focus point will be placed in the middle of the screen.
-	VecF focus_position_m();
+	VecF FocusPositionM();
 
 	/// Returns the width of the plane seen by the camera in its equator
-	float visible_width_m();
+	float VisibleWidthM();
 
 	/// Returns the PPM at the plane seen by the camera in its equator.
-	float ppm();
+	float Ppm();
 
 	/// Returns the line from camera to given position.
-	Line camera_to_position_line(const VecF& position);
+	Line CameraToPositionLine(const VecF& position);
 
 	/// Returns the plane that faces the camera from the focus point.
 	/// This plane is called the "camera plane"
-	Plane focus_to_camera_plane();
+	Plane FocusToCameraPlane();
 
 	/// Returns the projection of a given position on the camera plane.
-	std::optional<VecF> projection(const VecF& position);
+	std::optional<VecF> Projection(const VecF& position);
 
 	/// Returns a 3D vector from the focus point to the projection of a given position.
 	/// Since the focus point is at the center of the camera plane, this vector must also lie on the plane.
-	std::optional<VecF> focus_to_projection_m(const VecF& position);
+	std::optional<VecF> FocusToProjectionM(const VecF& position);
 
 	/// Returns a vector from the focus point to the projection of a given position, but using the camera plane as the
 	/// coordinate system where the focus point sits in the center. Returned vector is 2D, because both the focus point
 	/// and the projection lie on the same plane (camera plane)
-	std::optional<m2::VecF> focus_to_projection_in_camera_plane_coordinates_m(const VecF& position);
+	std::optional<m2::VecF> FocusToProjectionInCameraPlaneCoordinatesM(const VecF& position);
 
 	/// Returns a vector from the focus point to the projection of a given position, but using the camera plane as the
 	/// coordinate system where the focus point sits in the center, in destination pixels.
-	std::optional<m2::VecF> focus_to_projection_in_camera_plane_coordinates_dstpx(const VecF& position);
+	std::optional<m2::VecF> FocusToProjectionInCameraPlaneCoordinatesDstpx(const VecF& position);
 
 	/// Returns a vector from the screen origins, to the projection of a given position, but using the camera plane as
 	/// the coordinate system where the focus point sits in the center, in destination pixels.
-	std::optional<m2::VecF> screen_origin_to_projection_along_camera_plane_dstpx(const VecF& position);
+	std::optional<m2::VecF> ScreenOriginToProjectionAlongCameraPlaneDstpx(const VecF& position);
 }
 
 namespace m2 {
@@ -76,15 +76,15 @@ namespace m2 {
 		bool draw{true};
 
 		using Callback = std::function<void(Graphic&)>;
-		Callback pre_draw{};
-		Callback on_draw{};
-		Callback post_draw{};
+		Callback preDraw{};
+		Callback onDraw{};
+		Callback postDraw{};
 
 		std::variant<std::monostate, const Sprite*, const pb::TextLabel*> visual;
 
 		/// Only applicable to sprites. If any of the entries exist, Sprite's default_variant_draw_order is overridden.
 		/// First variant is drawn first.
-		std::array<std::optional<SpriteVariant>, 2> variant_draw_order{};
+		std::array<std::optional<SpriteVariant>, 2> variantDrawOrder{};
 
 		/// Only applicable to text labels.
 		RectI textLabelRect{};
@@ -100,25 +100,25 @@ namespace m2 {
 		static void DefaultDrawCallback(Graphic& gfx);
 
 		/// Color the world cell with the given color
-		static void color_cell(const VecI& cell, SDL_Color color);
-		static void color_rect(const RectF& world_coordinates_m, SDL_Color color);
-		static void color_rect(const RectF& world_coordinates_m, const RGB& color);
-		static void color_rect(const RectF& world_coordinates_m, const RGBA& color);
-		static void color_disk(const VecF& center_position_m, float radius_m, const SDL_Color& color);
-		static void draw_cross(const VecF& world_position, SDL_Color color);
-		static void draw_line(const VecF& world_position_1, const VecF& world_position_2, SDL_Color color);
+		static void ColorCell(const VecI& cell, SDL_Color color);
+		static void ColorRect(const RectF& world_coordinates_m, SDL_Color color);
+		static void ColorRect(const RectF& world_coordinates_m, const RGB& color);
+		static void ColorRect(const RectF& world_coordinates_m, const RGBA& color);
+		static void ColorDisk(const VecF& center_position_m, float radius_m, const SDL_Color& color);
+		static void DrawCross(const VecF& world_position, SDL_Color color);
+		static void DrawLine(const VecF& world_position_1, const VecF& world_position_2, SDL_Color color);
 		static void DrawLine(const VecF& worldPosition1M, const VecF& worldPosition2M, const RGBA& color);
-		static void draw_vertical_line(float x, const RGBA& color);
-		static void draw_horizontal_line(float y, const RGBA& color);
+		static void DrawVerticalLine(float x, const RGBA& color);
+		static void DrawHorizontalLine(float y, const RGBA& color);
 		static void DrawRectangle(const VecF& center, float width, float height, float orientationRads, const RGBA& color);
 		static void DrawGridLines(const RGBA& color, unsigned startFrom = 0, unsigned frequency = 1);
 
 		// Global Modifiers
 
 		/// If dimming_with_exceptions is enabled, and the given object_id is not in the exceptions, dim the given texture.
-		static bool dim_rendering_if_necessary(Id object_id, SDL_Texture* texture);
+		static bool DimRenderingIfNecessary(Id object_id, SDL_Texture* texture);
 		/// Undim the given texture
-		static void undim_rendering(SDL_Texture* texture);
+		static void UndimRendering(SDL_Texture* texture);
 	};
 
 	/// Draws the given texture to the 2D World. Before applying extra rotation to the texture, the rotation of the

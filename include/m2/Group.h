@@ -38,8 +38,8 @@ namespace m2 {
 		Group() = default;
 		virtual ~Group() = default;
 
-		[[nodiscard]] inline uint64_t member_count() const { return _members.size(); }
-		inline IndexInGroup add_member(Id object_id) { return _members.emplace(object_id).id() & 0xFF; }
-		inline void remove_member(IndexInGroup index) { _members.free_index(index); }
+		[[nodiscard]] inline uint64_t member_count() const { return _members.Size(); }
+		inline IndexInGroup add_member(Id object_id) { return _members.Emplace(object_id).Id() & 0xFF; }
+		inline void remove_member(IndexInGroup index) { _members.FreeIndex(index); }
 	};
 }

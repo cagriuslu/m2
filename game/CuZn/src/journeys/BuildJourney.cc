@@ -22,7 +22,7 @@ namespace {
 		if (not is_card(card)) {
 			throw M2_ERROR("Item is not a card");
 		}
-		if (player.find_items(card) == player.end_items()) {
+		if (player.FindItems(card) == player.EndItems()) {
 			throw M2_ERROR("Player does not own the given card");
 		}
 
@@ -147,8 +147,8 @@ namespace {
 		const auto& built_industry_tile_item = M2_GAME.GetNamedItem(built_industry_tile_type);
 		const auto& next_industry_tile_item = M2_GAME.GetNamedItem(next_industry_tile);
 		return is_less(
-				built_industry_tile_item.get_attribute(TILE_LEVEL),
-				next_industry_tile_item.get_attribute(TILE_LEVEL),
+				built_industry_tile_item.GetAttribute(TILE_LEVEL),
+				next_industry_tile_item.GetAttribute(TILE_LEVEL),
 				0.001f);
 	}
 }
@@ -172,7 +172,7 @@ BuildJourney::~BuildJourney() {
 	deinit();
 	// Return the reserved resources
 	for (auto [factory, resource_type] : _reserved_resources) {
-		factory->character().add_resource(resource_type, 1.0f);
+		factory->character().AddResource(resource_type, 1.0f);
 	}
 	_reserved_resources.clear();
 }
@@ -255,10 +255,10 @@ std::optional<BuildJourneyStep> BuildJourney::HandleLocationMouseClickSignal(con
 
 		// Create empty entries in resource_sources for every required resource
 		_resource_sources.insert(_resource_sources.end(),
-				iround(M2_GAME.GetNamedItem(*tile_type).get_attribute(COAL_COST)),
+				iround(M2_GAME.GetNamedItem(*tile_type).GetAttribute(COAL_COST)),
 				std::make_pair(COAL_CUBE_COUNT, NO_SPRITE));
 		_resource_sources.insert(_resource_sources.end(),
-				iround(M2_GAME.GetNamedItem(*tile_type).get_attribute(IRON_COST)),
+				iround(M2_GAME.GetNamedItem(*tile_type).GetAttribute(IRON_COST)),
 				std::make_pair(IRON_CUBE_COUNT, NO_SPRITE));
 		return _resource_sources.empty() ? BuildJourneyStep::EXPECT_CONFIRMATION : BuildJourneyStep::EXPECT_RESOURCE_SOURCE;
 	} else {
@@ -313,7 +313,7 @@ std::optional<BuildJourneyStep> BuildJourney::HandleResourceEnterSignal() {
 					LOG_DEBUG("Player agreed");
 					// Reserve resource
 					auto* factory = FindFactoryAtLocation(*closest_mines_with_coal.begin());
-					factory->character().remove_resource(COAL_CUBE_COUNT, 1.0f);
+					factory->character().RemoveResource(COAL_CUBE_COUNT, 1.0f);
 					_reserved_resources.emplace_back(factory, COAL_CUBE_COUNT);
 					// Specify resource source
 					unspecified_resource->second = *closest_mines_with_coal.begin();
@@ -356,7 +356,7 @@ std::optional<BuildJourneyStep> BuildJourney::HandleResourceEnterSignal() {
 					LOG_DEBUG("Player agreed");
 					// Reserve resource
 					auto* factory = FindFactoryAtLocation(*iron_industries.begin());
-					factory->character().remove_resource(IRON_CUBE_COUNT, 1.0f);
+					factory->character().RemoveResource(IRON_CUBE_COUNT, 1.0f);
 					_reserved_resources.emplace_back(factory, IRON_CUBE_COUNT);
 					// Specify resource source
 					unspecified_resource->second = *iron_industries.begin();
@@ -387,7 +387,7 @@ std::optional<BuildJourneyStep> BuildJourney::HandleResourceMouseClickSignal(con
 			// Check if the location is one of the dimming exceptions
 			if (M2_LEVEL.DimmingExceptions()->contains(factory->id())) {
 				// Reserve resource
-				factory->character().remove_resource(unspecified_resource->first, 1.0f);
+				factory->character().RemoveResource(unspecified_resource->first, 1.0f);
 				// Specify resource source
 				unspecified_resource->second = industry_location;
 				// Reserve resource
@@ -452,7 +452,7 @@ m2::void_expected CanPlayerBuild(m2::Character& player, const m2g::pb::ClientCom
 	if (not is_card(build_action.card())) {
 		return make_unexpected("Selected card is not a card");
 	}
-	if (player.find_items(build_action.card()) == player.end_items()) {
+	if (player.FindItems(build_action.card()) == player.EndItems()) {
 		return make_unexpected("Player does not have the selected card");
 	}
 
@@ -460,7 +460,7 @@ m2::void_expected CanPlayerBuild(m2::Character& player, const m2g::pb::ClientCom
 	if (not is_industry_tile(build_action.industry_tile())) {
 		return make_unexpected("Selected industry tile is not an industry tile");
 	}
-	if (player.find_items(build_action.industry_tile()) == player.end_items()) {
+	if (player.FindItems(build_action.industry_tile()) == player.EndItems()) {
 		return make_unexpected("Player does not have the selected tile");
 	}
 	auto industry = industry_of_industry_tile(build_action.industry_tile());
@@ -471,7 +471,7 @@ m2::void_expected CanPlayerBuild(m2::Character& player, const m2g::pb::ClientCom
 		return make_unexpected("Player cannot use the selected tile");
 	}
 	// Check if the tile can be built in this era
-	auto forbidden_era = selected_industry_tile.get_attribute(m2g::pb::FORBIDDEN_ERA);
+	auto forbidden_era = selected_industry_tile.GetAttribute(m2g::pb::FORBIDDEN_ERA);
 	if ((m2::is_equal(forbidden_era, 1.0f, 0.001f) && M2G_PROXY.is_canal_era()) ||
 		(m2::is_equal(forbidden_era, 2.0f, 0.001f) && M2G_PROXY.is_railroad_era())) {
 		return make_unexpected("Player selected an industry that cannot be built in this era");
@@ -514,10 +514,10 @@ m2::void_expected CanPlayerBuild(m2::Character& player, const m2g::pb::ClientCom
 	std::vector<std::pair<m2g::pb::ResourceType, Location>> resource_sources;
 	// Create empty entries in resource_sources for every required resource
 	resource_sources.insert(resource_sources.end(),
-		iround(M2_GAME.GetNamedItem(build_action.industry_tile()).get_attribute(COAL_COST)),
+		iround(M2_GAME.GetNamedItem(build_action.industry_tile()).GetAttribute(COAL_COST)),
 		std::make_pair(COAL_CUBE_COUNT, NO_SPRITE));
 	resource_sources.insert(resource_sources.end(),
-		iround(M2_GAME.GetNamedItem(build_action.industry_tile()).get_attribute(IRON_COST)),
+		iround(M2_GAME.GetNamedItem(build_action.industry_tile()).GetAttribute(IRON_COST)),
 		std::make_pair(IRON_CUBE_COUNT, NO_SPRITE));
 	// Gather reserved resources so that they can be given back
 	std::vector<std::pair<m2::Object*, m2g::pb::ResourceType>> reserved_resources;
@@ -534,7 +534,7 @@ m2::void_expected CanPlayerBuild(m2::Character& player, const m2g::pb::ClientCom
 			} else {
 				// Reserve resource
 				auto* factory = FindFactoryAtLocation(location);
-				factory->character().remove_resource(COAL_CUBE_COUNT, 1.0f);
+				factory->character().RemoveResource(COAL_CUBE_COUNT, 1.0f);
 				reserved_resources.emplace_back(factory, COAL_CUBE_COUNT);
 				// Specify resource source
 				next_unspecified_coal_resource->second = location;
@@ -565,7 +565,7 @@ m2::void_expected CanPlayerBuild(m2::Character& player, const m2g::pb::ClientCom
 			} else {
 				// Reserve resource
 				auto* factory = FindFactoryAtLocation(location);
-				factory->character().remove_resource(IRON_CUBE_COUNT, 1.0f);
+				factory->character().RemoveResource(IRON_CUBE_COUNT, 1.0f);
 				reserved_resources.emplace_back(factory, IRON_CUBE_COUNT);
 				// Specify resource source
 				next_unspecified_iron_resource->second = location;
@@ -588,7 +588,7 @@ m2::void_expected CanPlayerBuild(m2::Character& player, const m2g::pb::ClientCom
 return_resources:
 	// Give back the reserved resources
 	for (auto [factory, resource_type] : reserved_resources) {
-		factory->character().add_resource(resource_type, 1.0f);
+		factory->character().AddResource(resource_type, 1.0f);
 	}
 	// Check if exploration finished with a success
 	if (not resource_sources_are_valid) {
@@ -609,7 +609,7 @@ return_resources:
 		return is_merchant_location(static_cast<Location>(iron_source));
 	});
 	// Check if the player has enough money
-	if (iround(player.get_resource(MONEY)) < iround(M2_GAME.GetNamedItem(build_action.industry_tile()).get_attribute(MONEY_COST)) +
+	if (iround(player.GetResource(MONEY)) < iround(M2_GAME.GetNamedItem(build_action.industry_tile()).GetAttribute(MONEY_COST)) +
 		M2G_PROXY.market_coal_cost(I(coal_from_market)) + M2G_PROXY.market_iron_cost(I(iron_from_market))) {
 		return make_unexpected("Player does not have enough money");
 	}
@@ -624,7 +624,7 @@ std::pair<Card,int> ExecuteBuildAction(m2::Character& player, const m2g::pb::Cli
 	const auto& tile_item = M2_GAME.GetNamedItem(build_action.industry_tile());
 	auto tile_category = tile_item.category();
 	auto tile_type = PlayerNextIndustryTileOfCategory(player, tile_category);
-	player.remove_item(player.find_items(*tile_type));
+	player.RemoveItem(player.FindItems(*tile_type));
 
 	// Calculate the cost before building the industry
 	auto coal_from_market = std::count_if(build_action.coal_sources().begin(), build_action.coal_sources().end(), [](const auto& coal_source) {
@@ -633,7 +633,7 @@ std::pair<Card,int> ExecuteBuildAction(m2::Character& player, const m2g::pb::Cli
 	auto iron_from_market = std::count_if(build_action.iron_sources().begin(), build_action.iron_sources().end(), [](const auto& iron_source) {
 		return is_merchant_location(static_cast<Location>(iron_source));
 	});
-	auto cost = m2::iround(M2_GAME.GetNamedItem(build_action.industry_tile()).get_attribute(MONEY_COST)) +
+	auto cost = m2::iround(M2_GAME.GetNamedItem(build_action.industry_tile()).GetAttribute(MONEY_COST)) +
 		M2G_PROXY.market_coal_cost(m2::I(coal_from_market)) + M2G_PROXY.market_iron_cost(m2::I(iron_from_market));
 
 	// Take resources
@@ -641,7 +641,7 @@ std::pair<Card,int> ExecuteBuildAction(m2::Character& player, const m2g::pb::Cli
 		auto location = static_cast<Location>(coal_source);
 		if (is_industry_location(location)) {
 			auto* factory = FindFactoryAtLocation(location);
-			factory->character().remove_resource(COAL_CUBE_COUNT, 1.0f);
+			factory->character().RemoveResource(COAL_CUBE_COUNT, 1.0f);
 		} else if (is_merchant_location(location)) {
 			M2G_PROXY.buy_coal_from_market();
 		}
@@ -650,7 +650,7 @@ std::pair<Card,int> ExecuteBuildAction(m2::Character& player, const m2g::pb::Cli
 		auto location = static_cast<Location>(iron_source);
 		if (is_industry_location(location)) {
 			auto* factory = FindFactoryAtLocation(location);
-			factory->character().remove_resource(IRON_CUBE_COUNT, 1.0f);
+			factory->character().RemoveResource(IRON_CUBE_COUNT, 1.0f);
 		} else if (is_merchant_location(location)) {
 			M2G_PROXY.buy_iron_from_market();
 		}
@@ -669,28 +669,28 @@ std::pair<Card,int> ExecuteBuildAction(m2::Character& player, const m2g::pb::Cli
 	if (tile_category == ITEM_CATEGORY_COAL_MINE_TILE) {
 		// If there's a connection to coal market
 		if (find_connected_coal_market(city)) {
-			auto gained_resource_count = m2::iround(tile_item.get_attribute(COAL_BONUS));
+			auto gained_resource_count = m2::iround(tile_item.GetAttribute(COAL_BONUS));
 			auto [sell_count, revenue] = M2G_PROXY.market_coal_revenue(gained_resource_count);
 			// Sell to market
 			M2G_PROXY.sell_coal_to_market(sell_count);
 			// Gain revenue
-			player.add_resource(MONEY, m2::F(revenue));
+			player.AddResource(MONEY, m2::F(revenue));
 			// Keep the rest
-			it->character().add_resource(COAL_CUBE_COUNT, m2::F(gained_resource_count - sell_count));
+			it->character().AddResource(COAL_CUBE_COUNT, m2::F(gained_resource_count - sell_count));
 		} else {
-			it->character().add_resource(COAL_CUBE_COUNT, tile_item.get_attribute(COAL_BONUS));
+			it->character().AddResource(COAL_CUBE_COUNT, tile_item.GetAttribute(COAL_BONUS));
 		}
 	} else if (tile_category == ITEM_CATEGORY_IRON_WORKS_TILE) {
-		auto gained_resource_count = m2::iround(tile_item.get_attribute(IRON_BONUS));
+		auto gained_resource_count = m2::iround(tile_item.GetAttribute(IRON_BONUS));
 		auto [sell_count, revenue] = M2G_PROXY.market_iron_revenue(gained_resource_count);
 		// Sell to market
 		M2G_PROXY.sell_iron_to_market(sell_count);
 		// Gain revenue
-		player.add_resource(MONEY, m2::F(revenue));
+		player.AddResource(MONEY, m2::F(revenue));
 		// Keep the rest
-		it->character().add_resource(IRON_CUBE_COUNT, m2::F(gained_resource_count - sell_count));
+		it->character().AddResource(IRON_CUBE_COUNT, m2::F(gained_resource_count - sell_count));
 	} else if (tile_category == ITEM_CATEGORY_BREWERY_TILE) {
-		it->character().add_resource(BEER_BARREL_COUNT, tile_item.get_attribute(
+		it->character().AddResource(BEER_BARREL_COUNT, tile_item.GetAttribute(
 			M2G_PROXY.is_canal_era() ? BEER_BONUS_FIRST_ERA : BEER_BONUS_SECOND_ERA));
 	}
 

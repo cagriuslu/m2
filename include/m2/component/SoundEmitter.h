@@ -18,8 +18,8 @@ namespace m2 {
 	struct SoundListener {
 		VecF position;
 		float direction{}; // [0,2PI]
-		float listen_angle{PI_MUL2}; // [0,2PI] Minimum angle to omnidirectional hearing
+		float listenAngle{PI_MUL2}; // [0,2PI] Minimum angle to omnidirectional hearing
 
-		[[nodiscard]] float volume_of(const VecF& emitter_position) const;
+		[[nodiscard]] float VolumeOf(const VecF& emitter_position) const;
 	};
 }

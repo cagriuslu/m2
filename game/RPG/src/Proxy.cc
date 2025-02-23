@@ -139,7 +139,7 @@ const m2::UiPanelBlueprint* m2g::Proxy::generate_main_menu() {
 		        .onAction = [=, this](MAYBE const m2::widget::Text &self) {
 			        alive_enemy_count = 0;
 			        m2_succeed_or_throw_error(M2_GAME.LoadSinglePlayer(level_json, level_name));
-			        M2_GAME.audio_manager->play(&M2_GAME.songs[m2g::pb::SONG_MAIN_THEME],
+			        M2_GAME.audio_manager->Play(&M2_GAME.songs[m2g::pb::SONG_MAIN_THEME],
 			                                 m2::AudioManager::PlayPolicy::LOOP, 0.5f);
 			        return m2::MakeReturnAction();
 		        }
@@ -185,8 +185,8 @@ const m2::UiPanelBlueprint* m2g::Proxy::generate_right_hud() {
 	        .bar_color = SDL_Color{0, 127, 255, 255},
 	        .onUpdate = [](m2::widget::ProgressBar& self) {
 		        if (const auto *player = M2_LEVEL.Player(); player) {
-			        if (const auto ammo = player->character().get_resource(pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO); ammo != 0.0f) {
-				        if (const auto weapon = player->character().find_items(pb::ITEM_CATEGORY_SPECIAL_RANGED_WEAPON); weapon) {
+			        if (const auto ammo = player->character().GetResource(pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO); ammo != 0.0f) {
+				        if (const auto weapon = player->character().FindItems(pb::ITEM_CATEGORY_SPECIAL_RANGED_WEAPON); weapon) {
 					        self.SetProgress(ammo / weapon->get_acquire_benefit(pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO));
 				        }
 			        }

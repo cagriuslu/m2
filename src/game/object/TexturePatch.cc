@@ -8,7 +8,7 @@ m2::Id m2::obj::create_texture_patch(const VecF& pos, SDL_Texture* texture, Rect
 	auto src_rect = static_cast<SDL_Rect>(rect);
 
 	auto& gfx = it->add_terrain_graphic(BackgroundLayer::L0);
-	gfx.on_draw = [=, src_rect = src_rect](Graphic& _gfx) {
+	gfx.onDraw = [=, src_rect = src_rect](Graphic& _gfx) {
 		auto texture_width_dstpx = iround(F(rect.w) * M2_GAME.Dimensions().OutputPixelsPerMeter() / F(ppm));
 		auto texture_height_dstpx = iround(F(rect.h) * M2_GAME.Dimensions().OutputPixelsPerMeter() / F(ppm));
 
@@ -21,5 +21,5 @@ m2::Id m2::obj::create_texture_patch(const VecF& pos, SDL_Texture* texture, Rect
 		SDL_RenderCopy(M2_GAME.renderer, texture, &src_rect, &dst_rect);
 	};
 
-	return it.id();
+	return it.Id();
 }

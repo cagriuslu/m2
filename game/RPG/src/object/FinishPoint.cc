@@ -14,12 +14,12 @@ m2::void_expected rpg::init_finish_point(m2::Object& obj) {
 	bp.mutable_background_fixture()->mutable_circ()->set_radius(sprite.BackgroundColliderCircRadiusM());
 	bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_ITEM_ON_FOREGROUND);
 	bp.mutable_background_fixture()->set_is_sensor(true);
-	phy.body = m2::box2d::create_body(*M2_LEVEL.world, obj.physique_id(), obj.position, bp);
+	phy.body = m2::box2d::CreateBody(*M2_LEVEL.world, obj.physique_id(), obj.position, bp);
 
 	auto& gfx = obj.add_graphic(sprite_type);
-	gfx.variant_draw_order[0] = m2::pb::SpriteEffectType::SPRITE_EFFECT_GRAYSCALE;
+	gfx.variantDrawOrder[0] = m2::pb::SpriteEffectType::SPRITE_EFFECT_GRAYSCALE;
 
-	phy.on_collision = [](MAYBE m2::Physique& self, MAYBE m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
+	phy.onCollision = [](MAYBE m2::Physique& self, MAYBE m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
 		// Check enemy counter
 		if (M2G_PROXY.alive_enemy_count == 0) {
 			// Finish game
@@ -34,12 +34,12 @@ m2::void_expected rpg::init_finish_point(m2::Object& obj) {
 			});
 		}
 	};
-	gfx.pre_draw = [](MAYBE m2::Graphic& gfx) {
+	gfx.preDraw = [](MAYBE m2::Graphic& gfx) {
 		// Check enemy counter, adjust sprite effect
 		if (M2G_PROXY.alive_enemy_count) {
-			gfx.variant_draw_order[0] = m2::pb::SpriteEffectType::SPRITE_EFFECT_GRAYSCALE;
+			gfx.variantDrawOrder[0] = m2::pb::SpriteEffectType::SPRITE_EFFECT_GRAYSCALE;
 		} else {
-			gfx.variant_draw_order[0] = std::nullopt;
+			gfx.variantDrawOrder[0] = std::nullopt;
 		}
 	};
 

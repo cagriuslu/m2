@@ -6,19 +6,19 @@
 
 namespace m2 {
 	struct Physique : Component {
-		static void default_debug_draw(Physique& phy);
+		static void DefaultDebugDraw(Physique& phy);
 
 		using Callback = std::function<void(Physique&)>;
-		Callback pre_step{};
-		Callback post_step{};
-		Callback on_debug_draw{default_debug_draw};
+		Callback preStep{};
+		Callback postStep{};
+		Callback onDebugDraw{DefaultDebugDraw};
 
 		// An object has either body or rigidBodyIndex.
 		box2d::BodyUniquePtr body;
 		std::optional<int> rigidBodyIndex;
 
-		std::function<void(Physique&, Physique&, const box2d::Contact&)> on_collision;
-		std::function<void(Physique&, Physique&)> off_collision;
+		std::function<void(Physique&, Physique&, const box2d::Contact&)> onCollision;
+		std::function<void(Physique&, Physique&)> offCollision;
 
 		Physique() = default;
 		explicit Physique(Id object_id);
@@ -29,12 +29,12 @@ namespace m2 {
 		Physique(Physique&& other) noexcept;
 		Physique& operator=(Physique&& other) noexcept;
 
-		static void default_begin_contact_cb(b2Contact& b2_contact);
-		static void default_end_contact_cb(b2Contact& b2_contact);
+		static void DefaultBeginContactCallback(b2Contact& b2_contact);
+		static void DefaultEndContactCallback(b2Contact& b2_contact);
 	};
 
 	// Utilities
 
 	/// Returns a force multiplier that can be applied to a physics object with a speed limit
-	float calculate_limited_force(float curr_speed, float speed_limit);
+	float CalculateLimitedForce(float curr_speed, float speed_limit);
 }

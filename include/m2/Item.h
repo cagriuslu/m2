@@ -36,7 +36,7 @@ namespace m2 {
 
 		[[nodiscard]] virtual size_t get_attribute_count() const = 0;
 		[[nodiscard]] virtual std::pair<m2g::pb::AttributeType, float> get_attribute_by_index(size_t i) const = 0;
-		[[nodiscard]] virtual float get_attribute(m2g::pb::AttributeType) const = 0;
+		[[nodiscard]] virtual float GetAttribute(m2g::pb::AttributeType) const = 0;
 		[[nodiscard]] virtual float try_get_attribute(m2g::pb::AttributeType, float default_value) const = 0;
 		[[nodiscard]] virtual bool has_attribute(m2g::pb::AttributeType) const = 0;
 
@@ -88,7 +88,7 @@ namespace m2 {
 		[[nodiscard]] bool has_acquire_benefit(m2g::pb::ResourceType) const override;
 		[[nodiscard]] inline size_t get_attribute_count() const override { return _attribute.second != 0.0f ? 1 : 0; }
 		[[nodiscard]] std::pair<m2g::pb::AttributeType, float> get_attribute_by_index(size_t i) const override;
-		[[nodiscard]] float get_attribute(m2g::pb::AttributeType) const override;
+		[[nodiscard]] float GetAttribute(m2g::pb::AttributeType) const override;
 		[[nodiscard]] float try_get_attribute(m2g::pb::AttributeType, float default_value) const override;
 		[[nodiscard]] bool has_attribute(m2g::pb::AttributeType) const override;
 		[[nodiscard]] inline m2g::pb::SpriteType game_sprite() const override { return _game_sprite; }
@@ -135,7 +135,7 @@ namespace m2 {
 		[[nodiscard]] bool has_acquire_benefit(m2g::pb::ResourceType) const override;
 		[[nodiscard]] inline size_t get_attribute_count() const override { return _item.attributes_size(); }
 		[[nodiscard]] std::pair<m2g::pb::AttributeType, float> get_attribute_by_index(size_t i) const override;
-		[[nodiscard]] float get_attribute(m2g::pb::AttributeType) const override;
+		[[nodiscard]] float GetAttribute(m2g::pb::AttributeType) const override;
 		[[nodiscard]] float try_get_attribute(m2g::pb::AttributeType, float default_value) const override;
 		[[nodiscard]] bool has_attribute(m2g::pb::AttributeType) const override;
 		[[nodiscard]] inline m2g::pb::SpriteType game_sprite() const override { return _item.game_sprite(); }

@@ -30,13 +30,13 @@ namespace m2::box2d {
 	constexpr uint16_t FIXTURE_CATEGORY_FOE_ALL_FOREGROUND = FIXTURE_CATEGORY_FOE_ON_FOREGROUND | FIXTURE_CATEGORY_FOE_OFFENSE_ON_FOREGROUND;
 	constexpr uint16_t FIXTURE_CATEGORY_FOE_ALL = FIXTURE_CATEGORY_FOE | FIXTURE_CATEGORY_FOE_ALL_OFFENSE;
 
-	bool does_category_have_background_bits(uint16_t category_bits);
+	bool DoesCategoryHaveBackgroundBits(uint16_t category_bits);
 
-    b2AABB expand_aabb(const b2AABB& in, float amount);
+    b2AABB ExpandAabb(const b2AABB& in, float amount);
 
-	pb::BodyBlueprint example_bullet_body_blueprint();
+	pb::BodyBlueprint ExampleBulletBodyBlueprint();
 
 	/// b2Vec2 object's default constructor does not zero-initialize
 	/// Provide our own.
-	inline b2Vec2 vec2_zero() { return b2Vec2{0.0f, 0.0f}; }
+	inline b2Vec2 Vec2Zero() { return b2Vec2{0.0f, 0.0f}; }
 }

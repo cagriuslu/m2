@@ -5,9 +5,9 @@
 #include <m2/Game.h>
 
 void DrawResources(m2::Character& chr) {
-	auto coal_count = m2::iround(chr.get_resource(m2g::pb::COAL_CUBE_COUNT));
-	auto iron_count = m2::iround(chr.get_resource(m2g::pb::IRON_CUBE_COUNT));
-	auto beer_count = m2::iround(chr.get_resource(m2g::pb::BEER_BARREL_COUNT));
+	auto coal_count = m2::iround(chr.GetResource(m2g::pb::COAL_CUBE_COUNT));
+	auto iron_count = m2::iround(chr.GetResource(m2g::pb::IRON_CUBE_COUNT));
+	auto beer_count = m2::iround(chr.GetResource(m2g::pb::BEER_BARREL_COUNT));
 
 	auto nonzero_resource_type_count = (coal_count ? 1 : 0) + (iron_count ? 1 : 0) + (beer_count ? 1 : 0);
 	if (nonzero_resource_type_count == 0) {
@@ -25,8 +25,8 @@ void DrawResources(m2::Character& chr) {
 	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(sprite_type));
 
 	// Dim if necessary
-	m2::Graphic::dim_rendering_if_necessary(chr.owner_id(), M2_GAME.TextLabelCache().Texture());
-	m2::Graphic::dim_rendering_if_necessary(chr.owner_id(), sprite.Texture());
+	m2::Graphic::DimRenderingIfNecessary(chr.owner_id(), M2_GAME.TextLabelCache().Texture());
+	m2::Graphic::DimRenderingIfNecessary(chr.owner_id(), sprite.Texture());
 	// Draw count
 	const auto& textLabel = std::get<m2::pb::TextLabel>(M2_GAME.GetSpriteOrTextLabel(count_sprite_type));
 	const auto rect = M2_GAME.TextLabelCache().Create(textLabel.text(), m2::FontSizeOfTextLabel(textLabel));
@@ -36,6 +36,6 @@ void DrawResources(m2::Character& chr) {
 	sprite.DrawIn2dWorld(pos + m2::VecF{1.0f, 1.05f}, m2::pb::SpriteEffectType{m2::pb::SPRITE_EFFECT_BLURRED_DROP_SHADOW}, 0.0f);
 	sprite.DrawIn2dWorld(pos + m2::VecF{1.0f, 1.0f}, {}, 0.0f);
 	// Undim
-	m2::Graphic::undim_rendering(M2_GAME.TextLabelCache().Texture());
-	m2::Graphic::undim_rendering(sprite.Texture());
+	m2::Graphic::UndimRendering(M2_GAME.TextLabelCache().Texture());
+	m2::Graphic::UndimRendering(sprite.Texture());
 }

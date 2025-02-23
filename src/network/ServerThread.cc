@@ -129,8 +129,8 @@ m2::pb::NetworkMessage m2::network::ServerThread::prepare_server_update(const bo
 				object_descriptor->mutable_position()->CopyFrom(static_cast<pb::VecF>(v.owner().position));
 				object_descriptor->set_object_type(v.owner().object_type());
 				object_descriptor->set_parent_id(v.owner().parent_id());
-				for (auto item_it = v.begin_items(); item_it != v.end_items(); ++item_it) {
-					const auto* item_ptr = item_it.get();
+				for (auto item_it = v.BeginItems(); item_it != v.EndItems(); ++item_it) {
+					const auto* item_ptr = item_it.Get();
 					const auto* named_item_ptr = dynamic_cast<const NamedItem*>(item_ptr);
 					if (!named_item_ptr) {
 						throw M2_ERROR("ServerUpdate does not support unnamed items");
@@ -138,17 +138,17 @@ m2::pb::NetworkMessage m2::network::ServerThread::prepare_server_update(const bo
 					object_descriptor->add_named_items(named_item_ptr->type());
 				}
 				pb::for_each_enum_value<m2g::pb::ResourceType>([&v, object_descriptor](m2g::pb::ResourceType rt) {
-					if (v.has_resource(rt)) {
+					if (v.HasResource(rt)) {
 						auto* resource = object_descriptor->add_resources();
 						resource->set_type(rt);
-						resource->set_amount(v.get_resource(rt));
+						resource->set_amount(v.GetResource(rt));
 					}
 				});
 				pb::for_each_enum_value<m2g::pb::AttributeType>([&v, object_descriptor](m2g::pb::AttributeType at) {
-					if (v.has_attribute(at)) {
+					if (v.HasAttribute(at)) {
 						auto* attribute = object_descriptor->add_attributes();
 						attribute->set_type(at);
-						attribute->set_amount(v.get_attribute(at));
+						attribute->set_amount(v.GetAttribute(at));
 					}
 				});
 			}

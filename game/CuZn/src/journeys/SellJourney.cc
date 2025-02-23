@@ -74,7 +74,7 @@ SellJourney::~SellJourney() {
 	deinit();
 	// Return the reserved resources
 	for (auto* object : _reserved_beers) {
-		object->character().add_resource(BEER_BARREL_COUNT, 1.0f);
+		object->character().AddResource(BEER_BARREL_COUNT, 1.0f);
 	}
 	_reserved_beers.clear();
 }
@@ -192,11 +192,11 @@ std::optional<SellJourneyStep> SellJourney::HandleResourcePoiOrCancelSignal(cons
 		// Reserve the resource
 		if (is_industry_location(poi)) {
 			auto* factory = FindFactoryAtLocation(poi);
-			factory->character().remove_resource(BEER_BARREL_COUNT, 1.0f);
+			factory->character().RemoveResource(BEER_BARREL_COUNT, 1.0f);
 			_reserved_beers.emplace_back(factory);
 		} else if (is_merchant_location(poi)) {
 			auto* merchant = find_merchant_at_location(poi);
-			merchant->character().remove_resource(BEER_BARREL_COUNT, 1.0f);
+			merchant->character().RemoveResource(BEER_BARREL_COUNT, 1.0f);
 			_reserved_beers.emplace_back(merchant);
 		}
 		// Specify source
@@ -226,7 +226,7 @@ std::optional<SellJourneyStep> SellJourney::HandleDevelopBenefitIndustryTileEnte
 				// Ask for tile selection
 				if (const auto selected_tile = ask_for_tile_selection()) {
 					// Check if tile can be developed
-					if (m2::is_equal(M2_GAME.GetNamedItem(*selected_tile).get_attribute(DEVELOPMENT_BAN), 1.0f, 0.001f)) {
+					if (m2::is_equal(M2_GAME.GetNamedItem(*selected_tile).GetAttribute(DEVELOPMENT_BAN), 1.0f, 0.001f)) {
 						M2_LEVEL.ShowMessage("Selected industry cannot be developed", 8.0f);
 						M2_DEFER(m2g::Proxy::main_journey_deleter);
 						return std::nullopt;
@@ -295,17 +295,17 @@ m2::void_expected CanPlayerSell(m2::Character& player, const m2g::pb::ClientComm
 			// Reserve the resource
 			if (is_industry_location(beer_source)) {
 				auto* source_factory = FindFactoryAtLocation(beer_source);
-				source_factory->character().remove_resource(BEER_BARREL_COUNT, 1.0f);
+				source_factory->character().RemoveResource(BEER_BARREL_COUNT, 1.0f);
 				reserved_beers.emplace_back(source_factory);
 			} else if (is_merchant_location(beer_source)) {
 				auto* source_merchant = find_merchant_at_location(beer_source);
-				source_merchant->character().remove_resource(BEER_BARREL_COUNT, 1.0f);
+				source_merchant->character().RemoveResource(BEER_BARREL_COUNT, 1.0f);
 				reserved_beers.emplace_back(source_merchant);
 			}
 		}
 		// Give back the reserved resources
 		for (auto* source : reserved_beers) {
-			source->character().add_resource(BEER_BARREL_COUNT, 1.0f);
+			source->character().AddResource(BEER_BARREL_COUNT, 1.0f);
 		}
 	} else {
 		m2_return_unexpected_message_unless(sell_action.beer_sources_size() == 0, "Beer not required but beer sources are provided");
@@ -321,7 +321,7 @@ m2::void_expected CanPlayerSell(m2::Character& player, const m2g::pb::ClientComm
 			"Selected develop benefit tile is not an industry tile");
 		m2_return_unexpected_message_unless(PlayerNextIndustryTileOfCategory(player, industry_tile_category_of_industry_tile(tile)) == tile,
 			"Selected develop benefit tile is not the next tile to develop in the category");
-		m2_return_unexpected_message_unless(m2::is_equal(M2_GAME.GetNamedItem(tile).get_attribute(DEVELOPMENT_BAN), 0.0f, 0.001f),
+		m2_return_unexpected_message_unless(m2::is_equal(M2_GAME.GetNamedItem(tile).GetAttribute(DEVELOPMENT_BAN), 0.0f, 0.001f),
 			"Selected develop benefit tile cannot be developed");
 	}
 
@@ -336,10 +336,10 @@ Card ExecuteSellAction(m2::Character& player, const m2g::pb::ClientCommand_SellA
 		auto beer_source = static_cast<Location>(beer_source_i);
 		if (is_industry_location(beer_source)) {
 			auto* source_factory = FindFactoryAtLocation(beer_source);
-			source_factory->character().remove_resource(BEER_BARREL_COUNT, 1.0f);
+			source_factory->character().RemoveResource(BEER_BARREL_COUNT, 1.0f);
 		} else if (is_merchant_location(beer_source)) {
 			auto* source_merchant = find_merchant_at_location(beer_source);
-			source_merchant->character().remove_resource(BEER_BARREL_COUNT, 1.0f);
+			source_merchant->character().RemoveResource(BEER_BARREL_COUNT, 1.0f);
 		}
 	}
 
@@ -348,20 +348,20 @@ Card ExecuteSellAction(m2::Character& player, const m2g::pb::ClientCommand_SellA
 	// Merchant develop benefit
 	if (sell_action.merchant_develop_benefit_industry_tile()) {
 		// Take tile from player
-		player.remove_item(player.find_items(sell_action.merchant_develop_benefit_industry_tile()));
+		player.RemoveItem(player.FindItems(sell_action.merchant_develop_benefit_industry_tile()));
 	}
 	if (DoesBeerSourcesContainMerchant(sell_action.beer_sources(), sell_action.merchant_location())) {
 		if (const auto incomePointsBenefit = MerchantIncomePointsBenefit(sell_action.merchant_location())) {
 			LOG_INFO("Player income points benefit", incomePointsBenefit);
-			player.set_attribute(INCOME_POINTS, F(ClampIncomePoints(PlayerIncomePoints(player) + incomePointsBenefit)));
+			player.SetAttribute(INCOME_POINTS, F(ClampIncomePoints(PlayerIncomePoints(player) + incomePointsBenefit)));
 		}
 		if (const auto victoryPointsBenefit = MerchantVictoryPointsBenefit(sell_action.merchant_location())) {
 			LOG_INFO("Player victory points benefit", victoryPointsBenefit);
-			player.add_resource(VICTORY_POINTS, F(victoryPointsBenefit));
+			player.AddResource(VICTORY_POINTS, F(victoryPointsBenefit));
 		}
 		if (const auto moneyPointsBenefit = MerchantMoneyBenefit(sell_action.merchant_location())) {
 			LOG_INFO("Player income points benefit", moneyPointsBenefit);
-			player.add_resource(MONEY, F(moneyPointsBenefit));
+			player.AddResource(MONEY, F(moneyPointsBenefit));
 		}
 	}
 

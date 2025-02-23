@@ -46,14 +46,14 @@ namespace m2 {
 				_children[3].first = RectF{area.x + half_w, area.y + half_h, half_w, half_h};
 			}
 			// Accessors
-			[[nodiscard]] const RectF& area() const { return _area; }
+			[[nodiscard]] const RectF& Area() const { return _area; }
 			// Iterators
-			uint64_t for_each_containing(const RectF& area, const std::function<bool(const RectF&,Id,T&)>& op, float tolerance) {
+			uint64_t ForEachContaining(const RectF& area, const std::function<bool(const RectF&,Id,T&)>& op, float tolerance) {
 				uint64_t count = 0;
 				// Search in items
 				for (auto& item : _items) {
 					if (area.contains(item.area, tolerance)) {
-						if (op(item.area, item.id, *_map.get(item.id))) {
+						if (op(item.area, item.id, *_map.Get(item.id))) {
 							++count;
 						} else {
 							return count;
@@ -63,17 +63,17 @@ namespace m2 {
 				// Search in quadrants
 				for (auto& [child_area, child] : _children) {
 					if (child && area.intersect(child_area, tolerance)) {
-						count += child->for_each_containing(area, op, tolerance);
+						count += child->ForEachContaining(area, op, tolerance);
 					}
 				}
 				return count;
 			}
-			uint64_t for_each_intersecting(const RectF& area, const std::function<bool(const RectF&,Id,T&)>& op, float tolerance) {
+			uint64_t ForEachIntersecting(const RectF& area, const std::function<bool(const RectF&,Id,T&)>& op, float tolerance) {
 				uint64_t count = 0;
 				// Search in items
 				for (auto& item : _items) {
 					if (area.intersect(item.area, tolerance)) {
-						if (op(item.area, item.id, *_map.get(item.id))) {
+						if (op(item.area, item.id, *_map.Get(item.id))) {
 							++count;
 						} else {
 							return count;
@@ -83,20 +83,20 @@ namespace m2 {
 				// Search in quadrants
 				for (auto& [child_area, child] : _children) {
 					if (child && area.intersect(child_area, tolerance)) {
-						count += child->for_each_containing(area, op, tolerance);
+						count += child->ForEachContaining(area, op, tolerance);
 					}
 				}
 				return count;
 			}
 			// Modifiers
-			std::deque<MapContainerItemF>* insert(MapContainerItemF&& item) {
+			std::deque<MapContainerItemF>* Insert(MapContainerItemF&& item) {
 				// Check if the item can be wholly contained in a children, and the children is created
-				for (size_t i = 0; i < _children.size(); ++i) {
+				for (size_t i = 0; i < _children.Size(); ++i) {
 					if (auto& [child_area, child] = _children[i]; child_area.contains(item.area, _tolerance)) {
 						// Item can be wholly contained in the child
 						if (child) {
 							// Child is already created
-							return child->insert(std::move(item));
+							return child->Insert(std::move(item));
 						} else if (_items.size() < ITEM_COUNT_THRESHOLD) {
 							// Child is not created, but there isn't enough items at this level to create it yet
 							_dirty = true;
@@ -105,12 +105,12 @@ namespace m2 {
 						} else {
 							// Child is not created, and this level has too many items already
 							// Distribute the items on this level to the children
-							distribute();
+							Distribute();
 							// Check the child. It may or may not have been created during the distribution process
 							if (not _children[i].second) {
 								_children[i].second = std::make_unique<Quadrant>(_map, child_area, _tolerance);
 							}
-							return _children[i].second->insert(std::move(item));
+							return _children[i].second->Insert(std::move(item));
 						}
 					}
 				}
@@ -118,7 +118,7 @@ namespace m2 {
 				_items.emplace_back(std::move(item));
 				return &_items;
 			}
-			void clear() {
+			void Clear() {
 				_items.clear();
 				for (auto& child : _children) {
 					child.second.reset();
@@ -126,25 +126,25 @@ namespace m2 {
 			}
 		private:
 			// Distribute the items at this level to children
-			void distribute() {
+			void Distribute() {
 				if (not _dirty) {
 					return; // Nothing to distribute
 				}
 				for (auto item_it = _items.begin(); item_it != _items.end(); ) {
 					bool child_can_contain = false;
-					for (size_t i = 0; i < _children.size(); ++i) {
+					for (size_t i = 0; i < _children.Size(); ++i) {
 						if (auto& [child_area, child] = _children[i]; child_area.contains(item_it->area, _tolerance)) {
 							// Item can be wholly contained in the child
 							child_can_contain = true;
 							auto id = item_it->id;
 							if (child) {
 								// Child is already created, adjust container to new position
-								_map.adjust_container(id, child->insert(std::move(*item_it)));
+								_map.AdjustContainer(id, child->Insert(std::move(*item_it)));
 							} else {
 								// Child needs to be created
 								_children[i].second = std::make_unique<Quadrant>(_map, child_area, _tolerance);
 								// Adjust container to new position
-								_map.adjust_container(id, _children[i].second->insert(std::move(*item_it)));
+								_map.AdjustContainer(id, _children[i].second->Insert(std::move(*item_it)));
 							}
 							item_it = _items.erase(item_it);
 							break;
@@ -184,50 +184,50 @@ namespace m2 {
 	template <typename T, uint64_t Capacity>
 	class MapF : private Pool<detail::MapPoolItemF<T>,Capacity> {
 		float _tolerance;
-		detail::Quadrant<T,Capacity> _root_quadrant; /// The main plot of land managed by the Map
-		std::deque<detail::MapContainerItemF> _foreign_items; /// Items that at least partially lay outside the main plot
+		detail::Quadrant<T,Capacity> _rootQuadrant; /// The main plot of land managed by the Map
+		std::deque<detail::MapContainerItemF> _foreignItems; /// Items that at least partially lay outside the main plot
 
 	public:
-		explicit MapF(const RectF& area, const float tolerance = 0.001f) : Pool<detail::MapPoolItemF<T>,Capacity>(), _tolerance(tolerance), _root_quadrant(*this, area, _tolerance) {}
+		explicit MapF(const RectF& area, const float tolerance = 0.001f) : Pool<detail::MapPoolItemF<T>,Capacity>(), _tolerance(tolerance), _rootQuadrant(*this, area, _tolerance) {}
 		MapF(const float x, const float y, const float w, const float h) : MapF(RectF{x, y, w, h}) {}
 
 		//<editor-fold desc="Accessors">
-		using Pool<detail::MapPoolItemF<T>,Capacity>::size;
-		using Pool<detail::MapPoolItemF<T>,Capacity>::contains;
-		T* get(Id id) {
-			if (auto* item = Pool<detail::MapPoolItemF<T>,Capacity>::get(id)) {
+		using Pool<detail::MapPoolItemF<T>,Capacity>::Size;
+		using Pool<detail::MapPoolItemF<T>,Capacity>::Contains;
+		T* Get(Id id) {
+			if (auto* item = Pool<detail::MapPoolItemF<T>,Capacity>::Get(id)) {
 				return &item->t;
 			}
 			return nullptr;
 		}
-		const T* get(Id id) const {
-			if (const auto* item = Pool<detail::MapPoolItemF<T>,Capacity>::get(id)) {
+		const T* Get(Id id) const {
+			if (const auto* item = Pool<detail::MapPoolItemF<T>,Capacity>::Get(id)) {
 				return &item->t;
 			}
 			return nullptr;
 		}
 		T& operator[](Id id) {
-			if (auto* t = get(id)) {
+			if (auto* t = Get(id)) {
 				return *t;
 			}
 			throw M2_ERROR("Out of bounds");
 		}
 		const T& operator[](Id id) const {
-			if (const auto* t = get(id)) {
+			if (const auto* t = Get(id)) {
 				return *t;
 			}
 			throw M2_ERROR("Out of bounds");
 		}
-		[[nodiscard]] const RectF& area() const { return _root_quadrant.area(); }
+		[[nodiscard]] const RectF& Area() const { return _rootQuadrant.Area(); }
 		//</editor-fold>
 
 		//<editor-fold desc="Iterators">
 		// Iterate over all objects in the container. The iteration continues as long as `op` returns true.
 		// Returns the number items iterated for which op returned true.
-		uint64_t for_each(const std::function<bool(const RectF&,Id,T&)>& op) {
+		uint64_t ForEach(const std::function<bool(const RectF&,Id,T&)>& op) {
 			uint64_t count = 0;
 			for (auto it = Pool<detail::MapPoolItemF<T>,Capacity>::begin(); it != Pool<detail::MapPoolItemF<T>,Capacity>::end(); ++it) {
-				if (op(it->area, it.id(), it->t)) {
+				if (op(it->area, it.Id(), it->t)) {
 					++count;
 				} else {
 					return count;
@@ -235,95 +235,95 @@ namespace m2 {
 			}
 			return count;
 		}
-		uint64_t for_each_containing(const RectF& area, const std::function<bool(const RectF&,Id,T&)>& op, float tolerance = 0.001f) {
+		uint64_t ForEachContaining(const RectF& area, const std::function<bool(const RectF&,Id,T&)>& op, float tolerance = 0.001f) {
 			uint64_t count = 0;
 			// Iterate over foreign items
-			for (auto& item : _foreign_items) {
+			for (auto& item : _foreignItems) {
 				if (area.contains(item.area, tolerance)) {
-					if (op(item.area, item.id, *get(item.id))) {
+					if (op(item.area, item.id, *Get(item.id))) {
 						++count;
 					} else {
 						return count;
 					}
 				}
 			}
-			return count + _root_quadrant.for_each_containing(area, op, tolerance); // Search in quadrants
+			return count + _rootQuadrant.ForEachContaining(area, op, tolerance); // Search in quadrants
 		}
-		uint64_t for_each_intersecting(const RectF& area, const std::function<bool(const RectF&,Id,T&)>& op, float tolerance = 0.001f) {
+		uint64_t ForEachIntersecting(const RectF& area, const std::function<bool(const RectF&,Id,T&)>& op, float tolerance = 0.001f) {
 			uint64_t count = 0;
 			// Iterate over foreign items
-			for (auto& item : _foreign_items) {
+			for (auto& item : _foreignItems) {
 				if (area.intersect(item.area, tolerance)) {
-					if (op(item.area, item.id, *get(item.id))) {
+					if (op(item.area, item.id, *Get(item.id))) {
 						++count;
 					} else {
 						return count;
 					}
 				}
 			}
-			return count + _root_quadrant.for_each_intersecting(area, op, tolerance); // Search in quadrants
+			return count + _rootQuadrant.ForEachIntersecting(area, op, tolerance); // Search in quadrants
 		}
 		//</editor-fold>
 
 		//<editor-fold desc="Modifiers">
 		template <typename... Args>
-		std::pair<T&, Id> emplace(const RectF& area, Args&&... args) {
+		std::pair<T&, Id> Emplace(const RectF& area, Args&&... args) {
 			// Insert item into Pool
-			auto pool_it = Pool<detail::MapPoolItemF<T>,Capacity>::emplace(std::forward<Args>(args)...);
+			auto pool_it = Pool<detail::MapPoolItemF<T>,Capacity>::Emplace(std::forward<Args>(args)...);
 			// Store area
 			pool_it->area = area;
 			// Point back-pointer to the correct container
-			if (_root_quadrant.area().contains(area, _tolerance)) {
+			if (_rootQuadrant.Area().contains(area, _tolerance)) {
 				// Object fits inside the managed area, insert to one of the quadrants
-				pool_it->container = _root_quadrant.insert({area, pool_it.id()});
+				pool_it->container = _rootQuadrant.Insert({area, pool_it.Id()});
 			} else {
 				// Object doesn't fit inside the managed area, insert to _foreign_items
-				_foreign_items.emplace_back(area, pool_it.id());
-				pool_it->container = &_foreign_items;
+				_foreignItems.emplace_back(area, pool_it.Id());
+				pool_it->container = &_foreignItems;
 			}
-			return {pool_it->t, pool_it.id()};
+			return {pool_it->t, pool_it.Id()};
 		}
-		void erase(Id id) {
+		void Erase(Id id) {
 			// Erase from container
-			auto* container = Pool<detail::MapPoolItemF<T>,Capacity>::get(id)->container;
+			auto* container = Pool<detail::MapPoolItemF<T>,Capacity>::Get(id)->container;
 			for (auto it = container->begin(); it != container->end(); ++it) {
 				if (it->id == id) {
-					container->erase(it);
-					Pool<detail::MapPoolItemF<T>,Capacity>::free(id);
+					container->Erase(it);
+					Pool<detail::MapPoolItemF<T>,Capacity>::Free(id);
 					return;
 				}
 			}
 			throw M2_ERROR("Attempt to erase item from wrong quadrant");
 		}
-		void move(Id id, const RectF& new_area) {
-			auto* pool_item = Pool<detail::MapPoolItemF<T>,Capacity>::get(id);
+		void Move(Id id, const RectF& new_area) {
+			auto* pool_item = Pool<detail::MapPoolItemF<T>,Capacity>::Get(id);
 			pool_item->area = new_area;
 			// Erase from container
 			auto* container = pool_item->container;
 			for (auto it = container->begin(); it != container->end(); ++it) {
 				if (it->id == id) {
-					container->erase(it); // TODO erase_if
+					container->Erase(it); // TODO erase_if
 					break;
 				}
 			}
 			// Reinsert
-			if (_root_quadrant.area().contains(new_area, _tolerance)) {
-				pool_item->container = _root_quadrant.insert({new_area, id});
+			if (_rootQuadrant.Area().contains(new_area, _tolerance)) {
+				pool_item->container = _rootQuadrant.Insert({new_area, id});
 			} else {
-				_foreign_items.emplace_back(new_area, id);
-				pool_item->container = &_foreign_items;
+				_foreignItems.emplace_back(new_area, id);
+				pool_item->container = &_foreignItems;
 			}
 		}
-		void clear() {
-			Pool<detail::MapPoolItemF<T>,Capacity>::clear();
-			_root_quadrant.clear();
-			_foreign_items.clear();
+		void Clear() {
+			Pool<detail::MapPoolItemF<T>,Capacity>::Clear();
+			_rootQuadrant.Clear();
+			_foreignItems.clear();
 		}
 		//</editor-fold>
 
 	private:
-		void adjust_container(Id id, std::deque<detail::MapContainerItemF>* container) {
-			Pool<detail::MapPoolItemF<T>,Capacity>::get(id)->container = container;
+		void AdjustContainer(Id id, std::deque<detail::MapContainerItemF>* container) {
+			Pool<detail::MapPoolItemF<T>,Capacity>::Get(id)->container = container;
 		}
 
 		friend class detail::Quadrant<T,Capacity>;

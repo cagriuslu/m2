@@ -186,35 +186,35 @@ void State::Draw() const {
 	if (M2_LEVEL.RightHud()->Name() == "RectModeRightHud") {
 		// Draw selection
 		if (const auto cellSelection = M2_LEVEL.PrimarySelection()->CellSelectionRectM()) {
-			Graphic::color_rect(*cellSelection, SELECTION_COLOR);
+			Graphic::ColorRect(*cellSelection, SELECTION_COLOR);
 		}
 		if (const auto centerSelection = M2_LEVEL.SecondarySelection()->HalfCellSelectionsM()) {
-			Graphic::draw_cross(centerSelection->first, CROSS_COLOR);
+			Graphic::DrawCross(centerSelection->first, CROSS_COLOR);
 		}
 		// Draw already existing
 		const auto rect = RectI{sprite.regular().rect()};
 		if (rect) {
-			Graphic::color_rect(RectF{rect}.shift({-0.5f, -0.5f}), CONFIRMED_SELECTION_COLOR);
+			Graphic::ColorRect(RectF{rect}.shift({-0.5f, -0.5f}), CONFIRMED_SELECTION_COLOR);
 		}
 		const auto rectCenter = RectF{rect}.shift({-0.5f, -0.5f}).center();
 		const auto centerToOriginVecPx = VecF{sprite.regular().center_to_origin_vec_px()};
-		Graphic::draw_cross(rectCenter + centerToOriginVecPx, CONFIRMED_CROSS_COLOR);
+		Graphic::DrawCross(rectCenter + centerToOriginVecPx, CONFIRMED_CROSS_COLOR);
 	} else if (M2_LEVEL.RightHud()->Name() == "ForegroundCompanionModeRightHud") {
 		// Draw selection
 		if (const auto cellSelection = M2_LEVEL.PrimarySelection()->CellSelectionRectM()) {
-			Graphic::color_rect(*cellSelection, SELECTION_COLOR);
+			Graphic::ColorRect(*cellSelection, SELECTION_COLOR);
 		}
 		if (const auto centerSelection = M2_LEVEL.SecondarySelection()->HalfCellSelectionsM()) {
-			Graphic::draw_cross(centerSelection->first, CROSS_COLOR);
+			Graphic::DrawCross(centerSelection->first, CROSS_COLOR);
 		}
 		// Draw already existing
 		for (const auto& rect : sprite.regular().foreground_companion_rects()) {
-			Graphic::color_rect(RectF{rect}.shift({-0.5f, -0.5f}), CONFIRMED_SELECTION_COLOR);
+			Graphic::ColorRect(RectF{rect}.shift({-0.5f, -0.5f}), CONFIRMED_SELECTION_COLOR);
 		}
 		const auto rect = RectI{sprite.regular().rect()};
 		const auto rectCenter = RectF{rect}.shift({-0.5f, -0.5f}).center();
 		const auto fCompCenterToOriginVecPx = VecF{sprite.regular().foreground_companion_center_to_origin_vec_px()};
-		Graphic::draw_cross(rectCenter + fCompCenterToOriginVecPx, CONFIRMED_CROSS_COLOR);
+		Graphic::DrawCross(rectCenter + fCompCenterToOriginVecPx, CONFIRMED_CROSS_COLOR);
 	} else if (M2_LEVEL.RightHud()->Name() == "FixtureModeRightHud") {
 		const auto foreground = std::get<int>(M2_LEVEL.RightHud()->find_first_widget_by_name<widget::TextSelection>("LayerSelection")->selections()[0]) == FIXTURE_LAYER_SELECTION_FOREGROUND_OPTION;
 		const auto& fixtures = foreground ? sprite.regular().foreground_fixtures() : sprite.regular().background_fixtures();
@@ -222,13 +222,13 @@ void State::Draw() const {
 		if (const auto shape = std::get<int>(M2_LEVEL.RightHud()->find_first_widget_by_name<widget::TextSelection>("ShapeSelection")->selections()[0]);
 				shape == FIXTURE_SHAPE_SELECTION_RECTANGLE) {
 			if (const auto halfCellSelection = M2_LEVEL.PrimarySelection()->HalfCellSelectionRectM()) {
-				Graphic::color_rect(*halfCellSelection, SELECTION_COLOR);
+				Graphic::ColorRect(*halfCellSelection, SELECTION_COLOR);
 			}
 		} else if (shape == FIXTURE_SHAPE_SELECTION_CIRCLE) {
 			if (const auto halfCellSelection = M2_LEVEL.PrimarySelection()->HalfCellSelectionsM()) {
 				const auto center = halfCellSelection->first;
 				const auto radius = center.distance(halfCellSelection->second);
-				Graphic::color_disk(center, radius, SELECTION_COLOR);
+				Graphic::ColorDisk(center, radius, SELECTION_COLOR);
 			}
 		} else if (shape == FIXTURE_SHAPE_SELECTION_CHAIN_POINT) {
 			if (const auto halfCellSelection = M2_LEVEL.PrimarySelection()->HalfCellSelectionsM()) {
@@ -236,10 +236,10 @@ void State::Draw() const {
 				// Find the last chain point
 				if (fixtures.chain_fixture().points_size()) {
 					const auto& lastPoint = fixtures.chain_fixture().points(fixtures.chain_fixture().points_size() - 1);
-					Graphic::draw_line(spriteOrigin + VecF{lastPoint}, point, CROSS_COLOR);
+					Graphic::DrawLine(spriteOrigin + VecF{lastPoint}, point, CROSS_COLOR);
 				} else {
 					// Draw only first point
-					Graphic::draw_cross(point, CROSS_COLOR);
+					Graphic::DrawCross(point, CROSS_COLOR);
 				}
 			}
 		}
@@ -247,18 +247,18 @@ void State::Draw() const {
 		for (const auto& rect : fixtures.rectangle_fixtures()) {
 			const auto rectF = RectF::centered_around(spriteOrigin + VecF{rect.sprite_origin_to_rectangle_center_vec_px()},
 					rect.rectangle_dimensions_px().w(), rect.rectangle_dimensions_px().h());
-			Graphic::color_rect(rectF, CONFIRMED_SELECTION_COLOR);
+			Graphic::ColorRect(rectF, CONFIRMED_SELECTION_COLOR);
 		}
 		for (const auto& circ : fixtures.circle_fixtures()) {
 			const auto center = spriteOrigin + VecF{circ.sprite_origin_to_circle_center_vec_px()};
-			Graphic::color_disk(center, circ.circle_radius_px(), CONFIRMED_SELECTION_COLOR);
+			Graphic::ColorDisk(center, circ.circle_radius_px(), CONFIRMED_SELECTION_COLOR);
 		}
 		if (fixtures.chain_fixture().points().size() == 1) {
-			Graphic::draw_cross(spriteOrigin + VecF{fixtures.chain_fixture().points(0)}, CONFIRMED_CROSS_COLOR);
+			Graphic::DrawCross(spriteOrigin + VecF{fixtures.chain_fixture().points(0)}, CONFIRMED_CROSS_COLOR);
 		} else if (1 < fixtures.chain_fixture().points().size()) {
 			auto end = fixtures.chain_fixture().points().cend() - 1;
 			for (auto it = fixtures.chain_fixture().points().cbegin(); it != end; ++it) {
-				Graphic::draw_line(spriteOrigin + VecF{*it}, spriteOrigin + VecF{*(it+1)}, CONFIRMED_CROSS_COLOR);
+				Graphic::DrawLine(spriteOrigin + VecF{*it}, spriteOrigin + VecF{*(it+1)}, CONFIRMED_CROSS_COLOR);
 			}
 		}
 	}
@@ -268,10 +268,10 @@ void State::Draw() const {
 	// Draw PPM grid lines
 	Graphic::DrawGridLines({255, 255, 255, 255}, 0, _ppm);
 	// Draw sheet boundaries
-	Graphic::draw_vertical_line(-0.5f, {255, 0, 0, 255});
-	Graphic::draw_horizontal_line(-0.5f, {255, 0, 0, 255});
-	Graphic::draw_vertical_line(F(_textureDimensions.x) - 0.5f, {255, 0, 0, 255});
-	Graphic::draw_horizontal_line(F(_textureDimensions.y) - 0.5f, {255, 0, 0, 255});
+	Graphic::DrawVerticalLine(-0.5f, {255, 0, 0, 255});
+	Graphic::DrawHorizontalLine(-0.5f, {255, 0, 0, 255});
+	Graphic::DrawVerticalLine(F(_textureDimensions.x) - 0.5f, {255, 0, 0, 255});
+	Graphic::DrawHorizontalLine(F(_textureDimensions.y) - 0.5f, {255, 0, 0, 255});
 }
 
 const pb::Sprite& State::SelectedSprite() const {

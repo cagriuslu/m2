@@ -5,7 +5,7 @@
 m2::Component::Component(Id owner_id) : _owner_id(owner_id) {}
 
 m2::Object& m2::Component::owner() const {
-    return *M2_LEVEL.objects.get(_owner_id);
+    return *M2_LEVEL.objects.Get(_owner_id);
 }
 
 std::function<bool(const m2::Component&)> m2::is_component_of_parent_object(Id parent_id) {

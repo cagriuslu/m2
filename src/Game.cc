@@ -516,7 +516,7 @@ void m2::Game::HandleNetworkEvents() {
 void m2::Game::ExecutePreStep() {
 	_proxy.OnPreStep();
 	for (auto& phy : _level->physics) {
-		IF(phy.pre_step)(phy);
+		IF(phy.preStep)(phy);
 	}
 	if (IsServer()) {
 		if (not _bot_threads.empty()) {
@@ -568,11 +568,11 @@ void m2::Game::ExecutePreStep() {
 
 void m2::Game::UpdateCharacters() {
 	for (auto& character : _level->characters) {
-		auto& chr = to_character_base(character);
-		chr.automatic_update();
+		auto& chr = ToCharacterBase(character);
+		chr.AutomaticUpdate();
 	}
 	for (auto& character : _level->characters) {
-		auto& chr = to_character_base(character);
+		auto& chr = ToCharacterBase(character);
 		IF(chr.update)(chr);
 	}
 }
@@ -592,7 +592,7 @@ void m2::Game::ExecuteStep() {
 				object.orientation = phy.body->GetAngle();
 				// Update draw list
 				if (old_pos != object.position) {
-					_level->drawList.queue_update(phy.owner_id(), object.position);
+					_level->drawList.QueueUpdate(phy.owner_id(), object.position);
 				}
 			} else if (phy.rigidBodyIndex) {
 				const auto& rigidBody = _level->World2().GetRigidBody(*phy.rigidBodyIndex);
@@ -604,13 +604,13 @@ void m2::Game::ExecuteStep() {
 				object.orientation = rigidBody.OrientationAboutCenterOfMass().ToFloat();
 				// Update draw list
 				if (oldPosition != object.position) {
-					_level->drawList.queue_update(phy.owner_id(), object.position);
+					_level->drawList.QueueUpdate(phy.owner_id(), object.position);
 				}
 			}
 		}
 	}
 	// Re-sort draw list
-	_level->drawList.update();
+	_level->drawList.Update();
 	if (not _proxy.world_is_static) {
 		// If the world is NOT static, the pathfinder's cache should be cleared, because the objects might have been
 		// moved
@@ -656,7 +656,7 @@ void m2::Game::ExecutePostStep() {
 
 	_proxy.OnPostStep();
 	for (auto& phy : _level->physics) {
-		IF(phy.post_step)(phy);
+		IF(phy.postStep)(phy);
 	}
 }
 
@@ -669,7 +669,7 @@ void m2::Game::UpdateSounds() {
 void m2::Game::ExecutePreDraw() {
 	for (auto& gfx : _level->graphics) {
 		if (gfx.enabled) {
-			IF(gfx.pre_draw)(gfx);
+			IF(gfx.preDraw)(gfx);
 		}
 	}
 }
@@ -710,7 +710,7 @@ namespace {
 	void draw_one_background_layer(m2::Pool<m2::Graphic>& terrainGraphics) {
 		for (auto& gfx : terrainGraphics) {
 			if (gfx.enabled && gfx.draw) {
-				IF(gfx.on_draw)(gfx);
+				IF(gfx.onDraw)(gfx);
 			}
 		}
 	}
@@ -741,21 +741,21 @@ void m2::Game::DrawForeground() {
 	for (const auto& gfx_id : _level->drawList) {
 		auto& gfx = _level->graphics[gfx_id];
 		if (gfx.enabled && gfx.draw) {
-			IF(gfx.on_draw)(gfx);
+			IF(gfx.onDraw)(gfx);
 		}
 	}
 }
 
 void m2::Game::DrawLights() {
 	for (auto& light : _level->lights) {
-		IF(light.on_draw)(light);
+		IF(light.onDraw)(light);
 	}
 }
 
 void m2::Game::ExecutePostDraw() {
 	for (auto& gfx : _level->graphics) {
 		if (gfx.enabled) {
-			IF(gfx.post_draw)(gfx);
+			IF(gfx.postDraw)(gfx);
 		}
 	}
 }
@@ -763,15 +763,15 @@ void m2::Game::ExecutePostDraw() {
 void m2::Game::DebugDraw() {
 #ifdef DEBUG
 	for (auto& phy : _level->physics) {
-		IF(phy.on_debug_draw)(phy);
+		IF(phy.onDebugDraw)(phy);
 	}
 
-	if (is_projection_type_perspective(_level->ProjectionType())) {
+	if (IsProjectionTypePerspective(_level->ProjectionType())) {
 		SDL_SetRenderDrawColor(M2_GAME.renderer, 255, 255, 255, 127);
 		for (int y = 0; y < 20; ++y) {
 			for (int x = 0; x < 20; ++x) {
 				m3::VecF p = {x, y, 0};
-				if (const auto projected_p = screen_origin_to_projection_along_camera_plane_dstpx(p); projected_p) {
+				if (const auto projected_p = ScreenOriginToProjectionAlongCameraPlaneDstpx(p); projected_p) {
 					SDL_RenderDrawPointF(M2_GAME.renderer, projected_p->x, projected_p->y);
 				}
 			}
@@ -950,17 +950,17 @@ void m2::Game::RecalculateDirectionalAudio() {
 			const auto& sound_position = sound_emitter.owner().position;
 			// Loop over playbacks
 			for (const auto playback_id : sound_emitter.playbacks) {
-				if (!audio_manager->has_playback(playback_id)) {
+				if (!audio_manager->HasPlayback(playback_id)) {
 					continue;  // Playback may have finished (if it's ONCE)
 				}
 				// Left listener
 				const auto left_volume =
-					_level->leftListener ? _level->leftListener->volume_of(sound_position) : 0.0f;
-				audio_manager->set_playback_left_volume(playback_id, left_volume);
+					_level->leftListener ? _level->leftListener->VolumeOf(sound_position) : 0.0f;
+				audio_manager->SetPlaybackLeftVolume(playback_id, left_volume);
 				// Right listener
 				const auto right_volume =
-					_level->rightListener ? _level->rightListener->volume_of(sound_position) : 0.0f;
-				audio_manager->set_playback_right_volume(playback_id, right_volume);
+					_level->rightListener ? _level->rightListener->VolumeOf(sound_position) : 0.0f;
+				audio_manager->SetPlaybackRightVolume(playback_id, right_volume);
 			}
 		}
 	}
@@ -986,22 +986,22 @@ void m2::Game::RecalculateMousePosition() const {
 	_screen_center_to_mouse_position_m = VecF{
 		F(screen_center_to_mouse_position_px.x) / Dimensions().OutputPixelsPerMeter(), F(screen_center_to_mouse_position_px.y) / Dimensions().OutputPixelsPerMeter()};
 
-	if (is_projection_type_perspective(_level->ProjectionType())) {
+	if (IsProjectionTypePerspective(_level->ProjectionType())) {
 		// Mouse moves on the plane centered at the player looking towards the camera
 		// Find m3::VecF of the mouse position in the world starting from the player position
 		const auto sin_of_player_to_camera_angle = M2_LEVEL.CameraOffset().z / M2_LEVEL.CameraOffset().length();
 		const auto cos_of_player_to_camera_angle =
 			sqrtf(1.0f - sin_of_player_to_camera_angle * sin_of_player_to_camera_angle);
 
-		const auto y_offset = (F(screen_center_to_mouse_position_px.y) / m3::ppm()) * sin_of_player_to_camera_angle;
-		const auto z_offset = -(F(screen_center_to_mouse_position_px.y) / m3::ppm()) * cos_of_player_to_camera_angle;
-		const auto x_offset = F(screen_center_to_mouse_position_px.x) / m3::ppm();
-		const auto player_position = m3::focus_position_m();
+		const auto y_offset = (F(screen_center_to_mouse_position_px.y) / m3::Ppm()) * sin_of_player_to_camera_angle;
+		const auto z_offset = -(F(screen_center_to_mouse_position_px.y) / m3::Ppm()) * cos_of_player_to_camera_angle;
+		const auto x_offset = F(screen_center_to_mouse_position_px.x) / m3::Ppm();
+		const auto player_position = m3::FocusPositionM();
 		const auto mouse_position_world_m =
 			m3::VecF{player_position.x + x_offset, player_position.y + y_offset, player_position.z + z_offset};
 
 		// Create Line from camera to mouse position
-		const auto ray_to_mouse = m3::Line::from_points(m3::camera_position_m(), mouse_position_world_m);
+		const auto ray_to_mouse = m3::Line::from_points(m3::CameraPositionM(), mouse_position_world_m);
 		// Get the xy-plane
 		const auto plane = m3::Plane::xy_plane(_proxy.xy_plane_z_component);
 		// Get the intersection

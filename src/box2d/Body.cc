@@ -53,7 +53,7 @@ void m2::box2d::BodyDeleter::operator()(b2Body* body) {
 	}
 }
 
-m2::box2d::BodyUniquePtr m2::box2d::create_body(b2World& world, Id physique_id, m2::VecF position, const pb::BodyBlueprint& blueprint) {
+m2::box2d::BodyUniquePtr m2::box2d::CreateBody(b2World& world, Id physique_id, m2::VecF position, const pb::BodyBlueprint& blueprint) {
 	if (M2_LEVEL.world->IsLocked()) {
 		throw M2_ERROR("b2Body is created during physics step");
 	}
@@ -115,7 +115,7 @@ m2::box2d::BodyUniquePtr m2::box2d::create_body(b2World& world, Id physique_id, 
 	return BodyUniquePtr{body};
 }
 
-bool m2::box2d::has_obstacle(const b2Body* body) {
+bool m2::box2d::HasObstacle(const b2Body* body) {
 	uint16_t is_obstacle = 0;
 	for (const auto* fixture = body->GetFixtureList(); fixture; fixture = fixture->GetNext()) {
 		auto category_bits = fixture->GetFilterData().categoryBits;

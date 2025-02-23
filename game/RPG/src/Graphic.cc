@@ -5,7 +5,7 @@ void DrawAddons(const m2::Graphic& gfx, float health) {
 		const auto& sprite = *std::get<const m2::Sprite*>(gfx.visual);
 
 		SDL_Rect dst_rect{};
-		if (m2::is_projection_type_parallel(M2_LEVEL.ProjectionType())) {
+		if (m2::IsProjectionTypeParallel(M2_LEVEL.ProjectionType())) {
 			const auto src_rect = static_cast<SDL_Rect>(sprite.Rect());
 			const auto screen_origin_to_sprite_center_px_vec = sprite.ScreenOriginToCenterVecOutpx(gfx.owner().position, m2::SpriteVariant{});
 			dst_rect = SDL_Rect{
@@ -18,7 +18,7 @@ void DrawAddons(const m2::Graphic& gfx, float health) {
 			const auto obj_position = gfx.owner().position;
 			// Place add-on below the sprite
 			const auto addon_position = m3::VecF{obj_position.x, obj_position.y, -0.2f};
-			if (const auto projected_addon_position = screen_origin_to_projection_along_camera_plane_dstpx(addon_position)) {
+			if (const auto projected_addon_position = ScreenOriginToProjectionAlongCameraPlaneDstpx(addon_position)) {
 				const auto rect = m2::RectI::centered_around(m2::VecI{*projected_addon_position}, m2::iround(M2_GAME.Dimensions().OutputPixelsPerMeter()), m2::iround(M2_GAME.Dimensions().OutputPixelsPerMeter() * 12.0f / 100.0f));
 				dst_rect = static_cast<SDL_Rect>(rect);
 			}

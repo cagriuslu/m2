@@ -31,15 +31,15 @@ namespace {
 	}
 }
 
-bool m2::is_projection_type_parallel(const pb::ProjectionType pt) {
+bool m2::IsProjectionTypeParallel(const pb::ProjectionType pt) {
 	return pt == pb::PARALLEL || pt == pb::PARALLEL_ISOMETRIC;
 }
-bool m2::is_projection_type_perspective(const pb::ProjectionType pt) {
+bool m2::IsProjectionTypePerspective(const pb::ProjectionType pt) {
 	return pt == pb::PERSPECTIVE_YZ || pt == pb::PERSPECTIVE_XYZ;
 }
 
 m2::VecF m2::CameraToPositionVecM(const VecF& position) {
-	const auto* camera = M2_LEVEL.objects.get(M2_LEVEL.cameraId);
+	const auto* camera = M2_LEVEL.objects.Get(M2_LEVEL.cameraId);
 	return position - camera->position;
 }
 m2::VecF m2::CameraToPositionVecPx(const VecF& position) {
@@ -71,16 +71,16 @@ m2::RectF m2::ViewportM() {
 	return RectF::from_corners(top_left, bottom_right);
 }
 
-m3::VecF m3::camera_position_m() {
-	const auto* camera = M2_LEVEL.objects.get(M2_LEVEL.cameraId);
+m3::VecF m3::CameraPositionM() {
+	const auto* camera = M2_LEVEL.objects.Get(M2_LEVEL.cameraId);
 	const auto raw_camera_position = VecF{camera->position.x, camera->position.y, 0.0f};
 	const auto camera_position = raw_camera_position + M2_LEVEL.CameraOffset();
 	return camera_position;
 }
-m3::VecF m3::focus_position_m() {
+m3::VecF m3::FocusPositionM() {
 	return {M2_PLAYER.position.x, M2_PLAYER.position.y, M2G_PROXY.focus_point_height};
 }
-float m3::visible_width_m() {
+float m3::VisibleWidthM() {
 	// Do not recalculate unless the distance or FOV has changed
 	static m3::VecF prev_camera_offset;
 	static auto prev_horizontal_fov = INFINITY;
@@ -95,35 +95,35 @@ float m3::visible_width_m() {
 	}
 	return visible_width;
 }
-float m3::ppm() {
-	return static_cast<float>(M2_GAME.Dimensions().Game().w) / visible_width_m();
+float m3::Ppm() {
+	return static_cast<float>(M2_GAME.Dimensions().Game().w) / VisibleWidthM();
 }
 
-m3::Line m3::camera_to_position_line(const VecF& position) {
-	return Line::from_points(camera_position_m(), position);
+m3::Line m3::CameraToPositionLine(const VecF& position) {
+	return Line::from_points(CameraPositionM(), position);
 }
-m3::Plane m3::focus_to_camera_plane() {
-	const auto focus_position = focus_position_m();
-	const auto normal = camera_position_m() - focus_position;
+m3::Plane m3::FocusToCameraPlane() {
+	const auto focus_position = FocusPositionM();
+	const auto normal = CameraPositionM() - focus_position;
 	return Plane{normal, focus_position};
 }
-std::optional<m3::VecF> m3::projection(const VecF& position) {
-	auto [intersection_point, forward_intersection] = focus_to_camera_plane()
-			.intersection(camera_to_position_line(position));
+std::optional<m3::VecF> m3::Projection(const VecF& position) {
+	auto [intersection_point, forward_intersection] = FocusToCameraPlane()
+			.intersection(CameraToPositionLine(position));
 	if (not forward_intersection) {
 		return {};
 	}
 	return intersection_point;
 }
-std::optional<m3::VecF> m3::focus_to_projection_m(const VecF& position) {
-	const auto proj = projection(position);
+std::optional<m3::VecF> m3::FocusToProjectionM(const VecF& position) {
+	const auto proj = Projection(position);
 	if (not proj) {
 		return std::nullopt;
 	}
-	return *proj - focus_position_m();
+	return *proj - FocusPositionM();
 }
-std::optional<m2::VecF> m3::focus_to_projection_in_camera_plane_coordinates_m(const VecF& position) {
-	const auto focus_to_projection = focus_to_projection_m(position);
+std::optional<m2::VecF> m3::FocusToProjectionInCameraPlaneCoordinatesM(const VecF& position) {
+	const auto focus_to_projection = FocusToProjectionM(position);
 	if (not focus_to_projection) {
 		return {};
 	}
@@ -151,16 +151,16 @@ std::optional<m2::VecF> m3::focus_to_projection_in_camera_plane_coordinates_m(co
 	}
 	return m2::VecF{horizontal_projection, vertical_projection};
 }
-std::optional<m2::VecF> m3::focus_to_projection_in_camera_plane_coordinates_dstpx(const VecF& position) {
-	const auto focus_to_projection_along_camera_plane = focus_to_projection_in_camera_plane_coordinates_m(position);
+std::optional<m2::VecF> m3::FocusToProjectionInCameraPlaneCoordinatesDstpx(const VecF& position) {
+	const auto focus_to_projection_along_camera_plane = FocusToProjectionInCameraPlaneCoordinatesM(position);
 	if (not focus_to_projection_along_camera_plane) {
 		return {};
 	}
-	const auto pixels_per_meter = ppm();
+	const auto pixels_per_meter = Ppm();
 	return *focus_to_projection_along_camera_plane * pixels_per_meter;
 }
-std::optional<m2::VecF> m3::screen_origin_to_projection_along_camera_plane_dstpx(const VecF& position) {
-	const auto focus_to_projection_along_camera_plane_px = focus_to_projection_in_camera_plane_coordinates_dstpx(position);
+std::optional<m2::VecF> m3::ScreenOriginToProjectionAlongCameraPlaneDstpx(const VecF& position) {
+	const auto focus_to_projection_along_camera_plane_px = FocusToProjectionInCameraPlaneCoordinatesDstpx(position);
 	if (not focus_to_projection_along_camera_plane_px) {
 		return {};
 	}
@@ -169,7 +169,7 @@ std::optional<m2::VecF> m3::screen_origin_to_projection_along_camera_plane_dstpx
 
 m2::Graphic::Graphic(const Id object_id) : Component(object_id) {}
 m2::Graphic::Graphic(const uint64_t object_id, const std::variant<Sprite, pb::TextLabel>& spriteOrTextLabel)
-		: Component(object_id), on_draw(DefaultDrawCallback) {
+		: Component(object_id), onDraw(DefaultDrawCallback) {
 	if (std::holds_alternative<Sprite>(spriteOrTextLabel)) {
 		visual = &std::get<Sprite>(spriteOrTextLabel);
 	} else {
@@ -182,8 +182,8 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 		const auto& sprite = *std::get<const Sprite*>(gfx.visual);
 
 		// Check if foreground or background
-		const bool is_foreground = M2_LEVEL.graphics.get_id(&gfx);
-		const auto projector = is_projection_type_perspective(M2_LEVEL.ProjectionType())
+		const bool is_foreground = M2_LEVEL.graphics.GetId(&gfx);
+		const auto projector = IsProjectionTypePerspective(M2_LEVEL.ProjectionType())
 				? &Sprite::DrawIn3dWorld
 				: &Sprite::DrawIn2dWorld;
 		const auto spriteDrawer = [&](const SpriteVariant sv) -> void {
@@ -191,11 +191,11 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 		};
 
 		// Dim the sprite if dimming mode is enabled. TODO Dimming is implemented only for default variant.
-		const bool dimmed = dim_rendering_if_necessary(gfx.owner_id(), sprite.Texture(SpriteVariant{}));
+		const bool dimmed = DimRenderingIfNecessary(gfx.owner_id(), sprite.Texture(SpriteVariant{}));
 
 		// First, try to draw something using the variant_draw_order, which overrides default_variant_draw_order.
 		bool isAnythingDrawn = false;
-		for (auto optionalSpriteVariant : gfx.variant_draw_order) {
+		for (auto optionalSpriteVariant : gfx.variantDrawOrder) {
 			if (optionalSpriteVariant) {
 				spriteDrawer(*optionalSpriteVariant);
 				isAnythingDrawn = true;
@@ -218,7 +218,7 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 
 		// If dimming was active, we need to un-dim.
 		if (dimmed) {
-			undim_rendering(sprite.Texture(SpriteVariant{}));
+			UndimRendering(sprite.Texture(SpriteVariant{}));
 		}
 	} else if (std::holds_alternative<const pb::TextLabel*>(gfx.visual)) {
 		const auto& textLabel = *std::get<const pb::TextLabel*>(gfx.visual);
@@ -230,29 +230,29 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 		}
 
 		// Dim the sprite if dimming mode is enabled.
-		const bool dimmed = dim_rendering_if_necessary(gfx.owner_id(), M2_GAME.TextLabelCache().Texture());
+		const bool dimmed = DimRenderingIfNecessary(gfx.owner_id(), M2_GAME.TextLabelCache().Texture());
 
 		// Draw background
 		if (textLabel.background_color().a()) {
 			DrawTextLabelBackgroundIn2dWorld(textLabel, gfx.textLabelRect, gfx.owner().position, dimmed);
 		}
 		// Draw text label
-		const bool is_foreground = M2_LEVEL.graphics.get_id(&gfx);
-		const auto projector = is_projection_type_perspective(M2_LEVEL.ProjectionType())
+		const bool is_foreground = M2_LEVEL.graphics.GetId(&gfx);
+		const auto projector = IsProjectionTypePerspective(M2_LEVEL.ProjectionType())
 				? &DrawTextLabelIn3dWorld
 				: &DrawTextLabelIn2dWorld;
 		projector(textLabel, gfx.textLabelRect, gfx.owner().position, gfx.owner().orientation, is_foreground, gfx.z);
 
 		// If dimming was active, we need to un-dim.
 		if (dimmed) {
-			undim_rendering(M2_GAME.TextLabelCache().Texture());
+			UndimRendering(M2_GAME.TextLabelCache().Texture());
 		}
 	} else {
 		// This function only draws visuals
 	}
 }
 
-void m2::Graphic::color_cell(const VecI& cell, SDL_Color color) {
+void m2::Graphic::ColorCell(const VecI& cell, SDL_Color color) {
 	const auto screen_origin_to_cell_center_px = ScreenOriginToPositionVecPx(VecF{cell});
 	const auto rect = SDL_Rect{
 		iround(screen_origin_to_cell_center_px.x - (M2_GAME.Dimensions().OutputPixelsPerMeter() / 2.0f)),
@@ -265,7 +265,7 @@ void m2::Graphic::color_cell(const VecI& cell, SDL_Color color) {
 	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
 	SDL_RenderFillRect(M2_GAME.renderer, &rect);
 }
-void m2::Graphic::color_rect(const RectF& world_coordinates_m, const SDL_Color color) {
+void m2::Graphic::ColorRect(const RectF& world_coordinates_m, const SDL_Color color) {
 	const auto screen_origin_to_top_left_px = ScreenOriginToPositionVecPx(world_coordinates_m.top_left());
 	const auto screen_origin_to_bottom_right_px = ScreenOriginToPositionVecPx(world_coordinates_m.bottom_right());
 	const auto rect = SDL_Rect{
@@ -283,46 +283,46 @@ void m2::Graphic::color_rect(const RectF& world_coordinates_m, const SDL_Color c
 	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
 	SDL_RenderFillRect(M2_GAME.renderer, &rect);
 }
-void m2::Graphic::color_rect(const RectF& world_coordinates_m, const RGB& color) {
-	color_rect(world_coordinates_m, SDL_Color{color.r, color.g, color.b, 255});
+void m2::Graphic::ColorRect(const RectF& world_coordinates_m, const RGB& color) {
+	ColorRect(world_coordinates_m, SDL_Color{color.r, color.g, color.b, 255});
 }
-void m2::Graphic::color_rect(const RectF& world_coordinates_m, const RGBA& color) {
-	color_rect(world_coordinates_m, SDL_Color{color.r, color.g, color.b, color.a});
+void m2::Graphic::ColorRect(const RectF& world_coordinates_m, const RGBA& color) {
+	ColorRect(world_coordinates_m, SDL_Color{color.r, color.g, color.b, color.a});
 }
-void m2::Graphic::color_disk(const VecF& center_position_m, const float radius_m, const SDL_Color& color) {
+void m2::Graphic::ColorDisk(const VecF& center_position_m, const float radius_m, const SDL_Color& color) {
 	const auto center_position_px = ScreenOriginToPositionVecPx(center_position_m);
 	const auto radius_px = radius_m * M2_GAME.Dimensions().OutputPixelsPerMeter();
 	sdl::draw_disk(M2_GAME.renderer, center_position_px, color, radius_px, color);
 }
-void m2::Graphic::draw_cross(const VecF& world_position, SDL_Color color) {
+void m2::Graphic::DrawCross(const VecF& world_position, SDL_Color color) {
 	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
 	const auto draw_position = VecI{ScreenOriginToPositionVecPx(world_position)};
 	SDL_RenderDrawLine(M2_GAME.renderer, draw_position.x - 9, draw_position.y - 9, draw_position.x + 10, draw_position.y + 10);
 	SDL_RenderDrawLine(M2_GAME.renderer, draw_position.x - 9, draw_position.y + 9, draw_position.x + 10, draw_position.y - 10);
 }
-void m2::Graphic::draw_line(const VecF& world_position_1, const VecF& world_position_2, SDL_Color color) {
+void m2::Graphic::DrawLine(const VecF& world_position_1, const VecF& world_position_2, SDL_Color color) {
 	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
-	if (is_projection_type_parallel(M2_LEVEL.ProjectionType())) {
+	if (IsProjectionTypeParallel(M2_LEVEL.ProjectionType())) {
 		const auto p1 = static_cast<VecI>(ScreenOriginToPositionVecPx(world_position_1));
 		const auto p2 = static_cast<VecI>(ScreenOriginToPositionVecPx(world_position_2));
 		SDL_RenderDrawLine(M2_GAME.renderer, p1.x, p1.y, p2.x, p2.y);
 	} else {
-		const auto p1 = m3::screen_origin_to_projection_along_camera_plane_dstpx(m3::VecF{world_position_1});
-		const auto p2 = m3::screen_origin_to_projection_along_camera_plane_dstpx(m3::VecF{world_position_2});
+		const auto p1 = m3::ScreenOriginToProjectionAlongCameraPlaneDstpx(m3::VecF{world_position_1});
+		const auto p2 = m3::ScreenOriginToProjectionAlongCameraPlaneDstpx(m3::VecF{world_position_2});
 		if (p1 && p2) {
 			SDL_RenderDrawLineF(M2_GAME.renderer, p1->x, p1->y, p2->x, p2->y);
 		}
 	}
 }
 void m2::Graphic::DrawLine(const VecF& worldPosition1M, const VecF& worldPosition2M, const RGBA& color) {
-	draw_line(worldPosition1M, worldPosition2M, SDL_Color{color.r, color.g, color.b, color.a});
+	DrawLine(worldPosition1M, worldPosition2M, SDL_Color{color.r, color.g, color.b, color.a});
 }
-void m2::Graphic::draw_vertical_line(float x, const RGBA& color) {
+void m2::Graphic::DrawVerticalLine(float x, const RGBA& color) {
 	const auto x_px = static_cast<int>(roundf(ScreenOriginToPositionVecPx(VecF{x, 0.0f}).x));
 	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
 	SDL_RenderDrawLine(M2_GAME.renderer, x_px, M2_GAME.Dimensions().Game().y, x_px, M2_GAME.Dimensions().Game().y + M2_GAME.Dimensions().Game().h);
 }
-void m2::Graphic::draw_horizontal_line(float y, const RGBA& color) {
+void m2::Graphic::DrawHorizontalLine(float y, const RGBA& color) {
 	const auto y_px = static_cast<int>(roundf(ScreenOriginToPositionVecPx(VecF{0.0f, y}).y));
 	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
 	SDL_RenderDrawLine(M2_GAME.renderer, M2_GAME.Dimensions().Game().x, y_px, M2_GAME.Dimensions().Game().x + M2_GAME.Dimensions().Game().w, y_px);
@@ -342,17 +342,17 @@ void m2::Graphic::DrawGridLines(const RGBA& color, const unsigned startFrom, con
 	const auto viewport = ViewportM();
 	for (auto x = floorf(viewport.x); x <= ceilf(viewport.X2()); x += 1.0f) {
 		if (const auto xInt = iround(x); ((xInt % frequency) + frequency - startFrom) % frequency == 0) {
-			draw_vertical_line(x - 0.5f, color);
+			DrawVerticalLine(x - 0.5f, color);
 		}
 	}
 	for (auto y = floorf(viewport.y); y <= ceilf(viewport.Y2()); y += 1.0f) {
 		if (const auto yInt = iround(y); ((yInt % frequency) + frequency - startFrom) % frequency == 0) {
-			draw_horizontal_line(y - 0.5f, color);
+			DrawHorizontalLine(y - 0.5f, color);
 		}
 	}
 }
 
-bool m2::Graphic::dim_rendering_if_necessary(Id object_id, SDL_Texture* texture) {
+bool m2::Graphic::DimRenderingIfNecessary(Id object_id, SDL_Texture* texture) {
 	// Dim the sprite if dimming mode is enabled
 	if (const auto& DimmingExceptions = M2_LEVEL.DimmingExceptions()) {
 		if (not DimmingExceptions->contains(object_id)) {
@@ -364,7 +364,7 @@ bool m2::Graphic::dim_rendering_if_necessary(Id object_id, SDL_Texture* texture)
 	return false;
 }
 
-void m2::Graphic::undim_rendering(SDL_Texture* texture) {
+void m2::Graphic::UndimRendering(SDL_Texture* texture) {
 	SDL_SetTextureColorMod(texture, 255, 255, 255);
 }
 
@@ -508,10 +508,10 @@ void m2::DrawTextureIn3dWorld(
 		point_3 = (position_to_point_3 + position3).offset_z(zPositionInWorldM);
 	}
 
-	const auto projected_point_0 = m3::screen_origin_to_projection_along_camera_plane_dstpx(point_0);
-	const auto projected_point_1 = m3::screen_origin_to_projection_along_camera_plane_dstpx(point_1);
-	const auto projected_point_2 = m3::screen_origin_to_projection_along_camera_plane_dstpx(point_2);
-	const auto projected_point_3 = m3::screen_origin_to_projection_along_camera_plane_dstpx(point_3);
+	const auto projected_point_0 = m3::ScreenOriginToProjectionAlongCameraPlaneDstpx(point_0);
+	const auto projected_point_1 = m3::ScreenOriginToProjectionAlongCameraPlaneDstpx(point_1);
+	const auto projected_point_2 = m3::ScreenOriginToProjectionAlongCameraPlaneDstpx(point_2);
+	const auto projected_point_3 = m3::ScreenOriginToProjectionAlongCameraPlaneDstpx(point_3);
 
 	if (projected_point_0 && projected_point_1 && projected_point_2 && projected_point_3) {
 		SDL_Vertex vertices[4] = {};

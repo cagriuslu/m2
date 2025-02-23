@@ -33,7 +33,7 @@ std::set<IndustryLocation> find_closest_connected_coal_mines_with_coal(City city
 		// Check if the city contains a coal resource
 		auto locs_in_city = industry_locations_in_city(static_cast<City>(node));
 		for (const auto& loc : locs_in_city) {
-			if (auto* factory = FindFactoryAtLocation(loc); factory && factory->character().has_resource(COAL_CUBE_COUNT)) {
+			if (auto* factory = FindFactoryAtLocation(loc); factory && factory->character().HasResource(COAL_CUBE_COUNT)) {
 				industry_locations.emplace(loc);
 				closest_coal_mine_cost = cost;
 			}
@@ -72,12 +72,12 @@ bool is_there_coal_on_the_board() {
 	// Iterate over factories
 	auto there_is_coal_mine_with_coal = std::ranges::any_of(
 			M2_LEVEL.characters
-				| std::views::transform(m2::to_character_base)
+				| std::views::transform(m2::ToCharacterBase)
 				| std::views::filter(IsFactoryCharacter),
 			[](m2::Character& chr) {
-				return m2::is_positive(chr.get_resource(COAL_CUBE_COUNT), 0.001f);
+				return m2::is_positive(chr.GetResource(COAL_CUBE_COUNT), 0.001f);
 			});
 	// Check the market as well
 	return there_is_coal_mine_with_coal
-		|| m2::is_positive(M2G_PROXY.game_state_tracker().get_resource(COAL_CUBE_COUNT), 0.001f);
+		|| m2::is_positive(M2G_PROXY.game_state_tracker().GetResource(COAL_CUBE_COUNT), 0.001f);
 }

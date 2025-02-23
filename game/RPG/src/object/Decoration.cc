@@ -7,7 +7,7 @@ m2::void_expected rpg::create_decoration(m2::Object& obj, m2g::pb::SpriteType sp
 	}
 
 	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(sprite_type));
-	auto& gfx = obj.add_graphic(sprite_type);
+	[[maybe_unused]] auto& gfx = obj.add_graphic(sprite_type);
 
 	if (sprite.BackgroundColliderType() == m2::box2d::ColliderType::RECTANGLE) {
 		m2::pb::BodyBlueprint bp;
@@ -25,7 +25,7 @@ m2::void_expected rpg::create_decoration(m2::Object& obj, m2g::pb::SpriteType sp
 		bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::OBSTACLE_BACKGROUND);
 
 		auto& phy = obj.add_physique();
-		phy.body = m2::box2d::create_body(*M2_LEVEL.world, obj.physique_id(), obj.position, bp);
+		phy.body = m2::box2d::CreateBody(*M2_LEVEL.world, obj.physique_id(), obj.position, bp);
 	} else if (sprite.BackgroundColliderType() == m2::box2d::ColliderType::CIRCLE) {
 		m2::pb::BodyBlueprint bp;
 		bp.set_type(m2::pb::BodyType::STATIC);
@@ -38,7 +38,7 @@ m2::void_expected rpg::create_decoration(m2::Object& obj, m2g::pb::SpriteType sp
 		bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::OBSTACLE_BACKGROUND);
 
 		auto& phy = obj.add_physique();
-		phy.body = m2::box2d::create_body(*M2_LEVEL.world, obj.physique_id(), obj.position, bp);
+		phy.body = m2::box2d::CreateBody(*M2_LEVEL.world, obj.physique_id(), obj.position, bp);
 	}
 
 	return {};

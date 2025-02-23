@@ -11,8 +11,8 @@ namespace m2 {
 	class DrawList {
 	   public:
 		struct DrawItem {
-			ObjectId obj_id;
-			GraphicId gfx_id;
+			ObjectId objId;
+			GraphicId gfxId;
 		};
 
 	   private:
@@ -22,17 +22,17 @@ namespace m2 {
 		};
 
 		/// A map is used to order the items
-		std::multimap<VecF, DrawItem, Vec2fComparator> draw_map;
+		std::multimap<VecF, DrawItem, Vec2fComparator> drawMap;
 
 		/// A map that maps an ObjectId to an item in the draw_map
-		std::unordered_map<ObjectId, decltype(draw_map)::iterator> id_lookup;
+		std::unordered_map<ObjectId, decltype(drawMap)::iterator> idLookup;
 
 		/// A queue of updates
-		std::vector<std::pair<ObjectId, VecF>> update_queue;
+		std::vector<std::pair<ObjectId, VecF>> updateQueue;
 
 	   public:
 		struct ConstIterator {
-			decltype(draw_map)::const_iterator map_it;
+			decltype(drawMap)::const_iterator mapIt;
 
 			ConstIterator& operator++();
 			bool operator==(const ConstIterator& other) const;
@@ -40,16 +40,16 @@ namespace m2 {
 		};
 
 		/// Add new object to the DrawList
-		void insert(ObjectId id);
+		void Insert(ObjectId id);
 
 		/// Queue a position update for an object for later
-		void queue_update(ObjectId id, const VecF& pos);
+		void QueueUpdate(ObjectId id, const VecF& pos);
 
 		/// Apply the queued updates
-		void update();
+		void Update();
 
 		/// Remove an object from the DrawList
-		void remove(ObjectId id);
+		void Remove(ObjectId id);
 
 		[[nodiscard]] ConstIterator begin() const;
 		[[nodiscard]] ConstIterator end() const;

@@ -9,10 +9,10 @@ std::set<Location> find_breweries_with_beer(m2::Character& player, City city, st
 
 	// Look-up player's own breweries with beer
 	auto player_breweries_with_beer = M2_LEVEL.characters
-		| std::views::transform(m2::to_character_base)
+		| std::views::transform(m2::ToCharacterBase)
 		| std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
 		| std::views::filter(IsFactoryCharacter)
-		| std::views::filter([](m2::Character& chr) { return chr.has_resource(m2g::pb::BEER_BARREL_COUNT); })
+		| std::views::filter([](m2::Character& chr) { return chr.HasResource(m2g::pb::BEER_BARREL_COUNT); })
 		| std::views::transform(ToIndustryLocationOfFactoryCharacter);
 	locations.insert(player_breweries_with_beer.begin(), player_breweries_with_beer.end());
 
@@ -27,7 +27,7 @@ std::set<Location> find_breweries_with_beer(m2::Character& player, City city, st
 		| std::views::filter(FindFactoryAtLocation)
 		| std::views::transform(FindFactoryAtLocation)
 		| std::views::transform(m2::to_character_of_object_unsafe)
-		| std::views::filter([](m2::Character& chr) { return chr.has_resource(m2g::pb::BEER_BARREL_COUNT); })
+		| std::views::filter([](m2::Character& chr) { return chr.HasResource(m2g::pb::BEER_BARREL_COUNT); })
 		| std::views::transform(ToIndustryLocationOfFactoryCharacter);
 	locations.insert(reachable_breweries_with_beer.begin(), reachable_breweries_with_beer.end());
 
@@ -35,7 +35,7 @@ std::set<Location> find_breweries_with_beer(m2::Character& player, City city, st
 	if (selling_to) {
 		// Check if merchant is active, has beer, and is connected
 		if (auto merchant = find_merchant_at_location(*selling_to);
-			merchant && merchant->character().has_resource(m2g::pb::BEER_BARREL_COUNT)
+			merchant && merchant->character().HasResource(m2g::pb::BEER_BARREL_COUNT)
 			&& IsIndustryCityConnectedToLocation(city, *selling_to)) {
 			locations.insert(*selling_to);
 		}

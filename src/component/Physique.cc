@@ -7,23 +7,23 @@
 
 m2::Physique::Physique(Id object_id) : Component(object_id), body(nullptr) {}
 
-m2::Physique::Physique(Physique&& other) noexcept : Component(other._owner_id), pre_step(std::move(other.pre_step)), post_step(std::move(other.post_step)), body(std::move(other.body)), rigidBodyIndex(std::move(other.rigidBodyIndex)), on_collision(std::move(other.on_collision)), off_collision(std::move(other.off_collision)) {
+m2::Physique::Physique(Physique&& other) noexcept : Component(other._owner_id), preStep(std::move(other.preStep)), postStep(std::move(other.postStep)), body(std::move(other.body)), rigidBodyIndex(std::move(other.rigidBodyIndex)), onCollision(std::move(other.onCollision)), offCollision(std::move(other.offCollision)) {
     other.body = nullptr;
 	other.rigidBodyIndex = std::nullopt;
 }
 
 m2::Physique& m2::Physique::operator=(Physique&& other) noexcept {
     std::swap(_owner_id, other._owner_id);
-    std::swap(pre_step, other.pre_step);
-    std::swap(post_step, other.post_step);
+    std::swap(preStep, other.preStep);
+    std::swap(postStep, other.postStep);
     std::swap(body, other.body);
     std::swap(rigidBodyIndex, other.rigidBodyIndex);
-	std::swap(on_collision, other.on_collision);
-	std::swap(off_collision, other.off_collision);
+	std::swap(onCollision, other.onCollision);
+	std::swap(offCollision, other.offCollision);
     return *this;
 }
 
-void m2::Physique::default_debug_draw(Physique& phy) {
+void m2::Physique::DefaultDebugDraw(Physique& phy) {
 	if (!phy.body) {
 		return;
 	}
@@ -35,7 +35,7 @@ void m2::Physique::default_debug_draw(Physique& phy) {
 		fixture->GetShape()->ComputeAABB(&aabb, phy.body->GetTransform(), 0);
 
 		// Pick different color for background and foreground colliders
-		auto color = box2d::does_category_have_background_bits(fixture->GetFilterData().categoryBits) ?
+		auto color = box2d::DoesCategoryHaveBackgroundBits(fixture->GetFilterData().categoryBits) ?
 			SDL_Color{255, 0, 0, 255} :
 			SDL_Color{255, 255, 0, 255};
 
@@ -48,7 +48,7 @@ void m2::Physique::default_debug_draw(Physique& phy) {
 				const auto polygonWidth = VecF{shape->m_vertices[0]}.distance(VecF{shape->m_vertices[1]});
 				const auto polygonHeight = VecF{shape->m_vertices[1]}.distance(VecF{shape->m_vertices[2]});
 
-				if (is_projection_type_parallel(M2_LEVEL.ProjectionType())) {
+				if (IsProjectionTypeParallel(M2_LEVEL.ProjectionType())) {
 					Graphic::DrawRectangle(polygonCenter, polygonWidth, polygonHeight, objectOrientation, RGBA{color});
 				} else {
 					// Decompose the "object origin" to "shape centroid" vector
@@ -63,13 +63,13 @@ void m2::Physique::default_debug_draw(Physique& phy) {
 					auto center_position_2d = objectPosition + center_offset_m;
 					auto center_position = m3::VecF{center_position_2d};
 					// Draw a rectangle
-					auto point_0 = m3::screen_origin_to_projection_along_camera_plane_dstpx(
+					auto point_0 = m3::ScreenOriginToProjectionAlongCameraPlaneDstpx(
 							center_position.offset_x(-polygonWidth / 2.0f).offset_y(-polygonHeight / 2.0f));
-					auto point_1 = m3::screen_origin_to_projection_along_camera_plane_dstpx(
+					auto point_1 = m3::ScreenOriginToProjectionAlongCameraPlaneDstpx(
 							center_position.offset_x(polygonWidth / 2.0f).offset_y(-polygonHeight / 2.0f));
-					auto point_2 = m3::screen_origin_to_projection_along_camera_plane_dstpx(
+					auto point_2 = m3::ScreenOriginToProjectionAlongCameraPlaneDstpx(
 							center_position.offset_x(-polygonWidth / 2.0f).offset_y(polygonHeight / 2.0f));
-					auto point_3 = m3::screen_origin_to_projection_along_camera_plane_dstpx(
+					auto point_3 = m3::ScreenOriginToProjectionAlongCameraPlaneDstpx(
 							center_position.offset_x(polygonWidth / 2.0f).offset_y(polygonHeight / 2.0f));
 					if (point_0 && point_1 && point_2 && point_3) {
 						SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
@@ -91,7 +91,7 @@ void m2::Physique::default_debug_draw(Physique& phy) {
 				const auto circleCenter = objectPosition + objectOriginToCircleCenter.rotate(objectOrientation);
 				const auto circleRadius = shape->m_radius;
 
-				if (is_projection_type_parallel(M2_LEVEL.ProjectionType())) {
+				if (IsProjectionTypeParallel(M2_LEVEL.ProjectionType())) {
 					const int r = iround(M2_GAME.Dimensions().OutputPixelsPerMeter() * circleRadius);
 					const auto srcRect = static_cast<SDL_Rect>(M2_GAME.ShapeCache().Create(std::make_shared<Circle>(r)));
 					auto* texture = M2_GAME.ShapeCache().Texture();
@@ -105,13 +105,13 @@ void m2::Physique::default_debug_draw(Physique& phy) {
 				} else {
 					auto center_position = m3::VecF{circleCenter};
 					// Draw a diamond instead of circle
-					auto horizontal_point_a = m3::screen_origin_to_projection_along_camera_plane_dstpx(
+					auto horizontal_point_a = m3::ScreenOriginToProjectionAlongCameraPlaneDstpx(
 							center_position.offset_x(-circleRadius));
-					auto horizontal_point_b = m3::screen_origin_to_projection_along_camera_plane_dstpx(
+					auto horizontal_point_b = m3::ScreenOriginToProjectionAlongCameraPlaneDstpx(
 							center_position.offset_x(circleRadius));
-					auto vertical_point_a = m3::screen_origin_to_projection_along_camera_plane_dstpx(
+					auto vertical_point_a = m3::ScreenOriginToProjectionAlongCameraPlaneDstpx(
 							center_position.offset_y(-circleRadius));
-					auto vertical_point_b = m3::screen_origin_to_projection_along_camera_plane_dstpx(
+					auto vertical_point_b = m3::ScreenOriginToProjectionAlongCameraPlaneDstpx(
 							center_position.offset_y(circleRadius));
 					if (horizontal_point_a && horizontal_point_b && vertical_point_a && vertical_point_b) {
 						SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
@@ -128,12 +128,12 @@ void m2::Physique::default_debug_draw(Physique& phy) {
 				break;
 			}
 			case b2Shape::Type::e_chain: {
-				if (is_projection_type_parallel(M2_LEVEL.ProjectionType())) {
+				if (IsProjectionTypeParallel(M2_LEVEL.ProjectionType())) {
 					if (const auto* shape = dynamic_cast<const b2ChainShape*>(fixture->GetShape()); 3 < shape->m_count) {
 						for (int i = 1; i < shape->m_count; ++i) {
 							const auto point1 = objectPosition + VecF{shape->m_vertices[i-1]}.rotate(objectOrientation);
 							const auto point2 = objectPosition + VecF{shape->m_vertices[i]}.rotate(objectOrientation);
-							Graphic::draw_line(point1, point2, color);
+							Graphic::DrawLine(point1, point2, color);
 						}
 					}
 				}
@@ -143,7 +143,7 @@ void m2::Physique::default_debug_draw(Physique& phy) {
 				const auto* shape = dynamic_cast<const b2EdgeShape*>(fixture->GetShape());
 				auto point1 = static_cast<VecF>(shape->m_vertex1);
 				auto point2 = static_cast<VecF>(shape->m_vertex2);
-				if (is_projection_type_parallel(M2_LEVEL.ProjectionType())) {
+				if (IsProjectionTypeParallel(M2_LEVEL.ProjectionType())) {
 					auto point1OnScreen = ScreenOriginToPositionVecPx(objectPosition + point1);
 					auto point2OnScreen = ScreenOriginToPositionVecPx(objectPosition + point2);
 					SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
@@ -158,33 +158,33 @@ void m2::Physique::default_debug_draw(Physique& phy) {
 	}
 }
 
-void m2::Physique::default_begin_contact_cb(b2Contact& b2_contact) {
+void m2::Physique::DefaultBeginContactCallback(b2Contact& b2_contact) {
 	box2d::Contact contact{b2_contact};
 
 	Id physique_id_a = b2_contact.GetFixtureA()->GetBody()->GetUserData().pointer;
 	Id physique_id_b = b2_contact.GetFixtureB()->GetBody()->GetUserData().pointer;
 	auto& phy_a = M2_LEVEL.physics[physique_id_a];
 	auto& phy_b = M2_LEVEL.physics[physique_id_b];
-	if (phy_a.on_collision) {
-		phy_a.on_collision(phy_a, phy_b, contact);
+	if (phy_a.onCollision) {
+		phy_a.onCollision(phy_a, phy_b, contact);
 	}
-	if (phy_b.on_collision) {
-		phy_b.on_collision(phy_b, phy_a, contact);
+	if (phy_b.onCollision) {
+		phy_b.onCollision(phy_b, phy_a, contact);
 	}
 }
-void m2::Physique::default_end_contact_cb(b2Contact& b2_contact) {
+void m2::Physique::DefaultEndContactCallback(b2Contact& b2_contact) {
 	Id physique_id_a = b2_contact.GetFixtureA()->GetBody()->GetUserData().pointer;
 	Id physique_id_b = b2_contact.GetFixtureB()->GetBody()->GetUserData().pointer;
 	auto& phy_a = M2_LEVEL.physics[physique_id_a];
 	auto& phy_b = M2_LEVEL.physics[physique_id_b];
-	if (phy_a.off_collision) {
-		phy_a.off_collision(phy_a, phy_b);
+	if (phy_a.offCollision) {
+		phy_a.offCollision(phy_a, phy_b);
 	}
-	if (phy_b.off_collision) {
-		phy_b.off_collision(phy_b, phy_a);
+	if (phy_b.offCollision) {
+		phy_b.offCollision(phy_b, phy_a);
 	}
 }
 
-float m2::calculate_limited_force(float curr_speed, float speed_limit) {
+float m2::CalculateLimitedForce(float curr_speed, float speed_limit) {
 	return logf(abs(speed_limit) - abs(curr_speed) + 1.0f); // ln(1) = 0
 }

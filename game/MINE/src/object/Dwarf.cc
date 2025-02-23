@@ -21,15 +21,15 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 	bp.set_gravity_scale(2.0f);
 	bp.set_linear_damping(0.0f);
 	bp.set_fixed_rotation(true);
-	phy.body = m2::box2d::create_body(*M2_LEVEL.world, obj.physique_id(), obj.position, bp);
+	phy.body = m2::box2d::CreateBody(*M2_LEVEL.world, obj.physique_id(), obj.position, bp);
 
 	obj.add_graphic(DWARF_FULL);
 
 	auto& chr = obj.add_full_character();
-	chr.add_named_item(M2_GAME.GetNamedItem(ITEM_REUSABLE_JUMP));
-	chr.add_named_item(M2_GAME.GetNamedItem(ITEM_AUTOMATIC_JUMP_ENERGY));
+	chr.AddNamedItem(M2_GAME.GetNamedItem(ITEM_REUSABLE_JUMP));
+	chr.AddNamedItem(M2_GAME.GetNamedItem(ITEM_AUTOMATIC_JUMP_ENERGY));
 
-	phy.pre_step = [&obj, &chr](m2::Physique& phy) {
+	phy.preStep = [&obj, &chr](m2::Physique& phy) {
 		// Character movement
 		auto [direction_enum, direction_vector] = m2::calculate_character_movement(m2::Key::LEFT, m2::Key::RIGHT, m2::Key::UNKNOWN, m2::Key::UNKNOWN);
 		if (direction_enum == m2::CHARMOVEMENT_NONE) {
@@ -41,12 +41,12 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 			}
 		} else {
 			// Accelerate character
-			auto force_multiplier = m2::calculate_limited_force(phy.body->GetLinearVelocity().x, 5.0f);
+			auto force_multiplier = m2::CalculateLimitedForce(phy.body->GetLinearVelocity().x, 5.0f);
 			phy.body->ApplyForceToCenter(b2Vec2{direction_vector * force_multiplier * 4000.0f}, true);
 		}
 		// Jump
-		auto is_grounded = chr.get_resource(RESOURCE_IS_GROUNDED_X) != 0.0f && chr.get_resource(RESOURCE_IS_GROUNDED_Y) != 0.0f;
-		if (is_grounded && M2_GAME.events.is_key_down(m2::Key::DASH) && chr.use_item(chr.find_items(ITEM_REUSABLE_JUMP))) {
+		auto is_grounded = chr.GetResource(RESOURCE_IS_GROUNDED_X) != 0.0f && chr.GetResource(RESOURCE_IS_GROUNDED_Y) != 0.0f;
+		if (is_grounded && M2_GAME.events.is_key_down(m2::Key::DASH) && chr.UseItem(chr.FindItems(ITEM_REUSABLE_JUMP))) {
 			auto linear_velocity = phy.body->GetLinearVelocity();
 			linear_velocity.y -= 7.0f;
 			phy.body->SetLinearVelocity(linear_velocity);
@@ -54,17 +54,17 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 
 		// Mouse button
 		if (M2_GAME.events.is_mouse_button_down(m2::MouseButton::PRIMARY)) {
-			m2::box2d::find_objects_near_position_under_mouse(obj.position, 2.0f, [](m2::Physique& other_phy) -> bool {
+			m2::box2d::FindObjectsNearPositionUnderMouse(obj.position, 2.0f, [](m2::Physique& other_phy) -> bool {
 				auto& obj_under_mouse = other_phy.owner();
 				// If object under mouse has character
 				if (obj_under_mouse.character_id()) {
 					auto& chr_under_mouse = obj_under_mouse.character();
 					// If character has HP
-					if (chr_under_mouse.has_resource(RESOURCE_HP)) {
+					if (chr_under_mouse.HasResource(RESOURCE_HP)) {
 						// Damage object
-						chr_under_mouse.remove_resource(RESOURCE_HP, 2.0f * M2_GAME.DeltaTimeS());
+						chr_under_mouse.RemoveResource(RESOURCE_HP, 2.0f * M2_GAME.DeltaTimeS());
 						// Show health bar
-						auto hp = chr_under_mouse.get_resource(RESOURCE_HP);
+						auto hp = chr_under_mouse.GetResource(RESOURCE_HP);
 						// If object under mouse runs out of HP
 						if (hp == 0.0f) {
 							// Delete object
@@ -79,23 +79,23 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 			});
 		}
 	};
-	phy.on_collision = [&chr](MAYBE m2::Physique& phy, m2::Physique& other, const m2::box2d::Contact& contact) {
+	phy.onCollision = [&chr](MAYBE m2::Physique& phy, m2::Physique& other, const m2::box2d::Contact& contact) {
 		// Check if in contact with obstacle
-		if (other.body && m2::box2d::has_obstacle(other.body.get())) {
+		if (other.body && m2::box2d::HasObstacle(other.body.get())) {
 			// Check is contact normal points upwards
 			if (abs(contact.normal.x) <= -contact.normal.y) {
-				chr.set_resource(RESOURCE_IS_GROUNDED_X, other.owner().position.x);
-				chr.set_resource(RESOURCE_IS_GROUNDED_Y, other.owner().position.y);
+				chr.SetResource(RESOURCE_IS_GROUNDED_X, other.owner().position.x);
+				chr.SetResource(RESOURCE_IS_GROUNDED_Y, other.owner().position.y);
 			}
 		}
 	};
-	phy.off_collision = [&chr](MAYBE m2::Physique& phy, m2::Physique& other) {
+	phy.offCollision = [&chr](MAYBE m2::Physique& phy, m2::Physique& other) {
 		// Check if in contact with obstacle
-		if (other.body && m2::box2d::has_obstacle(other.body.get())) {
+		if (other.body && m2::box2d::HasObstacle(other.body.get())) {
 			// Check if the other object is the grounding object
-			if (chr.get_resource(RESOURCE_IS_GROUNDED_X) == other.owner().position.x && chr.get_resource(RESOURCE_IS_GROUNDED_Y) == other.owner().position.y) {
-				chr.set_resource(RESOURCE_IS_GROUNDED_X, 0.0f);
-				chr.set_resource(RESOURCE_IS_GROUNDED_Y, 0.0f);
+			if (chr.GetResource(RESOURCE_IS_GROUNDED_X) == other.owner().position.x && chr.GetResource(RESOURCE_IS_GROUNDED_Y) == other.owner().position.y) {
+				chr.SetResource(RESOURCE_IS_GROUNDED_X, 0.0f);
+				chr.SetResource(RESOURCE_IS_GROUNDED_Y, 0.0f);
 			}
 		}
 	};

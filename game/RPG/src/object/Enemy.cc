@@ -52,16 +52,16 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 	bp.set_mass(20.0f); // Enemy mass is lower than player, so that player can push the enemies
 	bp.set_linear_damping(5.0f);
 	bp.set_fixed_rotation(true);
-	phy.body = m2::box2d::create_body(*M2_LEVEL.world, obj.physique_id(), obj.position, bp);
+	phy.body = m2::box2d::CreateBody(*M2_LEVEL.world, obj.physique_id(), obj.position, bp);
 
 	auto& chr = obj.add_full_character();
-	chr.add_named_item(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_GUN));
-	chr.add_named_item(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_ENEMY_SWORD));
-	chr.add_named_item(M2_GAME.GetNamedItem(m2g::pb::ITEM_AUTOMATIC_DAMAGE_EFFECT_TTL));
-	chr.add_named_item(M2_GAME.GetNamedItem(m2g::pb::ITEM_AUTOMATIC_RANGED_ENERGY));
-	chr.add_named_item(M2_GAME.GetNamedItem(m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY));
-	chr.add_named_item(M2_GAME.GetNamedItem(m2g::pb::ITEM_AUTOMATIC_STUN_TTL));
-	chr.add_resource(m2g::pb::RESOURCE_HP, 1.0f);
+	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_GUN));
+	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_ENEMY_SWORD));
+	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_AUTOMATIC_DAMAGE_EFFECT_TTL));
+	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_AUTOMATIC_RANGED_ENERGY));
+	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY));
+	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_AUTOMATIC_STUN_TTL));
+	chr.AddResource(m2g::pb::RESOURCE_HP, 1.0f);
 
     obj.impl = std::make_unique<Enemy>(obj, M2G_PROXY.get_enemy(obj.object_type()));
 	auto& impl = dynamic_cast<Enemy&>(*obj.impl);
@@ -69,7 +69,7 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 	// Increment enemy counter
 	M2G_PROXY.alive_enemy_count++;
 
-	phy.pre_step = [&](MAYBE m2::Physique& phy) {
+	phy.preStep = [&](MAYBE m2::Physique& phy) {
 		std::visit(m2::overloaded {
 			[](MAYBE std::monostate& v) {},
 			[](auto& v) { v.time(M2_GAME.DeltaTimeS()); }
@@ -83,9 +83,9 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 	chr.on_interaction = [&, obj_type = obj.object_type()](m2::Character& self, MAYBE m2::Character* other, const InteractionData& data) -> std::optional<m2g::pb::InteractionData> {
 		if (data.has_hit_damage()) {
 			// Deduct HP
-			self.remove_resource(RESOURCE_HP, data.hit_damage());
+			self.RemoveResource(RESOURCE_HP, data.hit_damage());
 			// Apply mask effect
-			self.set_resource(m2g::pb::RESOURCE_DAMAGE_EFFECT_TTL, 0.15f);
+			self.SetResource(m2g::pb::RESOURCE_DAMAGE_EFFECT_TTL, 0.15f);
 			// Play audio effect if not already doing so
 			if (obj.sound_id() == 0) {
 				// Add sound emitter
@@ -93,7 +93,7 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 				sound_emitter.update = [&](m2::SoundEmitter& se) {
 					// Play sound
 					if (se.playbacks.empty()) {
-						auto playback_id = M2_GAME.audio_manager->play(&M2_GAME.songs[m2g::pb::SONG_DAMAGE_TO_ENEMY], m2::AudioManager::PlayPolicy::ONCE, 0.10f);
+						auto playback_id = M2_GAME.audio_manager->Play(&M2_GAME.songs[m2g::pb::SONG_DAMAGE_TO_ENEMY], m2::AudioManager::PlayPolicy::ONCE, 0.10f);
 						se.playbacks.emplace_back(playback_id);
 					} else {
 						// Playback finished, destroy self
@@ -102,7 +102,7 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 				};
 			}
 			// Check if we died
-			if (not self.has_resource(RESOURCE_HP)) {
+			if (not self.HasResource(RESOURCE_HP)) {
 				// Drop item
 				auto drop_position = obj.position;
 				if (m2::Group* group = obj.get_group()) {
@@ -140,33 +140,33 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 				}, impl.ai_fsm);
 			}
 		} else if (data.has_stun_duration()) {
-			self.set_resource(m2g::pb::RESOURCE_STUN_TTL, data.stun_duration());
+			self.SetResource(m2g::pb::RESOURCE_STUN_TTL, data.stun_duration());
 		}
 		return std::nullopt;
 	};
-	phy.post_step = [&](MAYBE m2::Physique& phy) {
+	phy.postStep = [&](MAYBE m2::Physique& phy) {
 		m2::VecF velocity = m2::VecF{phy.body->GetLinearVelocity()};
 		if (velocity.is_near(m2::VecF{}, 0.1f)) {
 			impl.animation_fsm.signal(m2::AnimationFsmSignal{m2g::pb::ANIMATION_STATE_IDLE});
 		}
 	};
-	gfx.pre_draw = [&](m2::Graphic& gfx) {
+	gfx.preDraw = [&](m2::Graphic& gfx) {
 		using namespace m2::pb;
 		impl.animation_fsm.time(M2_GAME.DeltaTimeS());
-		if (chr.has_resource(RESOURCE_DAMAGE_EFFECT_TTL)) {
-			gfx.variant_draw_order[0] = SPRITE_EFFECT_MASK;
+		if (chr.HasResource(RESOURCE_DAMAGE_EFFECT_TTL)) {
+			gfx.variantDrawOrder[0] = SPRITE_EFFECT_MASK;
 		} else {
-			gfx.variant_draw_order[0] = std::nullopt;
+			gfx.variantDrawOrder[0] = std::nullopt;
 		}
 	};
-	gfx.on_draw = [&](m2::Graphic& gfx) {
+	gfx.onDraw = [&](m2::Graphic& gfx) {
 		// Draw the sprite itself
 		m2::Graphic::DefaultDrawCallback(gfx);
 		// Draw the HP addon
-		DrawAddons(gfx, chr.get_resource(RESOURCE_HP));
+		DrawAddons(gfx, chr.GetResource(RESOURCE_HP));
 	};
-	phy.on_debug_draw = [&impl](m2::Physique& phy) {
-		m2::Physique::default_debug_draw(phy);
+	phy.onDebugDraw = [&impl](m2::Physique& phy) {
+		m2::Physique::DefaultDebugDraw(phy);
 		std::visit(m2::overloaded {
 				[](ChaserFsm& v) { m2::Pathfinder::draw_path(v.reverse_path(), SDL_Color{127, 127, 255, 255}); },
 				[](MAYBE auto& v) { }
@@ -178,7 +178,7 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 
 void rpg::Enemy::move_towards(m2::Object& obj, m2::VecF direction, float force) {
 	// If not stunned
-	if (not obj.character().has_resource(m2g::pb::RESOURCE_STUN_TTL)) {
+	if (not obj.character().HasResource(m2g::pb::RESOURCE_STUN_TTL)) {
 		direction = direction.normalize();
 		// Walk animation
 		auto char_move_dir = m2::to_character_movement_direction(direction);
@@ -192,15 +192,15 @@ void rpg::Enemy::move_towards(m2::Object& obj, m2::VecF direction, float force) 
 
 void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
 	// If not stunned
-	if (not obj.character().has_resource(m2g::pb::RESOURCE_STUN_TTL)) {
+	if (not obj.character().HasResource(m2g::pb::RESOURCE_STUN_TTL)) {
 		// Attack if player is close
 		if (obj.position.is_near(M2_PLAYER.position, ai.attack_distance())) {
 			// Based on what the capability is
 			auto capability = ai.capabilities(0);
 			switch (capability) {
 				case pb::CAPABILITY_RANGED: {
-					auto it = obj.character().find_items(m2g::pb::ITEM_CATEGORY_DEFAULT_RANGED_WEAPON);
-					if (it && obj.character().use_item(it)) {
+					auto it = obj.character().FindItems(m2g::pb::ITEM_CATEGORY_DEFAULT_RANGED_WEAPON);
+					if (it && obj.character().UseItem(it)) {
 						auto shoot_direction = M2_PLAYER.position - obj.position;
 						rpg::create_projectile(*m2::create_object(obj.position, {}, obj.id()),
 							shoot_direction, *it, false);
@@ -210,8 +210,8 @@ void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
 					break;
 				}
 				case pb::CAPABILITY_MELEE: {
-					auto it = obj.character().find_items(m2g::pb::ITEM_CATEGORY_DEFAULT_MELEE_WEAPON);
-					if (it && obj.character().use_item(it)) {
+					auto it = obj.character().FindItems(m2g::pb::ITEM_CATEGORY_DEFAULT_MELEE_WEAPON);
+					if (it && obj.character().UseItem(it)) {
 						rpg::create_blade(*m2::create_object(obj.position, {}, obj.id()),
 							M2_PLAYER.position - obj.position, *it, false);
 					}

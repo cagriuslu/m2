@@ -23,14 +23,14 @@
 
 m2::Level::~Level() {
 	// Custom destructor is provided because the order is important
-	characters.clear();
-	lights.clear();
+	characters.Clear();
+	lights.Clear();
 	for (auto& terrain : terrainGraphics) {
-		terrain.clear();
+		terrain.Clear();
 	}
-	graphics.clear();
-	physics.clear();
-	objects.clear();
+	graphics.Clear();
+	physics.Clear();
+	objects.Clear();
 	groups.clear();
 
 	delete contactListener;
@@ -202,7 +202,7 @@ m2::void_expected m2::Level::InitBulkSheetEditor(const std::filesystem::path& pa
 }
 
 m2::void_expected m2::Level::ResetSheetEditor() {
-	objects.clear();
+	objects.Clear();
 
 	// Create default objects
 	playerId = obj::create_god();
@@ -212,7 +212,7 @@ m2::void_expected m2::Level::ResetSheetEditor() {
 	return {};
 }
 m2::void_expected m2::Level::ResetBulkSheetEditor() {
-	objects.clear();
+	objects.Clear();
 
 	// Create default objects
 	playerId = obj::create_god();
@@ -330,9 +330,9 @@ m2::void_expected m2::Level::InitAnyPlayer(
 	}
 
 	if (physical_world) {
-		world = new b2World(M2G_PROXY.gravity ? b2Vec2{0.0f, 10.0f} : box2d::vec2_zero());
+		world = new b2World(M2G_PROXY.gravity ? b2Vec2{0.0f, 10.0f} : box2d::Vec2Zero());
 		contactListener = new m2::box2d::ContactListener(
-		    m2::Physique::default_begin_contact_cb, m2::Physique::default_end_contact_cb);
+		    m2::Physique::DefaultBeginContactCallback, m2::Physique::DefaultEndContactCallback);
 		world->SetContactListener(contactListener);
 	}
 
@@ -355,7 +355,7 @@ m2::void_expected m2::Level::InitAnyPlayer(
 					LOGF_TRACE("Creating tile from %d sprite at (%d,%d)...", sprite_type, x, y);
 					auto it = obj::create_tile(static_cast<BackgroundLayer>(l), VecF{x, y}, sprite_type);
 					M2G_PROXY.post_tile_create(*it, sprite_type);
-					LOG_TRACE("Created tile", it.id());
+					LOG_TRACE("Created tile", it.Id());
 				}
 			}
 		}
@@ -380,12 +380,12 @@ m2::void_expected m2::Level::InitAnyPlayer(
 				group = M2G_PROXY.create_group(group_id.type);
 				groups[group_id] = std::unique_ptr<Group>(group);
 			}
-			it->set_group(group_id, group->add_member(it.id()));
+			it->set_group(group_id, group->add_member(it.Id()));
 		}
 
 		auto load_result = M2G_PROXY.LoadForegroundObjectFromLevelBlueprint(*it);
 		m2_reflect_unexpected(load_result);
-		LOG_TRACE("Created object", it.id());
+		LOG_TRACE("Created object", it.Id());
 	}
 
 	if (physical_world) {

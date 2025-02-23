@@ -15,6 +15,6 @@ namespace m2::box2d {
         float ReportFixture(b2Fixture* fixture, const b2Vec2& point, const b2Vec2& normal, float fraction) override;
     };
 
-    bool check_eyesight(b2World& world, VecF from, VecF to, uint16_t category_bits);
-	float check_distance(b2World& world, VecF from, VecF to, uint16_t category_bits);
+    bool CheckEyesight(b2World& world, VecF from, VecF to, uint16_t category_bits);
+	float CheckDistance(b2World& world, VecF from, VecF to, uint16_t category_bits);
 }

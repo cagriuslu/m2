@@ -23,7 +23,7 @@ namespace {
 	}
 
 	TextSelectionBlueprint::Options list_cards_as_selection_options(const m2g::pb::ItemType exclude_card_1, const m2g::pb::ItemType exclude_card_2) {
-		const auto card_filter = generate_named_item_types_filter(
+		const auto card_filter = GenerateNamedItemTypesFilter(
 				{m2g::pb::ITEM_CATEGORY_CITY_CARD,
 				m2g::pb::ITEM_CATEGORY_INDUSTRY_CARD,
 				m2g::pb::ITEM_CATEGORY_WILD_CARD});

@@ -71,15 +71,15 @@ bool DoesMerchantHasDevelopBenefit(const MerchantLocation location) {
 }
 int MerchantIncomePointsBenefit(const MerchantLocation location) {
 	const auto merchantCity = city_of_location(location);
-	return m2::iround(M2_GAME.GetNamedItem(merchantCity).get_attribute(MERCHANT_BONUS_INCOME));
+	return m2::iround(M2_GAME.GetNamedItem(merchantCity).GetAttribute(MERCHANT_BONUS_INCOME));
 }
 int MerchantVictoryPointsBenefit(const MerchantLocation location) {
 	const auto merchantCity = city_of_location(location);
-	return m2::iround(M2_GAME.GetNamedItem(merchantCity).get_attribute(MERCHANT_BONUS_VICTORY_POINTS));
+	return m2::iround(M2_GAME.GetNamedItem(merchantCity).GetAttribute(MERCHANT_BONUS_VICTORY_POINTS));
 }
 int MerchantMoneyBenefit(const MerchantLocation location) {
 	const auto merchantCity = city_of_location(location);
-	return m2::iround(M2_GAME.GetNamedItem(merchantCity).get_attribute(MERCHANT_BONUS_MONEY));
+	return m2::iround(M2_GAME.GetNamedItem(merchantCity).GetAttribute(MERCHANT_BONUS_MONEY));
 }
 
 bool is_connection(Connection connection) {

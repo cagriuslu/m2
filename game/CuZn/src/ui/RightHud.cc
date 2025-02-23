@@ -32,7 +32,7 @@ const UiPanelBlueprint right_hud_blueprint = {
 				.horizontal_alignment = TextHorizontalAlignment::LEFT,
 				.wrapped_font_size_in_units = 1.25f,
 				.onUpdate = [](MAYBE Text& self) {
-					auto vp = m2::iround(M2_PLAYER.character().get_resource(VICTORY_POINTS));
+					auto vp = m2::iround(M2_PLAYER.character().GetResource(VICTORY_POINTS));
 					self.set_text(std::string{"Victory Points: "} + m2::ToString(vp));
 					return MakeContinueAction();
 				}
@@ -49,7 +49,7 @@ const UiPanelBlueprint right_hud_blueprint = {
 				.horizontal_alignment = TextHorizontalAlignment::LEFT,
 				.wrapped_font_size_in_units = 1.25f,
 				.onUpdate = [](MAYBE Text& self) {
-					auto vp = m2::iround(M2_PLAYER.character().get_attribute(INCOME_POINTS));
+					auto vp = m2::iround(M2_PLAYER.character().GetAttribute(INCOME_POINTS));
 					self.set_text(std::string{"Income Points: "} + m2::ToString(vp));
 					return MakeContinueAction();
 				}
@@ -66,7 +66,7 @@ const UiPanelBlueprint right_hud_blueprint = {
 				.horizontal_alignment = TextHorizontalAlignment::LEFT,
 				.wrapped_font_size_in_units = 1.25f,
 				.onUpdate = [](MAYBE Text& self) {
-					const auto income_points = m2::iround(M2_PLAYER.character().get_attribute(INCOME_POINTS));
+					const auto income_points = m2::iround(M2_PLAYER.character().GetAttribute(INCOME_POINTS));
 					const auto income_level = IncomeLevelFromIncomePoints(income_points);
 					self.set_text(std::string{"Income: £"} + m2::ToString(income_level));
 					return MakeContinueAction();
@@ -84,7 +84,7 @@ const UiPanelBlueprint right_hud_blueprint = {
 				.horizontal_alignment = TextHorizontalAlignment::LEFT,
 				.wrapped_font_size_in_units = 1.25f,
 				.onUpdate = [](MAYBE Text& self) {
-					auto money = m2::iround(M2_PLAYER.character().get_resource(MONEY));
+					auto money = m2::iround(M2_PLAYER.character().GetResource(MONEY));
 					self.set_text(std::string{"Cash: £"} + m2::ToString(money));
 					return MakeContinueAction();
 				}
@@ -163,7 +163,7 @@ const UiPanelBlueprint right_hud_blueprint = {
 				.horizontal_alignment = m2::TextHorizontalAlignment::CENTER,
 				.wrapped_font_size_in_units = 1.25f,
 				.onUpdate = [](MAYBE Text& self) {
-					auto dds = m2::iround(M2G_PROXY.game_state_tracker().get_resource(DRAW_DECK_SIZE));
+					auto dds = m2::iround(M2G_PROXY.game_state_tracker().GetResource(DRAW_DECK_SIZE));
 					self.set_text(std::string{"Cards Left in Deck: "} + m2::ToString(dds));
 					return MakeContinueAction();
 				}

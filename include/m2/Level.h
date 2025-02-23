@@ -119,8 +119,8 @@ namespace m2 {
 			    : m3::VecF{};
 		}
 		float HorizontalFov() const;
-		Object* Player() { return objects.get(playerId); }
-		Object* Camera() { return objects.get(cameraId); }
+		Object* Player() { return objects.Get(playerId); }
+		Object* Camera() { return objects.Get(cameraId); }
 		const sdl::ticks_t* PauseTicksHandle() const { return &*_pauseTicks; }
 		sdl::ticks_t GetLevelDuration() const;
 

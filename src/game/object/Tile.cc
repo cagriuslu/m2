@@ -41,13 +41,13 @@ m2::Pool<m2::Object>::Iterator m2::obj::create_tile(BackgroundLayer layer, const
 	            throw M2_ERROR("Circular tile foreground_collider unimplemented");
 	        }
 	        auto& phy = it->add_physique();
-	        phy.body = box2d::create_body(*M2_LEVEL.world, it->physique_id(), it->position, bp);
+	        phy.body = box2d::CreateBody(*M2_LEVEL.world, it->physique_id(), it->position, bp);
 		}
 
 		if (sprite.HasForegroundCompanion()) {
 			const auto fg_it = create_object(position - sprite.CenterToOriginVecM() + sprite.ForegroundCompanionCenterToOriginVecM());
 			auto& gfx = fg_it->add_graphic(spriteType);
-			gfx.variant_draw_order[0] = ForegroundCompanion{};
+			gfx.variantDrawOrder[0] = ForegroundCompanion{};
 		}
 	}
 

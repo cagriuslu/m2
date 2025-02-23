@@ -93,7 +93,7 @@ std::pair<m2g::pb::AttributeType, float> m2::TinyItem::get_attribute_by_index(si
 		throw M2_ERROR("Out of bounds cost index");
 	}
 }
-float m2::TinyItem::get_attribute(m2g::pb::AttributeType attribute_type) const {
+float m2::TinyItem::GetAttribute(m2g::pb::AttributeType attribute_type) const {
 	if (_attribute.first == attribute_type) {
 		return _attribute.second;
 	}
@@ -173,15 +173,15 @@ std::pair<m2g::pb::AttributeType, float> m2::NamedItem::get_attribute_by_index(s
 	const auto& attr = _item.attributes((int) i);
 	return std::make_pair(attr.type(), attr.amount());
 }
-float m2::NamedItem::get_attribute(m2g::pb::AttributeType type) const {
+float m2::NamedItem::GetAttribute(m2g::pb::AttributeType type) const {
 	return _attributes[pb::enum_index(type)];
 }
 float m2::NamedItem::try_get_attribute(m2g::pb::AttributeType type, float default_value) const {
-	auto value = get_attribute(type);
+	auto value = GetAttribute(type);
 	return value != 0.0f ? value : default_value;
 }
 bool m2::NamedItem::has_attribute(m2g::pb::AttributeType type) const {
-	return get_attribute(type) != 0.0f;
+	return GetAttribute(type) != 0.0f;
 }
 
 const m2::NamedItem& m2::to_named_item(m2g::pb::ItemType item_type) {
@@ -190,7 +190,7 @@ const m2::NamedItem& m2::to_named_item(m2g::pb::ItemType item_type) {
 
 std::function<float(const m2::NamedItem&)> m2::generate_to_attribute_value_transformer(m2g::pb::AttributeType attribute_type) {
 	return [attribute_type](const m2::NamedItem& item) -> float {
-		return item.get_attribute(attribute_type);
+		return item.GetAttribute(attribute_type);
 	};
 }
 

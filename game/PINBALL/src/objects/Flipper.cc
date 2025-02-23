@@ -79,7 +79,7 @@ m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
 	MAYBE auto& gfx = obj.add_graphic(rightFlipper ? m2g::pb::SPRITE_BASIC_FLIPPER_RIGHT : m2g::pb::SPRITE_BASIC_FLIPPER_LEFT);
 
 	if (rightFlipper) {
-		phy.pre_step = [flipper](m2::Physique& phy_) {
+		phy.preStep = [flipper](m2::Physique& phy_) {
 			if (flipper->state == FlipperState::RESTING && M2_GAME.events.is_key_down(m2::Key::RIGHT)) {
 				phy_.body->SetAngularVelocity(FLIPPER_SWEEP_UP_SPEED);
 				flipper->state = FlipperState::GOING_UP;
@@ -89,7 +89,7 @@ m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
 				flipper->state = FlipperState::GOING_DOWN;
 			}
 		};
-		phy.post_step = [flipper](m2::Physique& phy_) {
+		phy.postStep = [flipper](m2::Physique& phy_) {
 			if (flipper->state == FlipperState::GOING_UP && m2::is_less(MAX_FLIPPER_SWEEP_RADS, m2::AngleAbsoluteDifference(phy_.body->GetAngle(), flipper->initialRotation), 0.001f)) {
 				phy_.body->SetTransform(phy_.body->GetTransform().p, flipper->initialRotation + MAX_FLIPPER_SWEEP_RADS);
 				phy_.body->SetAngularVelocity(0.0f);
@@ -102,7 +102,7 @@ m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
 			}
 		};
 	} else {
-		phy.pre_step = [flipper](m2::Physique& phy_) {
+		phy.preStep = [flipper](m2::Physique& phy_) {
 			if (flipper->state == FlipperState::RESTING && M2_GAME.events.is_key_down(m2::Key::LEFT)) {
 				phy_.body->SetAngularVelocity(-FLIPPER_SWEEP_UP_SPEED);
 				flipper->state = FlipperState::GOING_UP;
@@ -112,7 +112,7 @@ m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
 				flipper->state = FlipperState::GOING_DOWN;
 			}
 		};
-		phy.post_step = [flipper](m2::Physique& phy_) {
+		phy.postStep = [flipper](m2::Physique& phy_) {
 			if (flipper->state == FlipperState::GOING_UP && m2::is_less(MAX_FLIPPER_SWEEP_RADS, m2::AngleAbsoluteDifference(phy_.body->GetAngle(), flipper->initialRotation), 0.001f)) {
 				phy_.body->SetTransform(phy_.body->GetTransform().p, flipper->initialRotation - MAX_FLIPPER_SWEEP_RADS);
 				phy_.body->SetAngularVelocity(0.0f);
