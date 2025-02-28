@@ -11,7 +11,8 @@ message Animal {
   Type type = 2;
   float mass = 3;
   float health = 4; // [0,1]
-  int64 reproduction_count_down = 5; // In ticks
+  float hunger = 5; // [0,1]
+  int64 reproduction_count_down = 6; // In ticks
 }
 
 message SimulationState {

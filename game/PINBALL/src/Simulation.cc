@@ -209,6 +209,7 @@ pb::SimulationState pinball::InitialSimulationState(const std::function<int64_t(
 		animal->set_type(pb::Animal_Type_HERBIVORE);
 		animal->set_mass(0.35f);
 		animal->set_health(1.0f);
+		animal->set_hunger(0.5f);
 		animal->set_reproduction_count_down(150);
 	}
 	state.set_temperature(25.0f);
