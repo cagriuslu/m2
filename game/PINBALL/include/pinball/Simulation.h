@@ -11,7 +11,7 @@ namespace pinball {
 	/// Amount of bacteria that can exist without developing diseases.
 	constexpr auto SIMULATION_BACTERIA_LIMIT_KG = 1.0f;
 	/// Maximum temperature bacteria can live without dying.
-	constexpr auto SIMULATION_BACTERIA_MAX_TEMPERATURE = 42.0f;
+	constexpr auto SIMULATION_BACTERIA_DEATH_TEMPERATURE = 42.0f;
 	/// Exponent applied to temperature above the maximum temperature.
 	constexpr auto SIMULATION_BACTERIA_TEMPERATURE_DEATH_EXPONENT = 0.5f;
 	/// Amount of bacteria killed per second if the temperature is 1C above max.
@@ -22,6 +22,18 @@ namespace pinball {
 	constexpr auto SIMULATION_BACTERIA_DISEASE_SPREAD_RATE_PER_SECOND = 1.5f;
 	/// Percentage of diseased bacteria dying per second
 	constexpr auto SIMULATION_BACTERIA_DISEASE_DIE_PERCENTAGE_PER_SECOND = 0.02f;
+	/// Minimum decomposition temperature
+	constexpr auto SIMULATION_BACTERIA_DECOMPOSITION_MIN_TEMPERATURE = 20.0f;
+	/// Fastest decomposition temperature
+	constexpr auto SIMULATION_BACTERIA_DECOMPOSITION_FASTEST_TEMPERATURE = 32.0f;
+	/// Maximum decomposition temperature
+	constexpr auto SIMULATION_BACTERIA_DECOMPOSITION_MAX_TEMPERATURE = 38.0f;
+	/// Amount of waste decomposited per 1KG of bacteria at the fastest decomposition temperature
+	constexpr auto SIMULATION_BACTERIA_DECOMPOSITION_RATE = 5.0f; // TODO number madeup
+	/// Amount of nutrient produced per 1KG of waste decomposited
+	constexpr auto SIMULATION_BACTERIA_DECOMPOSITION_NUTRIENT_PRODUCTION_RATE = 1.0f; // TODO number madeup
+	/// Amount of water used per 1KG of waste decomposited
+	constexpr auto SIMULATION_BACTERIA_DECOMPOSITION_WATER_USE_RATE = 0.5f; // TODO number madeup
 
 	/// Amount of plant that can exist without developing diseases.
 	constexpr auto SIMULATION_PLANT_LIMIT_KG = 1000.0f;

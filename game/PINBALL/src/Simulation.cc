@@ -65,7 +65,7 @@ namespace {
 		auto nextState = currentState;
 		// Bacteria die at high temperatures. Healthy and diseased bacteria die at the same rate.
 		const auto bacteriaMassAfterTemperatureDeath = CalculatePrimitiveTemperatureDeath(currentState.bacteria_mass(),
-				SIMULATION_BACTERIA_MAX_TEMPERATURE, currentState.temperature(),
+				SIMULATION_BACTERIA_DEATH_TEMPERATURE, currentState.temperature(),
 				SIMULATION_BACTERIA_TEMPERATURE_DEATH_EXPONENT,
 				SIMULATION_BACTERIA_TEMPERATURE_DEATH_AMOUNT_PER_UNIT_PER_SECOND);
 		// Bacteria die naturally. Healthy and diseased bacteria die at the same rate.
@@ -110,7 +110,6 @@ namespace {
 
 	pb::SimulationState AdvanceAnimalDeaths(const pb::SimulationState& currentState, const std::function<void(int64_t)>& animalReleaser) {
 		auto nextState = currentState;
-
 		// Animals lose health at cold, high temperatures, and zero humidity. Clear and recreate animals.
 		nextState.clear_animals();
 		for (const auto& animal : currentState.animals()) {
@@ -156,6 +155,47 @@ namespace {
 		}
 		return nextState;
 	}
+
+	pb::SimulationState AdvanceWasteConsumption(const pb::SimulationState& currentState, const pb::SimulationInputs& inputs) {
+		auto nextState = currentState;
+		// Decomposition requires darkness, and appropriate temperature
+		if (inputs.light() == false
+				&& SIMULATION_BACTERIA_DECOMPOSITION_MIN_TEMPERATURE <= currentState.temperature()
+				&& currentState.temperature() <= SIMULATION_BACTERIA_DECOMPOSITION_MAX_TEMPERATURE) {
+			// Decomposition rate at given temperature
+			float decompositionRatePerKgBacteria;
+			if (currentState.temperature() < SIMULATION_BACTERIA_DECOMPOSITION_FASTEST_TEMPERATURE) {
+				decompositionRatePerKgBacteria = (currentState.temperature() - SIMULATION_BACTERIA_DECOMPOSITION_MIN_TEMPERATURE)
+					/ (SIMULATION_BACTERIA_DECOMPOSITION_FASTEST_TEMPERATURE - SIMULATION_BACTERIA_DECOMPOSITION_MIN_TEMPERATURE);
+			} else {
+				decompositionRatePerKgBacteria = (currentState.temperature() - SIMULATION_BACTERIA_DECOMPOSITION_FASTEST_TEMPERATURE)
+					/ (SIMULATION_BACTERIA_DECOMPOSITION_MAX_TEMPERATURE - SIMULATION_BACTERIA_DECOMPOSITION_FASTEST_TEMPERATURE);
+			}
+			// Only healthy bacteria do decomposition.
+			const auto healthyBacteriaMass = currentState.bacteria_mass() * (1.0f - currentState.zombie_bacteria_percentage());
+			// Decomposition rate at given temperature and bacteria amount (given enough waste and water)
+			auto decompositionRate = decompositionRatePerKgBacteria * healthyBacteriaMass;
+			// Calculate decomposition rate at given waste amount
+			auto requiredWasteMass = decompositionRate * SIMULATION_BACTERIA_DECOMPOSITION_RATE;
+			if (currentState.waste_mass() < requiredWasteMass) {
+				decompositionRate *= currentState.waste_mass() / requiredWasteMass;
+				requiredWasteMass = decompositionRate * SIMULATION_BACTERIA_DECOMPOSITION_RATE;
+			}
+			// Calculate decomposition rate at given water amount
+			auto requiredWaterMass = requiredWasteMass * SIMULATION_BACTERIA_DECOMPOSITION_WATER_USE_RATE;
+			if (currentState.water_mass() < requiredWaterMass) {
+				decompositionRate *= currentState.water_mass() / requiredWaterMass;
+				requiredWasteMass = decompositionRate * SIMULATION_BACTERIA_DECOMPOSITION_RATE;
+				requiredWaterMass = requiredWasteMass * SIMULATION_BACTERIA_DECOMPOSITION_WATER_USE_RATE;
+			}
+			// Decompose
+			const auto producedNutrientMass = requiredWasteMass * SIMULATION_BACTERIA_DECOMPOSITION_NUTRIENT_PRODUCTION_RATE;
+			nextState.set_waste_mass(currentState.waste_mass() - requiredWasteMass);
+			nextState.set_nutrient_mass(currentState.nutrient_mass() + producedNutrientMass);
+			nextState.set_water_mass(currentState.water_mass() - requiredWaterMass);
+		}
+		return nextState;
+	}
 }
 
 pb::SimulationState pinball::AdvanceSimulation(const pb::SimulationState& currentState, const pb::SimulationInputs& inputs,
@@ -165,13 +205,15 @@ pb::SimulationState pinball::AdvanceSimulation(const pb::SimulationState& curren
 	const auto stateAfterBacteriaDeaths = AdvanceBacteriaDeaths(stateAfterEnvironment);
 	const auto stateAfterPlantDeaths = AdvancePlantDeaths(stateAfterBacteriaDeaths);
 	const auto stateAfterAnimalDeaths = AdvanceAnimalDeaths(stateAfterPlantDeaths, animalReleaser);
+	const auto stateAfterWasteConsumption = AdvanceWasteConsumption(stateAfterAnimalDeaths, inputs);
 
 	// Do consumptions and productions
 
-	// If the conditions are right, bacteria consumes waste and produces nutrients.
 	// If the conditions are right, plants consume nutrients and water, and produce mass
 	// Herbivores consume plants and water
 	// Carnivores consume herbivores
 
 	// Do reproductions
+
+	return stateAfterWasteConsumption;
 }
