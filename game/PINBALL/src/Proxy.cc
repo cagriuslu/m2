@@ -1,8 +1,10 @@
-#include <m2g/Proxy.h>
-#include <m2/Game.h>
 #include <pinball/objects/Player.h>
 #include <pinball/objects/Ball.h>
 #include <pinball/objects/Flipper.h>
+#include <pinball/Simulation.h>
+#include <pinball/objects/Animal.h>
+#include <m2g/Proxy.h>
+#include <m2/Game.h>
 
 namespace {
 	const m2::UiPanelBlueprint mainMenuBlueprint = {
@@ -135,5 +137,16 @@ m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object&
 			return LoadFlipper(obj, true);
 		default:
 			throw M2_ERROR("Missing loader for type: " + m2::ToString(obj.object_type()));
+	}
+}
+
+void m2g::Proxy::OnPostStep() {
+	const auto now = m2::sdl::get_ticks();
+	if (not _lastSimulationRunTicks || *_lastSimulationRunTicks + pinball::SIMULATION_TICK_PERIOD_TICKS <= now) {
+		if (not _lastSimulationRunTicks) {
+			_lastSimulationState = pinball::InitialSimulationState(AnimalAllocator);
+		}
+		_lastSimulationState = pinball::AdvanceSimulation(*_lastSimulationState, {}, AnimalAllocator, AnimalDeallocator);
+		_lastSimulationRunTicks = now;
 	}
 }

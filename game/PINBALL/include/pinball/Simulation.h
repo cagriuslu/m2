@@ -1,9 +1,11 @@
 #pragma once
 #include <Simulation.pb.h>
+#include <m2/Meta.h>
 
 namespace pinball {
 	constexpr auto SIMULATION_TICKS_PER_SECOND = 10.0f;
 	constexpr auto SIMULATION_TICK_PERIOD_S = 1.0f / SIMULATION_TICKS_PER_SECOND;
+	const auto SIMULATION_TICK_PERIOD_TICKS = m2::iround(SIMULATION_TICK_PERIOD_S * 1000.0f);
 
 	/// Rate of change of temperate if heating is enabled
 	constexpr auto SIMULATION_HEATING_RATE_PER_SECOND = 0.2f;
@@ -74,9 +76,11 @@ namespace pinball {
 	/// Default duration after which a carnivore reproduces.
 	constexpr auto SIMULATION_CARNIVORE_DEFAULT_REPRODUCTION_PERIOD_S = 55.0f;
 
+	pb::SimulationState InitialSimulationState(const std::function<int64_t(pb::Animal_Type)>& animalAllocator);
+
 	/// Advances the simulation by one tick.
 	pb::SimulationState AdvanceSimulation(const pb::SimulationState& currentState, const pb::SimulationInputs& inputs,
-			const std::function<int64_t()>& animalAllocator, const std::function<void(int64_t)>& animalReleaser);
+			const std::function<int64_t(pb::Animal_Type)>& animalAllocator, const std::function<void(int64_t)>& animalReleaser);
 
 	struct DerivedSimulationState {
 		/// Ratio of current decomposition to max decomposition that could be achieved by all existing bacteria.

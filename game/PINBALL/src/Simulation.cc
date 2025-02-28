@@ -2,6 +2,7 @@
 #include <m2/Error.h>
 #include <m2/Math.h>
 #include <m2/Meta.h>
+#include <m2/Log.h>
 
 using namespace pinball;
 
@@ -198,8 +199,28 @@ namespace {
 	}
 }
 
+pb::SimulationState pinball::InitialSimulationState(const std::function<int64_t(pb::Animal_Type)>& animalAllocator) {
+	pb::SimulationState state;
+	state.set_bacteria_mass(SIMULATION_BACTERIA_LIMIT_KG / 8.0f);
+	state.set_plant_mass(SIMULATION_PLANT_LIMIT_KG / 50.0f);
+	for (int i = 0; i < 6; ++i) {
+		auto* animal = state.add_animals();
+		animal->set_id(animalAllocator(pb::Animal_Type_HERBIVORE));
+		animal->set_type(pb::Animal_Type_HERBIVORE);
+		animal->set_mass(0.35f);
+		animal->set_health(1.0f);
+		animal->set_reproduction_count_down(150);
+	}
+	state.set_temperature(25.0f);
+	state.set_waste_mass(4.0f);
+	state.set_nutrient_mass(0.25f);
+	state.set_water_mass(15.0f);
+	return state;
+}
+
 pb::SimulationState pinball::AdvanceSimulation(const pb::SimulationState& currentState, const pb::SimulationInputs& inputs,
-	const std::function<int64_t()>& animalAllocator, const std::function<void(int64_t)>& animalReleaser) {
+	const std::function<int64_t(pb::Animal_Type)>& animalAllocator, const std::function<void(int64_t)>& animalReleaser) {
+	LOG_DEBUG("Advancing simulation");
 	const auto stateAfterTickCount = AdvanceTickCount(currentState);
 	const auto stateAfterEnvironment = AdvanceEnvironment(stateAfterTickCount, inputs);
 	const auto stateAfterBacteriaDeaths = AdvanceBacteriaDeaths(stateAfterEnvironment);
