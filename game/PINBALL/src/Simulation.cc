@@ -173,11 +173,10 @@ namespace {
 		return nextState;
 	}
 
-	pb::SimulationState AdvanceWasteConsumption(const pb::SimulationState& currentState, const pb::SimulationInputs& inputs) {
+	pb::SimulationState AdvanceDecomposition(const pb::SimulationState& currentState, const pb::SimulationInputs& inputs) {
 		auto nextState = currentState;
 		// Decomposition requires darkness, and appropriate temperature
-		if (inputs.light() == false
-				&& SIMULATION_BACTERIA_DECOMPOSITION_MIN_TEMPERATURE <= currentState.temperature()
+		if (not inputs.light() && SIMULATION_BACTERIA_DECOMPOSITION_MIN_TEMPERATURE <= currentState.temperature()
 				&& currentState.temperature() <= SIMULATION_BACTERIA_DECOMPOSITION_MAX_TEMPERATURE) {
 			// Decomposition speed of a single bacteria
 			const float decompositionEfficiency = CalculateEfficiencyFromMinIdealMax(currentState.temperature(),
@@ -188,11 +187,11 @@ namespace {
 			const auto healthyBacteriaMass = currentState.bacteria_mass() * (1.0f - currentState.zombie_bacteria_percentage());
 			// Find rate limit due to waste availability
 			const auto idealRequiredWasteMass = CalculateProductionAmount(SIMULATION_BACTERIA_DECOMPOSITION_WASTE_USE_PER_SECOND, healthyBacteriaMass, decompositionEfficiency);
-			const auto availableWasteMass = currentState.waste_mass() < idealRequiredWasteMass ? currentState.waste_mass() : idealRequiredWasteMass;
+			const auto availableWasteMass = std::min(currentState.waste_mass(), idealRequiredWasteMass);
 			const auto rateLimitDueToWaste = availableWasteMass / idealRequiredWasteMass;
 			// Find rate limit due to water availability
 			const auto idealRequiredWaterMass = idealRequiredWasteMass * SIMULATION_BACTERIA_DECOMPOSITION_WATER_USE_RATE;
-			const auto availableWaterMass = currentState.water_mass() < idealRequiredWaterMass ? currentState.water_mass() : idealRequiredWaterMass;
+			const auto availableWaterMass = std::min(currentState.water_mass(), idealRequiredWaterMass);
 			const auto rateLimitDueToWater = availableWaterMass / idealRequiredWaterMass;
 			// Find actual rate limit
 			const auto rateLimit = std::min(rateLimitDueToWaste, rateLimitDueToWater);
@@ -201,10 +200,49 @@ namespace {
 			// Decompose
 			const auto producedNutrientMass = actualRequiredWasteMass * SIMULATION_BACTERIA_DECOMPOSITION_NUTRIENT_PRODUCTION_RATE;
 			const auto reproductionMass = actualRequiredWasteMass * SIMULATION_BACTERIA_REPRODUCTION_RATE;
+			const auto newZombieBacteriaPercentage = currentState.bacteria_mass() * currentState.zombie_bacteria_percentage()
+					/ (currentState.bacteria_mass() + reproductionMass);
 			nextState.set_waste_mass(currentState.waste_mass() - actualRequiredWasteMass);
 			nextState.set_nutrient_mass(currentState.nutrient_mass() + producedNutrientMass);
 			nextState.set_water_mass(currentState.water_mass() - actualRequiredWaterMass);
 			nextState.set_bacteria_mass(currentState.bacteria_mass() + reproductionMass);
+			nextState.set_zombie_bacteria_percentage(newZombieBacteriaPercentage);
+		}
+		return nextState;
+	}
+
+	pb::SimulationState AdvancePlantGrowth(const pb::SimulationState& currentState, const pb::SimulationInputs& inputs) {
+		auto nextState = currentState;
+		// Plant growth requires light, and appropriate temperature
+		if (inputs.light() && SIMULATION_PLANT_GROWTH_MIN_TEMPERATURE <= currentState.temperature()
+				&& currentState.temperature() <= SIMULATION_PLANT_GROWTH_MAX_TEMPERATURE) {
+			const float growthEfficiency = CalculateEfficiencyFromMinIdealMax(currentState.temperature(),
+					SIMULATION_PLANT_GROWTH_MIN_TEMPERATURE,
+					SIMULATION_PLANT_GROWTH_FASTEST_TEMPERATURE,
+					SIMULATION_PLANT_GROWTH_MAX_TEMPERATURE);
+			// Only healthy plants grow
+			const auto healthyPlantMass = currentState.plant_mass() * (1.0f - currentState.diseased_plant_percentage());
+			// Find rate limit due to nutrient availability
+			const auto idealGrowthMass = CalculateProductionAmount(SIMULATION_PLANT_GROWTH_PRODUCTION_RATE_PER_SECOND, healthyPlantMass, growthEfficiency);
+			const auto idealRequiredNutrientMass = idealGrowthMass * SIMULATION_PLANT_GROWTH_NUTRIENT_USE_RATE;
+			const auto availableNutrientMass = std::min(currentState.nutrient_mass(), idealRequiredNutrientMass);
+			const auto rateLimitDueToNutrient = availableNutrientMass / idealRequiredNutrientMass;
+			// Find rate limit due to water availability
+			const auto idealRequiredWaterMass = idealGrowthMass * SIMULATION_PLANT_GROWTH_WATER_USE_RATE;
+			const auto availableWaterMass = std::min(currentState.water_mass(), idealRequiredWaterMass);
+			const auto rateLimitDueToWater = availableWaterMass / idealRequiredWaterMass;
+			// Find actual rate limit
+			const auto rateLimit = std::min(rateLimitDueToNutrient, rateLimitDueToWater);
+			const auto actualRequiredNutrientMass = idealRequiredNutrientMass * rateLimit;
+			const auto actualRequiredWaterMass = idealRequiredWaterMass * rateLimit;
+			const auto actualGrowthMass = actualRequiredWaterMass / SIMULATION_PLANT_GROWTH_WATER_USE_RATE;
+			// Grow
+			const auto newDiseasedPlantPercentage = currentState.plant_mass() * currentState.diseased_plant_percentage()
+					/ (currentState.plant_mass() + actualGrowthMass);
+			nextState.set_plant_mass(currentState.plant_mass() + actualGrowthMass);
+			nextState.set_diseased_plant_percentage(newDiseasedPlantPercentage);
+			nextState.set_nutrient_mass(currentState.nutrient_mass() - actualRequiredNutrientMass);
+			nextState.set_water_mass(currentState.water_mass() - actualRequiredWaterMass);
 		}
 		return nextState;
 	}
@@ -238,15 +276,9 @@ pb::SimulationState pinball::AdvanceSimulation(const pb::SimulationState& curren
 	const auto stateAfterBacteriaDeaths = AdvanceBacteriaDeaths(stateAfterEnvironment);
 	const auto stateAfterPlantDeaths = AdvancePlantDeaths(stateAfterBacteriaDeaths);
 	const auto stateAfterAnimalDeaths = AdvanceAnimalDeaths(stateAfterPlantDeaths, animalReleaser);
-	const auto stateAfterWasteConsumption = AdvanceWasteConsumption(stateAfterAnimalDeaths, inputs);
-
-	// Do consumptions and productions
-
-	// If the conditions are right, plants consume nutrients and water, and produce mass
-	// Herbivores consume plants and water
-	// Carnivores consume herbivores
-
-	// Do reproductions
-
-	return stateAfterWasteConsumption;
+	const auto stateAfterDecomposition = AdvanceDecomposition(stateAfterAnimalDeaths, inputs);
+	const auto stateAfterPlantGrowth = AdvancePlantGrowth(stateAfterDecomposition, inputs);
+	// TODO Herbivores consume plants and water, and reproduce
+	// TODO Carnivores consume herbivores, and reproduce
+	return stateAfterPlantGrowth;
 }
