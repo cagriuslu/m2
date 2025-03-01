@@ -30,12 +30,14 @@ namespace pinball {
 	constexpr auto SIMULATION_BACTERIA_DECOMPOSITION_FASTEST_TEMPERATURE = 32.0f;
 	/// Maximum decomposition temperature
 	constexpr auto SIMULATION_BACTERIA_DECOMPOSITION_MAX_TEMPERATURE = 38.0f;
-	/// Amount of waste decomposited per 1KG of bacteria at the fastest decomposition temperature
-	constexpr auto SIMULATION_BACTERIA_DECOMPOSITION_RATE = 5.0f; // TODO number madeup
+	/// Amount of waste decomposited per 1KG of bacteria per second at the fastest decomposition temperature
+	constexpr auto SIMULATION_BACTERIA_DECOMPOSITION_WASTE_USE_PER_SECOND = 0.25f;
 	/// Amount of nutrient produced per 1KG of waste decomposited
-	constexpr auto SIMULATION_BACTERIA_DECOMPOSITION_NUTRIENT_PRODUCTION_RATE = 1.0f; // TODO number madeup
+	constexpr auto SIMULATION_BACTERIA_DECOMPOSITION_NUTRIENT_PRODUCTION_RATE = 0.05f;
 	/// Amount of water used per 1KG of waste decomposited
-	constexpr auto SIMULATION_BACTERIA_DECOMPOSITION_WATER_USE_RATE = 0.5f; // TODO number madeup
+	constexpr auto SIMULATION_BACTERIA_DECOMPOSITION_WATER_USE_RATE = 0.5f;
+	/// Amount of bacteria reproduction per 1KG of waste used
+	constexpr auto SIMULATION_BACTERIA_REPRODUCTION_RATE = 0.05f;
 
 	/// Amount of plant that can exist without developing diseases.
 	constexpr auto SIMULATION_PLANT_LIMIT_KG = 1000.0f;
@@ -47,8 +49,20 @@ namespace pinball {
 	constexpr auto SIMULATION_PLANT_TEMPERATURE_DEATH_AMOUNT_PER_UNIT_PER_SECOND = 1.0f;
 	/// Amount of healthy plant infected with diseased per 1 unit of diseased plant per second.
 	constexpr auto SIMULATION_PLANT_DISEASE_SPREAD_RATE_PER_SECOND = 1.25f;
-	/// Percentage of diseased plany dying per second
+	/// Percentage of diseased plant dying per second
 	constexpr auto SIMULATION_PLANT_DISEASE_DIE_PERCENTAGE_PER_SECOND = 0.01f;
+	/// Minimum growth temperature
+	constexpr auto SIMULATION_PLANT_GROWTH_MIN_TEMPERATURE = 14.0f;
+	/// Fastest growth temperature
+	constexpr auto SIMULATION_PLANT_GROWTH_FASTEST_TEMPERATURE = 28.0f;
+	/// Maximum growth temperature
+	constexpr auto SIMULATION_PLANT_GROWTH_MAX_TEMPERATURE = 36.0f;
+	/// Amount of plant growth per 1KG of plant per second at the fastest growth temperature
+	constexpr auto SIMULATION_PLANT_GROWTH_PRODUCTION_RATE_PER_SECOND = 0.1f;
+	/// Amount of nutrient used per 1KG of plant growth
+	constexpr auto SIMULATION_PLANT_GROWTH_NUTRIENT_USE_RATE = 0.1f;
+	/// Amount of water used per 1KG of plant growth
+	constexpr auto SIMULATION_PLANT_GROWTH_WATER_USE_RATE = 0.5f;
 
 	/// Minimum temperature herbivores can live without losing health.
 	constexpr auto SIMULATION_HERBIVORE_MIN_TEMPERATURE = 8.0f;
