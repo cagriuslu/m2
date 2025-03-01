@@ -48,6 +48,22 @@ namespace {
 		return std::make_pair(newHealthyMass, newDiseasedMass);
 	}
 
+	/// Returns [0,1] rate
+	float CalculateEfficiencyFromMinIdealMax(const float currentValue, const float minValue, const float idealValue, const float maxValue) {
+		if (currentValue < minValue || maxValue < currentValue) {
+			return 0.0f;
+		}
+		if (currentValue < idealValue) {
+			return (currentValue - minValue) / (idealValue - minValue);
+		} else {
+			return (currentValue - idealValue) / (maxValue - idealValue);
+		}
+	}
+
+	float CalculateProductionAmount(const float productionRatePerProducerPerSecond, const float producerAmount, const float efficiency) {
+		return productionRatePerProducerPerSecond * producerAmount * efficiency * SIMULATION_TICK_PERIOD_S;
+	}
+
 	pb::SimulationState AdvanceTickCount(const pb::SimulationState& currentState) {
 		auto nextState = currentState;
 		nextState.set_passed_tick_count(currentState.passed_tick_count() + 1);
@@ -58,7 +74,7 @@ namespace {
 		auto nextState = currentState;
 		// Add water and heat to the environment
 		nextState.set_water_mass(currentState.water_mass() + inputs.extra_water());
-		nextState.set_temperature(currentState.temperature() + (SIMULATION_HEATING_RATE_PER_SECOND * SIMULATION_TICK_PERIOD_S));
+		nextState.set_temperature(currentState.temperature() + SIMULATION_HEATING_RATE_PER_SECOND * SIMULATION_TICK_PERIOD_S);
 		return nextState;
 	}
 
@@ -164,37 +180,30 @@ namespace {
 				&& SIMULATION_BACTERIA_DECOMPOSITION_MIN_TEMPERATURE <= currentState.temperature()
 				&& currentState.temperature() <= SIMULATION_BACTERIA_DECOMPOSITION_MAX_TEMPERATURE) {
 			// Decomposition speed of a single bacteria
-			float decompositionSpeedPerUnitBacteria; // [0,1]
-			if (currentState.temperature() < SIMULATION_BACTERIA_DECOMPOSITION_FASTEST_TEMPERATURE) {
-				decompositionSpeedPerUnitBacteria = (currentState.temperature() - SIMULATION_BACTERIA_DECOMPOSITION_MIN_TEMPERATURE)
-					/ (SIMULATION_BACTERIA_DECOMPOSITION_FASTEST_TEMPERATURE - SIMULATION_BACTERIA_DECOMPOSITION_MIN_TEMPERATURE);
-			} else {
-				decompositionSpeedPerUnitBacteria = (currentState.temperature() - SIMULATION_BACTERIA_DECOMPOSITION_FASTEST_TEMPERATURE)
-					/ (SIMULATION_BACTERIA_DECOMPOSITION_MAX_TEMPERATURE - SIMULATION_BACTERIA_DECOMPOSITION_FASTEST_TEMPERATURE);
-			}
+			const float decompositionEfficiency = CalculateEfficiencyFromMinIdealMax(currentState.temperature(),
+					SIMULATION_BACTERIA_DECOMPOSITION_MIN_TEMPERATURE,
+					SIMULATION_BACTERIA_DECOMPOSITION_FASTEST_TEMPERATURE,
+					SIMULATION_BACTERIA_DECOMPOSITION_MAX_TEMPERATURE);
 			// Only healthy bacteria do decomposition.
 			const auto healthyBacteriaMass = currentState.bacteria_mass() * (1.0f - currentState.zombie_bacteria_percentage());
-			// Decomposition speed of all bacteria combined (given enough waste and water)
-			auto totalDecompositionSpeed = decompositionSpeedPerUnitBacteria * healthyBacteriaMass;
-			// Calculate decomposition rate at given waste amount
-			auto requiredWasteMass = totalDecompositionSpeed * SIMULATION_BACTERIA_DECOMPOSITION_WASTE_USE_PER_SECOND * SIMULATION_TICK_PERIOD_S;
-			if (currentState.waste_mass() < requiredWasteMass) {
-				totalDecompositionSpeed *= currentState.waste_mass() / requiredWasteMass;
-				requiredWasteMass = totalDecompositionSpeed * SIMULATION_BACTERIA_DECOMPOSITION_WASTE_USE_PER_SECOND * SIMULATION_TICK_PERIOD_S;
-			}
-			// Calculate decomposition rate at given water amount
-			auto requiredWaterMass = requiredWasteMass * SIMULATION_BACTERIA_DECOMPOSITION_WATER_USE_RATE;
-			if (currentState.water_mass() < requiredWaterMass) {
-				totalDecompositionSpeed *= currentState.water_mass() / requiredWaterMass;
-				requiredWasteMass = totalDecompositionSpeed * SIMULATION_BACTERIA_DECOMPOSITION_WASTE_USE_PER_SECOND * SIMULATION_TICK_PERIOD_S;
-				requiredWaterMass = requiredWasteMass * SIMULATION_BACTERIA_DECOMPOSITION_WATER_USE_RATE;
-			}
+			// Find rate limit due to waste availability
+			const auto idealRequiredWasteMass = CalculateProductionAmount(SIMULATION_BACTERIA_DECOMPOSITION_WASTE_USE_PER_SECOND, healthyBacteriaMass, decompositionEfficiency);
+			const auto availableWasteMass = currentState.waste_mass() < idealRequiredWasteMass ? currentState.waste_mass() : idealRequiredWasteMass;
+			const auto rateLimitDueToWaste = availableWasteMass / idealRequiredWasteMass;
+			// Find rate limit due to water availability
+			const auto idealRequiredWaterMass = idealRequiredWasteMass * SIMULATION_BACTERIA_DECOMPOSITION_WATER_USE_RATE;
+			const auto availableWaterMass = currentState.water_mass() < idealRequiredWaterMass ? currentState.water_mass() : idealRequiredWaterMass;
+			const auto rateLimitDueToWater = availableWaterMass / idealRequiredWaterMass;
+			// Find actual rate limit
+			const auto rateLimit = std::min(rateLimitDueToWaste, rateLimitDueToWater);
+			const auto actualRequiredWasteMass = idealRequiredWasteMass * rateLimit;
+			const auto actualRequiredWaterMass = idealRequiredWaterMass * rateLimit;
 			// Decompose
-			const auto producedNutrientMass = requiredWasteMass * SIMULATION_BACTERIA_DECOMPOSITION_NUTRIENT_PRODUCTION_RATE;
-			const auto reproductionMass = requiredWasteMass * SIMULATION_BACTERIA_REPRODUCTION_RATE;
-			nextState.set_waste_mass(currentState.waste_mass() - requiredWasteMass);
+			const auto producedNutrientMass = actualRequiredWasteMass * SIMULATION_BACTERIA_DECOMPOSITION_NUTRIENT_PRODUCTION_RATE;
+			const auto reproductionMass = actualRequiredWasteMass * SIMULATION_BACTERIA_REPRODUCTION_RATE;
+			nextState.set_waste_mass(currentState.waste_mass() - actualRequiredWasteMass);
 			nextState.set_nutrient_mass(currentState.nutrient_mass() + producedNutrientMass);
-			nextState.set_water_mass(currentState.water_mass() - requiredWaterMass);
+			nextState.set_water_mass(currentState.water_mass() - actualRequiredWaterMass);
 			nextState.set_bacteria_mass(currentState.bacteria_mass() + reproductionMass);
 		}
 		return nextState;
