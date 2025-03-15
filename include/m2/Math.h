@@ -13,6 +13,8 @@ namespace m2 {
 	uint64_t rand(); /// Generates full range 64-bit random numbers.
 	uint64_t rand_nonzero(); /// Generates full range 64-bit random numbers.
 	float randf(); /// Generates numbers from set [0.0f, 1.0f)
+	int UniformRandom(int min, int max);
+	float UniformRandomF(float min, float max);
 	float apply_accuracy(float value, float max_swing, float accuracy); /// Returns value ± value * accuracy%
 
 	// Floating point comparisons

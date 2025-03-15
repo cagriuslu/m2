@@ -2,6 +2,9 @@
 #include <random>
 #include <cmath>
 
+#include "m2/Error.h"
+#include "m2/Meta.h"
+
 namespace {
 	std::random_device rd;
 	std::unique_ptr<std::mt19937> random_number_engine_f;
@@ -36,6 +39,18 @@ float m2::randf() {
 		random_number_distribution_f = std::make_unique<std::uniform_real_distribution<float>>(0.0f, 1.0f);
 	}
 	return (*random_number_distribution_f)(*random_number_engine_f);
+}
+int m2::UniformRandom(const int min, const int max) {
+	if (max < min) {
+		throw M2_ERROR("Max is smaller than minimum");
+	}
+	return min + iround((max - min) * randf());
+}
+float m2::UniformRandomF(const float min, const float max) {
+	if (max < min) {
+		throw M2_ERROR("Max is smaller than minimum");
+	}
+	return min + (max - min) * randf();
 }
 float m2::apply_accuracy(float value, float max_swing, float accuracy) {
 	if (accuracy == 1.0f) {

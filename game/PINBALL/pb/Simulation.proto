@@ -11,8 +11,9 @@ message Animal {
   Type type = 2;
   float mass = 3;
   float health = 4; // [0,1]
-  float hunger = 5; // [0,1]
-  int64 reproduction_count_down = 6; // In ticks
+  float hunger = 5; // [0,1] where 0 means fully satisfied with food.
+  int64 hunting_count_down = 6; // In ticks, only applicable to carnivore
+  int64 reproduction_count_down = 7; // In ticks
 }
 
 message SimulationState {
@@ -22,17 +23,17 @@ message SimulationState {
   float bacteria_mass = 2;
   float zombie_bacteria_percentage = 3;
   // Includes both healthy and diseased plant
-  float plant_mass = 4; // TODO
-  float diseased_plant_percentage = 5; // TODO
-  repeated Animal animals = 6; // TODO
+  float plant_mass = 4;
+  float diseased_plant_percentage = 5;
+  repeated Animal animals = 6;
 
   float temperature = 11;
   // Waste is decomposed by bacteria into nutrients
-  float waste_mass = 12; // TODO
+  float waste_mass = 12;
   // Nutrients are used by plants to trap light and build mass
-  float nutrient_mass = 13; // TODO
+  float nutrient_mass = 13;
   // Water is used by all organisms
-  float water_mass = 14; // TODO
+  float water_mass = 14;
 }
 
 message SimulationInputs {

@@ -7,6 +7,7 @@ namespace m2g {
 	class Proxy : public m2::Proxy {
 		std::optional<m2::sdl::ticks_t> _lastSimulationRunTicks;
 		std::optional<pinball::pb::SimulationState> _lastSimulationState;
+		pinball::pb::SimulationInputs _simulationInputs;
 
 	public:
 		const std::string game_identifier = "PINBALL";
@@ -24,5 +25,8 @@ namespace m2g {
 		m2::void_expected LoadForegroundObjectFromLevelBlueprint(m2::Object& obj);
 
 		void OnPostStep();
+
+		const pinball::pb::SimulationState& SimulationState() const { return *_lastSimulationState; }
+		const pinball::pb::SimulationInputs& SimulationInputs() const { return _simulationInputs; }
 	};
 }  // namespace m2g

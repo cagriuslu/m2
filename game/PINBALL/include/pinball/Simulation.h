@@ -74,6 +74,16 @@ namespace pinball {
 	constexpr auto SIMULATION_HERBIVORE_TEMPERATURE_DEATH_AMOUNT_PER_UNIT_PER_SECOND = 0.05f;
 	/// Amount of herbivore health lost per second if the humidity is zero.
 	constexpr auto SIMULATION_HERBIVORE_HUMIDITY_DEATH_AMOUNT_PER_SECOND = 0.02f;
+	/// Percentage of hunger increase per second
+	constexpr auto SIMULATION_HERBIVORE_HUNGER_PERCENTAGE_GAINED_PER_SECOND = 0.04f;
+	/// Percentage of hunger fulfilled every second if there's enough food in the environment
+	constexpr auto SIMULATION_HERBIVORE_HUNGER_PERCENTAGE_FULFILLED_PER_SECOND = 0.1f;
+	/// Ratio of required plant amount to animal's mass to fulfill a full hunger
+	constexpr auto SIMULATION_HERBIVORE_PLANT_REQUIRED_FOR_FULL_HUNGER_FULFILLMENT = 1.2f;
+	/// Ratio of required water amount to animal's mass to fulfill a full hunger
+	constexpr auto SIMULATION_HERBIVORE_WATER_REQUIRED_FOR_FULL_HUNGER_FULFILLMENT = 0.5f;
+	/// Maximum hunger allowed for enabling reproduction timer
+	constexpr auto SIMULATION_HERBIVORE_REPRODUCTION_HUNGER_THRESHOLD = 0.5f;
 	/// Default duration after which a herbivore reproduces.
 	constexpr auto SIMULATION_HERBIVORE_DEFAULT_REPRODUCTION_PERIOD_S = 25.0f;
 
@@ -87,6 +97,20 @@ namespace pinball {
 	constexpr auto SIMULATION_CARNIVORE_TEMPERATURE_DEATH_AMOUNT_PER_UNIT_PER_SECOND = 0.075f;
 	/// Amount of carnivore health lost per second if the humidity is zero.
 	constexpr auto SIMULATION_CARNIVORE_HUMIDITY_DEATH_AMOUNT_PER_SECOND = 0.01f;
+	/// Percentage of hunger increase per second
+	constexpr auto SIMULATION_CARNIVORE_HUNGER_PERCENTAGE_GAINED_PER_SECOND = 0.04f;
+	/// Minimum hunger for carnivore to hunt
+	constexpr auto SIMULATION_CARNIVORE_HUNTING_HUNGER_THRESHOLD = 0.65f;
+	/// Hunting period for carnivore
+	constexpr auto SIMULATION_CARNIVORE_HUNTING_PERIOD_S = 9.0f;
+	/// Hunting period variance for carnivore
+	constexpr auto SIMULATION_CARNIVORE_HUNTING_PERIOD_VARIANCE_S = 2.0f;
+	/// Ratio of required herbivore mass to animal's mass to fulfill a full hunger
+	constexpr auto SIMULATION_CARNIVORE_HERBIVORE_MASS_REQUIRED_FOR_FULL_HUNGER_FULFILLMENT = 0.8f;
+	/// Ratio of required water amount to animal's mass to fulfill a full hunger
+	constexpr auto SIMULATION_CARNIVORE_WATER_REQUIRED_FOR_FULL_HUNGER_FULFILLMENT = 0.7f;
+	/// Maximum hunger allowed for enabling reproduction timer
+	constexpr auto SIMULATION_CARNIVORE_REPRODUCTION_HUNGER_THRESHOLD = 0.5f;
 	/// Default duration after which a carnivore reproduces.
 	constexpr auto SIMULATION_CARNIVORE_DEFAULT_REPRODUCTION_PERIOD_S = 55.0f;
 
