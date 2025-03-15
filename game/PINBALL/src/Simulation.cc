@@ -85,8 +85,7 @@ namespace {
 		auto nextState = currentState;
 		// Add water and heat to the environment
 		nextState.set_water_mass(currentState.water_mass() + inputs.extra_water());
-		nextState.set_temperature(currentState.temperature() +
-				SIMULATION_HEATING_RATE_PER_SECOND * SIMULATION_TICK_PERIOD_S);
+		nextState.set_temperature(currentState.temperature() + HEATING_RATE_PER_SECOND * SIMULATION_TICK_PERIOD_S);
 		return nextState;
 	}
 
@@ -94,12 +93,12 @@ namespace {
 		auto nextState = currentState;
 		// Bacteria die at high temperatures. Healthy and diseased bacteria die at the same rate.
 		const auto bacteriaMassAfterTemperatureDeath = CalculatePrimitiveTemperatureDamage(currentState.bacteria_mass(),
-				SIMULATION_BACTERIA_DEATH_TEMPERATURE, currentState.temperature(),
-				SIMULATION_BACTERIA_TEMPERATURE_DEATH_EXPONENT,
-				SIMULATION_BACTERIA_TEMPERATURE_DEATH_AMOUNT_PER_UNIT_PER_SECOND);
+				BACTERIA_DEATH_TEMPERATURE, currentState.temperature(),
+				BACTERIA_TEMPERATURE_DEATH_EXPONENT,
+				BACTERIA_TEMPERATURE_DEATH_AMOUNT_PER_UNIT_PER_SECOND);
 		// Bacteria die naturally. Healthy and diseased bacteria die at the same rate.
 		const auto bacteriaMassAfterNaturalDeath = bacteriaMassAfterTemperatureDeath
-				* (1.0f - SIMULATION_BACTERIA_NATURAL_DEATH_RATE_PER_SECOND * SIMULATION_TICK_PERIOD_S);
+				* (1.0f - BACTERIA_NATURAL_DEATH_RATE_PER_SECOND * SIMULATION_TICK_PERIOD_S);
 		// Zombie bacteria kill healthy bacteria
 		const auto diseasedBacteriaMassAfterTemperatureDeath = bacteriaMassAfterNaturalDeath
 				* currentState.zombie_bacteria_percentage();
@@ -107,8 +106,8 @@ namespace {
 				- diseasedBacteriaMassAfterTemperatureDeath;
 		const auto [healthyBacteriaMassAfterInfection, diseasedBacteriaMassAfterDiseaseDeath] =
 				CalculatePrimitiveDiseaseDeath(healthyBacteriaMassAfterTemperatureDeath,
-					diseasedBacteriaMassAfterTemperatureDeath, SIMULATION_BACTERIA_DISEASE_SPREAD_RATE_PER_SECOND,
-					SIMULATION_BACTERIA_DISEASE_DIE_PERCENTAGE_PER_SECOND);
+					diseasedBacteriaMassAfterTemperatureDeath, BACTERIA_DISEASE_SPREAD_RATE_PER_SECOND,
+					BACTERIA_DISEASE_DIE_PERCENTAGE_PER_SECOND);
 		// Bacteria doesn't die any other way. Calculate next bacteria mass. Dead bacteria become waste mass.
 		const auto nextBacteriaMass = healthyBacteriaMassAfterInfection + diseasedBacteriaMassAfterDiseaseDeath;
 		const auto deadBacteriaMass = currentState.bacteria_mass() - nextBacteriaMass;
@@ -122,9 +121,9 @@ namespace {
 		auto nextState = currentState;
 		// Plants die at high temperatures. Healthy and diseased plants die at the same rate.
 		const auto plantMassAfterTemperatureDeath = CalculatePrimitiveTemperatureDamage(currentState.plant_mass(),
-				SIMULATION_PLANT_MAX_TEMPERATURE, currentState.temperature(),
-				SIMULATION_PLANT_TEMPERATURE_DEATH_EXPONENT,
-				SIMULATION_PLANT_TEMPERATURE_DEATH_AMOUNT_PER_UNIT_PER_SECOND);
+				PLANT_MAX_TEMPERATURE, currentState.temperature(),
+				PLANT_TEMPERATURE_DEATH_EXPONENT,
+				PLANT_TEMPERATURE_DEATH_AMOUNT_PER_UNIT_PER_SECOND);
 		// Diseased plants kill healthy plants
 		const auto diseasedPlantMassAfterTemperatureDeath = plantMassAfterTemperatureDeath
 				* currentState.diseased_plant_percentage();
@@ -132,8 +131,8 @@ namespace {
 				- diseasedPlantMassAfterTemperatureDeath;
 		const auto [healthyPlantMassAfterInfection, diseasedPlantMassAfterDiseaseDeath] =
 				CalculatePrimitiveDiseaseDeath(healthyPlantMassAfterTemperatureDeath,
-					diseasedPlantMassAfterTemperatureDeath, SIMULATION_PLANT_DISEASE_SPREAD_RATE_PER_SECOND,
-					SIMULATION_PLANT_DISEASE_DIE_PERCENTAGE_PER_SECOND);
+					diseasedPlantMassAfterTemperatureDeath, PLANT_DISEASE_SPREAD_RATE_PER_SECOND,
+					PLANT_DISEASE_DIE_PERCENTAGE_PER_SECOND);
 		const auto nextPlantMass = healthyPlantMassAfterInfection + diseasedPlantMassAfterDiseaseDeath;
 		const auto deadBacteriaMass = currentState.plant_mass() - nextPlantMass;
 		nextState.set_plant_mass(nextPlantMass);
@@ -151,22 +150,22 @@ namespace {
 		for (const auto& animal : currentState.animals()) {
 			// Temperature
 			const auto minTemperature = animal.type() == pb::Animal_Type_HERBIVORE
-					? SIMULATION_HERBIVORE_MIN_TEMPERATURE : SIMULATION_CARNIVORE_MIN_TEMPERATURE;
+					? HERBIVORE_MIN_TEMPERATURE : CARNIVORE_MIN_TEMPERATURE;
 			const auto maxTemperature = animal.type() == pb::Animal_Type_HERBIVORE
-					? SIMULATION_HERBIVORE_MAX_TEMPERATURE : SIMULATION_CARNIVORE_MAX_TEMPERATURE;
+					? HERBIVORE_MAX_TEMPERATURE : CARNIVORE_MAX_TEMPERATURE;
 			const auto temperatureDeathExponent = animal.type() == pb::Animal_Type_HERBIVORE
-					? SIMULATION_HERBIVORE_TEMPERATURE_DEATH_EXPONENT : SIMULATION_CARNIVORE_TEMPERATURE_DEATH_EXPONENT;
+					? HERBIVORE_TEMPERATURE_DEATH_EXPONENT : CARNIVORE_TEMPERATURE_DEATH_EXPONENT;
 			const auto temperatureDeathPerUnitPerSecond = animal.type() == pb::Animal_Type_HERBIVORE
-					? SIMULATION_HERBIVORE_TEMPERATURE_DEATH_AMOUNT_PER_UNIT_PER_SECOND
-					: SIMULATION_CARNIVORE_TEMPERATURE_DEATH_AMOUNT_PER_UNIT_PER_SECOND;
+					? HERBIVORE_TEMPERATURE_DEATH_AMOUNT_PER_UNIT_PER_SECOND
+					: CARNIVORE_TEMPERATURE_DEATH_AMOUNT_PER_UNIT_PER_SECOND;
 			const auto healthAfterTemperatureDeath = CalculateAnimalTemperatureDamage(animal.health(), minTemperature,
 					maxTemperature, nextState.temperature(), temperatureDeathExponent,
 					temperatureDeathPerUnitPerSecond);
 			// TODO lose health due to hunger
 			// Humidity
 			const auto humidityDeathPerSecond = animal.type() == pb::Animal_Type_HERBIVORE
-					? SIMULATION_HERBIVORE_HUMIDITY_DEATH_AMOUNT_PER_SECOND
-					: SIMULATION_CARNIVORE_HUMIDITY_DEATH_AMOUNT_PER_SECOND;
+					? HERBIVORE_HUMIDITY_DEATH_AMOUNT_PER_SECOND
+					: CARNIVORE_HUMIDITY_DEATH_AMOUNT_PER_SECOND;
 			const auto healthAfterTemperatureAndHumidityDeath = CalculateAnimalHumidityDamage(
 					healthAfterTemperatureDeath, nextState.water_mass(), humidityDeathPerSecond);
 			// Reset reproduction count down if any health is lost
@@ -175,8 +174,8 @@ namespace {
 				reproductionCountDownAfterTemperatureDeath = animal.reproduction_count_down();
 			} else {
 				const auto defaultReproductionPeriodS = animal.type() == pb::Animal_Type_HERBIVORE
-						? SIMULATION_HERBIVORE_DEFAULT_REPRODUCTION_PERIOD_S
-						: SIMULATION_CARNIVORE_DEFAULT_REPRODUCTION_PERIOD_S;
+						? HERBIVORE_DEFAULT_REPRODUCTION_PERIOD_S
+						: CARNIVORE_DEFAULT_REPRODUCTION_PERIOD_S;
 				reproductionCountDownAfterTemperatureDeath = m2::iround(defaultReproductionPeriodS
 						* SIMULATION_TICKS_PER_SECOND);
 			}
@@ -198,21 +197,21 @@ namespace {
 	pb::SimulationState AdvanceDecomposition(const pb::SimulationState& currentState, const pb::SimulationInputs& inputs) {
 		auto nextState = currentState;
 		// Decomposition requires darkness, and appropriate temperature
-		if (not inputs.light() && SIMULATION_BACTERIA_DECOMPOSITION_MIN_TEMPERATURE <= currentState.temperature()
-				&& currentState.temperature() <= SIMULATION_BACTERIA_DECOMPOSITION_MAX_TEMPERATURE) {
+		if (not inputs.light() && BACTERIA_DECOMPOSITION_MIN_TEMPERATURE <= currentState.temperature()
+				&& currentState.temperature() <= BACTERIA_DECOMPOSITION_MAX_TEMPERATURE) {
 			// Decomposition speed of a single bacteria
 			const float decompositionEfficiency = CalculateEfficiencyFromMinIdealMax(currentState.temperature(),
-					SIMULATION_BACTERIA_DECOMPOSITION_MIN_TEMPERATURE,
-					SIMULATION_BACTERIA_DECOMPOSITION_FASTEST_TEMPERATURE,
-					SIMULATION_BACTERIA_DECOMPOSITION_MAX_TEMPERATURE);
+					BACTERIA_DECOMPOSITION_MIN_TEMPERATURE,
+					BACTERIA_DECOMPOSITION_FASTEST_TEMPERATURE,
+					BACTERIA_DECOMPOSITION_MAX_TEMPERATURE);
 			// Only healthy bacteria do decomposition.
 			const auto healthyBacteriaMass = currentState.bacteria_mass() * (1.0f - currentState.zombie_bacteria_percentage());
 			// Find rate limit due to waste availability
-			const auto idealRequiredWasteMass = CalculateProductionAmount(SIMULATION_BACTERIA_DECOMPOSITION_WASTE_USE_PER_SECOND, healthyBacteriaMass, decompositionEfficiency);
+			const auto idealRequiredWasteMass = CalculateProductionAmount(BACTERIA_DECOMPOSITION_WASTE_USE_PER_SECOND, healthyBacteriaMass, decompositionEfficiency);
 			const auto availableWasteMass = std::min(currentState.waste_mass(), idealRequiredWasteMass);
 			const auto rateLimitDueToWaste = availableWasteMass / idealRequiredWasteMass;
 			// Find rate limit due to water availability
-			const auto idealRequiredWaterMass = idealRequiredWasteMass * SIMULATION_BACTERIA_DECOMPOSITION_WATER_USE_RATE;
+			const auto idealRequiredWaterMass = idealRequiredWasteMass * BACTERIA_DECOMPOSITION_WATER_USE_RATE;
 			const auto availableWaterMass = std::min(currentState.water_mass(), idealRequiredWaterMass);
 			const auto rateLimitDueToWater = availableWaterMass / idealRequiredWaterMass;
 			// Find actual rate limit
@@ -220,8 +219,8 @@ namespace {
 			const auto actualRequiredWasteMass = idealRequiredWasteMass * rateLimit;
 			const auto actualRequiredWaterMass = idealRequiredWaterMass * rateLimit;
 			// Decompose
-			const auto producedNutrientMass = actualRequiredWasteMass * SIMULATION_BACTERIA_DECOMPOSITION_NUTRIENT_PRODUCTION_RATE;
-			const auto reproductionMass = actualRequiredWasteMass * SIMULATION_BACTERIA_REPRODUCTION_RATE;
+			const auto producedNutrientMass = actualRequiredWasteMass * BACTERIA_DECOMPOSITION_NUTRIENT_PRODUCTION_RATE;
+			const auto reproductionMass = actualRequiredWasteMass * BACTERIA_REPRODUCTION_RATE;
 			const auto newZombieBacteriaPercentage = currentState.bacteria_mass() * currentState.zombie_bacteria_percentage()
 					/ (currentState.bacteria_mass() + reproductionMass);
 			nextState.set_waste_mass(currentState.waste_mass() - actualRequiredWasteMass);
@@ -236,28 +235,28 @@ namespace {
 	pb::SimulationState AdvancePlantGrowth(const pb::SimulationState& currentState, const pb::SimulationInputs& inputs) {
 		auto nextState = currentState;
 		// Plant growth requires light, and appropriate temperature
-		if (inputs.light() && SIMULATION_PLANT_GROWTH_MIN_TEMPERATURE <= currentState.temperature()
-				&& currentState.temperature() <= SIMULATION_PLANT_GROWTH_MAX_TEMPERATURE) {
+		if (inputs.light() && PLANT_GROWTH_MIN_TEMPERATURE <= currentState.temperature()
+				&& currentState.temperature() <= PLANT_GROWTH_MAX_TEMPERATURE) {
 			const float growthEfficiency = CalculateEfficiencyFromMinIdealMax(currentState.temperature(),
-					SIMULATION_PLANT_GROWTH_MIN_TEMPERATURE,
-					SIMULATION_PLANT_GROWTH_FASTEST_TEMPERATURE,
-					SIMULATION_PLANT_GROWTH_MAX_TEMPERATURE);
+					PLANT_GROWTH_MIN_TEMPERATURE,
+					PLANT_GROWTH_FASTEST_TEMPERATURE,
+					PLANT_GROWTH_MAX_TEMPERATURE);
 			// Only healthy plants grow
 			const auto healthyPlantMass = currentState.plant_mass() * (1.0f - currentState.diseased_plant_percentage());
 			// Find rate limit due to nutrient availability
-			const auto idealGrowthMass = CalculateProductionAmount(SIMULATION_PLANT_GROWTH_PRODUCTION_RATE_PER_SECOND, healthyPlantMass, growthEfficiency);
-			const auto idealRequiredNutrientMass = idealGrowthMass * SIMULATION_PLANT_GROWTH_NUTRIENT_USE_RATE;
+			const auto idealGrowthMass = CalculateProductionAmount(PLANT_GROWTH_PRODUCTION_RATE_PER_SECOND, healthyPlantMass, growthEfficiency);
+			const auto idealRequiredNutrientMass = idealGrowthMass * PLANT_GROWTH_NUTRIENT_USE_RATE;
 			const auto availableNutrientMass = std::min(currentState.nutrient_mass(), idealRequiredNutrientMass);
 			const auto rateLimitDueToNutrient = availableNutrientMass / idealRequiredNutrientMass;
 			// Find rate limit due to water availability
-			const auto idealRequiredWaterMass = idealGrowthMass * SIMULATION_PLANT_GROWTH_WATER_USE_RATE;
+			const auto idealRequiredWaterMass = idealGrowthMass * PLANT_GROWTH_WATER_USE_RATE;
 			const auto availableWaterMass = std::min(currentState.water_mass(), idealRequiredWaterMass);
 			const auto rateLimitDueToWater = availableWaterMass / idealRequiredWaterMass;
 			// Find actual rate limit
 			const auto rateLimit = std::min(rateLimitDueToNutrient, rateLimitDueToWater);
 			const auto actualRequiredNutrientMass = idealRequiredNutrientMass * rateLimit;
 			const auto actualRequiredWaterMass = idealRequiredWaterMass * rateLimit;
-			const auto actualGrowthMass = actualRequiredWaterMass / SIMULATION_PLANT_GROWTH_WATER_USE_RATE;
+			const auto actualGrowthMass = actualRequiredWaterMass / PLANT_GROWTH_WATER_USE_RATE;
 			// Grow
 			const auto newDiseasedPlantPercentage = currentState.plant_mass() * currentState.diseased_plant_percentage()
 					/ (currentState.plant_mass() + actualGrowthMass);
@@ -277,16 +276,16 @@ namespace {
 			}
 			// First, increase hunger
 			animal.set_hunger(
-					CalculateHungerAfterIncrease(animal.hunger(), SIMULATION_HERBIVORE_HUNGER_PERCENTAGE_GAINED_PER_SECOND));
+					CalculateHungerAfterIncrease(animal.hunger(), HERBIVORE_HUNGER_PERCENTAGE_GAINED_PER_SECOND));
 			// Then, feed
 			const auto idealHungerPercentageToFulfill = std::max(animal.hunger(),
-					SIMULATION_HERBIVORE_HUNGER_PERCENTAGE_FULFILLED_PER_SECOND * SIMULATION_TICK_PERIOD_S);
+					HERBIVORE_HUNGER_PERCENTAGE_FULFILLED_PER_SECOND * SIMULATION_TICK_PERIOD_S);
 
-			const auto idealRequiredPlantMass = idealHungerPercentageToFulfill * animal.mass() * SIMULATION_HERBIVORE_PLANT_REQUIRED_FOR_FULL_HUNGER_FULFILLMENT;
+			const auto idealRequiredPlantMass = idealHungerPercentageToFulfill * animal.mass() * HERBIVORE_PLANT_REQUIRED_FOR_FULL_HUNGER_FULFILLMENT;
 			const auto availablePlantMassForFeeding = std::min(nextState.plant_mass(), idealRequiredPlantMass);
 			const auto feedRateLimitDueToPlant = availablePlantMassForFeeding / idealRequiredPlantMass;
 
-			const auto idealRequiredWaterMass = idealHungerPercentageToFulfill * animal.mass() * SIMULATION_HERBIVORE_WATER_REQUIRED_FOR_FULL_HUNGER_FULFILLMENT;
+			const auto idealRequiredWaterMass = idealHungerPercentageToFulfill * animal.mass() * HERBIVORE_WATER_REQUIRED_FOR_FULL_HUNGER_FULFILLMENT;
 			const auto availableWaterMassForFeeding = std::min(nextState.water_mass(), idealRequiredWaterMass);
 			const auto feedRateLimitDueToWater = availableWaterMassForFeeding / idealRequiredWaterMass;
 
@@ -300,15 +299,15 @@ namespace {
 			nextState.set_plant_mass(nextState.plant_mass() - actualRequiredWaterMass);
 
 			// Check if reproduction count down needs to be reset
-			if (SIMULATION_HERBIVORE_REPRODUCTION_HUNGER_THRESHOLD < animal.hunger()) {
+			if (HERBIVORE_REPRODUCTION_HUNGER_THRESHOLD < animal.hunger()) {
 				animal.set_reproduction_count_down(
-						m2::iround(SIMULATION_HERBIVORE_DEFAULT_REPRODUCTION_PERIOD_S * SIMULATION_TICKS_PER_SECOND));
+						m2::iround(HERBIVORE_DEFAULT_REPRODUCTION_PERIOD_S * SIMULATION_TICKS_PER_SECOND));
 			} else {
 				const auto nextReproductionCountDown = animal.reproduction_count_down() - 1;
 				if (nextReproductionCountDown == 0) {
 					// TODO Reproduce
 					animal.set_reproduction_count_down(
-							m2::iround(SIMULATION_HERBIVORE_DEFAULT_REPRODUCTION_PERIOD_S * SIMULATION_TICKS_PER_SECOND));
+							m2::iround(HERBIVORE_DEFAULT_REPRODUCTION_PERIOD_S * SIMULATION_TICKS_PER_SECOND));
 				} else {
 					animal.set_reproduction_count_down(nextReproductionCountDown);
 				}
@@ -325,15 +324,15 @@ namespace {
 			}
 			// First, increase hunger
 			animal.set_hunger(
-					CalculateHungerAfterIncrease(animal.hunger(), SIMULATION_CARNIVORE_HUNGER_PERCENTAGE_GAINED_PER_SECOND));
+					CalculateHungerAfterIncrease(animal.hunger(), CARNIVORE_HUNGER_PERCENTAGE_GAINED_PER_SECOND));
 			// Check if hunger threshold is passed
-			if (SIMULATION_CARNIVORE_HUNTING_HUNGER_THRESHOLD < animal.hunger()) {
+			if (CARNIVORE_HUNTING_HUNGER_THRESHOLD < animal.hunger()) {
 				if (animal.hunting_count_down() == 0) {
 					// Reinit hunting count down
-					const auto minTicks = m2::iround(SIMULATION_CARNIVORE_HUNTING_PERIOD_S * SIMULATION_TICKS_PER_SECOND
-							- SIMULATION_CARNIVORE_HUNTING_PERIOD_VARIANCE_S * SIMULATION_TICKS_PER_SECOND);
-					const auto maxTicks = m2::iround(SIMULATION_CARNIVORE_HUNTING_PERIOD_S * SIMULATION_TICKS_PER_SECOND
-							+ SIMULATION_CARNIVORE_HUNTING_PERIOD_VARIANCE_S * SIMULATION_TICKS_PER_SECOND);
+					const auto minTicks = m2::iround(CARNIVORE_HUNTING_PERIOD_S * SIMULATION_TICKS_PER_SECOND
+							- CARNIVORE_HUNTING_PERIOD_VARIANCE_S * SIMULATION_TICKS_PER_SECOND);
+					const auto maxTicks = m2::iround(CARNIVORE_HUNTING_PERIOD_S * SIMULATION_TICKS_PER_SECOND
+							+ CARNIVORE_HUNTING_PERIOD_VARIANCE_S * SIMULATION_TICKS_PER_SECOND);
 					const auto ticks = m2::UniformRandom(minTicks, maxTicks);
 					animal.set_hunting_count_down(ticks);
 				} else if (animal.hunting_count_down() == 1) {
@@ -348,15 +347,15 @@ namespace {
 			}
 
 			// Check if reproduction count down needs to be reset
-			if (SIMULATION_CARNIVORE_REPRODUCTION_HUNGER_THRESHOLD < animal.hunger()) {
+			if (CARNIVORE_REPRODUCTION_HUNGER_THRESHOLD < animal.hunger()) {
 				animal.set_reproduction_count_down(
-						m2::iround(SIMULATION_CARNIVORE_DEFAULT_REPRODUCTION_PERIOD_S * SIMULATION_TICKS_PER_SECOND));
+						m2::iround(CARNIVORE_DEFAULT_REPRODUCTION_PERIOD_S * SIMULATION_TICKS_PER_SECOND));
 			} else {
 				const auto nextReproductionCountDown = animal.reproduction_count_down() - 1;
 				if (nextReproductionCountDown == 0) {
 					// TODO Reproduce
 					animal.set_reproduction_count_down(
-							m2::iround(SIMULATION_CARNIVORE_DEFAULT_REPRODUCTION_PERIOD_S * SIMULATION_TICKS_PER_SECOND));
+							m2::iround(CARNIVORE_DEFAULT_REPRODUCTION_PERIOD_S * SIMULATION_TICKS_PER_SECOND));
 				} else {
 					animal.set_reproduction_count_down(nextReproductionCountDown);
 				}
@@ -368,8 +367,8 @@ namespace {
 
 pb::SimulationState pinball::InitialSimulationState(const std::function<int64_t(pb::Animal_Type)>& animalAllocator) {
 	pb::SimulationState state;
-	state.set_bacteria_mass(SIMULATION_BACTERIA_LIMIT_KG / 8.0f);
-	state.set_plant_mass(SIMULATION_PLANT_LIMIT_KG / 50.0f);
+	state.set_bacteria_mass(BACTERIA_LIMIT_KG / 8.0f);
+	state.set_plant_mass(PLANT_LIMIT_KG / 50.0f);
 	for (int i = 0; i < 6; ++i) {
 		auto* animal = state.add_animals();
 		animal->set_id(animalAllocator(pb::Animal_Type_HERBIVORE));
