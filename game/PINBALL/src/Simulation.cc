@@ -207,7 +207,7 @@ namespace {
 				const auto defaultReproductionPeriodS = animalType == pb::Animal_Type_HERBIVORE
 						? HERBIVORE_DEFAULT_REPRODUCTION_PERIOD_S
 						: CARNIVORE_DEFAULT_REPRODUCTION_PERIOD_S;
-				return m2::iround(defaultReproductionPeriodS * SIMULATION_TICKS_PER_SECOND);
+				return static_cast<int64_t>(m2::iround(defaultReproductionPeriodS * SIMULATION_TICKS_PER_SECOND));
 			}();
 			// Delete the animal if the health is zero
 			if (m2::is_zero(newHealth, 0.001f)) {

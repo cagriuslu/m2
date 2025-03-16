@@ -4,6 +4,8 @@
 #include "m2/math/RectI.h"
 #include "m2/math/VecF.h"
 #include "m2/math/VecI.h"
+#include <m2g_SpriteType.pb.h>
+#include <Level.pb.h>
 
 namespace m2::level_editor {
 	class State {
