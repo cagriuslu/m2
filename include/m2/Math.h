@@ -8,14 +8,20 @@ namespace m2 {
 	constexpr float PI_DIV2 = 1.570796326794897f;
 	constexpr float SQROOT_2 = 1.414213562373095f;
 
-	uint32_t rand(uint32_t max); /// Generates numbers from set [0, max). Uses randf internally, thus shouldn't be used for large numbers.
-	uint64_t rand(uint64_t max); /// Generates numbers from set [0, max). Uses randf internally, thus shouldn't be used for large numbers.
-	uint64_t rand(); /// Generates full range 64-bit random numbers.
-	uint64_t rand_nonzero(); /// Generates full range 64-bit random numbers.
-	float randf(); /// Generates numbers from set [0.0f, 1.0f)
+	uint32_t rand(uint32_t max); /// Generates numbers from set [0, max). Uses randf internally, thus shouldn't be used for large numbers. TODO remove
+	uint64_t rand(uint64_t max); /// Generates numbers from set [0, max). Uses randf internally, thus shouldn't be used for large numbers. TODO remove
+	/// Generates numbers in [0,max). Max should be much smaller than 2^32.
+	uint32_t Random(uint32_t max);
+	/// Generates numbers in [0,max). Max should be much smaller than 2^64.
+	uint64_t Random64(uint64_t max);
+	/// Generates a 64-bit random number.
+	uint64_t Random64();
+	uint64_t rand(); /// Generates full range 64-bit random numbers. TODO remove
+	uint64_t rand_nonzero(); /// Generates full range 64-bit random numbers. TODO remove or rename
+	float randf(); /// Generates numbers from set [0.0f, 1.0f) TODO rename
 	int UniformRandom(int min, int max);
 	float UniformRandomF(float min, float max);
-	float apply_accuracy(float value, float max_swing, float accuracy); /// Returns value ± value * accuracy%
+	float apply_accuracy(float value, float max_swing, float accuracy); /// Returns value ± value * accuracy% TODO rename to something more generic
 
 	// Floating point comparisons
 

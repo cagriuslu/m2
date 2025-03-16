@@ -19,13 +19,22 @@ uint32_t m2::rand(uint32_t max) {
 uint64_t m2::rand(uint64_t max) {
 	return static_cast<uint64_t>(static_cast<double>(max) * m2::randf());
 }
-uint64_t m2::rand() {
-	if (!random_number_distribution_i) {
+uint32_t m2::Random(const uint32_t max) {
+	return Random() % max;
+}
+uint64_t m2::Random64(const uint64_t max) {
+	return Random() % max;
+}
+uint64_t m2::Random64() {
+	if (not random_number_distribution_i) {
 		// Seed with std::random_device
 		random_number_engine_i = std::make_unique<std::mt19937>(rd());
 		random_number_distribution_i = std::make_unique<std::uniform_int_distribution<uint64_t>>();
 	}
 	return (*random_number_distribution_i)(*random_number_engine_i);
+}
+uint64_t m2::rand() {
+	return Random64();
 }
 uint64_t m2::rand_nonzero() {
 	uint64_t n;

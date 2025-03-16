@@ -95,6 +95,24 @@ namespace {
 		return animal;
 	}
 
+	const pb::Animal* FindRandomHerbivore(const google::protobuf::RepeatedPtrField<pb::Animal>& animals,
+			const std::list<int64_t>& excludedAnimals) {
+		std::vector<const pb::Animal*> availableHerbivores;
+		// Gather non-excluded herbivores
+		for (const auto& animal : animals) {
+			if (animal.type() == pb::Animal_Type_HERBIVORE
+					&& std::ranges::find(excludedAnimals, animal.id()) == excludedAnimals.end()) {
+				availableHerbivores.emplace_back(&animal);
+			}
+		}
+		if (availableHerbivores.empty()) {
+			return nullptr;
+		}
+		// Select random
+		const auto index = m2::Random64(availableHerbivores.size());
+		return availableHerbivores[index];
+	}
+
 	pb::SimulationState AdvanceTickCount(const pb::SimulationState& currentState) {
 		auto nextState = currentState;
 		nextState.set_passed_tick_count(currentState.passed_tick_count() + 1);
@@ -357,6 +375,7 @@ namespace {
 		auto nextState = currentState;
 
 		std::list<pb::Animal> newAnimals;
+		std::list<int64_t> huntedHerbivores;
 		for (auto& animal : *nextState.mutable_animals()) {
 			if (animal.type() != pb::Animal::CARNIVORE) {
 				continue;
@@ -375,7 +394,16 @@ namespace {
 					const auto ticks = m2::UniformRandom(minTicks, maxTicks);
 					animal.set_hunting_count_down(ticks);
 				} else if (animal.hunting_count_down() == 1) {
-					// TODO hunt if there's an animal
+					if (const auto* victim = FindRandomHerbivore(nextState.animals(), huntedHerbivores)) {
+						// Hunt animal
+						huntedHerbivores.emplace_back(victim->id());
+						// Lose hunger
+						const auto victimMassRequiredForFullHunger = animal.mass() * CARNIVORE_HERBIVORE_MASS_REQUIRED_FOR_FULL_HUNGER_FULFILLMENT;
+						const auto victimMass = victim->mass();
+						const auto hungerToLose = victimMass / victimMassRequiredForFullHunger;
+						const auto newHunger = std::clamp(animal.hunger() - hungerToLose, 0.0f, 1.0f);
+						animal.set_hunger(newHunger);
+					}
 				} else {
 					// Decrement hunting count down
 					animal.set_hunting_count_down(animal.hunting_count_down() - 1);
@@ -404,7 +432,22 @@ namespace {
 		for (const auto& newAnimal : newAnimals) {
 			nextState.add_animals()->CopyFrom(newAnimal);
 		}
-		return nextState;
+		// Remove hunted herbivores if necessary
+		if (huntedHerbivores.empty()) {
+			return nextState;
+		} else {
+			auto nextNextState = nextState;
+			nextNextState.clear_animals();
+			for (const auto& animal : nextState.animals()) {
+				if (animal.type() == pb::Animal_Type_HERBIVORE && std::ranges::find(huntedHerbivores, animal.id()) != huntedHerbivores.end()) {
+					// Animal is hunted
+					animalReleaser(animal.id());
+				} else {
+					nextNextState.add_animals()->CopyFrom(animal);
+				}
+			}
+			return nextNextState;
+		}
 	}
 }
 

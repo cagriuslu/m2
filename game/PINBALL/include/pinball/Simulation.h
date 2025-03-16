@@ -111,7 +111,7 @@ namespace pinball {
 	/// Ratio of required herbivore mass to animal's mass to fulfill a full hunger
 	constexpr auto CARNIVORE_HERBIVORE_MASS_REQUIRED_FOR_FULL_HUNGER_FULFILLMENT = 0.8f;
 	/// Ratio of required water amount to animal's mass to fulfill a full hunger
-	constexpr auto CARNIVORE_WATER_REQUIRED_FOR_FULL_HUNGER_FULFILLMENT = 0.7f;
+	//constexpr auto CARNIVORE_WATER_REQUIRED_FOR_FULL_HUNGER_FULFILLMENT = 0.7f;
 	/// Maximum hunger allowed for enabling reproduction timer
 	constexpr auto CARNIVORE_REPRODUCTION_HUNGER_THRESHOLD = 0.5f;
 	/// Default duration after which a carnivore reproduces.
