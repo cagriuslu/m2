@@ -58,7 +58,7 @@ namespace m2 {
 			const Item& operator*() const { return *_item_ptr; }
 			const Item* operator->() const { return _item_ptr; }
 
-			[[nodiscard]] const Character& Character() const { return _character; }
+			[[nodiscard]] const Character& GetCharacter() const { return _character; }
 			[[nodiscard]] Filter GetFilter() const { return _filter; }
 			[[nodiscard]] const Item* Get() const { return _item_ptr; }
 			void Set(const Item* ptr) { _item_ptr = ptr; }

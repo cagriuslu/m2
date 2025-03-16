@@ -226,11 +226,11 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 		// Generate the text label if necessary
 		if (not gfx.textLabelRect) {
 			// Font size is the same as text height in output pixels
-			gfx.textLabelRect = M2_GAME.TextLabelCache().Create(textLabel.text(), FontSizeOfTextLabel(textLabel));
+			gfx.textLabelRect = M2_GAME.GetTextLabelCache().Create(textLabel.text(), FontSizeOfTextLabel(textLabel));
 		}
 
 		// Dim the sprite if dimming mode is enabled.
-		const bool dimmed = DimRenderingIfNecessary(gfx.owner_id(), M2_GAME.TextLabelCache().Texture());
+		const bool dimmed = DimRenderingIfNecessary(gfx.owner_id(), M2_GAME.GetTextLabelCache().Texture());
 
 		// Draw background
 		if (textLabel.background_color().a()) {
@@ -245,7 +245,7 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 
 		// If dimming was active, we need to un-dim.
 		if (dimmed) {
-			UndimRendering(M2_GAME.TextLabelCache().Texture());
+			UndimRendering(M2_GAME.GetTextLabelCache().Texture());
 		}
 	} else {
 		// This function only draws visuals

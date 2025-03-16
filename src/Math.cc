@@ -1,5 +1,6 @@
 #include <m2/Math.h>
 #include <random>
+#include <cmath>
 
 namespace {
 	std::random_device rd;
@@ -78,7 +79,7 @@ bool m2::is_one(float a, float tolerance) {
 }
 
 float m2::ClampRadiansTo2Pi(const float rads) {
-	if (const auto firstMod = std::fmodf(rads, PI_MUL2); firstMod < 0.0f) {
+	if (const auto firstMod = fmodf(rads, PI_MUL2); firstMod < 0.0f) {
 		return firstMod + PI_MUL2;
 	} else {
 		return firstMod;

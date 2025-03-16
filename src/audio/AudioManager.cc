@@ -37,7 +37,7 @@ m2::PlaybackId m2::AudioManager::Play(const Song* song, PlayPolicy policy, float
 	std::unique_lock<std::mutex> lock{playbacksMutex};
 	auto it = playbacks.Emplace(song, volume, policy);
 	SDL_PauseAudioDevice(sdlAudioDeviceId, 0);
-	return it.Id();
+	return it.GetId();
 }
 
 void m2::AudioManager::Stop(PlaybackId id) {
@@ -106,7 +106,7 @@ void m2::AudioManager::AudioCallback(MAYBE void* user_data, uint8_t* stream, int
 
 		if (it->playPolicy == PlayPolicy::ONCE && it->nextSample == 0) {
 			// Playback finished
-			audio_manager.playbacks.Free(it.Id());
+			audio_manager.playbacks.Free(it.GetId());
 		} else {
 			// Playback wrapped around and there is space in output buffer
 			copy(&*it, out_length - min_len);

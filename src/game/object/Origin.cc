@@ -10,5 +10,5 @@ m2::Id m2::obj::create_origin() {
 		Graphic::DrawCross(gfx.owner().position, SDL_Color{255, 0, 0, 255});
 	};
 
-	return it.Id();
+	return it.GetId();
 }

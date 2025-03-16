@@ -219,7 +219,7 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::SequenceNo>> m2::netw
 				auto* character = obj_it->get_character();
 				update_character(character, it->named_items, it->resources, it->attributes);
 				// Add object to the map, marked as visited
-				_server_to_local_map[it->server_object_id] = std::make_pair(obj_it.Id(), true);
+				_server_to_local_map[it->server_object_id] = std::make_pair(obj_it.GetId(), true);
 				// Delete the object details from the objects_to_be_created vector
 				it = objects_to_be_created.erase(it);
 			} else if (auto parent_it = _server_to_local_map.find(it->server_object_parent_id); parent_it != _server_to_local_map.end()) {
@@ -232,7 +232,7 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::SequenceNo>> m2::netw
 				auto* character = obj_it->get_character();
 				update_character(character, it->named_items, it->resources, it->attributes);
 				// Add object to the map, marked as visited
-				_server_to_local_map[it->server_object_id] = std::make_pair(obj_it.Id(), true);
+				_server_to_local_map[it->server_object_id] = std::make_pair(obj_it.GetId(), true);
 				// Delete the object details from the objects_to_be_created vector
 				it = objects_to_be_created.erase(it);
 			} else {

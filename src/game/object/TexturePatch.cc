@@ -21,5 +21,5 @@ m2::Id m2::obj::create_texture_patch(const VecF& pos, SDL_Texture* texture, Rect
 		SDL_RenderCopy(M2_GAME.renderer, texture, &src_rect, &dst_rect);
 	};
 
-	return it.Id();
+	return it.GetId();
 }

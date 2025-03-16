@@ -55,7 +55,7 @@ void m2g::Proxy::post_multi_player_level_client_init(MAYBE const std::string& na
 			auto client_init_result = PlayerInitOtherInstance(*it);
 			m2_succeed_or_throw_error(client_init_result);
 		}
-		multiPlayerObjectIds.emplace_back(it.Id());
+		multiPlayerObjectIds.emplace_back(it.GetId());
 		player_colors.emplace_back(generate_player_color(i));
 	}
 
@@ -65,13 +65,13 @@ void m2g::Proxy::post_multi_player_level_client_init(MAYBE const std::string& na
 		auto it = m2::create_object(std::get<m2::VecF>(merchant_positions[merchant_sprite]), m2g::pb::ObjectType::MERCHANT);
 		init_merchant(*it);
 		// Store for later
-		merchant_object_ids[merchant_sprite] = it.Id();
+		merchant_object_ids[merchant_sprite] = it.GetId();
 	}
 
 	// Add Game State Tracker object
 	auto it = m2::create_object(m2::VecF{}, m2g::pb::ObjectType::GAME_STATE_TRACKER);
 	InitGameStateTracker(*it);
-	_game_state_tracker_id = it.Id();
+	_game_state_tracker_id = it.GetId();
 
 	// Add status bar panel to the level
 	_status_bar_panel = M2_LEVEL.AddCustomNonblockingUiPanel(

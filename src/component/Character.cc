@@ -257,7 +257,7 @@ void m2::TinyCharacter::ClearAttributes() {
 }
 
 void m2::FullCharacterIteratorIncrementor(m2::Character::Iterator& it) {
-	const auto& character = dynamic_cast<const m2::FullCharacter&>(it.Character());
+	const auto& character = dynamic_cast<const m2::FullCharacter&>(it.GetCharacter());
 	auto curr_index = it.GetIndex();
 	auto filter = it.GetFilter();
 	if (std::holds_alternative<std::monostate>(filter)) {

@@ -46,5 +46,5 @@ m2::Id m2::obj::create_camera() {
 		    SoundListener{.position = M2_PLAYER.position, .direction = 0.0f, .listenAngle = PI_DIV2};
 	}
 
-	return M2_LEVEL.cameraId = it.Id();
+	return M2_LEVEL.cameraId = it.GetId();
 }

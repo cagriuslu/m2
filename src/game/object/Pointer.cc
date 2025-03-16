@@ -14,5 +14,5 @@ m2::Id m2::obj::create_pointer() {
 	//lig.dynamic_category_bits = box2d::FIXTURE_CATEGORY_OBSTACLE;
     lig.radiusM = 3.0f;
 
-    return M2_LEVEL.pointer_id = it.Id();
+    return M2_LEVEL.pointer_id = it.GetId();
 }

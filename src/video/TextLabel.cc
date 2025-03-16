@@ -47,7 +47,7 @@ void m2::DrawTextLabelIn2dWorld(const pb::TextLabel& tl, const RectI& sourceRect
 	const auto sourceRectSdl = static_cast<SDL_Rect>(sourceRect);
 	DrawTextureIn2dWorld(
 			M2_GAME.renderer,
-			M2_GAME.TextLabelCache().Texture(),
+			M2_GAME.GetTextLabelCache().Texture(),
 			&sourceRectSdl,
 			0.0f,
 			1.0f,
@@ -59,12 +59,12 @@ void m2::DrawTextLabelIn3dWorld(const pb::TextLabel& tl, const RectI& sourceRect
 	const auto sourceRectSdl = static_cast<SDL_Rect>(sourceRect);
 	DrawTextureIn3dWorld(
 			M2_GAME.renderer,
-			M2_GAME.TextLabelCache().Texture(),
+			M2_GAME.GetTextLabelCache().Texture(),
 			&sourceRectSdl,
 			M2_GAME.Dimensions().OutputPixelsPerMeter(),
 			TextLabelCenterToOriginVectorInOutputPixels(tl),
 			0.0f,
-			static_cast<VecF>(sdl::texture_dimensions(M2_GAME.TextLabelCache().Texture())),
+			static_cast<VecF>(sdl::texture_dimensions(M2_GAME.GetTextLabelCache().Texture())),
 			position,
 			z,
 			angle,

@@ -1,6 +1,8 @@
 #include <m2/network/IpAddressAndPort.h>
 #ifdef _WIN32
 #include <WinSock2.h>
+#else
+#include <netinet/in.h>
 #endif
 
 std::string m2::ToString(const network::IpAddressAndPort& ip_port) {

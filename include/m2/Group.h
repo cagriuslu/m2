@@ -39,7 +39,7 @@ namespace m2 {
 		virtual ~Group() = default;
 
 		[[nodiscard]] inline uint64_t member_count() const { return _members.Size(); }
-		inline IndexInGroup add_member(Id object_id) { return _members.Emplace(object_id).Id() & 0xFF; }
+		inline IndexInGroup add_member(Id object_id) { return _members.Emplace(object_id).GetId() & 0xFF; }
 		inline void remove_member(IndexInGroup index) { _members.FreeIndex(index); }
 	};
 }

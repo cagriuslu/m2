@@ -133,20 +133,20 @@ void m2::Object::set_group(const GroupId& group_id, IndexInGroup group_index) {
 
 m2::Physique& m2::Object::add_physique() {
 	auto phy = M2_LEVEL.physics.Emplace(id());
-	_physique_id = phy.Id();
+	_physique_id = phy.GetId();
     LOG_TRACE("Added physique component", _physique_id);
 	return *phy;
 }
 m2::Graphic& m2::Object::add_graphic() {
 	auto gfx = M2_LEVEL.graphics.Emplace(id());
-	_graphic_id = gfx.Id();
+	_graphic_id = gfx.GetId();
 	M2_LEVEL.drawList.Insert(id());
     LOG_TRACE("Added graphic component", _graphic_id);
 	return *gfx;
 }
 m2::Graphic& m2::Object::add_graphic(const m2g::pb::SpriteType spriteType) {
 	auto gfx = M2_LEVEL.graphics.Emplace(id(), M2_GAME.GetSpriteOrTextLabel(spriteType));
-	_graphic_id = gfx.Id();
+	_graphic_id = gfx.GetId();
 	M2_LEVEL.drawList.Insert(id());
 	LOG_TRACE("Added graphic component", _graphic_id);
 	return *gfx;
@@ -156,7 +156,7 @@ m2::Graphic& m2::Object::add_terrain_graphic(BackgroundLayer layer) {
 		throw M2_ERROR("Invalid background layer");
 	}
 	auto terrain_gfx = M2_LEVEL.terrainGraphics[I(layer)].Emplace(id());
-	_terrain_graphic_id = std::make_pair(terrain_gfx.Id(), layer);
+	_terrain_graphic_id = std::make_pair(terrain_gfx.GetId(), layer);
 	LOG_TRACE("Added terrain graphic component", _terrain_graphic_id);
 	return *terrain_gfx;
 }
@@ -165,31 +165,31 @@ m2::Graphic& m2::Object::add_terrain_graphic(BackgroundLayer layer, const m2g::p
 		throw M2_ERROR("Invalid background layer");
 	}
 	auto terrain_gfx = M2_LEVEL.terrainGraphics[I(layer)].Emplace(id(), M2_GAME.GetSpriteOrTextLabel(spriteType));
-	_terrain_graphic_id = std::make_pair(terrain_gfx.Id(), layer);
+	_terrain_graphic_id = std::make_pair(terrain_gfx.GetId(), layer);
 	LOG_TRACE("Added terrain graphic component", _terrain_graphic_id);
 	return *terrain_gfx;
 }
 m2::Light& m2::Object::add_light() {
 	auto light = M2_LEVEL.lights.Emplace(id());
-	_light_id = light.Id();
+	_light_id = light.GetId();
     LOG_TRACE("Added light component", _light_id);
 	return *light;
 }
 m2::SoundEmitter& m2::Object::add_sound_emitter() {
 	auto sound = M2_LEVEL.soundEmitters.Emplace(id());
-	_sound_emitter_id = sound.Id();
+	_sound_emitter_id = sound.GetId();
 	LOG_TRACE("Added sound component", _sound_emitter_id);
 	return *sound;
 }
 m2::Character& m2::Object::add_tiny_character() {
     auto character = M2_LEVEL.characters.Emplace(std::in_place_type<TinyCharacter>, id());
-    _character_id = character.Id();
+    _character_id = character.GetId();
     LOG_TRACE("Added tiny character", _character_id);
     return std::get<TinyCharacter>(*character);
 }
 m2::Character& m2::Object::add_full_character() {
     auto character = M2_LEVEL.characters.Emplace(std::in_place_type<FullCharacter>, id());
-    _character_id = character.Id();
+    _character_id = character.GetId();
     LOG_TRACE("Added full character", _character_id);
     return std::get<FullCharacter>(*character);
 }

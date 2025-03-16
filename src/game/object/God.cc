@@ -68,5 +68,5 @@ Id obj::create_god() {
 		    M2_LEVEL.stateVariant);
 	};
 
-	return it.Id();
+	return it.GetId();
 }

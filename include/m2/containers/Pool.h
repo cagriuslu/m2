@@ -44,7 +44,7 @@ namespace m2 {
 			explicit operator bool() const { return _data && _id; }
 			bool operator==(const Iterator& other) const { return _data == other._data && _id == other._id; }
 			// Accessors
-			[[nodiscard]] Id Id() const { return _id; }
+			[[nodiscard]] Id GetId() const { return _id; }
 			[[nodiscard]] T* Data() const { return _data; }
 			T* operator->() const { return _data; }
 			T& operator*() const { return *_data; }
@@ -237,7 +237,7 @@ namespace m2 {
         void Clear() {
             while (_size) {
                 auto it = begin();
-                Free(it.Id());
+                Free(it.GetId());
             }
         }
 

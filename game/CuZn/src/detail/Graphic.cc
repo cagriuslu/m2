@@ -25,17 +25,17 @@ void DrawResources(m2::Character& chr) {
 	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(sprite_type));
 
 	// Dim if necessary
-	m2::Graphic::DimRenderingIfNecessary(chr.owner_id(), M2_GAME.TextLabelCache().Texture());
+	m2::Graphic::DimRenderingIfNecessary(chr.owner_id(), M2_GAME.GetTextLabelCache().Texture());
 	m2::Graphic::DimRenderingIfNecessary(chr.owner_id(), sprite.Texture());
 	// Draw count
 	const auto& textLabel = std::get<m2::pb::TextLabel>(M2_GAME.GetSpriteOrTextLabel(count_sprite_type));
-	const auto rect = M2_GAME.TextLabelCache().Create(textLabel.text(), m2::FontSizeOfTextLabel(textLabel));
+	const auto rect = M2_GAME.GetTextLabelCache().Create(textLabel.text(), m2::FontSizeOfTextLabel(textLabel));
 	DrawTextLabelIn2dWorld(textLabel, rect, pos + m2::VecF{0.20f, 1.0f}, 0.0f);
 	// Draw resource
 	// We're not using a graphics component, so we have to draw the drop shadow ourselves.
 	sprite.DrawIn2dWorld(pos + m2::VecF{1.0f, 1.05f}, m2::pb::SpriteEffectType{m2::pb::SPRITE_EFFECT_BLURRED_DROP_SHADOW}, 0.0f);
 	sprite.DrawIn2dWorld(pos + m2::VecF{1.0f, 1.0f}, {}, 0.0f);
 	// Undim
-	m2::Graphic::UndimRendering(M2_GAME.TextLabelCache().Texture());
+	m2::Graphic::UndimRendering(M2_GAME.GetTextLabelCache().Texture());
 	m2::Graphic::UndimRendering(sprite.Texture());
 }

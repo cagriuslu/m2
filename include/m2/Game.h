@@ -30,7 +30,7 @@
 #define M2_GAME (m2::Game::Instance())
 #define M2_DEFER(f) (M2_GAME.AddDeferredAction(f))
 #define M2G_PROXY (M2_GAME.Proxy())
-#define M2_LEVEL (M2_GAME.Level())
+#define M2_LEVEL (M2_GAME.GetLevel())
 #define M2_PLAYER (*M2_LEVEL.Player())
 
 namespace m2 {
@@ -99,8 +99,8 @@ namespace m2 {
 		pb::LUT<m2::pb::Animation, Animation> animations;
 		pb::LUT<m2::pb::Song, Song> songs;
 		const Rational& font_letter_width_to_height_ratio() const { return _font_letter_width_to_height_ratio; }
-		TextLabelCache& TextLabelCache() { return *_textLabelCache; }
-		ShapeCache& ShapeCache() { return *_shapeCache; }
+		TextLabelCache& GetTextLabelCache() { return *_textLabelCache; }
+		ShapeCache& GetShapeCache() { return *_shapeCache; }
 
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////////// CONFIG ////////////////////////////////
@@ -155,7 +155,7 @@ namespace m2 {
 		void_expected LoadSheetEditor();
 		void_expected LoadBulkSheetEditor();
 		bool HasLevel() const { return static_cast<bool>(_level); }
-		Level& Level() { return *_level; }
+		Level& GetLevel() { return *_level; }
 		void UnloadLevel() { _level.reset(); ResetState(); }
 
 		// Accessors

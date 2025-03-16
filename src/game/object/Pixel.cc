@@ -18,5 +18,5 @@ m2::Id m2::obj::create_pixel(const VecF &pos, SDL_Color color) {
 		SDL_RenderFillRect(M2_GAME.renderer, &dst_rect);
 	};
 
-	return it.Id();
+	return it.GetId();
 }

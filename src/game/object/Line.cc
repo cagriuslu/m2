@@ -8,7 +8,7 @@ m2::Id m2::obj::create_vertical_line(float x, const RGBA& color) {
 		Graphic::DrawVerticalLine(x, color);
 	};
 
-	return it.Id();
+	return it.GetId();
 }
 
 m2::Id m2::obj::create_horizontal_line(float y, const RGBA& color) {
@@ -19,5 +19,5 @@ m2::Id m2::obj::create_horizontal_line(float y, const RGBA& color) {
 		Graphic::DrawHorizontalLine(y, color);
 	};
 
-	return it.Id();
+	return it.GetId();
 }

@@ -355,7 +355,7 @@ m2::void_expected m2::Level::InitAnyPlayer(
 					LOGF_TRACE("Creating tile from %d sprite at (%d,%d)...", sprite_type, x, y);
 					auto it = obj::create_tile(static_cast<BackgroundLayer>(l), VecF{x, y}, sprite_type);
 					M2G_PROXY.post_tile_create(*it, sprite_type);
-					LOG_TRACE("Created tile", it.Id());
+					LOG_TRACE("Created tile", it.GetId());
 				}
 			}
 		}
@@ -380,12 +380,12 @@ m2::void_expected m2::Level::InitAnyPlayer(
 				group = M2G_PROXY.create_group(group_id.type);
 				groups[group_id] = std::unique_ptr<Group>(group);
 			}
-			it->set_group(group_id, group->add_member(it.Id()));
+			it->set_group(group_id, group->add_member(it.GetId()));
 		}
 
 		auto load_result = M2G_PROXY.LoadForegroundObjectFromLevelBlueprint(*it);
 		m2_reflect_unexpected(load_result);
-		LOG_TRACE("Created object", it.Id());
+		LOG_TRACE("Created object", it.GetId());
 	}
 
 	if (physical_world) {

@@ -93,8 +93,8 @@ void m2::Physique::DefaultDebugDraw(Physique& phy) {
 
 				if (IsProjectionTypeParallel(M2_LEVEL.ProjectionType())) {
 					const int r = iround(M2_GAME.Dimensions().OutputPixelsPerMeter() * circleRadius);
-					const auto srcRect = static_cast<SDL_Rect>(M2_GAME.ShapeCache().Create(std::make_shared<Circle>(r)));
-					auto* texture = M2_GAME.ShapeCache().Texture();
+					const auto srcRect = static_cast<SDL_Rect>(M2_GAME.GetShapeCache().Create(std::make_shared<Circle>(r)));
+					auto* texture = M2_GAME.GetShapeCache().Texture();
 					auto screenOriginToSpriteCenter = ScreenOriginToPositionVecPx(circleCenter);
 					auto dstRect = SDL_Rect{
 							iround(screenOriginToSpriteCenter.x) - (srcRect.w / 2),

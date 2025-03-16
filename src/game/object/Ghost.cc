@@ -23,5 +23,5 @@ m2::Id m2::obj::create_ghost(const m2g::pb::SpriteType spriteType, const bool ro
 			}
 		};
 	}
-	return it.Id();
+	return it.GetId();
 }
