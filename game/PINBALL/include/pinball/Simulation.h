@@ -15,7 +15,7 @@ namespace pinball {
 	/// Maximum temperature bacteria can live without dying.
 	constexpr auto BACTERIA_DEATH_TEMPERATURE = 42.0f;
 	/// Amount of bacteria killed per second if the temperature is 1C above max.
-	constexpr auto BACTERIA_TEMPERATURE_DEATH_AMOUNT_PER_UNIT_PER_SECOND = 0.0075f;
+	constexpr auto BACTERIA_TEMPERATURE_DAMAGE_PER_CELSIUS_PER_SECOND = 0.0075f;
 	/// Percentage of bacteria killed per second naturally.
 	constexpr auto BACTERIA_NATURAL_DEATH_RATE_PER_SECOND = 0.005f;
 	/// Amount of healthy bacteria infected with diseased per 1 unit of diseased bacteria per second.
@@ -42,7 +42,7 @@ namespace pinball {
 	/// Maximum temperature plants can live without dying.
 	constexpr auto PLANT_MAX_TEMPERATURE = 48.0f;
 	/// Amount of plant killed per second if the temperature is 1C above max.
-	constexpr auto PLANT_TEMPERATURE_DEATH_AMOUNT_PER_UNIT_PER_SECOND = 1.0f;
+	constexpr auto PLANT_TEMPERATURE_DAMAGE_PER_CELCIUS_PER_SECOND = 1.0f;
 	/// Amount of healthy plant infected with diseased per 1 unit of diseased plant per second.
 	constexpr auto PLANT_DISEASE_SPREAD_RATE_PER_SECOND = 1.25f;
 	/// Percentage of diseased plant dying per second
@@ -65,7 +65,7 @@ namespace pinball {
 	/// Maximum temperature herbivores can live without losing health.
 	constexpr auto HERBIVORE_MAX_TEMPERATURE = 51.0f;
 	/// Amount of herbivore health lost per second if the temperature is 1C above max.
-	constexpr auto HERBIVORE_TEMPERATURE_DEATH_AMOUNT_PER_UNIT_PER_SECOND = 0.05f;
+	constexpr auto HERBIVORE_TEMPERATURE_DAMAGE_PER_CELSIUS_PER_SECOND = 0.05f;
 	/// Amount of herbivore health lost per second if the humidity is zero.
 	constexpr auto HERBIVORE_HUMIDITY_DEATH_AMOUNT_PER_SECOND = 0.02f;
 	/// Percentage of hunger increase per second
@@ -86,7 +86,7 @@ namespace pinball {
 	/// Maximum temperature carnivores can live without losing health.
 	constexpr auto CARNIVORE_MAX_TEMPERATURE = 55.0f;
 	/// Amount of carnivore health lost per second if the temperature is 1C above max.
-	constexpr auto CARNIVORE_TEMPERATURE_DEATH_AMOUNT_PER_UNIT_PER_SECOND = 0.075f;
+	constexpr auto CARNIVORE_TEMPERATURE_DAMAGE_PER_CELSIUS_PER_SECOND = 0.075f;
 	/// Amount of carnivore health lost per second if the humidity is zero.
 	constexpr auto CARNIVORE_HUMIDITY_DEATH_AMOUNT_PER_SECOND = 0.01f;
 	/// Percentage of hunger increase per second
