@@ -8,24 +8,21 @@ using namespace pinball;
 
 namespace {
 	float CalculatePrimitiveTemperatureDamage(const float currentMass, const float maxTemperature,
-			const float currentTemperature, const float damageExponent, const float damagePerUnitPerSecond) {
+			const float currentTemperature, const float damagePerUnitPerSecond) {
 		if (maxTemperature < currentTemperature) {
 			const auto temperatureDiff = currentTemperature - maxTemperature;
-			const auto damageFactor = powf(temperatureDiff, damageExponent);
-			const auto damageAmount = damageFactor * SIMULATION_TICK_PERIOD_S * damagePerUnitPerSecond;
+			const auto damageAmount = temperatureDiff * SIMULATION_TICK_PERIOD_S * damagePerUnitPerSecond;
 			return std::clamp(currentMass - damageAmount, 0.0f, currentMass);
 		}
 		return currentMass;
 	}
 
 	float CalculateAnimalTemperatureDamage(const float currentHealth, const float minTemperature,
-			const float maxTemperature, const float currentTemperature, const float damageExponent,
-			const float damagePerUnitPerSecond) {
+			const float maxTemperature, const float currentTemperature, const float damagePerUnitPerSecond) {
 		if (currentTemperature < minTemperature || maxTemperature < currentTemperature) {
 			const auto temperatureDiff = currentTemperature < minTemperature
 					? minTemperature - currentTemperature : currentTemperature - maxTemperature;
-			const auto damageFactor = powf(temperatureDiff, damageExponent);
-			const auto damageAmount = damageFactor * SIMULATION_TICK_PERIOD_S * damagePerUnitPerSecond;
+			const auto damageAmount = temperatureDiff * SIMULATION_TICK_PERIOD_S * damagePerUnitPerSecond;
 			return std::clamp(currentHealth - damageAmount, 0.0f, currentHealth);
 		}
 		return currentHealth;
@@ -94,7 +91,6 @@ namespace {
 		// Bacteria die at high temperatures. Healthy and diseased bacteria die at the same rate.
 		const auto bacteriaMassAfterTemperatureDeath = CalculatePrimitiveTemperatureDamage(currentState.bacteria_mass(),
 				BACTERIA_DEATH_TEMPERATURE, currentState.temperature(),
-				BACTERIA_TEMPERATURE_DEATH_EXPONENT,
 				BACTERIA_TEMPERATURE_DEATH_AMOUNT_PER_UNIT_PER_SECOND);
 		// Bacteria die naturally. Healthy and diseased bacteria die at the same rate.
 		const auto bacteriaMassAfterNaturalDeath = bacteriaMassAfterTemperatureDeath
@@ -122,7 +118,6 @@ namespace {
 		// Plants die at high temperatures. Healthy and diseased plants die at the same rate.
 		const auto plantMassAfterTemperatureDeath = CalculatePrimitiveTemperatureDamage(currentState.plant_mass(),
 				PLANT_MAX_TEMPERATURE, currentState.temperature(),
-				PLANT_TEMPERATURE_DEATH_EXPONENT,
 				PLANT_TEMPERATURE_DEATH_AMOUNT_PER_UNIT_PER_SECOND);
 		// Diseased plants kill healthy plants
 		const auto diseasedPlantMassAfterTemperatureDeath = plantMassAfterTemperatureDeath
@@ -153,14 +148,11 @@ namespace {
 					? HERBIVORE_MIN_TEMPERATURE : CARNIVORE_MIN_TEMPERATURE;
 			const auto maxTemperature = animal.type() == pb::Animal_Type_HERBIVORE
 					? HERBIVORE_MAX_TEMPERATURE : CARNIVORE_MAX_TEMPERATURE;
-			const auto temperatureDeathExponent = animal.type() == pb::Animal_Type_HERBIVORE
-					? HERBIVORE_TEMPERATURE_DEATH_EXPONENT : CARNIVORE_TEMPERATURE_DEATH_EXPONENT;
 			const auto temperatureDeathPerUnitPerSecond = animal.type() == pb::Animal_Type_HERBIVORE
 					? HERBIVORE_TEMPERATURE_DEATH_AMOUNT_PER_UNIT_PER_SECOND
 					: CARNIVORE_TEMPERATURE_DEATH_AMOUNT_PER_UNIT_PER_SECOND;
 			const auto healthAfterTemperatureDeath = CalculateAnimalTemperatureDamage(animal.health(), minTemperature,
-					maxTemperature, nextState.temperature(), temperatureDeathExponent,
-					temperatureDeathPerUnitPerSecond);
+					maxTemperature, nextState.temperature(), temperatureDeathPerUnitPerSecond);
 			// TODO lose health due to hunger
 			// Humidity
 			const auto humidityDeathPerSecond = animal.type() == pb::Animal_Type_HERBIVORE

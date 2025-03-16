@@ -14,8 +14,6 @@ namespace pinball {
 	constexpr auto BACTERIA_LIMIT_KG = 1.0f;
 	/// Maximum temperature bacteria can live without dying.
 	constexpr auto BACTERIA_DEATH_TEMPERATURE = 42.0f;
-	/// Exponent applied to temperature above the maximum temperature.
-	constexpr auto BACTERIA_TEMPERATURE_DEATH_EXPONENT = 0.5f;
 	/// Amount of bacteria killed per second if the temperature is 1C above max.
 	constexpr auto BACTERIA_TEMPERATURE_DEATH_AMOUNT_PER_UNIT_PER_SECOND = 0.0075f;
 	/// Percentage of bacteria killed per second naturally.
@@ -43,8 +41,6 @@ namespace pinball {
 	constexpr auto PLANT_LIMIT_KG = 1000.0f;
 	/// Maximum temperature plants can live without dying.
 	constexpr auto PLANT_MAX_TEMPERATURE = 48.0f;
-	/// Exponent applied to temperature above the maximum temperature.
-	constexpr auto PLANT_TEMPERATURE_DEATH_EXPONENT = 0.65f;
 	/// Amount of plant killed per second if the temperature is 1C above max.
 	constexpr auto PLANT_TEMPERATURE_DEATH_AMOUNT_PER_UNIT_PER_SECOND = 1.0f;
 	/// Amount of healthy plant infected with diseased per 1 unit of diseased plant per second.
@@ -68,8 +64,6 @@ namespace pinball {
 	constexpr auto HERBIVORE_MIN_TEMPERATURE = 8.0f;
 	/// Maximum temperature herbivores can live without losing health.
 	constexpr auto HERBIVORE_MAX_TEMPERATURE = 51.0f;
-	/// Exponent applied to temperature above the maximum temperature.
-	constexpr auto HERBIVORE_TEMPERATURE_DEATH_EXPONENT = 1.0f;
 	/// Amount of herbivore health lost per second if the temperature is 1C above max.
 	constexpr auto HERBIVORE_TEMPERATURE_DEATH_AMOUNT_PER_UNIT_PER_SECOND = 0.05f;
 	/// Amount of herbivore health lost per second if the humidity is zero.
@@ -91,8 +85,6 @@ namespace pinball {
 	constexpr auto CARNIVORE_MIN_TEMPERATURE = 12.0f;
 	/// Maximum temperature carnivores can live without losing health.
 	constexpr auto CARNIVORE_MAX_TEMPERATURE = 55.0f;
-	/// Exponent applied to temperature above the maximum temperature.
-	constexpr auto CARNIVORE_TEMPERATURE_DEATH_EXPONENT = 1.0f;
 	/// Amount of carnivore health lost per second if the temperature is 1C above max.
 	constexpr auto CARNIVORE_TEMPERATURE_DEATH_AMOUNT_PER_UNIT_PER_SECOND = 0.075f;
 	/// Amount of carnivore health lost per second if the humidity is zero.
@@ -125,10 +117,6 @@ namespace pinball {
 		float decompositionRate; // [0,1]
 		/// Ratio of current photosynthesis to max photosynthesis that could be achieved by all existing plants.
 		float photosynthesisRate; // [0,1]
-		/// Ratio of plant mass eaten by herbivores to max plant mass that could be eaten by all existing herbivores.
-		float herbivoreSatisfaction; // [0,1]
-		/// Ratio of herbivore count eaten by carnivores to max herbivore count that could be eaten by all existing carnivores.
-		float carnivoreSatisfaction; // [0,1]
 	};
 	DerivedSimulationState DeriveSimulationState(const pb::SimulationState& currentState);
 }
