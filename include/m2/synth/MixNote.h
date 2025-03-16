@@ -28,7 +28,7 @@ namespace m2::synth {
 				case pb::SAWTOOTH:
 					return foc < 0.5f ? (2.0f * foc) : (2.0f * foc - 2.0f);
 				case pb::NOISE:
-					return 2.0f * randf() - 1.0f;
+					return 2.0f * RandomF() - 1.0f;
 				default:
 					throw M2_ERROR("Unknown sound wave shape");
 			}

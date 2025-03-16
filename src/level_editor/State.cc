@@ -166,7 +166,7 @@ void m2::level_editor::State::PasteBackground(const VecI& position) {
 }
 void m2::level_editor::State::RandomFillBackground(const RectI& area, const std::vector<m2g::pb::SpriteType>& spriteSet) {
 	area.for_each_cell([&](const VecI& pos) {
-		const auto index = rand(static_cast<uint32_t>(spriteSet.size()));
+		const auto index = Random(spriteSet.size());
 		PaintBackground(pos, spriteSet[index]);
 	});
 }

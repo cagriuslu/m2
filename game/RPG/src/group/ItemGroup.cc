@@ -9,7 +9,7 @@ rpg::ItemGroup::ItemGroup(std::initializer_list<std::pair<m2g::pb::ItemType, flo
 		total_prob += item_prob.second;
 	}
 	// Roll the dice
-	float weight = m2::randf() * total_prob;
+	float weight = m2::RandomF() * total_prob;
 	// Search for the item
 	m2g::pb::ItemType item{};
 	float accumulator{};
@@ -24,7 +24,7 @@ rpg::ItemGroup::ItemGroup(std::initializer_list<std::pair<m2g::pb::ItemType, flo
 }
 
 std::optional<m2g::pb::ItemType> rpg::ItemGroup::pop_item() {
-	if (_item && m2::rand(member_count()) == 0) {
+	if (_item && m2::Random64(member_count()) == 0) {
 		auto item = *_item;
 		_item.reset();
 		return item;

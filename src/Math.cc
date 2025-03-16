@@ -13,17 +13,11 @@ namespace {
 	std::unique_ptr<std::uniform_int_distribution<uint64_t>> random_number_distribution_i;
 }
 
-uint32_t m2::rand(uint32_t max) {
-	return static_cast<uint32_t>(static_cast<float>(max) * m2::randf());
-}
-uint64_t m2::rand(uint64_t max) {
-	return static_cast<uint64_t>(static_cast<double>(max) * m2::randf());
-}
 uint32_t m2::Random(const uint32_t max) {
-	return Random() % max;
+	return Random64() % max;
 }
 uint64_t m2::Random64(const uint64_t max) {
-	return Random() % max;
+	return Random64() % max;
 }
 uint64_t m2::Random64() {
 	if (not random_number_distribution_i) {
@@ -33,15 +27,12 @@ uint64_t m2::Random64() {
 	}
 	return (*random_number_distribution_i)(*random_number_engine_i);
 }
-uint64_t m2::rand() {
-	return Random64();
-}
-uint64_t m2::rand_nonzero() {
+uint64_t m2::RandomNonZero64() {
 	uint64_t n;
-	while ((n = ::m2::rand()) == 0) {}
+	while ((n = Random64()) == 0) {}
 	return n;
 }
-float m2::randf() {
+float m2::RandomF() {
 	if (!random_number_distribution_f) {
 		// Seed with std::random_device
 		random_number_engine_f = std::make_unique<std::mt19937>(rd());
@@ -53,19 +44,19 @@ int m2::UniformRandom(const int min, const int max) {
 	if (max < min) {
 		throw M2_ERROR("Max is smaller than minimum");
 	}
-	return min + iround((max - min) * randf());
+	return min + iround((max - min) * RandomF());
 }
 float m2::UniformRandomF(const float min, const float max) {
 	if (max < min) {
 		throw M2_ERROR("Max is smaller than minimum");
 	}
-	return min + (max - min) * randf();
+	return min + (max - min) * RandomF();
 }
 float m2::apply_accuracy(float value, float max_swing, float accuracy) {
 	if (accuracy == 1.0f) {
 		return value;
 	}
-	return value + max_swing * (2.0f * randf() - 1.0f) * (1.0f - accuracy);
+	return value + max_swing * (2.0f * RandomF() - 1.0f) * (1.0f - accuracy);
 }
 
 bool m2::is_near(float a, float b, float tolerance) {

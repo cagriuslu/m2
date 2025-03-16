@@ -6,7 +6,8 @@
 #include <m2/network/TcpSocketManager.h>
 
 m2::network::detail::BaseClientThread::BaseClientThread(mplayer::Type type, std::string addr, bool ping_broadcast)
-	: _type(type), _addr(std::move(addr)), _ping_broadcast(ping_broadcast), _ready_token(m2::rand_nonzero()), _thread(BaseClientThread::base_client_thread_func, this) {
+		: _type(type), _addr(std::move(addr)), _ping_broadcast(ping_broadcast), _ready_token(RandomNonZero64()),
+		_thread(base_client_thread_func, this) {
 	LOG_INFO("Constructing ClientThread with ready-token", _ready_token);
 }
 

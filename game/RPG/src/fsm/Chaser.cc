@@ -4,7 +4,7 @@
 
 namespace {
 	float random_alarm_duration(float recalc_period) {
-		return recalc_period / 2.0f + recalc_period * m2::randf() * 1.5f;
+		return recalc_period / 2.0f + recalc_period * m2::RandomF() * 1.5f;
 	}
 
 	m2::Path::const_reverse_iterator reverse_find_first_local_min(const m2::Path& list, const m2::VecF& pos) {
