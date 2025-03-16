@@ -66,6 +66,8 @@ namespace pinball {
 	constexpr auto HERBIVORE_MAX_TEMPERATURE = 51.0f;
 	/// Amount of herbivore health lost per second if the temperature is 1C above max.
 	constexpr auto HERBIVORE_TEMPERATURE_DAMAGE_PER_CELSIUS_PER_SECOND = 0.05f;
+	/// Amount of health lost per second if hunger is maximum
+	constexpr auto HERBIVORE_HUNGER_DAMAGE_PER_SECOND = 0.1f;
 	/// Amount of herbivore health lost per second if the humidity is zero.
 	constexpr auto HERBIVORE_HUMIDITY_DEATH_AMOUNT_PER_SECOND = 0.02f;
 	/// Percentage of hunger increase per second
@@ -87,6 +89,8 @@ namespace pinball {
 	constexpr auto CARNIVORE_MAX_TEMPERATURE = 55.0f;
 	/// Amount of carnivore health lost per second if the temperature is 1C above max.
 	constexpr auto CARNIVORE_TEMPERATURE_DAMAGE_PER_CELSIUS_PER_SECOND = 0.075f;
+	/// Amount of health lost per second if hunger is maximum
+	constexpr auto CARNIVORE_HUNGER_DAMAGE_PER_SECOND = 0.1f;
 	/// Amount of carnivore health lost per second if the humidity is zero.
 	constexpr auto CARNIVORE_HUMIDITY_DEATH_AMOUNT_PER_SECOND = 0.01f;
 	/// Percentage of hunger increase per second

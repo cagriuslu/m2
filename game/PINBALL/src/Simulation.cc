@@ -17,24 +17,21 @@ namespace {
 		return currentMass;
 	}
 
-	float CalculateAnimalTemperatureDamage(const float currentHealth, const float minTemperature,
+	float CalculateAnimalTemperatureDamage(const float minTemperature,
 			const float maxTemperature, const float currentTemperature, const float damagePerUnitPerSecond) {
 		if (currentTemperature < minTemperature || maxTemperature < currentTemperature) {
 			const auto temperatureDiff = currentTemperature < minTemperature
 					? minTemperature - currentTemperature : currentTemperature - maxTemperature;
-			const auto damageAmount = temperatureDiff * SIMULATION_TICK_PERIOD_S * damagePerUnitPerSecond;
-			return std::clamp(currentHealth - damageAmount, 0.0f, currentHealth);
+			return temperatureDiff * SIMULATION_TICK_PERIOD_S * damagePerUnitPerSecond;
 		}
-		return currentHealth;
+		return 0.0f;
 	}
 
-	float CalculateAnimalHumidityDamage(const float currentHealth, const float currentWaterMass,
-			const float damagePerSecond) {
+	float CalculateAnimalHumidityDamage(const float currentWaterMass, const float damagePerSecond) {
 		if (m2::is_zero(currentWaterMass, 0.001f)) {
-			const auto damageAmount = damagePerSecond * SIMULATION_TICK_PERIOD_S;
-			return std::clamp(currentHealth - damageAmount, 0.0f, currentHealth);
+			return damagePerSecond * SIMULATION_TICK_PERIOD_S;
 		}
-		return currentHealth;
+		return 0.0f;
 	}
 
 	/// Returns new healthy mass, and new diseased mass
@@ -143,43 +140,57 @@ namespace {
 		// Animals lose health at cold, high temperatures, and zero humidity. Clear and recreate animals.
 		nextState.clear_animals();
 		for (const auto& animal : currentState.animals()) {
-			// Temperature
-			const auto minTemperature = animal.type() == pb::Animal_Type_HERBIVORE
-					? HERBIVORE_MIN_TEMPERATURE : CARNIVORE_MIN_TEMPERATURE;
-			const auto maxTemperature = animal.type() == pb::Animal_Type_HERBIVORE
-					? HERBIVORE_MAX_TEMPERATURE : CARNIVORE_MAX_TEMPERATURE;
-			const auto temperatureDeathPerUnitPerSecond = animal.type() == pb::Animal_Type_HERBIVORE
-					? HERBIVORE_TEMPERATURE_DAMAGE_PER_CELSIUS_PER_SECOND
-					: CARNIVORE_TEMPERATURE_DAMAGE_PER_CELSIUS_PER_SECOND;
-			const auto healthAfterTemperatureDeath = CalculateAnimalTemperatureDamage(animal.health(), minTemperature,
-					maxTemperature, nextState.temperature(), temperatureDeathPerUnitPerSecond);
-			// TODO lose health due to hunger
+			// Temperature damage
+			const auto temperatureDamage = [animalType = animal.type(), temperature = currentState.temperature()] {
+				const auto minTemperature = animalType == pb::Animal_Type_HERBIVORE
+						? HERBIVORE_MIN_TEMPERATURE : CARNIVORE_MIN_TEMPERATURE;
+				const auto maxTemperature = animalType == pb::Animal_Type_HERBIVORE
+						? HERBIVORE_MAX_TEMPERATURE : CARNIVORE_MAX_TEMPERATURE;
+				const auto temperatureDeathPerUnitPerSecond = animalType == pb::Animal_Type_HERBIVORE
+						? HERBIVORE_TEMPERATURE_DAMAGE_PER_CELSIUS_PER_SECOND
+						: CARNIVORE_TEMPERATURE_DAMAGE_PER_CELSIUS_PER_SECOND;
+				return CalculateAnimalTemperatureDamage(minTemperature, maxTemperature,
+						temperature, temperatureDeathPerUnitPerSecond);
+			}();
+			// Hunger
+			const auto hungerDamage = [hunger = animal.hunger(), animalType = animal.type()] {
+				if (m2::is_one(hunger, 0.001f)) {
+					const auto hungerDamagePerSecond = animalType == pb::Animal_Type_HERBIVORE
+							? HERBIVORE_HUNGER_DAMAGE_PER_SECOND : CARNIVORE_HUNGER_DAMAGE_PER_SECOND;
+					return hungerDamagePerSecond * SIMULATION_TICK_PERIOD_S;
+				}
+				return 0.0f;
+			}();
 			// Humidity
-			const auto humidityDeathPerSecond = animal.type() == pb::Animal_Type_HERBIVORE
+			const auto humidityDamage = [animalType = animal.type(), waterMass = currentState.water_mass()] {
+				const auto humidityDeathPerSecond = animalType == pb::Animal_Type_HERBIVORE
 					? HERBIVORE_HUMIDITY_DEATH_AMOUNT_PER_SECOND
 					: CARNIVORE_HUMIDITY_DEATH_AMOUNT_PER_SECOND;
-			const auto healthAfterTemperatureAndHumidityDeath = CalculateAnimalHumidityDamage(
-					healthAfterTemperatureDeath, nextState.water_mass(), humidityDeathPerSecond);
+				return CalculateAnimalHumidityDamage(waterMass, humidityDeathPerSecond);
+			}();
+			// Calculate health after damages
+			const auto newHealth = std::clamp(animal.health() - temperatureDamage - hungerDamage - humidityDamage, 0.0f,
+					1.0f);
 			// Reset reproduction count down if any health is lost
-			int64_t reproductionCountDownAfterTemperatureDeath;
-			if (m2::is_equal(animal.health(), healthAfterTemperatureAndHumidityDeath, 0.001f)) {
-				reproductionCountDownAfterTemperatureDeath = animal.reproduction_count_down();
-			} else {
-				const auto defaultReproductionPeriodS = animal.type() == pb::Animal_Type_HERBIVORE
+			const auto newReproductionCountDown = [currHealthy = animal.health(), newHealth,
+					currReproductionCountDown = animal.reproduction_count_down(), animalType = animal.type()] {
+				if (m2::is_equal(currHealthy, newHealth, 0.001f)) {
+					return currReproductionCountDown;
+				}
+				const auto defaultReproductionPeriodS = animalType == pb::Animal_Type_HERBIVORE
 						? HERBIVORE_DEFAULT_REPRODUCTION_PERIOD_S
 						: CARNIVORE_DEFAULT_REPRODUCTION_PERIOD_S;
-				reproductionCountDownAfterTemperatureDeath = m2::iround(defaultReproductionPeriodS
-						* SIMULATION_TICKS_PER_SECOND);
-			}
+				return m2::iround(defaultReproductionPeriodS * SIMULATION_TICKS_PER_SECOND);
+			}();
 			// Delete the animal if the health is zero
-			if (healthAfterTemperatureAndHumidityDeath < 0.001f) {
+			if (m2::is_zero(newHealth, 0.001f)) {
 				animalReleaser(animal.id());
 				// Dead animals become waste mass. Eaten animals don't.
 				nextState.set_waste_mass(nextState.waste_mass() + animal.mass());
 			} else {
 				pb::Animal animalAfterDeath = animal;
-				animalAfterDeath.set_health(healthAfterTemperatureAndHumidityDeath);
-				animalAfterDeath.set_reproduction_count_down(reproductionCountDownAfterTemperatureDeath);
+				animalAfterDeath.set_health(newHealth);
+				animalAfterDeath.set_reproduction_count_down(newReproductionCountDown);
 				nextState.add_animals()->CopyFrom(animal);
 			}
 		}
