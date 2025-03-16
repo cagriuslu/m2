@@ -3,6 +3,9 @@
 #include <m2/Meta.h>
 
 namespace pinball {
+	using AnimalAllocator = std::function<int64_t(pb::Animal_Type)>;
+	using AnimalReleaser = std::function<void(int64_t)>;
+
 	constexpr auto SIMULATION_TICKS_PER_SECOND = 10.0f;
 	constexpr auto SIMULATION_TICK_PERIOD_S = 1.0f / SIMULATION_TICKS_PER_SECOND;
 	const auto SIMULATION_TICK_PERIOD_TICKS = m2::iround(SIMULATION_TICK_PERIOD_S * 1000.0f);
@@ -82,6 +85,10 @@ namespace pinball {
 	constexpr auto HERBIVORE_REPRODUCTION_HUNGER_THRESHOLD = 0.5f;
 	/// Default duration after which a herbivore reproduces.
 	constexpr auto HERBIVORE_DEFAULT_REPRODUCTION_PERIOD_S = 25.0f;
+	/// Default herbivore mass
+	constexpr auto HERBIVORE_MASS = 0.35f;
+	/// Default herbivore mass variance
+	constexpr auto HERBIVORE_MASS_VARIANCE = 0.05f;
 
 	/// Minimum temperature carnivores can live without losing health.
 	constexpr auto CARNIVORE_MIN_TEMPERATURE = 12.0f;
@@ -109,12 +116,16 @@ namespace pinball {
 	constexpr auto CARNIVORE_REPRODUCTION_HUNGER_THRESHOLD = 0.5f;
 	/// Default duration after which a carnivore reproduces.
 	constexpr auto CARNIVORE_DEFAULT_REPRODUCTION_PERIOD_S = 55.0f;
+	/// Default carnivore mass
+	constexpr auto CARNIVORE_MASS = 2.0f;
+	/// Default carnivore mass variance
+	constexpr auto CARNIVORE_MASS_VARIANCE = 0.25f;
 
-	pb::SimulationState InitialSimulationState(const std::function<int64_t(pb::Animal_Type)>& animalAllocator);
+	pb::SimulationState InitialSimulationState(const AnimalAllocator& animalAllocator);
 
 	/// Advances the simulation by one tick.
 	pb::SimulationState AdvanceSimulation(const pb::SimulationState& currentState, const pb::SimulationInputs& inputs,
-			const std::function<int64_t(pb::Animal_Type)>& animalAllocator, const std::function<void(int64_t)>& animalReleaser);
+			const AnimalAllocator& animalAllocator, const AnimalReleaser& animalReleaser);
 
 	struct DerivedSimulationState {
 		/// Ratio of current decomposition to max decomposition that could be achieved by all existing bacteria.

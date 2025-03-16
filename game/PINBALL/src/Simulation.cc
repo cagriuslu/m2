@@ -3,6 +3,7 @@
 #include <m2/Math.h>
 #include <m2/Meta.h>
 #include <m2/Log.h>
+#include <list>
 
 using namespace pinball;
 
@@ -66,6 +67,32 @@ namespace {
 
 	float CalculateHungerAfterIncrease(const float currentHunger, const float hungerIncreasePerSecond) {
 		return std::clamp(currentHunger + hungerIncreasePerSecond * SIMULATION_TICK_PERIOD_S, currentHunger, 1.0f);
+	}
+
+	pb::Animal CreateHerbivore(const AnimalAllocator& animalAllocator) {
+		pb::Animal animal;
+		animal.set_id(animalAllocator(pb::Animal_Type_HERBIVORE));
+		animal.set_type(pb::Animal_Type_HERBIVORE);
+		animal.set_mass(m2::UniformRandomF(HERBIVORE_MASS - HERBIVORE_MASS_VARIANCE,
+				HERBIVORE_MASS + HERBIVORE_MASS_VARIANCE));
+		animal.set_health(1.0f);
+		animal.set_hunger(0.25f);
+		animal.set_reproduction_count_down(m2::iround(HERBIVORE_DEFAULT_REPRODUCTION_PERIOD_S
+				* SIMULATION_TICKS_PER_SECOND));
+		return animal;
+	}
+
+	pb::Animal CreateCarnivore(const AnimalAllocator& animalAllocator) {
+		pb::Animal animal;
+		animal.set_id(animalAllocator(pb::Animal_Type_CARNIVORE));
+		animal.set_type(pb::Animal_Type_CARNIVORE);
+		animal.set_mass(m2::UniformRandomF(CARNIVORE_MASS - CARNIVORE_MASS_VARIANCE,
+				CARNIVORE_MASS + CARNIVORE_MASS_VARIANCE));
+		animal.set_health(1.0f);
+		animal.set_hunger(0.25f);
+		animal.set_reproduction_count_down(m2::iround(CARNIVORE_DEFAULT_REPRODUCTION_PERIOD_S
+				* SIMULATION_TICKS_PER_SECOND));
+		return animal;
 	}
 
 	pb::SimulationState AdvanceTickCount(const pb::SimulationState& currentState) {
@@ -135,7 +162,7 @@ namespace {
 	}
 
 	pb::SimulationState AdvanceAnimalDeaths(const pb::SimulationState& currentState,
-			const std::function<void(int64_t)>& animalReleaser) {
+			const AnimalReleaser& animalReleaser) {
 		auto nextState = currentState;
 		// Animals lose health at cold, high temperatures, and zero humidity. Clear and recreate animals.
 		nextState.clear_animals();
@@ -271,8 +298,10 @@ namespace {
 		return nextState;
 	}
 
-	pb::SimulationState AdvanceHerbivoreGrowth(const pb::SimulationState& currentState, const std::function<int64_t(pb::Animal_Type)>& animalAllocator) {
+	pb::SimulationState AdvanceHerbivoreGrowth(const pb::SimulationState& currentState, const AnimalAllocator& animalAllocator) {
 		auto nextState = currentState;
+
+		std::list<pb::Animal> newAnimals;
 		for (auto& animal : *nextState.mutable_animals()) {
 			if (animal.type() != pb::Animal::HERBIVORE) {
 				continue;
@@ -306,21 +335,28 @@ namespace {
 				animal.set_reproduction_count_down(
 						m2::iround(HERBIVORE_DEFAULT_REPRODUCTION_PERIOD_S * SIMULATION_TICKS_PER_SECOND));
 			} else {
-				const auto nextReproductionCountDown = animal.reproduction_count_down() - 1;
-				if (nextReproductionCountDown == 0) {
-					// TODO Reproduce
-					animal.set_reproduction_count_down(
-							m2::iround(HERBIVORE_DEFAULT_REPRODUCTION_PERIOD_S * SIMULATION_TICKS_PER_SECOND));
+				if (const auto nextReproductionCountDown = animal.reproduction_count_down() - 1;
+						nextReproductionCountDown == 0) {
+					// Reproduce
+					newAnimals.emplace_back(CreateHerbivore(animalAllocator));
+					animal.set_reproduction_count_down(m2::iround(HERBIVORE_DEFAULT_REPRODUCTION_PERIOD_S
+							* SIMULATION_TICKS_PER_SECOND));
 				} else {
 					animal.set_reproduction_count_down(nextReproductionCountDown);
 				}
 			}
 		}
+		// Add new animals
+		for (const auto& newAnimal : newAnimals) {
+			nextState.add_animals()->CopyFrom(newAnimal);
+		}
 		return nextState;
 	}
 
-	pb::SimulationState AdvanceCarnivoreGrowth(const pb::SimulationState& currentState, const std::function<int64_t(pb::Animal_Type)>& animalAllocator, const std::function<void(int64_t)>& animalReleaser) {
+	pb::SimulationState AdvanceCarnivoreGrowth(const pb::SimulationState& currentState, const AnimalAllocator& animalAllocator, const AnimalReleaser& animalReleaser) {
 		auto nextState = currentState;
+
+		std::list<pb::Animal> newAnimals;
 		for (auto& animal : *nextState.mutable_animals()) {
 			if (animal.type() != pb::Animal::CARNIVORE) {
 				continue;
@@ -354,21 +390,25 @@ namespace {
 				animal.set_reproduction_count_down(
 						m2::iround(CARNIVORE_DEFAULT_REPRODUCTION_PERIOD_S * SIMULATION_TICKS_PER_SECOND));
 			} else {
-				const auto nextReproductionCountDown = animal.reproduction_count_down() - 1;
-				if (nextReproductionCountDown == 0) {
-					// TODO Reproduce
-					animal.set_reproduction_count_down(
-							m2::iround(CARNIVORE_DEFAULT_REPRODUCTION_PERIOD_S * SIMULATION_TICKS_PER_SECOND));
+				if (const auto nextReproductionCountDown = animal.reproduction_count_down() - 1;
+						nextReproductionCountDown == 0) {
+					newAnimals.emplace_back(CreateCarnivore(animalAllocator));
+					animal.set_reproduction_count_down(m2::iround(CARNIVORE_DEFAULT_REPRODUCTION_PERIOD_S
+							* SIMULATION_TICKS_PER_SECOND));
 				} else {
 					animal.set_reproduction_count_down(nextReproductionCountDown);
 				}
 			}
 		}
+		// Add new animals
+		for (const auto& newAnimal : newAnimals) {
+			nextState.add_animals()->CopyFrom(newAnimal);
+		}
 		return nextState;
 	}
 }
 
-pb::SimulationState pinball::InitialSimulationState(const std::function<int64_t(pb::Animal_Type)>& animalAllocator) {
+pb::SimulationState pinball::InitialSimulationState(const AnimalAllocator& animalAllocator) {
 	pb::SimulationState state;
 	state.set_bacteria_mass(BACTERIA_LIMIT_KG / 8.0f);
 	state.set_plant_mass(PLANT_LIMIT_KG / 50.0f);
@@ -389,7 +429,7 @@ pb::SimulationState pinball::InitialSimulationState(const std::function<int64_t(
 }
 
 pb::SimulationState pinball::AdvanceSimulation(const pb::SimulationState& currentState, const pb::SimulationInputs& inputs,
-	const std::function<int64_t(pb::Animal_Type)>& animalAllocator, const std::function<void(int64_t)>& animalReleaser) {
+	const AnimalAllocator& animalAllocator, const AnimalReleaser& animalReleaser) {
 	LOG_DEBUG("Advancing simulation");
 	const auto stateAfterTickCount = AdvanceTickCount(currentState);
 	const auto stateAfterEnvironment = AdvanceEnvironment(stateAfterTickCount, inputs);
