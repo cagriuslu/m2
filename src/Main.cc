@@ -12,6 +12,7 @@
 using namespace m2;
 
 int main(const int argc, char **argv) {
+	StoreInitialStackPosition();
 	SetThreadNameForLogging("MN");
 	INFO_FN();
 

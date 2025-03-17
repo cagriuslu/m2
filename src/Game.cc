@@ -416,19 +416,18 @@ void m2::Game::HandleConsoleEvent() {
 void m2::Game::HandleMenuEvent() {
 	if (events.pop_key_press(Key::MENU)) {
 		// Select the correct pause menu
-		const UiPanelBlueprint* PauseMenuBlueprint{};
-		if (std::holds_alternative<splayer::State>(Level().stateVariant)) {
-			PauseMenuBlueprint = _proxy.PauseMenuBlueprint();
-		} else if (std::holds_alternative<level_editor::State>(Level().stateVariant)) {
-			PauseMenuBlueprint = nullptr;
-		} else if (std::holds_alternative<sheet_editor::State>(Level().stateVariant)) {
-			PauseMenuBlueprint = &sheet_editor_main_menu;
-		} else if (std::holds_alternative<bulk_sheet_editor::State>(Level().stateVariant)) {
-			PauseMenuBlueprint = nullptr;
+		const UiPanelBlueprint* pauseMenuBlueprint{};
+		if (std::holds_alternative<splayer::State>(GetLevel().stateVariant)) {
+			pauseMenuBlueprint = _proxy.PauseMenuBlueprint();
+		} else if (std::holds_alternative<level_editor::State>(GetLevel().stateVariant)) {
+			pauseMenuBlueprint = nullptr;
+		} else if (std::holds_alternative<sheet_editor::State>(GetLevel().stateVariant)) {
+			pauseMenuBlueprint = &sheet_editor_main_menu;
+		} else if (std::holds_alternative<bulk_sheet_editor::State>(GetLevel().stateVariant)) {
+			pauseMenuBlueprint = nullptr;
 		}
-
 		// Execute pause menu if found, exit if QUIT is returned
-		if (PauseMenuBlueprint && UiPanel::create_and_run_blocking(PauseMenuBlueprint).IsQuit()) {
+		if (pauseMenuBlueprint && UiPanel::create_and_run_blocking(pauseMenuBlueprint).IsQuit()) {
 			quit = true;
 		}
 	}
@@ -896,8 +895,8 @@ const m2::VecF& m2::Game::ScreenCenterToMousePositionM() const {
 
 m2::sdl::TextureUniquePtr m2::Game::DrawGameToTexture(m2::VecF camera_position) {
 	// Temporarily change camera position
-	auto prev_camera_position = Level().Camera()->position;
-	Level().Camera()->position = camera_position;
+	auto prev_camera_position = GetLevel().Camera()->position;
+	GetLevel().Camera()->position = camera_position;
 
 	// Create an empty render target
 	auto render_target = sdl::create_drawable_texture_of_screen_size();
@@ -916,7 +915,7 @@ m2::sdl::TextureUniquePtr m2::Game::DrawGameToTexture(m2::VecF camera_position) 
 	SDL_SetRenderTarget(renderer, prev_render_target);
 
 	// Reinstate old camera position
-	Level().Camera()->position = prev_camera_position;
+	GetLevel().Camera()->position = prev_camera_position;
 
 	return render_target;
 }
