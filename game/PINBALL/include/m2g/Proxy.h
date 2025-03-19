@@ -26,7 +26,13 @@ namespace m2g {
 
 		void OnPostStep();
 
+		// Accessors
+
 		const pinball::pb::SimulationState& SimulationState() const { return *_lastSimulationState; }
 		const pinball::pb::SimulationInputs& SimulationInputs() const { return _simulationInputs; }
+
+		// Modifiers
+
+		pinball::pb::SimulationInputs& MutableSimulationInputs() { return _simulationInputs; }
 	};
 }  // namespace m2g

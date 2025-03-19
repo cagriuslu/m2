@@ -1,4 +1,5 @@
 syntax = "proto3";
 package m2g.pb;
 
+// TODO this can be replaced with abstract class under Proxy
 message InteractionData {}

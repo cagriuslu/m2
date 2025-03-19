@@ -1,0 +1,13 @@
+syntax = "proto3";
+package m2.pb;
+
+import "m2g_KeyType.proto";
+
+message Key {
+  m2g.pb.KeyType type = 1;
+  repeated int32 sdl_scancodes = 2;
+}
+
+message Keys {
+  repeated Key keys = 1;
+}

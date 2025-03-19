@@ -1,0 +1,20 @@
+syntax = "proto3";
+package m2g.pb;
+
+enum KeyType {
+  // Default buttons
+  NO_KEY = 0;
+  PAUSE = 1;
+  CONSOLE = 2;
+  BACKSPACE = 3;
+  RETURN = 4;
+  ZOOM_OUT = 5;
+  ZOOM_IN = 6;
+
+  LEFT_FLIPPER = 10;
+  RIGHT_FLIPPER = 11;
+
+  TOGGLE_LIGHT = 20;
+  ADD_WATER = 21;
+  TOGGLE_HEATER = 22;
+}

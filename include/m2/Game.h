@@ -25,6 +25,7 @@
 #include <vector>
 #include "math/Hash.h"
 #include "GameDimensions.h"
+#include <m2g_KeyType.pb.h>
 #include <m2/video/Shape.h>
 
 #define M2_GAME (m2::Game::Instance())
@@ -95,9 +96,11 @@ namespace m2 {
 		std::optional<SpriteEffectsSheet> spriteEffectsSheet;
 		std::vector<m2g::pb::SpriteType> level_editor_background_sprites;
 		std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> object_main_sprites;
-		pb::LUT<m2::pb::Item, NamedItem> named_items;
-		pb::LUT<m2::pb::Animation, Animation> animations;
-		pb::LUT<m2::pb::Song, Song> songs;
+		pb::LUT<pb::Item, NamedItem> named_items;
+		pb::LUT<pb::Animation, Animation> animations;
+		pb::LUT<pb::Song, Song> songs;
+		std::multimap<m2g::pb::KeyType, SDL_Scancode> keyToScancodeMap;
+		std::map<SDL_Scancode, m2g::pb::KeyType> scancodeToKeyMap;
 		const Rational& font_letter_width_to_height_ratio() const { return _font_letter_width_to_height_ratio; }
 		TextLabelCache& GetTextLabelCache() { return *_textLabelCache; }
 		ShapeCache& GetShapeCache() { return *_shapeCache; }

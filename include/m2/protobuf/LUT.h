@@ -6,7 +6,7 @@
 #include <filesystem>
 
 namespace m2::pb {
-	template <typename ProtoItemT, typename LoadedItemT>
+	template <typename ProtoItemT, typename LoadedItemT = int>
 	class LUT {
 		std::vector<LoadedItemT> _vector;
 

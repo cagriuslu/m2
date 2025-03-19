@@ -15,7 +15,9 @@
 #include <filesystem>
 #include <ranges>
 #include "m2/component/Graphic.h"
+#include <Key.pb.h>
 #include <m2/ui/UiAction.h>
+#include <m2/game/Key.h>
 
 m2::Game* m2::Game::_instance;
 
@@ -136,17 +138,26 @@ m2::Game::Game() {
 	spriteSheets = SpriteSheet::LoadSpriteSheets(*sheets_pb, renderer, _proxy.lightning);
 	_sprites = LoadSprites(spriteSheets, sheets_pb->text_labels(), *spriteEffectsSheet, _proxy.lightning);
 	LOG_INFO("Loaded sprites", _sprites.size());
+
 	auto backgroundSprites = _sprites | std::views::filter(IsSpriteBackgroundTile) | std::views::transform(ToSpriteType);
 	level_editor_background_sprites = std::vector<m2g::pb::SpriteType>{backgroundSprites.begin(), backgroundSprites.end()};
 	LOG_INFO("Loaded level editor background sprites", level_editor_background_sprites.size());
+
 	object_main_sprites = ListLevelEditorObjectSprites(resource_dir / "Objects.json");
 	LOG_INFO("Loaded objects", object_main_sprites.size());
+
 	named_items = pb::LUT<m2::pb::Item, NamedItem>::load(resource_dir / "Items.json", &m2::pb::Items::items);
 	LOG_INFO("Loaded named items", named_items.size());
+
 	animations = pb::LUT<m2::pb::Animation, Animation>::load(resource_dir / "Animations.json", &m2::pb::Animations::animations);
 	LOG_INFO("Loaded animations", animations.size());
+
 	songs = pb::LUT<m2::pb::Song, Song>::load(resource_dir / "Songs.json", &m2::pb::Songs::songs);
 	LOG_INFO("Loaded songs", songs.size());
+
+	keyToScancodeMap = GenerateKeyToScancodeMap(resource_dir / "Keys.json");
+	scancodeToKeyMap = GenerateScancodeToKeyMap(resource_dir / "Keys.json");
+	LOG_INFO("Loaded keys and scancodes", keyToScancodeMap.size());
 }
 
 m2::Game::~Game() {
