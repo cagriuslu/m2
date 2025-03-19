@@ -23,35 +23,57 @@ namespace m2::pb {
 			return _vector[index];
 		}
 
-		template <typename EnvelopeT, typename... LoadedItemArgs>
-		static LUT load(const std::filesystem::path& envelope_path, const ::google::protobuf::RepeatedPtrField<ProtoItemT>& (EnvelopeT::*list_accessor)() const, LoadedItemArgs... args) {
+		template <typename EnvelopeT>
+		static expected<std::vector<ProtoItemT>> LoadProtoItems(const std::filesystem::path& envelope_path,
+				const ::google::protobuf::RepeatedPtrField<ProtoItemT>& (EnvelopeT::*list_accessor)() const) {
+			// Load the envelope from the file
 			auto envelope = pb::json_file_to_message<EnvelopeT>(envelope_path);
-			if (!envelope) {
-				throw M2_ERROR(envelope.error());
-			}
+			m2_reflect_unexpected(envelope);
 
 			using KeyT = decltype(std::declval<ProtoItemT>().type());
-			std::vector<LoadedItemT> items(pb::enum_value_count<KeyT>());
-			std::vector<bool> is_loaded(pb::enum_value_count<KeyT>());
+			std::vector<ProtoItemT> protoItems(pb::enum_value_count<KeyT>());
+			std::vector<bool> isLoaded(pb::enum_value_count<KeyT>());
 
-			for (const auto& item : ((*envelope).*list_accessor)()) {
-				auto index = pb::enum_index(item.type());
+			for (const auto& protoItem : ((*envelope).*list_accessor)()) {
+				const auto key = protoItem.type(); // Enum value
+				const auto keyIndex = pb::enum_index(key); // Index of the enum value
+
 				// Check if the item is already loaded
-				if (is_loaded[index]) {
-					throw M2_ERROR("Item has duplicate definition: " + pb::enum_name(item.type()));
+				if (isLoaded[keyIndex]) {
+					return make_unexpected("Item has duplicate definition: " + pb::enum_name(key));
 				}
-				// Load item
-				items[index] = LoadedItemT{item, args...};
-				is_loaded[index] = true;
+
+				// Save proto item
+				protoItems[keyIndex] = protoItem;
+				isLoaded[keyIndex] = true;
 			}
 
 			// Check if every item is loaded
 			for (int i = 0; i < pb::enum_value_count<KeyT>(); ++i) {
-				if (!is_loaded[i]) {
-					throw M2_ERROR("Item is not defined: " + pb::enum_name<KeyT>(i));
+				if (not isLoaded[i]) {
+					return make_unexpected("Item is not defined: " + pb::enum_name<KeyT>(pb::enum_value<KeyT>(i)));
 				}
 			}
 
+			return protoItems;
+		}
+
+		template <typename EnvelopeT, typename... LoadedItemArgs>
+		static LUT load(const std::filesystem::path& envelopePath,
+				const ::google::protobuf::RepeatedPtrField<ProtoItemT>& (EnvelopeT::*listAccessor)() const,
+				LoadedItemArgs... args) {
+			const auto protoItems = LoadProtoItems(envelopePath, listAccessor);
+			if (not protoItems) {
+				throw M2_ERROR(protoItems.error());
+			}
+
+			// Transform proto items into loaded items
+			std::vector<LoadedItemT> items(protoItems->size());
+			for (const auto& protoItem : *protoItems) {
+				const auto key = protoItem.type(); // Enum value
+				const auto keyIndex = pb::enum_index(key); // Index of the enum value
+				items[keyIndex] = LoadedItemT{protoItem, args...};
+			}
 			return LUT{std::move(items)};
 		}
 	};
