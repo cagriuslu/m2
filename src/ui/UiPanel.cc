@@ -154,7 +154,7 @@ UiAction UiPanel::run_blocking() {
 			}
 
 			// Handle console action
-			if ((not console_command.empty() || events.pop_key_press(Key::CONSOLE)) &&
+			if ((not console_command.empty() || events.pop_key_press(m2g::pb::KeyType::CONSOLE)) &&
 				blueprint != &console_ui) {  // Do not open console on top of console
 
 				// Initialize console with command
@@ -365,7 +365,7 @@ UiAction UiPanel::HandleEvents(Events& events, bool IsPanning) {
 	}
 
 	// If the UI is cancellable, check if MENU button is pressed
-	if (blueprint->cancellable && events.pop_key_press(Key::MENU)) {
+	if (blueprint->cancellable && events.pop_key_press(m2g::pb::KeyType::PAUSE)) {
 		return MakeReturnAction();
 	}
 

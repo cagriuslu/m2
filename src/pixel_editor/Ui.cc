@@ -7,7 +7,6 @@ using namespace m2;
 
 const widget::TextBlueprint pixel_editor_left_hud_paint_button = {
 		.text = "Paint",
-		.kb_shortcut = SDL_SCANCODE_P,
 		.onAction = [](MAYBE const widget::Text &self) -> UiAction {
 			std::get<pixel_editor::State>(M2_LEVEL.stateVariant).activate_paint_mode();
 			return MakeContinueAction();
@@ -15,7 +14,6 @@ const widget::TextBlueprint pixel_editor_left_hud_paint_button = {
 };
 const widget::TextBlueprint pixel_editor_left_hud_erase_button = {
 		.text = "Erase",
-		.kb_shortcut = SDL_SCANCODE_E,
 		.onAction = [](MAYBE const widget::Text &self) -> UiAction {
 			std::get<pixel_editor::State>(M2_LEVEL.stateVariant).activate_erase_mode();
 			return MakeContinueAction();
@@ -23,7 +21,6 @@ const widget::TextBlueprint pixel_editor_left_hud_erase_button = {
 };
 const widget::TextBlueprint pixel_editor_left_hud_color_picker_button = {
 		.text = "Pick",
-		.kb_shortcut = SDL_SCANCODE_C,
 		.onAction = [](MAYBE const widget::Text &self) -> UiAction {
 			std::get<pixel_editor::State>(M2_LEVEL.stateVariant).activate_color_picker_mode();
 			return MakeContinueAction();
@@ -31,7 +28,6 @@ const widget::TextBlueprint pixel_editor_left_hud_color_picker_button = {
 };
 const widget::TextBlueprint pixel_editor_left_hud_cancel_button = {
 		.text = "Cancel",
-		.kb_shortcut = SDL_SCANCODE_X,
 		.onAction = [](MAYBE const widget::Text &self) -> UiAction {
 			std::get<pixel_editor::State>(M2_LEVEL.stateVariant).deactivate_mode();
 			return MakeContinueAction();
@@ -39,7 +35,6 @@ const widget::TextBlueprint pixel_editor_left_hud_cancel_button = {
 };
 const widget::TextBlueprint pixel_editor_left_hud_gridlines_button = {
 		.text = "Grid",
-		.kb_shortcut = SDL_SCANCODE_G,
 		.onAction = [](MAYBE const widget::Text &self) -> UiAction {
 			return MakeContinueAction();
 		}

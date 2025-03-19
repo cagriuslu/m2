@@ -15,10 +15,5 @@ enum KeyType {
   MOVE_LEFT = 9;
   MOVE_RIGHT = 10;
 
-  LEFT_FLIPPER = 20;
-  RIGHT_FLIPPER = 21;
-
-  TOGGLE_LIGHT = 30;
-  ADD_WATER = 31;
-  TOGGLE_HEATER = 32;
+  DASH = 20;
 }

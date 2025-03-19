@@ -9,12 +9,12 @@ using namespace m2::widget;
 
 AbstractButton::AbstractButton(UiPanel* parent, const UiWidgetBlueprint *blueprint) :
 		UiWidget(parent, blueprint),
-		kb_shortcut(
+		keyboardShortcut(
 				std::visit(overloaded {
-						[](const TextBlueprint& v) -> SDL_Scancode { return v.kb_shortcut; },
-						[](const ImageBlueprint& v) -> SDL_Scancode { return v.kb_shortcut; },
-						[](const CheckboxWithTextBlueprint& v) -> SDL_Scancode { return v.kb_shortcut; },
-						[](const auto& v) -> SDL_Scancode { (void)v; return SDL_SCANCODE_UNKNOWN; }
+						[](const TextBlueprint& v) -> m2g::pb::KeyType { return v.keyboardShortcut; },
+						[](const ImageBlueprint& v) -> m2g::pb::KeyType { return v.keyboardShortcut; },
+						[](const CheckboxWithTextBlueprint& v) -> m2g::pb::KeyType { return v.keyboardShortcut; },
+						[](MAYBE const auto& v) -> m2g::pb::KeyType { return {}; }
 				}, blueprint->variant)
 		),
 		depressed(false) {}
@@ -32,7 +32,7 @@ UiAction AbstractButton::HandleEvents(Events &events) {
 	}
 
 	auto run_action = false;
-	if (kb_shortcut != SDL_SCANCODE_UNKNOWN && SDL_IsTextInputActive() == false && events.pop_ui_key_press(kb_shortcut)) {
+	if (keyboardShortcut && not SDL_IsTextInputActive() && events.pop_key_press(keyboardShortcut)) {
 		run_action = true;
 	} else {
 		if (not depressed) {

@@ -1,9 +1,10 @@
 #pragma once
 #include "../UiWidget.h"
+#include <m2g_KeyType.pb.h>
 
 namespace m2::widget {
 	struct AbstractButton : public UiWidget {
-		SDL_Scancode kb_shortcut;
+		m2g::pb::KeyType keyboardShortcut;
 		bool depressed;
 
 		explicit AbstractButton(UiPanel* parent, const UiWidgetBlueprint* blueprint);

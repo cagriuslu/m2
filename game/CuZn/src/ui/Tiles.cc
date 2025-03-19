@@ -261,7 +261,6 @@ UiPanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType
 				.h = 2,
 				.variant = TextBlueprint{
 					.text = "OK",
-					.kb_shortcut = SDL_SCANCODE_RETURN,
 					.onAction = [](const Text& self) -> UiAction {
 						// Find the other blueprint
 						if (auto* tile_selection = self.Parent().find_first_widget_by_name<TextSelection>("TileLevelSelection")) {

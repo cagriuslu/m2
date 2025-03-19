@@ -43,26 +43,6 @@
     {
       "type": "MOVE_RIGHT",
       "sdlScancodes": [7]
-    },
-    {
-      "type": "LEFT_FLIPPER",
-      "sdlScancodes": [80]
-    },
-    {
-      "type": "RIGHT_FLIPPER",
-      "sdlScancodes": [79]
-    },
-    {
-      "type": "TOGGLE_LIGHT",
-      "sdlScancodes": [15]
-    },
-    {
-      "type": "ADD_WATER",
-      "sdlScancodes": [24]
-    },
-    {
-      "type": "TOGGLE_HEATER",
-      "sdlScancodes": [11]
     }
   ]
 }

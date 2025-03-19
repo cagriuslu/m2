@@ -11,7 +11,7 @@ namespace m2::widget {
 	struct CheckboxWithTextBlueprint {
 		std::string text;
 		bool initial_state{};
-		SDL_Scancode kb_shortcut{};
+		m2g::pb::KeyType keyboardShortcut{};
 
 		std::function<void(CheckboxWithText& self)> onCreate{};
 		std::function<UiAction(CheckboxWithText& self)> onAction{};

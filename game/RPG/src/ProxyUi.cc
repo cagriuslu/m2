@@ -8,7 +8,6 @@ using namespace m2;
 
 static widget::TextBlueprint resume_button = {
 		.text = "Resume",
-		.kb_shortcut = SDL_SCANCODE_R,
 		.onAction = [](MAYBE const widget::Text &self) {
 			LOG_DEBUG("Resume button pressed");
 			return MakeReturnAction(); // TODO Return value
@@ -16,7 +15,6 @@ static widget::TextBlueprint resume_button = {
 };
 static widget::TextBlueprint quit_button = {
 		.text = "Quit",
-		.kb_shortcut = SDL_SCANCODE_Q,
 		.onAction = [](MAYBE const widget::Text &self) {
 			return MakeQuitAction();
 		}

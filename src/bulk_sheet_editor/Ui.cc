@@ -116,7 +116,7 @@ const UiPanelBlueprint m2::bulk_sheet_editor::gMainMenu = {
             .x = 1, .y = 7, .w = 14, .h = 1,
             .variant = widget::TextBlueprint{
                 .text = "SELECT",
-                .kb_shortcut = SDL_SCANCODE_RETURN,
+                .keyboardShortcut = m2g::pb::RETURN,
                 .onAction = [](MAYBE const widget::Text& self) -> UiAction {
 	                if (const auto selections = self.Parent().find_first_widget_by_name<widget::TextSelection>("ResourceSelection")->selections();
 	                		not selections.empty()) {

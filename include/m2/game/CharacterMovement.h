@@ -1,5 +1,5 @@
 #pragma once
-#include "../Controls.h"
+#include <m2g_KeyType.pb.h>
 #include "../math/VecF.h"
 
 namespace m2 {
@@ -19,5 +19,6 @@ namespace m2 {
 	};
 	CharacterMovementDirection to_character_movement_direction(const VecF& direction_vector);
 
-	std::pair<CharacterMovementDirection, VecF> calculate_character_movement(Key left_key, Key right_key, Key up_key, Key down_key);
+	std::pair<CharacterMovementDirection, VecF> calculate_character_movement(m2g::pb::KeyType left_key,
+			m2g::pb::KeyType right_key, m2g::pb::KeyType up_key, m2g::pb::KeyType down_key);
 }

@@ -56,7 +56,7 @@ const UiPanelBlueprint main_menu_blueprint = {
 			.variant = TextBlueprint{
 				.text = "QUIT",
 				.wrapped_font_size_in_units = 5.0f,
-				.kb_shortcut = SDL_SCANCODE_Q, .onAction = quit_button_action
+				.onAction = quit_button_action
 			}
 		}
 	}

@@ -62,10 +62,10 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 		auto& chr = obj.character();
 		auto vector_to_mouse = (M2_GAME.MousePositionWorldM() - obj.position).normalize();
 
-		auto [direction_enum, direction_vector] = m2::calculate_character_movement(m2::Key::LEFT, m2::Key::RIGHT, m2::Key::UP, m2::Key::DOWN);
+		auto [direction_enum, direction_vector] = m2::calculate_character_movement(m2g::pb::MOVE_LEFT, m2g::pb::MOVE_RIGHT, m2g::pb::MOVE_UP, m2g::pb::MOVE_DOWN);
 		float move_force;
 		// Check if dash
-		if (direction_vector && M2_GAME.events.pop_key_press(m2::Key::DASH) && chr.UseItem(chr.FindItems(m2g::pb::ITEM_REUSABLE_DASH_2S))) {
+		if (direction_vector && M2_GAME.events.pop_key_press(m2g::pb::DASH) && chr.UseItem(chr.FindItems(m2g::pb::ITEM_REUSABLE_DASH_2S))) {
 			move_force = PLAYER_DASH_FORCE;
 		} else {
 			// Character movement

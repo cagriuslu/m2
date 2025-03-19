@@ -152,7 +152,6 @@ const m2::UiPanelBlueprint* m2g::Proxy::generate_main_menu() {
 	    .x = 75, .y = 78, .w = 10, .h = 6,
 	    .variant = m2::widget::TextBlueprint{
 	        .text = "Quit",
-	        .kb_shortcut = SDL_SCANCODE_Q,
 	        .onAction = [](MAYBE const m2::widget::Text &self) {
 		        return m2::MakeQuitAction();
 	        }

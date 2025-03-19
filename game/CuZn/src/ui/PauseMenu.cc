@@ -30,7 +30,6 @@ const UiPanelBlueprint pause_menu_blueprint = {
 			.h = 10,
 			.variant = TextBlueprint{
 				.text = "QUIT",
-				.kb_shortcut = SDL_SCANCODE_Q,
 				.onAction = quit_button_action,
 			}
 		}

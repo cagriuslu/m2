@@ -2,25 +2,6 @@
 #include <SDL2/SDL.h>
 
 namespace m2 {
-	enum class Key {
-		UNKNOWN = 0,
-		MENU,
-		UP,
-		DOWN,
-		LEFT,
-		RIGHT,
-		DASH, // TODO rename to SPACE
-		CONSOLE,
-		ENTER,
-		BACKSPACE,
-		MINUS,
-		PLUS,
-		end
-	};
-	constexpr unsigned u(Key k) {
-		return static_cast<unsigned>(k);
-	}
-
 	enum class MouseButton {
 		UNKNOWN = 0,
 		PRIMARY,

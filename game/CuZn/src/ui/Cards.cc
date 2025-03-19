@@ -105,7 +105,6 @@ UiPanelBlueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType
 				.h = 2,
 				.variant = TextBlueprint{
 					.text = blocking_window ? "OK" : "Close",
-					.kb_shortcut = SDL_SCANCODE_RETURN,
 					.onAction = [](const Text& self) -> UiAction {
 						// Find the other blueprint
 						if (auto* card_selection = self.Parent().find_first_widget_by_name<TextSelection>("CardSelection")) {

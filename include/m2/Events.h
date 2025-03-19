@@ -3,6 +3,8 @@
 #include "math/RectI.h"
 #include <m2/math/VecI.h>
 #include <m2/math/VecF.h>
+#include <m2/protobuf/Detail.h>
+#include <m2g_KeyType.pb.h>
 #include <array>
 #include <optional>
 #include <sstream>
@@ -12,18 +14,15 @@
 namespace m2 {
 	/// Stateful event manager
 	class Events {
-		static constexpr unsigned ui_key_press_count_limit = 16;
-
 		bool quit{};
 
 		bool window_resize{};
 
 		uint32_t key_press_count{};
-		std::array<uint16_t, u(Key::end)> keys_pressed{};
-		std::deque<SDL_Scancode> ui_keys_pressed;
+		std::vector<uint16_t> keys_pressed = std::vector<uint16_t>(pb::enum_value_count<m2g::pb::KeyType>());
 
 		uint32_t key_release_count{};
-		std::array<uint16_t, u(Key::end)> keys_released{};
+		std::vector<uint16_t> keys_released = std::vector<uint16_t>(pb::enum_value_count<m2g::pb::KeyType>());
 
 		uint32_t mouse_button_press_count{};
 		std::array<uint16_t, u(MouseButton::end)> mouse_buttons_pressed{};
@@ -37,10 +36,9 @@ namespace m2 {
 		std::stringstream text_input;
 
 		// Persistent states
-		std::array<bool, SDL_NUM_SCANCODES> sdl_keys_down{};
-		std::array<bool, u(Key::end)> keys_down{};
+		std::vector<bool> keys_down = std::vector<bool>(pb::enum_value_count<m2g::pb::KeyType>());
 		std::array<bool, u(MouseButton::end)> mouse_buttons_down{};
-		m2::VecI _mouse_position;
+		VecI _mouse_position;
 
 	public:
 		Events() = default;
@@ -53,18 +51,17 @@ namespace m2 {
 		// Window resize
 		bool pop_window_resize();
 		// Key presses
-		bool pop_key_press(Key k);
-		bool pop_ui_key_press(SDL_Scancode scode);
-		bool pop_key_release(Key k);
+		bool pop_key_press(m2g::pb::KeyType key);
+		bool pop_key_release(m2g::pb::KeyType key);
 		// Mouse button
-		bool peek_mouse_button_press(MouseButton mb);
+		bool peek_mouse_button_press(MouseButton mb) const;
 		bool pop_mouse_button_press(MouseButton mb);
-		bool peek_mouse_button_press(MouseButton mb, const RectI& rect);
+		bool peek_mouse_button_press(MouseButton mb, const RectI& rect) const;
 		bool pop_mouse_button_press(MouseButton mb, const RectI& rect);
 		void clear_mouse_button_presses(const RectI& rect);
-		bool peek_mouse_button_release(MouseButton mb);
+		bool peek_mouse_button_release(MouseButton mb) const;
 		bool pop_mouse_button_release(MouseButton mb);
-		bool peek_mouse_button_release(MouseButton mb, const RectI& rect);
+		bool peek_mouse_button_release(MouseButton mb, const RectI& rect) const;
 		bool pop_mouse_button_release(MouseButton mb, const RectI& rect);
 		void clear_mouse_button_releases(const RectI& rect);
 		// Mouse scroll
@@ -77,8 +74,7 @@ namespace m2 {
 		std::optional<std::string> pop_text_input();
 
 		// Continuous states
-		bool is_sdl_key_down(SDL_Scancode sc) const;
-		bool is_key_down(Key k) const;
+		bool is_key_down(m2g::pb::KeyType key) const;
 		bool is_mouse_button_down(MouseButton mb) const;
 		void clear_mouse_button_down(const RectI& rect);
 		VecI mouse_position() const;

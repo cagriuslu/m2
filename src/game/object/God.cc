@@ -28,16 +28,16 @@ Id obj::create_god() {
 		auto& obj = phy.owner();
 
 		VecF move_direction;
-		if (M2_GAME.events.is_key_down(Key::UP)) {
+		if (M2_GAME.events.is_key_down(m2g::pb::KeyType::MOVE_UP)) {
 			move_direction.y -= 1.0f;
 		}
-		if (M2_GAME.events.is_key_down(Key::DOWN)) {
+		if (M2_GAME.events.is_key_down(m2g::pb::KeyType::MOVE_DOWN)) {
 			move_direction.y += 1.0f;
 		}
-		if (M2_GAME.events.is_key_down(Key::LEFT)) {
+		if (M2_GAME.events.is_key_down(m2g::pb::KeyType::MOVE_LEFT)) {
 			move_direction.x -= 1.0f;
 		}
-		if (M2_GAME.events.is_key_down(Key::RIGHT)) {
+		if (M2_GAME.events.is_key_down(m2g::pb::KeyType::MOVE_RIGHT)) {
 			move_direction.x += 1.0f;
 		}
 		obj.position += move_direction.normalize() * (M2_GAME.DeltaTimeS() * M2_GAME.Dimensions().GameM().y);
@@ -45,10 +45,10 @@ Id obj::create_god() {
 		obj.position = obj.position.clamp(VecF{0.0f, 0.0f}, std::nullopt);
 
 		// Adjust zoom
-		if (M2_GAME.events.pop_key_press(Key::MINUS)) {
+		if (M2_GAME.events.pop_key_press(m2g::pb::KeyType::ZOOM_OUT)) {
 			M2_GAME.SetScale(M2_GAME.Dimensions().Scale() / 1.5f);
 		}
-		if (M2_GAME.events.pop_key_press(Key::PLUS)) {
+		if (M2_GAME.events.pop_key_press(m2g::pb::KeyType::ZOOM_IN)) {
 			M2_GAME.SetScale(M2_GAME.Dimensions().Scale() * 1.5f);
 		}
 

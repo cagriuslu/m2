@@ -80,11 +80,11 @@ m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
 
 	if (rightFlipper) {
 		phy.preStep = [flipper](m2::Physique& phy_) {
-			if (flipper->state == FlipperState::RESTING && M2_GAME.events.is_key_down(m2::Key::RIGHT)) {
+			if (flipper->state == FlipperState::RESTING && M2_GAME.events.is_key_down(m2g::pb::RIGHT_FLIPPER)) {
 				phy_.body->SetAngularVelocity(FLIPPER_SWEEP_UP_SPEED);
 				flipper->state = FlipperState::GOING_UP;
 			}
-			if (flipper->state == FlipperState::FULLY_UP && not M2_GAME.events.is_key_down(m2::Key::RIGHT)) {
+			if (flipper->state == FlipperState::FULLY_UP && not M2_GAME.events.is_key_down(m2g::pb::RIGHT_FLIPPER)) {
 				phy_.body->SetAngularVelocity(-FLIPPER_SWEEP_DOWN_SPEED);
 				flipper->state = FlipperState::GOING_DOWN;
 			}
@@ -103,11 +103,11 @@ m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
 		};
 	} else {
 		phy.preStep = [flipper](m2::Physique& phy_) {
-			if (flipper->state == FlipperState::RESTING && M2_GAME.events.is_key_down(m2::Key::LEFT)) {
+			if (flipper->state == FlipperState::RESTING && M2_GAME.events.is_key_down(m2g::pb::LEFT_FLIPPER)) {
 				phy_.body->SetAngularVelocity(-FLIPPER_SWEEP_UP_SPEED);
 				flipper->state = FlipperState::GOING_UP;
 			}
-			if (flipper->state == FlipperState::FULLY_UP && not M2_GAME.events.is_key_down(m2::Key::LEFT)) {
+			if (flipper->state == FlipperState::FULLY_UP && not M2_GAME.events.is_key_down(m2g::pb::LEFT_FLIPPER)) {
 				phy_.body->SetAngularVelocity(FLIPPER_SWEEP_DOWN_SPEED);
 				flipper->state = FlipperState::GOING_DOWN;
 			}

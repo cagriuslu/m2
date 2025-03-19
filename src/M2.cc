@@ -7,7 +7,8 @@ namespace {
 
 	uintptr_t GetStackPointerValue() {
 		void* p = nullptr;
-		return reinterpret_cast<uintptr_t>(&p);
+		const auto ptr = reinterpret_cast<uintptr_t>(&p);
+		return ptr - 8;
 	}
 }
 

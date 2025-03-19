@@ -25,7 +25,7 @@ namespace m2::widget {
 
 		RGB color{255, 255, 255};
 
-		SDL_Scancode kb_shortcut{};
+		m2g::pb::KeyType keyboardShortcut{};
 
 		std::function<void(Text& self)> onCreate{};
 		std::function<UiAction(Text& self)> onUpdate{};

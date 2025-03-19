@@ -336,7 +336,6 @@ const UiPanelBlueprint m2::sheet_editor_main_menu = {
 			.x = 35, .y = 70, .w = 40, .h = 10,
 			.variant = widget::TextBlueprint{
 				.text = "QUIT",
-				.kb_shortcut = SDL_SCANCODE_Q,
 				.onAction = [](MAYBE const widget::Text& self) -> UiAction { return MakeQuitAction(); },
 			}
 		},
@@ -344,7 +343,6 @@ const UiPanelBlueprint m2::sheet_editor_main_menu = {
 			.x = 85, .y = 70, .w = 40, .h = 10,
 			.variant = widget::TextBlueprint{
 				.text = "SELECT",
-				.kb_shortcut = SDL_SCANCODE_RETURN,
 				.onAction = [](MAYBE const widget::Text& self) -> UiAction {
 					if (const auto selections = self.Parent().find_first_widget_by_name<widget::TextSelection>("SpriteTypeSelection")->selections();
 							not selections.empty()) {

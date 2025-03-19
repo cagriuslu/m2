@@ -447,7 +447,6 @@ m2::UiPanelBlueprint generate_market_window() {
 				.h = 6,
 				.variant = TextBlueprint{
 					.text = "Dismiss",
-					.kb_shortcut = SDL_SCANCODE_RETURN,
 					.onAction = [](MAYBE const Text& self) -> UiAction {
 						return MakeReturnAction();
 					}

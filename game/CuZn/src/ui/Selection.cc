@@ -40,7 +40,6 @@ bool ask_for_confirmation(const std::string& question1, const std::string& quest
 				.x = 25, .y = 30, .w = 30, .h = 5,
 				.variant = TextBlueprint{
 					.text = accept_text,
-					.kb_shortcut = SDL_SCANCODE_RETURN,
 					.onAction = [](MAYBE const Text& self) -> UiAction {
 						return MakeReturnAction<bool>(true);
 					}
@@ -78,7 +77,6 @@ std::optional<bool> ask_for_confirmation_with_cancellation(const std::string& qu
 				.variant = TextBlueprint{
 					.text = accept_text,
 					.wrapped_font_size_in_units = 3.0f,
-					.kb_shortcut = SDL_SCANCODE_RETURN,
 					.onAction = [](MAYBE const Text& self) -> UiAction {
 						return MakeReturnAction<bool>(true);
 					}
@@ -142,7 +140,6 @@ bool ask_for_confirmation_bottom(const std::string& question, const std::string&
 				.x = 39, .y = 1, .w = 4, .h = 10,
 				.variant = TextBlueprint{
 					.text = accept_text,
-					.kb_shortcut = SDL_SCANCODE_RETURN,
 					.onAction = [](MAYBE const Text& self) -> UiAction {
 						return MakeReturnAction<bool>(true);
 					}

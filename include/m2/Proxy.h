@@ -79,23 +79,6 @@ namespace m2 {
 		/// will be filled with the message text.
 		std::pair<const UiPanelBlueprint*, std::variant<std::monostate,RectI,RectF>> MessageBoxBlueprintAndArea() { return std::make_pair(&DefaultMessageBoxBlueprint, DefaultMessageBoxArea); }
 
-		// Controls
-		m2::Key scancode_to_key(SDL_Scancode scancode);
-		const std::array<SDL_Scancode, static_cast<unsigned>(m2::Key::end)> key_to_scancode = {
-		    SDL_SCANCODE_UNKNOWN,
-		    SDL_SCANCODE_ESCAPE,
-		    SDL_SCANCODE_W,
-		    SDL_SCANCODE_S,
-		    SDL_SCANCODE_A,
-		    SDL_SCANCODE_D,
-		    SDL_SCANCODE_SPACE,
-		    SDL_SCANCODE_GRAVE,
-		    SDL_SCANCODE_RETURN,
-		    SDL_SCANCODE_BACKSPACE,
-		    SDL_SCANCODE_MINUS,
-		    SDL_SCANCODE_EQUALS
-		};
-
 		/// Called before/after a single player level is loaded
 		void pre_single_player_level_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
 		void post_single_player_level_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}

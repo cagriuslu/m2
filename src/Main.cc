@@ -62,7 +62,7 @@ int main(const int argc, char **argv) {
 			M2_GAME.HandleQuitEvent();
 			M2_GAME.HandleWindowResizeEvent();
 			M2_GAME.HandleConsoleEvent();
-			M2_GAME.HandleMenuEvent();
+			M2_GAME.HandlePauseEvent();
 			M2_GAME.HandleHudEvents();
 			M2_GAME.HandleNetworkEvents();
 			M2_GAME.ExecuteDeferredActions();

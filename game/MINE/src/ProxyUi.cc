@@ -20,7 +20,6 @@ namespace {
 
 static TextBlueprint entry_variant_1 = {
 		.text = "RANDOM LEVEL",
-		.kb_shortcut = SDL_SCANCODE_R,
 		.onAction = [](MAYBE const widget::Text &self) {
 			auto expect_lb = m2::pb::json_file_to_message<m2::pb::Level>(m2::resource_path() / "game/MINE/levels/sp000.json");
 			if (!expect_lb) {
@@ -50,7 +49,6 @@ static TextBlueprint entry_variant_1 = {
 };
 static TextBlueprint entry_variant_2 = {
 		.text = "NEW GAME",
-		.kb_shortcut = SDL_SCANCODE_N,
 		.onAction = [](MAYBE const widget::Text &self) {
 			auto success = M2_GAME.LoadSinglePlayer(m2::resource_path() / "game/MINE/levels/sp000.json");
 			if (!success) {
@@ -61,7 +59,6 @@ static TextBlueprint entry_variant_2 = {
 };
 static TextBlueprint entry_variant_3 = {
 		.text = "QUIT",
-		.kb_shortcut = SDL_SCANCODE_Q,
 		.onAction = quit_button_action
 };
 const UiPanelBlueprint main_menu_blueprint = {
@@ -87,14 +84,12 @@ const UiPanelBlueprint main_menu_blueprint = {
 static TextBlueprint pause_variant_1 = {
 		.text = "RESUME GAME",
 		.horizontal_alignment = TextHorizontalAlignment::CENTER,
-		.kb_shortcut = SDL_SCANCODE_R,
 		.onAction = [](MAYBE const widget::Text &self) {
 			return MakeReturnAction(); // TODO Return value
 		}
 };
 static TextBlueprint pause_variant_2 = {
 		.text = "QUIT",
-		.kb_shortcut = SDL_SCANCODE_Q,
 		.onAction = quit_button_action,
 };
 const UiPanelBlueprint pause_menu_blueprint = {

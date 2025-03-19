@@ -31,15 +31,15 @@ UiAction TextInput::HandleEvents(Events& events) {
 		return MakeContinueAction();
 	}
 
-	if (events.pop_key_press(Key::MENU)) {
+	if (events.pop_key_press(m2g::pb::PAUSE)) {
 		return MakeContinueAction(false);
-	} else if (events.pop_key_press(Key::ENTER) && std::get<TextInputBlueprint>(blueprint->variant).onAction) {
+	} else if (events.pop_key_press(m2g::pb::RETURN) && std::get<TextInputBlueprint>(blueprint->variant).onAction) {
 		auto [action, new_string] = std::get<TextInputBlueprint>(blueprint->variant).onAction(*this);
 		if (new_string) {
 			_text_input = std::stringstream{*new_string};
 		}
 		return std::move(action);
-	} else if (events.pop_key_press(Key::BACKSPACE)) {
+	} else if (events.pop_key_press(m2g::pb::BACKSPACE)) {
 		if (const auto text_input_str = _text_input.str(); not text_input_str.empty()) {
 			_text_input = std::stringstream{text_input_str.substr(0, text_input_str.length() - 1)};
 			_text_input.seekp(0, std::ios::end);

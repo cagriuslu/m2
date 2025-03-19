@@ -417,15 +417,15 @@ void m2::Game::HandleWindowResizeEvent() {
 }
 
 void m2::Game::HandleConsoleEvent() {
-	if (events.pop_key_press(Key::CONSOLE)) {
+	if (events.pop_key_press(m2g::pb::KeyType::CONSOLE)) {
 		if (UiPanel::create_and_run_blocking(&console_ui).IsQuit()) {
 			quit = true;
 		}
 	}
 }
 
-void m2::Game::HandleMenuEvent() {
-	if (events.pop_key_press(Key::MENU)) {
+void m2::Game::HandlePauseEvent() {
+	if (events.pop_key_press(m2g::pb::KeyType::PAUSE)) {
 		// Select the correct pause menu
 		const UiPanelBlueprint* pauseMenuBlueprint{};
 		if (std::holds_alternative<splayer::State>(GetLevel().stateVariant)) {

@@ -182,7 +182,7 @@ namespace m2 {
 		void HandleQuitEvent();
 		void HandleWindowResizeEvent();
 		void HandleConsoleEvent();
-		void HandleMenuEvent();
+		void HandlePauseEvent();
 		void HandleHudEvents();
 		void HandleNetworkEvents();
 		void ExecutePreStep();

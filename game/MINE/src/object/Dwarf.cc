@@ -31,7 +31,7 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 
 	phy.preStep = [&obj, &chr](m2::Physique& phy) {
 		// Character movement
-		auto [direction_enum, direction_vector] = m2::calculate_character_movement(m2::Key::LEFT, m2::Key::RIGHT, m2::Key::UNKNOWN, m2::Key::UNKNOWN);
+		auto [direction_enum, direction_vector] = m2::calculate_character_movement(MOVE_LEFT, MOVE_RIGHT, NO_KEY, NO_KEY);
 		if (direction_enum == m2::CHARMOVEMENT_NONE) {
 			// Slow down character
 			auto linear_velocity = phy.body->GetLinearVelocity();
@@ -46,7 +46,7 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 		}
 		// Jump
 		auto is_grounded = chr.GetResource(RESOURCE_IS_GROUNDED_X) != 0.0f && chr.GetResource(RESOURCE_IS_GROUNDED_Y) != 0.0f;
-		if (is_grounded && M2_GAME.events.is_key_down(m2::Key::DASH) && chr.UseItem(chr.FindItems(ITEM_REUSABLE_JUMP))) {
+		if (is_grounded && M2_GAME.events.is_key_down(JUMP) && chr.UseItem(chr.FindItems(ITEM_REUSABLE_JUMP))) {
 			auto linear_velocity = phy.body->GetLinearVelocity();
 			linear_velocity.y -= 7.0f;
 			phy.body->SetLinearVelocity(linear_velocity);

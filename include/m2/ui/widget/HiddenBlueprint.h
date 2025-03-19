@@ -8,7 +8,7 @@ namespace m2::widget {
 
     // Empty widget with no visuals
     struct HiddenBlueprint {
-        SDL_Scancode kb_shortcut{};
+        m2g::pb::KeyType keyboardShortcut{};
 
 		std::function<void(const Hidden& self)> onCreate{};
         std::function<UiAction(const Hidden& self)> onUpdate{};
