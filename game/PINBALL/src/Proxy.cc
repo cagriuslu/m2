@@ -170,12 +170,18 @@ m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object&
 }
 
 void m2g::Proxy::OnPostStep() {
-	const auto now = m2::sdl::get_ticks();
-	if (not _lastSimulationRunTicks || *_lastSimulationRunTicks + pinball::SIMULATION_TICK_PERIOD_TICKS <= now) {
-		if (not _lastSimulationRunTicks) {
+	// On first run or enough time passed
+	if (const auto now = m2::sdl::get_ticks(); not _lastSimulationRunTicks
+			|| *_lastSimulationRunTicks + pinball::SIMULATION_TICK_PERIOD_TICKS <= now) {
+		// Init simulation state on first run
+		if (not _lastSimulationState) {
 			_lastSimulationState = pinball::InitialSimulationState(AnimalAllocator);
 		}
-		_lastSimulationState = pinball::AdvanceSimulation(*_lastSimulationState, {}, AnimalAllocator, AnimalDeallocator);
+
+		_lastSimulationState = pinball::AdvanceSimulation(*_lastSimulationState, SimulationInputs(), AnimalAllocator, AnimalDeallocator);
+		// Clear water
+		MutableSimulationInputs().clear_extra_water();
+
 		_lastSimulationRunTicks = now;
 	}
 }
