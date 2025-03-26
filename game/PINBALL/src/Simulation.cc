@@ -72,6 +72,12 @@ namespace {
 		return std::clamp(currentHunger + hungerIncreasePerSecond * SIMULATION_TICK_PERIOD_S, currentHunger, 1.0f);
 	}
 
+	int RandomizeReproductionCountDown(const float minReproductionPeriod, const float maxReproductionPeriod) {
+		const auto minReproductionCountDown = m2::iround(minReproductionPeriod * SIMULATION_TICKS_PER_SECOND);
+		const auto maxReproductionCountDown = m2::iround(maxReproductionPeriod * SIMULATION_TICKS_PER_SECOND);
+		return m2::UniformRandom(minReproductionCountDown, maxReproductionCountDown);
+	}
+
 	pb::Animal CreateHerbivore(const AnimalAllocator& animalAllocator) {
 		pb::Animal animal;
 		animal.set_id(animalAllocator(pb::Animal_Type_HERBIVORE));
@@ -80,8 +86,8 @@ namespace {
 				HERBIVORE_MASS + HERBIVORE_MASS_VARIANCE));
 		animal.set_health(1.0f);
 		animal.set_hunger(0.25f);
-		animal.set_reproduction_count_down(m2::iround(HERBIVORE_DEFAULT_REPRODUCTION_PERIOD_S
-				* SIMULATION_TICKS_PER_SECOND));
+		animal.set_reproduction_count_down(RandomizeReproductionCountDown(HERBIVORE_MIN_REPRODUCTION_PERIOD_S,
+				HERBIVORE_MAX_REPRODUCTION_PERIOD_S));
 		return animal;
 	}
 
@@ -93,8 +99,8 @@ namespace {
 				CARNIVORE_MASS + CARNIVORE_MASS_VARIANCE));
 		animal.set_health(1.0f);
 		animal.set_hunger(0.25f);
-		animal.set_reproduction_count_down(m2::iround(CARNIVORE_DEFAULT_REPRODUCTION_PERIOD_S
-				* SIMULATION_TICKS_PER_SECOND));
+		animal.set_reproduction_count_down(RandomizeReproductionCountDown(CARNIVORE_MIN_REPRODUCTION_PERIOD_S,
+				CARNIVORE_MAX_REPRODUCTION_PERIOD_S));
 		return animal;
 	}
 
@@ -156,7 +162,7 @@ namespace {
 		const auto deadBacteriaMass = currentState.bacteria_mass() - nextBacteriaMass;
 		nextState.set_bacteria_mass(nextBacteriaMass);
 		nextState.set_zombie_bacteria_percentage(diseasedBacteriaMassAfterDiseaseDeath / nextBacteriaMass);
-		const auto nextWasteMass = std::min(currentState.water_mass() + deadBacteriaMass, MAX_WASTE_MASS);
+		const auto nextWasteMass = std::min(currentState.waste_mass() + deadBacteriaMass, MAX_WASTE_MASS);
 		nextState.set_waste_mass(nextWasteMass);
 		return nextState;
 	}
@@ -182,7 +188,7 @@ namespace {
 		nextState.set_diseased_plant_percentage(diseasedPlantMassAfterDiseaseDeath / nextPlantMass);
 		// Dead plants become waste mass. Eaten plants don't.
 		const auto nextWasteMass = std::min(currentState.waste_mass() + deadBacteriaMass, MAX_WASTE_MASS);
-		nextState.set_waste_mass(nextWasteMass);
+		nextState.set_waste_mass(nextWasteMass); //////
 		return nextState;
 	}
 
@@ -229,10 +235,13 @@ namespace {
 				if (m2::is_equal(currHealthy, newHealth, 0.001f)) {
 					return currReproductionCountDown;
 				}
-				const auto defaultReproductionPeriodS = animalType == pb::Animal_Type_HERBIVORE
-						? HERBIVORE_DEFAULT_REPRODUCTION_PERIOD_S
-						: CARNIVORE_DEFAULT_REPRODUCTION_PERIOD_S;
-				return static_cast<int64_t>(m2::iround(defaultReproductionPeriodS * SIMULATION_TICKS_PER_SECOND));
+				const auto minReproductionPeriodS = animalType == pb::Animal_Type_HERBIVORE
+						? HERBIVORE_MIN_REPRODUCTION_PERIOD_S
+						: CARNIVORE_MIN_REPRODUCTION_PERIOD_S;
+				const auto maxReproductionPeriodS = animalType == pb::Animal_Type_HERBIVORE
+						? HERBIVORE_MAX_REPRODUCTION_PERIOD_S
+						: CARNIVORE_MAX_REPRODUCTION_PERIOD_S;
+				return RandomizeReproductionCountDown(minReproductionPeriodS, maxReproductionPeriodS);
 			}();
 			// Delete the animal if the health is zero
 			if (m2::is_zero(newHealth, 0.001f)) {
@@ -377,15 +386,15 @@ namespace {
 
 			// Check if reproduction count down needs to be reset
 			if (HERBIVORE_REPRODUCTION_HUNGER_THRESHOLD < animal.hunger()) {
-				animal.set_reproduction_count_down(
-						m2::iround(HERBIVORE_DEFAULT_REPRODUCTION_PERIOD_S * SIMULATION_TICKS_PER_SECOND));
+				animal.set_reproduction_count_down(RandomizeReproductionCountDown(HERBIVORE_MIN_REPRODUCTION_PERIOD_S,
+						HERBIVORE_MAX_REPRODUCTION_PERIOD_S));
 			} else {
 				if (const auto nextReproductionCountDown = animal.reproduction_count_down() - 1;
 						nextReproductionCountDown == 0) {
 					// Reproduce
 					newAnimals.emplace_back(CreateHerbivore(animalAllocator));
-					animal.set_reproduction_count_down(m2::iround(HERBIVORE_DEFAULT_REPRODUCTION_PERIOD_S
-							* SIMULATION_TICKS_PER_SECOND));
+					animal.set_reproduction_count_down(RandomizeReproductionCountDown(HERBIVORE_MIN_REPRODUCTION_PERIOD_S,
+							HERBIVORE_MAX_REPRODUCTION_PERIOD_S));
 				} else {
 					animal.set_reproduction_count_down(nextReproductionCountDown);
 				}
@@ -442,14 +451,14 @@ namespace {
 
 			// Check if reproduction count down needs to be reset
 			if (CARNIVORE_REPRODUCTION_HUNGER_THRESHOLD < animal.hunger()) {
-				animal.set_reproduction_count_down(
-						m2::iround(CARNIVORE_DEFAULT_REPRODUCTION_PERIOD_S * SIMULATION_TICKS_PER_SECOND));
+				animal.set_reproduction_count_down(RandomizeReproductionCountDown(CARNIVORE_MIN_REPRODUCTION_PERIOD_S,
+						CARNIVORE_MAX_REPRODUCTION_PERIOD_S));
 			} else {
 				if (const auto nextReproductionCountDown = animal.reproduction_count_down() - 1;
 						nextReproductionCountDown == 0) {
 					newAnimals.emplace_back(CreateCarnivore(animalAllocator));
-					animal.set_reproduction_count_down(m2::iround(CARNIVORE_DEFAULT_REPRODUCTION_PERIOD_S
-							* SIMULATION_TICKS_PER_SECOND));
+					animal.set_reproduction_count_down(RandomizeReproductionCountDown(CARNIVORE_MIN_REPRODUCTION_PERIOD_S,
+							CARNIVORE_MAX_REPRODUCTION_PERIOD_S));
 				} else {
 					animal.set_reproduction_count_down(nextReproductionCountDown);
 				}
@@ -481,7 +490,7 @@ namespace {
 pb::SimulationState pinball::InitialSimulationState(const AnimalAllocator& animalAllocator) {
 	pb::SimulationState state;
 	state.set_bacteria_mass(BACTERIA_SAFE_MASS_LIMIT_KG / 8.0f);
-	state.set_plant_mass(PLANT_SAFE_MASS_LIMIT_KG / 20.0f);
+	state.set_plant_mass(PLANT_SAFE_MASS_LIMIT_KG / 4.0f);
 	for (int i = 0; i < 6; ++i) {
 		auto* animal = state.add_animals();
 		animal->set_id(animalAllocator(pb::Animal_Type_HERBIVORE));
@@ -489,10 +498,11 @@ pb::SimulationState pinball::InitialSimulationState(const AnimalAllocator& anima
 		animal->set_mass(0.35f);
 		animal->set_health(1.0f);
 		animal->set_hunger(0.25f);
-		animal->set_reproduction_count_down(150);
+		const auto val = RandomizeReproductionCountDown(HERBIVORE_MIN_REPRODUCTION_PERIOD_S, HERBIVORE_MAX_REPRODUCTION_PERIOD_S);
+		animal->set_reproduction_count_down(val);
 	}
 	state.set_temperature(25.0f);
-	state.set_waste_mass(4.0f);
+	state.set_waste_mass(3.5f);
 	state.set_nutrient_mass(0.25f);
 	state.set_water_mass(5.0f);
 	return state;

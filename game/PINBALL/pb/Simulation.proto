@@ -12,12 +12,12 @@ message Animal {
   float mass = 3;
   float health = 4; // [0,1]
   float hunger = 5; // [0,1] where 0 means fully satisfied with food.
-  int64 hunting_count_down = 6; // In ticks, only applicable to carnivore
-  int64 reproduction_count_down = 7; // In ticks
+  int32 hunting_count_down = 6; // In ticks, only applicable to carnivore
+  int32 reproduction_count_down = 7; // In ticks
 }
 
 message SimulationState {
-  int64 passed_tick_count = 1;
+  int32 passed_tick_count = 1;
 
   // Includes both healthy and zombie bacteria
   float bacteria_mass = 2;

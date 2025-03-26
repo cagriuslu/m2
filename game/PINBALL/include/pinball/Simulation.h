@@ -12,7 +12,7 @@ namespace pinball {
 
 	constexpr auto MAX_WATER_MASS = 10.0f;
 	/// Rate of change of temperature if heating is enabled
-	constexpr auto HEATING_RATE_PER_SECOND = 0.2f;
+	constexpr auto HEATING_RATE_PER_SECOND = 0.3f;
 	/// Rate of change of temperature if heating is disabled
 	constexpr auto COOLING_RATE_PER_SECOND = -0.1f;
 	/// Maximum temperature the environment can get
@@ -20,7 +20,7 @@ namespace pinball {
 	/// Minimum temperature the environment can get
 	constexpr auto MIN_TEMPERATURE = 4.0f;
 	constexpr auto MAX_NUTRIENT_MASS = 5.0f;
-	constexpr auto MAX_WASTE_MASS = 20.0f;
+	constexpr auto MAX_WASTE_MASS = 5.0f;
 
 	/// Maximum allowed bacteria amount
 	constexpr auto BACTERIA_MAX_MASS_KG = 1.1f;
@@ -43,18 +43,18 @@ namespace pinball {
 	/// Maximum decomposition temperature
 	constexpr auto BACTERIA_DECOMPOSITION_MAX_TEMPERATURE = 38.0f;
 	/// Amount of waste decomposited per 1KG of bacteria per second at the fastest decomposition temperature
-	constexpr auto BACTERIA_DECOMPOSITION_WASTE_USE_PER_SECOND = 0.25f;
+	constexpr auto BACTERIA_DECOMPOSITION_WASTE_USE_PER_SECOND = 0.4f;
 	/// Amount of nutrient produced per 1KG of waste decomposited
-	constexpr auto BACTERIA_DECOMPOSITION_NUTRIENT_PRODUCTION_RATE = 0.05f;
+	constexpr auto BACTERIA_DECOMPOSITION_NUTRIENT_PRODUCTION_RATE = 1.0f;
 	/// Amount of water used per 1KG of waste decomposited
 	constexpr auto BACTERIA_DECOMPOSITION_WATER_USE_RATE = 0.5f;
 	/// Amount of bacteria reproduction per 1KG of waste used
 	constexpr auto BACTERIA_REPRODUCTION_RATE = 0.05f;
 
 	/// Maximum allowed plant mass
-	constexpr auto PLANT_MAX_MASS_KG = 1100.0f;
+	constexpr auto PLANT_MAX_MASS_KG = 110.0f;
 	/// Amount of plant that can exist without developing diseases.
-	constexpr auto PLANT_SAFE_MASS_LIMIT_KG = 1000.0f;
+	constexpr auto PLANT_SAFE_MASS_LIMIT_KG = 100.0f;
 	/// Maximum temperature plants can live without dying.
 	constexpr auto PLANT_MAX_TEMPERATURE = 48.0f;
 	/// Amount of plant killed per second if the temperature is 1C above max.
@@ -72,9 +72,9 @@ namespace pinball {
 	/// Amount of plant growth per 1KG of plant per second at the fastest growth temperature
 	constexpr auto PLANT_GROWTH_PRODUCTION_RATE_PER_SECOND = 0.1f;
 	/// Amount of nutrient used per 1KG of plant growth
-	constexpr auto PLANT_GROWTH_NUTRIENT_USE_RATE = 0.1f;
+	constexpr auto PLANT_GROWTH_NUTRIENT_USE_RATE = 0.01f;
 	/// Amount of water used per 1KG of plant growth
-	constexpr auto PLANT_GROWTH_WATER_USE_RATE = 0.5f;
+	constexpr auto PLANT_GROWTH_WATER_USE_RATE = 0.05f;
 
 	/// Minimum temperature herbivores can live without losing health.
 	constexpr auto HERBIVORE_MIN_TEMPERATURE = 8.0f;
@@ -87,7 +87,7 @@ namespace pinball {
 	/// Amount of herbivore health lost per second if the humidity is zero.
 	constexpr auto HERBIVORE_HUMIDITY_DEATH_AMOUNT_PER_SECOND = 0.02f;
 	/// Percentage of hunger increase per second
-	constexpr auto HERBIVORE_HUNGER_PERCENTAGE_GAINED_PER_SECOND = 0.04f;
+	constexpr auto HERBIVORE_HUNGER_PERCENTAGE_GAINED_PER_SECOND = 0.1f;
 	/// Percentage of hunger fulfilled every second if there's enough food in the environment
 	constexpr auto HERBIVORE_HUNGER_PERCENTAGE_FULFILLED_PER_SECOND = 0.1f;
 	/// Ratio of required plant amount to animal's mass to fulfill a full hunger
@@ -96,8 +96,9 @@ namespace pinball {
 	constexpr auto HERBIVORE_WATER_REQUIRED_FOR_FULL_HUNGER_FULFILLMENT = 0.5f;
 	/// Maximum hunger allowed for enabling reproduction timer
 	constexpr auto HERBIVORE_REPRODUCTION_HUNGER_THRESHOLD = 0.5f;
-	/// Default duration after which a herbivore reproduces.
-	constexpr auto HERBIVORE_DEFAULT_REPRODUCTION_PERIOD_S = 25.0f;
+	/// Duration after which a herbivore reproduces.
+	constexpr auto HERBIVORE_MIN_REPRODUCTION_PERIOD_S = 25.0f;
+	constexpr auto HERBIVORE_MAX_REPRODUCTION_PERIOD_S = 120.0f;
 	/// Default herbivore mass
 	constexpr auto HERBIVORE_MASS = 0.35f;
 	/// Default herbivore mass variance
@@ -127,8 +128,9 @@ namespace pinball {
 	//constexpr auto CARNIVORE_WATER_REQUIRED_FOR_FULL_HUNGER_FULFILLMENT = 0.7f;
 	/// Maximum hunger allowed for enabling reproduction timer
 	constexpr auto CARNIVORE_REPRODUCTION_HUNGER_THRESHOLD = 0.5f;
-	/// Default duration after which a carnivore reproduces.
-	constexpr auto CARNIVORE_DEFAULT_REPRODUCTION_PERIOD_S = 55.0f;
+	/// Duration after which a carnivore reproduces.
+	constexpr auto CARNIVORE_MIN_REPRODUCTION_PERIOD_S = 45.0f;
+	constexpr auto CARNIVORE_MAX_REPRODUCTION_PERIOD_S = 180.0f;
 	/// Default carnivore mass
 	constexpr auto CARNIVORE_MASS = 2.0f;
 	/// Default carnivore mass variance
