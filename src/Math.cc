@@ -42,13 +42,13 @@ float m2::RandomF() {
 }
 int m2::UniformRandom(const int min, const int max) {
 	if (max < min) {
-		throw M2_ERROR("Max is smaller than minimum");
+		throw M2_ERROR("Max is smaller than min");
 	}
 	return min + iround((max - min) * RandomF());
 }
 float m2::UniformRandomF(const float min, const float max) {
 	if (max < min) {
-		throw M2_ERROR("Max is smaller than minimum");
+		throw M2_ERROR("Max is smaller than min");
 	}
 	return min + (max - min) * RandomF();
 }
@@ -118,4 +118,13 @@ float m2::AngleAbsoluteDifference(const float rads1, const float rads2) {
 }
 float m2::AngleDifference(const float rads1, const float rads2) {
 	return ClampRadiansToPi(rads1 - rads2);
+}
+
+float m2::Normalize(const float value, const float min, const float max) {
+	if (max < min) {
+		throw M2_ERROR("Max is smaller than min");
+	}
+	const auto distanceToOrigin = value - min;
+	const auto unit = max - min;
+	return distanceToOrigin / unit;
 }

@@ -10,11 +10,22 @@ namespace pinball {
 	constexpr auto SIMULATION_TICK_PERIOD_S = 1.0f / SIMULATION_TICKS_PER_SECOND;
 	const auto SIMULATION_TICK_PERIOD_TICKS = m2::iround(SIMULATION_TICK_PERIOD_S * 1000.0f);
 
-	/// Rate of change of temperate if heating is enabled
+	constexpr auto MAX_WATER_MASS = 10.0f;
+	/// Rate of change of temperature if heating is enabled
 	constexpr auto HEATING_RATE_PER_SECOND = 0.2f;
+	/// Rate of change of temperature if heating is disabled
+	constexpr auto COOLING_RATE_PER_SECOND = -0.1f;
+	/// Maximum temperature the environment can get
+	constexpr auto MAX_TEMPERATURE = 65.0f;
+	/// Minimum temperature the environment can get
+	constexpr auto MIN_TEMPERATURE = 4.0f;
+	constexpr auto MAX_NUTRIENT_MASS = 5.0f;
+	constexpr auto MAX_WASTE_MASS = 20.0f;
 
+	/// Maximum allowed bacteria amount
+	constexpr auto BACTERIA_MAX_MASS_KG = 1.1f;
 	/// Amount of bacteria that can exist without developing diseases.
-	constexpr auto BACTERIA_LIMIT_KG = 1.0f;
+	constexpr auto BACTERIA_SAFE_MASS_LIMIT_KG = 1.0f;
 	/// Maximum temperature bacteria can live without dying.
 	constexpr auto BACTERIA_DEATH_TEMPERATURE = 42.0f;
 	/// Amount of bacteria killed per second if the temperature is 1C above max.
@@ -40,8 +51,10 @@ namespace pinball {
 	/// Amount of bacteria reproduction per 1KG of waste used
 	constexpr auto BACTERIA_REPRODUCTION_RATE = 0.05f;
 
+	/// Maximum allowed plant mass
+	constexpr auto PLANT_MAX_MASS_KG = 1100.0f;
 	/// Amount of plant that can exist without developing diseases.
-	constexpr auto PLANT_LIMIT_KG = 1000.0f;
+	constexpr auto PLANT_SAFE_MASS_LIMIT_KG = 1000.0f;
 	/// Maximum temperature plants can live without dying.
 	constexpr auto PLANT_MAX_TEMPERATURE = 48.0f;
 	/// Amount of plant killed per second if the temperature is 1C above max.

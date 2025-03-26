@@ -7,6 +7,7 @@
 #include <m2/Game.h>
 #include <m2/ui/widget/ProgressBar.h>
 #include <m2/ui/widget/Text.h>
+#include <numeric>
 
 namespace {
 	const m2::UiPanelBlueprint mainMenuBlueprint = {
@@ -35,11 +36,11 @@ namespace {
 		.widgets = {
 			m2::UiWidgetBlueprint{
 				.x = 0, .y = 0, .w = 16, .h = 1,
+				.border_width = 0.0f,
 				.variant = m2::widget::TextBlueprint{ .text = "Light" }
 			},
 			m2::UiWidgetBlueprint{
-				.name = "LightStatus",
-				.x = 0, .y = 1, .w = 16, .h = 2,
+				.x = 0, .y = 1, .w = 16, .h = 1,
 				.variant = m2::widget::TextBlueprint{
 					.onUpdate = [](m2::widget::Text& self) -> m2::UiAction {
 						self.set_text(M2G_PROXY.SimulationInputs().light() ? "ON" : "OFF");
@@ -49,11 +50,11 @@ namespace {
 			},
 			m2::UiWidgetBlueprint{
 				.x = 0, .y = 3, .w = 16, .h = 1,
+				.border_width = 0.0f,
 				.variant = m2::widget::TextBlueprint{ .text = "Heater" }
 			},
 			m2::UiWidgetBlueprint{
-				.name = "HeaterStatus",
-				.x = 0, .y = 4, .w = 16, .h = 2,
+				.x = 0, .y = 4, .w = 16, .h = 1,
 				.variant = m2::widget::TextBlueprint{
 					.onUpdate = [](m2::widget::Text& self) -> m2::UiAction {
 						self.set_text(M2G_PROXY.SimulationInputs().heat() ? "ON" : "OFF");
@@ -63,38 +64,78 @@ namespace {
 			},
 			m2::UiWidgetBlueprint{
 				.x = 0, .y = 6, .w = 16, .h = 1,
+				.border_width = 0.0f,
 				.variant = m2::widget::TextBlueprint{ .text = "Temperature" }
 			},
 			m2::UiWidgetBlueprint{
-				.name = "Temperature",
-				.x = 0, .y = 7, .w = 16, .h = 2,
+				.x = 0, .y = 7, .w = 16, .h = 1,
 				.variant = m2::widget::ProgressBarBlueprint{
 					.bar_color = {255, 255, 255, 255},
 					.onUpdate = [](m2::widget::ProgressBar& self) {
-						self.SetProgress(M2G_PROXY.SimulationState().temperature() / 100.0f);
+						self.SetProgress(m2::Normalize(M2G_PROXY.SimulationState().temperature(),
+								pinball::MIN_TEMPERATURE, pinball::MAX_TEMPERATURE));
 					}
 				}
 			},
 			m2::UiWidgetBlueprint{
-				.name = "WaterStatus",
 				.x = 0, .y = 9, .w = 16, .h = 1,
+				.border_width = 0.0f,
 				.variant = m2::widget::TextBlueprint{ .text = "Water" }
 			},
 			m2::UiWidgetBlueprint{
-				.name = "PlantMass",
+				.x = 0, .y = 10, .w = 16, .h = 1,
+				.variant = m2::widget::ProgressBarBlueprint{
+					.bar_color = {255, 255, 255, 255},
+					.onUpdate = [](m2::widget::ProgressBar& self) {
+						self.SetProgress(m2::Normalize(M2G_PROXY.SimulationState().water_mass(), 0.0f,
+								pinball::MAX_WATER_MASS));
+					}
+				}
+			},
+			m2::UiWidgetBlueprint{
 				.x = 0, .y = 12, .w = 16, .h = 1,
+				.border_width = 0.0f,
 				.variant = m2::widget::TextBlueprint{ .text = "Plant Mass" }
 			},
 			m2::UiWidgetBlueprint{
-				.name = "NutrientAmount",
+				.x = 0, .y = 13, .w = 16, .h = 1,
+				.variant = m2::widget::ProgressBarBlueprint{
+					.bar_color = {255, 255, 255, 255},
+					.onUpdate = [](m2::widget::ProgressBar& self) {
+						self.SetProgress(m2::Normalize(M2G_PROXY.SimulationState().plant_mass(), 0.0f,
+								pinball::PLANT_MAX_MASS_KG));
+					}
+				}
+			},
+			m2::UiWidgetBlueprint{
 				.x = 0, .y = 15, .w = 16, .h = 1,
+				.border_width = 0.0f,
 				.variant = m2::widget::TextBlueprint{ .text = "Nutrient Amount" }
 			},
 			m2::UiWidgetBlueprint{
-				.name = "PhotosynthesisRate",
+				.x = 0, .y = 16, .w = 16, .h = 1,
+				.variant = m2::widget::ProgressBarBlueprint{
+					.bar_color = {255, 255, 255, 255},
+					.onUpdate = [](m2::widget::ProgressBar& self) {
+						self.SetProgress(m2::Normalize(M2G_PROXY.SimulationState().nutrient_mass(), 0.0f,
+								pinball::MAX_NUTRIENT_MASS));
+					}
+				}
+			},
+			m2::UiWidgetBlueprint{
 				.x = 0, .y = 18, .w = 16, .h = 1,
+				.border_width = 0.0f,
 				.variant = m2::widget::TextBlueprint{ .text = "Photosynthesis" }
-			}
+			},
+			m2::UiWidgetBlueprint{
+				.x = 0, .y = 19, .w = 16, .h = 1,
+				.variant = m2::widget::ProgressBarBlueprint{
+					.bar_color = {255, 255, 255, 255},
+					.onUpdate = [](m2::widget::ProgressBar& self) {
+						self.SetProgress(M2G_PROXY.SimulationState().last_photosynthesis_rate());
+					}
+				}
+			},
 		}
 	};
 	const m2::UiPanelBlueprint rightHudBlueprint = {
@@ -103,40 +144,139 @@ namespace {
 		.border_width = 0.0001f,
 		.widgets = {
 			m2::UiWidgetBlueprint{
-				.name = "HerbivoreCount",
 				.x = 0, .y = 0, .w = 16, .h = 1,
+				.border_width = 0.0f,
 				.variant = m2::widget::TextBlueprint{ .text = "Herbivore Count" }
 			},
 			m2::UiWidgetBlueprint{
-				.name = "HerbivoreSatisfaction",
+				.x = 0, .y = 1, .w = 16, .h = 1,
+				.variant = m2::widget::TextBlueprint{
+					.onUpdate = [](m2::widget::Text& self) -> m2::UiAction {
+						self.set_text(std::to_string(std::ranges::count_if(M2G_PROXY.SimulationState().animals(),
+								[](const auto& animal) { return animal.type() == pinball::pb::Animal_Type_HERBIVORE; })));
+						return m2::MakeContinueAction();
+					}
+				}
+			},
+			m2::UiWidgetBlueprint{
 				.x = 0, .y = 3, .w = 16, .h = 1,
+				.border_width = 0.0f,
 				.variant = m2::widget::TextBlueprint{ .text = "Herbivore Satisfaction" }
 			},
 			m2::UiWidgetBlueprint{
-				.name = "CarnivoreCount",
+				.x = 0, .y = 4, .w = 16, .h = 1,
+				.variant = m2::widget::ProgressBarBlueprint{
+					.bar_color = {255, 255, 255, 255},
+					.onUpdate = [](m2::widget::ProgressBar& self) {
+						const auto count = std::ranges::count_if(M2G_PROXY.SimulationState().animals(),
+								[](const auto& animal) { return animal.type() == pinball::pb::Animal_Type_HERBIVORE; });
+						if (0 < count) {
+							const auto sumOfHunger = std::accumulate(M2G_PROXY.SimulationState().animals().begin(),
+									M2G_PROXY.SimulationState().animals().end(), 0.0f,
+											[](const auto sum, const auto& animal) {
+										if (animal.type() == pinball::pb::Animal_Type_HERBIVORE) {
+											return sum + animal.hunger();
+										}
+										return sum;
+									});
+							const auto averageHunger = sumOfHunger / count;
+							const auto averageSatisfaction = 1.0f - averageHunger;
+							self.SetProgress(averageSatisfaction);
+						} else {
+							self.SetProgress(0.0f);
+						}
+					}
+				}
+			},
+			m2::UiWidgetBlueprint{
 				.x = 0, .y = 6, .w = 16, .h = 1,
+				.border_width = 0.0f,
 				.variant = m2::widget::TextBlueprint{ .text = "Carnivore Count" }
 			},
 			m2::UiWidgetBlueprint{
-				.name = "CarnivoreSatisfaction",
+				.x = 0, .y = 7, .w = 16, .h = 1,
+				.variant = m2::widget::TextBlueprint{
+					.onUpdate = [](m2::widget::Text& self) -> m2::UiAction {
+						self.set_text(std::to_string(std::ranges::count_if(M2G_PROXY.SimulationState().animals(),
+								[](const auto& animal) { return animal.type() == pinball::pb::Animal_Type_CARNIVORE; })));
+						return m2::MakeContinueAction();
+					}
+				}
+			},
+			m2::UiWidgetBlueprint{
 				.x = 0, .y = 9, .w = 16, .h = 1,
+				.border_width = 0.0f,
 				.variant = m2::widget::TextBlueprint{ .text = "Carnivore Satisfaction" }
 			},
 			m2::UiWidgetBlueprint{
-				.name = "BacteriaMass",
+				.x = 0, .y = 10, .w = 16, .h = 1,
+				.variant = m2::widget::ProgressBarBlueprint{
+					.bar_color = {255, 255, 255, 255},
+					.onUpdate = [](m2::widget::ProgressBar& self) {
+						const auto count = std::ranges::count_if(M2G_PROXY.SimulationState().animals(),
+								[](const auto& animal) { return animal.type() == pinball::pb::Animal_Type_CARNIVORE; });
+						if (0 < count) {
+							const auto sumOfHunger = std::accumulate(M2G_PROXY.SimulationState().animals().begin(),
+									M2G_PROXY.SimulationState().animals().end(), 0.0f,
+											[](const auto sum, const auto& animal) {
+										if (animal.type() == pinball::pb::Animal_Type_CARNIVORE) {
+											return sum + animal.hunger();
+										}
+										return sum;
+									});
+							const auto averageHunger = sumOfHunger / count;
+							const auto averageSatisfaction = 1.0f - averageHunger;
+							self.SetProgress(averageSatisfaction);
+						} else {
+							self.SetProgress(0.0f);
+						}
+					}
+				}
+			},
+			m2::UiWidgetBlueprint{
 				.x = 0, .y = 12, .w = 16, .h = 1,
+				.border_width = 0.0f,
 				.variant = m2::widget::TextBlueprint{ .text = "Bacteria Mass" }
 			},
 			m2::UiWidgetBlueprint{
-				.name = "WasteAmount",
+				.x = 0, .y = 13, .w = 16, .h = 1,
+				.variant = m2::widget::ProgressBarBlueprint{
+					.bar_color = {255, 255, 255, 255},
+					.onUpdate = [](m2::widget::ProgressBar& self) {
+						self.SetProgress(m2::Normalize(M2G_PROXY.SimulationState().bacteria_mass(), 0.0f,
+								pinball::BACTERIA_MAX_MASS_KG));
+					}
+				}
+			},
+			m2::UiWidgetBlueprint{
 				.x = 0, .y = 15, .w = 16, .h = 1,
+				.border_width = 0.0f,
 				.variant = m2::widget::TextBlueprint{ .text = "Waste Amount" }
 			},
 			m2::UiWidgetBlueprint{
-				.name = "DecompositionRate",
+				.x = 0, .y = 16, .w = 16, .h = 1,
+				.variant = m2::widget::ProgressBarBlueprint{
+					.bar_color = {255, 255, 255, 255},
+					.onUpdate = [](m2::widget::ProgressBar& self) {
+						self.SetProgress(m2::Normalize(M2G_PROXY.SimulationState().waste_mass(), 0.0f,
+								pinball::MAX_WASTE_MASS));
+					}
+				}
+			},
+			m2::UiWidgetBlueprint{
 				.x = 0, .y = 18, .w = 16, .h = 1,
+				.border_width = 0.0f,
 				.variant = m2::widget::TextBlueprint{ .text = "Decomposition" }
-			}
+			},
+			m2::UiWidgetBlueprint{
+				.x = 0, .y = 19, .w = 16, .h = 1,
+				.variant = m2::widget::ProgressBarBlueprint{
+					.bar_color = {255, 255, 255, 255},
+					.onUpdate = [](m2::widget::ProgressBar& self) {
+						self.SetProgress(M2G_PROXY.SimulationState().last_decomposition_rate());
+					}
+				}
+			},
 		}
 	};
 }

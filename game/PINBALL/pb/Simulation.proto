@@ -34,6 +34,11 @@ message SimulationState {
   float nutrient_mass = 13;
   // Water is used by all organisms
   float water_mass = 14;
+
+  // Statistical state fields
+
+  float last_decomposition_rate = 20;
+  float last_photosynthesis_rate = 21;
 }
 
 message SimulationInputs {

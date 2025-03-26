@@ -56,13 +56,16 @@ namespace {
 		if (currentValue < idealValue) {
 			return (currentValue - minValue) / (idealValue - minValue);
 		} else {
-			return (currentValue - idealValue) / (maxValue - idealValue);
+			return 1.0f - (currentValue - idealValue) / (maxValue - idealValue);
 		}
 	}
 
 	float CalculateProductionAmount(const float productionRatePerProducerPerSecond, const float producerAmount,
-			const float efficiency) {
-		return productionRatePerProducerPerSecond * producerAmount * efficiency * SIMULATION_TICK_PERIOD_S;
+			const float efficiency, const float maxProducerAmount) {
+		const auto limitlessProductionAmount = productionRatePerProducerPerSecond * producerAmount * efficiency
+				* SIMULATION_TICK_PERIOD_S;
+		const auto remainingSpace = maxProducerAmount - producerAmount;
+		return std::min(limitlessProductionAmount, remainingSpace);
 	}
 
 	float CalculateHungerAfterIncrease(const float currentHunger, const float hungerIncreasePerSecond) {
@@ -123,8 +126,10 @@ namespace {
 			const pb::SimulationInputs& inputs) {
 		auto nextState = currentState;
 		// Add water and heat to the environment
-		nextState.set_water_mass(currentState.water_mass() + inputs.extra_water());
-		nextState.set_temperature(currentState.temperature() + HEATING_RATE_PER_SECOND * SIMULATION_TICK_PERIOD_S);
+		nextState.set_water_mass(std::clamp(currentState.water_mass() + inputs.extra_water(), 0.0f, MAX_WATER_MASS));
+		nextState.set_temperature(std::clamp(currentState.temperature() +
+				(inputs.heat() ? HEATING_RATE_PER_SECOND : COOLING_RATE_PER_SECOND) * SIMULATION_TICK_PERIOD_S,
+				MIN_TEMPERATURE, MAX_TEMPERATURE));
 		return nextState;
 	}
 
@@ -151,7 +156,8 @@ namespace {
 		const auto deadBacteriaMass = currentState.bacteria_mass() - nextBacteriaMass;
 		nextState.set_bacteria_mass(nextBacteriaMass);
 		nextState.set_zombie_bacteria_percentage(diseasedBacteriaMassAfterDiseaseDeath / nextBacteriaMass);
-		nextState.set_waste_mass(currentState.water_mass() + deadBacteriaMass);
+		const auto nextWasteMass = std::min(currentState.water_mass() + deadBacteriaMass, MAX_WASTE_MASS);
+		nextState.set_waste_mass(nextWasteMass);
 		return nextState;
 	}
 
@@ -175,7 +181,8 @@ namespace {
 		nextState.set_plant_mass(nextPlantMass);
 		nextState.set_diseased_plant_percentage(diseasedPlantMassAfterDiseaseDeath / nextPlantMass);
 		// Dead plants become waste mass. Eaten plants don't.
-		nextState.set_waste_mass(currentState.waste_mass() + deadBacteriaMass);
+		const auto nextWasteMass = std::min(currentState.waste_mass() + deadBacteriaMass, MAX_WASTE_MASS);
+		nextState.set_waste_mass(nextWasteMass);
 		return nextState;
 	}
 
@@ -231,7 +238,8 @@ namespace {
 			if (m2::is_zero(newHealth, 0.001f)) {
 				animalReleaser(animal.id());
 				// Dead animals become waste mass. Eaten animals don't.
-				nextState.set_waste_mass(nextState.waste_mass() + animal.mass());
+				const auto nextWasteMass = std::min(nextState.waste_mass() + animal.mass(), MAX_WASTE_MASS);
+				nextState.set_waste_mass(nextWasteMass);
 			} else {
 				pb::Animal animalAfterDeath = animal;
 				animalAfterDeath.set_health(newHealth);
@@ -255,7 +263,8 @@ namespace {
 			// Only healthy bacteria do decomposition.
 			const auto healthyBacteriaMass = currentState.bacteria_mass() * (1.0f - currentState.zombie_bacteria_percentage());
 			// Find rate limit due to waste availability
-			const auto idealRequiredWasteMass = CalculateProductionAmount(BACTERIA_DECOMPOSITION_WASTE_USE_PER_SECOND, healthyBacteriaMass, decompositionEfficiency);
+			const auto idealRequiredWasteMass = CalculateProductionAmount(BACTERIA_DECOMPOSITION_WASTE_USE_PER_SECOND,
+					healthyBacteriaMass, decompositionEfficiency, BACTERIA_MAX_MASS_KG);
 			const auto availableWasteMass = std::min(currentState.waste_mass(), idealRequiredWasteMass);
 			const auto rateLimitDueToWaste = availableWasteMass / idealRequiredWasteMass;
 			// Find rate limit due to water availability
@@ -272,10 +281,20 @@ namespace {
 			const auto newZombieBacteriaPercentage = currentState.bacteria_mass() * currentState.zombie_bacteria_percentage()
 					/ (currentState.bacteria_mass() + reproductionMass);
 			nextState.set_waste_mass(currentState.waste_mass() - actualRequiredWasteMass);
-			nextState.set_nutrient_mass(currentState.nutrient_mass() + producedNutrientMass);
+			// Decomposition doesn't stop because of nutrient limit
+			const auto nextNutrientMass = std::min(currentState.nutrient_mass() + producedNutrientMass, MAX_NUTRIENT_MASS);
+			nextState.set_nutrient_mass(nextNutrientMass);
 			nextState.set_water_mass(currentState.water_mass() - actualRequiredWaterMass);
 			nextState.set_bacteria_mass(currentState.bacteria_mass() + reproductionMass);
 			nextState.set_zombie_bacteria_percentage(newZombieBacteriaPercentage);
+			// Calculate statistics
+			const auto bestPossibleWasteUse = CalculateProductionAmount(BACTERIA_DECOMPOSITION_WASTE_USE_PER_SECOND,
+					healthyBacteriaMass, 1.0f, BACTERIA_MAX_MASS_KG);
+			const auto bestPossibleNutrientProduction = bestPossibleWasteUse * BACTERIA_DECOMPOSITION_NUTRIENT_PRODUCTION_RATE;
+			const auto decompositionRate = producedNutrientMass / bestPossibleNutrientProduction;
+			nextState.set_last_decomposition_rate(decompositionRate);
+		} else {
+			nextState.set_last_decomposition_rate(0.0f);
 		}
 		return nextState;
 	}
@@ -292,7 +311,8 @@ namespace {
 			// Only healthy plants grow
 			const auto healthyPlantMass = currentState.plant_mass() * (1.0f - currentState.diseased_plant_percentage());
 			// Find rate limit due to nutrient availability
-			const auto idealGrowthMass = CalculateProductionAmount(PLANT_GROWTH_PRODUCTION_RATE_PER_SECOND, healthyPlantMass, growthEfficiency);
+			const auto idealGrowthMass = CalculateProductionAmount(PLANT_GROWTH_PRODUCTION_RATE_PER_SECOND,
+					healthyPlantMass, growthEfficiency, PLANT_MAX_MASS_KG);
 			const auto idealRequiredNutrientMass = idealGrowthMass * PLANT_GROWTH_NUTRIENT_USE_RATE;
 			const auto availableNutrientMass = std::min(currentState.nutrient_mass(), idealRequiredNutrientMass);
 			const auto rateLimitDueToNutrient = availableNutrientMass / idealRequiredNutrientMass;
@@ -312,6 +332,13 @@ namespace {
 			nextState.set_diseased_plant_percentage(newDiseasedPlantPercentage);
 			nextState.set_nutrient_mass(currentState.nutrient_mass() - actualRequiredNutrientMass);
 			nextState.set_water_mass(currentState.water_mass() - actualRequiredWaterMass);
+			// Calculate statistics
+			const auto bestPossibleGrowth = CalculateProductionAmount(PLANT_GROWTH_PRODUCTION_RATE_PER_SECOND,
+					healthyPlantMass, 1.0f, PLANT_MAX_MASS_KG);
+			const auto growthRate = actualGrowthMass / bestPossibleGrowth;
+			nextState.set_last_photosynthesis_rate(growthRate);
+		} else {
+			nextState.set_last_photosynthesis_rate(0.0f);
 		}
 		return nextState;
 	}
@@ -328,7 +355,7 @@ namespace {
 			animal.set_hunger(
 					CalculateHungerAfterIncrease(animal.hunger(), HERBIVORE_HUNGER_PERCENTAGE_GAINED_PER_SECOND));
 			// Then, feed
-			const auto idealHungerPercentageToFulfill = std::max(animal.hunger(),
+			const auto idealHungerPercentageToFulfill = std::min(animal.hunger(),
 					HERBIVORE_HUNGER_PERCENTAGE_FULFILLED_PER_SECOND * SIMULATION_TICK_PERIOD_S);
 
 			const auto idealRequiredPlantMass = idealHungerPercentageToFulfill * animal.mass() * HERBIVORE_PLANT_REQUIRED_FOR_FULL_HUNGER_FULFILLMENT;
@@ -345,8 +372,8 @@ namespace {
 			const auto actualHungerPercentageToFulfill = idealHungerPercentageToFulfill * feedRateLimit;
 
 			animal.set_hunger(animal.hunger() - actualHungerPercentageToFulfill);
-			nextState.set_plant_mass(nextState.water_mass() - actualRequiredPlantMass);
-			nextState.set_plant_mass(nextState.plant_mass() - actualRequiredWaterMass);
+			nextState.set_water_mass(nextState.water_mass() - actualRequiredWaterMass);
+			nextState.set_plant_mass(nextState.plant_mass() - actualRequiredPlantMass);
 
 			// Check if reproduction count down needs to be reset
 			if (HERBIVORE_REPRODUCTION_HUNGER_THRESHOLD < animal.hunger()) {
@@ -453,8 +480,8 @@ namespace {
 
 pb::SimulationState pinball::InitialSimulationState(const AnimalAllocator& animalAllocator) {
 	pb::SimulationState state;
-	state.set_bacteria_mass(BACTERIA_LIMIT_KG / 8.0f);
-	state.set_plant_mass(PLANT_LIMIT_KG / 50.0f);
+	state.set_bacteria_mass(BACTERIA_SAFE_MASS_LIMIT_KG / 8.0f);
+	state.set_plant_mass(PLANT_SAFE_MASS_LIMIT_KG / 20.0f);
 	for (int i = 0; i < 6; ++i) {
 		auto* animal = state.add_animals();
 		animal->set_id(animalAllocator(pb::Animal_Type_HERBIVORE));
@@ -467,7 +494,7 @@ pb::SimulationState pinball::InitialSimulationState(const AnimalAllocator& anima
 	state.set_temperature(25.0f);
 	state.set_waste_mass(4.0f);
 	state.set_nutrient_mass(0.25f);
-	state.set_water_mass(15.0f);
+	state.set_water_mass(5.0f);
 	return state;
 }
 
