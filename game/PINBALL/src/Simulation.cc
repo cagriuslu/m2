@@ -489,13 +489,13 @@ namespace {
 
 pb::SimulationState pinball::InitialSimulationState(const AnimalAllocator& animalAllocator) {
 	pb::SimulationState state;
-	state.set_bacteria_mass(BACTERIA_SAFE_MASS_LIMIT_KG / 8.0f);
+	state.set_bacteria_mass(BACTERIA_SAFE_MASS_LIMIT_KG / 4.0f);
 	state.set_plant_mass(PLANT_SAFE_MASS_LIMIT_KG / 4.0f);
-	for (int i = 0; i < 6; ++i) {
+	for (int i = 0; i < 3; ++i) {
 		auto* animal = state.add_animals();
 		animal->set_id(animalAllocator(pb::Animal_Type_HERBIVORE));
 		animal->set_type(pb::Animal_Type_HERBIVORE);
-		animal->set_mass(0.35f);
+		animal->set_mass(HERBIVORE_MASS);
 		animal->set_health(1.0f);
 		animal->set_hunger(0.25f);
 		const auto val = RandomizeReproductionCountDown(HERBIVORE_MIN_REPRODUCTION_PERIOD_S, HERBIVORE_MAX_REPRODUCTION_PERIOD_S);
@@ -503,8 +503,8 @@ pb::SimulationState pinball::InitialSimulationState(const AnimalAllocator& anima
 	}
 	state.set_temperature(25.0f);
 	state.set_waste_mass(3.5f);
-	state.set_nutrient_mass(0.25f);
-	state.set_water_mass(5.0f);
+	state.set_nutrient_mass(1.5f);
+	state.set_water_mass(MAX_WATER_MASS / 4.0f);
 	return state;
 }
 

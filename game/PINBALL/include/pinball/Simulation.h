@@ -10,7 +10,7 @@ namespace pinball {
 	constexpr auto SIMULATION_TICK_PERIOD_S = 1.0f / SIMULATION_TICKS_PER_SECOND;
 	const auto SIMULATION_TICK_PERIOD_TICKS = m2::iround(SIMULATION_TICK_PERIOD_S * 1000.0f);
 
-	constexpr auto MAX_WATER_MASS = 10.0f;
+	constexpr auto MAX_WATER_MASS = 100.0f;
 	/// Rate of change of temperature if heating is enabled
 	constexpr auto HEATING_RATE_PER_SECOND = 0.3f;
 	/// Rate of change of temperature if heating is disabled
@@ -23,15 +23,15 @@ namespace pinball {
 	constexpr auto MAX_WASTE_MASS = 5.0f;
 
 	/// Maximum allowed bacteria amount
-	constexpr auto BACTERIA_MAX_MASS_KG = 1.1f;
+	constexpr auto BACTERIA_MAX_MASS_KG = 0.5f;
 	/// Amount of bacteria that can exist without developing diseases.
-	constexpr auto BACTERIA_SAFE_MASS_LIMIT_KG = 1.0f;
+	constexpr auto BACTERIA_SAFE_MASS_LIMIT_KG = 0.4f;
 	/// Maximum temperature bacteria can live without dying.
 	constexpr auto BACTERIA_DEATH_TEMPERATURE = 42.0f;
 	/// Amount of bacteria killed per second if the temperature is 1C above max.
 	constexpr auto BACTERIA_TEMPERATURE_DAMAGE_PER_CELSIUS_PER_SECOND = 0.0075f;
 	/// Percentage of bacteria killed per second naturally.
-	constexpr auto BACTERIA_NATURAL_DEATH_RATE_PER_SECOND = 0.005f;
+	constexpr auto BACTERIA_NATURAL_DEATH_RATE_PER_SECOND = 0.001f;
 	/// Amount of healthy bacteria infected with diseased per 1 unit of diseased bacteria per second.
 	constexpr auto BACTERIA_DISEASE_SPREAD_RATE_PER_SECOND = 1.5f;
 	/// Percentage of diseased bacteria dying per second
@@ -70,7 +70,7 @@ namespace pinball {
 	/// Maximum growth temperature
 	constexpr auto PLANT_GROWTH_MAX_TEMPERATURE = 36.0f;
 	/// Amount of plant growth per 1KG of plant per second at the fastest growth temperature
-	constexpr auto PLANT_GROWTH_PRODUCTION_RATE_PER_SECOND = 0.1f;
+	constexpr auto PLANT_GROWTH_PRODUCTION_RATE_PER_SECOND = 0.05f;
 	/// Amount of nutrient used per 1KG of plant growth
 	constexpr auto PLANT_GROWTH_NUTRIENT_USE_RATE = 0.01f;
 	/// Amount of water used per 1KG of plant growth
@@ -89,15 +89,15 @@ namespace pinball {
 	/// Percentage of hunger increase per second
 	constexpr auto HERBIVORE_HUNGER_PERCENTAGE_GAINED_PER_SECOND = 0.1f;
 	/// Percentage of hunger fulfilled every second if there's enough food in the environment
-	constexpr auto HERBIVORE_HUNGER_PERCENTAGE_FULFILLED_PER_SECOND = 0.1f;
+	constexpr auto HERBIVORE_HUNGER_PERCENTAGE_FULFILLED_PER_SECOND = 0.11f;
 	/// Ratio of required plant amount to animal's mass to fulfill a full hunger
-	constexpr auto HERBIVORE_PLANT_REQUIRED_FOR_FULL_HUNGER_FULFILLMENT = 1.2f;
+	constexpr auto HERBIVORE_PLANT_REQUIRED_FOR_FULL_HUNGER_FULFILLMENT = 2.5f;
 	/// Ratio of required water amount to animal's mass to fulfill a full hunger
 	constexpr auto HERBIVORE_WATER_REQUIRED_FOR_FULL_HUNGER_FULFILLMENT = 0.5f;
 	/// Maximum hunger allowed for enabling reproduction timer
 	constexpr auto HERBIVORE_REPRODUCTION_HUNGER_THRESHOLD = 0.5f;
 	/// Duration after which a herbivore reproduces.
-	constexpr auto HERBIVORE_MIN_REPRODUCTION_PERIOD_S = 25.0f;
+	constexpr auto HERBIVORE_MIN_REPRODUCTION_PERIOD_S = 45.0f;
 	constexpr auto HERBIVORE_MAX_REPRODUCTION_PERIOD_S = 120.0f;
 	/// Default herbivore mass
 	constexpr auto HERBIVORE_MASS = 0.35f;
@@ -129,7 +129,7 @@ namespace pinball {
 	/// Maximum hunger allowed for enabling reproduction timer
 	constexpr auto CARNIVORE_REPRODUCTION_HUNGER_THRESHOLD = 0.5f;
 	/// Duration after which a carnivore reproduces.
-	constexpr auto CARNIVORE_MIN_REPRODUCTION_PERIOD_S = 45.0f;
+	constexpr auto CARNIVORE_MIN_REPRODUCTION_PERIOD_S = 60.0f;
 	constexpr auto CARNIVORE_MAX_REPRODUCTION_PERIOD_S = 180.0f;
 	/// Default carnivore mass
 	constexpr auto CARNIVORE_MASS = 2.0f;

@@ -18,7 +18,7 @@ m2::void_expected LoadPlayer(m2::Object& obj) {
 			M2G_PROXY.MutableSimulationInputs().set_light(!M2G_PROXY.SimulationInputs().light());
 		}
 		if (M2_GAME.events.pop_key_press(m2g::pb::ADD_WATER)) {
-			M2G_PROXY.MutableSimulationInputs().set_extra_water(0.1f);
+			M2G_PROXY.MutableSimulationInputs().set_extra_water(5.0f);
 		}
 		if (M2_GAME.events.pop_key_press(m2g::pb::TOGGLE_HEATER)) {
 			M2G_PROXY.MutableSimulationInputs().set_heat(!M2G_PROXY.SimulationInputs().heat());
