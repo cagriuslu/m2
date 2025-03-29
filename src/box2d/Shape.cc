@@ -7,8 +7,8 @@ using namespace m2;
 b2PolygonShape m2::box2d::GeneratePolygonShape(const pb::Fixtures_RectangleFixture& rectFixture, const int spritePpm) {
 	b2PolygonShape polygonShape;
 	polygonShape.SetAsBox(
-			rectFixture.rectangle_dimensions_px().w() / F(spritePpm),
-			rectFixture.rectangle_dimensions_px().h() / F(spritePpm),
+			rectFixture.rectangle_dimensions_px().w() / F(spritePpm) / 2.0f,
+			rectFixture.rectangle_dimensions_px().h() / F(spritePpm) / 2.0f,
 			static_cast<b2Vec2>(VecF{rectFixture.sprite_origin_to_rectangle_center_vec_px()} / F(spritePpm)),
 			0.0f);
 	return polygonShape;

@@ -26,7 +26,8 @@ namespace {
 }
 
 m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
-	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(rightFlipper ? m2g::pb::SPRITE_BASIC_FLIPPER_RIGHT : m2g::pb::SPRITE_BASIC_FLIPPER_LEFT));
+	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(rightFlipper
+			? m2g::pb::SPRITE_BASIC_FLIPPER_RIGHT : m2g::pb::SPRITE_BASIC_FLIPPER_LEFT));
 
 	obj.impl = std::make_unique<FlipperImpl>(obj.orientation);
 	auto* flipper = dynamic_cast<FlipperImpl*>(obj.impl.get());
@@ -52,7 +53,7 @@ m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
 		b2FixtureDef fixtureDef;
 		const auto chain = m2::box2d::GenerateChainShape(sprite.Pb().regular().foreground_fixtures().chain_fixture(), sprite.Ppm());
 		fixtureDef.shape = &chain;
-		fixtureDef.friction = 0.1f;
+		fixtureDef.friction = 0.0f; // TODO
 		fixtureDef.restitution = 1.0f;
 		fixtureDef.restitutionThreshold = 0.0f;
 		fixtureDef.density = 0.0f; // Kinematic object doesn't need mass
@@ -65,7 +66,7 @@ m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
 		b2FixtureDef fixtureDef;
 		const auto circle = m2::box2d::GenerateCircleShape(circ, sprite.Ppm());
 		fixtureDef.shape = &circle;
-		fixtureDef.friction = 0.1f;
+		fixtureDef.friction = 0.0f; // TODO
 		fixtureDef.restitution = 1.0f;
 		fixtureDef.restitutionThreshold = 0.0f;
 		fixtureDef.density = 0.0f; // Kinematic object doesn't need mass

@@ -58,7 +58,7 @@ void LoadEdge() {
 		b2EdgeShape edgeShape;
 		edgeShape.SetTwoSided(b2Vec2{0.0f, gLevelDimensions.y / 2.0f}, b2Vec2{gLevelDimensions.x, gLevelDimensions.y / 2.0f});
 		fixtureDef.shape = &edgeShape;
-		fixtureDef.friction = 0.1f;
+		fixtureDef.friction = 0.0f; // TODO
 		fixtureDef.filter.categoryBits = m2::box2d::FIXTURE_CATEGORY_OBSTACLE;
 		fixtureDef.filter.maskBits = 0xFFFF; // Collide with everything
 		body->CreateFixture(&fixtureDef);

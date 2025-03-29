@@ -24,13 +24,12 @@ m2::void_expected LoadBall(m2::Object& obj) {
 	bodyDef.gravityScale = 1.0f;
 	b2Body* body = M2_LEVEL.world->CreateBody(&bodyDef);
 	{
-		// Top edge
 		b2FixtureDef fixtureDef;
 		b2CircleShape circleShape;
 		circleShape.m_radius = sprite.ForegroundColliderCircRadiusM();
 		circleShape.m_p = static_cast<b2Vec2>(m2::VecF{});
 		fixtureDef.shape = &circleShape;
-		fixtureDef.friction = 0.1f;
+		fixtureDef.friction = 0.0f; // TODO
 		fixtureDef.restitution = 1.0f;
 		fixtureDef.restitutionThreshold = 0.0f;
 		fixtureDef.density = 0.0f; // Mass will be set statically

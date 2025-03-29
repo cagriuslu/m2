@@ -43,7 +43,7 @@
                   "spriteOriginToCircleCenterVecPx": {
                     "x": 1.5
                   },
-                  "circleRadiusPx": 9.01387787
+                  "circleRadiusPx": 8
                 },
                 {
                   "spriteOriginToCircleCenterVecPx": {
@@ -101,7 +101,7 @@
                   "spriteOriginToCircleCenterVecPx": {
                     "x": 1.5
                   },
-                  "circleRadiusPx": 9
+                  "circleRadiusPx": 8
                 },
                 {
                   "spriteOriginToCircleCenterVecPx": {
@@ -130,6 +130,28 @@
                   }
                 ]
               }
+            }
+          }
+        },
+        {
+          "type": "SPRITE_BASIC_WALL_2X1",
+          "regular": {
+            "rect": {
+              "x": 96,
+              "y": 8,
+              "w": 64,
+              "h": 16
+            },
+            "foregroundFixtures": {
+              "rectangleFixtures": [
+                {
+                  "spriteOriginToRectangleCenterVecPx": {},
+                  "rectangleDimensionsPx": {
+                    "w": 64,
+                    "h": 16
+                  }
+                }
+              ]
             }
           }
         }

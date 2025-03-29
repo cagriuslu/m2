@@ -1,12 +1,14 @@
+#include <m2g/Proxy.h>
 #include <pinball/objects/Player.h>
 #include <pinball/objects/Ball.h>
 #include <pinball/objects/Flipper.h>
 #include <pinball/Simulation.h>
 #include <pinball/objects/Animal.h>
-#include <m2g/Proxy.h>
+#include <pinball/objects/Wall.h>
 #include <m2/Game.h>
 #include <m2/ui/widget/ProgressBar.h>
 #include <m2/ui/widget/Text.h>
+#include <m2g_ObjectType.pb.h>
 #include <numeric>
 
 namespace {
@@ -304,6 +306,8 @@ m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object&
 			return LoadFlipper(obj, false);
 		case pb::ObjectType::FLIPPER_RIGHT:
 			return LoadFlipper(obj, true);
+		case pb::ObjectType::OBJECT_BASIC_WALL_2X1:
+			return LoadWall(obj);
 		default:
 			throw M2_ERROR("Missing loader for type: " + m2::ToString(obj.object_type()));
 	}

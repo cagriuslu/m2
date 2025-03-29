@@ -1,1 +1,53 @@
-{"identifier":"001","objects":[{"position":{},"type":"PLAYER","group":{}},{"position":{"x":5.69422722,"y":3.97078037},"type":"BALL","group":{}},{"position":{"x":8.48336315,"y":11.5880318},"orientation":2.53072739,"type":"FLIPPER_RIGHT","group":{}},{"position":{"x":4.40324402,"y":11.6797962},"type":"FLIPPER_LEFT","group":{}}]}
+{
+  "identifier": "001",
+  "objects": [
+    {
+      "position": {},
+      "type": "PLAYER",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 5.69422722,
+        "y": 3.97078037
+      },
+      "type": "BALL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 9.13061619,
+        "y": 10.3337364
+      },
+      "orientation": 1.81514251,
+      "type": "OBJECT_BASIC_WALL_2X1",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 3.05931568,
+        "y": 11.5221424
+      },
+      "orientation": 0.104719758,
+      "type": "OBJECT_BASIC_WALL_2X1",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 8.48336315,
+        "y": 11.5880318
+      },
+      "orientation": 2.53072739,
+      "type": "FLIPPER_RIGHT",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 4.40324402,
+        "y": 11.6797962
+      },
+      "type": "FLIPPER_LEFT",
+      "group": {}
+    }
+  ]
+}
