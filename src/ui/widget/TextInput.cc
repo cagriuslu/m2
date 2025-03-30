@@ -22,7 +22,7 @@ TextInput::TextInput(UiPanel* parent, const UiWidgetBlueprint* blueprint) : UiWi
 }
 
 UiAction TextInput::HandleEvents(Events& events) {
-	if (events.pop_mouse_button_press(MouseButton::PRIMARY, RectI{Rect()})) {
+	if (events.PopMouseButtonPress(MouseButton::PRIMARY, RectI{Rect()})) {
 		LOG_INFO("Regaining focus");
 		return MakeContinueAction(true);
 	}
@@ -31,21 +31,21 @@ UiAction TextInput::HandleEvents(Events& events) {
 		return MakeContinueAction();
 	}
 
-	if (events.pop_key_press(m2g::pb::PAUSE)) {
+	if (events.PopKeyPress(m2g::pb::PAUSE)) {
 		return MakeContinueAction(false);
-	} else if (events.pop_key_press(m2g::pb::RETURN) && std::get<TextInputBlueprint>(blueprint->variant).onAction) {
+	} else if (events.PopKeyPress(m2g::pb::RETURN) && std::get<TextInputBlueprint>(blueprint->variant).onAction) {
 		auto [action, new_string] = std::get<TextInputBlueprint>(blueprint->variant).onAction(*this);
 		if (new_string) {
 			_text_input = std::stringstream{*new_string};
 		}
 		return std::move(action);
-	} else if (events.pop_key_press(m2g::pb::BACKSPACE)) {
+	} else if (events.PopKeyPress(m2g::pb::BACKSPACE)) {
 		if (const auto text_input_str = _text_input.str(); not text_input_str.empty()) {
 			_text_input = std::stringstream{text_input_str.substr(0, text_input_str.length() - 1)};
 			_text_input.seekp(0, std::ios::end);
 		}
 	} else {
-		if (const auto opt_text_input = events.pop_text_input(); opt_text_input) {
+		if (const auto opt_text_input = events.PopTextInput(); opt_text_input) {
 			_text_input << *opt_text_input;
 		}
 	}
@@ -71,11 +71,11 @@ void TextInput::Draw() {
 			str += '_';
 		}
 		// Generate text texture
-		auto textTexture = m2_move_or_throw_error(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font,
+		auto textTexture = m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font,
 				M2G_PROXY.default_font_size, str));
 		// Calculate destination rectangle
 		auto destination_rect = calculate_filled_text_rect(drawable_area(), TextHorizontalAlignment::LEFT,
-				I(utf8_codepoint_count(str.c_str())));
+				I(Utf8CodepointCount(str.c_str())));
 		// Save for later
 		_text_texture_and_destination_cache = sdl::TextTextureAndDestination{std::move(textTexture), destination_rect};
 	}

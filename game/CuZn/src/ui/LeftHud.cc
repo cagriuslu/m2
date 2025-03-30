@@ -20,7 +20,7 @@ namespace {
 		.text = "Build",
 		.wrapped_font_size_in_units = 1.75f,
 		.onAction = [](MAYBE const Text& self) -> UiAction {
-			if (auto build_prerequisite = CanPlayerAttemptToBuild(M2_PLAYER.character())) {
+			if (auto build_prerequisite = CanPlayerAttemptToBuild(M2_PLAYER.GetCharacter())) {
 				m2g::Proxy::get_instance().main_journeys.emplace(std::in_place_type<BuildJourney>); // Avoid a temporary
 			} else {
 				M2_LEVEL.ShowMessage(build_prerequisite.error(), 8.0f);
@@ -33,7 +33,7 @@ namespace {
 		.text = "Develop",
 		.wrapped_font_size_in_units = 1.75f,
 		.onAction = [](MAYBE const Text& self) -> UiAction {
-			if (auto develop_prerequisite = CanPlayerAttemptToDevelop(M2_PLAYER.character())) {
+			if (auto develop_prerequisite = CanPlayerAttemptToDevelop(M2_PLAYER.GetCharacter())) {
 				m2g::Proxy::get_instance().main_journeys.emplace(std::in_place_type<DevelopJourney>);
 			} else {
 				M2_LEVEL.ShowMessage(develop_prerequisite.error(), 8.0f);
@@ -46,7 +46,7 @@ namespace {
 		.text = "Loan",
 		.wrapped_font_size_in_units = 1.75f,
 		.onAction = [](MAYBE const m2::widget::Text& self) -> m2::UiAction {
-			if (auto loan_prerequisite = CanPlayerAttemptToLoan(M2_PLAYER.character())) {
+			if (auto loan_prerequisite = CanPlayerAttemptToLoan(M2_PLAYER.GetCharacter())) {
 				ExecuteLoanJourney();
 			} else {
 				M2_LEVEL.ShowMessage(loan_prerequisite.error(), 8.0f);
@@ -59,7 +59,7 @@ namespace {
 		.text = "Network",
 		.wrapped_font_size_in_units = 1.75f,
 		.onAction = [](MAYBE const Text& self) -> UiAction {
-			if (auto network_prerequisite = CanPlayerAttemptToNetwork(M2_PLAYER.character())) {
+			if (auto network_prerequisite = CanPlayerAttemptToNetwork(M2_PLAYER.GetCharacter())) {
 				m2g::Proxy::get_instance().main_journeys.emplace(std::in_place_type<NetworkJourney>);
 			} else {
 				M2_LEVEL.ShowMessage(network_prerequisite.error(), 8.0f);
@@ -83,7 +83,7 @@ namespace {
 		.text = "Scout",
 		.wrapped_font_size_in_units = 1.75f,
 		.onAction = [](MAYBE const m2::widget::Text& self) -> m2::UiAction {
-			if (auto scout_prerequisite = CanPlayerAttemptToScout(M2_PLAYER.character())) {
+			if (auto scout_prerequisite = CanPlayerAttemptToScout(M2_PLAYER.GetCharacter())) {
 				ExecuteScoutJourney();
 			} else {
 				M2_LEVEL.ShowMessage(scout_prerequisite.error(), 8.0f);
@@ -96,7 +96,7 @@ namespace {
 		.text = "Sell",
 		.wrapped_font_size_in_units = 1.75f,
 		.onAction = [](MAYBE const Text& self) -> UiAction {
-			if (auto sell_prerequisite = CanPlayerAttemptToSell(M2_PLAYER.character())) {
+			if (auto sell_prerequisite = CanPlayerAttemptToSell(M2_PLAYER.GetCharacter())) {
 				m2g::Proxy::get_instance().main_journeys.emplace(std::in_place_type<SellJourney>);
 			} else {
 				M2_LEVEL.ShowMessage(sell_prerequisite.error(), 8.0f);
@@ -143,13 +143,13 @@ const UiPanelBlueprint left_hud_blueprint = {
 				.wrapped_font_size_in_units = 1.25f,
 				.onUpdate = [](MAYBE Text& self) {
 					if (M2_GAME.IsOurTurn()) {
-						if (m2::is_one(M2G_PROXY.game_state_tracker().GetResource(m2g::pb::IS_LAST_ACTION_OF_PLAYER), 0.001f)) {
+						if (m2::IsOne(M2G_PROXY.game_state_tracker().GetResource(m2g::pb::IS_LAST_ACTION_OF_PLAYER), 0.001f)) {
 							self.set_text("Take your\nlast action\nof this turn");
 						} else {
 							self.set_text("Take your\nfirst action\nof this turn");
 						}
 					} else {
-						if (m2::is_one(M2G_PROXY.game_state_tracker().GetResource(m2g::pb::IS_LAST_ACTION_OF_PLAYER), 0.001f)) {
+						if (m2::IsOne(M2G_PROXY.game_state_tracker().GetResource(m2g::pb::IS_LAST_ACTION_OF_PLAYER), 0.001f)) {
 							self.set_text("Current\nplayer will\ntake their\nlast action\nof this turn");
 						} else {
 							self.set_text("Current\nplayer will\ntake their\nfirst action\nof this turn");

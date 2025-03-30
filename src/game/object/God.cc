@@ -22,22 +22,22 @@ namespace {
 }  // namespace
 
 Id obj::create_god() {
-	const auto it = create_object({});
+	const auto it = CreateObject({});
 
-	it->add_physique().preStep = [](MAYBE Physique& phy) {
-		auto& obj = phy.owner();
+	it->AddPhysique().preStep = [](MAYBE Physique& phy) {
+		auto& obj = phy.Owner();
 
 		VecF move_direction;
-		if (M2_GAME.events.is_key_down(m2g::pb::KeyType::MOVE_UP)) {
+		if (M2_GAME.events.IsKeyDown(m2g::pb::KeyType::MOVE_UP)) {
 			move_direction.y -= 1.0f;
 		}
-		if (M2_GAME.events.is_key_down(m2g::pb::KeyType::MOVE_DOWN)) {
+		if (M2_GAME.events.IsKeyDown(m2g::pb::KeyType::MOVE_DOWN)) {
 			move_direction.y += 1.0f;
 		}
-		if (M2_GAME.events.is_key_down(m2g::pb::KeyType::MOVE_LEFT)) {
+		if (M2_GAME.events.IsKeyDown(m2g::pb::KeyType::MOVE_LEFT)) {
 			move_direction.x -= 1.0f;
 		}
-		if (M2_GAME.events.is_key_down(m2g::pb::KeyType::MOVE_RIGHT)) {
+		if (M2_GAME.events.IsKeyDown(m2g::pb::KeyType::MOVE_RIGHT)) {
 			move_direction.x += 1.0f;
 		}
 		obj.position += move_direction.normalize() * (M2_GAME.DeltaTimeS() * M2_GAME.Dimensions().GameM().y);
@@ -45,21 +45,21 @@ Id obj::create_god() {
 		obj.position = obj.position.clamp(VecF{0.0f, 0.0f}, std::nullopt);
 
 		// Adjust zoom
-		if (M2_GAME.events.pop_key_press(m2g::pb::KeyType::ZOOM_OUT)) {
+		if (M2_GAME.events.PopKeyPress(m2g::pb::KeyType::ZOOM_OUT)) {
 			M2_GAME.SetScale(M2_GAME.Dimensions().Scale() / 1.5f);
 		}
-		if (M2_GAME.events.pop_key_press(m2g::pb::KeyType::ZOOM_IN)) {
+		if (M2_GAME.events.PopKeyPress(m2g::pb::KeyType::ZOOM_IN)) {
 			M2_GAME.SetScale(M2_GAME.Dimensions().Scale() * 1.5f);
 		}
 
 		if (const auto& mousePosition = M2_GAME.MousePositionWorldM(); not mousePosition.is_negative()) {
-			if (M2_GAME.events.pop_mouse_button_press(MouseButton::PRIMARY)) {
+			if (M2_GAME.events.PopMouseButtonPress(MouseButton::PRIMARY)) {
 				handle_primary_button_press(mousePosition);
 			}
 		}
 	};
 
-	it->add_graphic().postDraw = [](MAYBE Graphic& gfx) {
+	it->AddGraphic().postDraw = [](MAYBE Graphic& gfx) {
 		std::visit(overloaded{
 		        [](const level_editor::State& le) { le.Draw(); },
 		        [](const sheet_editor::State& se) { se.Draw(); },

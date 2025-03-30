@@ -289,7 +289,7 @@ m2::void_expected m2::MoveBackground(const int from, const int to, const std::st
 	}
 
 	auto lb = pb::json_file_to_message<pb::Level>(M2_GAME.levels_dir / level);
-	m2_reflect_unexpected(lb);
+	m2ReflectUnexpected(lb);
 
 	// Ensure there are enough layers
 	while (lb->background_layers_size() < 4) {

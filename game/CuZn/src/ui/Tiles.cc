@@ -83,12 +83,12 @@ UiPanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType
 							auto industry_type = static_cast<m2g::pb::ItemCategory>(industry_type_selection_int);
 							// Gather the industry tiles
 							std::vector<IndustryTile> industry_tiles;
-							for (auto item_it = M2_PLAYER.character().FindItems(industry_type); item_it != M2_PLAYER.character().EndItems(); ++item_it) {
-								if (item_it->type() == tile_to_filter) {
+							for (auto item_it = M2_PLAYER.GetCharacter().FindItems(industry_type); item_it != M2_PLAYER.GetCharacter().EndItems(); ++item_it) {
+								if (item_it->Type() == tile_to_filter) {
 									// Don't emplace, clear filter because only one tile is filtered
 									tile_to_filter = {};
 								} else {
-									industry_tiles.emplace_back(item_it->type());
+									industry_tiles.emplace_back(item_it->Type());
 								}
 							}
 							// Sort the tiles
@@ -103,7 +103,7 @@ UiPanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType
 									->set_options(std::move(options)); // Trigger the other widget to recreate itself
 							const auto industry = industry_of_industry_tile_category(industry_type);
 							self.Parent().find_first_widget_by_name<Image>("IndustryVisual")
-									->SetSpriteType(M2_GAME.GetNamedItem(industry).ui_sprite()); // Set the industry image
+									->SetSpriteType(M2_GAME.GetNamedItem(industry).UiSprite()); // Set the industry image
 						} else {
 							self.Parent().find_first_widget_by_name<TextSelection>("TileLevelSelection")
 									->set_options({}); // Trigger the other widget to recreate itself
@@ -295,11 +295,11 @@ std::optional<m2g::pb::ItemType> ask_for_tile_selection(m2g::pb::ItemType exclud
 
 std::string GetIndustryTileBuildRequirementsString(const IndustryTile industryTileType) {
 	const auto& industryTile = M2_GAME.GetNamedItem(industryTileType);
-	std::string build_requirements = "£" + m2::ToString(iround(industryTile.GetAttribute(m2g::pb::MONEY_COST)));
-	if (const auto coal_cost = iround(industryTile.GetAttribute(m2g::pb::COAL_COST))) {
+	std::string build_requirements = "£" + m2::ToString(RoundI(industryTile.GetAttribute(m2g::pb::MONEY_COST)));
+	if (const auto coal_cost = RoundI(industryTile.GetAttribute(m2g::pb::COAL_COST))) {
 		build_requirements += ", " + m2::ToString(coal_cost) + " Coal";
 	}
-	if (const auto iron_cost = iround(industryTile.GetAttribute(m2g::pb::IRON_COST))) {
+	if (const auto iron_cost = RoundI(industryTile.GetAttribute(m2g::pb::IRON_COST))) {
 		build_requirements += ", " + m2::ToString(iron_cost) + " Iron";
 	}
 	return build_requirements;
@@ -307,13 +307,13 @@ std::string GetIndustryTileBuildRequirementsString(const IndustryTile industryTi
 std::string GetIndustryTileResourceGainString(const IndustryTile industryTileType) {
 	const auto& industryTile = M2_GAME.GetNamedItem(industryTileType);
 	std::string resource_gain;
-	if (const auto coal_gain = iround(industryTile.GetAttribute(m2g::pb::COAL_BONUS))) {
+	if (const auto coal_gain = RoundI(industryTile.GetAttribute(m2g::pb::COAL_BONUS))) {
 		resource_gain = m2::ToString(coal_gain) + " Coal";
-	} else if (const auto iron_gain = iround(industryTile.GetAttribute(m2g::pb::IRON_BONUS))) {
+	} else if (const auto iron_gain = RoundI(industryTile.GetAttribute(m2g::pb::IRON_BONUS))) {
 		resource_gain = m2::ToString(iron_gain) + " Iron";
-	} else if (const auto canal_era_beer_gain = iround(industryTile.GetAttribute(m2g::pb::BEER_BONUS_FIRST_ERA))) {
+	} else if (const auto canal_era_beer_gain = RoundI(industryTile.GetAttribute(m2g::pb::BEER_BONUS_FIRST_ERA))) {
 		resource_gain = m2::ToString(canal_era_beer_gain);
-		const auto railroad_era_beer_gain = iround(industryTile.GetAttribute(m2g::pb::BEER_BONUS_SECOND_ERA));
+		const auto railroad_era_beer_gain = RoundI(industryTile.GetAttribute(m2g::pb::BEER_BONUS_SECOND_ERA));
 		if (railroad_era_beer_gain != canal_era_beer_gain) {
 			resource_gain += "/" + m2::ToString(railroad_era_beer_gain);
 		}
@@ -323,15 +323,15 @@ std::string GetIndustryTileResourceGainString(const IndustryTile industryTileTyp
 }
 std::string GetIndustryTileSellRequirementsString(const IndustryTile industryTileType) {
 	const auto& industryTile = M2_GAME.GetNamedItem(industryTileType);
-	if (auto sell_beer_cost = iround(industryTile.GetAttribute(m2g::pb::BEER_COST))) {
+	if (auto sell_beer_cost = RoundI(industryTile.GetAttribute(m2g::pb::BEER_COST))) {
 		return m2::ToString(sell_beer_cost) + " Beer";
 	}
 	return {};
 }
 std::string GetIndustryTileSellBenefitsString(const IndustryTile industryTileType) {
 	const auto& industryTile = M2_GAME.GetNamedItem(industryTileType);
-	std::string sell_benefits = m2::ToString(iround(industryTile.GetAttribute(m2g::pb::VICTORY_POINTS_BONUS))) + " Points, ";
-	sell_benefits += m2::ToString(iround(industryTile.GetAttribute(m2g::pb::INCOME_POINTS_BONUS))) + " Income, ";
-	sell_benefits += m2::ToString(iround(industryTile.GetAttribute(m2g::pb::LINK_BONUS))) + " Link";
+	std::string sell_benefits = m2::ToString(RoundI(industryTile.GetAttribute(m2g::pb::VICTORY_POINTS_BONUS))) + " Points, ";
+	sell_benefits += m2::ToString(RoundI(industryTile.GetAttribute(m2g::pb::INCOME_POINTS_BONUS))) + " Income, ";
+	sell_benefits += m2::ToString(RoundI(industryTile.GetAttribute(m2g::pb::LINK_BONUS))) + " Link";
 	return sell_benefits;
 }

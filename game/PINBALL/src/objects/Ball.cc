@@ -6,7 +6,7 @@
 m2::void_expected LoadBall(m2::Object& obj) {
 	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(m2g::pb::SPRITE_BASIC_BALL));
 
-	auto& phy = obj.add_physique();
+	auto& phy = obj.AddPhysique();
 	b2BodyDef bodyDef;
 	bodyDef.type = b2_dynamicBody;
 	bodyDef.position.Set(obj.position.x, obj.position.y);
@@ -20,7 +20,7 @@ m2::void_expected LoadBall(m2::Object& obj) {
 	bodyDef.fixedRotation = false;
 	bodyDef.bullet = true;
 	bodyDef.enabled = true;
-	bodyDef.userData.pointer = obj.physique_id();
+	bodyDef.userData.pointer = obj.GetPhysiqueId();
 	bodyDef.gravityScale = 1.0f;
 	b2Body* body = M2_LEVEL.world->CreateBody(&bodyDef);
 	{
@@ -47,7 +47,7 @@ m2::void_expected LoadBall(m2::Object& obj) {
 
 	phy.postStep = [](MAYBE m2::Physique& phy_) {};
 
-	MAYBE auto& gfx = obj.add_graphic(m2g::pb::SPRITE_BASIC_BALL);
+	MAYBE auto& gfx = obj.AddGraphic(m2g::pb::SPRITE_BASIC_BALL);
 
 	return {};
 }

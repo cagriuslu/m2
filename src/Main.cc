@@ -56,9 +56,9 @@ int main(const int argc, char **argv) {
 		if (last_phy_count) {
 			// Clear the events only if the physics step has executed
 			// Otherwise some keys/buttons may not have been handled
-			M2_GAME.events.clear();
+			M2_GAME.events.Clear();
 		}
-		if (M2_GAME.events.gather()) {
+		if (M2_GAME.events.Gather()) {
 			M2_GAME.HandleQuitEvent();
 			M2_GAME.HandleWindowResizeEvent();
 			M2_GAME.HandleConsoleEvent();

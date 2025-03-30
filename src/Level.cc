@@ -72,7 +72,7 @@ m2::void_expected m2::Level::InitLevelEditor(const std::filesystem::path& lb_pat
 
 	if (std::filesystem::exists(*_lbPath)) {
 		auto lb = pb::json_file_to_message<pb::Level>(*_lbPath);
-		m2_reflect_unexpected(lb);
+		m2ReflectUnexpected(lb);
 		_lb.emplace(*lb);
 
 		std::get<level_editor::State>(stateVariant).LoadLevelBlueprint(*_lb);
@@ -158,7 +158,7 @@ m2::void_expected m2::Level::InitPixelEditor(const std::filesystem::path& path, 
 m2::void_expected m2::Level::InitSheetEditor(const std::filesystem::path& path) {
 	// Create state
 	auto state = sheet_editor::State::create(path);
-	m2_reflect_unexpected(state);
+	m2ReflectUnexpected(state);
 	stateVariant.emplace<sheet_editor::State>(std::move(*state));
 
 	// Create message box initially disabled
@@ -183,7 +183,7 @@ m2::void_expected m2::Level::InitSheetEditor(const std::filesystem::path& path) 
 m2::void_expected m2::Level::InitBulkSheetEditor(const std::filesystem::path& path) {
 	// Create state
 	auto state = bulk_sheet_editor::State::Create(path);
-	m2_reflect_unexpected(state);
+	m2ReflectUnexpected(state);
 	stateVariant.emplace<bulk_sheet_editor::State>(std::move(*state));
 
 	// Create message box initially disabled
@@ -312,7 +312,7 @@ m2::void_expected m2::Level::InitAnyPlayer(
 	if (std::holds_alternative<std::filesystem::path>(level_path_or_blueprint)) {
 		_lbPath = std::get<std::filesystem::path>(level_path_or_blueprint);
 		auto lb = pb::json_file_to_message<pb::Level>(*_lbPath);
-		m2_reflect_unexpected(lb);
+		m2ReflectUnexpected(lb);
 		_lb = *lb;
 	} else {
 		_lbPath = {};
@@ -365,7 +365,7 @@ m2::void_expected m2::Level::InitAnyPlayer(
 	for (const auto& fg_object : _lb->objects()) {
 		const auto objectPosition = VecF{fg_object.position()};
 		LOG_TRACE("Loading foreground object", fg_object.type(), objectPosition);
-		auto it = create_object(objectPosition, fg_object.type());
+		auto it = CreateObject(objectPosition, fg_object.type());
 		it->orientation = fg_object.orientation();
 
 		// Assign to group
@@ -380,11 +380,11 @@ m2::void_expected m2::Level::InitAnyPlayer(
 				group = M2G_PROXY.create_group(group_id.type);
 				groups[group_id] = std::unique_ptr<Group>(group);
 			}
-			it->set_group(group_id, group->add_member(it.GetId()));
+			it->SetGroup(group_id, group->AddMember(it.GetId()));
 		}
 
 		auto load_result = M2G_PROXY.LoadForegroundObjectFromLevelBlueprint(*it);
-		m2_reflect_unexpected(load_result);
+		m2ReflectUnexpected(load_result);
 		LOG_TRACE("Created object", it.GetId());
 	}
 

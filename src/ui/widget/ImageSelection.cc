@@ -7,8 +7,8 @@ using namespace m2::widget;
 
 ImageSelection::ImageSelection(UiPanel* parent, const UiWidgetBlueprint* blueprint)
     : UiWidget(parent, blueprint),
-      _plus_texture(m2_move_or_throw_error(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "+"))),
-      _minus_texture(m2_move_or_throw_error(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "-"))) {
+      _plus_texture(m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "+"))),
+      _minus_texture(m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "-"))) {
 	select(0);
 	if (VariantBlueprint().onCreate) {
 		VariantBlueprint().onCreate(*this);
@@ -22,25 +22,25 @@ UiAction ImageSelection::HandleEvents(Events& events) {
 
 	const auto& image_selection = std::get<ImageSelectionBlueprint>(blueprint->variant);
 
-	if (!_inc_depressed && events.pop_mouse_button_press(MouseButton::PRIMARY, inc_button_rect)) {
+	if (!_inc_depressed && events.PopMouseButtonPress(MouseButton::PRIMARY, inc_button_rect)) {
 		_inc_depressed = true;
 		_dec_depressed = false;
-	} else if (!_dec_depressed && events.pop_mouse_button_press(MouseButton::PRIMARY, dec_button_rect)) {
+	} else if (!_dec_depressed && events.PopMouseButtonPress(MouseButton::PRIMARY, dec_button_rect)) {
 		_dec_depressed = true;
 		_inc_depressed = false;
-	} else if (_inc_depressed && events.pop_mouse_button_release(MouseButton::PRIMARY, inc_button_rect)) {
+	} else if (_inc_depressed && events.PopMouseButtonRelease(MouseButton::PRIMARY, inc_button_rect)) {
 		_inc_depressed = false;
 		if (_selection + 1 < image_selection.list.size()) {
 			select(_selection + 1);
 		}
-	} else if (_dec_depressed && events.pop_mouse_button_release(MouseButton::PRIMARY, dec_button_rect)) {
+	} else if (_dec_depressed && events.PopMouseButtonRelease(MouseButton::PRIMARY, dec_button_rect)) {
 		_dec_depressed = false;
 		if (0 < _selection) {
 			select(_selection - 1);
 		}
 	} else {
 		// Check if scrolled
-		if (auto scroll_amount = events.pop_mouse_wheel_vertical_scroll(Rect()); 0 < scroll_amount) {
+		if (auto scroll_amount = events.PopMouseWheelVerticalScroll(Rect()); 0 < scroll_amount) {
 			auto min_scroll_amount =
 			    std::min(static_cast<size_t>(scroll_amount), image_selection.list.size() - _selection - 1);
 			if (min_scroll_amount) {
@@ -81,12 +81,12 @@ void ImageSelection::Draw() {
 	auto buttons_rect = Rect().trim_top(Rect().w);
 	auto inc_button_rect = buttons_rect.trim_left(buttons_rect.w / 2);
 	sdl::render_texture_with_color_mod(_plus_texture.texture(),
-			calculate_filled_text_rect(inc_button_rect, TextHorizontalAlignment::LEFT, I(utf8_codepoint_count(_plus_texture.string().c_str()))));
+			calculate_filled_text_rect(inc_button_rect, TextHorizontalAlignment::LEFT, I(Utf8CodepointCount(_plus_texture.string().c_str()))));
 	draw_border(inc_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 
 	auto dec_button_rect = buttons_rect.trim_right(buttons_rect.w / 2);
 	sdl::render_texture_with_color_mod(_minus_texture.texture(),
-			calculate_filled_text_rect(dec_button_rect, TextHorizontalAlignment::LEFT, I(utf8_codepoint_count(_minus_texture.string().c_str()))));
+			calculate_filled_text_rect(dec_button_rect, TextHorizontalAlignment::LEFT, I(Utf8CodepointCount(_minus_texture.string().c_str()))));
 	draw_border(dec_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 
 	draw_border(Rect(), vertical_border_width_px(), horizontal_border_width_px());

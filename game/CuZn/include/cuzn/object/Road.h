@@ -13,7 +13,7 @@ int LinkCountOfRoadCharacter(const m2::Character& chr);
 void RemoveAllRoads();
 
 // Filters
-constexpr auto IsRoadCharacter = [](const m2::Character& chr) { return chr.owner().object_type() == m2g::pb::ROAD; };
+constexpr auto IsRoadCharacter = [](const m2::Character& chr) { return chr.Owner().GetType() == m2g::pb::ROAD; };
 
 // Transformers
 constexpr auto ToCitiesOfRoadCharacter = [](const m2::Character& chr) -> std::set<m2g::pb::ItemType> {
@@ -22,7 +22,7 @@ constexpr auto ToCitiesOfRoadCharacter = [](const m2::Character& chr) -> std::se
 	}
 	std::set<m2g::pb::ItemType> city_cards;
 	for (auto it = chr.FindItems(m2g::pb::ITEM_CATEGORY_CITY_CARD); it != chr.EndItems(); ++it) {
-		city_cards.insert(it->type());
+		city_cards.insert(it->Type());
 	}
 	return city_cards;
 };

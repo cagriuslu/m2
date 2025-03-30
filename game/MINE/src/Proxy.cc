@@ -7,7 +7,7 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 		case pb::SpriteType::DUNGEON_COAL_1:
 		case pb::SpriteType::DUNGEON_COAL_2: {
 			// Add HP to destroyable tiles
-			auto& chr = obj.add_tiny_character();
+			auto& chr = obj.AddTinyCharacter();
 			chr.AddResource(m2g::pb::RESOURCE_HP, 2.0f);
 			chr.SetMaxResource(m2g::pb::RESOURCE_HP, 2.0f);
 			break;
@@ -15,7 +15,7 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 		case pb::SpriteType::GRASSLAND_DIRT_1:
 		case pb::SpriteType::GRASSLAND_DIRT_2: {
 			// Add HP to destroyable tiles
-			auto& chr = obj.add_tiny_character();
+			auto& chr = obj.AddTinyCharacter();
 			chr.AddResource(m2g::pb::RESOURCE_HP, 1.0f);
 			chr.SetMaxResource(m2g::pb::RESOURCE_HP, 1.0f);
 			break;
@@ -26,7 +26,7 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 }
 
 m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object& obj) {
-	switch (obj.object_type()) {
+	switch (obj.GetType()) {
 		case pb::ObjectType::DWARF:
 			return create_dwarf(obj);
 		case pb::ObjectType::BLACKSMITH:

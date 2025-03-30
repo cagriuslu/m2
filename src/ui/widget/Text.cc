@@ -30,13 +30,13 @@ void Text::Draw() {
 		const auto fontSize = VariantBlueprint().wrapped_font_size_in_units != 0.0f
 				// Integer rounding because iround might produce too big of a font
 				? RoundDownToEvenI(vertical_pixels_per_unit() * VariantBlueprint().wrapped_font_size_in_units)
-				: calculate_filled_text_rect(drawable_area(), VariantBlueprint().horizontal_alignment, I(utf8_codepoint_count(_current_text.c_str()))).h;
+				: calculate_filled_text_rect(drawable_area(), VariantBlueprint().horizontal_alignment, I(Utf8CodepointCount(_current_text.c_str()))).h;
 		auto textTexture = VariantBlueprint().wrapped_font_size_in_units != 0.0f
-				? m2_move_or_throw_error(sdl::TextTexture::create_wrapped(M2_GAME.renderer, M2_GAME.font, fontSize, drawable_area().w, VariantBlueprint().horizontal_alignment, _current_text))
-				: m2_move_or_throw_error(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, _current_text));
+				? m2MoveOrThrowError(sdl::TextTexture::create_wrapped(M2_GAME.renderer, M2_GAME.font, fontSize, drawable_area().w, VariantBlueprint().horizontal_alignment, _current_text))
+				: m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, _current_text));
 		auto destination_rect = VariantBlueprint().wrapped_font_size_in_units != 0.0f
 				? calculate_wrapped_text_rect(textTexture.texture(), drawable_area(), VariantBlueprint().horizontal_alignment, VariantBlueprint().vertical_alignment)
-				: calculate_filled_text_rect(drawable_area(), VariantBlueprint().horizontal_alignment, I(utf8_codepoint_count(_current_text.c_str())));
+				: calculate_filled_text_rect(drawable_area(), VariantBlueprint().horizontal_alignment, I(Utf8CodepointCount(_current_text.c_str())));
 		_text_texture_and_destination_cache = sdl::TextTextureAndDestination{std::move(textTexture), destination_rect};
 	}
 

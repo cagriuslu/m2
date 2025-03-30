@@ -20,9 +20,9 @@ bool is_there_iron_on_the_board() {
 				| std::views::transform(m2::ToCharacterBase)
 				| std::views::filter(IsFactoryCharacter),
 			[](m2::Character& chr) {
-				return m2::is_positive(chr.GetResource(m2g::pb::IRON_CUBE_COUNT), 0.001f);
+				return m2::IsPositive(chr.GetResource(m2g::pb::IRON_CUBE_COUNT), 0.001f);
 			});
 	// Check the market as well
 	return there_is_iron_works_with_iron
-		|| m2::is_positive(M2G_PROXY.game_state_tracker().GetResource(m2g::pb::IRON_CUBE_COUNT), 0.001f);
+		|| m2::IsPositive(M2G_PROXY.game_state_tracker().GetResource(m2g::pb::IRON_CUBE_COUNT), 0.001f);
 }

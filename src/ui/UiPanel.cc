@@ -146,15 +146,15 @@ UiAction UiPanel::run_blocking() {
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////// EVENT HANDLING ////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		events.clear();
-		if (events.gather()) {
+		events.Clear();
+		if (events.Gather()) {
 			// Handle quit action
-			if (events.pop_quit()) {
+			if (events.PopQuit()) {
 				return MakeQuitAction();
 			}
 
 			// Handle console action
-			if ((not console_command.empty() || events.pop_key_press(m2g::pb::KeyType::CONSOLE)) &&
+			if ((not console_command.empty() || events.PopKeyPress(m2g::pb::KeyType::CONSOLE)) &&
 				blueprint != &console_ui) {  // Do not open console on top of console
 
 				// Initialize console with command
@@ -172,7 +172,7 @@ UiAction UiPanel::run_blocking() {
 			}
 
 			// Handle resize action
-			if (const auto window_resize = events.pop_window_resize(); window_resize) {
+			if (const auto window_resize = events.PopWindowResize(); window_resize) {
 				M2_GAME.OnWindowResize();
 				// TODO what about the other sync panels in the stack?
 				RecalculateRects();
@@ -312,10 +312,10 @@ const AnyReturnContainer* UiPanel::PeekReturnValueContainer() const {
 RectI UiPanel::Rect() const {
 	const auto& game_and_hud_dims = M2_GAME.Dimensions().GameAndHud();
 	return RectI{
-		iround(F(game_and_hud_dims.x) + _relation_to_game_and_hud_dims.x * F(game_and_hud_dims.w)),
-		iround(F(game_and_hud_dims.y) + _relation_to_game_and_hud_dims.y * F(game_and_hud_dims.h)),
-		iround(_relation_to_game_and_hud_dims.w * F(game_and_hud_dims.w)),
-		iround(_relation_to_game_and_hud_dims.h * F(game_and_hud_dims.h))};
+		RoundI(F(game_and_hud_dims.x) + _relation_to_game_and_hud_dims.x * F(game_and_hud_dims.w)),
+		RoundI(F(game_and_hud_dims.y) + _relation_to_game_and_hud_dims.y * F(game_and_hud_dims.h)),
+		RoundI(_relation_to_game_and_hud_dims.w * F(game_and_hud_dims.w)),
+		RoundI(_relation_to_game_and_hud_dims.h * F(game_and_hud_dims.h))};
 }
 
 void UiPanel::KillWithReturnValue(AnyReturnContainer&& arc) {
@@ -365,7 +365,7 @@ UiAction UiPanel::HandleEvents(Events& events, bool IsPanning) {
 	}
 
 	// If the UI is cancellable, check if MENU button is pressed
-	if (blueprint->cancellable && events.pop_key_press(m2g::pb::KeyType::PAUSE)) {
+	if (blueprint->cancellable && events.PopKeyPress(m2g::pb::KeyType::PAUSE)) {
 		return MakeReturnAction();
 	}
 
@@ -394,11 +394,11 @@ UiAction UiPanel::HandleEvents(Events& events, bool IsPanning) {
 	// Clear mouse events if the mouse is inside the UI element so that it isn't delivered to game objects. This
 	// behavior can partially be overwritten with Game::EnablePanning().
 	const auto rect = Rect();
-	events.clear_mouse_button_presses(rect);
-	events.clear_mouse_button_releases(rect);
-	events.clear_mouse_wheel_scrolls(rect);
+	events.ClearMouseButtonPresses(rect);
+	events.ClearMouseButtonReleases(rect);
+	events.ClearMouseWheelScrolls(rect);
 	if (not IsPanning) {
-		events.clear_mouse_button_down(rect);
+		events.ClearMouseButtonDown(rect);
 	}
 
 	if (not action) {
@@ -457,7 +457,7 @@ int UiPanel::vertical_border_width_px() const {
 	} else {
 		// Pixels per unit
 		float pixel_pitch = F(Rect().w) / F(blueprint->w);
-		return std::max(1, iround(pixel_pitch * blueprint->border_width));
+		return std::max(1, RoundI(pixel_pitch * blueprint->border_width));
 	}
 }
 
@@ -467,7 +467,7 @@ int UiPanel::horizontal_border_width_px() const {
 	} else {
 		// Pixels per unit
 		float pixel_pitch = F(Rect().h) / F(blueprint->h);
-		return std::max(1, iround(pixel_pitch * blueprint->border_width));
+		return std::max(1, RoundI(pixel_pitch * blueprint->border_width));
 	}
 }
 

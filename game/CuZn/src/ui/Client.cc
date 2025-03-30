@@ -23,7 +23,7 @@ static TextBlueprint client_status = {
 			auto player_count = M2_GAME.RealClientThread().total_player_count();
 			const auto expect_success =
 				M2_GAME.LoadMultiPlayerAsGuest(M2_GAME.levels_dir / "Map.json", m2::ToString(player_count));
-			m2_succeed_or_throw_error(expect_success);
+			m2SucceedOrThrowError(expect_success);
 			return MakeClearStackAction();
 		} else if (M2_GAME.RealClientThread().IsQuit()) {
 			self.set_text("SERVER FULL");

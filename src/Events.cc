@@ -5,9 +5,9 @@
 
 using namespace m2;
 
-void Events::clear() { *this = Events(); }
+void Events::Clear() { *this = Events(); }
 
-bool Events::gather() {
+bool Events::Gather() {
 	// Set the mouse position first because below calculations may call MousePositionWorldM(), which reads _mouse_position.
 	const uint32_t mouseStateBitmask = SDL_GetMouseState(&_mouse_position.x, &_mouse_position.y);
 	mouse_buttons_down[u(MouseButton::PRIMARY)] = mouseStateBitmask & SDL_BUTTON(SDL_BUTTON_LEFT);
@@ -69,14 +69,14 @@ bool Events::gather() {
 				++mouse_button_press_count;
 				++mouse_buttons_pressed[u(button_to_mouse_button(e.button.button))];
 				if (auto* primarySelection = M2_LEVEL.PrimarySelection();
-						primarySelection && peek_mouse_button_press(MouseButton::PRIMARY, primarySelection->ScreenBoundaryPx())) {
+						primarySelection && PeekMouseButtonPress(MouseButton::PRIMARY, primarySelection->ScreenBoundaryPx())) {
 					primarySelection->SetFirstAndClearSecondPositionM(M2_GAME.MousePositionWorldM());
 					if (auto* secondarySelection = M2_LEVEL.SecondarySelection()) {
 						secondarySelection->Reset();
 					}
 				}
 				if (auto* secondarySelection = M2_LEVEL.SecondarySelection();
-						secondarySelection && peek_mouse_button_press(MouseButton::SECONDARY, secondarySelection->ScreenBoundaryPx())) {
+						secondarySelection && PeekMouseButtonPress(MouseButton::SECONDARY, secondarySelection->ScreenBoundaryPx())) {
 					secondarySelection->SetFirstAndClearSecondPositionM(M2_GAME.MousePositionWorldM());
 					if (auto* primarySelection = M2_LEVEL.PrimarySelection()) {
 						primarySelection->Reset();
@@ -87,14 +87,14 @@ bool Events::gather() {
 				++mouse_button_release_count;
 				++mouse_buttons_released[u(button_to_mouse_button(e.button.button))];
 				if (auto* primarySelection = M2_LEVEL.PrimarySelection();
-						primarySelection && peek_mouse_button_release(MouseButton::PRIMARY, primarySelection->ScreenBoundaryPx())) {
+						primarySelection && PeekMouseButtonRelease(MouseButton::PRIMARY, primarySelection->ScreenBoundaryPx())) {
 					primarySelection->SetSecondPositionIfFirstSetM(M2_GAME.MousePositionWorldM());
 					if (auto* secondarySelection = M2_LEVEL.SecondarySelection()) {
 						secondarySelection->Reset();
 					}
 				}
 				if (auto* secondarySelection = M2_LEVEL.SecondarySelection();
-						secondarySelection && peek_mouse_button_release(MouseButton::SECONDARY, secondarySelection->ScreenBoundaryPx())) {
+						secondarySelection && PeekMouseButtonRelease(MouseButton::SECONDARY, secondarySelection->ScreenBoundaryPx())) {
 					secondarySelection->SetSecondPositionIfFirstSetM(M2_GAME.MousePositionWorldM());
 					if (auto* primarySelection = M2_LEVEL.PrimarySelection()) {
 						primarySelection->Reset();
@@ -143,13 +143,13 @@ bool Events::gather() {
 		    std::ranges::any_of(mouse_buttons_down, [](auto x) { return x; });
 }
 
-bool Events::pop_quit() {
+bool Events::PopQuit() {
 	const auto value = quit;
 	quit = false;
 	return value;
 }
 
-bool Events::pop_window_resize() {
+bool Events::PopWindowResize() {
 	if (window_resize) {
 		window_resize = false;
 		return true;
@@ -157,7 +157,7 @@ bool Events::pop_window_resize() {
 	return false;
 }
 
-bool Events::pop_key_press(const m2g::pb::KeyType key) {
+bool Events::PopKeyPress(const m2g::pb::KeyType key) {
 	if (const auto keyIndex = pb::enum_index(key); keys_pressed[keyIndex]) {
 		--keys_pressed[keyIndex];
 		--key_press_count;
@@ -166,7 +166,7 @@ bool Events::pop_key_press(const m2g::pb::KeyType key) {
 	return false;
 }
 
-bool Events::pop_key_release(const m2g::pb::KeyType key) {
+bool Events::PopKeyRelease(const m2g::pb::KeyType key) {
 	if (const auto keyIndex = pb::enum_index(key); keys_released[keyIndex]) {
 		--keys_released[keyIndex];
 		--key_release_count;
@@ -175,8 +175,8 @@ bool Events::pop_key_release(const m2g::pb::KeyType key) {
 	return false;
 }
 
-bool Events::peek_mouse_button_press(const MouseButton mb) const { return mouse_buttons_pressed[u(mb)]; }
-bool Events::pop_mouse_button_press(const MouseButton mb) {
+bool Events::PeekMouseButtonPress(const MouseButton mb) const { return mouse_buttons_pressed[u(mb)]; }
+bool Events::PopMouseButtonPress(const MouseButton mb) {
 	if (mouse_buttons_pressed[u(mb)]) {
 		--mouse_buttons_pressed[u(mb)];
 		--mouse_button_press_count;
@@ -184,25 +184,25 @@ bool Events::pop_mouse_button_press(const MouseButton mb) {
 	}
 	return false;
 }
-bool Events::peek_mouse_button_press(const MouseButton mb, const RectI& rect) const {
-	return mouse_buttons_pressed[u(mb)] && rect.contains(mouse_position());
+bool Events::PeekMouseButtonPress(const MouseButton mb, const RectI& rect) const {
+	return mouse_buttons_pressed[u(mb)] && rect.contains(MousePosition());
 }
-bool Events::pop_mouse_button_press(const MouseButton mb, const RectI& rect) {
-	if (mouse_buttons_pressed[u(mb)] && rect.contains(mouse_position())) {
+bool Events::PopMouseButtonPress(const MouseButton mb, const RectI& rect) {
+	if (mouse_buttons_pressed[u(mb)] && rect.contains(MousePosition())) {
 		--mouse_buttons_pressed[u(mb)];
 		--mouse_button_press_count;
 		return true;
 	}
 	return false;
 }
-void Events::clear_mouse_button_presses(const RectI& rect) {
-	if (rect.contains(mouse_position())) {
+void Events::ClearMouseButtonPresses(const RectI& rect) {
+	if (rect.contains(MousePosition())) {
 		mouse_buttons_pressed = {};
 		mouse_button_press_count = 0;
 	}
 }
-bool Events::peek_mouse_button_release(const MouseButton mb) const { return mouse_buttons_released[u(mb)]; }
-bool Events::pop_mouse_button_release(const MouseButton mb) {
+bool Events::PeekMouseButtonRelease(const MouseButton mb) const { return mouse_buttons_released[u(mb)]; }
+bool Events::PopMouseButtonRelease(const MouseButton mb) {
 	if (mouse_buttons_released[u(mb)]) {
 		--mouse_buttons_released[u(mb)];
 		--mouse_button_release_count;
@@ -210,58 +210,58 @@ bool Events::pop_mouse_button_release(const MouseButton mb) {
 	}
 	return false;
 }
-bool Events::peek_mouse_button_release(const MouseButton mb, const RectI& rect) const {
-	return mouse_buttons_released[u(mb)] && rect.contains(mouse_position());
+bool Events::PeekMouseButtonRelease(const MouseButton mb, const RectI& rect) const {
+	return mouse_buttons_released[u(mb)] && rect.contains(MousePosition());
 }
-bool Events::pop_mouse_button_release(const MouseButton mb, const RectI& rect) {
-	if (mouse_buttons_released[u(mb)] && rect.contains(mouse_position())) {
+bool Events::PopMouseButtonRelease(const MouseButton mb, const RectI& rect) {
+	if (mouse_buttons_released[u(mb)] && rect.contains(MousePosition())) {
 		--mouse_buttons_released[u(mb)];
 		--mouse_button_release_count;
 		return true;
 	}
 	return false;
 }
-void Events::clear_mouse_button_releases(const RectI& rect) {
-	if (rect.contains(mouse_position())) {
+void Events::ClearMouseButtonReleases(const RectI& rect) {
+	if (rect.contains(MousePosition())) {
 		mouse_buttons_released = {};
 		mouse_button_release_count = 0;
 	}
 }
 
-int32_t Events::pop_mouse_wheel_vertical_scroll() {
+int32_t Events::PopMouseWheelVerticalScroll() {
 	const auto value = mouse_wheel_vertical_scroll_count;
 	mouse_wheel_vertical_scroll_count = 0;
 	return value;
 }
-int32_t Events::pop_mouse_wheel_vertical_scroll(const RectI& rect) {
-	if (rect.contains(mouse_position())) {
+int32_t Events::PopMouseWheelVerticalScroll(const RectI& rect) {
+	if (rect.contains(MousePosition())) {
 		const auto value = mouse_wheel_vertical_scroll_count;
 		mouse_wheel_vertical_scroll_count = 0;
 		return value;
 	}
 	return 0;
 }
-int32_t Events::pop_mouse_wheel_horizontal_scroll() {
+int32_t Events::PopMouseWheelHorizontalScroll() {
 	const auto value = mouse_wheel_horizontal_scroll_count;
 	mouse_wheel_horizontal_scroll_count = 0;
 	return value;
 }
-int32_t Events::pop_mouse_wheel_horizontal_scroll(const RectI& rect) {
-	if (rect.contains(mouse_position())) {
+int32_t Events::PopMouseWheelHorizontalScroll(const RectI& rect) {
+	if (rect.contains(MousePosition())) {
 		const auto value = mouse_wheel_horizontal_scroll_count;
 		mouse_wheel_horizontal_scroll_count = 0;
 		return value;
 	}
 	return 0;
 }
-void Events::clear_mouse_wheel_scrolls(const RectI& rect) {
-	if (rect.contains(mouse_position())) {
+void Events::ClearMouseWheelScrolls(const RectI& rect) {
+	if (rect.contains(MousePosition())) {
 		mouse_wheel_vertical_scroll_count = 0;
 		mouse_wheel_horizontal_scroll_count = 0;
 	}
 }
 
-std::optional<std::string> Events::pop_text_input() {
+std::optional<std::string> Events::PopTextInput() {
 	if (const auto str = text_input.str(); not str.empty()) {
 		text_input = std::stringstream();
 		return str;
@@ -269,11 +269,11 @@ std::optional<std::string> Events::pop_text_input() {
 	return {};
 }
 
-bool Events::is_key_down(const m2g::pb::KeyType key) const { return keys_down[pb::enum_index(key)]; }
-bool Events::is_mouse_button_down(const MouseButton mb) const { return mouse_buttons_down[u(mb)]; }
-void Events::clear_mouse_button_down(const RectI& rect) {
-	if (rect.contains(mouse_position())) {
+bool Events::IsKeyDown(const m2g::pb::KeyType key) const { return keys_down[pb::enum_index(key)]; }
+bool Events::IsMouseButtonDown(const MouseButton mb) const { return mouse_buttons_down[u(mb)]; }
+void Events::ClearMouseButtonDown(const RectI& rect) {
+	if (rect.contains(MousePosition())) {
 		mouse_buttons_down = {};
 	}
 }
-VecI Events::mouse_position() const { return _mouse_position; }
+VecI Events::MousePosition() const { return _mouse_position; }

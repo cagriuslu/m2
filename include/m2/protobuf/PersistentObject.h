@@ -24,7 +24,7 @@ namespace m2::pb {
 			return CreateFile(std::move(path));
 		}
 		static expected<PersistentObject> CreateFile(std::filesystem::path path) {
-			if (auto expectNew = write_to_file("", path)) {
+			if (auto expectNew = WriteToFile("", path)) {
 				return PersistentObject{std::move(path), {}};
 			} else {
 				return make_unexpected(expectNew.error());

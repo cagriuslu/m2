@@ -5,9 +5,9 @@
 #include <m2/Game.h>
 
 void DrawResources(m2::Character& chr) {
-	auto coal_count = m2::iround(chr.GetResource(m2g::pb::COAL_CUBE_COUNT));
-	auto iron_count = m2::iround(chr.GetResource(m2g::pb::IRON_CUBE_COUNT));
-	auto beer_count = m2::iround(chr.GetResource(m2g::pb::BEER_BARREL_COUNT));
+	auto coal_count = m2::RoundI(chr.GetResource(m2g::pb::COAL_CUBE_COUNT));
+	auto iron_count = m2::RoundI(chr.GetResource(m2g::pb::IRON_CUBE_COUNT));
+	auto beer_count = m2::RoundI(chr.GetResource(m2g::pb::BEER_BARREL_COUNT));
 
 	auto nonzero_resource_type_count = (coal_count ? 1 : 0) + (iron_count ? 1 : 0) + (beer_count ? 1 : 0);
 	if (nonzero_resource_type_count == 0) {
@@ -18,15 +18,15 @@ void DrawResources(m2::Character& chr) {
 		throw M2_ERROR("Factory holds more than one type of resources");
 	}
 
-	const auto& pos = chr.owner().position;
+	const auto& pos = chr.Owner().position;
 	auto count = coal_count + iron_count + beer_count;
 	auto count_sprite_type = static_cast<m2g::pb::SpriteType>(m2g::pb::TEXT_LABEL_1X - 1 + count);
 	auto sprite_type = (coal_count ? m2g::pb::COAL_CUBE : (iron_count ? m2g::pb::IRON_CUBE : m2g::pb::BEER_BARREL));
 	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(sprite_type));
 
 	// Dim if necessary
-	m2::Graphic::DimRenderingIfNecessary(chr.owner_id(), M2_GAME.GetTextLabelCache().Texture());
-	m2::Graphic::DimRenderingIfNecessary(chr.owner_id(), sprite.Texture());
+	m2::Graphic::DimRenderingIfNecessary(chr.OwnerId(), M2_GAME.GetTextLabelCache().Texture());
+	m2::Graphic::DimRenderingIfNecessary(chr.OwnerId(), sprite.Texture());
 	// Draw count
 	const auto& textLabel = std::get<m2::pb::TextLabel>(M2_GAME.GetSpriteOrTextLabel(count_sprite_type));
 	const auto rect = M2_GAME.GetTextLabelCache().Create(textLabel.text(), m2::FontSizeOfTextLabel(textLabel));

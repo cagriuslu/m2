@@ -66,16 +66,16 @@ NetworkJourney::~NetworkJourney() {
 	deinit();
 	for (auto& source : _resource_sources) {
 		if (source.reserved_object) {
-			source.reserved_object->character().AddResource(source.resource_type, 1.0f);
+			source.reserved_object->GetCharacter().AddResource(source.resource_type, 1.0f);
 			source.reserved_object = nullptr;
 		}
 	}
 	if (_decoy_road_1) {
-		m2::create_object_deleter(_decoy_road_1)();
+		m2::CreateObjectDeleter(_decoy_road_1)();
 		_decoy_road_1 = 0;
 	}
 	if (_decoy_road_2) {
-		m2::create_object_deleter(_decoy_road_2)();
+		m2::CreateObjectDeleter(_decoy_road_2)();
 		_decoy_road_2 = 0;
 	}
 }
@@ -103,7 +103,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::HandleSignal(const POIOrCancel
 
 std::optional<NetworkJourneyStep> NetworkJourney::HandleInitialEnterSignal() {
 	// Ask if double railroads should be built
-	if (M2G_PROXY.is_railroad_era() && 1 < M2_PLAYER.character().CountItem(m2g::pb::ROAD_TILE)) {
+	if (M2G_PROXY.is_railroad_era() && 1 < M2_PLAYER.GetCharacter().CountItem(m2g::pb::ROAD_TILE)) {
 		_build_double_railroads = ask_for_confirmation("Build double railroads?", "", "Yes", "No");
 	}
 
@@ -117,7 +117,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::HandleInitialEnterSignal() {
 }
 
 std::optional<NetworkJourneyStep> NetworkJourney::HandleLocationEnterSignal() {
-	sub_journey.emplace(buildable_connections_in_network(M2_PLAYER.character()), "Pick a connection using right mouse button...");
+	sub_journey.emplace(buildable_connections_in_network(M2_PLAYER.GetCharacter()), "Pick a connection using right mouse button...");
 	return std::nullopt;
 }
 
@@ -130,7 +130,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::HandleLocationMouseClickSignal
 			_selected_connection_1 = selected_location;
 			if (_build_double_railroads) {
 				// Update buildable connections with the new selection
-				sub_journey.emplace(buildable_connections_in_network(M2_PLAYER.character(), _selected_connection_1),
+				sub_journey.emplace(buildable_connections_in_network(M2_PLAYER.GetCharacter(), _selected_connection_1),
 						"Pick the second connection using right mouse button...");
 			}
 		} else if (_build_double_railroads && !_selected_connection_2 && _selected_connection_1 != selected_location) {
@@ -161,15 +161,15 @@ std::optional<NetworkJourneyStep> NetworkJourney::HandleResourceEnterSignal() {
 		// Create the decoy connections if necessary
 		if (unspecified_resource->connection == _selected_connection_1 && not _decoy_road_1) {
 			// Create the first decoy
-			auto it = m2::create_object(position_of_connection(_selected_connection_1), m2g::pb::ROAD, M2_PLAYER.id());
+			auto it = m2::CreateObject(position_of_connection(_selected_connection_1), m2g::pb::ROAD, M2_PLAYER.GetId());
 			InitRoad(*it, _selected_connection_1);
-			_decoy_road_1 = it->id();
+			_decoy_road_1 = it->GetId();
 		}
 		if (unspecified_resource->connection == _selected_connection_2 && not _decoy_road_2) {
 			// Create the second decoy
-			auto it = m2::create_object(position_of_connection(_selected_connection_2), m2g::pb::ROAD, M2_PLAYER.id());
+			auto it = m2::CreateObject(position_of_connection(_selected_connection_2), m2g::pb::ROAD, M2_PLAYER.GetId());
 			InitRoad(*it, _selected_connection_2);
-			_decoy_road_2 = it->id();
+			_decoy_road_2 = it->GetId();
 		}
 
 		const auto major_cities = major_cities_from_connection(unspecified_resource->connection);
@@ -214,7 +214,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::HandleResourceEnterSignal() {
 					LOG_DEBUG("Player agreed");
 					// Reserve resource
 					auto* factory = FindFactoryAtLocation(*closest_mines_with_coal.begin());
-					factory->character().RemoveResource(COAL_CUBE_COUNT, 1.0f);
+					factory->GetCharacter().RemoveResource(COAL_CUBE_COUNT, 1.0f);
 					unspecified_resource->reserved_object = factory;
 					// Specify resource source
 					unspecified_resource->source = *closest_mines_with_coal.begin();
@@ -228,7 +228,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::HandleResourceEnterSignal() {
 				sub_journey.emplace(closest_mines_with_coal, "Pick a coal source using the right mouse button...");
 			}
 		} else if (unspecified_resource->resource_type == BEER_BARREL_COUNT) {
-			if (auto beer_sources = find_breweries_with_beer(M2_PLAYER.character(), major_cities[0], std::nullopt, major_cities[1]); beer_sources.empty()) {
+			if (auto beer_sources = find_breweries_with_beer(M2_PLAYER.GetCharacter(), major_cities[0], std::nullopt, major_cities[1]); beer_sources.empty()) {
 				M2_LEVEL.ShowMessage("Beer required but none available in network", 8.0f);
 				M2_DEFER(m2g::Proxy::main_journey_deleter);
 			} else if (beer_sources.size() == 1) {
@@ -241,7 +241,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::HandleResourceEnterSignal() {
 					LOG_DEBUG("Player agreed");
 					// Reserve resource
 					auto* factory = FindFactoryAtLocation(industry_location);
-					factory->character().RemoveResource(BEER_BARREL_COUNT, 1.0f);
+					factory->GetCharacter().RemoveResource(BEER_BARREL_COUNT, 1.0f);
 					unspecified_resource->reserved_object = factory;
 					// Specify resource source
 					unspecified_resource->source = industry_location;
@@ -270,9 +270,9 @@ std::optional<NetworkJourneyStep> NetworkJourney::HandleResourceMouseClickSignal
 		// Check if location has a built factory
 		if (auto *factory = FindFactoryAtLocation(selected_location)) {
 			// Check if the location is one of the dimming exceptions
-			if (M2_LEVEL.DimmingExceptions()->contains(factory->id())) {
+			if (M2_LEVEL.DimmingExceptions()->contains(factory->GetId())) {
 				// Reserve resource
-				factory->character().RemoveResource(unspecified_resource->resource_type, 1.0f);
+				factory->GetCharacter().RemoveResource(unspecified_resource->resource_type, 1.0f);
 				unspecified_resource->reserved_object = factory;
 				unspecified_resource->source = selected_location;
 				// Re-enter resource selection
@@ -396,7 +396,7 @@ m2::void_expected CanPlayerNetwork(m2::Character& player, const m2g::pb::ClientC
 		return is_merchant_location(static_cast<Location>(coal_source));
 	});
 	// Check if the player has enough money
-	if (m2::iround(player.GetResource(MONEY)) < road_cost(network_action.connection_2()) + M2G_PROXY.market_coal_cost(m2::I(coal_from_market))) {
+	if (m2::RoundI(player.GetResource(MONEY)) < road_cost(network_action.connection_2()) + M2G_PROXY.market_coal_cost(m2::I(coal_from_market))) {
 		return make_unexpected("Player does not have enough money");
 	}
 
@@ -425,7 +425,7 @@ std::pair<Card,int> ExecuteNetworkAction(m2::Character& player, const m2g::pb::C
 		auto location = static_cast<Location>(coal_source);
 		if (is_industry_location(location)) {
 			auto* factory = FindFactoryAtLocation(location);
-			factory->character().RemoveResource(COAL_CUBE_COUNT, 1.0f);
+			factory->GetCharacter().RemoveResource(COAL_CUBE_COUNT, 1.0f);
 		} else if (is_merchant_location(location)) {
 			M2G_PROXY.buy_coal_from_market();
 		}
@@ -433,14 +433,14 @@ std::pair<Card,int> ExecuteNetworkAction(m2::Character& player, const m2g::pb::C
 	if (network_action.beer_source()) {
 		auto location = static_cast<Location>(network_action.beer_source());
 		auto* factory = FindFactoryAtLocation(location);
-		factory->character().RemoveResource(BEER_BARREL_COUNT, 1.0f);
+		factory->GetCharacter().RemoveResource(BEER_BARREL_COUNT, 1.0f);
 	}
 
 	// Create the road on the map
-	auto it = m2::create_object(position_of_connection(network_action.connection_1()), m2g::pb::ROAD, player.owner_id());
+	auto it = m2::CreateObject(position_of_connection(network_action.connection_1()), m2g::pb::ROAD, player.OwnerId());
 	InitRoad(*it, network_action.connection_1());
 	if (network_action.connection_2()) {
-		auto it_2 = m2::create_object(position_of_connection(network_action.connection_2()), m2g::pb::ROAD, player.owner_id());
+		auto it_2 = m2::CreateObject(position_of_connection(network_action.connection_2()), m2g::pb::ROAD, player.OwnerId());
 		InitRoad(*it_2, network_action.connection_2());
 	}
 

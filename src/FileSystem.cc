@@ -6,7 +6,7 @@
 #include <CoreFoundation/CFBundle.h>
 #endif
 
-std::filesystem::path m2::resource_path() {
+std::filesystem::path m2::ResourcePath() {
 #if defined(__APPLE__)
 	auto main_bundle_handle = CFBundleGetMainBundle();
 	auto resources_directory_url_ref = CFBundleCopyResourcesDirectoryURL(main_bundle_handle);
@@ -26,9 +26,9 @@ std::filesystem::path m2::resource_path() {
 #endif
 }
 
-m2::expected<std::string> m2::read_file(const std::filesystem::path& path) {
+m2::expected<std::string> m2::ReadFile(const std::filesystem::path& path) {
 	FILE* file = fopen(path.string().c_str(), "r");
-	m2_return_unexpected_message_unless(file, "Unable to open file " + path.string());
+	m2ReturnUnexpectedUnless(file, "Unable to open file " + path.string());
 
 	std::stringstream ss;
 	while (not feof(file)) {
@@ -40,9 +40,9 @@ m2::expected<std::string> m2::read_file(const std::filesystem::path& path) {
 	return ss.str();
 }
 
-m2::void_expected m2::write_to_file(const std::string& str, const std::filesystem::path& path) {
+m2::void_expected m2::WriteToFile(const std::string& str, const std::filesystem::path& path) {
 	FILE* file = fopen(path.string().c_str(), "w");
-	m2_return_unexpected_message_unless(file, "Unable to open file " + path.string());
+	m2ReturnUnexpectedUnless(file, "Unable to open file " + path.string());
 	auto size = str.size();
 	bool success = (fwrite(str.data(), 1, size, file) == size);
 	fclose(file);
@@ -53,7 +53,7 @@ m2::void_expected m2::write_to_file(const std::string& str, const std::filesyste
 	}
 }
 
-std::vector<std::filesystem::path> m2::list_files(const std::filesystem::path& dir, const std::string& ends_with) {
+std::vector<std::filesystem::path> m2::ListFiles(const std::filesystem::path& dir, const std::string& ends_with) {
 	std::vector<std::filesystem::path> files;
 	// Iterate over files in the directory
 	for (const auto& dir_entry : std::filesystem::directory_iterator{dir}) {

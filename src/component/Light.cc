@@ -13,7 +13,7 @@ void m2::Light::DefaultDrawCallback(Light& lig) {
 		return;
 	}
 
-	auto& obj = M2_LEVEL.objects[lig.owner_id()];
+	auto& obj = M2_LEVEL.objects[lig.OwnerId()];
 
 	// Check if dynamic lightning
 	auto category_bits = lig.dynamicCategoryBits;

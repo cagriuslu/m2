@@ -13,7 +13,7 @@ m2::expected<m2::network::TcpSocketManager::ReadResult> m2::network::TcpSocketMa
 	// Assuming that the socket is already readable, read from the next available position at the buffer
 	auto received_byte_count = _socket.recv(_incoming_buffer.data() + _incoming_buffer_next_available_position,
 		_incoming_buffer.size() - _incoming_buffer_next_available_position);
-	m2_reflect_unexpected(received_byte_count);
+	m2ReflectUnexpected(received_byte_count);
 
 	if (*received_byte_count == 0) {
 		// Assuming the socket is blocking and no receive timeout is set
@@ -105,7 +105,7 @@ m2::expected<m2::network::TcpSocketManager::SendResult> m2::network::TcpSocketMa
 	// Assuming the socket is in writable state, try to send everything in _outgoing_buffer
 	auto sent_byte_count = _socket.send(_outgoing_buffer.data() + _outgoing_buffer_start_position,
 		_outgoing_buffer_bytes_left);
-	m2_reflect_unexpected(sent_byte_count);
+	m2ReflectUnexpected(sent_byte_count);
 	if (*sent_byte_count == -1 || *sent_byte_count == 0) {
 		// EAGAIN occurred or no bytes were sent, try again later
 		return SendResult::OK;

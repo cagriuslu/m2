@@ -90,7 +90,7 @@ m2::Game::Game() {
 
 	_dimensionsManager.emplace(renderer, _proxy.gamePpm, _proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
 
-	SDL_Surface* lightSurface = IMG_Load((resource_path() / "RadialGradient-WhiteBlack.png").string().c_str());
+	SDL_Surface* lightSurface = IMG_Load((ResourcePath() / "RadialGradient-WhiteBlack.png").string().c_str());
 	if (lightSurface == nullptr) {
 		throw M2_ERROR("SDL error: " + std::string{IMG_GetError()});
 	}
@@ -102,7 +102,7 @@ m2::Game::Game() {
 	SDL_SetTextureAlphaMod(light_texture, 0);
 	SDL_SetTextureColorMod(light_texture, 127, 127, 127);
 	// Open font
-	if ((font = TTF_OpenFont((resource_path() / _proxy.default_font_path).string().c_str(), _proxy.default_font_size)) == nullptr) {
+	if ((font = TTF_OpenFont((ResourcePath() / _proxy.default_font_path).string().c_str(), _proxy.default_font_size)) == nullptr) {
 		throw M2_ERROR("SDL error: " + std::string{TTF_GetError()});
 	}
 	// Check font properties
@@ -128,8 +128,8 @@ m2::Game::Game() {
 	spriteEffectsSheet = SpriteEffectsSheet{renderer};
 
 	// Load game resources
-	resource_dir = resource_path() / "game" / _proxy.game_identifier;
-	levels_dir = resource_path() / "game" / _proxy.game_identifier / "levels";
+	resource_dir = ResourcePath() / "game" / _proxy.game_identifier;
+	levels_dir = ResourcePath() / "game" / _proxy.game_identifier / "levels";
 
 	auto sheets_pb = pb::json_file_to_message<pb::SpriteSheets>(resource_dir / "SpriteSheets.json");
 	if (!sheets_pb) {
@@ -239,7 +239,7 @@ bool m2::Game::AddBot() {
 }
 
 m2::network::BotClientThread& m2::Game::FindBot(int receiver_index) {
-	auto it = std::find_if(_bot_threads.begin(), _bot_threads.end(), is_second_equals<network::BotClientThread, int>(receiver_index));
+	auto it = std::find_if(_bot_threads.begin(), _bot_threads.end(), IsSecondEquals<network::BotClientThread, int>(receiver_index));
 	if (it == _bot_threads.end()) {
 		throw M2_ERROR("Bot not found");
 	}
@@ -315,7 +315,7 @@ m2::void_expected m2::Game::LoadMultiPlayerAsHost(
 	_level.emplace();
 
 	auto success = _level->InitMultiPlayerAsHost(level_path_or_blueprint, level_name);
-	m2_reflect_unexpected(success);
+	m2ReflectUnexpected(success);
 
 	// Execute the first server update, which will trigger clients to initialize their levels, but not fully.
 	M2_GAME.ServerThread().send_server_update();
@@ -362,13 +362,13 @@ m2::void_expected m2::Game::LoadMultiPlayerAsGuest(
 	_level.emplace();
 
 	auto success = _level->InitMultiPlayerAsGuest(level_path_or_blueprint, level_name);
-	m2_reflect_unexpected(success);
+	m2ReflectUnexpected(success);
 
 	// Consume the initial ServerUpdate that triggered the level to be initialized
 	auto expect_server_update = M2_GAME.RealClientThread().process_server_update();
-	m2_reflect_unexpected(expect_server_update);
+	m2ReflectUnexpected(expect_server_update);
 	_lastSentOrReceivedServerUpdateSequenceNo = expect_server_update->second;
-	m2_return_unexpected_message_unless(expect_server_update->first == network::ServerUpdateStatus::PROCESSED,
+	m2ReturnUnexpectedUnless(expect_server_update->first == network::ServerUpdateStatus::PROCESSED,
 			"Unexpected ServerUpdate status");
 	return {};
 }
@@ -402,22 +402,22 @@ m2::void_expected m2::Game::LoadBulkSheetEditor() {
 	return _level->InitBulkSheetEditor(resource_dir / "SpriteSheets.json");
 }
 
-void m2::Game::ResetState() { events.clear(); }
+void m2::Game::ResetState() { events.Clear(); }
 
 void m2::Game::HandleQuitEvent() {
-	if (events.pop_quit()) {
+	if (events.PopQuit()) {
 		quit = true;
 	}
 }
 
 void m2::Game::HandleWindowResizeEvent() {
-	if (events.pop_window_resize()) {
+	if (events.PopWindowResize()) {
 		OnWindowResize();
 	}
 }
 
 void m2::Game::HandleConsoleEvent() {
-	if (events.pop_key_press(m2g::pb::KeyType::CONSOLE)) {
+	if (events.PopKeyPress(m2g::pb::KeyType::CONSOLE)) {
 		if (UiPanel::create_and_run_blocking(&console_ui).IsQuit()) {
 			quit = true;
 		}
@@ -425,7 +425,7 @@ void m2::Game::HandleConsoleEvent() {
 }
 
 void m2::Game::HandlePauseEvent() {
-	if (events.pop_key_press(m2g::pb::KeyType::PAUSE)) {
+	if (events.PopKeyPress(m2g::pb::KeyType::PAUSE)) {
 		// Select the correct pause menu
 		const UiPanelBlueprint* pauseMenuBlueprint{};
 		if (std::holds_alternative<splayer::State>(GetLevel().stateVariant)) {
@@ -456,7 +456,7 @@ void m2::Game::HandleHudEvents() {
 				});
 
 		// After semi-blocking UI, events are cleared to prevent the game objects from receiving it.
-		events.clear();
+		events.Clear();
 		// Handling of events of other UI panels are also skipped.
 	} else {
 		// Mouse hover UI panel doesn't receive events, but based on the mouse position, it may be moved
@@ -597,17 +597,17 @@ void m2::Game::ExecuteStep() {
 		// Update positions
 		for (auto& phy : _level->physics) {
 			if (phy.body) {
-				auto& object = phy.owner();
+				auto& object = phy.Owner();
 				auto old_pos = object.position;
 				object.position = m2::VecF{phy.body->GetPosition()};
 				object.orientation = phy.body->GetAngle();
 				// Update draw list
 				if (old_pos != object.position) {
-					_level->drawList.QueueUpdate(phy.owner_id(), object.position);
+					_level->drawList.QueueUpdate(phy.OwnerId(), object.position);
 				}
 			} else if (phy.rigidBodyIndex) {
 				const auto& rigidBody = _level->World2().GetRigidBody(*phy.rigidBodyIndex);
-				auto& object = phy.owner();
+				auto& object = phy.Owner();
 				auto oldPosition = object.position;
 				auto newPosition = rigidBody.PositionOfCenterOfMass();
 				object.position.x = newPosition.X().ToFloat();
@@ -615,7 +615,7 @@ void m2::Game::ExecuteStep() {
 				object.orientation = rigidBody.OrientationAboutCenterOfMass().ToFloat();
 				// Update draw list
 				if (oldPosition != object.position) {
-					_level->drawList.QueueUpdate(phy.owner_id(), object.position);
+					_level->drawList.QueueUpdate(phy.OwnerId(), object.position);
 				}
 			}
 		}
@@ -652,7 +652,7 @@ void m2::Game::ExecutePostStep() {
 	} else if (IsRealClient()) {
 		// Handle ServerUpdate
 		auto status = RealClientThread().process_server_update();
-		m2_succeed_or_throw_error(status);
+		m2SucceedOrThrowError(status);
 
 		if (status->first == network::ServerUpdateStatus::PROCESSED || status->first == network::ServerUpdateStatus::PROCESSED_SHUTDOWN) {
 			_lastSentOrReceivedServerUpdateSequenceNo = status->second;
@@ -936,7 +936,7 @@ bool m2::Game::IsMouseOnAnyUiPanel() const {
 		return true;
 	}
 	// Otherwise, check if the mouse is on top of the other UI panels known to Level
-	const auto mouse_position = events.mouse_position();
+	const auto mouse_position = events.MousePosition();
 	if (_level->_leftHudUiPanel && _level->_leftHudUiPanel->Rect().contains(mouse_position)) {
 		return true;
 	}
@@ -959,7 +959,7 @@ void m2::Game::RecalculateDirectionalAudio() {
 	if (_level->leftListener || _level->rightListener) {
 		// Loop over sounds
 		for (auto& sound_emitter : _level->soundEmitters) {
-			const auto& sound_position = sound_emitter.owner().position;
+			const auto& sound_position = sound_emitter.Owner().position;
 			// Loop over playbacks
 			for (const auto playback_id : sound_emitter.playbacks) {
 				if (!audio_manager->HasPlayback(playback_id)) {
@@ -992,7 +992,7 @@ void m2::Game::ExecuteDeferredActions() {
 }
 
 void m2::Game::RecalculateMousePosition() const {
-	const auto mouse_position = events.mouse_position();
+	const auto mouse_position = events.MousePosition();
 	const auto screen_center_to_mouse_position_px =
 		VecI{mouse_position.x - (Dimensions().WindowDimensions().x / 2), mouse_position.y - (Dimensions().WindowDimensions().y / 2)};
 	_screen_center_to_mouse_position_m = VecF{

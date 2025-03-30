@@ -15,9 +15,9 @@ std::pair<UiPanelBlueprint,RectF> GenerateBuiltIndustryLocationMouseHoverUiBluep
 		throw M2_ERROR("Factory not found");
 	}
 
-	const auto industryType = ToIndustryOfFactoryCharacter(factory->character());
+	const auto industryType = ToIndustryOfFactoryCharacter(factory->GetCharacter());
 	const auto& industryCard = M2_GAME.GetNamedItem(industryType);
-	const auto industryTileType = ToIndustryTileOfFactoryCharacter(factory->character());
+	const auto industryTileType = ToIndustryTileOfFactoryCharacter(factory->GetCharacter());
 	const auto& industryTile = M2_GAME.GetNamedItem(industryTileType);
 	return std::make_pair(
 			UiPanelBlueprint{
@@ -79,7 +79,7 @@ std::pair<UiPanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluep
 
 	if (industries.size() == 1) {
 		const auto& industryCard = M2_GAME.GetNamedItem(industries[0]);
-		const auto nextIndustryTileType = PlayerNextIndustryTileOfIndustry(M2_PLAYER.character(), industries[0]);
+		const auto nextIndustryTileType = PlayerNextIndustryTileOfIndustry(M2_PLAYER.GetCharacter(), industries[0]);
 		const auto* nextIndustryTile = nextIndustryTileType ? &M2_GAME.GetNamedItem(*nextIndustryTileType) : nullptr;
 		return std::make_pair(
 				UiPanelBlueprint{
@@ -176,8 +176,8 @@ std::pair<UiPanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluep
 	} else { // industries.size() == 2
 		const auto& industryCard1 = M2_GAME.GetNamedItem(industries[0]);
 		const auto& industryCard2 = M2_GAME.GetNamedItem(industries[1]);
-		const auto nextIndustryTileType1 = PlayerNextIndustryTileOfIndustry(M2_PLAYER.character(), industries[0]);
-		const auto nextIndustryTileType2 = PlayerNextIndustryTileOfIndustry(M2_PLAYER.character(), industries[1]);
+		const auto nextIndustryTileType1 = PlayerNextIndustryTileOfIndustry(M2_PLAYER.GetCharacter(), industries[0]);
+		const auto nextIndustryTileType2 = PlayerNextIndustryTileOfIndustry(M2_PLAYER.GetCharacter(), industries[1]);
 		const auto* nextIndustryTile1 = nextIndustryTileType1 ? &M2_GAME.GetNamedItem(*nextIndustryTileType1) : nullptr;
 		const auto* nextIndustryTile2 = nextIndustryTileType2 ? &M2_GAME.GetNamedItem(*nextIndustryTileType2) : nullptr;
 		return std::make_pair(
@@ -361,9 +361,9 @@ std::pair<UiPanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluep
 
 std::pair<UiPanelBlueprint,RectF> GenerateMerchantLocationMouseHoverUiBlueprint(const MerchantLocation loc) {
 	const auto* merchant = find_merchant_at_location(loc);
-	const std::string merchantBenefit = merchant->character().HasResource(m2g::pb::BEER_BARREL_COUNT)
+	const std::string merchantBenefit = merchant->GetCharacter().HasResource(m2g::pb::BEER_BARREL_COUNT)
 			? "Available" : "Exhausted";
-	const auto merchantBenefitBackgroundColor = merchant->character().HasResource(m2g::pb::BEER_BARREL_COUNT)
+	const auto merchantBenefitBackgroundColor = merchant->GetCharacter().HasResource(m2g::pb::BEER_BARREL_COUNT)
 			? SDL_Color{0, 0, 0, 255} : SDL_Color{180, 0, 0, 255};
 
 	return std::make_pair(
@@ -432,7 +432,7 @@ std::pair<UiPanelBlueprint,RectF> GenerateConnectionMouseHoverUiBlueprint(Connec
 						.background_color = {0, 0, 0, 255},
 						.variant = widget::TextBlueprint {
 							.text = road
-									? "Current Link Count: " + ToString(LinkCountOfRoadCharacter(road->character()))
+									? "Current Link Count: " + ToString(LinkCountOfRoadCharacter(road->GetCharacter()))
 									: "Estimated Link Count: " + ToString(LinkCountOfConnectionLocation(loc)),
 							.horizontal_alignment = TextHorizontalAlignment::LEFT,
 							.wrapped_font_size_in_units = 0.75f

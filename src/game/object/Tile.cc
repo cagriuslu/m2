@@ -9,8 +9,8 @@ m2::Pool<m2::Object>::Iterator m2::obj::create_tile(BackgroundLayer layer, const
 		throw M2_ERROR("Invalid background layer");
 	}
 
-    const auto it = create_object(position);
-	it->add_terrain_graphic(layer, spriteType);
+    const auto it = CreateObject(position);
+	it->AddTerrainGraphic(layer, spriteType);
 
 	const auto& spriteOrTextLabel = M2_GAME.GetSpriteOrTextLabel(spriteType);
 	if (std::holds_alternative<Sprite>(spriteOrTextLabel)) {
@@ -40,13 +40,13 @@ m2::Pool<m2::Object>::Iterator m2::obj::create_tile(BackgroundLayer layer, const
 	        } else if (sprite.ForegroundColliderType() == box2d::ColliderType::CIRCLE) {
 	            throw M2_ERROR("Circular tile foreground_collider unimplemented");
 	        }
-	        auto& phy = it->add_physique();
-	        phy.body = box2d::CreateBody(*M2_LEVEL.world, it->physique_id(), it->position, bp);
+	        auto& phy = it->AddPhysique();
+	        phy.body = box2d::CreateBody(*M2_LEVEL.world, it->GetPhysiqueId(), it->position, bp);
 		}
 
 		if (sprite.HasForegroundCompanion()) {
-			const auto fg_it = create_object(position - sprite.CenterToOriginVecM() + sprite.ForegroundCompanionCenterToOriginVecM());
-			auto& gfx = fg_it->add_graphic(spriteType);
+			const auto fg_it = CreateObject(position - sprite.CenterToOriginVecM() + sprite.ForegroundCompanionCenterToOriginVecM());
+			auto& gfx = fg_it->AddGraphic(spriteType);
 			gfx.variantDrawOrder[0] = ForegroundCompanion{};
 		}
 	}

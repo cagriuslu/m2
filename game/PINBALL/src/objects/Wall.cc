@@ -4,11 +4,11 @@
 #include <m2/Game.h>
 
 m2::void_expected LoadWall(m2::Object& obj) {
-	const auto type = obj.object_type();
+	const auto type = obj.GetType();
 	const auto spriteType = M2_GAME.object_main_sprites[type];
 	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(spriteType));
 
-	auto& phy = obj.add_physique();
+	auto& phy = obj.AddPhysique();
 	b2BodyDef bodyDef;
 	bodyDef.type = b2_staticBody;
 	bodyDef.position.Set(obj.position.x, obj.position.y);
@@ -22,7 +22,7 @@ m2::void_expected LoadWall(m2::Object& obj) {
 	bodyDef.fixedRotation = true;
 	bodyDef.bullet = false;
 	bodyDef.enabled = true;
-	bodyDef.userData.pointer = obj.physique_id();
+	bodyDef.userData.pointer = obj.GetPhysiqueId();
 	bodyDef.gravityScale = 0.0f;
 	b2Body* body = M2_LEVEL.world->CreateBody(&bodyDef);
 	if (const auto& foregroundFixtures = sprite.Pb().regular().foreground_fixtures();
@@ -65,7 +65,7 @@ m2::void_expected LoadWall(m2::Object& obj) {
 	}
 	phy.body = m2::box2d::BodyUniquePtr{body};
 
-	obj.add_graphic(spriteType);
+	obj.AddGraphic(spriteType);
 
 	return {};
 }

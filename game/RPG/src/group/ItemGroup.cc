@@ -24,7 +24,7 @@ rpg::ItemGroup::ItemGroup(std::initializer_list<std::pair<m2g::pb::ItemType, flo
 }
 
 std::optional<m2g::pb::ItemType> rpg::ItemGroup::pop_item() {
-	if (_item && m2::Random64(member_count()) == 0) {
+	if (_item && m2::Random64(MemberCount()) == 0) {
 		auto item = *_item;
 		_item.reset();
 		return item;

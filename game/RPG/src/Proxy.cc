@@ -12,7 +12,7 @@
 
 void m2g::Proxy::load_resources() {
 	// Load enemies
-	enemies = m2_move_or_throw_error(m2::pb::json_file_to_message<rpg::pb::Enemies>(M2_GAME.resource_dir / "Enemies.json"));
+	enemies = m2MoveOrThrowError(m2::pb::json_file_to_message<rpg::pb::Enemies>(M2_GAME.resource_dir / "Enemies.json"));
 	// Load progress
 	progress_file_path = M2_GAME.resource_dir / "Progress.json";
 	auto expect_progress = m2::pb::json_file_to_message<rpg::pb::Progress>(progress_file_path);
@@ -46,7 +46,7 @@ void m2g::Proxy::post_single_player_level_init(MAYBE const std::string& name, co
 
 m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object& obj) {
 	using namespace rpg;
-	switch (obj.object_type()) {
+	switch (obj.GetType()) {
 		case pb::ObjectType::PLAYER:
 			return Player::init(obj);
 		case pb::ObjectType::SKELETON:
@@ -74,7 +74,7 @@ m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object&
 		case pb::TREE_DEAD_03:
 		case pb::FENCE_HORIZONTAL:
 		case pb::FENCE_VERTICAL:
-			return rpg::create_decoration(obj, M2_GAME.object_main_sprites[obj.object_type()]);
+			return rpg::create_decoration(obj, M2_GAME.object_main_sprites[obj.GetType()]);
 		case pb::SPIKES:
 			return rpg::create_spikes(obj);
 		default:
@@ -114,7 +114,7 @@ const m2::UiPanelBlueprint* m2g::Proxy::generate_main_menu() {
 	    .background_color = SDL_Color{20, 20, 20, 255}
 	};
 
-	auto level_jsons = m2::list_files(M2_GAME.resource_dir / "levels", ".json");
+	auto level_jsons = m2::ListFiles(M2_GAME.resource_dir / "levels", ".json");
 	for (int i = 0; i < (int) level_jsons.size(); ++i) {
 		const auto &level_json = level_jsons[i];
 		auto level_name = level_json.stem().string();
@@ -138,7 +138,7 @@ const m2::UiPanelBlueprint* m2g::Proxy::generate_main_menu() {
 		        .text = level_display_name,
 		        .onAction = [=, this](MAYBE const m2::widget::Text &self) {
 			        alive_enemy_count = 0;
-			        m2_succeed_or_throw_error(M2_GAME.LoadSinglePlayer(level_json, level_name));
+			        m2SucceedOrThrowError(M2_GAME.LoadSinglePlayer(level_json, level_name));
 			        M2_GAME.audio_manager->Play(&M2_GAME.songs[m2g::pb::SONG_MAIN_THEME],
 			                                 m2::AudioManager::PlayPolicy::LOOP, 0.5f);
 			        return m2::MakeReturnAction();
@@ -184,9 +184,9 @@ const m2::UiPanelBlueprint* m2g::Proxy::generate_right_hud() {
 	        .bar_color = SDL_Color{0, 127, 255, 255},
 	        .onUpdate = [](m2::widget::ProgressBar& self) {
 		        if (const auto *player = M2_LEVEL.Player(); player) {
-			        if (const auto ammo = player->character().GetResource(pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO); ammo != 0.0f) {
-				        if (const auto weapon = player->character().FindItems(pb::ITEM_CATEGORY_SPECIAL_RANGED_WEAPON); weapon) {
-					        self.SetProgress(ammo / weapon->get_acquire_benefit(pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO));
+			        if (const auto ammo = player->GetCharacter().GetResource(pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO); ammo != 0.0f) {
+				        if (const auto weapon = player->GetCharacter().FindItems(pb::ITEM_CATEGORY_SPECIAL_RANGED_WEAPON); weapon) {
+					        self.SetProgress(ammo / weapon->GetAcquireBenefit(pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO));
 				        }
 			        }
 		        }
@@ -219,7 +219,7 @@ const m2::UiPanelBlueprint* m2g::Proxy::you_died_menu() {
 		        .text = "Retry",
 		        .onAction = [=, this](MAYBE const m2::widget::Text &self) -> m2::UiAction {
 			        alive_enemy_count = 0;
-			        m2_succeed_or_throw_error(M2_GAME.LoadSinglePlayer(*lb_path, M2_LEVEL.Name()));
+			        m2SucceedOrThrowError(M2_GAME.LoadSinglePlayer(*lb_path, M2_LEVEL.Name()));
 			        return m2::MakeReturnAction();
 		        }
 		    }

@@ -21,7 +21,7 @@ namespace m2 {
 	inline uint64_t IdToKey(Id id) { return id & 0xFFFFFF000000ull; }
 	inline uint64_t IdToIndex(Id id) { return id & 0xFFFFFFull; }
 	constexpr auto pool_iterator_to_data = [](const auto &it) { return it.Data(); };
-	constexpr auto to_id = [](const auto &it) { return it.Id(); };
+	constexpr auto to_id = [](const auto &it) { return it.GetId(); };
 
     template <typename T, uint64_t Capacity = 65536>
     class Pool {

@@ -13,7 +13,7 @@ namespace {
 		// Update resources
 		c->ClearResources();
 		for (const auto& resource : resources) {
-			c->AddResource(resource.type(), m2::get_resource_amount(resource));
+			c->AddResource(resource.type(), m2::GetResourceAmount(resource));
 		}
 		// Update attributes
 		c->ClearAttributes();
@@ -111,10 +111,10 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::SequenceNo>> m2::netw
 			auto server_character = server_update.objects_with_character(i);
 			auto success = std::visit(overloaded {
 				[this, &server_character](const auto& v) -> m2::void_expected {
-					if (v.owner().position != VecF{server_character.position()}) {
+					if (v.Owner().position != VecF{server_character.position()}) {
 						return make_unexpected("Server and local position mismatch");
 					}
-					if (v.owner().object_type() != server_character.object_type()) {
+					if (v.Owner().GetType() != server_character.object_type()) {
 						return make_unexpected("Server and local object type mismatch");
 					}
 					if (std::distance(v.BeginItems(), v.EndItems()) != server_character.named_items_size()) {
@@ -123,12 +123,12 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::SequenceNo>> m2::netw
 					// TODO other checks
 
 					// Map server ObjectIDs to local ObjectIDs
-					_server_to_local_map[server_character.object_id()] = std::make_pair(v.owner_id(), true);
+					_server_to_local_map[server_character.object_id()] = std::make_pair(v.OwnerId(), true);
 
 					return {};
 				}
 			}, *char_it);
-			m2_reflect_unexpected(success);
+			m2ReflectUnexpected(success);
 		}
 
 		// Check if server_to_local_map contains all the players in the game
@@ -179,7 +179,7 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::SequenceNo>> m2::netw
 		if (auto it = _server_to_local_map.find(object_desc.object_id()); it != _server_to_local_map.end()) {
 			LOG_TRACE("Server object is still alive", object_desc.object_id(), it->first);
 			// Update the character
-			auto* character = M2_LEVEL.objects.Get(it->second.first)->get_character();
+			auto* character = M2_LEVEL.objects.Get(it->second.first)->TryGetCharacter();
 			update_character(character, object_desc.named_items(), object_desc.resources(), object_desc.attributes());
 			// Mark object as visited
 			it->second.second = true;
@@ -212,11 +212,11 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::SequenceNo>> m2::netw
 			if (it->server_object_parent_id == 0) {
 				// Simply, create the object
 				LOG_DEBUG("Server has created an object", it->server_object_id);
-				auto obj_it = m2::create_object(m2::VecF{it->position}, it->object_type, 0);
+				auto obj_it = m2::CreateObject(m2::VecF{it->position}, it->object_type, 0);
 				auto load_result = M2G_PROXY.init_server_update_fg_object(*obj_it, it->named_items, it->resources);
-				m2_reflect_unexpected(load_result);
+				m2ReflectUnexpected(load_result);
 				// Update the character
-				auto* character = obj_it->get_character();
+				auto* character = obj_it->TryGetCharacter();
 				update_character(character, it->named_items, it->resources, it->attributes);
 				// Add object to the map, marked as visited
 				_server_to_local_map[it->server_object_id] = std::make_pair(obj_it.GetId(), true);
@@ -225,11 +225,11 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::SequenceNo>> m2::netw
 			} else if (auto parent_it = _server_to_local_map.find(it->server_object_parent_id); parent_it != _server_to_local_map.end()) {
 				// If the object has a parent that's already created, create the object by looking up the corresponding parent
 				LOG_DEBUG("Server has created an object", it->server_object_id);
-				auto obj_it = m2::create_object(m2::VecF{it->position}, it->object_type, parent_it->second.first);
+				auto obj_it = m2::CreateObject(m2::VecF{it->position}, it->object_type, parent_it->second.first);
 				auto load_result = M2G_PROXY.init_server_update_fg_object(*obj_it, it->named_items, it->resources);
-				m2_reflect_unexpected(load_result);
+				m2ReflectUnexpected(load_result);
 				// Update the character
-				auto* character = obj_it->get_character();
+				auto* character = obj_it->TryGetCharacter();
 				update_character(character, it->named_items, it->resources, it->attributes);
 				// Add object to the map, marked as visited
 				_server_to_local_map[it->server_object_id] = std::make_pair(obj_it.GetId(), true);
@@ -247,7 +247,7 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::SequenceNo>> m2::netw
 		if (!it->second.second) {
 			auto object_to_delete = it->second.first;
 			LOG_DEBUG("Local object hasn't been visited by ServerUpdate, scheduling for deletion", it->second.first);
-			M2_DEFER(create_object_deleter(object_to_delete));
+			M2_DEFER(CreateObjectDeleter(object_to_delete));
 			it = _server_to_local_map.erase(it); // Erase from map
 		} else {
 			++it;

@@ -10,7 +10,7 @@ using namespace m2::widget;
 
 namespace {
 	RGB cards_window_card_color(Card card) {
-		switch (M2_GAME.named_items[card].category()) {
+		switch (M2_GAME.named_items[card].Category()) {
 			case m2g::pb::ITEM_CATEGORY_WILD_CARD:
 				return {255, 200, 71};
 			case m2g::pb::ITEM_CATEGORY_INDUSTRY_CARD:
@@ -27,7 +27,7 @@ namespace {
 				{m2g::pb::ITEM_CATEGORY_CITY_CARD,
 				m2g::pb::ITEM_CATEGORY_INDUSTRY_CARD,
 				m2g::pb::ITEM_CATEGORY_WILD_CARD});
-		const auto cards = card_filter(M2_PLAYER.character());
+		const auto cards = card_filter(M2_PLAYER.GetCharacter());
 
 		Card filter_card_1 = exclude_card_1, filter_card_2 = exclude_card_2;
 		TextSelectionBlueprint::Options options;
@@ -44,8 +44,8 @@ namespace {
 		// Sort first by type, then by alphabetically
 		std::ranges::sort(options,
 				[](const TextSelectionBlueprint::Option& a, const TextSelectionBlueprint::Option& b) {
-					const auto a_category = M2_GAME.named_items[static_cast<Card>(std::get<int>(a.return_value))].category();
-					const auto b_category = M2_GAME.named_items[static_cast<Card>(std::get<int>(b.return_value))].category();
+					const auto a_category = M2_GAME.named_items[static_cast<Card>(std::get<int>(a.return_value))].Category();
+					const auto b_category = M2_GAME.named_items[static_cast<Card>(std::get<int>(b.return_value))].Category();
 					if (a_category != b_category) {
 						return a_category < b_category;
 					}

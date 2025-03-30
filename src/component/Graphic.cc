@@ -90,7 +90,7 @@ float m3::VisibleWidthM() {
 		prev_camera_offset = camera_offset;
 		prev_horizontal_fov = M2_LEVEL.HorizontalFov();
 
-		const auto tan_of_half_horizontal_fov = tanf(m2::to_radians(M2_LEVEL.HorizontalFov()) / 2.0f);
+		const auto tan_of_half_horizontal_fov = tanf(m2::ToRadians(M2_LEVEL.HorizontalFov()) / 2.0f);
 		visible_width = 2 * camera_offset.length() * tan_of_half_horizontal_fov;
 	}
 	return visible_width;
@@ -187,11 +187,11 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 				? &Sprite::DrawIn3dWorld
 				: &Sprite::DrawIn2dWorld;
 		const auto spriteDrawer = [&](const SpriteVariant sv) -> void {
-			(sprite.*projector)(gfx.owner().position, sv, gfx.owner().orientation, is_foreground, gfx.z);
+			(sprite.*projector)(gfx.Owner().position, sv, gfx.Owner().orientation, is_foreground, gfx.z);
 		};
 
 		// Dim the sprite if dimming mode is enabled. TODO Dimming is implemented only for default variant.
-		const bool dimmed = DimRenderingIfNecessary(gfx.owner_id(), sprite.Texture(SpriteVariant{}));
+		const bool dimmed = DimRenderingIfNecessary(gfx.OwnerId(), sprite.Texture(SpriteVariant{}));
 
 		// First, try to draw something using the variant_draw_order, which overrides default_variant_draw_order.
 		bool isAnythingDrawn = false;
@@ -230,18 +230,18 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 		}
 
 		// Dim the sprite if dimming mode is enabled.
-		const bool dimmed = DimRenderingIfNecessary(gfx.owner_id(), M2_GAME.GetTextLabelCache().Texture());
+		const bool dimmed = DimRenderingIfNecessary(gfx.OwnerId(), M2_GAME.GetTextLabelCache().Texture());
 
 		// Draw background
 		if (textLabel.background_color().a()) {
-			DrawTextLabelBackgroundIn2dWorld(textLabel, gfx.textLabelRect, gfx.owner().position, dimmed);
+			DrawTextLabelBackgroundIn2dWorld(textLabel, gfx.textLabelRect, gfx.Owner().position, dimmed);
 		}
 		// Draw text label
 		const bool is_foreground = M2_LEVEL.graphics.GetId(&gfx);
 		const auto projector = IsProjectionTypePerspective(M2_LEVEL.ProjectionType())
 				? &DrawTextLabelIn3dWorld
 				: &DrawTextLabelIn2dWorld;
-		projector(textLabel, gfx.textLabelRect, gfx.owner().position, gfx.owner().orientation, is_foreground, gfx.z);
+		projector(textLabel, gfx.textLabelRect, gfx.Owner().position, gfx.Owner().orientation, is_foreground, gfx.z);
 
 		// If dimming was active, we need to un-dim.
 		if (dimmed) {
@@ -255,10 +255,10 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 void m2::Graphic::ColorCell(const VecI& cell, SDL_Color color) {
 	const auto screen_origin_to_cell_center_px = ScreenOriginToPositionVecPx(VecF{cell});
 	const auto rect = SDL_Rect{
-		iround(screen_origin_to_cell_center_px.x - (M2_GAME.Dimensions().OutputPixelsPerMeter() / 2.0f)),
-		iround(screen_origin_to_cell_center_px.y - (M2_GAME.Dimensions().OutputPixelsPerMeter() / 2.0f)),
-		iround(M2_GAME.Dimensions().OutputPixelsPerMeter()),
-		iround(M2_GAME.Dimensions().OutputPixelsPerMeter())
+		RoundI(screen_origin_to_cell_center_px.x - (M2_GAME.Dimensions().OutputPixelsPerMeter() / 2.0f)),
+		RoundI(screen_origin_to_cell_center_px.y - (M2_GAME.Dimensions().OutputPixelsPerMeter() / 2.0f)),
+		RoundI(M2_GAME.Dimensions().OutputPixelsPerMeter()),
+		RoundI(M2_GAME.Dimensions().OutputPixelsPerMeter())
 	};
 
 	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
@@ -271,8 +271,8 @@ void m2::Graphic::ColorRect(const RectF& world_coordinates_m, const SDL_Color co
 	const auto rect = SDL_Rect{
 			I(screen_origin_to_top_left_px.x),
 			I(screen_origin_to_top_left_px.y),
-			iceil(screen_origin_to_bottom_right_px.x - screen_origin_to_top_left_px.x),
-			iceil(screen_origin_to_bottom_right_px.y - screen_origin_to_top_left_px.y)
+			CeilI(screen_origin_to_bottom_right_px.x - screen_origin_to_top_left_px.x),
+			CeilI(screen_origin_to_bottom_right_px.y - screen_origin_to_top_left_px.y)
 			// TODO using I() and ceilf() here is quite problematic, but I couldn't find any other way of ensuring not
 			//  leaving any gaps between sprites
 			// TODO unfortunately, we can't draw pixel perfect sprites with floating point scaling. However, the game can
@@ -341,12 +341,12 @@ void m2::Graphic::DrawGridLines(const RGBA& color, const unsigned startFrom, con
 	// Draw grid lines
 	const auto viewport = ViewportM();
 	for (auto x = floorf(viewport.x); x <= ceilf(viewport.X2()); x += 1.0f) {
-		if (const auto xInt = iround(x); ((xInt % frequency) + frequency - startFrom) % frequency == 0) {
+		if (const auto xInt = RoundI(x); ((xInt % frequency) + frequency - startFrom) % frequency == 0) {
 			DrawVerticalLine(x - 0.5f, color);
 		}
 	}
 	for (auto y = floorf(viewport.y); y <= ceilf(viewport.Y2()); y += 1.0f) {
-		if (const auto yInt = iround(y); ((yInt % frequency) + frequency - startFrom) % frequency == 0) {
+		if (const auto yInt = RoundI(y); ((yInt % frequency) + frequency - startFrom) % frequency == 0) {
 			DrawHorizontalLine(y - 0.5f, color);
 		}
 	}
@@ -356,7 +356,7 @@ bool m2::Graphic::DimRenderingIfNecessary(Id object_id, SDL_Texture* texture) {
 	// Dim the sprite if dimming mode is enabled
 	if (const auto& DimmingExceptions = M2_LEVEL.DimmingExceptions()) {
 		if (not DimmingExceptions->contains(object_id)) {
-			static uint8_t mod = static_cast<uint8_t>(uround(M2G_PROXY.dimming_factor * F(255)));
+			static uint8_t mod = static_cast<uint8_t>(RoundU(M2G_PROXY.dimming_factor * F(255)));
 			SDL_SetTextureColorMod(texture, mod, mod, mod);
 			return true;
 		}
@@ -382,8 +382,8 @@ void m2::DrawTextureIn2dWorld(
 	const auto dstRect = SDL_Rect{
 		I(screenOriginToTextureCenterVecInOutputPixels.x - F(sourceRect->w) * outputToSourcePpmRatio / 2.0f),
 		I(screenOriginToTextureCenterVecInOutputPixels.y - F(sourceRect->h) * outputToSourcePpmRatio / 2.0f),
-		iceil(F(sourceRect->w) * outputToSourcePpmRatio),
-		iceil(F(sourceRect->h) * outputToSourcePpmRatio)
+		CeilI(F(sourceRect->w) * outputToSourcePpmRatio),
+		CeilI(F(sourceRect->h) * outputToSourcePpmRatio)
 		// TODO using I() and ceilf() here is quite problematic, but I couldn't find any other way of ensuring not
 		//  leaving any gaps between sprites
 		// TODO unfortunately, we can't draw pixel perfect sprites with floating point scaling. However, the game can
@@ -392,16 +392,16 @@ void m2::DrawTextureIn2dWorld(
 
 	// Calculate the center point used for rotation origin
 	const auto centerPoint = SDL_Point{
-		iround(textureCenterToTextureOriginVecInOutputPixels.x) + dstRect.w / 2,
-		iround(textureCenterToTextureOriginVecInOutputPixels.y) + dstRect.h / 2
+		RoundI(textureCenterToTextureOriginVecInOutputPixels.x) + dstRect.w / 2,
+		RoundI(textureCenterToTextureOriginVecInOutputPixels.y) + dstRect.h / 2
 	};
 
 	// Render
 	const auto renderModeResult = SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-	m2_expect_zero_or_throw_message(renderModeResult, SDL_GetError());
+	m2ExpectZeroOrThrowMessage(renderModeResult, SDL_GetError());
 	const auto renderResult = SDL_RenderCopyEx(renderer, sourceTexture, sourceRect, &dstRect,
-			to_degrees(rotationToApplyInRadians - originalRotationOfSourceTextureInRadians), &centerPoint, SDL_FLIP_NONE);
-	m2_expect_zero_or_throw_message(renderResult, SDL_GetError());
+			ToDegrees(rotationToApplyInRadians - originalRotationOfSourceTextureInRadians), &centerPoint, SDL_FLIP_NONE);
+	m2ExpectZeroOrThrowMessage(renderResult, SDL_GetError());
 }
 void m2::DrawTextureIn3dWorld(
 		SDL_Renderer* renderer,

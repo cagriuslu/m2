@@ -203,7 +203,7 @@ m2::RectI m2::SpriteEffectsSheet::create_blurred_drop_shadow_effect(const Sprite
 			// Clamp to [0,1]
 			sum = std::clamp(sum, 0.0f, 1.0f);
 			// Convert back to int
-			const auto an = iround(sum * 255.0f);
+			const auto an = RoundI(sum * 255.0f);
 			// Color dst pixel
 			auto* dst_pixels = static_cast<uint32_t*>(dst_surface->pixels);
 			auto* dst_pixel = dst_pixels + ((x - rect.x() + dst_rect.x) + (y - rect.y() + dst_rect.y) * dst_surface->w);

@@ -85,7 +85,7 @@ std::optional<m2::VecF> rpg::EscaperFsm::find_direction_to_escape() {
 
 	// Sweep with an increasing angle away from the player
 	for (auto sweep_degrees : {10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110}) {
-		auto sweep_rads = m2::to_radians(sweep_degrees);
+		auto sweep_rads = m2::ToRadians(sweep_degrees);
 		// Try both directions randomly
 		auto first_sweep_rads = m2::Random(2u) ? sweep_rads : -sweep_rads;
 		auto second_sweep_rads = -first_sweep_rads;

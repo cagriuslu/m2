@@ -29,7 +29,7 @@ namespace {
 	}
 
 	float CalculateAnimalHumidityDamage(const float currentWaterMass, const float damagePerSecond) {
-		if (m2::is_zero(currentWaterMass, 0.001f)) {
+		if (m2::IsZero(currentWaterMass, 0.001f)) {
 			return damagePerSecond * SIMULATION_TICK_PERIOD_S;
 		}
 		return 0.0f;
@@ -73,8 +73,8 @@ namespace {
 	}
 
 	int RandomizeReproductionCountDown(const float minReproductionPeriod, const float maxReproductionPeriod) {
-		const auto minReproductionCountDown = m2::iround(minReproductionPeriod * SIMULATION_TICKS_PER_SECOND);
-		const auto maxReproductionCountDown = m2::iround(maxReproductionPeriod * SIMULATION_TICKS_PER_SECOND);
+		const auto minReproductionCountDown = m2::RoundI(minReproductionPeriod * SIMULATION_TICKS_PER_SECOND);
+		const auto maxReproductionCountDown = m2::RoundI(maxReproductionPeriod * SIMULATION_TICKS_PER_SECOND);
 		return m2::UniformRandom(minReproductionCountDown, maxReproductionCountDown);
 	}
 
@@ -212,7 +212,7 @@ namespace {
 			}();
 			// Hunger
 			const auto hungerDamage = [hunger = animal.hunger(), animalType = animal.type()] {
-				if (m2::is_one(hunger, 0.001f)) {
+				if (m2::IsOne(hunger, 0.001f)) {
 					const auto hungerDamagePerSecond = animalType == pb::Animal_Type_HERBIVORE
 							? HERBIVORE_HUNGER_DAMAGE_PER_SECOND : CARNIVORE_HUNGER_DAMAGE_PER_SECOND;
 					return hungerDamagePerSecond * SIMULATION_TICK_PERIOD_S;
@@ -232,7 +232,7 @@ namespace {
 			// Reset reproduction count down if any health is lost
 			const auto newReproductionCountDown = [currHealthy = animal.health(), newHealth,
 					currReproductionCountDown = animal.reproduction_count_down(), animalType = animal.type()] {
-				if (m2::is_equal(currHealthy, newHealth, 0.001f)) {
+				if (m2::IsEqual(currHealthy, newHealth, 0.001f)) {
 					return currReproductionCountDown;
 				}
 				const auto minReproductionPeriodS = animalType == pb::Animal_Type_HERBIVORE
@@ -244,7 +244,7 @@ namespace {
 				return RandomizeReproductionCountDown(minReproductionPeriodS, maxReproductionPeriodS);
 			}();
 			// Delete the animal if the health is zero
-			if (m2::is_zero(newHealth, 0.001f)) {
+			if (m2::IsZero(newHealth, 0.001f)) {
 				animalReleaser(animal.id());
 				// Dead animals become waste mass. Eaten animals don't.
 				const auto nextWasteMass = std::min(nextState.waste_mass() + animal.mass(), MAX_WASTE_MASS);
@@ -423,9 +423,9 @@ namespace {
 			if (CARNIVORE_HUNTING_HUNGER_THRESHOLD < animal.hunger()) {
 				if (animal.hunting_count_down() == 0) {
 					// Reinit hunting count down
-					const auto minTicks = m2::iround(CARNIVORE_HUNTING_PERIOD_S * SIMULATION_TICKS_PER_SECOND
+					const auto minTicks = m2::RoundI(CARNIVORE_HUNTING_PERIOD_S * SIMULATION_TICKS_PER_SECOND
 							- CARNIVORE_HUNTING_PERIOD_VARIANCE_S * SIMULATION_TICKS_PER_SECOND);
-					const auto maxTicks = m2::iround(CARNIVORE_HUNTING_PERIOD_S * SIMULATION_TICKS_PER_SECOND
+					const auto maxTicks = m2::RoundI(CARNIVORE_HUNTING_PERIOD_S * SIMULATION_TICKS_PER_SECOND
 							+ CARNIVORE_HUNTING_PERIOD_VARIANCE_S * SIMULATION_TICKS_PER_SECOND);
 					const auto ticks = m2::UniformRandom(minTicks, maxTicks);
 					animal.set_hunting_count_down(ticks);

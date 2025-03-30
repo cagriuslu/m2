@@ -125,17 +125,17 @@ m2::pb::NetworkMessage m2::network::ServerThread::prepare_server_update(const bo
 		// For any Character type
 		std::visit(overloaded {
 			[object_descriptor](const auto& v) {
-				object_descriptor->set_object_id(v.owner().id());
-				object_descriptor->mutable_position()->CopyFrom(static_cast<pb::VecF>(v.owner().position));
-				object_descriptor->set_object_type(v.owner().object_type());
-				object_descriptor->set_parent_id(v.owner().parent_id());
+				object_descriptor->set_object_id(v.Owner().GetId());
+				object_descriptor->mutable_position()->CopyFrom(static_cast<pb::VecF>(v.Owner().position));
+				object_descriptor->set_object_type(v.Owner().GetType());
+				object_descriptor->set_parent_id(v.Owner().GetParentId());
 				for (auto item_it = v.BeginItems(); item_it != v.EndItems(); ++item_it) {
 					const auto* item_ptr = item_it.Get();
 					const auto* named_item_ptr = dynamic_cast<const NamedItem*>(item_ptr);
 					if (!named_item_ptr) {
 						throw M2_ERROR("ServerUpdate does not support unnamed items");
 					}
-					object_descriptor->add_named_items(named_item_ptr->type());
+					object_descriptor->add_named_items(named_item_ptr->Type());
 				}
 				pb::for_each_enum_value<m2g::pb::ResourceType>([&v, object_descriptor](m2g::pb::ResourceType rt) {
 					if (v.HasResource(rt)) {
@@ -251,7 +251,7 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 
 	// Try binding to the socket multiple times.
 	bool binded = false;
-	m2_repeat(32) { // The socket may linger up to 30 secs
+	m2Repeat(32) { // The socket may linger up to 30 secs
 		auto bind_result = listen_socket->bind();
 		if (not bind_result) {
 			throw M2_ERROR("Bind failed: " + bind_result.error());

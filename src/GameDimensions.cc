@@ -94,7 +94,7 @@ void m2::GameDimensionsManager::OnWindowResize() {
 		_scale = F(windowHeightForCorrectAspectRation) / minimumGameAndHudDimensions.y;
 	}
 
-	const int gameHeight = iround(minimumGameAndHudDimensions.y * _scale);
+	const int gameHeight = RoundI(minimumGameAndHudDimensions.y * _scale);
 	const int gameWidth = gameHeight * _gameAspectRatioMul / _gameAspectRatioDiv;
 	const int hudHeight = gameHeight;
 	const int hudWidth = gameHeight * HudAspectRatioMul(_gameAspectRatioMul, _gameAspectRatioDiv)
@@ -136,7 +136,7 @@ void m2::GameDimensionsManager::SetGameHeightM(const float heightM) {
 
 m2::VecI m2::GameDimensionsManager::EstimateMinimumWindowDimensions(const int gamePpm, const float gameHeightM) {
 	// We expect minimum window height to be integer multiple of GAME_AND_HUD_ASPECT_RATIO_DIV
-	const int requestedWindowHeight = iround(gameHeightM * F(gamePpm));
+	const int requestedWindowHeight = RoundI(gameHeightM * F(gamePpm));
 	const int requestedWindowHeightRemainder = requestedWindowHeight % GAME_AND_HUD_ASPECT_RATIO_DIV;
 	const int calculatedWindowHeight = requestedWindowHeight - requestedWindowHeightRemainder;
 

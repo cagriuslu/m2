@@ -7,9 +7,9 @@ using namespace m2::widget;
 
 IntegerInput::IntegerInput(UiPanel* parent, const UiWidgetBlueprint* blueprint)
     : UiWidget(parent, blueprint), _value(std::get<IntegerInputBlueprint>(blueprint->variant).initial_value),
-      _plus_texture(m2_move_or_throw_error(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "+"))),
-      _minus_texture(m2_move_or_throw_error(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "-"))) {
-	_textTexture = m2_move_or_throw_error(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, ToString(_value)));
+      _plus_texture(m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "+"))),
+      _minus_texture(m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "-"))) {
+	_textTexture = m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, ToString(_value)));
 
 	// Execute onCreate
 	if (VariantBlueprint().onCreate) {
@@ -17,7 +17,7 @@ IntegerInput::IntegerInput(UiPanel* parent, const UiWidgetBlueprint* blueprint)
 		if (opt_value) {
 			// Save new value
 			_value = *opt_value;
-			_textTexture = m2_move_or_throw_error(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, ToString(*opt_value)));
+			_textTexture = m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, ToString(*opt_value)));
 		}
 	}
 }
@@ -29,18 +29,18 @@ UiAction IntegerInput::HandleEvents(Events& events) {
 
 	const auto& integer_selection = std::get<IntegerInputBlueprint>(blueprint->variant);
 
-	if (!_inc_depressed && events.pop_mouse_button_press(MouseButton::PRIMARY, inc_button_rect)) {
+	if (!_inc_depressed && events.PopMouseButtonPress(MouseButton::PRIMARY, inc_button_rect)) {
 		_inc_depressed = true;
 		_dec_depressed = false;
-	} else if (!_dec_depressed && events.pop_mouse_button_press(MouseButton::PRIMARY, dec_button_rect)) {
+	} else if (!_dec_depressed && events.PopMouseButtonPress(MouseButton::PRIMARY, dec_button_rect)) {
 		_dec_depressed = true;
 		_inc_depressed = false;
-	} else if (_inc_depressed && events.pop_mouse_button_release(MouseButton::PRIMARY, inc_button_rect)) {
+	} else if (_inc_depressed && events.PopMouseButtonRelease(MouseButton::PRIMARY, inc_button_rect)) {
 		_inc_depressed = false;
 		if (value() < integer_selection.max_value) {
 			select(value() + 1);
 		}
-	} else if (_dec_depressed && events.pop_mouse_button_release(MouseButton::PRIMARY, dec_button_rect)) {
+	} else if (_dec_depressed && events.PopMouseButtonRelease(MouseButton::PRIMARY, dec_button_rect)) {
 		_dec_depressed = false;
 		if (integer_selection.min_value < value()) {
 			select(value() - 1);
@@ -79,20 +79,20 @@ void IntegerInput::Draw() {
 	if (const auto texture = _textTexture.texture(); texture) {
 		sdl::render_texture_with_color_mod(texture,
 				calculate_filled_text_rect(Rect().trim_right(Rect().h / 2), TextHorizontalAlignment::LEFT,
-					I(utf8_codepoint_count(_textTexture.string().c_str()))));
+					I(Utf8CodepointCount(_textTexture.string().c_str()))));
 	}
 
 	auto buttons_rect = Rect().trim_left(Rect().w - Rect().h / 2);
 	auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2);
 	sdl::render_texture_with_color_mod(_plus_texture.texture(),
 			calculate_filled_text_rect(inc_button_rect,
-				TextHorizontalAlignment::LEFT, I(utf8_codepoint_count(_plus_texture.string().c_str()))));
+				TextHorizontalAlignment::LEFT, I(Utf8CodepointCount(_plus_texture.string().c_str()))));
 	draw_border(inc_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 
 	auto dec_button_rect = buttons_rect.trim_top(buttons_rect.h / 2);
 	sdl::render_texture_with_color_mod(_minus_texture.texture(),
 			calculate_filled_text_rect(dec_button_rect,
-				TextHorizontalAlignment::LEFT, I(utf8_codepoint_count(_minus_texture.string().c_str()))));
+				TextHorizontalAlignment::LEFT, I(Utf8CodepointCount(_minus_texture.string().c_str()))));
 	draw_border(dec_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 
 	draw_border(Rect(), vertical_border_width_px(), horizontal_border_width_px());

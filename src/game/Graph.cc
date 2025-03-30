@@ -18,7 +18,7 @@ void m2::Graph::add_edge(Node from, Edge edge) {
 	if (from == edge.node) {
 		throw M2_ERROR("Source and destination nodes are the same");
 	}
-	if (is_less(edge.cost, 0.0f, _tolerance)) {
+	if (IsLess(edge.cost, 0.0f, _tolerance)) {
 		throw M2_ERROR("Negative edge cost");
 	}
 	// Check if the node already exists
@@ -48,7 +48,7 @@ std::unordered_map<m2::Graph::Node, float> m2::Graph::reachable_nodes_from(Node 
 	// Add the first set of edges from the source into the nodes_to_visit list
 	std::deque<std::pair<Node, float>> nodes_to_visit;
 	for (const auto& edge : source_it->second) {
-		if (is_less_or_equal(edge.cost, inclusive_cost, _tolerance)) {
+		if (IsLessOrEqual(edge.cost, inclusive_cost, _tolerance)) {
 			nodes_to_visit.emplace_back(edge.node, edge.cost);
 		}
 	}
@@ -83,11 +83,11 @@ std::unordered_map<m2::Graph::Node, float> m2::Graph::reachable_nodes_from(Node 
 		if (next_step_it != _edges.end()) {
 			for (const auto& edge : next_step_it->second) {
 				if (edge.node != source) {
-					if (auto already_was_gonna_visit = std::find_if(nodes_to_visit.begin(), nodes_to_visit.end(), is_first_equals<Node, float>(edge.node));
+					if (auto already_was_gonna_visit = std::find_if(nodes_to_visit.begin(), nodes_to_visit.end(), IsFirstEquals<Node, float>(edge.node));
 						already_was_gonna_visit != nodes_to_visit.end()) {
 						// If the node was already going to be visited, update its cost
 						already_was_gonna_visit->second = std::min(already_was_gonna_visit->second, lowest_cost + edge.cost);
-					} else if (is_less_or_equal(lowest_cost + edge.cost, inclusive_cost, _tolerance)) {
+					} else if (IsLessOrEqual(lowest_cost + edge.cost, inclusive_cost, _tolerance)) {
 						// Check if this next node was already reachable with a lower cost of reaching
 						if (auto edge_node_it = reachable_nodes.find(edge.node); edge_node_it != reachable_nodes.end()) {
 							if (lowest_cost + edge.cost < edge_node_it->second) {

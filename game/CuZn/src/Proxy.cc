@@ -47,13 +47,13 @@ void m2g::Proxy::post_multi_player_level_client_init(MAYBE const std::string& na
 
 	// Add human players
 	for (auto i = 0; i < client_count; ++i) {
-		auto it = m2::create_object(m2::VecF{i, i}, m2g::pb::ObjectType::HUMAN_PLAYER);
+		auto it = m2::CreateObject(m2::VecF{i, i}, m2g::pb::ObjectType::HUMAN_PLAYER);
 		if (i == self_index) {
 			auto client_init_result = PlayerInitThisInstance(*it);
-			m2_succeed_or_throw_error(client_init_result);
+			m2SucceedOrThrowError(client_init_result);
 		} else {
 			auto client_init_result = PlayerInitOtherInstance(*it);
-			m2_succeed_or_throw_error(client_init_result);
+			m2SucceedOrThrowError(client_init_result);
 		}
 		multiPlayerObjectIds.emplace_back(it.GetId());
 		player_colors.emplace_back(generate_player_color(i));
@@ -62,14 +62,14 @@ void m2g::Proxy::post_multi_player_level_client_init(MAYBE const std::string& na
 	// Add all merchants (without any license) since all merchants can deal in coal and iron
 	for (const auto& merchant_sprite : PossiblyActiveMerchantLocations()) {
 		// Create merchant object
-		auto it = m2::create_object(std::get<m2::VecF>(merchant_positions[merchant_sprite]), m2g::pb::ObjectType::MERCHANT);
+		auto it = m2::CreateObject(std::get<m2::VecF>(merchant_positions[merchant_sprite]), m2g::pb::ObjectType::MERCHANT);
 		init_merchant(*it);
 		// Store for later
 		merchant_object_ids[merchant_sprite] = it.GetId();
 	}
 
 	// Add Game State Tracker object
-	auto it = m2::create_object(m2::VecF{}, m2g::pb::ObjectType::GAME_STATE_TRACKER);
+	auto it = m2::CreateObject(m2::VecF{}, m2g::pb::ObjectType::GAME_STATE_TRACKER);
 	InitGameStateTracker(*it);
 	_game_state_tracker_id = it.GetId();
 
@@ -97,7 +97,7 @@ void m2g::Proxy::multi_player_level_server_populate(MAYBE const std::string& nam
 			if (license != pb::NO_MERCHANT_LICENSE) {
 				// Retrieve merchant object
 				auto merchant_object_id = merchant_object_ids[possibly_active_merchant_loc];
-				auto& merchant_char = M2_LEVEL.objects[merchant_object_id].character();
+				auto& merchant_char = M2_LEVEL.objects[merchant_object_id].GetCharacter();
 				LOG_DEBUG("Adding license to merchant", m2g::pb::ItemType_Name(license));
 				merchant_char.AddNamedItem(M2_GAME.GetNamedItem(license));
 				merchant_char.AddResource(pb::BEER_BARREL_COUNT, 1.0f);
@@ -107,7 +107,7 @@ void m2g::Proxy::multi_player_level_server_populate(MAYBE const std::string& nam
 
 	// Prepare draw deck
 	auto draw_deck = PrepareDrawDeck(client_count);
-	m2_repeat(client_count) { draw_deck.pop_back(); } // In the canal era, we discard client_count number of cards from the deck
+	m2Repeat(client_count) { draw_deck.pop_back(); } // In the canal era, we discard client_count number of cards from the deck
 	Give8CardsToEachPlayer(draw_deck);
 	_draw_deck = std::move(draw_deck);
 	game_state_tracker().SetResource(pb::DRAW_DECK_SIZE, m2::F(_draw_deck.size()));
@@ -136,7 +136,7 @@ void m2g::Proxy::multi_player_level_server_populate(MAYBE const std::string& nam
 std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYBE const m2g::pb::ClientCommand& client_command) {
 	LOG_INFO("Received command from client", turn_holder_index);
 	auto turn_holder_object_id = M2G_PROXY.multiPlayerObjectIds[turn_holder_index];
-	auto& turn_holder_character = M2_LEVEL.objects[turn_holder_object_id].character();
+	auto& turn_holder_character = M2_LEVEL.objects[turn_holder_object_id].GetCharacter();
 
 	if (_is_liquidating) {
 		if (auto liquidationSuccessful = HandleActionWhileLiquidating(turn_holder_character, client_command); not liquidationSuccessful) {
@@ -416,7 +416,7 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 	// Store the positions of the merchants
 	if (is_merchant_location(sprite_type)) {
 		auto merchant_cell_rect = m2::RectF{obj.position.x - 0.5f, obj.position.y - 0.5f, 2.0f, 2.0f};
-		merchant_positions[sprite_type] = std::make_tuple(obj.position, merchant_cell_rect, obj.id());
+		merchant_positions[sprite_type] = std::make_tuple(obj.position, merchant_cell_rect, obj.GetId());
 		LOG_DEBUG("Merchant position", m2g::pb::SpriteType_Name(sprite_type), merchant_cell_rect);
 	}
 	// Store the positions of the industries build locations
@@ -427,7 +427,7 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 			throw M2_ERROR("Sprite ppm mismatch");
 		}
 		auto industry_cell_rect = m2::RectF{obj.position.x - 0.5f, obj.position.y - 0.5f, 2.0f, 2.0f};
-		industry_positions[sprite_type] = std::make_tuple(obj.position, industry_cell_rect, obj.id());
+		industry_positions[sprite_type] = std::make_tuple(obj.position, industry_cell_rect, obj.GetId());
 		LOG_DEBUG("Industry position", m2g::pb::SpriteType_Name(sprite_type), industry_cell_rect);
 	}
 	// Store the positions of the connection locations
@@ -438,7 +438,7 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 		auto original_type = sprite.OriginalType(); // Connection sprites are duplicate of another
 		auto offset = connection_sprite_world_offset(*original_type);
 		connection_cell_rect = connection_cell_rect.shift(offset);
-		connection_positions[sprite_type] = std::make_tuple(obj.position + offset, connection_cell_rect, obj.id());
+		connection_positions[sprite_type] = std::make_tuple(obj.position + offset, connection_cell_rect, obj.GetId());
 		LOG_DEBUG("Connection position", m2g::pb::SpriteType_Name(sprite_type), connection_cell_rect);
 		// Fill graph
 		auto cities = cities_from_connection(sprite_type);
@@ -464,7 +464,7 @@ m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(MAYBE m2::O
 
 m2::void_expected m2g::Proxy::init_server_update_fg_object(m2::Object& obj, const std::vector<m2g::pb::ItemType>& items,
 	MAYBE const std::vector<m2::pb::Resource>& resources) {
-	switch (obj.object_type()) {
+	switch (obj.GetType()) {
 		case pb::FACTORY: {
 			auto city = std::ranges::find_if(items, is_city);
 			auto industry_tile = std::ranges::find_if(items, is_industry_tile);
@@ -504,7 +504,7 @@ unsigned m2g::Proxy::player_index(m2::Id id) const {
 }
 
 m2::Character& m2g::Proxy::game_state_tracker() const {
-	return M2_LEVEL.objects[_game_state_tracker_id].character();
+	return M2_LEVEL.objects[_game_state_tracker_id].GetCharacter();
 }
 int m2g::Proxy::total_card_count() const {
 	const auto player_card_lists = M2G_PROXY.multiPlayerObjectIds
@@ -512,41 +512,41 @@ int m2g::Proxy::total_card_count() const {
 		| std::views::transform(m2::to_character_of_object)
 		| std::views::transform(m2::GenerateNamedItemTypesFilter({pb::ITEM_CATEGORY_CITY_CARD, pb::ITEM_CATEGORY_INDUSTRY_CARD, pb::ITEM_CATEGORY_WILD_CARD}));
 	const auto card_count = std::accumulate(player_card_lists.begin(), player_card_lists.end(), 0, [](const int sum, const std::vector<Card>& card_list) { return sum + I(card_list.size()); });
-	return card_count + m2::iround(game_state_tracker().GetResource(pb::DRAW_DECK_SIZE));
+	return card_count + m2::RoundI(game_state_tracker().GetResource(pb::DRAW_DECK_SIZE));
 }
 bool m2g::Proxy::is_last_action_of_player() const {
-	return m2::is_equal(game_state_tracker().GetResource(pb::IS_LAST_ACTION_OF_PLAYER), 1.0f, 0.001f);
+	return m2::IsEqual(game_state_tracker().GetResource(pb::IS_LAST_ACTION_OF_PLAYER), 1.0f, 0.001f);
 }
 bool m2g::Proxy::is_canal_era() const {
-	return m2::is_equal(game_state_tracker().GetResource(pb::IS_RAILROAD_ERA), 0.0f, 0.001f);
+	return m2::IsEqual(game_state_tracker().GetResource(pb::IS_RAILROAD_ERA), 0.0f, 0.001f);
 }
 bool m2g::Proxy::is_railroad_era() const {
-	return m2::is_equal(game_state_tracker().GetResource(pb::IS_RAILROAD_ERA), 1.0f, 0.001f);
+	return m2::IsEqual(game_state_tracker().GetResource(pb::IS_RAILROAD_ERA), 1.0f, 0.001f);
 }
 int m2g::Proxy::market_coal_count() const {
-	return m2::iround(game_state_tracker().GetResource(m2g::pb::COAL_CUBE_COUNT));
+	return m2::RoundI(game_state_tracker().GetResource(m2g::pb::COAL_CUBE_COUNT));
 }
 int m2g::Proxy::market_iron_count() const {
-	return m2::iround(game_state_tracker().GetResource(m2g::pb::IRON_CUBE_COUNT));
+	return m2::RoundI(game_state_tracker().GetResource(m2g::pb::IRON_CUBE_COUNT));
 }
 int m2g::Proxy::market_coal_cost(int coal_count) const {
-	auto current_coal_count = m2::iround(game_state_tracker().GetResource(m2g::pb::COAL_CUBE_COUNT));
+	auto current_coal_count = m2::RoundI(game_state_tracker().GetResource(m2g::pb::COAL_CUBE_COUNT));
 	return CalculateCost(COAL_MARKET_CAPACITY, current_coal_count, coal_count);
 }
 int m2g::Proxy::market_iron_cost(int iron_count) const {
-	auto current_iron_count = m2::iround(game_state_tracker().GetResource(m2g::pb::IRON_CUBE_COUNT));
+	auto current_iron_count = m2::RoundI(game_state_tracker().GetResource(m2g::pb::IRON_CUBE_COUNT));
 	return CalculateCost(IRON_MARKET_CAPACITY, current_iron_count, iron_count);
 }
 int m2g::Proxy::player_spent_money(int player_index) const {
 	auto money_spent_by_player_enum = static_cast<pb::ResourceType>(pb::MONEY_SPENT_BY_PLAYER_0 + player_index);
-	return m2::iround(game_state_tracker().GetResource(money_spent_by_player_enum));
+	return m2::RoundI(game_state_tracker().GetResource(money_spent_by_player_enum));
 }
 std::pair<int,int> m2g::Proxy::market_coal_revenue(int count) const {
-	auto current_coal_count = m2::iround(game_state_tracker().GetResource(m2g::pb::COAL_CUBE_COUNT));
+	auto current_coal_count = m2::RoundI(game_state_tracker().GetResource(m2g::pb::COAL_CUBE_COUNT));
 	return CalculateRevenue(COAL_MARKET_CAPACITY, current_coal_count, count);
 }
 std::pair<int,int> m2g::Proxy::market_iron_revenue(int count) const {
-	auto current_iron_count = m2::iround(game_state_tracker().GetResource(m2g::pb::IRON_CUBE_COUNT));
+	auto current_iron_count = m2::RoundI(game_state_tracker().GetResource(m2g::pb::IRON_CUBE_COUNT));
 	return CalculateRevenue(IRON_MARKET_CAPACITY, current_iron_count, count);
 }
 
@@ -619,10 +619,10 @@ std::optional<std::pair<m2g::Proxy::PlayerIndex, m2g::pb::ServerCommand>> m2g::P
 	// Gain incomes
 	for (const auto playerId : M2G_PROXY.multiPlayerObjectIds) {
 		// Lookup player
-		auto& player_character = M2_LEVEL.objects[playerId].character();
-		const auto incomePoints = m2::iround(player_character.GetAttribute(pb::INCOME_POINTS));
+		auto& player_character = M2_LEVEL.objects[playerId].GetCharacter();
+		const auto incomePoints = m2::RoundI(player_character.GetAttribute(pb::INCOME_POINTS));
 		const auto incomeLevel = IncomeLevelFromIncomePoints(incomePoints);
-		const auto playerMoney = m2::iround(player_character.GetResource(pb::MONEY));
+		const auto playerMoney = m2::RoundI(player_character.GetResource(pb::MONEY));
 		LOG_DEBUG("Player gained money", incomeLevel);
 		const auto newPlayerMoney = playerMoney + incomeLevel;
 		if (newPlayerMoney < 0) {
@@ -677,14 +677,14 @@ m2g::Proxy::LiquidationDetails m2g::Proxy::prepare_railroad_era() {
 		| std::views::transform(m2::to_character_of_object),
 		[&](const m2::Character& human_player) {
 			canal_era_result_command.mutable_canal_era_result()->add_victory_points(
-				m2::iround(human_player.GetResource(pb::VICTORY_POINTS)));
+				m2::RoundI(human_player.GetResource(pb::VICTORY_POINTS)));
 		});
 	LOG_INFO("Sending CanalEraResult to clients");
 	M2_GAME.ServerThread().send_server_command(canal_era_result_command, -1);
 
 	// Reset merchant beer
 	for (const auto& merchantObjId: merchant_object_ids | std::views::values) {
-		auto& merchantChr = M2_LEVEL.objects[merchantObjId].character();
+		auto& merchantChr = M2_LEVEL.objects[merchantObjId].GetCharacter();
 		if (merchantChr.HasItem(pb::ITEM_CATEGORY_MERCHANT_LICENSE)) {
 			merchantChr.SetResource(pb::BEER_BARREL_COUNT, 1.0f);
 		}
@@ -698,7 +698,7 @@ m2g::Proxy::LiquidationDetails m2g::Proxy::prepare_railroad_era() {
 
 	// Give roads to players
 	const auto& road_item = M2_GAME.GetNamedItem(pb::ROAD_TILE);
-	auto road_possession_limit = m2::zround(road_item.GetAttribute(pb::POSSESSION_LIMIT));
+	auto road_possession_limit = m2::RoundZ(road_item.GetAttribute(pb::POSSESSION_LIMIT));
 	std::ranges::for_each(M2G_PROXY.multiPlayerObjectIds
 		| std::views::transform(m2::to_object_of_id)
 		| std::views::transform(m2::to_character_of_object),

@@ -92,13 +92,13 @@ void m2::Physique::DefaultDebugDraw(Physique& phy) {
 				const auto circleRadius = shape->m_radius;
 
 				if (IsProjectionTypeParallel(M2_LEVEL.ProjectionType())) {
-					const int r = iround(M2_GAME.Dimensions().OutputPixelsPerMeter() * circleRadius);
+					const int r = RoundI(M2_GAME.Dimensions().OutputPixelsPerMeter() * circleRadius);
 					const auto srcRect = static_cast<SDL_Rect>(M2_GAME.GetShapeCache().Create(std::make_shared<Circle>(r)));
 					auto* texture = M2_GAME.GetShapeCache().Texture();
 					auto screenOriginToSpriteCenter = ScreenOriginToPositionVecPx(circleCenter);
 					auto dstRect = SDL_Rect{
-							iround(screenOriginToSpriteCenter.x) - (srcRect.w / 2),
-							iround(screenOriginToSpriteCenter.y) - (srcRect.h / 2),
+							RoundI(screenOriginToSpriteCenter.x) - (srcRect.w / 2),
+							RoundI(screenOriginToSpriteCenter.y) - (srcRect.h / 2),
 							srcRect.w,
 							srcRect.h};
 					SDL_RenderCopy(M2_GAME.renderer, texture, &srcRect, &dstRect);
@@ -147,8 +147,8 @@ void m2::Physique::DefaultDebugDraw(Physique& phy) {
 					auto point1OnScreen = ScreenOriginToPositionVecPx(objectPosition + point1);
 					auto point2OnScreen = ScreenOriginToPositionVecPx(objectPosition + point2);
 					SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
-					SDL_RenderDrawLine(M2_GAME.renderer, iround(point1OnScreen.x), iround(point1OnScreen.y),
-							iround(point2OnScreen.x), iround(point2OnScreen.y));
+					SDL_RenderDrawLine(M2_GAME.renderer, RoundI(point1OnScreen.x), RoundI(point1OnScreen.y),
+							RoundI(point2OnScreen.x), RoundI(point2OnScreen.y));
 				}
 				break;
 			}

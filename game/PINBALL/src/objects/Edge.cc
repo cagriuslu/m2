@@ -5,9 +5,9 @@
 #include <box2d/b2_edge_shape.h>
 
 void LoadEdge() {
-	const auto it = m2::create_object({}, m2g::pb::NO_OBJECT);
+	const auto it = m2::CreateObject({}, m2g::pb::NO_OBJECT);
 
-	auto& phy = it->add_physique();
+	auto& phy = it->AddPhysique();
 
 	b2BodyDef bodyDef;
 	bodyDef.type = b2_staticBody;
@@ -15,7 +15,7 @@ void LoadEdge() {
 	bodyDef.allowSleep = true;
 	bodyDef.fixedRotation = true;
 	bodyDef.enabled = true;
-	bodyDef.userData.pointer = it->physique_id();
+	bodyDef.userData.pointer = it->GetPhysiqueId();
 	bodyDef.gravityScale = 0.0f;
 	b2Body* body = M2_LEVEL.world->CreateBody(&bodyDef);
 

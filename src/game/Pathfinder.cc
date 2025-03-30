@@ -213,7 +213,7 @@ bool m2::Pathfinder::check_eyesight(const VecI& from, const VecI& to) {
 }
 
 void m2::Pathfinder::draw_path(const Path& path, SDL_Color color) {
-	for_each_adjacent_pair(path.begin(), path.end(), [color](const VecI& p1, const VecI& p2) {
+	ForEachAdjacentPair(path.begin(), path.end(), [color](const VecI& p1, const VecI& p2) {
 		Graphic::DrawLine(static_cast<VecF>(p1), static_cast<VecF>(p2), color);
 	});
 }

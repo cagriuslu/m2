@@ -28,7 +28,7 @@ void score_sold_factories_and_remove_obsolete() {
 				| std::views::filter(IsFactoryCharacter)
 				| std::views::filter(IsFactorySold),
 			[](const m2::Character& factory) {
-				auto& player = factory.owner().get_parent()->character();
+				auto& player = factory.Owner().TryGetParent()->GetCharacter();
 				const auto& industryTileItem = M2_GAME.GetNamedItem(ToIndustryTileOfFactoryCharacter(factory));
 				const auto victoryPointsBonus = industryTileItem.GetAttribute(pb::VICTORY_POINTS_BONUS);
 				LOG_INFO("Player victory points bonus", victoryPointsBonus);

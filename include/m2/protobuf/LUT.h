@@ -28,7 +28,7 @@ namespace m2::pb {
 				const ::google::protobuf::RepeatedPtrField<ProtoItemT>& (EnvelopeT::*list_accessor)() const) {
 			// Load the envelope from the file
 			auto envelope = pb::json_file_to_message<EnvelopeT>(envelope_path);
-			m2_reflect_unexpected(envelope);
+			m2ReflectUnexpected(envelope);
 
 			using KeyT = decltype(std::declval<ProtoItemT>().type());
 			std::vector<ProtoItemT> protoItems(pb::enum_value_count<KeyT>());

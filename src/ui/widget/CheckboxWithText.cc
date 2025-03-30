@@ -6,7 +6,7 @@ using namespace m2::widget;
 
 CheckboxWithText::CheckboxWithText(UiPanel* parent, const UiWidgetBlueprint* blueprint)
     : AbstractButton(parent, blueprint), _state(std::get<CheckboxWithTextBlueprint>(blueprint->variant).initial_state) {
-	_textTexture = m2_move_or_throw_error(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font,
+	_textTexture = m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font,
 			M2G_PROXY.default_font_size, std::get<CheckboxWithTextBlueprint>(blueprint->variant).text)); // TODO scale the text with the window
 	if (VariantBlueprint().onCreate) {
 		VariantBlueprint().onCreate(*this);
@@ -21,7 +21,7 @@ void CheckboxWithText::Draw() {
 
 	// Text
 	if (auto* texture = _textTexture.texture(); texture) {
-		const auto destinationRect = calculate_filled_text_rect(Rect(), TextHorizontalAlignment::CENTER, I(utf8_codepoint_count(_textTexture.string().c_str())));
+		const auto destinationRect = calculate_filled_text_rect(Rect(), TextHorizontalAlignment::CENTER, I(Utf8CodepointCount(_textTexture.string().c_str())));
 		sdl::render_texture_with_color_mod(texture, destinationRect, static_cast<RGB>(accentColor));
 	}
 

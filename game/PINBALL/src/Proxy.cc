@@ -297,7 +297,7 @@ const m2::UiPanelBlueprint* m2g::Proxy::RightHudBlueprint() {
 }
 
 m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object& obj) {
-	switch (obj.object_type()) {
+	switch (obj.GetType()) {
 		case pb::ObjectType::PLAYER:
 			return LoadPlayer(obj);
 		case pb::ObjectType::BALL:
@@ -309,7 +309,7 @@ m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object&
 		case pb::ObjectType::OBJECT_BASIC_WALL_2X1:
 			return LoadWall(obj);
 		default:
-			throw M2_ERROR("Missing loader for type: " + m2::ToString(obj.object_type()));
+			throw M2_ERROR("Missing loader for type: " + m2::ToString(obj.GetType()));
 	}
 }
 

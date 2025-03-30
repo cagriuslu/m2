@@ -20,7 +20,7 @@ int m2::UiWidget::vertical_border_width_px() const {
 	if (blueprint->border_width == 0.0f) {
 		return 0;
 	} else {
-		return std::max(1, iround(vertical_pixels_per_unit() * blueprint->border_width));
+		return std::max(1, RoundI(vertical_pixels_per_unit() * blueprint->border_width));
 	}
 }
 
@@ -28,7 +28,7 @@ int m2::UiWidget::horizontal_border_width_px() const {
 	if (blueprint->border_width == 0.0f) {
 		return 0;
 	} else {
-		return std::max(1, iround(horizontal_pixels_per_unit() * blueprint->border_width));
+		return std::max(1, RoundI(horizontal_pixels_per_unit() * blueprint->border_width));
 	}
 }
 
@@ -36,7 +36,7 @@ int m2::UiWidget::vertical_padding_width_px() const {
 	if (blueprint->padding_width == 0.0f) {
 		return 0;
 	} else {
-		return iround(vertical_pixels_per_unit() * blueprint->padding_width);
+		return RoundI(vertical_pixels_per_unit() * blueprint->padding_width);
 	}
 }
 
@@ -44,7 +44,7 @@ int m2::UiWidget::horizontal_padding_width_px() const {
 	if (blueprint->padding_width == 0.0f) {
 		return 0;
 	} else {
-		return iround(horizontal_pixels_per_unit() * blueprint->padding_width);
+		return RoundI(horizontal_pixels_per_unit() * blueprint->padding_width);
 	}
 }
 
@@ -87,8 +87,8 @@ m2::RectI m2::UiWidget::calculate_wrapped_text_rect(SDL_Texture* text_texture, R
 m2::RectI m2::UiWidget::calculate_filled_text_rect(RectI drawable_area, TextHorizontalAlignment align, int text_length) {
 	// Fit the font into the drawable_area with correct aspect ratio
 	auto unaligned_destination = drawable_area.trim_to_aspect_ratio(
-		I(text_length * M2_GAME.font_letter_width_to_height_ratio().n()),
-			I(M2_GAME.font_letter_width_to_height_ratio().d()));
+		I(text_length * M2_GAME.FontLetterWidthToHeightRatio().n()),
+			I(M2_GAME.FontLetterWidthToHeightRatio().d()));
 
 	// If drawable area is wider than the font, horizontal alignment is necessary.
 	switch (align) {
@@ -128,10 +128,10 @@ void UiWidget::DrawSpriteOrTextLabel(const std::variant<Sprite, pb::TextLabel>& 
 		: F(dst_rect.w) / F(src_rect.w);  // Sprite is wider than the widget
 
 	const auto actual_dst_rect = SDL_Rect{
-		.x = dst_rect.x + (dst_rect.w - iround(src_rect.w * sprite_size_multiplier)) / 2,
-		.y = dst_rect.y + (dst_rect.h - iround(src_rect.h * sprite_size_multiplier)) / 2,
-		.w = iround(src_rect.w * sprite_size_multiplier),
-		.h = iround(src_rect.h * sprite_size_multiplier)};
+		.x = dst_rect.x + (dst_rect.w - RoundI(src_rect.w * sprite_size_multiplier)) / 2,
+		.y = dst_rect.y + (dst_rect.h - RoundI(src_rect.h * sprite_size_multiplier)) / 2,
+		.w = RoundI(src_rect.w * sprite_size_multiplier),
+		.h = RoundI(src_rect.h * sprite_size_multiplier)};
 
 	SDL_RenderCopy(M2_GAME.renderer, texture, &src_rect, &actual_dst_rect);
 }

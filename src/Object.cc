@@ -50,235 +50,235 @@ m2::Object& m2::Object::operator=(Object&& other) noexcept {
 
 m2::Object::~Object() {
 	if (_group_id) {
-		M2_LEVEL.groups[_group_id]->remove_member(_index_in_group);
+		M2_LEVEL.groups[_group_id]->RemoveMember(_index_in_group);
 	}
-	remove_physique();
-	remove_graphic();
-	remove_terrain_graphic();
-	remove_light();
-	remove_sound_emitter();
-	remove_character();
+	RemovePhysique();
+	RemoveGraphic();
+	RemoveTerrainGraphic();
+	RemoveLight();
+	RemoveSoundEmitter();
+	RemoveCharacter();
 }
 
-m2::ObjectId m2::Object::id() const {
+m2::ObjectId m2::Object::GetId() const {
 	if (!_id) {
 		// Looking up the id of the object itself is not very common
 		_id = M2_LEVEL.objects.GetId(this);
 	}
 	return *_id;
 }
-m2::ObjectId m2::Object::parent_id() const {
+m2::ObjectId m2::Object::GetParentId() const {
     return _parent_id;
 }
-m2::GroupId m2::Object::group_id() const {
+m2::GroupId m2::Object::GetGroupId() const {
 	return _group_id;
 }
-m2::PhysiqueId m2::Object::physique_id() const {
+m2::PhysiqueId m2::Object::GetPhysiqueId() const {
 	return _physique_id;
 }
-m2::GraphicId m2::Object::graphic_id() const {
+m2::GraphicId m2::Object::GetGraphicId() const {
 	return _graphic_id;
 }
-std::pair<m2::GraphicId, m2::BackgroundLayer> m2::Object::terrain_graphic_id() const {
+std::pair<m2::GraphicId, m2::BackgroundLayer> m2::Object::GetTerrainGraphicId() const {
 	return _terrain_graphic_id;
 }
-m2::LightId m2::Object::light_id() const {
+m2::LightId m2::Object::GetLightId() const {
 	return _light_id;
 }
-m2::SoundEmitterId m2::Object::sound_id() const {
+m2::SoundEmitterId m2::Object::GetSoundId() const {
 	return _sound_emitter_id;
 }
-m2::CharacterId m2::Object::character_id() const {
+m2::CharacterId m2::Object::GetCharacterId() const {
     return _character_id;
 }
 
-m2::Character* m2::Object::get_character() const {
+m2::Character* m2::Object::TryGetCharacter() const {
 	auto* character_variant = M2_LEVEL.characters.Get(_character_id);
 	if (not character_variant) {
 		return nullptr;
 	}
 	return &ToCharacterBase(*character_variant);
 }
-m2::Object* m2::Object::get_parent() const {
+m2::Object* m2::Object::TryGetParent() const {
     return _parent_id ? M2_LEVEL.objects.Get(_parent_id) : nullptr;
 }
-m2::Group* m2::Object::get_group() const {
+m2::Group* m2::Object::TryGetGroup() const {
 	return _group_id ? M2_LEVEL.groups[_group_id].get() : nullptr;
 }
 
-m2::Physique& m2::Object::physique() const {
+m2::Physique& m2::Object::GetPhysique() const {
 	return M2_LEVEL.physics[_physique_id];
 }
-m2::Graphic& m2::Object::graphic() const {
+m2::Graphic& m2::Object::GetGraphic() const {
 	return M2_LEVEL.graphics[_graphic_id];
 }
-m2::Graphic& m2::Object::terrain_graphic() const {
+m2::Graphic& m2::Object::GetTerrainGraphic() const {
 	return M2_LEVEL.terrainGraphics[I(_terrain_graphic_id.second)][_terrain_graphic_id.first];
 }
-m2::Light& m2::Object::light() const {
+m2::Light& m2::Object::GetLight() const {
 	return M2_LEVEL.lights[_light_id];
 }
-m2::SoundEmitter& m2::Object::sound_emitter() const {
+m2::SoundEmitter& m2::Object::GetSoundEmitter() const {
 	return M2_LEVEL.soundEmitters[_sound_emitter_id];
 }
-m2::Character& m2::Object::character() const {
+m2::Character& m2::Object::GetCharacter() const {
     auto& it = M2_LEVEL.characters[_character_id];
     return ToCharacterBase(it);
 }
 
-void m2::Object::set_group(const GroupId& group_id, IndexInGroup group_index) {
+void m2::Object::SetGroup(const GroupId& group_id, IndexInGroup group_index) {
 	_group_id = group_id;
 	_index_in_group = group_index;
 }
 
-m2::Physique& m2::Object::add_physique() {
-	auto phy = M2_LEVEL.physics.Emplace(id());
+m2::Physique& m2::Object::AddPhysique() {
+	auto phy = M2_LEVEL.physics.Emplace(GetId());
 	_physique_id = phy.GetId();
     LOG_TRACE("Added physique component", _physique_id);
 	return *phy;
 }
-m2::Graphic& m2::Object::add_graphic() {
-	auto gfx = M2_LEVEL.graphics.Emplace(id());
+m2::Graphic& m2::Object::AddGraphic() {
+	auto gfx = M2_LEVEL.graphics.Emplace(GetId());
 	_graphic_id = gfx.GetId();
-	M2_LEVEL.drawList.Insert(id());
+	M2_LEVEL.drawList.Insert(GetId());
     LOG_TRACE("Added graphic component", _graphic_id);
 	return *gfx;
 }
-m2::Graphic& m2::Object::add_graphic(const m2g::pb::SpriteType spriteType) {
-	auto gfx = M2_LEVEL.graphics.Emplace(id(), M2_GAME.GetSpriteOrTextLabel(spriteType));
+m2::Graphic& m2::Object::AddGraphic(const m2g::pb::SpriteType spriteType) {
+	auto gfx = M2_LEVEL.graphics.Emplace(GetId(), M2_GAME.GetSpriteOrTextLabel(spriteType));
 	_graphic_id = gfx.GetId();
-	M2_LEVEL.drawList.Insert(id());
+	M2_LEVEL.drawList.Insert(GetId());
 	LOG_TRACE("Added graphic component", _graphic_id);
 	return *gfx;
 }
-m2::Graphic& m2::Object::add_terrain_graphic(BackgroundLayer layer) {
+m2::Graphic& m2::Object::AddTerrainGraphic(BackgroundLayer layer) {
 	if (layer == BackgroundLayer::ALL) {
 		throw M2_ERROR("Invalid background layer");
 	}
-	auto terrain_gfx = M2_LEVEL.terrainGraphics[I(layer)].Emplace(id());
+	auto terrain_gfx = M2_LEVEL.terrainGraphics[I(layer)].Emplace(GetId());
 	_terrain_graphic_id = std::make_pair(terrain_gfx.GetId(), layer);
 	LOG_TRACE("Added terrain graphic component", _terrain_graphic_id);
 	return *terrain_gfx;
 }
-m2::Graphic& m2::Object::add_terrain_graphic(BackgroundLayer layer, const m2g::pb::SpriteType spriteType) {
+m2::Graphic& m2::Object::AddTerrainGraphic(BackgroundLayer layer, const m2g::pb::SpriteType spriteType) {
 	if (layer == BackgroundLayer::ALL) {
 		throw M2_ERROR("Invalid background layer");
 	}
-	auto terrain_gfx = M2_LEVEL.terrainGraphics[I(layer)].Emplace(id(), M2_GAME.GetSpriteOrTextLabel(spriteType));
+	auto terrain_gfx = M2_LEVEL.terrainGraphics[I(layer)].Emplace(GetId(), M2_GAME.GetSpriteOrTextLabel(spriteType));
 	_terrain_graphic_id = std::make_pair(terrain_gfx.GetId(), layer);
 	LOG_TRACE("Added terrain graphic component", _terrain_graphic_id);
 	return *terrain_gfx;
 }
-m2::Light& m2::Object::add_light() {
-	auto light = M2_LEVEL.lights.Emplace(id());
+m2::Light& m2::Object::AddLight() {
+	auto light = M2_LEVEL.lights.Emplace(GetId());
 	_light_id = light.GetId();
     LOG_TRACE("Added light component", _light_id);
 	return *light;
 }
-m2::SoundEmitter& m2::Object::add_sound_emitter() {
-	auto sound = M2_LEVEL.soundEmitters.Emplace(id());
+m2::SoundEmitter& m2::Object::AddSoundEmitter() {
+	auto sound = M2_LEVEL.soundEmitters.Emplace(GetId());
 	_sound_emitter_id = sound.GetId();
 	LOG_TRACE("Added sound component", _sound_emitter_id);
 	return *sound;
 }
-m2::Character& m2::Object::add_tiny_character() {
-    auto character = M2_LEVEL.characters.Emplace(std::in_place_type<TinyCharacter>, id());
+m2::Character& m2::Object::AddTinyCharacter() {
+    auto character = M2_LEVEL.characters.Emplace(std::in_place_type<TinyCharacter>, GetId());
     _character_id = character.GetId();
     LOG_TRACE("Added tiny character", _character_id);
     return std::get<TinyCharacter>(*character);
 }
-m2::Character& m2::Object::add_full_character() {
-    auto character = M2_LEVEL.characters.Emplace(std::in_place_type<FullCharacter>, id());
+m2::Character& m2::Object::AddFullCharacter() {
+    auto character = M2_LEVEL.characters.Emplace(std::in_place_type<FullCharacter>, GetId());
     _character_id = character.GetId();
     LOG_TRACE("Added full character", _character_id);
     return std::get<FullCharacter>(*character);
 }
 
-void m2::Object::remove_physique() {
+void m2::Object::RemovePhysique() {
 	if (_physique_id) {
 		M2_LEVEL.physics.Free(_physique_id);
 		_physique_id = 0;
 	}
 }
-void m2::Object::remove_graphic() {
+void m2::Object::RemoveGraphic() {
 	if (_graphic_id) {
-		M2_LEVEL.drawList.Remove(id());
+		M2_LEVEL.drawList.Remove(GetId());
 		M2_LEVEL.graphics.Free(_graphic_id);
 		_graphic_id = 0;
 	}
 }
-void m2::Object::remove_terrain_graphic() {
+void m2::Object::RemoveTerrainGraphic() {
 	if (_terrain_graphic_id.first) {
 		M2_LEVEL.terrainGraphics[I(_terrain_graphic_id.second)].Free(_terrain_graphic_id.first);
 		_terrain_graphic_id = {};
 	}
 }
-void m2::Object::remove_light() {
+void m2::Object::RemoveLight() {
 	if (_light_id) {
 		M2_LEVEL.lights.Free(_light_id);
 		_light_id = 0;
 	}
 }
-void m2::Object::remove_sound_emitter() {
+void m2::Object::RemoveSoundEmitter() {
 	if (_sound_emitter_id) {
 		M2_LEVEL.soundEmitters.Free(_sound_emitter_id);
 		_sound_emitter_id = 0;
 	}
 }
-void m2::Object::remove_character() {
+void m2::Object::RemoveCharacter() {
 	if (_character_id) {
 		M2_LEVEL.characters.Free(_character_id);
 		_character_id = 0;
 	}
 }
 
-m2::Pool<m2::Object>::Iterator m2::create_object(const m2::VecF &position, m2g::pb::ObjectType type, ObjectId parent_id) {
+m2::Pool<m2::Object>::Iterator m2::CreateObject(const m2::VecF &position, m2g::pb::ObjectType type, ObjectId parent_id) {
     return M2_LEVEL.objects.Emplace(position, type, parent_id);
 }
-std::function<void(void)> m2::create_object_deleter(ObjectId id) {
+std::function<void(void)> m2::CreateObjectDeleter(ObjectId id) {
 	return [id]() {
 		M2_LEVEL.objects.Free(id);
 	};
 }
-std::function<void(void)> m2::create_physique_deleter(ObjectId id) {
+std::function<void(void)> m2::CreatePhysiqueDeleter(ObjectId id) {
 	return [id]() {
 		if (auto* object = M2_LEVEL.objects.Get(id); object) {
-			object->remove_physique();
+			object->RemovePhysique();
 		}
 	};
 }
-std::function<void(void)> m2::create_graphic_deleter(ObjectId id) {
+std::function<void(void)> m2::CreateGraphicDeleter(ObjectId id) {
 	return [id]() {
 		if (auto* object = M2_LEVEL.objects.Get(id); object) {
-			object->remove_graphic();
+			object->RemoveGraphic();
 		}
 	};
 }
-std::function<void(void)> m2::create_terrain_graphic_deleter(ObjectId id) {
+std::function<void(void)> m2::CreateTerrainGraphicDeleter(ObjectId id) {
 	return [id]() {
 		if (auto* object = M2_LEVEL.objects.Get(id); object) {
-			object->remove_terrain_graphic();
+			object->RemoveTerrainGraphic();
 		}
 	};
 }
-std::function<void(void)> m2::create_light_deleter(ObjectId id) {
+std::function<void(void)> m2::CreateLightDeleter(ObjectId id) {
 	return [id]() {
 		if (auto* object = M2_LEVEL.objects.Get(id); object) {
-			object->remove_light();
+			object->RemoveLight();
 		}
 	};
 }
-std::function<void(void)> m2::create_sound_emitter_deleter(ObjectId id) {
+std::function<void(void)> m2::CreateSoundEmitterDeleter(ObjectId id) {
 	return [id]() {
 		if (auto* object = M2_LEVEL.objects.Get(id); object) {
-			object->remove_sound_emitter();
+			object->RemoveSoundEmitter();
 		}
 	};
 }
-std::function<void(void)> m2::create_character_deleter(ObjectId id) {
+std::function<void(void)> m2::CreateCharacterDeleter(ObjectId id) {
 	return [id]() {
 		if (auto* object = M2_LEVEL.objects.Get(id); object) {
-			object->remove_character();
+			object->RemoveCharacter();
 		}
 	};
 }

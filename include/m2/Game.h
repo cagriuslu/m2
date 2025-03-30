@@ -101,7 +101,7 @@ namespace m2 {
 		pb::LUT<pb::Song, Song> songs;
 		std::multimap<m2g::pb::KeyType, SDL_Scancode> keyToScancodeMap;
 		std::map<SDL_Scancode, m2g::pb::KeyType> scancodeToKeyMap;
-		const Rational& font_letter_width_to_height_ratio() const { return _font_letter_width_to_height_ratio; }
+		const Rational& FontLetterWidthToHeightRatio() const { return _font_letter_width_to_height_ratio; }
 		TextLabelCache& GetTextLabelCache() { return *_textLabelCache; }
 		ShapeCache& GetShapeCache() { return *_shapeCache; }
 
@@ -169,7 +169,7 @@ namespace m2 {
 		const NamedItem& GetNamedItem(const m2g::pb::ItemType item_type) const { return named_items[item_type]; }
 		void ForEachNamedItem(const std::function<bool(m2g::pb::ItemType, const NamedItem&)>& op) const;
 		float DeltaTimeS() const { return _delta_time_s; }
-		[[nodiscard]] VecI MousePositionPx() const { return events.mouse_position(); }
+		[[nodiscard]] VecI MousePositionPx() const { return events.MousePosition(); }
 		const VecF& MousePositionWorldM() const; // TODO move into Level?
 		const VecF& ScreenCenterToMousePositionM() const; // TODO move into Level?
 		sdl::TextureUniquePtr DrawGameToTexture(m2::VecF camera_position); // TODO move into Level?

@@ -8,7 +8,7 @@ namespace pinball {
 
 	constexpr auto SIMULATION_TICKS_PER_SECOND = 10.0f;
 	constexpr auto SIMULATION_TICK_PERIOD_S = 1.0f / SIMULATION_TICKS_PER_SECOND;
-	const auto SIMULATION_TICK_PERIOD_TICKS = m2::iround(SIMULATION_TICK_PERIOD_S * 1000.0f);
+	const auto SIMULATION_TICK_PERIOD_TICKS = m2::RoundI(SIMULATION_TICK_PERIOD_S * 1000.0f);
 
 	constexpr auto MAX_WATER_MASS = 100.0f;
 	/// Rate of change of temperature if heating is enabled

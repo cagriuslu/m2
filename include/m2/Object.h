@@ -45,46 +45,46 @@ namespace m2 {
 		// Destructor
 		~Object();
 
-		[[nodiscard]] ObjectId id() const;
-		[[nodiscard]] m2g::pb::ObjectType object_type() const { return _object_type; }
-		[[nodiscard]] ObjectId parent_id() const;
-		[[nodiscard]] GroupId group_id() const;
-		[[nodiscard]] PhysiqueId physique_id() const;
-		[[nodiscard]] GraphicId graphic_id() const;
-		[[nodiscard]] std::pair<GraphicId, BackgroundLayer> terrain_graphic_id() const;
-		[[nodiscard]] LightId light_id() const;
-		[[nodiscard]] SoundEmitterId sound_id() const;
-		[[nodiscard]] CharacterId character_id() const;
+		[[nodiscard]] ObjectId GetId() const;
+		[[nodiscard]] m2g::pb::ObjectType GetType() const { return _object_type; }
+		[[nodiscard]] ObjectId GetParentId() const;
+		[[nodiscard]] GroupId GetGroupId() const;
+		[[nodiscard]] PhysiqueId GetPhysiqueId() const;
+		[[nodiscard]] GraphicId GetGraphicId() const;
+		[[nodiscard]] std::pair<GraphicId, BackgroundLayer> GetTerrainGraphicId() const;
+		[[nodiscard]] LightId GetLightId() const;
+		[[nodiscard]] SoundEmitterId GetSoundId() const;
+		[[nodiscard]] CharacterId GetCharacterId() const;
 
-		[[nodiscard]] Character* get_character() const;
-		[[nodiscard]] Object* get_parent() const;
-		[[nodiscard]] Group* get_group() const;
+		[[nodiscard]] Character* TryGetCharacter() const;
+		[[nodiscard]] Object* TryGetParent() const;
+		[[nodiscard]] Group* TryGetGroup() const;
 
-		[[nodiscard]] Physique& physique() const;
-		[[nodiscard]] Graphic& graphic() const;
-		[[nodiscard]] Graphic& terrain_graphic() const;
-		[[nodiscard]] Light& light() const;
-		[[nodiscard]] SoundEmitter& sound_emitter() const;
-		[[nodiscard]] Character& character() const;
+		[[nodiscard]] Physique& GetPhysique() const;
+		[[nodiscard]] Graphic& GetGraphic() const;
+		[[nodiscard]] Graphic& GetTerrainGraphic() const;
+		[[nodiscard]] Light& GetLight() const;
+		[[nodiscard]] SoundEmitter& GetSoundEmitter() const;
+		[[nodiscard]] Character& GetCharacter() const;
 
-		void set_group(const GroupId& group_id, IndexInGroup group_index);
-		Physique& add_physique();
-		Graphic& add_graphic();
-		Graphic& add_graphic(m2g::pb::SpriteType);
-		Graphic& add_terrain_graphic(BackgroundLayer layer);
-		Graphic& add_terrain_graphic(BackgroundLayer layer, m2g::pb::SpriteType);
-		Light& add_light();
-		SoundEmitter& add_sound_emitter();
-		Character& add_tiny_character();
+		void SetGroup(const GroupId& group_id, IndexInGroup group_index);
+		Physique& AddPhysique();
+		Graphic& AddGraphic();
+		Graphic& AddGraphic(m2g::pb::SpriteType);
+		Graphic& AddTerrainGraphic(BackgroundLayer layer);
+		Graphic& AddTerrainGraphic(BackgroundLayer layer, m2g::pb::SpriteType);
+		Light& AddLight();
+		SoundEmitter& AddSoundEmitter();
+		Character& AddTinyCharacter();
 		// TODO mini(2),small(4),medium(8),large(16),huge(32)
-		Character& add_full_character();
+		Character& AddFullCharacter();
 
-		void remove_physique();
-		void remove_graphic();
-		void remove_terrain_graphic();
-		void remove_light();
-		void remove_sound_emitter();
-		void remove_character();
+		void RemovePhysique();
+		void RemoveGraphic();
+		void RemoveTerrainGraphic();
+		void RemoveLight();
+		void RemoveSoundEmitter();
+		void RemoveCharacter();
 
 	   private:
 		mutable std::optional<ObjectId> _id;
@@ -101,14 +101,14 @@ namespace m2 {
 		CharacterId _character_id{};
 	};
 
-	Pool<Object>::Iterator create_object(const m2::VecF& position, m2g::pb::ObjectType type = {}, ObjectId parent_id = 0);
-	std::function<void()> create_object_deleter(ObjectId id);
-	std::function<void()> create_physique_deleter(ObjectId id);
-	std::function<void()> create_graphic_deleter(ObjectId id);
-	std::function<void()> create_terrain_graphic_deleter(ObjectId id);
-	std::function<void()> create_light_deleter(ObjectId id);
-	std::function<void()> create_sound_emitter_deleter(ObjectId id);
-	std::function<void()> create_character_deleter(ObjectId id);
+	Pool<Object>::Iterator CreateObject(const m2::VecF& position, m2g::pb::ObjectType type = {}, ObjectId parent_id = 0);
+	std::function<void()> CreateObjectDeleter(ObjectId id);
+	std::function<void()> CreatePhysiqueDeleter(ObjectId id);
+	std::function<void()> CreateGraphicDeleter(ObjectId id);
+	std::function<void()> CreateTerrainGraphicDeleter(ObjectId id);
+	std::function<void()> CreateLightDeleter(ObjectId id);
+	std::function<void()> CreateSoundEmitterDeleter(ObjectId id);
+	std::function<void()> CreateCharacterDeleter(ObjectId id);
 
 	// Filters
 
@@ -118,6 +118,6 @@ namespace m2 {
 	// Transformers
 
 	Object& to_object_of_id(ObjectId id);
-	inline Character& to_character_of_object_unsafe(Object* o) { return o->character(); }
-	inline Character& to_character_of_object(Object& o) { return o.character(); }
+	inline Character& to_character_of_object_unsafe(Object* o) { return o->GetCharacter(); }
+	inline Character& to_character_of_object(Object& o) { return o.GetCharacter(); }
 }  // namespace m2

@@ -24,29 +24,29 @@ UiAction TextSelection::HandleEvents(Events& events) {
 		auto buttons_rect = Rect().trim_left(Rect().w - Rect().h / 2);
 		auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2);
 		auto dec_button_rect = buttons_rect.trim_top(buttons_rect.h / 2);
-		if (!_plus_depressed && events.pop_mouse_button_press(MouseButton::PRIMARY, inc_button_rect)) {
+		if (!_plus_depressed && events.PopMouseButtonPress(MouseButton::PRIMARY, inc_button_rect)) {
 			_plus_depressed = true;
 			_minus_depressed = false;
-		} else if (!_minus_depressed && events.pop_mouse_button_press(MouseButton::PRIMARY, dec_button_rect)) {
+		} else if (!_minus_depressed && events.PopMouseButtonPress(MouseButton::PRIMARY, dec_button_rect)) {
 			_minus_depressed = true;
 			_plus_depressed = false;
-		} else if (_plus_depressed && events.pop_mouse_button_release(MouseButton::PRIMARY, inc_button_rect)) {
+		} else if (_plus_depressed && events.PopMouseButtonRelease(MouseButton::PRIMARY, inc_button_rect)) {
 			_plus_depressed = false;
 			return increment_selection();
-		} else if (_minus_depressed && events.pop_mouse_button_release(MouseButton::PRIMARY, dec_button_rect)) {
+		} else if (_minus_depressed && events.PopMouseButtonRelease(MouseButton::PRIMARY, dec_button_rect)) {
 			_minus_depressed = false;
 			return decrement_selection();
 		} else {
 			// Check if scrolled
-			if (auto scroll_amount = events.pop_mouse_wheel_vertical_scroll(Rect()); 0 < scroll_amount) {
-				m2_repeat(scroll_amount) {
+			if (auto scroll_amount = events.PopMouseWheelVerticalScroll(Rect()); 0 < scroll_amount) {
+				m2Repeat(scroll_amount) {
 					if (auto action = increment_selection(); not action.IsContinue()) {
 						return action;
 					}
 				}
 				return MakeContinueAction();
 			} else if (scroll_amount < 0) {
-				m2_repeat(scroll_amount) {
+				m2Repeat(scroll_amount) {
 					if (auto action = decrement_selection(); not action.IsContinue()) {
 						return action;
 					}
@@ -65,17 +65,17 @@ UiAction TextSelection::HandleEvents(Events& events) {
 			I(VariantBlueprint().line_count) - 1);
 
 		// Check if scroll buttons are pressed
-		if (events.pop_mouse_button_press(MouseButton::PRIMARY, up_arrow_rect)) {
+		if (events.PopMouseButtonPress(MouseButton::PRIMARY, up_arrow_rect)) {
 			if (0 < _top_index) {
 				_top_index--;
 			}
-		} else if (events.pop_mouse_button_press(MouseButton::PRIMARY, down_button_rect)) {
+		} else if (events.PopMouseButtonPress(MouseButton::PRIMARY, down_button_rect)) {
 			if (_top_index + VariantBlueprint().line_count < I(_options.size())) {
 				_top_index++;
 			}
 		} else {
 			// Check if scrolled via mouse
-			if (auto scroll_amount = events.pop_mouse_wheel_vertical_scroll(Rect()); 0 < scroll_amount) {
+			if (auto scroll_amount = events.PopMouseWheelVerticalScroll(Rect()); 0 < scroll_amount) {
 				auto min_scroll_amount = std::min(static_cast<size_t>(scroll_amount), _options.size() - _top_index - VariantBlueprint().line_count);
 				if (min_scroll_amount) {
 					_top_index += I(min_scroll_amount);
@@ -93,7 +93,7 @@ UiAction TextSelection::HandleEvents(Events& events) {
 			// If the entry is in window
 			if (_top_index + i < I(_options.size())) {
 				auto text_rect = Rect().horizontal_split(VariantBlueprint().line_count, i).trim_right(scroll_bar_rect.w);
-				if (events.pop_mouse_button_press(MouseButton::PRIMARY, text_rect)) {
+				if (events.PopMouseButtonPress(MouseButton::PRIMARY, text_rect)) {
 					int pressed_item = _top_index + i;
 					if (_options[pressed_item].is_selected) {
 						// If already selected
@@ -131,9 +131,9 @@ void TextSelection::Draw() {
 			current_selection != _options.end()) {
 			if (not current_selection->text_texture_and_destination) {
 				auto drawable_area = Rect().trim_right(Rect().h / 2);
-				auto fontSize = calculate_filled_text_rect(drawable_area, TextHorizontalAlignment::LEFT, I(m2::utf8_codepoint_count(current_selection->blueprint_option.text.c_str()))).h;
-				auto textTexture = m2_move_or_throw_error(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, fontSize, current_selection->blueprint_option.text));
-				auto destination_rect = calculate_filled_text_rect(drawable_area, TextHorizontalAlignment::LEFT, I(m2::utf8_codepoint_count(current_selection->blueprint_option.text.c_str())));
+				auto fontSize = calculate_filled_text_rect(drawable_area, TextHorizontalAlignment::LEFT, I(m2::Utf8CodepointCount(current_selection->blueprint_option.text.c_str()))).h;
+				auto textTexture = m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, fontSize, current_selection->blueprint_option.text));
+				auto destination_rect = calculate_filled_text_rect(drawable_area, TextHorizontalAlignment::LEFT, I(m2::Utf8CodepointCount(current_selection->blueprint_option.text.c_str())));
 				current_selection->text_texture_and_destination = sdl::TextTextureAndDestination{std::move(textTexture), destination_rect};
 			}
 			sdl::render_texture_with_color_mod(current_selection->text_texture_and_destination->textTexture.texture(),
@@ -145,7 +145,7 @@ void TextSelection::Draw() {
 			auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2);
 			if (not _plus_texture) {
 				auto fontSize = inc_button_rect.h;
-				auto textTexture = m2_move_or_throw_error(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, fontSize, "+"));
+				auto textTexture = m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, fontSize, "+"));
 				auto destination_rect = RectI::centered_around(inc_button_rect.center(), textTexture.texture_dimensions().x, textTexture.texture_dimensions().y);
 				// TODO we may need to move the texture slightly up, check the font properties
 				_plus_texture = {std::move(textTexture), destination_rect};
@@ -158,7 +158,7 @@ void TextSelection::Draw() {
 			auto dec_button_rect = buttons_rect.trim_top(buttons_rect.h / 2);
 			if (not _minus_texture) {
 				auto fontSize = dec_button_rect.h;
-				auto textTexture = m2_move_or_throw_error(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, fontSize, "-"));
+				auto textTexture = m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, fontSize, "-"));
 				auto destination_rect = RectI::centered_around(dec_button_rect.center(), textTexture.texture_dimensions().x, textTexture.texture_dimensions().y);
 				// TODO we may need to move the texture slightly up, check the font properties
 				_minus_texture = {std::move(textTexture), destination_rect};
@@ -182,13 +182,13 @@ void TextSelection::Draw() {
 				// Draw text
 				auto& current_line = _options[_top_index + i];
 				if (not current_line.text_texture_and_destination) {
-					auto fontSize = calculate_filled_text_rect(text_rect, TextHorizontalAlignment::LEFT, I(m2::utf8_codepoint_count(current_line.blueprint_option.text.c_str()))).h;
-					auto textTexture = m2_move_or_throw_error(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, fontSize, current_line.blueprint_option.text));
+					auto fontSize = calculate_filled_text_rect(text_rect, TextHorizontalAlignment::LEFT, I(m2::Utf8CodepointCount(current_line.blueprint_option.text.c_str()))).h;
+					auto textTexture = m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, fontSize, current_line.blueprint_option.text));
 					// Don't bother with destination_rect, because we're going to calculate that every time
 					current_line.text_texture_and_destination = sdl::TextTextureAndDestination{std::move(textTexture), {}};
 				}
 				// Upon scroll, the destination might still have changed, calculate it again.
-				auto destination_rect = calculate_filled_text_rect(text_rect, TextHorizontalAlignment::LEFT, I(m2::utf8_codepoint_count(current_line.blueprint_option.text.c_str())));
+				auto destination_rect = calculate_filled_text_rect(text_rect, TextHorizontalAlignment::LEFT, I(m2::Utf8CodepointCount(current_line.blueprint_option.text.c_str())));
 				current_line.text_texture_and_destination->destinationRect = destination_rect;
 				sdl::render_texture_with_color_mod(current_line.text_texture_and_destination->textTexture.texture(),
 					current_line.text_texture_and_destination->destinationRect, current_line.blueprint_option.text_color);
@@ -204,7 +204,7 @@ void TextSelection::Draw() {
 				auto up_arrow_rect = scroll_bar_rect.horizontal_split(VariantBlueprint().line_count, 0);
 				if (not _up_arrow_texture) {
 					auto fontSize = up_arrow_rect.h;
-					auto textTexture = m2_move_or_throw_error(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, fontSize, "^"));
+					auto textTexture = m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, fontSize, "^"));
 					auto destination_rect = RectI::centered_around(up_arrow_rect.center(), textTexture.texture_dimensions().x, textTexture.texture_dimensions().y);
 					// TODO we may need to move the texture slightly up, check the font properties
 					_up_arrow_texture = {std::move(textTexture), destination_rect};
@@ -218,7 +218,7 @@ void TextSelection::Draw() {
 					VariantBlueprint().line_count - 1);
 				if (not _down_arrow_texture) {
 					auto fontSize = down_button_rect.h;
-					auto textTexture = m2_move_or_throw_error(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, fontSize, "v"));
+					auto textTexture = m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, fontSize, "v"));
 					auto destination_rect = RectI::centered_around(down_button_rect.center(), textTexture.texture_dimensions().x, textTexture.texture_dimensions().y);
 					// TODO we may need to move the texture slightly up, check the font properties
 					_down_arrow_texture = {std::move(textTexture), destination_rect};

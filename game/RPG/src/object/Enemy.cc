@@ -21,7 +21,7 @@ using namespace rpg;
 using namespace m2g;
 using namespace m2g::pb;
 
-Enemy::Enemy(m2::Object& obj, const pb::Enemy* enemy) : animation_fsm(enemy->animation_type(), obj.graphic_id()) {
+Enemy::Enemy(m2::Object& obj, const pb::Enemy* enemy) : animation_fsm(enemy->animation_type(), obj.GetGraphicId()) {
 	switch (enemy->ai().variant_case()) {
 		case pb::Ai::kChaser:
 			ai_fsm = ChaserFsm{&obj, &enemy->ai()};
@@ -37,11 +37,11 @@ Enemy::Enemy(m2::Object& obj, const pb::Enemy* enemy) : animation_fsm(enemy->ani
 }
 
 m2::void_expected Enemy::init(m2::Object& obj) {
-	const auto main_sprite_type = M2_GAME.object_main_sprites[obj.object_type()];
+	const auto main_sprite_type = M2_GAME.object_main_sprites[obj.GetType()];
 	const auto& mainSprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(main_sprite_type));
-	auto& gfx = obj.add_graphic(main_sprite_type);
+	auto& gfx = obj.AddGraphic(main_sprite_type);
 
-	auto& phy = obj.add_physique();
+	auto& phy = obj.AddPhysique();
 	m2::pb::BodyBlueprint bp;
 	bp.set_type(m2::pb::BodyType::DYNAMIC);
 	bp.set_allow_sleep(true);
@@ -52,9 +52,9 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 	bp.set_mass(20.0f); // Enemy mass is lower than player, so that player can push the enemies
 	bp.set_linear_damping(5.0f);
 	bp.set_fixed_rotation(true);
-	phy.body = m2::box2d::CreateBody(*M2_LEVEL.world, obj.physique_id(), obj.position, bp);
+	phy.body = m2::box2d::CreateBody(*M2_LEVEL.world, obj.GetPhysiqueId(), obj.position, bp);
 
-	auto& chr = obj.add_full_character();
+	auto& chr = obj.AddFullCharacter();
 	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_GUN));
 	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_ENEMY_SWORD));
 	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_AUTOMATIC_DAMAGE_EFFECT_TTL));
@@ -63,7 +63,7 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_AUTOMATIC_STUN_TTL));
 	chr.AddResource(m2g::pb::RESOURCE_HP, 1.0f);
 
-    obj.impl = std::make_unique<Enemy>(obj, M2G_PROXY.get_enemy(obj.object_type()));
+    obj.impl = std::make_unique<Enemy>(obj, M2G_PROXY.get_enemy(obj.GetType()));
 	auto& impl = dynamic_cast<Enemy&>(*obj.impl);
 
 	// Increment enemy counter
@@ -80,16 +80,16 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 			[](MAYBE auto& v) { }
 		}, impl.ai_fsm);
 	};
-	chr.on_interaction = [&, obj_type = obj.object_type()](m2::Character& self, MAYBE m2::Character* other, const InteractionData& data) -> std::optional<m2g::pb::InteractionData> {
+	chr.on_interaction = [&, obj_type = obj.GetType()](m2::Character& self, MAYBE m2::Character* other, const InteractionData& data) -> std::optional<m2g::pb::InteractionData> {
 		if (data.has_hit_damage()) {
 			// Deduct HP
 			self.RemoveResource(RESOURCE_HP, data.hit_damage());
 			// Apply mask effect
 			self.SetResource(m2g::pb::RESOURCE_DAMAGE_EFFECT_TTL, 0.15f);
 			// Play audio effect if not already doing so
-			if (obj.sound_id() == 0) {
+			if (obj.GetSoundId() == 0) {
 				// Add sound emitter
-				auto& sound_emitter = obj.add_sound_emitter();
+				auto& sound_emitter = obj.AddSoundEmitter();
 				sound_emitter.update = [&](m2::SoundEmitter& se) {
 					// Play sound
 					if (se.playbacks.empty()) {
@@ -97,7 +97,7 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 						se.playbacks.emplace_back(playback_id);
 					} else {
 						// Playback finished, destroy self
-						M2_LEVEL.deferredActions.push(m2::create_sound_emitter_deleter(obj.id()));
+						M2_LEVEL.deferredActions.push(m2::CreateSoundEmitterDeleter(obj.GetId()));
 					}
 				};
 			}
@@ -105,14 +105,14 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 			if (not self.HasResource(RESOURCE_HP)) {
 				// Drop item
 				auto drop_position = obj.position;
-				if (m2::Group* group = obj.get_group()) {
+				if (m2::Group* group = obj.TryGetGroup()) {
 					// Check if the object belongs to item group
 					auto* item_group = dynamic_cast<ItemGroup*>(group);
 					if (item_group) {
 						auto optional_item = item_group->pop_item();
 						if (optional_item) {
 							M2_DEFER([=]() {
-								create_dropped_item(*m2::create_object(drop_position), *optional_item);
+								create_dropped_item(*m2::CreateObject(drop_position), *optional_item);
 							});
 						}
 					}
@@ -121,15 +121,15 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 				M2G_PROXY.alive_enemy_count--;
 				// Delete self
 				LOG_INFO("Enemy died");
-				M2_DEFER(m2::create_object_deleter(self.owner_id()));
+				M2_DEFER(m2::CreateObjectDeleter(self.OwnerId()));
 				// Create corpse
 				if (obj_type == ObjectType::SKELETON) {
 					M2_DEFER([pos = obj.position]() {
-						create_corpse(*m2::create_object(pos), m2g::pb::SKELETON_CORPSE);
+						create_corpse(*m2::CreateObject(pos), m2g::pb::SKELETON_CORPSE);
 					});
 				} else if (obj_type == ObjectType::CUTEOPUS) {
 					M2_DEFER([pos = obj.position]() {
-						create_corpse(*m2::create_object(pos), m2g::pb::CUTEOPUS_CORPSE);
+						create_corpse(*m2::CreateObject(pos), m2g::pb::CUTEOPUS_CORPSE);
 					});
 				}
 			} else {
@@ -178,7 +178,7 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 
 void rpg::Enemy::move_towards(m2::Object& obj, m2::VecF direction, float force) {
 	// If not stunned
-	if (not obj.character().HasResource(m2g::pb::RESOURCE_STUN_TTL)) {
+	if (not obj.GetCharacter().HasResource(m2g::pb::RESOURCE_STUN_TTL)) {
 		direction = direction.normalize();
 		// Walk animation
 		auto char_move_dir = m2::to_character_movement_direction(direction);
@@ -186,33 +186,33 @@ void rpg::Enemy::move_towards(m2::Object& obj, m2::VecF direction, float force) 
 		dynamic_cast<Enemy&>(*obj.impl).animation_fsm.signal(m2::AnimationFsmSignal{anim_state_type});
 		// Apply force
 		m2::VecF force_direction = direction * (M2_GAME.DeltaTimeS() * force);
-		obj.physique().body->ApplyForceToCenter(static_cast<b2Vec2>(force_direction), true);
+		obj.GetPhysique().body->ApplyForceToCenter(static_cast<b2Vec2>(force_direction), true);
 	}
 }
 
 void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
 	// If not stunned
-	if (not obj.character().HasResource(m2g::pb::RESOURCE_STUN_TTL)) {
+	if (not obj.GetCharacter().HasResource(m2g::pb::RESOURCE_STUN_TTL)) {
 		// Attack if player is close
 		if (obj.position.is_near(M2_PLAYER.position, ai.attack_distance())) {
 			// Based on what the capability is
 			auto capability = ai.capabilities(0);
 			switch (capability) {
 				case pb::CAPABILITY_RANGED: {
-					auto it = obj.character().FindItems(m2g::pb::ITEM_CATEGORY_DEFAULT_RANGED_WEAPON);
-					if (it && obj.character().UseItem(it)) {
+					auto it = obj.GetCharacter().FindItems(m2g::pb::ITEM_CATEGORY_DEFAULT_RANGED_WEAPON);
+					if (it && obj.GetCharacter().UseItem(it)) {
 						auto shoot_direction = M2_PLAYER.position - obj.position;
-						rpg::create_projectile(*m2::create_object(obj.position, {}, obj.id()),
+						rpg::create_projectile(*m2::CreateObject(obj.position, {}, obj.GetId()),
 							shoot_direction, *it, false);
 						// Knock-back
-						obj.physique().body->ApplyForceToCenter(static_cast<b2Vec2>(m2::VecF::from_angle(shoot_direction.angle_rads() + m2::PI) * 5000.0f), true);
+						obj.GetPhysique().body->ApplyForceToCenter(static_cast<b2Vec2>(m2::VecF::from_angle(shoot_direction.angle_rads() + m2::PI) * 5000.0f), true);
 					}
 					break;
 				}
 				case pb::CAPABILITY_MELEE: {
-					auto it = obj.character().FindItems(m2g::pb::ITEM_CATEGORY_DEFAULT_MELEE_WEAPON);
-					if (it && obj.character().UseItem(it)) {
-						rpg::create_blade(*m2::create_object(obj.position, {}, obj.id()),
+					auto it = obj.GetCharacter().FindItems(m2g::pb::ITEM_CATEGORY_DEFAULT_MELEE_WEAPON);
+					if (it && obj.GetCharacter().UseItem(it)) {
+						rpg::create_blade(*m2::CreateObject(obj.position, {}, obj.GetId()),
 							M2_PLAYER.position - obj.position, *it, false);
 					}
 					break;

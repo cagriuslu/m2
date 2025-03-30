@@ -21,8 +21,8 @@ namespace m2 {
 		explicit Fixed(const  float f) { ThrowIfOutOfBounds(f); *this = UnsafeFromFloat(f);  }
 		explicit Fixed(const double d) { ThrowIfOutOfBounds(d); *this = UnsafeFromDouble(d); }
 		static Fixed UnsafeFromInt(int i)       noexcept { return Fixed{std::in_place, i << PRECISION}; }
-		static Fixed UnsafeFromFloat(float f)   noexcept { return Fixed{std::in_place, iround(F(0x1 << PRECISION) * f)}; }
-		static Fixed UnsafeFromDouble(double d) noexcept { return Fixed{std::in_place, iround(D(0x1 << PRECISION) * d)}; }
+		static Fixed UnsafeFromFloat(float f)   noexcept { return Fixed{std::in_place, RoundI(F(0x1 << PRECISION) * f)}; }
+		static Fixed UnsafeFromDouble(double d) noexcept { return Fixed{std::in_place, RoundI(D(0x1 << PRECISION) * d)}; }
 
 		// Operators
 

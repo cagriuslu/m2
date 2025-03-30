@@ -6,7 +6,7 @@
 #define IF_TYPE(ref, type) if (std::holds_alternative<type>(ref)) std::get<type>(ref) // TODO make this a function
 
 namespace m2 {
-	extern const std::string empty_string;
+	extern const std::string gEmptyString;
 
 	/// Background layers are drawn from back to front. L0 is drawn the last, thus it's on the front.
 	enum class BackgroundLayer {
@@ -22,7 +22,7 @@ namespace m2 {
 
 	/// Returns the number of codepoints in a UTF-8 string.
 	/// One codepoint does not always equate to one glyph, but it's a good estimation for most characters.
-	size_t utf8_codepoint_count(const char* s);
+	size_t Utf8CodepointCount(const char* s);
 
 	/// This function is called by main to store the initial stack position.
 	void StoreInitialStackPosition();

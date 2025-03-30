@@ -24,13 +24,13 @@ std::optional<POISelectionJourneyStep> POISelectionJourney::HandleSignal(const P
 				if (is_industry_location(poi)) {
 					// Light up the factory if built, otherwise the background sprite.
 					if (const auto* factory = FindFactoryAtLocation(poi)) {
-						objectIds.insert(factory->id());
+						objectIds.insert(factory->GetId());
 					} else {
 						objectIds.insert(std::get<m2::ObjectId>(M2G_PROXY.industry_positions[poi]));
 					}
 				} else if (is_merchant_location(poi)) {
 					objectIds.insert(std::get<m2::ObjectId>(M2G_PROXY.merchant_positions[poi]));
-					objectIds.insert(find_merchant_at_location(poi)->id());
+					objectIds.insert(find_merchant_at_location(poi)->GetId());
 				} else if (is_connection(poi)) {
 					objectIds.insert(std::get<m2::ObjectId>(M2G_PROXY.connection_positions[poi]));
 				} else {
@@ -62,7 +62,7 @@ std::optional<POISelectionJourneyStep> POISelectionJourney::HandleSignal(const P
 			if (const auto world_position = signal.world_position()) {
 				if (const auto industry_location = industry_location_on_position(*world_position)) {
 					// Look up factory if exists, otherwise the background sprite
-					if (auto* factory = FindFactoryAtLocation(*industry_location); factory && M2_LEVEL.DimmingExceptions()->contains(factory->id())) {
+					if (auto* factory = FindFactoryAtLocation(*industry_location); factory && M2_LEVEL.DimmingExceptions()->contains(factory->GetId())) {
 						M2_LEVEL.HideMessage();
 						LOG_INFO("Player selected factory of interest, notifying main journey", *industry_location);
 						notify_main_journey(*industry_location);

@@ -32,20 +32,20 @@ UiAction AbstractButton::HandleEvents(Events &events) {
 	}
 
 	auto run_action = false;
-	if (keyboardShortcut && not SDL_IsTextInputActive() && events.pop_key_press(keyboardShortcut)) {
+	if (keyboardShortcut && not SDL_IsTextInputActive() && events.PopKeyPress(keyboardShortcut)) {
 		run_action = true;
 	} else {
 		if (not depressed) {
 			// Check if mouse pressed inside the rect
-			if (events.pop_mouse_button_press(MouseButton::PRIMARY, Rect())) {
+			if (events.PopMouseButtonPress(MouseButton::PRIMARY, Rect())) {
 				depressed = true;
 			}
 		} else {
 			// Check if mouse released inside the rect
-			if (events.pop_mouse_button_release(MouseButton::PRIMARY, Rect())) {
+			if (events.PopMouseButtonRelease(MouseButton::PRIMARY, Rect())) {
 				depressed = false;
 				run_action = true;
-			} else if (events.pop_mouse_button_release(MouseButton::PRIMARY)) {
+			} else if (events.PopMouseButtonRelease(MouseButton::PRIMARY)) {
 				// Check if mouse released outside the rect
 				depressed = false;
 			}

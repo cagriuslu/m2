@@ -14,7 +14,7 @@ m2::void_expected m2::pb::message_to_json_file(const google::protobuf::Message& 
 	std::string str;
 	auto status = google::protobuf::util::MessageToJsonString(message, &str);
 	if (status.ok()) {
-		return write_to_file(str, path);
+		return WriteToFile(str, path);
 	} else {
 		return make_unexpected(status.ToString());
 	}

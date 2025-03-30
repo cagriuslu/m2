@@ -115,7 +115,7 @@ UiPanelBlueprint generate_custom_hud_blueprint() {
 	for (auto order = m2g::pb::FIRST_PLAYER_INDEX;
 			order <= m2g::pb::FORTH_PLAYER_INDEX;
 			order = static_cast<m2g::pb::AttributeType>(I(order) + 1), ++i) {
-		if (const auto playerIndexOfOrder = iround(M2G_PROXY.game_state_tracker().GetAttribute(order)); -1 < playerIndexOfOrder) {
+		if (const auto playerIndexOfOrder = RoundI(M2G_PROXY.game_state_tracker().GetAttribute(order)); -1 < playerIndexOfOrder) {
 			const auto x = 3 + (4 - M2_GAME.TotalPlayerCount()) + i;
 
 			// Add player names
@@ -132,7 +132,7 @@ UiPanelBlueprint generate_custom_hud_blueprint() {
 				}
 			});
 
-			auto& chr = M2_LEVEL.objects[M2G_PROXY.multiPlayerObjectIds[playerIndexOfOrder]].character();
+			auto& chr = M2_LEVEL.objects[M2G_PROXY.multiPlayerObjectIds[playerIndexOfOrder]].GetCharacter();
 			// Victory points
 			bp.widgets.emplace_back(UiWidgetBlueprint{
 				.x = x, .y = 1, .w = 1, .h = 1,

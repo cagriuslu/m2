@@ -18,13 +18,13 @@ namespace m2 {
 	float F(const auto t) { return static_cast<float>(t); }
 	double D(const auto t) { return static_cast<double>(t); }
 	std::string S(const auto& s) { return std::string(s); }
-	inline int iround(const float t) { return static_cast<int>(roundf(t)); }
-	inline int iround(const double t) { return static_cast<int>(round(t)); }
-	inline unsigned uround(const float t) { return static_cast<unsigned>(roundf(t)); }
-	inline uint8_t u8round(const float t) { return static_cast<uint8_t>(roundf(t)); }
-	inline size_t zround(const float t) { return static_cast<size_t>(roundf(t)); }
-	inline int ifloor(const float t) { return static_cast<int>(floorf(t)); }
-	inline int iceil(const float t) { return static_cast<int>(ceilf(t)); }
+	inline int RoundI(const float t) { return static_cast<int>(roundf(t)); }
+	inline int RoundI(const double t) { return static_cast<int>(round(t)); }
+	inline unsigned RoundU(const float t) { return static_cast<unsigned>(roundf(t)); }
+	inline uint8_t RoundU8(const float t) { return static_cast<uint8_t>(roundf(t)); }
+	inline size_t RoundZ(const float t) { return static_cast<size_t>(roundf(t)); }
+	inline int FloorI(const float t) { return static_cast<int>(floorf(t)); }
+	inline int CeilI(const float t) { return static_cast<int>(ceilf(t)); }
 	int RoundDownToEvenI(float);
 
 	inline std::string ToString(const bool b) { return b ? "true" : "false"; }
@@ -50,30 +50,30 @@ namespace m2 {
 	// Range utilities
 
 	template <typename FirstT, typename SecondT>
-	constexpr auto to_first_of(const std::pair<FirstT,SecondT>& p) { return p.first; }
+	constexpr auto ToFirst(const std::pair<FirstT,SecondT>& p) { return p.first; }
 	template <typename FirstT, typename SecondT>
-	constexpr auto to_second_of(const std::pair<FirstT,SecondT>& p) { return p.second; }
+	constexpr auto ToSecond(const std::pair<FirstT,SecondT>& p) { return p.second; }
 
 	template <typename FirstT, typename SecondT>
-	constexpr std::function<bool(const std::pair<FirstT,SecondT>&)> is_first_equals(const FirstT& f) {
+	constexpr std::function<bool(const std::pair<FirstT,SecondT>&)> IsFirstEquals(const FirstT& f) {
 		return [&f](const std::pair<FirstT,SecondT>& p) -> bool {
 			return p.first == f;
 		};
 	}
 	template <typename FirstT, typename SecondT>
-	constexpr std::function<bool(const std::pair<FirstT,SecondT>&)> is_first_not_equals(const FirstT& f) {
+	constexpr std::function<bool(const std::pair<FirstT,SecondT>&)> IsFirstNotEquals(const FirstT& f) {
 		return [&f](const std::pair<FirstT,SecondT>& p) -> bool {
 			return p.first != f;
 		};
 	}
 	template <typename FirstT, typename SecondT>
-	constexpr std::function<bool(const std::pair<FirstT,SecondT>&)> is_second_equals(const SecondT& s) {
+	constexpr std::function<bool(const std::pair<FirstT,SecondT>&)> IsSecondEquals(const SecondT& s) {
 		return [&s](const std::pair<FirstT,SecondT>& p) -> bool {
 			return p.second == s;
 		};
 	}
 	template <typename FirstT, typename SecondT>
-	constexpr std::function<bool(const std::pair<FirstT,SecondT>&)> is_second_not_equals(const SecondT& s) {
+	constexpr std::function<bool(const std::pair<FirstT,SecondT>&)> IsSecondNotEquals(const SecondT& s) {
 		return [&s](const std::pair<FirstT,SecondT>& p) -> bool {
 			return p.second != s;
 		};
@@ -81,13 +81,13 @@ namespace m2 {
 
 	// Converts a range into std::vector
 	template<std::ranges::range R>
-	constexpr auto to_vector(R&& r) {
+	constexpr auto ToVector(R&& r) {
 		using elem_t = std::decay_t<std::ranges::range_value_t<R>>;
 		return std::vector<elem_t>{r.begin(), r.end()};
 	}
 	// Converts a range into std::set
 	template<std::ranges::range R>
-	constexpr auto to_set(R&& r) {
+	constexpr auto ToSet(R&& r) {
 		using elem_t = std::decay_t<std::ranges::range_value_t<R>>;
 		return std::set<elem_t>{r.begin(), r.end()};
 	}
@@ -95,7 +95,7 @@ namespace m2 {
 	// Algorithms
 
 	template <typename InputIt, typename OutputIt, typename UnaryPredicate, typename UnaryOperation>
-	OutputIt transform_if(InputIt first, InputIt last, OutputIt destination, UnaryPredicate predicate, UnaryOperation operation) {
+	OutputIt TransformIf(InputIt first, InputIt last, OutputIt destination, UnaryPredicate predicate, UnaryOperation operation) {
 		for (; first != last; ++first) {
 			if (predicate(*first)) {
 				*destination = operation(*first);
@@ -106,7 +106,7 @@ namespace m2 {
 	}
 
 	template <typename InputIt, typename Operation>
-	void for_each_adjacent_pair(InputIt first, InputIt last, Operation operation) {
+	void ForEachAdjacentPair(InputIt first, InputIt last, Operation operation) {
 		if(first == last) {
 			return;
 		}
@@ -168,7 +168,7 @@ namespace m2 {
 	}
 }
 
-#define m2_reflect_unexpected(expected_type)           \
+#define m2ReflectUnexpected(expected_type)           \
 	do {                                               \
 		if (not (expected_type)) {                     \
 			return ::m2::make_unexpected(              \
@@ -177,7 +177,7 @@ namespace m2 {
 		}                                              \
 	} while (false)
 
-#define m2_return_unexpected_message_unless(condition, msg) \
+#define m2ReturnUnexpectedUnless(condition, msg) \
 	do {                                                    \
 		if (not (condition)) {                              \
 				return ::m2::make_unexpected(msg);          \
@@ -185,17 +185,17 @@ namespace m2 {
 	} while (false)
 
 /// Return the r-value reference to v if it contains a value, otherwise throw the contained error
-#define m2_move_or_throw_error(expected_type) (::m2::detail::_move_or_throw_error(__FILE__, __LINE__, (expected_type)))
+#define m2MoveOrThrowError(expected_type) (::m2::detail::_move_or_throw_error(__FILE__, __LINE__, (expected_type)))
 /// Return the r-value reference to v if it contains a value, otherwise throw the message
-#define m2_move_or_throw_message(optional_type, msg) (::m2::detail::_move_or_throw_message(__FILE__, __LINE__, (optional_type), msg))
+#define m2MoveOrThrowMessage(optional_type, msg) (::m2::detail::_move_or_throw_message(__FILE__, __LINE__, (optional_type), msg))
 
 /// Do nothing if v contains a value, otherwise throw the contained error
-#define m2_succeed_or_throw_error(expected_type) (::m2::detail::_succeed_or_throw_error(__FILE__, __LINE__, (expected_type)))
+#define m2SucceedOrThrowError(expected_type) (::m2::detail::_succeed_or_throw_error(__FILE__, __LINE__, (expected_type)))
 /// Do nothing if optional_type contains a value, otherwise throw the message
-#define m2_succeed_or_throw_message(optional_type, msg) (::m2::detail::_succeed_or_throw_message(__FILE__, __LINE__, (optional_type), msg))
+#define m2SucceedOrThrowMessage(optional_type, msg) (::m2::detail::_succeed_or_throw_message(__FILE__, __LINE__, (optional_type), msg))
 /// Do nothing if integral_type is zero, otherwise throw the message
-#define m2_expect_zero_or_throw_message(integral_type, msg) (::m2::detail::_expect_zero_or_throw_message(__FILE__, __LINE__, (integral_type), msg))
+#define m2ExpectZeroOrThrowMessage(integral_type, msg) (::m2::detail::_expect_zero_or_throw_message(__FILE__, __LINE__, (integral_type), msg))
 
-#define _m2_token_concat(x, y) x ## y
-#define m2_token_concat(x, y) _m2_token_concat(x, y)
-#define m2_repeat(n) for (int m2_token_concat(_i, __LINE__) = 0; m2_token_concat(_i, __LINE__) < (n); ++m2_token_concat(_i, __LINE__))
+#define _m2TokenConcat(x, y) x ## y
+#define m2TokenConcat(x, y) _m2TokenConcat(x, y)
+#define m2Repeat(n) for (int m2TokenConcat(_i, __LINE__) = 0; m2TokenConcat(_i, __LINE__) < (n); ++m2TokenConcat(_i, __LINE__))

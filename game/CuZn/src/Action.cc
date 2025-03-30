@@ -19,7 +19,7 @@ m2::void_expected HandleActionWhileLiquidating(m2::Character& turnHolderCharacte
 	if (auto expectFactoriesAndGain = CanPlayerLiquidateFactories(turnHolderCharacter, clientCommand.liquidate_action())) {
 		LOG_INFO("Liquidating factories and gaining money", expectFactoriesAndGain->first.size(), expectFactoriesAndGain->second);
 		for (const auto* factory : expectFactoriesAndGain->first) {
-			M2_LEVEL.objects.Free(factory->id());
+			M2_LEVEL.objects.Free(factory->GetId());
 		}
 		turnHolderCharacter.AddResource(m2g::pb::MONEY, m2::F(expectFactoriesAndGain->second));
 		return {}; // Liquidation successful
@@ -64,7 +64,7 @@ m2::expected<int> HandleActionWhileNotLiquidating(m2::Character& turnHolderChara
 			return m2::make_unexpected(sellValidation.error());
 		}
 		actionNotification.set_notification(GenerateSellNotification(
-				ToIndustryOfFactoryCharacter(FindFactoryAtLocation(clientCommand.sell_action().industry_location())->character()),
+				ToIndustryOfFactoryCharacter(FindFactoryAtLocation(clientCommand.sell_action().industry_location())->GetCharacter()),
 				city_of_location(clientCommand.sell_action().industry_location())));
 		LOG_INFO("Executing sell action");
 		cardToDiscardAndMoneySpent.first = ExecuteSellAction(turnHolderCharacter, clientCommand.sell_action());

@@ -59,7 +59,7 @@ namespace {
 		.onDestroy = [] {
 			// Delete ghost
 			if (const auto& levelEditorState = std::get<level_editor::State>(M2_LEVEL.stateVariant); levelEditorState.ghostId) {
-				M2_LEVEL.deferredActions.push(create_object_deleter(levelEditorState.ghostId));
+				M2_LEVEL.deferredActions.push(CreateObjectDeleter(levelEditorState.ghostId));
 			}
 		},
 		.widgets = {
@@ -94,7 +94,7 @@ namespace {
 						// Create ghost
 						auto& levelEditorState = std::get<level_editor::State>(M2_LEVEL.stateVariant);
 						if (levelEditorState.ghostId) {
-							M2_LEVEL.deferredActions.push(create_object_deleter(levelEditorState.ghostId));
+							M2_LEVEL.deferredActions.push(CreateObjectDeleter(levelEditorState.ghostId));
 						}
 						if (const auto selections = self.selections(); not selections.empty()) {
 							levelEditorState.ghostId = obj::create_ghost(
@@ -223,7 +223,7 @@ namespace {
 		.onDestroy = [] {
 			// Delete ghost
 			if (const auto& levelEditorState = std::get<level_editor::State>(M2_LEVEL.stateVariant); levelEditorState.ghostId) {
-				M2_LEVEL.deferredActions.push(create_object_deleter(levelEditorState.ghostId));
+				M2_LEVEL.deferredActions.push(CreateObjectDeleter(levelEditorState.ghostId));
 			}
 		},
 		.widgets = {
@@ -270,7 +270,7 @@ namespace {
 						// Delete previous ghost
 						auto& levelEditorState = std::get<level_editor::State>(M2_LEVEL.stateVariant);
 						if (levelEditorState.ghostId) {
-							M2_LEVEL.deferredActions.push(create_object_deleter(levelEditorState.ghostId));
+							M2_LEVEL.deferredActions.push(CreateObjectDeleter(levelEditorState.ghostId));
 						}
 						// Create ghost
 						if (const auto selections = self.selections(); not selections.empty()) {

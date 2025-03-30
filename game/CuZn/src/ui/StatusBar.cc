@@ -24,7 +24,7 @@ UiPanelBlueprint generate_status_bar_blueprint() {
 		.w = 70, .h = 8,
 		.border_width = 0.0f,
 		.OnEvent = [=](const UiPanel& panel, const Events& events) -> UiAction {
-			if (panel.Rect().contains(events.mouse_position())) {
+			if (panel.Rect().contains(events.MousePosition())) {
 				if (not M2G_PROXY.custom_hud_panel) {
 					M2G_PROXY.custom_hud_panel = M2_LEVEL.AddCustomNonblockingUiPanel(
 							std::make_unique<UiPanelBlueprint>(generate_custom_hud_blueprint()),
@@ -71,7 +71,7 @@ UiPanelBlueprint generate_status_bar_blueprint() {
 	for (auto order = m2g::pb::FIRST_PLAYER_INDEX;
 			order <= m2g::pb::FORTH_PLAYER_INDEX;
 			order = static_cast<m2g::pb::AttributeType>(I(order) + 1), ++i) {
-		if (const auto playerIndexOfOrder = iround(M2G_PROXY.game_state_tracker().GetAttribute(order)); -1 < playerIndexOfOrder) {
+		if (const auto playerIndexOfOrder = RoundI(M2G_PROXY.game_state_tracker().GetAttribute(order)); -1 < playerIndexOfOrder) {
 				bp.widgets.emplace_back(UiWidgetBlueprint{
 			// For deciding on the position, do not use the player index, use 0-based i
 			.x = 30 + (4 - M2_GAME.TotalPlayerCount()) * 10 + i * 10, .y = 0, .w = 10, .h = 5,

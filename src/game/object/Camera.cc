@@ -11,13 +11,13 @@
 m2::Id m2::obj::create_camera() {
 	// Start at player's location
 	auto* player = M2_LEVEL.objects.Get(M2_LEVEL.playerId);
-	auto it = create_object(player ? player->position : VecF{});
+	auto it = CreateObject(player ? player->position : VecF{});
 
 	// Create implementation
 	auto& camera = *it;
 	camera.impl = std::make_unique<m2::obj::Camera>();
 
-	auto& phy = camera.add_physique();
+	auto& phy = camera.AddPhysique();
 	phy.postStep = [&camera](MAYBE Physique& phy) {
 		//		auto* camera_data = dynamic_cast<m2::obj::Camera*>(camera.impl.get());
 		auto& player = M2_LEVEL.objects[M2_LEVEL.playerId];

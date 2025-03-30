@@ -44,7 +44,7 @@ int m2::UniformRandom(const int min, const int max) {
 	if (max < min) {
 		throw M2_ERROR("Max is smaller than min");
 	}
-	return min + iround((max - min) * RandomF());
+	return min + RoundI((max - min) * RandomF());
 }
 float m2::UniformRandomF(const float min, const float max) {
 	if (max < min) {
@@ -52,45 +52,39 @@ float m2::UniformRandomF(const float min, const float max) {
 	}
 	return min + (max - min) * RandomF();
 }
-float m2::apply_accuracy(float value, float max_swing, float accuracy) {
+float m2::ApplyAccuracy(float value, float max_swing, float accuracy) {
 	if (accuracy == 1.0f) {
 		return value;
 	}
 	return value + max_swing * (2.0f * RandomF() - 1.0f) * (1.0f - accuracy);
 }
 
-bool m2::is_near(float a, float b, float tolerance) {
+bool m2::IsEqual(float a, float b, float tolerance) {
 	return fabsf(b - a) < fabsf(tolerance);
 }
-bool m2::is_far(float a, float b, float tolerance) {
+bool m2::IsNotEqual(float a, float b, float tolerance) {
 	return fabsf(tolerance) < fabsf(b - a);
 }
-bool m2::is_equal(float a, float b, float tolerance) {
-	return is_near(a, b, tolerance);
-}
-bool m2::is_not_equal(float a, float b, float tolerance) {
-	return not is_near(a, b, tolerance);
-}
-bool m2::is_less(float a, float b, float tolerance) {
+bool m2::IsLess(float a, float b, float tolerance) {
 	return fabsf(tolerance) < (b - a);
 }
-bool m2::is_less_or_equal(float a, float b, float tolerance) {
-	return fabsf(tolerance) < (b - a) || is_near(a, b, tolerance);
+bool m2::IsLessOrEqual(float a, float b, float tolerance) {
+	return fabsf(tolerance) < (b - a) || IsEqual(a, b, tolerance);
 }
-bool m2::is_zero(float a, float tolerance) {
-	return is_equal(a, 0.0f, tolerance);
+bool m2::IsZero(float a, float tolerance) {
+	return IsEqual(a, 0.0f, tolerance);
 }
-bool m2::is_nonzero(float a, float tolerance) {
-	return not is_zero(a, tolerance);
+bool m2::IsNonZero(float a, float tolerance) {
+	return not IsZero(a, tolerance);
 }
-bool m2::is_positive(float a, float tolerance) {
-	return m2::is_less(0.0f, a, tolerance);
+bool m2::IsPositive(float a, float tolerance) {
+	return m2::IsLess(0.0f, a, tolerance);
 }
-bool m2::is_negative(float a, float tolerance) {
-	return m2::is_less(a, 0.0f, tolerance);
+bool m2::IsNegative(float a, float tolerance) {
+	return m2::IsLess(a, 0.0f, tolerance);
 }
-bool m2::is_one(float a, float tolerance) {
-	return is_equal(a, 1.0f, tolerance);
+bool m2::IsOne(float a, float tolerance) {
+	return IsEqual(a, 1.0f, tolerance);
 }
 
 float m2::ClampRadiansTo2Pi(const float rads) {

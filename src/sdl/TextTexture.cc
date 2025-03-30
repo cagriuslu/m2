@@ -48,10 +48,10 @@ m2::expected<m2::sdl::TextTexture> m2::sdl::TextTexture::create_nowrap(SDL_Rende
 	TTF_SetFontSize(font, fontSize);
 	// Render to surface
 	SurfaceUniquePtr surface{TTF_RenderUTF8_Blended(font, text.c_str(), color)};
-	m2_return_unexpected_message_unless(surface, TTF_GetError());
+	m2ReturnUnexpectedUnless(surface, TTF_GetError());
 	// Render to texture
 	SDL_Texture* texture = create_texture_with_linear_filtering(renderer, surface.get());
-	m2_return_unexpected_message_unless(texture, SDL_GetError());
+	m2ReturnUnexpectedUnless(texture, SDL_GetError());
 	return TextTexture{texture, text};
 }
 
@@ -66,9 +66,9 @@ m2::expected<m2::sdl::TextTexture> m2::sdl::TextTexture::create_wrapped(SDL_Rend
 	// Render to surface
 	TTF_SetFontWrappedAlign(font, ToTtfWrapAlignment(horizontal_alignment));
 	SurfaceUniquePtr surface{TTF_RenderUTF8_Blended_Wrapped(font, text.c_str(), color, width_px)};
-	m2_return_unexpected_message_unless(surface, TTF_GetError());
+	m2ReturnUnexpectedUnless(surface, TTF_GetError());
 	// Render to texture
 	SDL_Texture* texture = create_texture_with_linear_filtering(renderer, surface.get());
-	m2_return_unexpected_message_unless(texture, SDL_GetError());
+	m2ReturnUnexpectedUnless(texture, SDL_GetError());
 	return TextTexture{texture, text};
 }

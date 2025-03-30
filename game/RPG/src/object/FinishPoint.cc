@@ -3,10 +3,10 @@
 #include <m2/box2d/Detail.h>
 
 m2::void_expected rpg::init_finish_point(m2::Object& obj) {
-	auto sprite_type = M2_GAME.object_main_sprites[obj.object_type()];
+	auto sprite_type = M2_GAME.object_main_sprites[obj.GetType()];
 	auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(sprite_type));
 
-	auto& phy = obj.add_physique();
+	auto& phy = obj.AddPhysique();
 	m2::pb::BodyBlueprint bp;
 	bp.set_type(m2::pb::BodyType::STATIC);
 	bp.set_allow_sleep(true);
@@ -14,9 +14,9 @@ m2::void_expected rpg::init_finish_point(m2::Object& obj) {
 	bp.mutable_background_fixture()->mutable_circ()->set_radius(sprite.BackgroundColliderCircRadiusM());
 	bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_ITEM_ON_FOREGROUND);
 	bp.mutable_background_fixture()->set_is_sensor(true);
-	phy.body = m2::box2d::CreateBody(*M2_LEVEL.world, obj.physique_id(), obj.position, bp);
+	phy.body = m2::box2d::CreateBody(*M2_LEVEL.world, obj.GetPhysiqueId(), obj.position, bp);
 
-	auto& gfx = obj.add_graphic(sprite_type);
+	auto& gfx = obj.AddGraphic(sprite_type);
 	gfx.variantDrawOrder[0] = m2::pb::SpriteEffectType::SPRITE_EFFECT_GRAYSCALE;
 
 	phy.onCollision = [](MAYBE m2::Physique& self, MAYBE m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {

@@ -5,7 +5,7 @@
 #include <m2/box2d/Shape.h>
 
 namespace {
-	constexpr auto MAX_FLIPPER_SWEEP_RADS = m2::to_radians(60.0f);
+	constexpr auto MAX_FLIPPER_SWEEP_RADS = m2::ToRadians(60.0f);
 	constexpr auto FLIPPER_SWEEP_UP_SPEED = 16.0f;
 	// Down speed is intentionally slow. Spanning the flipper should have a negative impact.
 	constexpr auto FLIPPER_SWEEP_DOWN_SPEED = 4.0f;
@@ -32,7 +32,7 @@ m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
 	obj.impl = std::make_unique<FlipperImpl>(obj.orientation);
 	auto* flipper = dynamic_cast<FlipperImpl*>(obj.impl.get());
 
-	auto& phy = obj.add_physique();
+	auto& phy = obj.AddPhysique();
 	b2BodyDef bodyDef;
 	bodyDef.type = b2_kinematicBody;
 	bodyDef.position.Set(obj.position.x, obj.position.y);
@@ -46,7 +46,7 @@ m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
 	bodyDef.fixedRotation = false;
 	bodyDef.bullet = true;
 	bodyDef.enabled = true;
-	bodyDef.userData.pointer = obj.physique_id();
+	bodyDef.userData.pointer = obj.GetPhysiqueId();
 	bodyDef.gravityScale = 0.0f;
 	b2Body* body = M2_LEVEL.world->CreateBody(&bodyDef);
 	{
@@ -77,26 +77,26 @@ m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
 	}
 	phy.body = m2::box2d::BodyUniquePtr{body};
 
-	MAYBE auto& gfx = obj.add_graphic(rightFlipper ? m2g::pb::SPRITE_BASIC_FLIPPER_RIGHT : m2g::pb::SPRITE_BASIC_FLIPPER_LEFT);
+	MAYBE auto& gfx = obj.AddGraphic(rightFlipper ? m2g::pb::SPRITE_BASIC_FLIPPER_RIGHT : m2g::pb::SPRITE_BASIC_FLIPPER_LEFT);
 
 	if (rightFlipper) {
 		phy.preStep = [flipper](m2::Physique& phy_) {
-			if (flipper->state == FlipperState::RESTING && M2_GAME.events.is_key_down(m2g::pb::RIGHT_FLIPPER)) {
+			if (flipper->state == FlipperState::RESTING && M2_GAME.events.IsKeyDown(m2g::pb::RIGHT_FLIPPER)) {
 				phy_.body->SetAngularVelocity(FLIPPER_SWEEP_UP_SPEED);
 				flipper->state = FlipperState::GOING_UP;
 			}
-			if (flipper->state == FlipperState::FULLY_UP && not M2_GAME.events.is_key_down(m2g::pb::RIGHT_FLIPPER)) {
+			if (flipper->state == FlipperState::FULLY_UP && not M2_GAME.events.IsKeyDown(m2g::pb::RIGHT_FLIPPER)) {
 				phy_.body->SetAngularVelocity(-FLIPPER_SWEEP_DOWN_SPEED);
 				flipper->state = FlipperState::GOING_DOWN;
 			}
 		};
 		phy.postStep = [flipper](m2::Physique& phy_) {
-			if (flipper->state == FlipperState::GOING_UP && m2::is_less(MAX_FLIPPER_SWEEP_RADS, m2::AngleAbsoluteDifference(phy_.body->GetAngle(), flipper->initialRotation), 0.001f)) {
+			if (flipper->state == FlipperState::GOING_UP && m2::IsLess(MAX_FLIPPER_SWEEP_RADS, m2::AngleAbsoluteDifference(phy_.body->GetAngle(), flipper->initialRotation), 0.001f)) {
 				phy_.body->SetTransform(phy_.body->GetTransform().p, flipper->initialRotation + MAX_FLIPPER_SWEEP_RADS);
 				phy_.body->SetAngularVelocity(0.0f);
 				flipper->state = FlipperState::FULLY_UP;
 			}
-			if (flipper->state == FlipperState::GOING_DOWN && m2::is_negative(m2::AngleDifference(phy_.body->GetAngle(), flipper->initialRotation), 0.001f)) {
+			if (flipper->state == FlipperState::GOING_DOWN && m2::IsNegative(m2::AngleDifference(phy_.body->GetAngle(), flipper->initialRotation), 0.001f)) {
 				phy_.body->SetTransform(phy_.body->GetTransform().p, flipper->initialRotation);
 				phy_.body->SetAngularVelocity(0.0f);
 				flipper->state = FlipperState::RESTING;
@@ -104,22 +104,22 @@ m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
 		};
 	} else {
 		phy.preStep = [flipper](m2::Physique& phy_) {
-			if (flipper->state == FlipperState::RESTING && M2_GAME.events.is_key_down(m2g::pb::LEFT_FLIPPER)) {
+			if (flipper->state == FlipperState::RESTING && M2_GAME.events.IsKeyDown(m2g::pb::LEFT_FLIPPER)) {
 				phy_.body->SetAngularVelocity(-FLIPPER_SWEEP_UP_SPEED);
 				flipper->state = FlipperState::GOING_UP;
 			}
-			if (flipper->state == FlipperState::FULLY_UP && not M2_GAME.events.is_key_down(m2g::pb::LEFT_FLIPPER)) {
+			if (flipper->state == FlipperState::FULLY_UP && not M2_GAME.events.IsKeyDown(m2g::pb::LEFT_FLIPPER)) {
 				phy_.body->SetAngularVelocity(FLIPPER_SWEEP_DOWN_SPEED);
 				flipper->state = FlipperState::GOING_DOWN;
 			}
 		};
 		phy.postStep = [flipper](m2::Physique& phy_) {
-			if (flipper->state == FlipperState::GOING_UP && m2::is_less(MAX_FLIPPER_SWEEP_RADS, m2::AngleAbsoluteDifference(phy_.body->GetAngle(), flipper->initialRotation), 0.001f)) {
+			if (flipper->state == FlipperState::GOING_UP && m2::IsLess(MAX_FLIPPER_SWEEP_RADS, m2::AngleAbsoluteDifference(phy_.body->GetAngle(), flipper->initialRotation), 0.001f)) {
 				phy_.body->SetTransform(phy_.body->GetTransform().p, flipper->initialRotation - MAX_FLIPPER_SWEEP_RADS);
 				phy_.body->SetAngularVelocity(0.0f);
 				flipper->state = FlipperState::FULLY_UP;
 			}
-			if (flipper->state == FlipperState::GOING_DOWN && m2::is_negative(m2::AngleDifference(flipper->initialRotation, phy_.body->GetAngle()), 0.001f)) {
+			if (flipper->state == FlipperState::GOING_DOWN && m2::IsNegative(m2::AngleDifference(flipper->initialRotation, phy_.body->GetAngle()), 0.001f)) {
 				phy_.body->SetTransform(phy_.body->GetTransform().p, flipper->initialRotation);
 				phy_.body->SetAngularVelocity(0.0f);
 				flipper->state = FlipperState::RESTING;

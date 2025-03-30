@@ -13,7 +13,7 @@ Hidden::Hidden(UiPanel* parent, const UiWidgetBlueprint* blueprint) : UiWidget(p
 UiAction Hidden::HandleEvents(Events& events) {
     if (const auto& onAction = VariantBlueprint().onAction) {
         if (const auto kb_shortcut = VariantBlueprint().keyboardShortcut) {
-            if (not SDL_IsTextInputActive() && events.pop_key_press(kb_shortcut)) {
+            if (not SDL_IsTextInputActive() && events.PopKeyPress(kb_shortcut)) {
                 return onAction(*this);
             }
         }

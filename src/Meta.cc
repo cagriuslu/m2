@@ -2,7 +2,7 @@
 #include <cstdio>
 
 int m2::RoundDownToEvenI(const float f) {
-	const auto ceiled = iceil(f);
+	const auto ceiled = CeilI(f);
 	return ceiled % 2 // If even
 			? ceiled - 1 // Subtract one
 			: ceiled;

@@ -44,7 +44,7 @@ static widget::ProgressBarBlueprint hp_progress_bar = {
 		.bar_color = SDL_Color{255, 0, 0, 255},
 		.onUpdate = [](widget::ProgressBar& self) {
 			if (M2_LEVEL.Player()) {
-				self.SetProgress(M2_PLAYER.character().GetResource(m2g::pb::RESOURCE_HP));
+				self.SetProgress(M2_PLAYER.GetCharacter().GetResource(m2g::pb::RESOURCE_HP));
 			}
 			self.SetProgress(0.0f);
 		}
@@ -58,8 +58,8 @@ static widget::ProgressBarBlueprint dash_progress_bar = {
 		.onUpdate = [](widget::ProgressBar& self) {
 			if (M2_LEVEL.Player()) {
 				// Check if player has DASH capability
-				if (M2_PLAYER.character().HasItem(m2g::pb::ITEM_REUSABLE_DASH_2S)) {
-					float counter = M2_PLAYER.character().GetResource(m2g::pb::RESOURCE_DASH_ENERGY);
+				if (M2_PLAYER.GetCharacter().HasItem(m2g::pb::ITEM_REUSABLE_DASH_2S)) {
+					float counter = M2_PLAYER.GetCharacter().GetResource(m2g::pb::RESOURCE_DASH_ENERGY);
 					float cooldown = 2.0f;
 					counter = (cooldown <= counter) ? cooldown : counter;
 					self.SetProgress(counter / cooldown);

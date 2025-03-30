@@ -24,7 +24,7 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj) {
 
 	obj.impl = std::make_unique<HumanPlayer>();
 
-	auto& chr = obj.add_full_character();
+	auto& chr = obj.AddFullCharacter();
 	chr.SetResource(m2g::pb::MONEY, 17.0f);
 	chr.SetAttribute(m2g::pb::INCOME_POINTS, 0.0f);
 
@@ -35,37 +35,37 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj) {
 		// Lookup possession count
 		const auto& item = M2_GAME.GetNamedItem(industry_tile);
 		auto possession_limit = m2::I(item.GetAttribute(m2g::pb::POSSESSION_LIMIT));
-		m2_repeat(possession_limit) { chr.AddNamedItem(item); }
+		m2Repeat(possession_limit) { chr.AddNamedItem(item); }
 	}
 
 	// Add connection tiles
 	const auto& road_item = M2_GAME.GetNamedItem(m2g::pb::ROAD_TILE);
 	auto road_possession_limit = m2::I(road_item.GetAttribute(m2g::pb::POSSESSION_LIMIT));
-	m2_repeat(road_possession_limit) { chr.AddNamedItem(road_item); }
+	m2Repeat(road_possession_limit) { chr.AddNamedItem(road_item); }
 
-	auto& phy = obj.add_physique();
+	auto& phy = obj.AddPhysique();
 	phy.preStep = [&o = obj](MAYBE m2::Physique& _) {
 		auto& impl = dynamic_cast<HumanPlayer&>(*o.impl);
 		// Start map movement with mouse
-		if (M2_GAME.events.pop_mouse_button_press(m2::MouseButton::PRIMARY, M2_GAME.Dimensions().Game())) {
+		if (M2_GAME.events.PopMouseButtonPress(m2::MouseButton::PRIMARY, M2_GAME.Dimensions().Game())) {
 			LOG_TRACE("Begin panning");
-			impl.mouse_click_prev_position = std::make_pair(M2_GAME.events.mouse_position(), M2_GAME.MousePositionWorldM());
+			impl.mouse_click_prev_position = std::make_pair(M2_GAME.events.MousePosition(), M2_GAME.MousePositionWorldM());
 			M2_LEVEL.isPanning = true;
-		} else if (impl.mouse_click_prev_position && not M2_GAME.events.is_mouse_button_down(m2::MouseButton::PRIMARY)) {
+		} else if (impl.mouse_click_prev_position && not M2_GAME.events.IsMouseButtonDown(m2::MouseButton::PRIMARY)) {
 			LOG_TRACE("End panning");
 			impl.mouse_click_prev_position.reset();
 			M2_LEVEL.isPanning = false;
 		}
 		// Map movement is enabled
-		if (impl.mouse_click_prev_position && impl.mouse_click_prev_position->first != M2_GAME.events.mouse_position()) {
-			auto diff = impl.mouse_click_prev_position->first - M2_GAME.events.mouse_position();
+		if (impl.mouse_click_prev_position && impl.mouse_click_prev_position->first != M2_GAME.events.MousePosition()) {
+			auto diff = impl.mouse_click_prev_position->first - M2_GAME.events.MousePosition();
 			auto diff_m = m2::VecF{diff} / M2_GAME.Dimensions().OutputPixelsPerMeter();
 			o.position += diff_m;
-			impl.mouse_click_prev_position = std::make_pair(M2_GAME.events.mouse_position(), M2_GAME.MousePositionWorldM());
+			impl.mouse_click_prev_position = std::make_pair(M2_GAME.events.MousePosition(), M2_GAME.MousePositionWorldM());
 		}
 
 		constexpr float zoom_step = 1.2f;
-		if (auto scroll = M2_GAME.events.pop_mouse_wheel_vertical_scroll(M2_GAME.Dimensions().Game()); 0 < scroll) {
+		if (auto scroll = M2_GAME.events.PopMouseWheelVerticalScroll(M2_GAME.Dimensions().Game()); 0 < scroll) {
 			if (20.0f < M2_GAME.Dimensions().GameM().y) {
 				M2_GAME.SetScale(M2_GAME.Dimensions().Scale() * zoom_step);
 			}
@@ -101,7 +101,7 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj) {
 		}
 
 		// Check if mouse button pressed
-		if (M2_GAME.events.pop_mouse_button_press(m2::MouseButton::SECONDARY)) {
+		if (M2_GAME.events.PopMouseButtonPress(m2::MouseButton::SECONDARY)) {
 			if (M2G_PROXY.main_journeys) {
 				std::visit(m2::overloaded{
 					[](auto& journey) { journey.sub_journey->signal(PositionOrCancelSignal::create_mouse_click_signal(M2_GAME.MousePositionWorldM())); }
@@ -166,14 +166,14 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj) {
 	};
 
 	// Set the player ID so that the camera can find this
-	M2_LEVEL.playerId = obj.id();
+	M2_LEVEL.playerId = obj.GetId();
 
 	return {};
 }
 m2::void_expected PlayerInitOtherInstance(m2::Object& obj) {
 	DEBUG_FN();
 
-	auto& chr = obj.add_full_character();
+	auto& chr = obj.AddFullCharacter();
 
 	// TODO check if the following is really necessary. If the ServerUpdate is verified, it's necessary.
 	// TODO Otherwise, we don't need to fill the character with items and resources.
@@ -188,13 +188,13 @@ m2::void_expected PlayerInitOtherInstance(m2::Object& obj) {
 		// Lookup possession count
 		const auto& item = M2_GAME.GetNamedItem(industry_tile);
 		auto possession_limit = m2::I(item.GetAttribute(m2g::pb::POSSESSION_LIMIT));
-		m2_repeat(possession_limit) { chr.AddNamedItem(item); }
+		m2Repeat(possession_limit) { chr.AddNamedItem(item); }
 		 }
 
 	// Add connection tiles
 	const auto& road_item = M2_GAME.GetNamedItem(m2g::pb::ROAD_TILE);
 	auto road_possession_limit = m2::I(road_item.GetAttribute(m2g::pb::POSSESSION_LIMIT));
-	m2_repeat(road_possession_limit) { chr.AddNamedItem(road_item); }
+	m2Repeat(road_possession_limit) { chr.AddNamedItem(road_item); }
 
 	return {};
 }
@@ -207,10 +207,10 @@ size_t PlayerCardCount(const m2::Character& player) {
 std::list<Card> PlayerCards(const m2::Character& player) {
 	std::list<Card> card_list;
 	for (auto it = player.BeginItems(); it != player.EndItems(); ++it) {
-		if (it->category() == m2g::pb::ItemCategory::ITEM_CATEGORY_CITY_CARD
-			|| it->category() == m2g::pb::ItemCategory::ITEM_CATEGORY_WILD_CARD
-			|| it->category() == m2g::pb::ItemCategory::ITEM_CATEGORY_INDUSTRY_CARD) {
-			card_list.emplace_back(it->type());
+		if (it->Category() == m2g::pb::ItemCategory::ITEM_CATEGORY_CITY_CARD
+			|| it->Category() == m2g::pb::ItemCategory::ITEM_CATEGORY_WILD_CARD
+			|| it->Category() == m2g::pb::ItemCategory::ITEM_CATEGORY_INDUSTRY_CARD) {
+			card_list.emplace_back(it->Type());
 		}
 	}
 	return card_list;
@@ -219,7 +219,7 @@ std::list<Card> PlayerCards(const m2::Character& player) {
 int PlayerLinkCount(const m2::Character& player) {
 	auto road_characters = M2_LEVEL.characters
 			| std::views::transform(m2::ToCharacterBase)
-			| std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
+			| std::views::filter(m2::IsComponentOfAnyDescendant(player.OwnerId()))
 			| std::views::filter(IsRoadCharacter);
 	return std::accumulate(road_characters.begin(), road_characters.end(), 0, [](int acc, m2::Character& road_char) -> int {
 		return acc + LinkCountOfRoadCharacter(road_char);
@@ -228,22 +228,22 @@ int PlayerLinkCount(const m2::Character& player) {
 int PlayerEstimatedVictoryPoints(const m2::Character& player) {
 	auto soldFactories = M2_LEVEL.characters
 			| std::views::transform(m2::ToCharacterBase)
-			| std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
+			| std::views::filter(m2::IsComponentOfAnyDescendant(player.OwnerId()))
 			| std::views::filter(IsFactoryCharacter)
 			| std::views::filter(IsFactorySold);
 	return std::accumulate(soldFactories.begin(), soldFactories.end(), 0, [](int acc, m2::Character& factoryCharacter) -> int {
 		const auto& industryTileItem = M2_GAME.GetNamedItem(ToIndustryTileOfFactoryCharacter(factoryCharacter));
-		return acc + m2::iround(industryTileItem.GetAttribute(m2g::pb::VICTORY_POINTS_BONUS));
+		return acc + m2::RoundI(industryTileItem.GetAttribute(m2g::pb::VICTORY_POINTS_BONUS));
 	});
 }
 int PlayerVictoryPoints(const m2::Character& player) {
-	return m2::iround(player.GetResource(m2g::pb::VICTORY_POINTS));
+	return m2::RoundI(player.GetResource(m2g::pb::VICTORY_POINTS));
 }
 int PlayerIncomePoints(const m2::Character& player) {
-	return m2::iround(player.GetAttribute(m2g::pb::INCOME_POINTS));
+	return m2::RoundI(player.GetAttribute(m2g::pb::INCOME_POINTS));
 }
 int PlayerMoney(const m2::Character& player) {
-	return m2::iround(player.GetResource(m2g::pb::MONEY));
+	return m2::RoundI(player.GetResource(m2g::pb::MONEY));
 }
 
 size_t PlayerIndustryTileCount(const m2::Character& player) {
@@ -258,7 +258,7 @@ std::optional<m2g::pb::ItemType> PlayerNextIndustryTileOfCategory(const m2::Char
 	// Find the item with the category with the smallest integer value
 	auto tile_item = m2g::pb::ItemType_MAX;
 	for (auto item_it = player.FindItems(tile_category); item_it != player.EndItems(); ++item_it) {
-		tile_item = std::min(tile_item, item_it->type());
+		tile_item = std::min(tile_item, item_it->Type());
 	}
 
 	if (tile_item == m2g::pb::ItemType_MAX) {
@@ -273,14 +273,14 @@ std::optional<m2g::pb::ItemType> PlayerNextIndustryTileOfIndustry(const m2::Char
 size_t PlayerBuiltFactoryCount(const m2::Character& player) {
 	auto factories_view = M2_LEVEL.characters
 		| std::views::transform(m2::ToCharacterBase)
-		| std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
+		| std::views::filter(m2::IsComponentOfAnyDescendant(player.OwnerId()))
 		| std::views::filter(IsFactoryCharacter);
 	return std::distance(factories_view.begin(), factories_view.end());
 }
 std::set<IndustryLocation> PlayerBuiltFactoryLocations(const m2::Character& player) {
 	auto factories_view = M2_LEVEL.characters
 		| std::views::transform(m2::ToCharacterBase)
-		| std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
+		| std::views::filter(m2::IsComponentOfAnyDescendant(player.OwnerId()))
 		| std::views::filter(IsFactoryCharacter)
 		| std::views::transform(ToIndustryLocationOfFactoryCharacter);
 	return {factories_view.begin(), factories_view.end()};
@@ -288,7 +288,7 @@ std::set<IndustryLocation> PlayerBuiltFactoryLocations(const m2::Character& play
 std::set<IndustryLocation> PlayerSellableFactoryLocations(const m2::Character& player) {
 	auto factories_view = M2_LEVEL.characters
 		| std::views::transform(m2::ToCharacterBase)
-		| std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
+		| std::views::filter(m2::IsComponentOfAnyDescendant(player.OwnerId()))
 		| std::views::filter(IsFactoryCharacter)
 		| std::views::filter(IsFactoryNotSold)
 		| std::views::filter([](const m2::Character& c) {
@@ -300,8 +300,8 @@ std::set<IndustryLocation> PlayerSellableFactoryLocations(const m2::Character& p
 m2::void_expected PlayerCanOverbuild(const m2::Character& player, const IndustryLocation location, const Card card) {
 	// Check the industry type of the already built factory
 	const auto* factory = FindFactoryAtLocation(location);
-	const auto industryOfFactory = ToIndustryOfFactoryCharacter(factory->character());
-	const auto cityOfFactory = ToCityOfFactoryCharacter(factory->character());
+	const auto industryOfFactory = ToIndustryOfFactoryCharacter(factory->GetCharacter());
+	const auto cityOfFactory = ToCityOfFactoryCharacter(factory->GetCharacter());
 
 	// Check if the selected card can build the same industry
 	if (card == m2g::pb::WILD_LOCATION_CARD || card == m2g::pb::WILD_INDUSTRY_CARD || card == cityOfFactory || card == industryOfFactory) {
@@ -311,7 +311,7 @@ m2::void_expected PlayerCanOverbuild(const m2::Character& player, const Industry
 	}
 
 	// Check if the factory belongs to the player
-	if (player.owner_id() == factory->parent_id()) {
+	if (player.OwnerId() == factory->GetParentId()) {
 		// Any industry can be overbuilt
 		return {};
 	}
@@ -338,14 +338,14 @@ std::set<m2g::pb::ItemType> PlayerCitiesInNetwork(const m2::Character& player) {
 
 	auto cities_view = M2_LEVEL.characters
 		| std::views::transform(m2::ToCharacterBase)
-		| std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
+		| std::views::filter(m2::IsComponentOfAnyDescendant(player.OwnerId()))
 		| std::views::filter(IsFactoryCharacter)
 		| std::views::transform(ToCityOfFactoryCharacter);
 	cities.insert(cities_view.begin(), cities_view.end());
 
 	auto roads_view = M2_LEVEL.characters
 		| std::views::transform(m2::ToCharacterBase)
-		| std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
+		| std::views::filter(m2::IsComponentOfAnyDescendant(player.OwnerId()))
 		| std::views::filter(IsRoadCharacter)
 		| std::views::transform(ToCitiesOfRoadCharacter);
 	for (const auto& road_cities : roads_view) {

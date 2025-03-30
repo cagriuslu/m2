@@ -175,9 +175,9 @@ void State::Draw() const {
 	const auto textureTopLeftOutputPosition = ScreenOriginToPositionVecPx(offset);
 	const auto textureBottomRightOutputPosition = ScreenOriginToPositionVecPx(static_cast<VecF>(_textureDimensions) + offset);
 	const SDL_Rect dstRect = {
-		iround(textureTopLeftOutputPosition.x), iround(textureTopLeftOutputPosition.y),
-		iround(textureBottomRightOutputPosition.x - textureTopLeftOutputPosition.x),
-		iround(textureBottomRightOutputPosition.y - textureTopLeftOutputPosition.y)};
+		RoundI(textureTopLeftOutputPosition.x), RoundI(textureTopLeftOutputPosition.y),
+		RoundI(textureBottomRightOutputPosition.x - textureTopLeftOutputPosition.x),
+		RoundI(textureBottomRightOutputPosition.y - textureTopLeftOutputPosition.y)};
 	SDL_RenderCopy(M2_GAME.renderer, _texture.get(), nullptr, &dstRect);
 
 	const auto& sprite = SelectedSprite();

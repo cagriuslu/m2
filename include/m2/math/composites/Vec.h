@@ -30,7 +30,7 @@ namespace m2 {
 
 		[[nodiscard]] const Primitive& X() const { return _x; }
 		[[nodiscard]] const Primitive& Y() const { return _y; }
-		[[nodiscard]] bool IsNear(const Vec& other, Primitive tolerance) const { return (other._x - _x).AbsoluteValue() <= tolerance && (other._y - _y).AbsoluteValue() <= tolerance; }
+		[[nodiscard]] bool IsEqual(const Vec& other, Primitive tolerance) const { return (other._x - _x).AbsoluteValue() <= tolerance && (other._y - _y).AbsoluteValue() <= tolerance; }
 		[[nodiscard]] Primitive Magnitude() const { return MagnitudeSquare().SquareRoot(); }
 		[[nodiscard]] Primitive MagnitudeSquare() const { return _x * _x + _y * _y; }
 	};

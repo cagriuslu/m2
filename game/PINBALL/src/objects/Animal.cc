@@ -3,7 +3,7 @@
 
 int64_t AnimalAllocator(pinball::pb::Animal_Type type) {
 	// TODO
-	return m2::create_object({}, {}, {}).GetId();
+	return m2::CreateObject({}, {}, {}).GetId();
 }
 void AnimalDeallocator(const int64_t id) {
 	M2_LEVEL.objects.Free(id);

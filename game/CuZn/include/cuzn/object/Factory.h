@@ -15,7 +15,7 @@ void FlipExhaustedFactories();
 void SellFactory(m2::Character& factory_chr);
 
 // Filters
-inline bool IsFactoryCharacter(const m2::Character& chr) { return chr.owner().object_type() == m2g::pb::FACTORY; }
+inline bool IsFactoryCharacter(const m2::Character& chr) { return chr.Owner().GetType() == m2g::pb::FACTORY; }
 bool IsFactorySold(m2::Character& chr);
 inline bool IsFactoryNotSold(m2::Character& chr) { return not IsFactorySold(chr); }
 bool IsFactoryLevel1(m2::Character& chr);

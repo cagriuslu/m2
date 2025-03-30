@@ -3,7 +3,7 @@
 #include <cuzn/detail/Market.h>
 
 void InitGameStateTracker(m2::Object& obj) {
-	auto& chr = obj.add_full_character();
+	auto& chr = obj.AddFullCharacter();
 	// Hold the resources belonging to the market
 	chr.SetResource(m2g::pb::COAL_CUBE_COUNT, COAL_MARKET_INITIAL_COUNT);
 	chr.SetResource(m2g::pb::IRON_CUBE_COUNT, IRON_MARKET_INITIAL_COUNT);

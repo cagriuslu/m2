@@ -36,24 +36,24 @@ float m2::RectF::area() const {
 }
 
 bool m2::RectF::equals(const RectF& other, float tolerance) const {
-	return is_near(x, other.x, tolerance)
-		&& is_near(y, other.y, tolerance)
-		&& is_near(x + w, other.x + other.w, tolerance)
-		&& is_near(y + h, other.y + other.h, tolerance);
+	return IsEqual(x, other.x, tolerance)
+		&& IsEqual(y, other.y, tolerance)
+		&& IsEqual(x + w, other.x + other.w, tolerance)
+		&& IsEqual(y + h, other.y + other.h, tolerance);
 }
 
 bool m2::RectF::contains(const VecF& point, float tolerance) const {
-	return is_less_or_equal(x, point.x, tolerance)
-		&& is_less_or_equal(point.x, x + w, tolerance)
-		&& is_less_or_equal(y, point.y, tolerance)
-		&& is_less_or_equal(point.y, y + h, tolerance);
+	return IsLessOrEqual(x, point.x, tolerance)
+		&& IsLessOrEqual(point.x, x + w, tolerance)
+		&& IsLessOrEqual(y, point.y, tolerance)
+		&& IsLessOrEqual(point.y, y + h, tolerance);
 }
 
 bool m2::RectF::contains(const RectF& other, float tolerance) const {
-	return is_less_or_equal(x, other.x, tolerance)
-		&& is_less_or_equal(other.x + other.w, x + w, tolerance)
-		&& is_less_or_equal(y, other.y, tolerance)
-		&& is_less_or_equal(other.y + other.h, y + h, tolerance);
+	return IsLessOrEqual(x, other.x, tolerance)
+		&& IsLessOrEqual(other.x + other.w, x + w, tolerance)
+		&& IsLessOrEqual(y, other.y, tolerance)
+		&& IsLessOrEqual(other.y + other.h, y + h, tolerance);
 }
 
 m2::RectF m2::RectF::shift(const VecF& direction) const {
@@ -79,10 +79,10 @@ std::optional<m2::RectF> m2::RectF::intersect(const RectF& other, float toleranc
 	a_max = a_min + this->w;
 	b_min = other.x;
 	b_max = b_min + other.w;
-	if (is_less_or_equal(a_min, b_min, tolerance))
+	if (IsLessOrEqual(a_min, b_min, tolerance))
 		a_min = b_min;
 	result.x = a_min;
-	if (is_less(b_max, a_max, tolerance))
+	if (IsLess(b_max, a_max, tolerance))
 		a_max = b_max;
 	result.w = a_max - a_min;
 
@@ -91,10 +91,10 @@ std::optional<m2::RectF> m2::RectF::intersect(const RectF& other, float toleranc
 	a_max = a_min + this->h;
 	b_min = other.y;
 	b_max = b_min + other.h;
-	if (is_less_or_equal(a_min, b_min, tolerance))
+	if (IsLessOrEqual(a_min, b_min, tolerance))
 		a_min = b_min;
 	result.y = a_min;
-	if (is_less(b_max, a_max, tolerance))
+	if (IsLess(b_max, a_max, tolerance))
 		a_max = b_max;
 	result.h = a_max - a_min;
 

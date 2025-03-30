@@ -77,7 +77,7 @@ void m2::level_editor::State::HandleMousePrimaryButton(const VecF& position) {
 					std::get<int>(
 						M2_LEVEL.RightHud()->find_first_widget_by_name<widget::TextSelection>("GroupTypeSelection")->selections()[0]));
 			const auto selectedGroupInstance = M2_LEVEL.RightHud()->find_first_widget_by_name<widget::IntegerInput>("GroupInstanceSelection")->value();
-			const auto orientation = to_radians(M2_LEVEL.RightHud()->find_first_widget_by_name<widget::IntegerInput>("OrientationInput")->value());
+			const auto orientation = ToRadians(M2_LEVEL.RightHud()->find_first_widget_by_name<widget::IntegerInput>("OrientationInput")->value());
 			PlaceForeground(GetSnapToGridStatus() ? position.round() : position, orientation, selectedObjectType, selectedGroupType, selectedGroupInstance);
 		}
 	} else if (M2_LEVEL.RightHud()->Name() == "SampleFgRightHud") {
@@ -97,7 +97,7 @@ void m2::level_editor::State::HandleMousePrimaryButton(const VecF& position) {
 
 			// Find object properties and set it
 
-			const auto orientationDegreesUnbounded = iround(to_degrees(std::get<pb::LevelObject>(foundIt->second).orientation()));
+			const auto orientationDegreesUnbounded = RoundI(ToDegrees(std::get<pb::LevelObject>(foundIt->second).orientation()));
 			const auto orientationDegrees = ((orientationDegreesUnbounded % 360) + 360) % 360;
 			auto* orientationInput = M2_LEVEL.RightHud()->find_first_widget_by_name<widget::IntegerInput>("OrientationInput");
 			orientationInput->SetValue(orientationDegrees);
@@ -137,7 +137,7 @@ void m2::level_editor::State::EraseBackground(const RectI& area) {
 		if (const auto it = _backgroundSpritePlaceholders[selectedBgLayerIndex].find(pos);
 				it != _backgroundSpritePlaceholders[selectedBgLayerIndex].end()) {
 			const auto id = std::get<Id>(it->second);
-			M2_DEFER(create_object_deleter(id));
+			M2_DEFER(CreateObjectDeleter(id));
 			_backgroundSpritePlaceholders[selectedBgLayerIndex].erase(it);
 		}
 	});
@@ -176,7 +176,7 @@ void m2::level_editor::State::RemoveForegroundObject() {
 	for (auto it = _foregroundObjectPlaceholders.begin(); it != _foregroundObjectPlaceholders.end();) {
 		if (selection.contains(it->first)) {
 			const auto id = std::get<Id>(it->second);
-			M2_DEFER(create_object_deleter(id));
+			M2_DEFER(CreateObjectDeleter(id));
 			it = _foregroundObjectPlaceholders.erase(it);
 		} else {
 			++it;

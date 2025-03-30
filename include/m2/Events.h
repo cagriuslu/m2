@@ -43,40 +43,40 @@ namespace m2 {
 	public:
 		Events() = default;
 
-		void clear();
-		bool gather();
+		void Clear();
+		bool Gather();
 
 		// Quit
-		bool pop_quit();
+		bool PopQuit();
 		// Window resize
-		bool pop_window_resize();
+		bool PopWindowResize();
 		// Key presses
-		bool pop_key_press(m2g::pb::KeyType key);
-		bool pop_key_release(m2g::pb::KeyType key);
+		bool PopKeyPress(m2g::pb::KeyType key);
+		bool PopKeyRelease(m2g::pb::KeyType key);
 		// Mouse button
-		bool peek_mouse_button_press(MouseButton mb) const;
-		bool pop_mouse_button_press(MouseButton mb);
-		bool peek_mouse_button_press(MouseButton mb, const RectI& rect) const;
-		bool pop_mouse_button_press(MouseButton mb, const RectI& rect);
-		void clear_mouse_button_presses(const RectI& rect);
-		bool peek_mouse_button_release(MouseButton mb) const;
-		bool pop_mouse_button_release(MouseButton mb);
-		bool peek_mouse_button_release(MouseButton mb, const RectI& rect) const;
-		bool pop_mouse_button_release(MouseButton mb, const RectI& rect);
-		void clear_mouse_button_releases(const RectI& rect);
+		bool PeekMouseButtonPress(MouseButton mb) const;
+		bool PopMouseButtonPress(MouseButton mb);
+		bool PeekMouseButtonPress(MouseButton mb, const RectI& rect) const;
+		bool PopMouseButtonPress(MouseButton mb, const RectI& rect);
+		void ClearMouseButtonPresses(const RectI& rect);
+		bool PeekMouseButtonRelease(MouseButton mb) const;
+		bool PopMouseButtonRelease(MouseButton mb);
+		bool PeekMouseButtonRelease(MouseButton mb, const RectI& rect) const;
+		bool PopMouseButtonRelease(MouseButton mb, const RectI& rect);
+		void ClearMouseButtonReleases(const RectI& rect);
 		// Mouse scroll
-		int32_t pop_mouse_wheel_vertical_scroll();
-		int32_t pop_mouse_wheel_vertical_scroll(const RectI& rect);
-		int32_t pop_mouse_wheel_horizontal_scroll();
-		int32_t pop_mouse_wheel_horizontal_scroll(const RectI& rect);
-		void clear_mouse_wheel_scrolls(const RectI& rect);
+		int32_t PopMouseWheelVerticalScroll();
+		int32_t PopMouseWheelVerticalScroll(const RectI& rect);
+		int32_t PopMouseWheelHorizontalScroll();
+		int32_t PopMouseWheelHorizontalScroll(const RectI& rect);
+		void ClearMouseWheelScrolls(const RectI& rect);
 		// Text input
-		std::optional<std::string> pop_text_input();
+		std::optional<std::string> PopTextInput();
 
 		// Continuous states
-		bool is_key_down(m2g::pb::KeyType key) const;
-		bool is_mouse_button_down(MouseButton mb) const;
-		void clear_mouse_button_down(const RectI& rect);
-		VecI mouse_position() const;
+		bool IsKeyDown(m2g::pb::KeyType key) const;
+		bool IsMouseButtonDown(MouseButton mb) const;
+		void ClearMouseButtonDown(const RectI& rect);
+		VecI MousePosition() const;
 	};
 }

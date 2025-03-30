@@ -107,7 +107,7 @@ namespace m2 {
 		World& World2() { return world2; }
 		/// Inclusive rectangle that contains all terrain graphics inside. The unit is meters.
 		[[nodiscard]] const RectI& BackgroundBoundary() const { return _backgroundBoundary; }
-		const std::string& Identifier() const { return _lb ? _lb->identifier() : empty_string; }
+		const std::string& Identifier() const { return _lb ? _lb->identifier() : gEmptyString; }
 		pb::ProjectionType ProjectionType() const {
 			return (std::holds_alternative<splayer::State>(stateVariant) || std::holds_alternative<mplayer::State>(stateVariant)) && _lb
 			    ? _lb->projection_type()

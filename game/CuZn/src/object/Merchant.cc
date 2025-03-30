@@ -19,16 +19,16 @@ m2::Object* find_merchant_at_location(m2g::pb::SpriteType location) {
 }
 
 void init_merchant(m2::Object& obj) {
-	auto& chr = obj.add_full_character();
+	auto& chr = obj.AddFullCharacter();
 	// Active merchants will be given a merchant license during setup. (ITEM_CATEGORY_MERCHANT_LICENSE)
 	// Passive merchants will simply exist without a license.
 
-	auto& gfx = obj.add_graphic();
+	auto& gfx = obj.AddGraphic();
 	gfx.preDraw = [&chr](m2::Graphic& g) {
 		// Set the sprite if license is added. Licenses are assigned after population, thus do it pre_draw.
 		auto it = chr.FindItems(m2g::pb::ITEM_CATEGORY_MERCHANT_LICENSE);
 		if (it != chr.EndItems()) {
-			g.visual = &std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(it->game_sprite()));
+			g.visual = &std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(it->GameSprite()));
 		} else {
 			g.visual = std::monostate{};
 		}

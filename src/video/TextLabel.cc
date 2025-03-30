@@ -9,7 +9,7 @@ m2::VecI m2::EstimateTextLabelDimensions(TTF_Font* font, const std::string& text
 	// Estimate the size of the final text
 	int w, h;
 	const auto sizeResult = TTF_SizeUTF8(font, text.c_str(), &w, &h);
-	m2_expect_zero_or_throw_message(sizeResult, TTF_GetError());
+	m2ExpectZeroOrThrowMessage(sizeResult, TTF_GetError());
 	return {w, h};
 }
 
@@ -78,11 +78,11 @@ m2::RectI m2::TextLabelCache::TextLabelGenerator::operator()(const std::tuple<st
 	// Estimate the size of the final text
 	int w, h;
 	const auto sizeResult = TTF_SizeUTF8(_font, std::get<std::string>(item).c_str(), &w, &h);
-	m2_expect_zero_or_throw_message(sizeResult, TTF_GetError());
+	m2ExpectZeroOrThrowMessage(sizeResult, TTF_GetError());
 
 	// Render to new surface
 	sdl::SurfaceUniquePtr surface{TTF_RenderUTF8_Blended(_font, std::get<std::string>(item).c_str(), SDL_Color{255, 255, 255, 255})};
-	m2_succeed_or_throw_message(surface, TTF_GetError());
+	m2SucceedOrThrowMessage(surface, TTF_GetError());
 
 	// Allocate space
 	auto [dstSurface, dstRect] = _dynamicSheet.Alloc(w, h);
@@ -90,7 +90,7 @@ m2::RectI m2::TextLabelCache::TextLabelGenerator::operator()(const std::tuple<st
 	// Blit new surface to allocated surface
 	auto dstRectSdl = static_cast<SDL_Rect>(dstRect);
 	const auto blitResult = SDL_BlitSurface(surface.get(), nullptr, dstSurface, &dstRectSdl);
-	m2_expect_zero_or_throw_message(blitResult, SDL_GetError());
+	m2ExpectZeroOrThrowMessage(blitResult, SDL_GetError());
 
 	_dynamicSheet.RecreateTexture(false);
 

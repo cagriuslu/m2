@@ -11,37 +11,37 @@ namespace m2 {
 	public:
 		virtual ~Item() = default;
 
-		[[nodiscard]] virtual m2g::pb::ItemType type() const = 0;
-		[[nodiscard]] virtual m2g::pb::ItemCategory category() const = 0;
-		[[nodiscard]] virtual pb::Usage usage() const = 0;
-		[[nodiscard]] virtual bool use_on_acquire() const = 0;
+		[[nodiscard]] virtual m2g::pb::ItemType Type() const = 0;
+		[[nodiscard]] virtual m2g::pb::ItemCategory Category() const = 0;
+		[[nodiscard]] virtual pb::Usage Usage() const = 0;
+		[[nodiscard]] virtual bool UseOnAcquire() const = 0;
 
-		[[nodiscard]] virtual size_t get_cost_count() const = 0;
-		[[nodiscard]] virtual std::pair<m2g::pb::ResourceType, float> get_cost_by_index(size_t i) const = 0;
-		[[nodiscard]] virtual float get_cost(m2g::pb::ResourceType) const = 0;
-		[[nodiscard]] virtual float try_get_cost(m2g::pb::ResourceType, float default_value) const = 0;
-		[[nodiscard]] virtual bool has_cost(m2g::pb::ResourceType) const = 0;
+		[[nodiscard]] virtual size_t GetCostCount() const = 0;
+		[[nodiscard]] virtual std::pair<m2g::pb::ResourceType, float> GetCostByIndex(size_t i) const = 0;
+		[[nodiscard]] virtual float GetCost(m2g::pb::ResourceType) const = 0;
+		[[nodiscard]] virtual float TryGetCost(m2g::pb::ResourceType, float default_value) const = 0;
+		[[nodiscard]] virtual bool HasCost(m2g::pb::ResourceType) const = 0;
 
-		[[nodiscard]] virtual size_t get_benefit_count() const = 0;
-		[[nodiscard]] virtual std::pair<m2g::pb::ResourceType, float> get_benefit_by_index(size_t i) const = 0;
-		[[nodiscard]] virtual float get_benefit(m2g::pb::ResourceType) const = 0;
-		[[nodiscard]] virtual float try_get_benefit(m2g::pb::ResourceType, float default_value) const = 0;
-		[[nodiscard]] virtual bool has_benefit(m2g::pb::ResourceType) const = 0;
+		[[nodiscard]] virtual size_t GetBenefitCount() const = 0;
+		[[nodiscard]] virtual std::pair<m2g::pb::ResourceType, float> GetBenefitByIndex(size_t i) const = 0;
+		[[nodiscard]] virtual float GetBenefit(m2g::pb::ResourceType) const = 0;
+		[[nodiscard]] virtual float TryGetBenefit(m2g::pb::ResourceType, float default_value) const = 0;
+		[[nodiscard]] virtual bool HasBenefit(m2g::pb::ResourceType) const = 0;
 
-		[[nodiscard]] virtual size_t get_acquire_benefit_count() const = 0;
-		[[nodiscard]] virtual std::pair<m2g::pb::ResourceType, float> get_acquire_benefit_by_index(size_t i) const = 0;
-		[[nodiscard]] virtual float get_acquire_benefit(m2g::pb::ResourceType) const = 0;
-		[[nodiscard]] virtual float try_get_acquire_benefit(m2g::pb::ResourceType, float default_value) const = 0;
-		[[nodiscard]] virtual bool has_acquire_benefit(m2g::pb::ResourceType) const = 0;
+		[[nodiscard]] virtual size_t GetAcquireBenefitCount() const = 0;
+		[[nodiscard]] virtual std::pair<m2g::pb::ResourceType, float> GetAcquireBenefitByIndex(size_t i) const = 0;
+		[[nodiscard]] virtual float GetAcquireBenefit(m2g::pb::ResourceType) const = 0;
+		[[nodiscard]] virtual float TryGetAcquireBenefit(m2g::pb::ResourceType, float default_value) const = 0;
+		[[nodiscard]] virtual bool HasAcquireBenefit(m2g::pb::ResourceType) const = 0;
 
-		[[nodiscard]] virtual size_t get_attribute_count() const = 0;
-		[[nodiscard]] virtual std::pair<m2g::pb::AttributeType, float> get_attribute_by_index(size_t i) const = 0;
+		[[nodiscard]] virtual size_t GetAttributeCount() const = 0;
+		[[nodiscard]] virtual std::pair<m2g::pb::AttributeType, float> GetAttributeByIndex(size_t i) const = 0;
 		[[nodiscard]] virtual float GetAttribute(m2g::pb::AttributeType) const = 0;
-		[[nodiscard]] virtual float try_get_attribute(m2g::pb::AttributeType, float default_value) const = 0;
-		[[nodiscard]] virtual bool has_attribute(m2g::pb::AttributeType) const = 0;
+		[[nodiscard]] virtual float TryGetAttribute(m2g::pb::AttributeType, float default_value) const = 0;
+		[[nodiscard]] virtual bool HasAttribute(m2g::pb::AttributeType) const = 0;
 
-		[[nodiscard]] virtual m2g::pb::SpriteType game_sprite() const = 0;
-		[[nodiscard]] virtual m2g::pb::SpriteType ui_sprite() const = 0;
+		[[nodiscard]] virtual m2g::pb::SpriteType GameSprite() const = 0;
+		[[nodiscard]] virtual m2g::pb::SpriteType UiSprite() const = 0;
 	};
 
 	// Represents an item that doesn't have a protobuf correspondent.
@@ -67,32 +67,32 @@ namespace m2 {
 				std::pair<m2g::pb::ResourceType, float> acquire_benefit, std::pair<m2g::pb::AttributeType, float> attribute,
 				m2g::pb::SpriteType game_sprite, m2g::pb::SpriteType ui_sprite);
 
-		[[nodiscard]] inline m2g::pb::ItemType type() const override { return _type; }
-		[[nodiscard]] inline m2g::pb::ItemCategory category() const override { return _category; }
-		[[nodiscard]] inline pb::Usage usage() const override { return _usage; }
-		[[nodiscard]] inline bool use_on_acquire() const override { return _use_on_acquire; }
-		[[nodiscard]] inline size_t get_cost_count() const override { return _cost.second != 0.0f ? 1 : 0; }
-		[[nodiscard]] std::pair<m2g::pb::ResourceType, float> get_cost_by_index(size_t i) const override;
-		[[nodiscard]] float get_cost(m2g::pb::ResourceType) const override;
-		[[nodiscard]] float try_get_cost(m2g::pb::ResourceType, float default_value) const override;
-		[[nodiscard]] bool has_cost(m2g::pb::ResourceType) const override;
-		[[nodiscard]] inline size_t get_benefit_count() const override { return _benefit.second != 0.0f ? 1 : 0; }
-		[[nodiscard]] std::pair<m2g::pb::ResourceType, float> get_benefit_by_index(size_t i) const override;
-		[[nodiscard]] float get_benefit(m2g::pb::ResourceType) const override;
-		[[nodiscard]] float try_get_benefit(m2g::pb::ResourceType, float default_value) const override;
-		[[nodiscard]] bool has_benefit(m2g::pb::ResourceType) const override;
-		[[nodiscard]] size_t get_acquire_benefit_count() const override { return _acquire_benefit.second != 0.0f ? 1 : 0; }
-		[[nodiscard]] std::pair<m2g::pb::ResourceType, float> get_acquire_benefit_by_index(size_t i) const override;
-		[[nodiscard]] float get_acquire_benefit(m2g::pb::ResourceType) const override;
-		[[nodiscard]] float try_get_acquire_benefit(m2g::pb::ResourceType, float default_value) const override;
-		[[nodiscard]] bool has_acquire_benefit(m2g::pb::ResourceType) const override;
-		[[nodiscard]] inline size_t get_attribute_count() const override { return _attribute.second != 0.0f ? 1 : 0; }
-		[[nodiscard]] std::pair<m2g::pb::AttributeType, float> get_attribute_by_index(size_t i) const override;
+		[[nodiscard]] inline m2g::pb::ItemType Type() const override { return _type; }
+		[[nodiscard]] inline m2g::pb::ItemCategory Category() const override { return _category; }
+		[[nodiscard]] inline pb::Usage Usage() const override { return _usage; }
+		[[nodiscard]] inline bool UseOnAcquire() const override { return _use_on_acquire; }
+		[[nodiscard]] inline size_t GetCostCount() const override { return _cost.second != 0.0f ? 1 : 0; }
+		[[nodiscard]] std::pair<m2g::pb::ResourceType, float> GetCostByIndex(size_t i) const override;
+		[[nodiscard]] float GetCost(m2g::pb::ResourceType) const override;
+		[[nodiscard]] float TryGetCost(m2g::pb::ResourceType, float default_value) const override;
+		[[nodiscard]] bool HasCost(m2g::pb::ResourceType) const override;
+		[[nodiscard]] inline size_t GetBenefitCount() const override { return _benefit.second != 0.0f ? 1 : 0; }
+		[[nodiscard]] std::pair<m2g::pb::ResourceType, float> GetBenefitByIndex(size_t i) const override;
+		[[nodiscard]] float GetBenefit(m2g::pb::ResourceType) const override;
+		[[nodiscard]] float TryGetBenefit(m2g::pb::ResourceType, float default_value) const override;
+		[[nodiscard]] bool HasBenefit(m2g::pb::ResourceType) const override;
+		[[nodiscard]] size_t GetAcquireBenefitCount() const override { return _acquire_benefit.second != 0.0f ? 1 : 0; }
+		[[nodiscard]] std::pair<m2g::pb::ResourceType, float> GetAcquireBenefitByIndex(size_t i) const override;
+		[[nodiscard]] float GetAcquireBenefit(m2g::pb::ResourceType) const override;
+		[[nodiscard]] float TryGetAcquireBenefit(m2g::pb::ResourceType, float default_value) const override;
+		[[nodiscard]] bool HasAcquireBenefit(m2g::pb::ResourceType) const override;
+		[[nodiscard]] inline size_t GetAttributeCount() const override { return _attribute.second != 0.0f ? 1 : 0; }
+		[[nodiscard]] std::pair<m2g::pb::AttributeType, float> GetAttributeByIndex(size_t i) const override;
 		[[nodiscard]] float GetAttribute(m2g::pb::AttributeType) const override;
-		[[nodiscard]] float try_get_attribute(m2g::pb::AttributeType, float default_value) const override;
-		[[nodiscard]] bool has_attribute(m2g::pb::AttributeType) const override;
-		[[nodiscard]] inline m2g::pb::SpriteType game_sprite() const override { return _game_sprite; }
-		[[nodiscard]] inline m2g::pb::SpriteType ui_sprite() const override { return _ui_sprite; }
+		[[nodiscard]] float TryGetAttribute(m2g::pb::AttributeType, float default_value) const override;
+		[[nodiscard]] bool HasAttribute(m2g::pb::AttributeType) const override;
+		[[nodiscard]] inline m2g::pb::SpriteType GameSprite() const override { return _game_sprite; }
+		[[nodiscard]] inline m2g::pb::SpriteType UiSprite() const override { return _ui_sprite; }
 	};
 
 	/// Represents a protobuf-backed item. It can have as many costs, benefits, and attributes as possible.
@@ -114,38 +114,38 @@ namespace m2 {
 		NamedItem(NamedItem&& other) = default;
 		NamedItem& operator=(NamedItem&& other) = default;
 
-		[[nodiscard]] inline m2g::pb::ItemType type() const override { return _item.type(); }
-		[[nodiscard]] inline m2g::pb::ItemCategory category() const override { return _item.category(); }
-		[[nodiscard]] inline pb::Usage usage() const override { return _item.usage(); }
-		[[nodiscard]] inline bool use_on_acquire() const override { return _item.use_on_acquire(); }
-		[[nodiscard]] inline size_t get_cost_count() const override { return _item.costs_size(); }
-		[[nodiscard]] std::pair<m2g::pb::ResourceType, float> get_cost_by_index(size_t i) const override;
-		[[nodiscard]] float get_cost(m2g::pb::ResourceType) const override;
-		[[nodiscard]] float try_get_cost(m2g::pb::ResourceType, float default_value) const override;
-		[[nodiscard]] bool has_cost(m2g::pb::ResourceType) const override;
-		[[nodiscard]] inline size_t get_benefit_count() const override { return _item.benefits_size(); }
-		[[nodiscard]] std::pair<m2g::pb::ResourceType, float> get_benefit_by_index(size_t i) const override;
-		[[nodiscard]] float get_benefit(m2g::pb::ResourceType) const override;
-		[[nodiscard]] float try_get_benefit(m2g::pb::ResourceType, float default_value) const override;
-		[[nodiscard]] bool has_benefit(m2g::pb::ResourceType) const override;
-		[[nodiscard]] size_t get_acquire_benefit_count() const override { return _item.acquire_benefits_size(); }
-		[[nodiscard]] std::pair<m2g::pb::ResourceType, float> get_acquire_benefit_by_index(size_t i) const override;
-		[[nodiscard]] float get_acquire_benefit(m2g::pb::ResourceType) const override;
-		[[nodiscard]] float try_get_acquire_benefit(m2g::pb::ResourceType, float default_value) const override;
-		[[nodiscard]] bool has_acquire_benefit(m2g::pb::ResourceType) const override;
-		[[nodiscard]] inline size_t get_attribute_count() const override { return _item.attributes_size(); }
-		[[nodiscard]] std::pair<m2g::pb::AttributeType, float> get_attribute_by_index(size_t i) const override;
+		[[nodiscard]] inline m2g::pb::ItemType Type() const override { return _item.type(); }
+		[[nodiscard]] inline m2g::pb::ItemCategory Category() const override { return _item.category(); }
+		[[nodiscard]] inline pb::Usage Usage() const override { return _item.usage(); }
+		[[nodiscard]] inline bool UseOnAcquire() const override { return _item.use_on_acquire(); }
+		[[nodiscard]] inline size_t GetCostCount() const override { return _item.costs_size(); }
+		[[nodiscard]] std::pair<m2g::pb::ResourceType, float> GetCostByIndex(size_t i) const override;
+		[[nodiscard]] float GetCost(m2g::pb::ResourceType) const override;
+		[[nodiscard]] float TryGetCost(m2g::pb::ResourceType, float default_value) const override;
+		[[nodiscard]] bool HasCost(m2g::pb::ResourceType) const override;
+		[[nodiscard]] inline size_t GetBenefitCount() const override { return _item.benefits_size(); }
+		[[nodiscard]] std::pair<m2g::pb::ResourceType, float> GetBenefitByIndex(size_t i) const override;
+		[[nodiscard]] float GetBenefit(m2g::pb::ResourceType) const override;
+		[[nodiscard]] float TryGetBenefit(m2g::pb::ResourceType, float default_value) const override;
+		[[nodiscard]] bool HasBenefit(m2g::pb::ResourceType) const override;
+		[[nodiscard]] size_t GetAcquireBenefitCount() const override { return _item.acquire_benefits_size(); }
+		[[nodiscard]] std::pair<m2g::pb::ResourceType, float> GetAcquireBenefitByIndex(size_t i) const override;
+		[[nodiscard]] float GetAcquireBenefit(m2g::pb::ResourceType) const override;
+		[[nodiscard]] float TryGetAcquireBenefit(m2g::pb::ResourceType, float default_value) const override;
+		[[nodiscard]] bool HasAcquireBenefit(m2g::pb::ResourceType) const override;
+		[[nodiscard]] inline size_t GetAttributeCount() const override { return _item.attributes_size(); }
+		[[nodiscard]] std::pair<m2g::pb::AttributeType, float> GetAttributeByIndex(size_t i) const override;
 		[[nodiscard]] float GetAttribute(m2g::pb::AttributeType) const override;
-		[[nodiscard]] float try_get_attribute(m2g::pb::AttributeType, float default_value) const override;
-		[[nodiscard]] bool has_attribute(m2g::pb::AttributeType) const override;
-		[[nodiscard]] inline m2g::pb::SpriteType game_sprite() const override { return _item.game_sprite(); }
-		[[nodiscard]] inline m2g::pb::SpriteType ui_sprite() const override { return _item.ui_sprite(); }
+		[[nodiscard]] float TryGetAttribute(m2g::pb::AttributeType, float default_value) const override;
+		[[nodiscard]] bool HasAttribute(m2g::pb::AttributeType) const override;
+		[[nodiscard]] inline m2g::pb::SpriteType GameSprite() const override { return _item.game_sprite(); }
+		[[nodiscard]] inline m2g::pb::SpriteType UiSprite() const override { return _item.ui_sprite(); }
 		[[nodiscard]] const std::string& in_game_name() const { return _item.in_game_name(); }
 	};
 
 	// Transformers
-	const NamedItem& to_named_item(m2g::pb::ItemType item_type);
-	std::function<float(const NamedItem&)> generate_to_attribute_value_transformer(m2g::pb::AttributeType attribute_type);
+	const NamedItem& ToNamedItem(m2g::pb::ItemType item_type);
+	std::function<float(const NamedItem&)> ToAttributeValue(m2g::pb::AttributeType attribute_type);
 
-	float get_resource_amount(const pb::Resource& resource);
+	float GetResourceAmount(const pb::Resource& resource);
 }

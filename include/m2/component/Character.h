@@ -198,5 +198,5 @@ namespace m2 {
 	std::function<std::vector<m2g::pb::ItemType>(Character&)> GenerateNamedItemTypesFilter(std::initializer_list<m2g::pb::ItemCategory> categoriesToFilter);
 	// Transformers
 	Character& ToCharacterBase(CharacterVariant& v);
-	inline Object& ToOwnerOfCharacter(const Character& chr) { return chr.owner(); }
+	inline Object& ToOwnerOfCharacter(const Character& chr) { return chr.Owner(); }
 }

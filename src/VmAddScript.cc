@@ -252,7 +252,7 @@ m2::void_expected m2::Vm::add_script(const std::string& script) {
 }
 
 m2::void_expected m2::Vm::add_script_file(const std::string& path) {
-	auto str = read_file(path);
-	m2_reflect_unexpected(str);
+	auto str = ReadFile(path);
+	m2ReflectUnexpected(str);
 	return add_script(*str);
 }

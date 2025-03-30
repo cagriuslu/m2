@@ -33,7 +33,7 @@ static TextBlueprint client_count = {
 			if (M2_GAME.ServerThread().close_lobby()) {
 				auto ccount = M2_GAME.ServerThread().client_count();
 				const auto expect_success = M2_GAME.LoadMultiPlayerAsHost(M2_GAME.levels_dir / "Map.json", m2::ToString(ccount));
-				m2_succeed_or_throw_error(expect_success);
+				m2SucceedOrThrowError(expect_success);
 				return MakeClearStackAction();
 			}
 		}

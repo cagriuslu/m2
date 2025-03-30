@@ -11,7 +11,7 @@ int CalculateCost(int capacity, int current_resource_count, int to_buy) {
 	};
 
 	int total_cost = 0;
-	m2_repeat(to_buy) {
+	m2Repeat(to_buy) {
 		total_cost += cost_of_one(current_resource_count--);
 	}
 	return total_cost;
