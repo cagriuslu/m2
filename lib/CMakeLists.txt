@@ -22,6 +22,7 @@ macro(BuildDependency dependency)
         message("Will build ${dependency}...")
         execute_process(
                 COMMAND "${CMAKE_COMMAND}" -G ${CMAKE_GENERATOR} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DBUILDING_DEPS=ON -B ${CMAKE_BINARY_DIR} -S ${CMAKE_SOURCE_DIR}
+                COMMAND_ECHO STDOUT
                 OUTPUT_FILE ${CMAKE_BINARY_DIR}/${dependency}-cmake.out
                 ERROR_FILE ${CMAKE_BINARY_DIR}/${dependency}-cmake.err
                 RESULT_VARIABLE EXIT_CODE)
@@ -30,6 +31,7 @@ macro(BuildDependency dependency)
         endif()
         execute_process(
                 COMMAND "${CMAKE_COMMAND}" --build ${CMAKE_BINARY_DIR} --config ${CMAKE_BUILD_TYPE} --target ${dependency}
+                COMMAND_ECHO STDOUT
                 OUTPUT_FILE ${CMAKE_BINARY_DIR}/${dependency}-build.out
                 ERROR_FILE ${CMAKE_BINARY_DIR}/${dependency}-build.err
                 RESULT_VARIABLE EXIT_CODE)
