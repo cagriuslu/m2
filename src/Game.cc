@@ -8,14 +8,12 @@
 #include <m2/video/Sprite.h>
 #include <m2/String.h>
 #include <m2/bulk_sheet_editor/Ui.h>
-#include <m2/level_editor/Ui.h>
 #include <m2/sdl/Detail.h>
 #include <m2/sheet_editor/Ui.h>
 #include <m2/FileSystem.h>
 #include <filesystem>
 #include <ranges>
 #include "m2/component/Graphic.h"
-#include <Key.pb.h>
 #include <m2/ui/UiAction.h>
 #include <m2/game/Key.h>
 
@@ -60,7 +58,7 @@ m2::Game::Game() {
 		LOG_WARN("Failed to set line render method");
 	}
 
-	auto minimumWindowDims = GameDimensionsManager::EstimateMinimumWindowDimensions(_proxy.gamePpm, _proxy.defaultGameHeightM);
+	const auto minimumWindowDims = GameDimensionsManager::EstimateMinimumWindowDimensions(_proxy.gamePpm, _proxy.defaultGameHeightM);
 	if ((window = SDL_CreateWindow(_proxy.game_friendly_name.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 		minimumWindowDims.x, minimumWindowDims.y, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == nullptr) {
 		throw M2_ERROR("SDL error: " + std::string{SDL_GetError()});
@@ -146,13 +144,13 @@ m2::Game::Game() {
 	object_main_sprites = ListLevelEditorObjectSprites(resource_dir / "Objects.json");
 	LOG_INFO("Loaded objects", object_main_sprites.size());
 
-	named_items = pb::LUT<m2::pb::Item, NamedItem>::load(resource_dir / "Items.json", &m2::pb::Items::items);
+	named_items = pb::LUT<pb::Item, NamedItem>::load(resource_dir / "Items.json", &pb::Items::items);
 	LOG_INFO("Loaded named items", named_items.size());
 
-	animations = pb::LUT<m2::pb::Animation, Animation>::load(resource_dir / "Animations.json", &m2::pb::Animations::animations);
+	animations = pb::LUT<pb::Animation, Animation>::load(resource_dir / "Animations.json", &pb::Animations::animations);
 	LOG_INFO("Loaded animations", animations.size());
 
-	songs = pb::LUT<m2::pb::Song, Song>::load(resource_dir / "Songs.json", &m2::pb::Songs::songs);
+	songs = pb::LUT<pb::Song, Song>::load(resource_dir / "Songs.json", &pb::Songs::songs);
 	LOG_INFO("Loaded songs", songs.size());
 
 	keyToScancodeMap = GenerateKeyToScancodeMap(resource_dir / "Keys.json");
@@ -171,7 +169,7 @@ m2::Game::~Game() {
 	SDL_Quit();
 }
 
-m2::void_expected m2::Game::HostGame(mplayer::Type type, unsigned max_connection_count) {
+m2::void_expected m2::Game::HostGame(const mplayer::Type type, const unsigned max_connection_count) {
 	if (not std::holds_alternative<std::monostate>(_multi_player_threads)) {
 		throw M2_ERROR("Hosting game requires no other multiplayer threads to exist");
 	}
@@ -218,7 +216,7 @@ bool m2::Game::AddBot() {
 	}
 
 	// Create an instance at the end of the list
-	auto it = _bot_threads.emplace(_bot_threads.end());
+	const auto it = _bot_threads.emplace(_bot_threads.end());
 	LOG_INFO("Joining the game as bot client...");
 
 	LOG_DEBUG("Destroying temporary BotClientThread...");
@@ -231,15 +229,14 @@ bool m2::Game::AddBot() {
 	if (it->first.is_active()) {
 		it->second = -1; // Index is initially unknown
 		return true;
-	} else {
-		LOG_WARN("BotClientThread failed to connect, destroying client");
-		_bot_threads.erase(it);
-		return false;
 	}
+	LOG_WARN("BotClientThread failed to connect, destroying client");
+	_bot_threads.erase(it);
+	return false;
 }
 
-m2::network::BotClientThread& m2::Game::FindBot(int receiver_index) {
-	auto it = std::find_if(_bot_threads.begin(), _bot_threads.end(), IsSecondEquals<network::BotClientThread, int>(receiver_index));
+m2::network::BotClientThread& m2::Game::FindBot(const int receiver_index) {
+	const auto it = std::ranges::find_if(_bot_threads, IsSecondEquals<network::BotClientThread, int>(receiver_index));
 	if (it == _bot_threads.end()) {
 		throw M2_ERROR("Bot not found");
 	}
@@ -249,45 +246,44 @@ m2::network::BotClientThread& m2::Game::FindBot(int receiver_index) {
 int m2::Game::TotalPlayerCount() {
 	if (IsServer()) {
 		return ServerThread().client_count();
-	} else if (IsRealClient()) {
-		return RealClientThread().total_player_count();
-	} else {
-		throw M2_ERROR("Not a multiplayer game");
 	}
+	if (IsRealClient()) {
+		return RealClientThread().total_player_count();
+	}
+	throw M2_ERROR("Not a multiplayer game");
 }
 
 int m2::Game::SelfIndex() {
 	if (IsServer()) {
 		return 0;
-	} else if (IsRealClient()) {
-		return RealClientThread().self_index();
-	} else {
-		throw M2_ERROR("Not a multiplayer game");
 	}
+	if (IsRealClient()) {
+		return RealClientThread().self_index();
+	}
+	throw M2_ERROR("Not a multiplayer game");
 }
 
 int m2::Game::TurnHolderIndex() {
 	if (IsServer()) {
 		return ServerThread().turn_holder_index();
-	} else if (IsRealClient()) {
-		return RealClientThread().turn_holder_index();
-	} else {
-		throw M2_ERROR("Not a multiplayer game");
 	}
+	if (IsRealClient()) {
+		return RealClientThread().turn_holder_index();
+	}
+	throw M2_ERROR("Not a multiplayer game");
 }
 
 bool m2::Game::IsOurTurn() {
 	if (IsServer()) {
 		return ServerThread().is_our_turn();
-	} else if (IsRealClient()) {
+	}
+	if (IsRealClient()) {
 		if (RealClientThread().is_started()) {
 			return RealClientThread().is_our_turn();
-		} else {
-			return false;
 		}
-	} else {
-		throw M2_ERROR("Not a multiplayer game");
+		return false;
 	}
+	throw M2_ERROR("Not a multiplayer game");
 }
 
 void m2::Game::QueueClientCommand(const m2g::pb::ClientCommand& cmd) {
@@ -304,6 +300,8 @@ m2::void_expected m2::Game::LoadSinglePlayer(
 	const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& level_name) {
 	_level.reset();
 	ResetState();
+	// Reinit dimensions with proxy in case an editor was initialized before
+	_dimensionsManager->SetGameAspectRatio(_proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
 	_level.emplace();
 	return _level->InitSinglePlayer(level_path_or_blueprint, level_name);
 }
@@ -312,6 +310,8 @@ m2::void_expected m2::Game::LoadMultiPlayerAsHost(
 	const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& level_name) {
 	_level.reset();
 	ResetState();
+	// Reinit dimensions with proxy in case an editor was initialized before
+	_dimensionsManager->SetGameAspectRatio(_proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
 	_level.emplace();
 
 	auto success = _level->InitMultiPlayerAsHost(level_path_or_blueprint, level_name);
@@ -345,7 +345,7 @@ m2::void_expected m2::Game::LoadMultiPlayerAsHost(
 	LOG_DEBUG("Waiting 1s until the second server update is delivered to bots");
 	std::this_thread::sleep_for(std::chrono::seconds(1));
 	for (auto& [bot, index] : _bot_threads) {
-		auto server_update = bot.pop_server_update();
+		const auto server_update = bot.pop_server_update();
 		if (not server_update) {
 			throw M2_ERROR("Bot hasn't received the ServerUpdate");
 		}
@@ -359,6 +359,8 @@ m2::void_expected m2::Game::LoadMultiPlayerAsGuest(
 	const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& level_name) {
 	_level.reset();
 	ResetState();
+	// Reinit dimensions with proxy in case an editor was initialized before
+	_dimensionsManager->SetGameAspectRatio(_proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
 	_level.emplace();
 
 	auto success = _level->InitMultiPlayerAsGuest(level_path_or_blueprint, level_name);
@@ -376,6 +378,8 @@ m2::void_expected m2::Game::LoadMultiPlayerAsGuest(
 m2::void_expected m2::Game::LoadLevelEditor(const std::string& level_resource_path) {
 	_level.reset();
 	ResetState();
+	// Reinit dimensions with default parameters
+	_dimensionsManager->SetGameAspectRatio(m2::Proxy{}.gameAspectRatioMul, m2::Proxy{}.gameAspectRatioDiv);
 	_level.emplace();
 	return _level->InitLevelEditor(level_resource_path);
 }
@@ -384,6 +388,8 @@ m2::void_expected m2::Game::LoadPixelEditor(
 	const std::string& image_resource_path, const int x_offset, const int y_offset) {
 	_level.reset();
 	ResetState();
+	// Reinit dimensions with default parameters
+	_dimensionsManager->SetGameAspectRatio(m2::Proxy{}.gameAspectRatioMul, m2::Proxy{}.gameAspectRatioDiv);
 	_level.emplace();
 	return _level->InitPixelEditor(image_resource_path, x_offset, y_offset);
 }
@@ -391,6 +397,8 @@ m2::void_expected m2::Game::LoadPixelEditor(
 m2::void_expected m2::Game::LoadSheetEditor() {
 	_level.reset();
 	ResetState();
+	// Reinit dimensions with default parameters
+	_dimensionsManager->SetGameAspectRatio(m2::Proxy{}.gameAspectRatioMul, m2::Proxy{}.gameAspectRatioDiv);
 	_level.emplace();
 	return _level->InitSheetEditor(resource_dir / "SpriteSheets.json");
 }
@@ -398,6 +406,8 @@ m2::void_expected m2::Game::LoadSheetEditor() {
 m2::void_expected m2::Game::LoadBulkSheetEditor() {
 	_level.reset();
 	ResetState();
+	// Reinit dimensions with default parameters
+	_dimensionsManager->SetGameAspectRatio(m2::Proxy{}.gameAspectRatioMul, m2::Proxy{}.gameAspectRatioDiv);
 	_level.emplace();
 	return _level->InitBulkSheetEditor(resource_dir / "SpriteSheets.json");
 }
@@ -447,7 +457,7 @@ void m2::Game::HandlePauseEvent() {
 void m2::Game::HandleHudEvents() {
 	if (_level->_semiBlockingUiPanel) {
 		_level->_semiBlockingUiPanel->HandleEvents(events, _level->isPanning)
-				.IfQuit([this]() {
+				.IfQuit([this] {
 					quit = true;
 				})
 				.IfAnyReturn([this](const ReturnBase&) {
@@ -465,7 +475,7 @@ void m2::Game::HandleHudEvents() {
 		// The order of event handling is the reverse of the drawing order
 		for (auto &panel : std::ranges::reverse_view(_level->_customNonblockingUiPanels)) {
 			auto action{panel.HandleEvents(events, _level->isPanning)};
-			action.IfQuit([this]() { quit = true; });
+			action.IfQuit([this] { quit = true; });
 			if (auto anyReturnContainer = action.ExtractAnyReturnContainer()) {
 				// If UI returned, kill the panel. We cannot delete it yet, the iterator is held by the client, but we
 				// can replace it with a killed object that can hold the AnyReturnContainer instead.
@@ -491,13 +501,13 @@ void m2::Game::HandleNetworkEvents() {
 		}
 	} else if (IsServer()) {
 		// Check if a client has disconnected
-		if (auto disconnected_client_index = ServerThread().disconnected_client()) {
+		if (const auto disconnected_client_index = ServerThread().disconnected_client()) {
 			MAYBE auto action = _proxy.handle_disconnected_client(*disconnected_client_index);
 			// TODO handle
 		}
 
 		// Check if a client has misbehaved
-		if (auto misbehaved_client_index = ServerThread().misbehaved_client()) {
+		if (const auto misbehaved_client_index = ServerThread().misbehaved_client()) {
 			MAYBE auto action = _proxy.handle_misbehaving_client(*misbehaved_client_index);
 			// TODO handle
 		}
@@ -532,7 +542,7 @@ void m2::Game::ExecutePreStep() {
 	if (IsServer()) {
 		if (not _bot_threads.empty()) {
 			// Check if any of the bots need to handle the ServerUpdate
-			for (auto& [bot, _] : _bot_threads) {
+			for (auto& bot : _bot_threads | std::views::keys) {
 				if (auto server_update = bot.pop_server_update()) {
 					_proxy.bot_handle_server_update(*server_update);
 				}
@@ -540,9 +550,8 @@ void m2::Game::ExecutePreStep() {
 		}
 
 		// Handle client command
-		if (auto client_command = ServerThread().pop_turn_holder_command()) {
-			auto new_turn_holder = _proxy.handle_client_command(ServerThread().turn_holder_index(), client_command->second.client_command());
-			if (new_turn_holder) {
+		if (const auto client_command = ServerThread().pop_turn_holder_command()) {
+			if (const auto new_turn_holder = _proxy.handle_client_command(ServerThread().turn_holder_index(), client_command->second.client_command())) {
 				if (*new_turn_holder < 0) {
 					_server_update_necessary = true;
 					_server_update_with_shutdown = true;
@@ -558,7 +567,7 @@ void m2::Game::ExecutePreStep() {
 		}
 
 		// Handle server command
-		if (auto server_command = HostClientThread().pop_server_command()) {
+		if (const auto server_command = HostClientThread().pop_server_command()) {
 			_proxy.handle_server_command(*server_command);
 		}
 		if (not _bot_threads.empty()) {
@@ -571,7 +580,7 @@ void m2::Game::ExecutePreStep() {
 		}
 	} else if (IsRealClient()) {
 		// Handle server command
-		if (auto server_command = RealClientThread().pop_server_command()) {
+		if (const auto server_command = RealClientThread().pop_server_command()) {
 			_proxy.handle_server_command(*server_command);
 		}
 	}
@@ -599,7 +608,7 @@ void m2::Game::ExecuteStep() {
 			if (phy.body) {
 				auto& object = phy.Owner();
 				auto old_pos = object.position;
-				object.position = m2::VecF{phy.body->GetPosition()};
+				object.position = VecF{phy.body->GetPosition()};
 				object.orientation = phy.body->GetAngle();
 				// Update draw list
 				if (old_pos != object.position) {
@@ -693,7 +702,7 @@ void m2::Game::UpdateHudContents() {
 	IF(_level->_messageBoxUiPanel)->UpdateContents(_delta_time_s);
 	for (auto &panel : _level->_customNonblockingUiPanels) {
 		auto action{panel.UpdateContents(_delta_time_s)};
-		action.IfQuit([this]() { quit = true; });
+		action.IfQuit([this] { quit = true; });
 		if (auto anyReturnContainer = action.ExtractAnyReturnContainer()) {
 			// If UI returned, kill the panel. We cannot delete it yet, the iterator is held by the client, but we
 			// can replace it with a killed object that can hold the AnyReturnContainer instead.
@@ -703,7 +712,7 @@ void m2::Game::UpdateHudContents() {
 	IF(_level->_mouseHoverUiPanel)->UpdateContents(_delta_time_s);
 	if (_level->_semiBlockingUiPanel) {
 		_level->_semiBlockingUiPanel->UpdateContents(_delta_time_s)
-				.IfQuit([this]() {
+				.IfQuit([this] {
 					quit = true;
 				})
 				.IfAnyReturn([this](const ReturnBase&) {
@@ -751,8 +760,7 @@ void m2::Game::DrawBackground() {
 
 void m2::Game::DrawForeground() {
 	for (const auto& gfx_id : _level->drawList) {
-		auto& gfx = _level->graphics[gfx_id];
-		if (gfx.enabled && gfx.draw) {
+		if (auto& gfx = _level->graphics[gfx_id]; gfx.enabled && gfx.draw) {
 			IF(gfx.onDraw)(gfx);
 		}
 	}
@@ -873,9 +881,9 @@ void m2::Game::SetGameHeightM(const float heightM) {
 
 void m2::Game::ForEachSprite(const std::function<bool(m2g::pb::SpriteType, const Sprite&)>& op) const {
 	for (int i = 0; i < pb::enum_value_count<m2g::pb::SpriteType>(); ++i) {
-		auto type = pb::enum_value<m2g::pb::SpriteType>(i);
-		const auto& spriteOrTextLabel = GetSpriteOrTextLabel(type);
-		if (std::holds_alternative<Sprite>(spriteOrTextLabel) && not op(type, std::get<Sprite>(spriteOrTextLabel))) {
+		const auto type = pb::enum_value<m2g::pb::SpriteType>(i);
+		if (const auto& spriteOrTextLabel = GetSpriteOrTextLabel(type);
+				std::holds_alternative<Sprite>(spriteOrTextLabel) && not op(type, std::get<Sprite>(spriteOrTextLabel))) {
 			return;
 		}
 	}
@@ -883,8 +891,7 @@ void m2::Game::ForEachSprite(const std::function<bool(m2g::pb::SpriteType, const
 
 void m2::Game::ForEachNamedItem(const std::function<bool(m2g::pb::ItemType, const NamedItem&)>& op) const {
 	for (int i = 0; i < pb::enum_value_count<m2g::pb::ItemType>(); ++i) {
-		auto type = pb::enum_value<m2g::pb::ItemType>(i);
-		if (!op(type, GetNamedItem(type))) {
+		if (const auto type = pb::enum_value<m2g::pb::ItemType>(i); !op(type, GetNamedItem(type))) {
 			return;
 		}
 	}
@@ -904,15 +911,15 @@ const m2::VecF& m2::Game::ScreenCenterToMousePositionM() const {
 	return *_screen_center_to_mouse_position_m;
 }
 
-m2::sdl::TextureUniquePtr m2::Game::DrawGameToTexture(m2::VecF camera_position) {
+m2::sdl::TextureUniquePtr m2::Game::DrawGameToTexture(const VecF& camera_position) {
 	// Temporarily change camera position
-	auto prev_camera_position = GetLevel().Camera()->position;
+	const auto prev_camera_position = GetLevel().Camera()->position;
 	GetLevel().Camera()->position = camera_position;
 
 	// Create an empty render target
 	auto render_target = sdl::create_drawable_texture_of_screen_size();
 	// Temporarily change render target
-	auto prev_render_target = SDL_GetRenderTarget(renderer);
+	const auto prev_render_target = SDL_GetRenderTarget(renderer);
 	SDL_SetRenderTarget(renderer, render_target.get());
 
 	// Draw
@@ -978,13 +985,13 @@ void m2::Game::RecalculateDirectionalAudio() {
 	}
 }
 
-void m2::Game::AddDeferredAction(const std::function<void(void)>& action) {
+void m2::Game::AddDeferredAction(const std::function<void()>& action) {
 	_level->deferredActions.push(action);
 }
 
 void m2::Game::ExecuteDeferredActions() {
-	// Execute deferred actions one by one. A deferred action may insert another deferred action into the queue. Thus we
-	// cannot iterate over the queue, we must pop one by one.
+	// Execute deferred actions one by one. A deferred action may insert another deferred action into the queue.
+	// Thus, we cannot iterate over the queue, we must pop one by one.
 	while (not _level->deferredActions.empty()) {
 		_level->deferredActions.front()();
 		_level->deferredActions.pop();
@@ -994,7 +1001,7 @@ void m2::Game::ExecuteDeferredActions() {
 void m2::Game::RecalculateMousePosition() const {
 	const auto mouse_position = events.MousePosition();
 	const auto screen_center_to_mouse_position_px =
-		VecI{mouse_position.x - (Dimensions().WindowDimensions().x / 2), mouse_position.y - (Dimensions().WindowDimensions().y / 2)};
+		VecI{mouse_position.x - Dimensions().WindowDimensions().x / 2, mouse_position.y - Dimensions().WindowDimensions().y / 2};
 	_screen_center_to_mouse_position_m = VecF{
 		F(screen_center_to_mouse_position_px.x) / Dimensions().OutputPixelsPerMeter(), F(screen_center_to_mouse_position_px.y) / Dimensions().OutputPixelsPerMeter()};
 
@@ -1005,7 +1012,7 @@ void m2::Game::RecalculateMousePosition() const {
 		const auto cos_of_player_to_camera_angle =
 			sqrtf(1.0f - sin_of_player_to_camera_angle * sin_of_player_to_camera_angle);
 
-		const auto y_offset = (F(screen_center_to_mouse_position_px.y) / m3::Ppm()) * sin_of_player_to_camera_angle;
+		const auto y_offset = F(screen_center_to_mouse_position_px.y) / m3::Ppm() * sin_of_player_to_camera_angle;
 		const auto z_offset = -(F(screen_center_to_mouse_position_px.y) / m3::Ppm()) * cos_of_player_to_camera_angle;
 		const auto x_offset = F(screen_center_to_mouse_position_px.x) / m3::Ppm();
 		const auto player_position = m3::FocusPositionM();

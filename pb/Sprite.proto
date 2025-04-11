@@ -44,24 +44,15 @@ message SpriteEffect {
   }
 }
 
-message Collider {
-  // Vector from origin of the sprite to the position that should be the origin of this collider piece.
-  VecF sprite_origin_to_collider_origin_vec_px = 1;
-
-  oneof collider_variant {
-    Dim2f rect_dims_px = 11;
-    float circ_radius_px = 12;
-  }
-}
-
-message Fixtures {
+message Fixture {
   message RectangleFixture {
-    VecF sprite_origin_to_rectangle_center_vec_px = 1;
-    Dim2f rectangle_dimensions_px = 2;
+    VecF sprite_origin_to_fixture_center_vec_px = 1;
+    Dim2f dims_px = 2;
+    float angle_rads = 3;
   }
   message CircleFixture {
-    VecF sprite_origin_to_circle_center_vec_px = 1;
-    float circle_radius_px = 2;
+    VecF sprite_origin_to_fixture_center_vec_px = 1;
+    float radius_px = 2;
   }
   message ChainFixture {
     // The points are with respect to the origin of the sprite. They are automatically completed into a loop. At least
@@ -69,11 +60,22 @@ message Fixtures {
     repeated VecF points = 1;
   }
 
-  repeated RectangleFixture rectangle_fixtures = 1;
-  repeated CircleFixture circle_fixtures = 2;
-  ChainFixture chain_fixture = 3;
+  oneof fixture_type {
+      RectangleFixture rectangle = 1;
+      CircleFixture circle = 2;
+      ChainFixture chain = 3;
+  }
 }
 
+message ForegroundCompanion {
+  // Vector from the center of the sprite to the point that should be the origin of the Foreground Companion
+  VecF center_to_origin_vec_px = 1;
+  // w.r.t SpriteSheet coordinates
+  repeated RectI foreground_companion_rects = 2;
+  Fixture fixture = 3;
+}
+
+// TODO add comment
 message RegularSprite {
   // List of effects that might be used during the game
   repeated SpriteEffect effects = 1;
@@ -103,22 +105,17 @@ message RegularSprite {
   // Vector from the center of the (rect) to the position that should be the origin
   VecF center_to_origin_vec_px = 6;
 
-  // Colliders are not automatically loaded. Sprite editor can be used to draw colliders on the sprite itself.
-  Collider background_collider = 7;
-  Collider foreground_collider = 8;
-  Fixtures background_fixtures = 13;
-  Fixtures foreground_fixtures = 14;
+  // Fixtures are not automatically loaded. Sprite editor can be used to draw fixtures on the sprite itself.
+  repeated Fixture fixtures = 7;
 
-  // If the tile is a background tile, it'll show up in the PAINT list of the level editor.
-  bool is_background_tile = 9;
+  // If the sprite is a background tile, it'll show up in the level editor as a background sprite, instead of a
+  // foreground sprite. Additionally, fixtures will be auto-created as static bodies during loading.
+  bool is_background_tile = 8;
 
-  // Vector from the center of the (rect) to the position that should be the origin of the Foreground Companion
-  VecF foreground_companion_center_to_origin_vec_px = 10;
-  // w.r.t SpriteSheet coordinates
-  repeated RectI foreground_companion_rects = 11;
+  ForegroundCompanion foreground_companion = 9;
 
   // Sprites can hold immutable items just to simplify attribute lookup
-  repeated m2g.pb.ItemType named_items = 12;
+  repeated m2g.pb.ItemType named_items = 10;
 }
 
 message Duplicate {

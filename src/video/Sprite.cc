@@ -5,64 +5,40 @@
 
 m2::Sprite::Sprite(const std::vector<SpriteSheet>& spriteSheets, const SpriteSheet& spriteSheet,
 		SpriteEffectsSheet& spriteEffectsSheet, const pb::Sprite& sprite, const bool lightning)
-		: _spriteSheet(&spriteSheet), _effectsSheet(&spriteEffectsSheet), _pb(&sprite),
-		_type(sprite.type()) {
-	const pb::Sprite* original_sprite{};
+		: _spriteSheet(&spriteSheet), _effectsSheet(&spriteEffectsSheet), _pb(&sprite) {
+	// Lookup the original sprite
 	if (sprite.has_duplicate()) {
-		// Lookup original sprite
+		const pb::Sprite* originalPb{};
 		for (const auto& ss : spriteSheets) {
 			for (const auto& s : ss.Pb().sprites()) {
 				if (s.type() == sprite.duplicate().original_type()) {
-					original_sprite = &s;
+					originalPb = &s;
 					break;  // Early out
 				}
 			}
-			if (original_sprite) {
+			if (originalPb) {
 				break;  // Early out
 			}
 		}
-		if (not original_sprite) {
-			throw M2_ERROR("Unable to find original sprite");
+		if (not originalPb) {
+			throw M2_ERROR("Unable to find the original sprite");
 		}
-		_originalType = sprite.duplicate().original_type();
+		_originalPb = originalPb;
 	} else {
-		original_sprite = &sprite;
+		_originalPb = &sprite;
 	}
 
-	std::ranges::transform(original_sprite->regular().default_variant_draw_order(),
+	std::ranges::transform(_originalPb->regular().default_variant_draw_order(),
 			std::back_inserter(_defaultVariantDrawOrder),
 			[](int t) { return static_cast<pb::SpriteEffectType>(t); });
-	_rect = RectI{original_sprite->regular().rect()};
-	_originalRotationRad = original_sprite->regular().original_rotation() * PI;
-	_ppm = original_sprite->regular().override_ppm() ? original_sprite->regular().override_ppm()
-	                                                 : spriteSheet.Pb().ppm();
-	_centerToOriginVecPx = VecF{original_sprite->regular().center_to_origin_vec_px()};
-	_centerToOriginVecM = _centerToOriginVecPx / static_cast<float>(_ppm),
-	_backgroundColliderType = original_sprite->regular().has_background_collider()
-	    ? (original_sprite->regular().background_collider().has_rect_dims_px() ? box2d::ColliderType::RECTANGLE
-	                                                                           : box2d::ColliderType::CIRCLE)
-	    : box2d::ColliderType::NONE;
-	_originToBackgroundColliderOriginVecM =
-	    VecF{original_sprite->regular().background_collider().sprite_origin_to_collider_origin_vec_px()} / static_cast<float>(_ppm);
-
-	_backgroundColliderRectDimsM =
-	    VecF{original_sprite->regular().background_collider().rect_dims_px()} / static_cast<float>(_ppm);
-	_backgroundColliderCircRadiusM =
-	    original_sprite->regular().background_collider().circ_radius_px() / static_cast<float>(_ppm);
-	_foregroundColliderType = original_sprite->regular().has_foreground_collider()
-	    ? (original_sprite->regular().foreground_collider().has_rect_dims_px() ? box2d::ColliderType::RECTANGLE
-	                                                                           : box2d::ColliderType::CIRCLE)
-	    : box2d::ColliderType::NONE;
-	_originToForegroundColliderOriginVecM =
-	    VecF{original_sprite->regular().foreground_collider().sprite_origin_to_collider_origin_vec_px()} / static_cast<float>(_ppm);
-	_foregroundColliderRectDimsM =
-	    VecF{original_sprite->regular().foreground_collider().rect_dims_px()} / static_cast<float>(_ppm);
-	_foregroundColliderCircRadiusM =
-	    original_sprite->regular().foreground_collider().circ_radius_px() / static_cast<float>(_ppm);
-	_isBackgroundTile = original_sprite->regular().is_background_tile();
+	_rect = RectI{_originalPb->regular().rect()};
+	_originalRotationRad = _originalPb->regular().original_rotation() * PI;
+	_ppm = _originalPb->regular().override_ppm() ? _originalPb->regular().override_ppm() : spriteSheet.Pb().ppm();
+	_centerToOriginVecPx = VecF{_originalPb->regular().center_to_origin_vec_px()};
+	_centerToOriginVecM = _centerToOriginVecPx / static_cast<float>(_ppm);
 
 	// Fill named items
-	for (const auto& named_item : original_sprite->regular().named_items()) {
+	for (const auto& named_item : _originalPb->regular().named_items()) {
 		_namedItems.emplace_back(static_cast<m2g::pb::ItemType>(named_item));
 	}
 	if (sprite.has_duplicate()) {
@@ -72,22 +48,21 @@ m2::Sprite::Sprite(const std::vector<SpriteSheet>& spriteSheets, const SpriteShe
 	}
 
 	// Create foreground companion
-	if (original_sprite->has_regular() && original_sprite->regular().foreground_companion_rects_size()) {
+	if (_originalPb->has_regular() && _originalPb->regular().has_foreground_companion()) {
 		_foregroundCompanionSpriteEffectsSheetRect = spriteEffectsSheet.create_foreground_companion_effect(
-		    spriteSheet, original_sprite->regular().rect(), original_sprite->regular().foreground_companion_rects(),
-		    lightning);
-		LOG_DEBUG("Foreground companion rect", original_sprite->type(), *_foregroundCompanionSpriteEffectsSheetRect);
+		    spriteSheet, _originalPb->regular().rect(),
+		    _originalPb->regular().foreground_companion().foreground_companion_rects(), lightning);
 		_foregroundCompanionCenterToOriginVecPx =
-		    VecF{original_sprite->regular().foreground_companion_center_to_origin_vec_px()};
+		    VecF{_originalPb->regular().foreground_companion().center_to_origin_vec_px()};
 		_foregroundCompanionCenterToOriginVecM =
-		    VecF{original_sprite->regular().foreground_companion_center_to_origin_vec_px()} / static_cast<float>(_ppm);
+		    VecF{_originalPb->regular().foreground_companion().center_to_origin_vec_px()} / static_cast<float>(_ppm);
 	}
 
 	// Create effects
-	if (original_sprite->has_regular() && original_sprite->regular().effects_size()) {
+	if (_originalPb->has_regular() && _originalPb->regular().effects_size()) {
 		_effects.resize(pb::enum_value_count<pb::SpriteEffectType>());
 		std::vector<bool> is_created(pb::enum_value_count<pb::SpriteEffectType>());
-		for (const auto& effect : original_sprite->regular().effects()) {
+		for (const auto& effect : _originalPb->regular().effects()) {
 			const auto index = enum_index(effect.type());
 			// Check if the effect is already created
 			if (is_created[index]) {
@@ -97,26 +72,26 @@ m2::Sprite::Sprite(const std::vector<SpriteSheet>& spriteSheets, const SpriteShe
 			switch (effect.type()) {
 				case pb::SPRITE_EFFECT_MASK:
 					_effects[index] = spriteEffectsSheet.create_mask_effect(
-					    spriteSheet, original_sprite->regular().rect(), effect.mask_color(), lightning);
-					LOG_DEBUG("Sprite mask effect rect", original_sprite->type(), _effects[index]);
+					    spriteSheet, _originalPb->regular().rect(), effect.mask_color(), lightning);
+					LOG_DEBUG("Sprite mask effect rect", _originalPb->type(), _effects[index]);
 					break;
 				case pb::SPRITE_EFFECT_GRAYSCALE:
 					_effects[index] = spriteEffectsSheet.create_grayscale_effect(
-					    spriteSheet, original_sprite->regular().rect(), lightning);
-					LOG_DEBUG("Grayscale effect rect", original_sprite->type(), _effects[index]);
+					    spriteSheet, _originalPb->regular().rect(), lightning);
+					LOG_DEBUG("Grayscale effect rect", _originalPb->type(), _effects[index]);
 					break;
 				case pb::SPRITE_EFFECT_IMAGE_ADJUSTMENT:
 					_effects[index] = spriteEffectsSheet.create_image_adjustment_effect(
-					    spriteSheet, original_sprite->regular().rect(), effect.image_adjustment(), lightning);
-					LOG_DEBUG("Image adjustment effect rect", original_sprite->type(), _effects[index]);
+					    spriteSheet, _originalPb->regular().rect(), effect.image_adjustment(), lightning);
+					LOG_DEBUG("Image adjustment effect rect", _originalPb->type(), _effects[index]);
 					break;
 				case pb::SPRITE_EFFECT_BLURRED_DROP_SHADOW:
-					_effects[index] = spriteEffectsSheet.create_blurred_drop_shadow_effect(spriteSheet, original_sprite->regular().rect(), effect.blurred_drop_shadow(), lightning);
-					LOG_DEBUG("Blurred drop shadow effect rect", original_sprite->type(), _effects[index]);
+					_effects[index] = spriteEffectsSheet.create_blurred_drop_shadow_effect(spriteSheet, _originalPb->regular().rect(), effect.blurred_drop_shadow(), lightning);
+					LOG_DEBUG("Blurred drop shadow effect rect", _originalPb->type(), _effects[index]);
 					break;
 				default:
 					throw M2_ERROR(
-					    "Encountered a sprite with unknown sprite effect: " + m2::ToString(original_sprite->type()));
+					    "Encountered a sprite with unknown sprite effect: " + m2::ToString(_originalPb->type()));
 			}
 			is_created[index] = true;
 		}
@@ -164,7 +139,7 @@ m2::VecF m2::Sprite::ScreenOriginToCenterVecOutpx(const VecF& position, const Sp
 	return ScreenOriginToPositionVecPx(position) - CenterToOriginVecOutpx(sprite_variant);
 }
 
-void m2::Sprite::DrawIn2dWorld(const VecF& position, SpriteVariant sprite_variant, float angle, MAYBE bool is_foreground, MAYBE float z) const {
+void m2::Sprite::DrawIn2dWorld(const VecF& position, const SpriteVariant sprite_variant, const float angle, MAYBE bool is_foreground, MAYBE float z) const {
 	const auto sourceRect = static_cast<SDL_Rect>(Rect(sprite_variant));
 	DrawTextureIn2dWorld(
 			M2_GAME.renderer,
@@ -177,7 +152,7 @@ void m2::Sprite::DrawIn2dWorld(const VecF& position, SpriteVariant sprite_varian
 			angle
 	);
 }
-void m2::Sprite::DrawIn3dWorld(const VecF& position, SpriteVariant sprite_variant, float angle, bool is_foreground, float z) const {
+void m2::Sprite::DrawIn3dWorld(const VecF& position, const SpriteVariant sprite_variant, const float angle, const bool is_foreground, const float z) const {
 	const auto sourceRect = static_cast<SDL_Rect>(Rect(sprite_variant));
 	DrawTextureIn3dWorld(
 			M2_GAME.renderer,
@@ -196,17 +171,15 @@ void m2::Sprite::DrawIn3dWorld(const VecF& position, SpriteVariant sprite_varian
 bool m2::IsSpriteBackgroundTile(const std::variant<Sprite,pb::TextLabel>& spriteOrTextLabel) {
 	if (std::holds_alternative<Sprite>(spriteOrTextLabel)) {
 		return std::get<Sprite>(spriteOrTextLabel).IsBackgroundTile();
-	} else {
-		return std::get<pb::TextLabel>(spriteOrTextLabel).is_background_tile();
 	}
+	return std::get<pb::TextLabel>(spriteOrTextLabel).is_background_tile();
 }
 
 m2g::pb::SpriteType m2::ToSpriteType(const std::variant<Sprite,pb::TextLabel>& spriteOrTextLabel) {
 	if (std::holds_alternative<Sprite>(spriteOrTextLabel)) {
 		return std::get<Sprite>(spriteOrTextLabel).Type();
-	} else {
-		return std::get<pb::TextLabel>(spriteOrTextLabel).type();
 	}
+	return std::get<pb::TextLabel>(spriteOrTextLabel).type();
 }
 
 std::vector<std::variant<m2::Sprite, m2::pb::TextLabel>> m2::LoadSprites(const std::vector<SpriteSheet>& spriteSheets,

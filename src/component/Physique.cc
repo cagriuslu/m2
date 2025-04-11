@@ -1,15 +1,18 @@
 #include "m2/component/Physique.h"
-#include <m2/box2d/Detail.h>
 #include <m2/Game.h>
 #include <box2d/b2_contact.h>
 #include <m2/Object.h>
 #include <m2/box2d/Shape.h>
+#include <m2/third_party/physics/ColliderCategory.h>
 
-m2::Physique::Physique(Id object_id) : Component(object_id), body(nullptr) {}
+m2::Physique::Physique(Id object_id) : Component(object_id) {}
 
-m2::Physique::Physique(Physique&& other) noexcept : Component(other._owner_id), preStep(std::move(other.preStep)), postStep(std::move(other.postStep)), body(std::move(other.body)), rigidBodyIndex(std::move(other.rigidBodyIndex)), onCollision(std::move(other.onCollision)), offCollision(std::move(other.offCollision)) {
-    other.body = nullptr;
-	other.rigidBodyIndex = std::nullopt;
+m2::Physique::Physique(Physique&& other) noexcept
+		: Component(other._owner_id), preStep(std::move(other.preStep)), postStep(std::move(other.postStep)),
+		body(std::move(other.body)), rigidBodyIndex(std::move(other.rigidBodyIndex)),
+		onCollision(std::move(other.onCollision)), offCollision(std::move(other.offCollision)) {
+    other.body.reset();
+	other.rigidBodyIndex.reset();
 }
 
 m2::Physique& m2::Physique::operator=(Physique&& other) noexcept {
@@ -24,18 +27,18 @@ m2::Physique& m2::Physique::operator=(Physique&& other) noexcept {
 }
 
 void m2::Physique::DefaultDebugDraw(Physique& phy) {
-	if (!phy.body) {
+	if (not phy.body) {
 		return;
 	}
-
-	auto objectPosition = VecF{phy.body->GetPosition()};
-	auto objectOrientation = phy.body->GetAngle();
-	for (auto* fixture = phy.body->GetFixtureList(); fixture; fixture = fixture->GetNext()) {
+	auto* body = static_cast<b2Body*>(phy.body->GetThirdPartObject());
+	auto objectPosition = VecF{body->GetPosition()};
+	auto objectOrientation = body->GetAngle();
+	for (auto* fixture = body->GetFixtureList(); fixture; fixture = fixture->GetNext()) {
 		b2AABB aabb;
-		fixture->GetShape()->ComputeAABB(&aabb, phy.body->GetTransform(), 0);
+		fixture->GetShape()->ComputeAABB(&aabb, body->GetTransform(), 0);
 
 		// Pick different color for background and foreground colliders
-		auto color = box2d::DoesCategoryHaveBackgroundBits(fixture->GetFilterData().categoryBits) ?
+		auto color = third_party::physics::DoesBelongToBackground(fixture->GetFilterData().categoryBits) ?
 			SDL_Color{255, 0, 0, 255} :
 			SDL_Color{255, 255, 0, 255};
 
@@ -57,7 +60,7 @@ void m2::Physique::DefaultDebugDraw(Physique& phy) {
 					auto centroid_offset_length_m = centroid_offset_m.length();
 					auto centroid_offset_angle = centroid_offset_m.angle_rads();
 					// Current angle of the object in the world
-					auto current_angle = phy.body->GetTransform().q.GetAngle();
+					auto current_angle = body->GetTransform().q.GetAngle();
 					// Compose the "object origin" to "current shape centroid" vector
 					auto center_offset_m = VecF::from_angle(centroid_offset_angle + current_angle).with_length(centroid_offset_length_m);
 					auto center_position_2d = objectPosition + center_offset_m;

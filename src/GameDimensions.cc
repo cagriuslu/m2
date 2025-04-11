@@ -67,6 +67,11 @@ float m2::GameDimensionsManager::HudWidthToGameAndHudWidthRatio() const {
 	return F(_leftHud.w) / F(_gameAndHud.w);
 }
 
+void m2::GameDimensionsManager::SetGameAspectRatio(const int gameAspectRatioMul, const int gameAspectRatioDiv) {
+	_gameAspectRatioMul = gameAspectRatioMul;
+	_gameAspectRatioDiv = gameAspectRatioDiv;
+	OnWindowResize();
+}
 void m2::GameDimensionsManager::OnWindowResize() {
 	// We must keep the _gameAndHudM (and thus _gameM) exactly the same. The scale and the envelopes may be adjusted.
 

@@ -1,6 +1,7 @@
 #include <rpg/Objects.h>
 #include <m2/Game.h>
 #include <m2/game/Timer.h>
+#include <m2/third_party/physics/ColliderCategory.h>
 
 struct Spikes : public m2::ObjectImpl {
 	std::optional<m2::Timer> trigger_timer;
@@ -12,14 +13,18 @@ m2::void_expected rpg::create_spikes(m2::Object& obj) {
 
 	// Create physique component
 	auto& phy = obj.AddPhysique();
-	m2::pb::BodyBlueprint bp;
-	bp.set_type(m2::pb::BodyType::STATIC);
-	bp.set_allow_sleep(true);
-	bp.set_is_bullet(false);
-	bp.mutable_background_fixture()->mutable_circ()->set_radius(spikes_in.BackgroundColliderCircRadiusM());
-	bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::OBSTACLE_BACKGROUND);
-	bp.mutable_background_fixture()->set_is_sensor(true);
-	phy.body = m2::box2d::CreateBody(*M2_LEVEL.world, obj.GetPhysiqueId(), obj.position, bp);
+	m2::third_party::physics::RigidBodyDefinition rigidBodyDef{
+		.bodyType = m2::third_party::physics::RigidBodyType::STATIC,
+		.fixtures = {m2::third_party::physics::FixtureDefinition{
+			.shape = m2::third_party::physics::CircleShape::FromSpriteCircleFixture(spikes_in.OriginalPb().regular().fixtures(0).circle(), spikes_in.Ppm()),
+			.isSensor = true,
+			.colliderFilter = m2::third_party::physics::gColliderCategoryToParams[m2::I(m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_BACKGROUND_OBSTACLE)]
+		}},
+		.allowSleeping = true,
+		.initiallyAwake = false,
+		.isBullet = false
+	};
+	phy.body = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
 
 	// Create graphic component
 	auto& gfx = obj.AddGraphic(m2g::pb::SPIKES_IN);
@@ -28,14 +33,14 @@ m2::void_expected rpg::create_spikes(m2::Object& obj) {
 	obj.impl = std::make_unique<Spikes>();
 	auto& impl = dynamic_cast<Spikes&>(*obj.impl);
 
-	phy.preStep = [&, bp](MAYBE m2::Physique& self) {
+	phy.preStep = [&, rigidBodyDef](MAYBE m2::Physique& self) {
 		// Check if the spikes are in, and triggered
 		if (std::get<const m2::Sprite*>(gfx.visual) == &spikes_in && impl.trigger_timer) {
 			if (impl.trigger_timer->has_ticks_passed(200)) {
 				std::get<const m2::Sprite*>(gfx.visual) = &spikes_out;
 				impl.trigger_timer = m2::Timer{};
 				// Recreate the body so that collision is reset, otherwise the Player standing on the spikes doesn't collide again
-				self.body = m2::box2d::CreateBody(*M2_LEVEL.world, obj.GetPhysiqueId(), obj.position, bp);
+				phy.body = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
 			}
 		} else if (std::get<const m2::Sprite*>(gfx.visual) == &spikes_out && impl.trigger_timer) {
 			// Spikes are out and triggered
@@ -43,7 +48,7 @@ m2::void_expected rpg::create_spikes(m2::Object& obj) {
 				std::get<const m2::Sprite*>(gfx.visual) = &spikes_in;
 				impl.trigger_timer.reset();
 				// Recreate the body so that collision is reset, otherwise the Player standing on the spikes doesn't collide again
-				self.body = m2::box2d::CreateBody(*M2_LEVEL.world, obj.GetPhysiqueId(), obj.position, bp);
+				phy.body = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
 			}
 		}
 	};

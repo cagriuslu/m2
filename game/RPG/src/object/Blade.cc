@@ -2,8 +2,9 @@
 #include <m2/Object.h>
 #include "m2/Game.h"
 #include <rpg/Objects.h>
-#include <m2/box2d/Detail.h>
 #include <m2/Log.h>
+#include <m2/third_party/physics/ColliderCategory.h>
+#include <rpg/Physics.h>
 
 using namespace m2g;
 using namespace m2g::pb;
@@ -31,15 +32,17 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF &direction, 
 
 	// Add physics
 	auto& phy = obj.AddPhysique();
-	auto bp = m2::box2d::ExampleBulletBodyBlueprint();
-	bp.mutable_foreground_fixture()->mutable_rect()->mutable_dims()->set_w(sprite.ForegroundColliderRectDimsM().x);
-	bp.mutable_foreground_fixture()->mutable_rect()->mutable_dims()->set_h(sprite.ForegroundColliderRectDimsM().y);
-	bp.mutable_foreground_fixture()->mutable_rect()->mutable_center_offset()->set_x(sprite.OriginToForegroundColliderOriginVecM().x);
-	bp.mutable_foreground_fixture()->mutable_rect()->mutable_center_offset()->set_y(sprite.OriginToForegroundColliderOriginVecM().y);
-	bp.mutable_foreground_fixture()->set_is_sensor(true);
-	bp.mutable_foreground_fixture()->set_category(is_friend ? m2::pb::FixtureCategory::FRIEND_OFFENSE_ON_FOREGROUND : m2::pb::FixtureCategory::FOE_OFFENSE_ON_FOREGROUND);
-	phy.body = m2::box2d::CreateBody(*M2_LEVEL.world, obj.GetPhysiqueId(), obj.position, bp);
-	phy.body->SetTransform(static_cast<b2Vec2>(obj.position), start_angle);
+
+	auto rigidBodyDef = BasicBulletRigidBodyDefinition();
+	rigidBodyDef.fixtures = {m2::third_party::physics::FixtureDefinition{
+		.shape = m2::third_party::physics::RectangleShape::FromSpriteRectangleFixture(sprite.OriginalPb().regular().fixtures(0).rectangle(), sprite.Ppm()),
+		.restitution = 0.0f,
+		.isSensor = true,
+		.colliderFilter = m2::third_party::physics::gColliderCategoryToParams[m2::I(is_friend
+			? m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_FRIENDLY_DAMAGE
+			: m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_HOSTILE_DAMAGE)]
+	}};
+	phy.body = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, start_angle);
 	phy.body->SetAngularVelocity(-swing_speed);
 
 	// Add graphics
@@ -66,8 +69,7 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF &direction, 
 	};
 	phy.postStep = [&](m2::Physique& phy) {
 		if (auto* originator = obj.TryGetParent()) {
-			float curr_angle = phy.body->GetAngle();
-			phy.body->SetTransform(static_cast<b2Vec2>(originator->position), curr_angle);
+			phy.body->SetPosition(originator->position);
 		} else {
 			// Originator died
 			M2_DEFER(m2::CreateObjectDeleter(phy.OwnerId()));

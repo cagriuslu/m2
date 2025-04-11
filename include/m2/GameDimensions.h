@@ -6,7 +6,7 @@
 namespace m2 {
     class GameDimensionsManager final {
         void* const _renderer;
-        const int _gamePpm, _gameAspectRatioMul, _gameAspectRatioDiv;
+        int _gamePpm, _gameAspectRatioMul, _gameAspectRatioDiv;
 
         float _scale;
         RectI _topEnvelope, _bottomEnvelope, _leftEnvelope, _rightEnvelope;
@@ -15,6 +15,7 @@ namespace m2 {
         VecF _gameAndHudM, _gameM;
 
     public:
+        /// This constructor assumes the initial aspect ratio of the window is exact, thus requires no envelope.
         GameDimensionsManager(void* renderer, int gamePpm, int gameAspectRatioMul, int gameAspectRatioDiv);
 
         // Accessors
@@ -38,6 +39,8 @@ namespace m2 {
 
         // Modifiers
 
+        /// Changes the game aspect ratio. This function will call OnWindowResize internally.
+        void SetGameAspectRatio(int gameAspectRatioMul, int gameAspectRatioDiv);
         /// Re-evaluates the logical area dimensions and scale after a window resize.
         void OnWindowResize();
         void SetScale(float scale);

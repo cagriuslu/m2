@@ -1,6 +1,15 @@
+#include <m2/third_party/physics/ColliderCategory.h>
 #include <m2g/Proxy.h>
 #include <mine/object/Dwarf.h>
 #include <mine/object/Blacksmith.h>
+
+using namespace m2::third_party::physics;
+
+FixtureDefinition m2g::Proxy::TileFixtureDefinition(MAYBE pb::SpriteType spriteType) {
+	return FixtureDefinition{
+		.colliderFilter = gColliderCategoryToParams[m2::I(ColliderCategory::COLLIDER_CATEGORY_OBSTACLE)]
+	};
+}
 
 void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_type) {
 	switch (sprite_type) {

@@ -204,7 +204,7 @@ void TextSelection::Draw() {
 				auto up_arrow_rect = scroll_bar_rect.horizontal_split(VariantBlueprint().line_count, 0);
 				if (not _up_arrow_texture) {
 					auto fontSize = up_arrow_rect.h;
-					auto textTexture = m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, fontSize, "^"));
+					auto textTexture = m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, fontSize, "-"));
 					auto destination_rect = RectI::centered_around(up_arrow_rect.center(), textTexture.texture_dimensions().x, textTexture.texture_dimensions().y);
 					// TODO we may need to move the texture slightly up, check the font properties
 					_up_arrow_texture = {std::move(textTexture), destination_rect};
@@ -218,7 +218,7 @@ void TextSelection::Draw() {
 					VariantBlueprint().line_count - 1);
 				if (not _down_arrow_texture) {
 					auto fontSize = down_button_rect.h;
-					auto textTexture = m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, fontSize, "v"));
+					auto textTexture = m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, fontSize, "+"));
 					auto destination_rect = RectI::centered_around(down_button_rect.center(), textTexture.texture_dimensions().x, textTexture.texture_dimensions().y);
 					// TODO we may need to move the texture slightly up, check the font properties
 					_down_arrow_texture = {std::move(textTexture), destination_rect};

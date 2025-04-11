@@ -1,9 +1,10 @@
 #include <m2/Object.h>
+#include <rpg/Physics.h>
 #include "m2/Game.h"
 #include <rpg/Objects.h>
-#include <m2/box2d/Detail.h>
 #include <m2/M2.h>
 #include <m2/Log.h>
+#include <m2/third_party/physics/ColliderCategory.h>
 
 using namespace m2g;
 using namespace m2g::pb;
@@ -41,15 +42,16 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& intend
 
 	// Add physics
 	auto& phy = obj.AddPhysique();
-	auto bp = m2::box2d::ExampleBulletBodyBlueprint();
-	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_x(sprite.OriginToForegroundColliderOriginVecM().x);
-	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_y(sprite.OriginToForegroundColliderOriginVecM().y);
-	bp.mutable_foreground_fixture()->mutable_circ()->set_radius(sprite.ForegroundColliderCircRadiusM());
-	bp.mutable_foreground_fixture()->set_is_sensor(true);
-	bp.mutable_foreground_fixture()->set_category(is_friend ? m2::pb::FixtureCategory::FRIEND_OFFENSE_ON_FOREGROUND : m2::pb::FixtureCategory::FOE_OFFENSE_ON_FOREGROUND);
-	bp.set_fixed_rotation(true);
-	phy.body = m2::box2d::CreateBody(*M2_LEVEL.world, obj.GetPhysiqueId(), obj.position, bp);
-	phy.body->SetLinearVelocity(static_cast<b2Vec2>(direction * linear_speed));
+	auto rigidBodyDef = BasicBulletRigidBodyDefinition();
+	rigidBodyDef.fixtures = {m2::third_party::physics::FixtureDefinition{
+		.shape = m2::third_party::physics::CircleShape::FromSpriteCircleFixture(sprite.OriginalPb().regular().fixtures(0).circle(), sprite.Ppm()),
+		.isSensor = true,
+		.colliderFilter = m2::third_party::physics::gColliderCategoryToParams[m2::I(is_friend
+				? m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_FRIENDLY_DAMAGE
+				: m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_HOSTILE_DAMAGE)]
+	}};
+	phy.body = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
+	phy.body->SetLinearVelocity(direction * linear_speed);
 
 	// Add graphics
 	auto& gfx = obj.AddGraphic(ranged_weapon.GameSprite());
@@ -64,11 +66,13 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& intend
 		if (!chr.HasResource(RESOURCE_TTL)) {
 			if (is_explosive) {
 				LOG_DEBUG("Exploding...");
-				auto bp = m2::box2d::ExampleBulletBodyBlueprint();
-				bp.mutable_background_fixture()->mutable_circ()->set_radius(damage_radius);
-				bp.mutable_background_fixture()->set_is_sensor(true);
-				bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_OFFENSE_ON_FOREGROUND);
-				phy.body = m2::box2d::CreateBody(*M2_LEVEL.world, obj.GetPhysiqueId(), obj.position, bp);
+				auto explosionBodyDef = BasicBulletRigidBodyDefinition();
+				explosionBodyDef.fixtures = {m2::third_party::physics::FixtureDefinition{
+					.shape = m2::third_party::physics::CircleShape{.radius = damage_radius},
+					.isSensor = true,
+					.colliderFilter = m2::third_party::physics::gColliderCategoryToParams[m2::I(m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_FRIENDLY_DAMAGE)]
+				}};
+				phy.body = m2::third_party::physics::RigidBody::CreateFromDefinition(explosionBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
 				chr.AddNamedItem(M2_GAME.GetNamedItem(ITEM_AUTOMATIC_EXPLOSIVE_TTL));
 				// RESOURCE_EXPLOSION_TTL only means the object is currently exploding
 				chr.SetResource(RESOURCE_EXPLOSION_TTL, 1.0f); // 1.0f is just symbolic

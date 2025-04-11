@@ -4,7 +4,7 @@
 #include <m2/protobuf/PersistentObject.h>
 #include <filesystem>
 
-#include "../math/CircF.h"
+#include "Ui.h"
 #include "../Meta.h"
 #include "../ui/UiPanel.h"
 
@@ -23,6 +23,8 @@ namespace m2::sheet_editor {
 		// Accessors
 
 		const pb::SpriteSheets& SpriteSheets() const { return _persistentSpriteSheets.Cache(); }
+		int SelectedSpriteFixtureCount() const;
+		std::vector<FixtureType> SelectedSpriteFixtureTypes() const;
 
 		// Modifiers
 
@@ -33,12 +35,11 @@ namespace m2::sheet_editor {
 		void AddForegroundCompanionRect(const RectI& rect);
 		void SetForegroundCompanionOrigin(const VecF& origin);
 		void ResetForegroundCompanion();
-		void AddRectangleFixture(bool foreground, const RectF& rect);
-		void AddCircleFixture(bool foreground, const VecF& center, float radius);
-		void AddChainFixturePoint(bool foreground, const VecF& point);
-		void ResetRectangleFixtures(bool foreground);
-		void ResetCircleFixtures(bool foreground);
-		void ResetChainFixturePoints(bool foreground);
+		/// Returns the index of the newly added fixture. If insertIndex is negative, the new fixture is added at the end.
+		int AddFixture(FixtureType type, int insertIndex = -1);
+		void RemoveFixture(int index);
+		void StoreFixture(int index, const RectF& rect, const VecF& point1, const VecF& point2);
+		void UndoChainFixturePoint(int index);
 
 		void Draw() const;
 
@@ -52,8 +53,8 @@ namespace m2::sheet_editor {
 		VecF SelectedSpriteOrigin() const;
 	};
 
-	void modify_sprite_in_sheet(
-	    const std::filesystem::path& path, m2g::pb::SpriteType type, const std::function<void(pb::Sprite&)>& modifier); // TODO remove and use ModifySpriteInSheets
+	// TODO remove and use ModifySpriteInSheets
+	void modify_sprite_in_sheet(const std::filesystem::path& path, m2g::pb::SpriteType type, const std::function<void(pb::Sprite&)>& modifier);
 	void ModifySpriteInSheets(pb::PersistentObject<pb::SpriteSheets>& persistentObject, m2g::pb::SpriteType spriteType,
 			const std::function<void(pb::Sprite&)>& modifier);
 }  // namespace m2::sheet_editor

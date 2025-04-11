@@ -32,6 +32,23 @@ expected<State> State::create(const std::filesystem::path& path) {
 	}
 }
 
+int State::SelectedSpriteFixtureCount() const {
+	return SelectedSprite().regular().fixtures_size();
+}
+std::vector<FixtureType> State::SelectedSpriteFixtureTypes() const {
+	std::vector<FixtureType> fixtureTypes;
+	for (const auto& fixture : SelectedSprite().regular().fixtures()) {
+		if (fixture.has_rectangle()) {
+			fixtureTypes.emplace_back(RECTANGLE);
+		} else if (fixture.has_circle()) {
+			fixtureTypes.emplace_back(CIRCLE);
+		} else if (fixture.has_chain()) {
+			fixtureTypes.emplace_back(CHAIN);
+		}
+	}
+	return fixtureTypes;
+}
+
 void State::Select(const m2g::pb::SpriteType spriteType) {
 	for (const auto& spriteSheets = this->SpriteSheets(); const auto& spriteSheet : spriteSheets.sheets()) {
 		for (const auto& sprite : spriteSheet.sprites()) {
@@ -84,7 +101,7 @@ void State::ResetSpriteRectAndOrigin() {
 }
 void State::AddForegroundCompanionRect(const RectI& rect) {
 	ModifySelectedSprite([&](pb::Sprite& sprite) {
-		auto* newRect = sprite.mutable_regular()->add_foreground_companion_rects();
+		auto* newRect = sprite.mutable_regular()->mutable_foreground_companion()->add_foreground_companion_rects();
 		newRect->set_x(rect.x);
 		newRect->set_y(rect.y);
 		newRect->set_w(rect.w);
@@ -96,75 +113,67 @@ void State::SetForegroundCompanionOrigin(const VecF& origin) {
 	const auto rectCenter = RectF{rect}.shift({-0.5f, -0.5f}).center();
 	const auto centerToOrigin = origin - rectCenter;
 	ModifySelectedSprite([&](pb::Sprite& sprite) {
-		sprite.mutable_regular()->mutable_foreground_companion_center_to_origin_vec_px()->set_x(centerToOrigin.x);
-		sprite.mutable_regular()->mutable_foreground_companion_center_to_origin_vec_px()->set_y(centerToOrigin.y);
+		sprite.mutable_regular()->mutable_foreground_companion()->mutable_center_to_origin_vec_px()->set_x(centerToOrigin.x);
+		sprite.mutable_regular()->mutable_foreground_companion()->mutable_center_to_origin_vec_px()->set_y(centerToOrigin.y);
 	});
 }
 void State::ResetForegroundCompanion() {
 	ModifySelectedSprite([&](pb::Sprite& sprite) {
-		sprite.mutable_regular()->clear_foreground_companion_rects();
-		sprite.mutable_regular()->clear_foreground_companion_center_to_origin_vec_px();
+		sprite.mutable_regular()->clear_foreground_companion();
 	});
 }
-void State::AddRectangleFixture(const bool foreground, const RectF& rect) {
-	const auto rectCenter = rect.center();
-	const auto spriteOrigin = SelectedSpriteOrigin();
-	const auto spriteOriginToRectCenter = rectCenter - spriteOrigin;
-	const auto dimensions = VecF{rect.w, rect.h};
+int State::AddFixture(const FixtureType type, const int insertIndex) {
+	int newIndex;
 	ModifySelectedSprite([&](pb::Sprite& sprite) {
-		auto* fixtures = foreground ? sprite.mutable_regular()->mutable_foreground_fixtures() : sprite.mutable_regular()->mutable_background_fixtures();
-		auto* rectangle = fixtures->add_rectangle_fixtures();
-		rectangle->mutable_sprite_origin_to_rectangle_center_vec_px()->set_x(spriteOriginToRectCenter.x);
-		rectangle->mutable_sprite_origin_to_rectangle_center_vec_px()->set_y(spriteOriginToRectCenter.y);
-		rectangle->mutable_rectangle_dimensions_px()->set_w(dimensions.x);
-		rectangle->mutable_rectangle_dimensions_px()->set_h(dimensions.y);
+		newIndex = insertIndex < 0 ? sprite.regular().fixtures_size() : insertIndex;
+		auto* fixture = mutable_insert(sprite.mutable_regular()->mutable_fixtures(), newIndex);
+		switch (type) {
+			case RECTANGLE: fixture->mutable_rectangle(); break;
+			case CIRCLE: fixture->mutable_circle(); break;
+			case CHAIN: fixture->mutable_chain(); break;
+		}
+	});
+	return newIndex;
+}
+void State::RemoveFixture(const int index) {
+	ModifySelectedSprite([&](pb::Sprite& sprite) {
+		sprite.mutable_regular()->mutable_fixtures()->erase(sprite.mutable_regular()->mutable_fixtures()->begin() + index);
 	});
 }
-void State::AddCircleFixture(const bool foreground, const VecF& center, const float radius) {
-	const auto spriteOrigin = SelectedSpriteOrigin();
-	const auto spriteOriginToRectCenter = center - spriteOrigin;
+void State::StoreFixture(const int index, const RectF& rect, const VecF& point1, const VecF& point2) {
 	ModifySelectedSprite([&](pb::Sprite& sprite) {
-		auto* fixtures = foreground ? sprite.mutable_regular()->mutable_foreground_fixtures() : sprite.mutable_regular()->mutable_background_fixtures();
-		auto* circle = fixtures->add_circle_fixtures();
-		circle->mutable_sprite_origin_to_circle_center_vec_px()->set_x(spriteOriginToRectCenter.x);
-		circle->mutable_sprite_origin_to_circle_center_vec_px()->set_y(spriteOriginToRectCenter.y);
-		circle->set_circle_radius_px(radius);
-	});
-}
-void State::AddChainFixturePoint(const bool foreground, const VecF& point) {
-	const auto spriteOrigin = SelectedSpriteOrigin();
-	const auto spriteOriginToPoint = point - spriteOrigin;
-	ModifySelectedSprite([&](pb::Sprite& sprite) {
-		auto* fixtures = foreground ? sprite.mutable_regular()->mutable_foreground_fixtures() : sprite.mutable_regular()->mutable_background_fixtures();
-		auto* point_ = fixtures->mutable_chain_fixture()->add_points();
-		point_->set_x(spriteOriginToPoint.x);
-		point_->set_y(spriteOriginToPoint.y);
-	});
-}
-void State::ResetRectangleFixtures(const bool foreground) {
-	ModifySelectedSprite([&](pb::Sprite& sprite) {
-		if (foreground) {
-			sprite.mutable_regular()->mutable_foreground_fixtures()->clear_rectangle_fixtures();
-		} else {
-			sprite.mutable_regular()->mutable_background_fixtures()->clear_rectangle_fixtures();
+		if (auto* fixture = sprite.mutable_regular()->mutable_fixtures(index); fixture->has_rectangle()) {
+			const auto spriteOriginToRectCenter = rect.center() - SelectedSpriteOrigin();
+			const auto dimensions = VecF{rect.w, rect.h};
+			auto* rectangle = fixture->mutable_rectangle();
+			rectangle->mutable_sprite_origin_to_fixture_center_vec_px()->set_x(spriteOriginToRectCenter.x);
+			rectangle->mutable_sprite_origin_to_fixture_center_vec_px()->set_y(spriteOriginToRectCenter.y);
+			rectangle->mutable_dims_px()->set_w(dimensions.x);
+			rectangle->mutable_dims_px()->set_h(dimensions.y);
+		} else if (fixture->has_circle()) {
+			const auto& center = point1;
+			const auto radius = (point2 - point1).length();
+			const auto spriteOriginToRectCenter = center - SelectedSpriteOrigin();
+			auto* circle = fixture->mutable_circle();
+			circle->mutable_sprite_origin_to_fixture_center_vec_px()->set_x(spriteOriginToRectCenter.x);
+			circle->mutable_sprite_origin_to_fixture_center_vec_px()->set_y(spriteOriginToRectCenter.y);
+			circle->set_radius_px(radius);
+		} else if (fixture->has_chain()) {
+			const auto spriteOriginToPoint = point1 - SelectedSpriteOrigin();
+			auto* chain = fixture->mutable_chain();
+			auto* point = chain->add_points();
+			point->set_x(spriteOriginToPoint.x);
+			point->set_y(spriteOriginToPoint.y);
 		}
 	});
 }
-void State::ResetCircleFixtures(const bool foreground) {
+void State::UndoChainFixturePoint(const int index) {
 	ModifySelectedSprite([&](pb::Sprite& sprite) {
-		if (foreground) {
-			sprite.mutable_regular()->mutable_foreground_fixtures()->clear_circle_fixtures();
-		} else {
-			sprite.mutable_regular()->mutable_background_fixtures()->clear_circle_fixtures();
-		}
-	});
-}
-void State::ResetChainFixturePoints(const bool foreground) {
-	ModifySelectedSprite([&](pb::Sprite& sprite) {
-		if (foreground) {
-			sprite.mutable_regular()->mutable_foreground_fixtures()->clear_chain_fixture();
-		} else {
-			sprite.mutable_regular()->mutable_background_fixtures()->clear_chain_fixture();
+		if (auto* fixture = sprite.mutable_regular()->mutable_fixtures(index); fixture->has_chain()) {
+			if (auto* chain = fixture->mutable_chain(); chain->points_size()) {
+				auto* points = chain->mutable_points();
+				points->erase(points->end() - 1);
+			}
 		}
 	});
 }
@@ -174,10 +183,9 @@ void State::Draw() const {
 	const auto offset = VecF{-0.5f, -0.5f};
 	const auto textureTopLeftOutputPosition = ScreenOriginToPositionVecPx(offset);
 	const auto textureBottomRightOutputPosition = ScreenOriginToPositionVecPx(static_cast<VecF>(_textureDimensions) + offset);
-	const SDL_Rect dstRect = {
-		RoundI(textureTopLeftOutputPosition.x), RoundI(textureTopLeftOutputPosition.y),
-		RoundI(textureBottomRightOutputPosition.x - textureTopLeftOutputPosition.x),
-		RoundI(textureBottomRightOutputPosition.y - textureTopLeftOutputPosition.y)};
+	const SDL_Rect dstRect = {RoundI(textureTopLeftOutputPosition.x), RoundI(textureTopLeftOutputPosition.y),
+			RoundI(textureBottomRightOutputPosition.x - textureTopLeftOutputPosition.x),
+			RoundI(textureBottomRightOutputPosition.y - textureTopLeftOutputPosition.y)};
 	SDL_RenderCopy(M2_GAME.renderer, _texture.get(), nullptr, &dstRect);
 
 	const auto& sprite = SelectedSprite();
@@ -208,57 +216,55 @@ void State::Draw() const {
 			Graphic::DrawCross(centerSelection->first, CROSS_COLOR);
 		}
 		// Draw already existing
-		for (const auto& rect : sprite.regular().foreground_companion_rects()) {
+		for (const auto& rect : sprite.regular().foreground_companion().foreground_companion_rects()) {
 			Graphic::ColorRect(RectF{rect}.shift({-0.5f, -0.5f}), CONFIRMED_SELECTION_COLOR);
 		}
 		const auto rect = RectI{sprite.regular().rect()};
 		const auto rectCenter = RectF{rect}.shift({-0.5f, -0.5f}).center();
-		const auto fCompCenterToOriginVecPx = VecF{sprite.regular().foreground_companion_center_to_origin_vec_px()};
+		const auto fCompCenterToOriginVecPx = VecF{sprite.regular().foreground_companion().center_to_origin_vec_px()};
 		Graphic::DrawCross(rectCenter + fCompCenterToOriginVecPx, CONFIRMED_CROSS_COLOR);
 	} else if (M2_LEVEL.RightHud()->Name() == "FixtureModeRightHud") {
-		const auto foreground = std::get<int>(M2_LEVEL.RightHud()->find_first_widget_by_name<widget::TextSelection>("LayerSelection")->selections()[0]) == FIXTURE_LAYER_SELECTION_FOREGROUND_OPTION;
-		const auto& fixtures = foreground ? sprite.regular().foreground_fixtures() : sprite.regular().background_fixtures();
-		// Draw selection
-		if (const auto shape = std::get<int>(M2_LEVEL.RightHud()->find_first_widget_by_name<widget::TextSelection>("ShapeSelection")->selections()[0]);
-				shape == FIXTURE_SHAPE_SELECTION_RECTANGLE) {
-			if (const auto halfCellSelection = M2_LEVEL.PrimarySelection()->HalfCellSelectionRectM()) {
-				Graphic::ColorRect(*halfCellSelection, SELECTION_COLOR);
-			}
-		} else if (shape == FIXTURE_SHAPE_SELECTION_CIRCLE) {
-			if (const auto halfCellSelection = M2_LEVEL.PrimarySelection()->HalfCellSelectionsM()) {
-				const auto center = halfCellSelection->first;
-				const auto radius = center.distance(halfCellSelection->second);
-				Graphic::ColorDisk(center, radius, SELECTION_COLOR);
-			}
-		} else if (shape == FIXTURE_SHAPE_SELECTION_CHAIN_POINT) {
-			if (const auto halfCellSelection = M2_LEVEL.PrimarySelection()->HalfCellSelectionsM()) {
-				const auto point = halfCellSelection->first;
-				// Find the last chain point
-				if (fixtures.chain_fixture().points_size()) {
-					const auto& lastPoint = fixtures.chain_fixture().points(fixtures.chain_fixture().points_size() - 1);
-					Graphic::DrawLine(spriteOrigin + VecF{lastPoint}, point, CROSS_COLOR);
-				} else {
-					// Draw only first point
+		if (const auto fixtureSelection = M2_LEVEL.RightHud()->find_first_widget_by_name<widget::TextSelection>("FixtureSelection")->selections();
+				not fixtureSelection.empty()) {
+			const auto selectedIndex = std::get<int>(fixtureSelection[0]);
+			if (const auto& fixture = sprite.regular().fixtures(selectedIndex); fixture.has_rectangle()) {
+				if (const auto halfCellSelection = M2_LEVEL.PrimarySelection()->HalfCellSelectionRectM()) {
+					Graphic::ColorRect(*halfCellSelection, SELECTION_COLOR);
+				}
+			} else if (fixture.has_circle()) {
+				if (const auto halfCellSelection = M2_LEVEL.PrimarySelection()->HalfCellSelectionsM()) {
+					const auto center = halfCellSelection->first;
+					const auto radius = center.distance(halfCellSelection->second);
+					Graphic::ColorDisk(center, radius, SELECTION_COLOR);
+				}
+			} else if (fixture.has_chain()) {
+				if (const auto halfCellSelection = M2_LEVEL.PrimarySelection()->HalfCellSelectionsM()) {
+					const auto point = halfCellSelection->first;
 					Graphic::DrawCross(point, CROSS_COLOR);
 				}
 			}
 		}
-		// Draw already existing
-		for (const auto& rect : fixtures.rectangle_fixtures()) {
-			const auto rectF = RectF::centered_around(spriteOrigin + VecF{rect.sprite_origin_to_rectangle_center_vec_px()},
-					rect.rectangle_dimensions_px().w(), rect.rectangle_dimensions_px().h());
-			Graphic::ColorRect(rectF, CONFIRMED_SELECTION_COLOR);
-		}
-		for (const auto& circ : fixtures.circle_fixtures()) {
-			const auto center = spriteOrigin + VecF{circ.sprite_origin_to_circle_center_vec_px()};
-			Graphic::ColorDisk(center, circ.circle_radius_px(), CONFIRMED_SELECTION_COLOR);
-		}
-		if (fixtures.chain_fixture().points().size() == 1) {
-			Graphic::DrawCross(spriteOrigin + VecF{fixtures.chain_fixture().points(0)}, CONFIRMED_CROSS_COLOR);
-		} else if (1 < fixtures.chain_fixture().points().size()) {
-			auto end = fixtures.chain_fixture().points().cend() - 1;
-			for (auto it = fixtures.chain_fixture().points().cbegin(); it != end; ++it) {
-				Graphic::DrawLine(spriteOrigin + VecF{*it}, spriteOrigin + VecF{*(it+1)}, CONFIRMED_CROSS_COLOR);
+
+		// Draw already existing fixtures
+		for (const auto& fixture : sprite.regular().fixtures()) {
+			if (fixture.has_rectangle()) {
+				const auto& rect = fixture.rectangle();
+				const auto rectF = RectF::centered_around(spriteOrigin + VecF{rect.sprite_origin_to_fixture_center_vec_px()},
+					rect.dims_px().w(), rect.dims_px().h());
+				Graphic::ColorRect(rectF, CONFIRMED_SELECTION_COLOR);
+			} else if (fixture.has_circle()) {
+				const auto& circ = fixture.circle();
+				const auto center = spriteOrigin + VecF{circ.sprite_origin_to_fixture_center_vec_px()};
+				Graphic::ColorDisk(center, circ.radius_px(), CONFIRMED_SELECTION_COLOR);
+			} else if (fixture.has_chain()) {
+				if (const auto& points = fixture.chain().points(); points.size() == 1) {
+					Graphic::DrawCross(spriteOrigin + VecF{points[0]}, CONFIRMED_CROSS_COLOR);
+				} else if (1 < points.size()) {
+					auto end = points.cend() - 1;
+					for (auto it = points.cbegin(); it != end; ++it) {
+						Graphic::DrawLine(spriteOrigin + VecF{*it}, spriteOrigin + VecF{*(it+1)}, CONFIRMED_CROSS_COLOR);
+					}
+				}
 			}
 		}
 	}

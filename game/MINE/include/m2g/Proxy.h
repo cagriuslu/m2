@@ -13,6 +13,7 @@ namespace m2g {
 		const m2::UiPanelBlueprint* LeftHudBlueprint();
 		const m2::UiPanelBlueprint* RightHudBlueprint();
 
+		m2::third_party::physics::FixtureDefinition TileFixtureDefinition(pb::SpriteType spriteType);
 		void post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_type);
 		m2::void_expected LoadForegroundObjectFromLevelBlueprint(m2::Object& obj);
 	};

@@ -16,12 +16,16 @@
             },
             "originalRotation": -0.75,
             "overridePpm": 32,
-            "foregroundCollider": {
-              "spriteOriginToColliderOriginVecPx": {
-                "x": 5
-              },
-              "circRadiusPx": 3
-            }
+            "fixtures": [
+              {
+                "circle": {
+                  "spriteOriginToFixtureCenterVecPx": {
+                    "x": 5
+                  },
+                  "radiusPx": 3
+                }
+              }
+            ]
           }
         },
         {
@@ -34,12 +38,16 @@
             },
             "originalRotation": -0.75,
             "overridePpm": 32,
-            "foregroundCollider": {
-              "spriteOriginToColliderOriginVecPx": {
-                "x": 5
-              },
-              "circRadiusPx": 3
-            }
+            "fixtures": [
+              {
+                "circle": {
+                  "spriteOriginToFixtureCenterVecPx": {
+                    "x": 5
+                  },
+                  "radiusPx": 3
+                }
+              }
+            ]
           }
         },
         {
@@ -52,9 +60,13 @@
               "h": 16
             },
             "overridePpm": 32,
-            "foregroundCollider": {
-              "circRadiusPx": 8
-            }
+            "fixtures": [
+              {
+                "circle": {
+                  "radiusPx": 8
+                }
+              }
+            ]
           }
         },
         {
@@ -70,15 +82,19 @@
             "centerToOriginVecPx": {
               "x": -13
             },
-            "foregroundCollider": {
-              "spriteOriginToColliderOriginVecPx": {
-                "x": 13
-              },
-              "rectDimsPx": {
-                "w": 26,
-                "h": 5
+            "fixtures": [
+              {
+                "rectangle": {
+                  "spriteOriginToFixtureCenterVecPx": {
+                    "x": 13
+                  },
+                  "dimsPx": {
+                    "w": 26,
+                    "h": 5
+                  }
+                }
               }
-            }
+            ]
           }
         },
         {
@@ -90,9 +106,13 @@
               "w": 16,
               "h": 16
             },
-            "backgroundCollider": {
-              "circRadiusPx": 8
-            }
+            "fixtures": [
+              {
+                "circle": {
+                  "radiusPx": 8
+                }
+              }
+            ]
           }
         },
         {
@@ -104,9 +124,13 @@
               "w": 16,
               "h": 16
             },
-            "backgroundCollider": {
-              "circRadiusPx": 8
-            }
+            "fixtures": [
+              {
+                "circle": {
+                  "radiusPx": 8
+                }
+              }
+            ]
           }
         },
         {
@@ -122,15 +146,19 @@
             "centerToOriginVecPx": {
               "x": -13
             },
-            "foregroundCollider": {
-              "spriteOriginToColliderOriginVecPx": {
-                "x": 13
-              },
-              "rectDimsPx": {
-                "w": 26,
-                "h": 5
+            "fixtures": [
+              {
+                "rectangle": {
+                  "spriteOriginToFixtureCenterVecPx": {
+                    "x": 13
+                  },
+                  "dimsPx": {
+                    "w": 26,
+                    "h": 5
+                  }
+                }
               }
-            }
+            ]
           }
         },
         {
@@ -145,9 +173,13 @@
             "centerToOriginVecPx": {
               "y": 3
             },
-            "backgroundCollider": {
-              "circRadiusPx": 5
-            }
+            "fixtures": [
+              {
+                "circle": {
+                  "radiusPx": 5
+                }
+              }
+            ]
           }
         },
         {
@@ -162,9 +194,13 @@
             "centerToOriginVecPx": {
               "y": 3
             },
-            "backgroundCollider": {
-              "circRadiusPx": 5
-            }
+            "fixtures": [
+              {
+                "circle": {
+                  "radiusPx": 5
+                }
+              }
+            ]
           }
         },
         {
@@ -176,9 +212,13 @@
               "w": 16,
               "h": 16
             },
-            "backgroundCollider": {
-              "circRadiusPx": 8
-            }
+            "fixtures": [
+              {
+                "circle": {
+                  "radiusPx": 8
+                }
+              }
+            ]
           }
         },
         {
@@ -190,9 +230,13 @@
               "w": 16,
               "h": 16
             },
-            "backgroundCollider": {
-              "circRadiusPx": 8
-            }
+            "fixtures": [
+              {
+                "circle": {
+                  "radiusPx": 8
+                }
+              }
+            ]
           }
         }
       ]
@@ -222,12 +266,16 @@
               "w": 16,
               "h": 16
             },
-            "backgroundCollider": {
-              "rectDimsPx": {
-                "w": 16,
-                "h": 16
+            "fixtures": [
+              {
+                "rectangle": {
+                  "dimsPx": {
+                    "w": 16,
+                    "h": 16
+                  }
+                }
               }
-            },
+            ],
             "isBackgroundTile": true
           }
         },
@@ -240,12 +288,16 @@
               "w": 16,
               "h": 16
             },
-            "backgroundCollider": {
-              "rectDimsPx": {
-                "w": 16,
-                "h": 16
+            "fixtures": [
+              {
+                "rectangle": {
+                  "dimsPx": {
+                    "w": 16,
+                    "h": 16
+                  }
+                }
               }
-            },
+            ],
             "isBackgroundTile": true
           }
         },
@@ -258,60 +310,68 @@
               "w": 16,
               "h": 16
             },
-            "backgroundCollider": {
-              "spriteOriginToColliderOriginVecPx": {
+            "fixtures": [
+              {
+                "rectangle": {
+                  "spriteOriginToFixtureCenterVecPx": {
+                    "y": 5.5
+                  },
+                  "dimsPx": {
+                    "w": 16,
+                    "h": 5
+                  }
+                }
+              },
+              {
+                "rectangle": {
+                  "spriteOriginToFixtureCenterVecPx": {
+                    "x": -4.5
+                  },
+                  "dimsPx": {
+                    "w": 7,
+                    "h": 16
+                  }
+                }
+              }
+            ],
+            "isBackgroundTile": true,
+            "foregroundCompanion": {
+              "centerToOriginVecPx": {
                 "y": 5.5
               },
-              "rectDimsPx": {
-                "w": 16,
-                "h": 5
-              }
-            },
-            "foregroundCollider": {
-              "spriteOriginToColliderOriginVecPx": {
-                "x": -4.5
-              },
-              "rectDimsPx": {
-                "w": 7,
-                "h": 16
-              }
-            },
-            "isBackgroundTile": true,
-            "foregroundCompanionCenterToOriginVecPx": {
-              "y": 5.5
-            },
-            "foregroundCompanionRects": [
-              {
-                "x": 16,
-                "y": 151,
-                "w": 16,
-                "h": 9
-              },
-              {
-                "x": 16,
-                "y": 147,
-                "w": 12,
-                "h": 4
-              },
-              {
-                "x": 17,
-                "y": 146,
-                "w": 10,
-                "h": 1
-              },
-              {
-                "x": 18,
-                "y": 145,
-                "w": 3,
-                "h": 1
-              },
-              {
-                "x": 23,
-                "y": 145,
-                "w": 3,
-                "h": 1
-              }
-            ]
+              "foregroundCompanionRects": [
+                {
+                  "x": 16,
+                  "y": 151,
+                  "w": 16,
+                  "h": 9
+                },
+                {
+                  "x": 16,
+                  "y": 147,
+                  "w": 12,
+                  "h": 4
+                },
+                {
+                  "x": 17,
+                  "y": 146,
+                  "w": 10,
+                  "h": 1
+                },
+                {
+                  "x": 18,
+                  "y": 145,
+                  "w": 3,
+                  "h": 1
+                },
+                {
+                  "x": 23,
+                  "y": 145,
+                  "w": 3,
+                  "h": 1
+                }
+              ]
+            }
           }
         },
         {
@@ -323,60 +383,68 @@
               "w": 16,
               "h": 16
             },
-            "backgroundCollider": {
-              "spriteOriginToColliderOriginVecPx": {
+            "fixtures": [
+              {
+                "rectangle": {
+                  "spriteOriginToFixtureCenterVecPx": {
+                    "y": 5.5
+                  },
+                  "dimsPx": {
+                    "w": 16,
+                    "h": 5
+                  }
+                }
+              },
+              {
+                "rectangle": {
+                  "spriteOriginToFixtureCenterVecPx": {
+                    "x": 4.5
+                  },
+                  "dimsPx": {
+                    "w": 7,
+                    "h": 16
+                  }
+                }
+              }
+            ],
+            "isBackgroundTile": true,
+            "foregroundCompanion": {
+              "centerToOriginVecPx": {
                 "y": 5.5
               },
-              "rectDimsPx": {
-                "w": 16,
-                "h": 5
-              }
-            },
-            "foregroundCollider": {
-              "spriteOriginToColliderOriginVecPx": {
-                "x": 4.5
-              },
-              "rectDimsPx": {
-                "w": 7,
-                "h": 16
-              }
-            },
-            "isBackgroundTile": true,
-            "foregroundCompanionCenterToOriginVecPx": {
-              "y": 5.5
-            },
-            "foregroundCompanionRects": [
-              {
-                "x": 48,
-                "y": 151,
-                "w": 16,
-                "h": 9
-              },
-              {
-                "x": 52,
-                "y": 147,
-                "w": 12,
-                "h": 4
-              },
-              {
-                "x": 53,
-                "y": 146,
-                "w": 10,
-                "h": 1
-              },
-              {
-                "x": 54,
-                "y": 145,
-                "w": 3,
-                "h": 1
-              },
-              {
-                "x": 59,
-                "y": 145,
-                "w": 3,
-                "h": 1
-              }
-            ]
+              "foregroundCompanionRects": [
+                {
+                  "x": 48,
+                  "y": 151,
+                  "w": 16,
+                  "h": 9
+                },
+                {
+                  "x": 52,
+                  "y": 147,
+                  "w": 12,
+                  "h": 4
+                },
+                {
+                  "x": 53,
+                  "y": 146,
+                  "w": 10,
+                  "h": 1
+                },
+                {
+                  "x": 54,
+                  "y": 145,
+                  "w": 3,
+                  "h": 1
+                },
+                {
+                  "x": 59,
+                  "y": 145,
+                  "w": 3,
+                  "h": 1
+                }
+              ]
+            }
           }
         },
         {
@@ -388,25 +456,31 @@
               "w": 16,
               "h": 16
             },
-            "backgroundCollider": {
-              "spriteOriginToColliderOriginVecPx": {
-                "y": -1
+            "fixtures": [
+              {
+                "rectangle": {
+                  "spriteOriginToFixtureCenterVecPx": {
+                    "y": -1
+                  },
+                  "dimsPx": {
+                    "w": 16,
+                    "h": 10
+                  }
+                }
               },
-              "rectDimsPx": {
-                "w": 16,
-                "h": 10
+              {
+                "rectangle": {
+                  "spriteOriginToFixtureCenterVecPx": {
+                    "x": -4.5,
+                    "y": 6
+                  },
+                  "dimsPx": {
+                    "w": 7,
+                    "h": 4
+                  }
+                }
               }
-            },
-            "foregroundCollider": {
-              "spriteOriginToColliderOriginVecPx": {
-                "x": -4.5,
-                "y": 6
-              },
-              "rectDimsPx": {
-                "w": 7,
-                "h": 4
-              }
-            },
+            ],
             "isBackgroundTile": true
           }
         },
@@ -419,25 +493,31 @@
               "w": 16,
               "h": 16
             },
-            "backgroundCollider": {
-              "spriteOriginToColliderOriginVecPx": {
-                "y": -1
+            "fixtures": [
+              {
+                "rectangle": {
+                  "spriteOriginToFixtureCenterVecPx": {
+                    "y": -1
+                  },
+                  "dimsPx": {
+                    "w": 16,
+                    "h": 10
+                  }
+                }
               },
-              "rectDimsPx": {
-                "w": 16,
-                "h": 10
+              {
+                "rectangle": {
+                  "spriteOriginToFixtureCenterVecPx": {
+                    "x": 4.5,
+                    "y": 6
+                  },
+                  "dimsPx": {
+                    "w": 7,
+                    "h": 4
+                  }
+                }
               }
-            },
-            "foregroundCollider": {
-              "spriteOriginToColliderOriginVecPx": {
-                "x": 4.5,
-                "y": 6
-              },
-              "rectDimsPx": {
-                "w": 7,
-                "h": 4
-              }
-            },
+            ],
             "isBackgroundTile": true
           }
         },
@@ -450,12 +530,17 @@
               "w": 16,
               "h": 16
             },
-            "backgroundCollider": {
-              "rectDimsPx": {
-                "w": 16,
-                "h": 8
+            "fixtures": [
+              {
+                "rectangle": {
+                  "spriteOriginToFixtureCenterVecPx": {},
+                  "dimsPx": {
+                    "w": 16,
+                    "h": 8
+                  }
+                }
               }
-            },
+            ],
             "isBackgroundTile": true
           }
         },
@@ -468,15 +553,19 @@
               "w": 16,
               "h": 16
             },
-            "backgroundCollider": {
-              "spriteOriginToColliderOriginVecPx": {
-                "x": -4
-              },
-              "rectDimsPx": {
-                "w": 6,
-                "h": 16
+            "fixtures": [
+              {
+                "rectangle": {
+                  "spriteOriginToFixtureCenterVecPx": {
+                    "x": -4
+                  },
+                  "dimsPx": {
+                    "w": 6,
+                    "h": 16
+                  }
+                }
               }
-            },
+            ],
             "isBackgroundTile": true
           }
         },
@@ -489,15 +578,19 @@
               "w": 16,
               "h": 16
             },
-            "backgroundCollider": {
-              "spriteOriginToColliderOriginVecPx": {
-                "x": 4
-              },
-              "rectDimsPx": {
-                "w": 6,
-                "h": 16
+            "fixtures": [
+              {
+                "rectangle": {
+                  "spriteOriginToFixtureCenterVecPx": {
+                    "x": 4
+                  },
+                  "dimsPx": {
+                    "w": 6,
+                    "h": 16
+                  }
+                }
               }
-            },
+            ],
             "isBackgroundTile": true
           }
         },
@@ -510,33 +603,39 @@
               "w": 16,
               "h": 16
             },
-            "backgroundCollider": {
-              "spriteOriginToColliderOriginVecPx": {
+            "fixtures": [
+              {
+                "rectangle": {
+                  "spriteOriginToFixtureCenterVecPx": {
+                    "y": 5.5
+                  },
+                  "dimsPx": {
+                    "w": 16,
+                    "h": 5
+                  }
+                }
+              }
+            ],
+            "isBackgroundTile": true,
+            "foregroundCompanion": {
+              "centerToOriginVecPx": {
                 "y": 5.5
               },
-              "rectDimsPx": {
-                "w": 16,
-                "h": 5
-              }
-            },
-            "isBackgroundTile": true,
-            "foregroundCompanionCenterToOriginVecPx": {
-              "y": 5.5
-            },
-            "foregroundCompanionRects": [
-              {
-                "x": 32,
-                "y": 151,
-                "w": 16,
-                "h": 9
-              },
-              {
-                "x": 36,
-                "y": 149,
-                "w": 9,
-                "h": 2
-              }
-            ]
+              "foregroundCompanionRects": [
+                {
+                  "x": 32,
+                  "y": 151,
+                  "w": 16,
+                  "h": 9
+                },
+                {
+                  "x": 36,
+                  "y": 149,
+                  "w": 9,
+                  "h": 2
+                }
+              ]
+            }
           }
         },
         {
@@ -548,29 +647,35 @@
               "w": 16,
               "h": 16
             },
-            "backgroundCollider": {
-              "spriteOriginToColliderOriginVecPx": {
+            "fixtures": [
+              {
+                "rectangle": {
+                  "spriteOriginToFixtureCenterVecPx": {
+                    "x": 4.5,
+                    "y": 5.5
+                  },
+                  "dimsPx": {
+                    "w": 7,
+                    "h": 5
+                  }
+                }
+              }
+            ],
+            "isBackgroundTile": true,
+            "foregroundCompanion": {
+              "centerToOriginVecPx": {
                 "x": 4.5,
                 "y": 5.5
               },
-              "rectDimsPx": {
-                "w": 7,
-                "h": 5
-              }
-            },
-            "isBackgroundTile": true,
-            "foregroundCompanionCenterToOriginVecPx": {
-              "x": 4.5,
-              "y": 5.5
-            },
-            "foregroundCompanionRects": [
-              {
-                "x": 73,
-                "y": 117,
-                "w": 7,
-                "h": 11
-              }
-            ]
+              "foregroundCompanionRects": [
+                {
+                  "x": 73,
+                  "y": 117,
+                  "w": 7,
+                  "h": 11
+                }
+              ]
+            }
           }
         },
         {
@@ -582,29 +687,35 @@
               "w": 16,
               "h": 16
             },
-            "backgroundCollider": {
-              "spriteOriginToColliderOriginVecPx": {
+            "fixtures": [
+              {
+                "rectangle": {
+                  "spriteOriginToFixtureCenterVecPx": {
+                    "x": -4.5,
+                    "y": 5.5
+                  },
+                  "dimsPx": {
+                    "w": 7,
+                    "h": 5
+                  }
+                }
+              }
+            ],
+            "isBackgroundTile": true,
+            "foregroundCompanion": {
+              "centerToOriginVecPx": {
                 "x": -4.5,
                 "y": 5.5
               },
-              "rectDimsPx": {
-                "w": 7,
-                "h": 5
-              }
-            },
-            "isBackgroundTile": true,
-            "foregroundCompanionCenterToOriginVecPx": {
-              "x": -4.5,
-              "y": 5.5
-            },
-            "foregroundCompanionRects": [
-              {
-                "x": 80,
-                "y": 117,
-                "w": 7,
-                "h": 11
-              }
-            ]
+              "foregroundCompanionRects": [
+                {
+                  "x": 80,
+                  "y": 117,
+                  "w": 7,
+                  "h": 11
+                }
+              ]
+            }
           }
         },
         {
@@ -616,16 +727,20 @@
               "w": 16,
               "h": 16
             },
-            "backgroundCollider": {
-              "spriteOriginToColliderOriginVecPx": {
-                "x": 4.5,
-                "y": -2
-              },
-              "rectDimsPx": {
-                "w": 7,
-                "h": 12
+            "fixtures": [
+              {
+                "rectangle": {
+                  "spriteOriginToFixtureCenterVecPx": {
+                    "x": 4.5,
+                    "y": -2
+                  },
+                  "dimsPx": {
+                    "w": 7,
+                    "h": 12
+                  }
+                }
               }
-            },
+            ],
             "isBackgroundTile": true
           }
         },
@@ -638,16 +753,20 @@
               "w": 16,
               "h": 16
             },
-            "backgroundCollider": {
-              "spriteOriginToColliderOriginVecPx": {
-                "x": -4.5,
-                "y": -2
-              },
-              "rectDimsPx": {
-                "w": 7,
-                "h": 12
+            "fixtures": [
+              {
+                "rectangle": {
+                  "spriteOriginToFixtureCenterVecPx": {
+                    "x": -4.5,
+                    "y": -2
+                  },
+                  "dimsPx": {
+                    "w": 7,
+                    "h": 12
+                  }
+                }
               }
-            },
+            ],
             "isBackgroundTile": true
           }
         },
@@ -677,9 +796,14 @@
               "w": 16,
               "h": 16
             },
-            "backgroundCollider": {
-              "circRadiusPx": 6
-            }
+            "fixtures": [
+              {
+                "circle": {
+                  "spriteOriginToFixtureCenterVecPx": {},
+                  "radiusPx": 6
+                }
+              }
+            ]
           }
         },
         {
@@ -718,33 +842,39 @@
             "centerToOriginVecPx": {
               "y": -8
             },
-            "backgroundCollider": {
-              "spriteOriginToColliderOriginVecPx": {
-                "y": 5.5
-              },
-              "rectDimsPx": {
-                "w": 16,
-                "h": 5
+            "fixtures": [
+              {
+                "rectangle": {
+                  "spriteOriginToFixtureCenterVecPx": {
+                    "y": 5.5
+                  },
+                  "dimsPx": {
+                    "w": 16,
+                    "h": 5
+                  }
+                }
               }
-            },
+            ],
             "isBackgroundTile": true,
-            "foregroundCompanionCenterToOriginVecPx": {
-              "y": -2.5
-            },
-            "foregroundCompanionRects": [
-              {
-                "x": 304,
-                "y": 151,
-                "w": 16,
-                "h": 9
+            "foregroundCompanion": {
+              "centerToOriginVecPx": {
+                "y": -2.5
               },
-              {
-                "x": 308,
-                "y": 149,
-                "w": 9,
-                "h": 2
-              }
-            ]
+              "foregroundCompanionRects": [
+                {
+                  "x": 304,
+                  "y": 151,
+                  "w": 16,
+                  "h": 9
+                },
+                {
+                  "x": 308,
+                  "y": 149,
+                  "w": 9,
+                  "h": 2
+                }
+              ]
+            }
           }
         },
         {
@@ -771,33 +901,39 @@
             "centerToOriginVecPx": {
               "y": -8
             },
-            "backgroundCollider": {
-              "spriteOriginToColliderOriginVecPx": {
-                "y": 5.5
-              },
-              "rectDimsPx": {
-                "w": 16,
-                "h": 5
+            "fixtures": [
+              {
+                "rectangle": {
+                  "spriteOriginToFixtureCenterVecPx": {
+                    "y": 5.5
+                  },
+                  "dimsPx": {
+                    "w": 16,
+                    "h": 5
+                  }
+                }
               }
-            },
+            ],
             "isBackgroundTile": true,
-            "foregroundCompanionCenterToOriginVecPx": {
-              "y": -2.5
-            },
-            "foregroundCompanionRects": [
-              {
-                "x": 372,
-                "y": 149,
-                "w": 9,
-                "h": 2
+            "foregroundCompanion": {
+              "centerToOriginVecPx": {
+                "y": -2.5
               },
-              {
-                "x": 368,
-                "y": 151,
-                "w": 16,
-                "h": 9
-              }
-            ]
+              "foregroundCompanionRects": [
+                {
+                  "x": 372,
+                  "y": 149,
+                  "w": 9,
+                  "h": 2
+                },
+                {
+                  "x": 368,
+                  "y": 151,
+                  "w": 16,
+                  "h": 9
+                }
+              ]
+            }
           }
         },
         {
@@ -809,16 +945,20 @@
               "w": 16,
               "h": 16
             },
-            "backgroundCollider": {
-              "spriteOriginToColliderOriginVecPx": {
-                "x": -6.5,
-                "y": -2
-              },
-              "rectDimsPx": {
-                "w": 3,
-                "h": 12
+            "fixtures": [
+              {
+                "rectangle": {
+                  "spriteOriginToFixtureCenterVecPx": {
+                    "x": -6.5,
+                    "y": -2
+                  },
+                  "dimsPx": {
+                    "w": 3,
+                    "h": 12
+                  }
+                }
               }
-            },
+            ],
             "isBackgroundTile": true
           }
         },
@@ -843,16 +983,20 @@
               "w": 16,
               "h": 16
             },
-            "backgroundCollider": {
-              "spriteOriginToColliderOriginVecPx": {
-                "x": 6.5,
-                "y": -2
-              },
-              "rectDimsPx": {
-                "w": 3,
-                "h": 12
+            "fixtures": [
+              {
+                "rectangle": {
+                  "spriteOriginToFixtureCenterVecPx": {
+                    "x": 6.5,
+                    "y": -2
+                  },
+                  "dimsPx": {
+                    "w": 3,
+                    "h": 12
+                  }
+                }
               }
-            },
+            ],
             "isBackgroundTile": true
           }
         },
@@ -865,15 +1009,19 @@
               "w": 16,
               "h": 16
             },
-            "backgroundCollider": {
-              "spriteOriginToColliderOriginVecPx": {
-                "x": -6.5
-              },
-              "rectDimsPx": {
-                "w": 3,
-                "h": 16
+            "fixtures": [
+              {
+                "rectangle": {
+                  "spriteOriginToFixtureCenterVecPx": {
+                    "x": -6.5
+                  },
+                  "dimsPx": {
+                    "w": 3,
+                    "h": 16
+                  }
+                }
               }
-            },
+            ],
             "isBackgroundTile": true
           }
         },
@@ -898,15 +1046,19 @@
               "w": 16,
               "h": 16
             },
-            "backgroundCollider": {
-              "spriteOriginToColliderOriginVecPx": {
-                "x": 6.5
-              },
-              "rectDimsPx": {
-                "w": 3,
-                "h": 16
+            "fixtures": [
+              {
+                "rectangle": {
+                  "spriteOriginToFixtureCenterVecPx": {
+                    "x": 6.5
+                  },
+                  "dimsPx": {
+                    "w": 3,
+                    "h": 16
+                  }
+                }
               }
-            },
+            ],
             "isBackgroundTile": true
           }
         },
@@ -964,15 +1116,22 @@
               "x": -0.5,
               "y": 10
             },
-            "backgroundCollider": {
-              "circRadiusPx": 7.5
-            },
-            "foregroundCollider": {
-              "spriteOriginToColliderOriginVecPx": {
-                "y": -10
+            "fixtures": [
+              {
+                "circle": {
+                  "spriteOriginToFixtureCenterVecPx": {},
+                  "radiusPx": 7.5
+                }
               },
-              "circRadiusPx": 9.5
-            }
+              {
+                "circle": {
+                  "spriteOriginToFixtureCenterVecPx": {
+                    "y": -10
+                  },
+                  "radiusPx": 9.5
+                }
+              }
+            ]
           }
         },
         {
@@ -1151,12 +1310,20 @@
             "centerToOriginVecPx": {
               "y": 8.5
             },
-            "backgroundCollider": {
-              "circRadiusPx": 7
-            },
-            "foregroundCollider": {
-              "circRadiusPx": 8.5
-            }
+            "fixtures": [
+              {
+                "circle": {
+                  "spriteOriginToFixtureCenterVecPx": {},
+                  "radiusPx": 7
+                }
+              },
+              {
+                "circle": {
+                  "spriteOriginToFixtureCenterVecPx": {},
+                  "radiusPx": 8.5
+                }
+              }
+            ]
           }
         },
         {
@@ -1440,12 +1607,20 @@
               "x": -0.5,
               "y": 8.5
             },
-            "backgroundCollider": {
-              "circRadiusPx": 3.5
-            },
-            "foregroundCollider": {
-              "circRadiusPx": 6
-            }
+            "fixtures": [
+              {
+                "circle": {
+                  "spriteOriginToFixtureCenterVecPx": {},
+                  "radiusPx": 3.5
+                }
+              },
+              {
+                "circle": {
+                  "spriteOriginToFixtureCenterVecPx": {},
+                  "radiusPx": 6
+                }
+              }
+            ]
           }
         },
         {
@@ -1775,15 +1950,19 @@
             "centerToOriginVecPx": {
               "x": -25
             },
-            "foregroundCollider": {
-              "spriteOriginToColliderOriginVecPx": {
-                "x": 25
-              },
-              "rectDimsPx": {
-                "w": 50,
-                "h": 5
+            "fixtures": [
+              {
+                "rectangle": {
+                  "spriteOriginToFixtureCenterVecPx": {
+                    "x": 25
+                  },
+                  "dimsPx": {
+                    "w": 50,
+                    "h": 5
+                  }
+                }
               }
-            }
+            ]
           }
         }
       ]
@@ -1874,13 +2053,17 @@
             "centerToOriginVecPx": {
               "y": 54
             },
-            "backgroundCollider": {
-              "spriteOriginToColliderOriginVecPx": {
-                "x": 2,
-                "y": 1.5
-              },
-              "circRadiusPx": 4.0
-            }
+            "fixtures": [
+              {
+                "circle": {
+                  "spriteOriginToFixtureCenterVecPx": {
+                    "x": 2,
+                    "y": 1.5
+                  },
+                  "radiusPx": 4
+                }
+              }
+            ]
           }
         }
       ]
@@ -1899,13 +2082,17 @@
             "centerToOriginVecPx": {
               "y": 54
             },
-            "backgroundCollider": {
-              "spriteOriginToColliderOriginVecPx": {
-                "x": 1.5,
-                "y": 2
-              },
-              "circRadiusPx": 3.5
-            }
+            "fixtures": [
+              {
+                "circle": {
+                  "spriteOriginToFixtureCenterVecPx": {
+                    "x": 1.5,
+                    "y": 2
+                  },
+                  "radiusPx": 3.5
+                }
+              }
+            ]
           }
         }
       ]
@@ -1924,12 +2111,16 @@
             "centerToOriginVecPx": {
               "y": 14
             },
-            "backgroundCollider": {
-              "spriteOriginToColliderOriginVecPx": {
-                "y": 2
-              },
-              "circRadiusPx": 8
-            }
+            "fixtures": [
+              {
+                "circle": {
+                  "spriteOriginToFixtureCenterVecPx": {
+                    "y": 2
+                  },
+                  "radiusPx": 8
+                }
+              }
+            ]
           }
         }
       ]
@@ -1948,13 +2139,17 @@
             "centerToOriginVecPx": {
               "y": 54
             },
-            "backgroundCollider": {
-              "spriteOriginToColliderOriginVecPx": {
-                "x": 2,
-                "y": 2
-              },
-              "circRadiusPx": 3
-            }
+            "fixtures": [
+              {
+                "circle": {
+                  "spriteOriginToFixtureCenterVecPx": {
+                    "x": 2,
+                    "y": 2
+                  },
+                  "radiusPx": 3
+                }
+              }
+            ]
           }
         }
       ]
@@ -1973,13 +2168,17 @@
             "centerToOriginVecPx": {
               "y": 54
             },
-            "backgroundCollider": {
-              "spriteOriginToColliderOriginVecPx": {
-                "x": 2,
-                "y": 2
-              },
-              "circRadiusPx": 3
-            }
+            "fixtures": [
+              {
+                "circle": {
+                  "spriteOriginToFixtureCenterVecPx": {
+                    "x": 2,
+                    "y": 2
+                  },
+                  "radiusPx": 3
+                }
+              }
+            ]
           }
         }
       ]
@@ -2001,9 +2200,14 @@
               "x": 0.5,
               "y": 1.5
             },
-            "backgroundCollider": {
-              "circRadiusPx": 5.5
-            }
+            "fixtures": [
+              {
+                "circle": {
+                  "spriteOriginToFixtureCenterVecPx": {},
+                  "radiusPx": 5.5
+                }
+              }
+            ]
           }
         },
         {
@@ -2039,12 +2243,17 @@
             "centerToOriginVecPx": {
               "y": 6.5
             },
-            "backgroundCollider": {
-              "rectDimsPx": {
-                "w": 16,
-                "h": 3
+            "fixtures": [
+              {
+                "rectangle": {
+                  "spriteOriginToFixtureCenterVecPx": {},
+                  "dimsPx": {
+                    "w": 16,
+                    "h": 3
+                  }
+                }
               }
-            }
+            ]
           }
         }
       ]

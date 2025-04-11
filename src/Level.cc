@@ -4,7 +4,6 @@
 #include <m2/Level.h>
 #include <m2/Meta.h>
 #include <m2/Proxy.h>
-#include <m2/box2d/Detail.h>
 #include <m2/bulk_sheet_editor/Ui.h>
 #include <m2/level_editor/Ui.h>
 #include <m2/game/object/Camera.h>
@@ -330,7 +329,7 @@ m2::void_expected m2::Level::InitAnyPlayer(
 	}
 
 	if (physical_world) {
-		world = new b2World(M2G_PROXY.gravity ? b2Vec2{0.0f, 10.0f} : box2d::Vec2Zero());
+		world = new b2World(M2G_PROXY.gravity ? b2Vec2{0.0f, 10.0f} : b2Vec2{0.0f, 0.0f});
 		contactListener = new m2::box2d::ContactListener(
 		    m2::Physique::DefaultBeginContactCallback, m2::Physique::DefaultEndContactCallback);
 		world->SetContactListener(contactListener);

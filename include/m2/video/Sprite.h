@@ -2,8 +2,8 @@
 #include <m2/video/SpriteEffectSheet.h>
 #include <m2/video/SpriteSheet.h>
 #include <m2/video/SpriteVariant.h>
-#include <m2/box2d/Body.h>
 #include <m2/sdl/TextTexture.h>
+#include <m2/math/VecF.h>
 #include <m2/protobuf/Detail.h>
 #include <m2g_ObjectType.pb.h>
 
@@ -12,9 +12,8 @@ namespace m2 {
 		const SpriteSheet* _spriteSheet{};
 		const SpriteEffectsSheet* _effectsSheet{};
 		const pb::Sprite* _pb{};
+		const pb::Sprite* _originalPb{};
 
-		m2g::pb::SpriteType _type{};
-		std::optional<m2g::pb::SpriteType> _originalType;
 		std::vector<RectI> _effects;
 		std::vector<pb::SpriteEffectType> _defaultVariantDrawOrder;
 		std::optional<RectI> _foregroundCompanionSpriteEffectsSheetRect;
@@ -25,15 +24,6 @@ namespace m2 {
 		int _ppm{};
 		VecF _centerToOriginVecPx;
 		VecF _centerToOriginVecM;
-		box2d::ColliderType _backgroundColliderType{box2d::ColliderType::NONE};
-		VecF _originToBackgroundColliderOriginVecM;
-		VecF _backgroundColliderRectDimsM;
-		float _backgroundColliderCircRadiusM{};
-		box2d::ColliderType _foregroundColliderType{box2d::ColliderType::NONE};
-		VecF _originToForegroundColliderOriginVecM;
-		VecF _foregroundColliderRectDimsM;
-		float _foregroundColliderCircRadiusM{};
-		bool _isBackgroundTile{};
 		std::vector<m2g::pb::ItemType> _namedItems;
 
 	   public:
@@ -46,8 +36,9 @@ namespace m2 {
 		[[nodiscard]] const SpriteSheet& Sheet() const { return *_spriteSheet; }
 		[[nodiscard]] const SpriteEffectsSheet* EffectsSheet() const { return _effectsSheet; }
 		[[nodiscard]] const pb::Sprite& Pb() const { return *_pb; }
-		[[nodiscard]] m2g::pb::SpriteType Type() const { return _type; }
-		[[nodiscard]] std::optional<m2g::pb::SpriteType> OriginalType() const { return _originalType; }
+		[[nodiscard]] const pb::Sprite& OriginalPb() const { return *_originalPb; }
+		[[nodiscard]] m2g::pb::SpriteType Type() const { return _pb->type(); }
+		[[nodiscard]] m2g::pb::SpriteType OriginalType() const { return _originalPb->type(); }
 		[[nodiscard]] SDL_Texture* EffectsTexture() const { return _effectsSheet ? _effectsSheet->Texture() : nullptr; }
 		[[nodiscard]] const RectI& EffectRect(const pb::SpriteEffectType effect_type) const { return _effects[enum_index(effect_type)]; }
 		[[nodiscard]] const std::vector<pb::SpriteEffectType>& DefaultVariantDrawOrder() const { return _defaultVariantDrawOrder; }
@@ -59,15 +50,7 @@ namespace m2 {
 		[[nodiscard]] int Ppm() const { return _ppm; }
 		[[nodiscard]] const VecF& CenterToOriginVecPx() const { return _centerToOriginVecPx; }
 		[[nodiscard]] const VecF& CenterToOriginVecM() const { return _centerToOriginVecM; }
-		[[nodiscard]] box2d::ColliderType BackgroundColliderType() const { return _backgroundColliderType; }
-		[[nodiscard]] VecF OriginToBackgroundColliderOriginVecM() const { return _originToBackgroundColliderOriginVecM; }
-		[[nodiscard]] VecF BackgroundColliderRectDimsM() const { return _backgroundColliderRectDimsM; }
-		[[nodiscard]] float BackgroundColliderCircRadiusM() const { return _backgroundColliderCircRadiusM; }
-		[[nodiscard]] box2d::ColliderType ForegroundColliderType() const { return _foregroundColliderType; }
-		[[nodiscard]] VecF OriginToForegroundColliderOriginVecM() const { return _originToForegroundColliderOriginVecM; }
-		[[nodiscard]] VecF ForegroundColliderRectDimsM() const { return _foregroundColliderRectDimsM; }
-		[[nodiscard]] float ForegroundColliderCircRadiusM() const { return _foregroundColliderCircRadiusM; }
-		[[nodiscard]] bool IsBackgroundTile() const { return _isBackgroundTile; }
+		[[nodiscard]] bool IsBackgroundTile() const { return _originalPb->regular().is_background_tile(); }
 		[[nodiscard]] const std::vector<m2g::pb::ItemType>& NamedItems() const { return _namedItems; }
 
 		[[nodiscard]] SDL_Texture* Texture(SpriteVariant spriteVariant = {}) const;

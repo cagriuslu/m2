@@ -5,8 +5,8 @@
 #include <rpg/Objects.h>
 #include <m2/Log.h>
 #include <m2/Game.h>
-#include <rpg/Defs.h>
 #include <m2/protobuf/Detail.h>
+#include <m2/third_party/physics/ColliderCategory.h>
 #include <m2/ui/widget/ProgressBar.h>
 #include <rpg/Defs.h>
 
@@ -42,6 +42,12 @@ void m2g::Proxy::post_single_player_level_init(MAYBE const std::string& name, co
 	} else if (id == "AllMustBeKilledTutorialOpen") {
 		M2_LEVEL.ShowMessage("All enemies must be killed to complete the level successfully.");
 	}
+}
+
+m2::third_party::physics::FixtureDefinition m2g::Proxy::TileFixtureDefinition(MAYBE m2g::pb::SpriteType spriteType) {
+	return m2::third_party::physics::FixtureDefinition{
+		.colliderFilter = m2::third_party::physics::gColliderCategoryToParams[m2::I(m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_BACKGROUND_OBSTACLE)]
+	};
 }
 
 m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object& obj) {

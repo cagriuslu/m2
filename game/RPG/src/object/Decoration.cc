@@ -1,5 +1,6 @@
 #include <rpg/Objects.h>
 #include <m2/Game.h>
+#include <m2/third_party/physics/ColliderCategory.h>
 
 m2::void_expected rpg::create_decoration(m2::Object& obj, m2g::pb::SpriteType sprite_type) {
 	if (obj.GetType() == m2g::pb::FENCE_VERTICAL) {
@@ -9,36 +10,29 @@ m2::void_expected rpg::create_decoration(m2::Object& obj, m2g::pb::SpriteType sp
 	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(sprite_type));
 	[[maybe_unused]] auto& gfx = obj.AddGraphic(sprite_type);
 
-	if (sprite.BackgroundColliderType() == m2::box2d::ColliderType::RECTANGLE) {
-		m2::pb::BodyBlueprint bp;
-		bp.set_type(m2::pb::BodyType::STATIC);
-		bp.set_allow_sleep(true);
-		bp.mutable_background_fixture()->mutable_rect()->mutable_center_offset()->set_x(
-		    sprite.OriginToBackgroundColliderOriginVecM().x);
-		bp.mutable_background_fixture()->mutable_rect()->mutable_center_offset()->set_y(
-		    sprite.OriginToBackgroundColliderOriginVecM().y);
-		bp.mutable_background_fixture()->mutable_rect()->mutable_dims()->set_w(sprite.BackgroundColliderRectDimsM().x);
-		bp.mutable_background_fixture()->mutable_rect()->mutable_dims()->set_h(sprite.BackgroundColliderRectDimsM().y);
-		if (obj.GetType() == m2g::pb::FENCE_VERTICAL) {
-			bp.mutable_background_fixture()->mutable_rect()->set_angle(m2::PI_DIV2);
+	m2::third_party::physics::RigidBodyDefinition rigidBodyDef{
+		.bodyType = m2::third_party::physics::RigidBodyType::STATIC,
+		.allowSleeping = true,
+		.initiallyAwake = false,
+		.isBullet = false
+	};
+
+	if (sprite.OriginalPb().regular().fixtures_size()) {
+		if (sprite.OriginalPb().regular().fixtures(0).has_rectangle()) {
+			auto& phy = obj.AddPhysique();
+			rigidBodyDef.fixtures = {m2::third_party::physics::FixtureDefinition{
+				.shape = m2::third_party::physics::RectangleShape::FromSpriteRectangleFixture(sprite.OriginalPb().regular().fixtures(0).rectangle(), sprite.Ppm()),
+				.colliderFilter = m2::third_party::physics::gColliderCategoryToParams[m2::I(m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_BACKGROUND_OBSTACLE)]
+			}};
+			phy.body = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
+		} else if (sprite.OriginalPb().regular().fixtures(0).has_circle()) {
+			auto& phy = obj.AddPhysique();
+			rigidBodyDef.fixtures = {m2::third_party::physics::FixtureDefinition{
+				.shape = m2::third_party::physics::CircleShape::FromSpriteCircleFixture(sprite.OriginalPb().regular().fixtures(0).circle(), sprite.Ppm()),
+				.colliderFilter = m2::third_party::physics::gColliderCategoryToParams[m2::I(m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_BACKGROUND_OBSTACLE)]
+			}};
+			phy.body = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
 		}
-		bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::OBSTACLE_BACKGROUND);
-
-		auto& phy = obj.AddPhysique();
-		phy.body = m2::box2d::CreateBody(*M2_LEVEL.world, obj.GetPhysiqueId(), obj.position, bp);
-	} else if (sprite.BackgroundColliderType() == m2::box2d::ColliderType::CIRCLE) {
-		m2::pb::BodyBlueprint bp;
-		bp.set_type(m2::pb::BodyType::STATIC);
-		bp.set_allow_sleep(true);
-		bp.mutable_background_fixture()->mutable_circ()->mutable_center_offset()->set_x(
-		    sprite.OriginToBackgroundColliderOriginVecM().x);
-		bp.mutable_background_fixture()->mutable_circ()->mutable_center_offset()->set_y(
-		    sprite.OriginToBackgroundColliderOriginVecM().y);
-		bp.mutable_background_fixture()->mutable_circ()->set_radius(sprite.BackgroundColliderCircRadiusM());
-		bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::OBSTACLE_BACKGROUND);
-
-		auto& phy = obj.AddPhysique();
-		phy.body = m2::box2d::CreateBody(*M2_LEVEL.world, obj.GetPhysiqueId(), obj.position, bp);
 	}
 
 	return {};

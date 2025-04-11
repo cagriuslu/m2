@@ -6,7 +6,8 @@
 #include <type_traits>
 
 namespace m2::pb {
-
+	/// PersistentObject allows changes made to a protobuf object to be persisted on the file system after each change.
+	/// A cached version is kept in memory for quick access.
 	template <typename PbObjectType>
 	class PersistentObject {
 		static_assert(std::is_base_of_v<::google::protobuf::Message, PbObjectType>, "PbObjectType must be a Protobuf Message");

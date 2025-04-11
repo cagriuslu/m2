@@ -12,9 +12,14 @@
               "w": 16,
               "h": 16
             },
-            "foregroundCollider": {
-              "circRadiusPx": 8
-            }
+            "fixtures": [
+              {
+                "circle": {
+                  "spriteOriginToFixtureCenterVecPx": {},
+                  "radiusPx": 8
+                }
+              }
+            ]
           }
         },
         {
@@ -28,51 +33,46 @@
             "centerToOriginVecPx": {
               "x": -23.5
             },
-            "foregroundCollider": {
-              "spriteOriginToColliderOriginVecPx": {
-                "x": 23.5
-              },
-              "rectDimsPx": {
-                "w": 64,
-                "h": 18
-              }
-            },
-            "foregroundFixtures": {
-              "circleFixtures": [
-                {
-                  "spriteOriginToCircleCenterVecPx": {
+            "fixtures": [
+              {
+                "circle": {
+                  "spriteOriginToFixtureCenterVecPx": {
                     "x": 1.5
                   },
-                  "circleRadiusPx": 8
-                },
-                {
-                  "spriteOriginToCircleCenterVecPx": {
+                  "radiusPx": 8
+                }
+              },
+              {
+                "circle": {
+                  "spriteOriginToFixtureCenterVecPx": {
                     "x": 50.5
                   },
-                  "circleRadiusPx": 5
+                  "radiusPx": 5
                 }
-              ],
-              "chainFixture": {
-                "points": [
-                  {
-                    "x": 50.5,
-                    "y": 5
-                  },
-                  {
-                    "x": 1.5,
-                    "y": 9
-                  },
-                  {
-                    "x": 1.5,
-                    "y": -9
-                  },
-                  {
-                    "x": 50.5,
-                    "y": -5
-                  }
-                ]
+              },
+              {
+                "chain": {
+                  "points": [
+                    {
+                      "x": 50.5,
+                      "y": 5
+                    },
+                    {
+                      "x": 1.5,
+                      "y": 9
+                    },
+                    {
+                      "x": 1.5,
+                      "y": -9
+                    },
+                    {
+                      "x": 50.5,
+                      "y": -5
+                    }
+                  ]
+                }
               }
-            }
+            ]
           }
         },
         {
@@ -86,51 +86,46 @@
             "centerToOriginVecPx": {
               "x": -23.5
             },
-            "foregroundCollider": {
-              "spriteOriginToColliderOriginVecPx": {
-                "x": -23.5
-              },
-              "rectDimsPx": {
-                "w": 64,
-                "h": 18
-              }
-            },
-            "foregroundFixtures": {
-              "circleFixtures": [
-                {
-                  "spriteOriginToCircleCenterVecPx": {
+            "fixtures": [
+              {
+                "circle": {
+                  "spriteOriginToFixtureCenterVecPx": {
                     "x": 1.5
                   },
-                  "circleRadiusPx": 8
-                },
-                {
-                  "spriteOriginToCircleCenterVecPx": {
+                  "radiusPx": 8
+                }
+              },
+              {
+                "circle": {
+                  "spriteOriginToFixtureCenterVecPx": {
                     "x": 50.5
                   },
-                  "circleRadiusPx": 5
+                  "radiusPx": 5
                 }
-              ],
-              "chainFixture": {
-                "points": [
-                  {
-                    "x": 50.5,
-                    "y": 5
-                  },
-                  {
-                    "x": 1.5,
-                    "y": 9
-                  },
-                  {
-                    "x": 1.5,
-                    "y": -9
-                  },
-                  {
-                    "x": 50.5,
-                    "y": -5
-                  }
-                ]
+              },
+              {
+                "chain": {
+                  "points": [
+                    {
+                      "x": 50.5,
+                      "y": 5
+                    },
+                    {
+                      "x": 1.5,
+                      "y": 9
+                    },
+                    {
+                      "x": 1.5,
+                      "y": -9
+                    },
+                    {
+                      "x": 50.5,
+                      "y": -5
+                    }
+                  ]
+                }
               }
-            }
+            ]
           }
         },
         {
@@ -142,17 +137,16 @@
               "w": 64,
               "h": 16
             },
-            "foregroundFixtures": {
-              "rectangleFixtures": [
-                {
-                  "spriteOriginToRectangleCenterVecPx": {},
-                  "rectangleDimensionsPx": {
+            "fixtures": [
+              {
+                "rectangle": {
+                  "dimsPx": {
                     "w": 64,
                     "h": 16
                   }
                 }
-              ]
-            }
+              }
+            ]
           }
         }
       ]

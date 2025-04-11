@@ -1,27 +1,36 @@
 #include <mine/object/Dwarf.h>
 #include <m2/Game.h>
 #include <m2g_SpriteType.pb.h>
-#include <m2/box2d/Detail.h>
 #include <m2/box2d/Query.h>
 #include <m2/game/CharacterMovement.h>
+#include <m2/third_party/physics/ColliderCategory.h>
 
 using namespace m2g;
 using namespace m2g::pb;
+using namespace m2::third_party::physics;
 
 m2::void_expected create_dwarf(m2::Object& obj) {
-
+	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(DWARF_FULL));
 
 	auto& phy = obj.AddPhysique();
-	m2::pb::BodyBlueprint bp;
-	bp.set_type(m2::pb::BodyType::DYNAMIC);
-	bp.mutable_background_fixture()->mutable_circ()->set_radius(std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(DWARF_FULL)).BackgroundColliderCircRadiusM());
-	bp.mutable_background_fixture()->set_friction(0.0f);
-	bp.mutable_background_fixture()->set_category(m2::pb::FRIEND_ON_BACKGROUND);
-	bp.set_mass(100);
-	bp.set_gravity_scale(2.0f);
-	bp.set_linear_damping(0.0f);
-	bp.set_fixed_rotation(true);
-	phy.body = m2::box2d::CreateBody(*M2_LEVEL.world, obj.GetPhysiqueId(), obj.position, bp);
+	RigidBodyDefinition rigidBodyDef{
+		.bodyType = RigidBodyType::DYNAMIC,
+		.fixtures = {FixtureDefinition{
+			.shape = ToShape(sprite.OriginalPb().regular().fixtures(0), sprite.Ppm()),
+			.friction = 0.0f,
+			.restitution = 0.0f,
+			.colliderFilter = gColliderCategoryToParams[m2::I(ColliderCategory::COLLIDER_CATEGORY_BACKGROUND_FRIENDLY_OBJECT)]
+		}},
+		.linearDamping = 0.0f,
+		.fixedRotation = true,
+		.mass = 100.0f,
+		.gravityScale = 2.0f,
+		.allowSleeping = false,
+		.initiallyAwake = true,
+		.isBullet = false,
+		.initiallyEnabled = true
+	};
+	phy.body = RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
 
 	obj.AddGraphic(DWARF_FULL);
 
@@ -42,7 +51,7 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 		} else {
 			// Accelerate character
 			auto force_multiplier = m2::CalculateLimitedForce(phy.body->GetLinearVelocity().x, 5.0f);
-			phy.body->ApplyForceToCenter(b2Vec2{direction_vector * force_multiplier * 4000.0f}, true);
+			phy.body->ApplyForceToCenter(direction_vector * force_multiplier * 4000.0f);
 		}
 		// Jump
 		auto is_grounded = chr.GetResource(RESOURCE_IS_GROUNDED_X) != 0.0f && chr.GetResource(RESOURCE_IS_GROUNDED_Y) != 0.0f;
@@ -81,7 +90,7 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 	};
 	phy.onCollision = [&chr](MAYBE m2::Physique& phy, m2::Physique& other, const m2::box2d::Contact& contact) {
 		// Check if in contact with obstacle
-		if (other.body && m2::box2d::HasObstacle(other.body.get())) {
+		if (other.body && other.body->GetAllLayersBelongingTo() & (COLLIDER_LAYER_BACKGROUND_OBSTACLE | COLLIDER_LAYER_FOREGROUND_OBSTACLE)) {
 			// Check is contact normal points upwards
 			if (abs(contact.normal.x) <= -contact.normal.y) {
 				chr.SetResource(RESOURCE_IS_GROUNDED_X, other.Owner().position.x);
@@ -91,7 +100,7 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 	};
 	phy.offCollision = [&chr](MAYBE m2::Physique& phy, m2::Physique& other) {
 		// Check if in contact with obstacle
-		if (other.body && m2::box2d::HasObstacle(other.body.get())) {
+		if (other.body && other.body->GetAllLayersBelongingTo() & (COLLIDER_LAYER_BACKGROUND_OBSTACLE | COLLIDER_LAYER_FOREGROUND_OBSTACLE)) {
 			// Check if the other object is the grounding object
 			if (chr.GetResource(RESOURCE_IS_GROUNDED_X) == other.Owner().position.x && chr.GetResource(RESOURCE_IS_GROUNDED_Y) == other.Owner().position.y) {
 				chr.SetResource(RESOURCE_IS_GROUNDED_X, 0.0f);

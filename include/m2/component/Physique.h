@@ -1,7 +1,7 @@
 #pragma once
 #include "../Component.h"
 #include "../box2d/ContactListener.h"
-#include "../box2d/Body.h"
+#include <m2/third_party/physics/RigidBody.h>
 #include <functional>
 
 namespace m2 {
@@ -14,7 +14,7 @@ namespace m2 {
 		Callback onDebugDraw{DefaultDebugDraw};
 
 		// An object has either body or rigidBodyIndex.
-		box2d::BodyUniquePtr body;
+		std::optional<third_party::physics::RigidBody> body;
 		std::optional<int> rigidBodyIndex;
 
 		std::function<void(Physique&, Physique&, const box2d::Contact&)> onCollision;

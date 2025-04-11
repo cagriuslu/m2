@@ -1,13 +1,20 @@
 #pragma once
 #include "../ui/UiPanelBlueprint.h"
+#include <array>
 
 namespace m2 {
-	constexpr int FIXTURE_LAYER_SELECTION_BACKGROUND_OPTION = 0;
-	constexpr int FIXTURE_LAYER_SELECTION_FOREGROUND_OPTION = 1;
-
-	constexpr int FIXTURE_SHAPE_SELECTION_RECTANGLE = 0;
-	constexpr int FIXTURE_SHAPE_SELECTION_CIRCLE = 1;
-	constexpr int FIXTURE_SHAPE_SELECTION_CHAIN_POINT = 2;
+	namespace sheet_editor {
+		enum FixtureType {
+			RECTANGLE = 0,
+			CIRCLE = 1,
+			CHAIN = 2
+		};
+		constexpr std::array<std::string, 3> gFixtureTypeName = {
+			"Rectangle", // RECTANGLE
+			"Circle", // CIRCLE
+			"Chain" // CHAIN
+		};
+	}
 
 	extern const UiPanelBlueprint sheet_editor_left_hud;
 	extern const UiPanelBlueprint sheet_editor_right_hud;

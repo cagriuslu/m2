@@ -134,6 +134,9 @@ namespace m2 {
 		/// bot. Implementation should return false if level should be destroyed and main menu triggerred.
 		bool handle_misbehaving_client(MAYBE int receiver_index) { return false; }
 
+		/// This function is called if a background tile has a fixture. The FixtureDefinition, except the shape, should
+		/// be filled by the game code.
+		third_party::physics::FixtureDefinition TileFixtureDefinition(MAYBE m2g::pb::SpriteType spriteType) { throw M2_ERROR("Proxy is missing tile fixture definition"); }
 		/// Called after a tile is created
 		void post_tile_create(MAYBE m2::Object& obj, MAYBE m2g::pb::SpriteType sprite_type) {}
 

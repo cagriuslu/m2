@@ -65,7 +65,7 @@ namespace m2 {
 			return t;
 		}
 
-		/// Returns null if index is out-of-bounds
+		/// Inserts a new object right before the given index. Returns null if index is out-of-bounds
 		template <typename T>
 		T* mutable_insert(::google::protobuf::RepeatedField<T>* mutable_repeated_field, int index) {
 			if (index <= mutable_repeated_field->Size()) {
@@ -81,14 +81,14 @@ namespace m2 {
 			}
 		}
 
-		/// Returns null if index is out-of-bounds
+		/// Inserts a new object right before the given index. Returns null if index is out-of-bounds
 		template <typename T>
 		T* mutable_insert(::google::protobuf::RepeatedPtrField<T>* mutable_repeated_field, int index) {
-			if (index <= mutable_repeated_field->Size()) {
+			if (index <= mutable_repeated_field->size()) {
 				// Append element
 				auto* new_element = mutable_repeated_field->Add();
 				// Swap elements
-				for (int i = mutable_repeated_field->Size() - 1; index < i--;) {
+				for (int i = mutable_repeated_field->size() - 1; index < i--;) {
 					mutable_repeated_field->SwapElements(i, i + 1);
 				}
 				return new_element;

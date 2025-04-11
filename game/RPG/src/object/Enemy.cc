@@ -2,7 +2,6 @@
 #include <m2/M2.h>
 #include <m2/Log.h>
 #include <m2/Object.h>
-#include <m2/box2d/Detail.h>
 #include <m2/game/CharacterMovement.h>
 #include <m2g_Interaction.pb.h>
 #include <rpg/Data.h>
@@ -11,6 +10,7 @@
 #include <rpg/object/Enemy.h>
 
 #include <deque>
+#include <m2/third_party/physics/ColliderCategory.h>
 
 #include "m2/Game.h"
 #include "m2/game/Pathfinder.h"
@@ -42,17 +42,26 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 	auto& gfx = obj.AddGraphic(main_sprite_type);
 
 	auto& phy = obj.AddPhysique();
-	m2::pb::BodyBlueprint bp;
-	bp.set_type(m2::pb::BodyType::DYNAMIC);
-	bp.set_allow_sleep(true);
-	bp.mutable_background_fixture()->mutable_circ()->set_radius(mainSprite.BackgroundColliderCircRadiusM());
-	bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::FOE_ON_BACKGROUND);
-	bp.mutable_foreground_fixture()->mutable_circ()->set_radius(mainSprite.ForegroundColliderCircRadiusM());
-	bp.mutable_foreground_fixture()->set_category(m2::pb::FixtureCategory::FOE_ON_FOREGROUND);
-	bp.set_mass(20.0f); // Enemy mass is lower than player, so that player can push the enemies
-	bp.set_linear_damping(5.0f);
-	bp.set_fixed_rotation(true);
-	phy.body = m2::box2d::CreateBody(*M2_LEVEL.world, obj.GetPhysiqueId(), obj.position, bp);
+	m2::third_party::physics::RigidBodyDefinition rigidBodyDef{
+		.bodyType = m2::third_party::physics::RigidBodyType::DYNAMIC,
+		.fixtures = {
+			m2::third_party::physics::FixtureDefinition{
+				.shape = m2::third_party::physics::CircleShape::FromSpriteCircleFixture(mainSprite.OriginalPb().regular().fixtures(0).circle(), mainSprite.Ppm()),
+				.colliderFilter = m2::third_party::physics::gColliderCategoryToParams[m2::I(m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_BACKGROUND_HOSTILE_OBJECT)]
+			},
+			m2::third_party::physics::FixtureDefinition{
+				.shape = m2::third_party::physics::CircleShape::FromSpriteCircleFixture(mainSprite.OriginalPb().regular().fixtures(1).circle(), mainSprite.Ppm()),
+				.colliderFilter = m2::third_party::physics::gColliderCategoryToParams[m2::I(m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_HOSTILE_OBJECT)]
+			}
+		},
+		.linearDamping = 5.0f,
+		.fixedRotation = true,
+		.mass = 20.0f, // Enemy mass is lower than player, so that player can push the enemies
+		.allowSleeping = true,
+		.initiallyAwake = false,
+		.isBullet = false
+	};
+	phy.body = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
 
 	auto& chr = obj.AddFullCharacter();
 	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_GUN));
@@ -186,7 +195,7 @@ void rpg::Enemy::move_towards(m2::Object& obj, m2::VecF direction, float force) 
 		dynamic_cast<Enemy&>(*obj.impl).animation_fsm.signal(m2::AnimationFsmSignal{anim_state_type});
 		// Apply force
 		m2::VecF force_direction = direction * (M2_GAME.DeltaTimeS() * force);
-		obj.GetPhysique().body->ApplyForceToCenter(static_cast<b2Vec2>(force_direction), true);
+		obj.GetPhysique().body->ApplyForceToCenter(force_direction);
 	}
 }
 
@@ -205,7 +214,7 @@ void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
 						rpg::create_projectile(*m2::CreateObject(obj.position, {}, obj.GetId()),
 							shoot_direction, *it, false);
 						// Knock-back
-						obj.GetPhysique().body->ApplyForceToCenter(static_cast<b2Vec2>(m2::VecF::from_angle(shoot_direction.angle_rads() + m2::PI) * 5000.0f), true);
+						obj.GetPhysique().body->ApplyForceToCenter(m2::VecF::from_angle(shoot_direction.angle_rads() + m2::PI) * 5000.0f);
 					}
 					break;
 				}

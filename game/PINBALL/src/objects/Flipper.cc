@@ -1,8 +1,7 @@
 #include <pinball/objects/Flipper.h>
 #include <m2/Game.h>
-#include <box2d/b2_polygon_shape.h>
-#include <m2/box2d/Detail.h>
 #include <m2/box2d/Shape.h>
+#include <m2/third_party/physics/ColliderCategory.h>
 
 namespace {
 	constexpr auto MAX_FLIPPER_SWEEP_RADS = m2::ToRadians(60.0f);
@@ -33,49 +32,27 @@ m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
 	auto* flipper = dynamic_cast<FlipperImpl*>(obj.impl.get());
 
 	auto& phy = obj.AddPhysique();
-	b2BodyDef bodyDef;
-	bodyDef.type = b2_kinematicBody;
-	bodyDef.position.Set(obj.position.x, obj.position.y);
-	bodyDef.angle = obj.orientation;
-	bodyDef.linearVelocity = {};
-	bodyDef.angularVelocity = 0.0f;
-	bodyDef.linearDamping = 0.1f;
-	bodyDef.angularDamping = 0.1f;
-	bodyDef.allowSleep = true;
-	bodyDef.awake = true;
-	bodyDef.fixedRotation = false;
-	bodyDef.bullet = true;
-	bodyDef.enabled = true;
-	bodyDef.userData.pointer = obj.GetPhysiqueId();
-	bodyDef.gravityScale = 0.0f;
-	b2Body* body = M2_LEVEL.world->CreateBody(&bodyDef);
-	{
-		b2FixtureDef fixtureDef;
-		const auto chain = m2::box2d::GenerateChainShape(sprite.Pb().regular().foreground_fixtures().chain_fixture(), sprite.Ppm());
-		fixtureDef.shape = &chain;
-		fixtureDef.friction = 0.0f; // TODO
-		fixtureDef.restitution = 1.0f;
-		fixtureDef.restitutionThreshold = 0.0f;
-		fixtureDef.density = 0.0f; // Kinematic object doesn't need mass
-		fixtureDef.isSensor = false;
-		fixtureDef.filter.categoryBits = m2::box2d::FIXTURE_CATEGORY_FRIEND_ON_FOREGROUND;
-		fixtureDef.filter.maskBits = 0xFFFF; // Collide with everything
-		body->CreateFixture(&fixtureDef);
-	}
-	for (const auto& circ : sprite.Pb().regular().foreground_fixtures().circle_fixtures()) {
-		b2FixtureDef fixtureDef;
-		const auto circle = m2::box2d::GenerateCircleShape(circ, sprite.Ppm());
-		fixtureDef.shape = &circle;
-		fixtureDef.friction = 0.0f; // TODO
-		fixtureDef.restitution = 1.0f;
-		fixtureDef.restitutionThreshold = 0.0f;
-		fixtureDef.density = 0.0f; // Kinematic object doesn't need mass
-		fixtureDef.isSensor = false;
-		fixtureDef.filter.categoryBits = m2::box2d::FIXTURE_CATEGORY_FRIEND_ON_FOREGROUND;
-		fixtureDef.filter.maskBits = 0xFFFF; // Collide with everything
-		body->CreateFixture(&fixtureDef);
-	}
-	phy.body = m2::box2d::BodyUniquePtr{body};
+	const m2::third_party::physics::RigidBodyDefinition rigidBodyDef{
+		.bodyType = m2::third_party::physics::RigidBodyType::KINEMATIC,
+		.fixtures = m2::ToVector(
+				sprite.OriginalPb().regular().fixtures() | std::views::transform([&sprite](const auto& fixture) {
+					m2::third_party::physics::FixtureDefinition fixtureDef;
+					fixtureDef.shape = m2::third_party::physics::ToShape(fixture, sprite.Ppm());
+					fixtureDef.friction = 0.0f;
+					fixtureDef.restitution = 1.0f;
+					fixtureDef.restitutionThresholdVelocity = 0.0f;
+					fixtureDef.isSensor = false;
+					fixtureDef.colliderFilter.belongsTo =
+							m2::third_party::physics::ColliderLayer::COLLIDER_LAYER_FOREGROUND_FRIENDLY_OBJECT;
+					fixtureDef.colliderFilter.collidesWith = 0xFFFF;
+					return fixtureDef;
+				})),
+		.allowSleeping = false,
+		.initiallyAwake = true,
+		.isBullet = true,
+		.initiallyEnabled = true
+	};
+	phy.body = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
 
 	MAYBE auto& gfx = obj.AddGraphic(rightFlipper ? m2g::pb::SPRITE_BASIC_FLIPPER_RIGHT : m2g::pb::SPRITE_BASIC_FLIPPER_LEFT);
 
@@ -92,12 +69,12 @@ m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
 		};
 		phy.postStep = [flipper](m2::Physique& phy_) {
 			if (flipper->state == FlipperState::GOING_UP && m2::IsLess(MAX_FLIPPER_SWEEP_RADS, m2::AngleAbsoluteDifference(phy_.body->GetAngle(), flipper->initialRotation), 0.001f)) {
-				phy_.body->SetTransform(phy_.body->GetTransform().p, flipper->initialRotation + MAX_FLIPPER_SWEEP_RADS);
+				phy_.body->SetAngle(flipper->initialRotation + MAX_FLIPPER_SWEEP_RADS);
 				phy_.body->SetAngularVelocity(0.0f);
 				flipper->state = FlipperState::FULLY_UP;
 			}
 			if (flipper->state == FlipperState::GOING_DOWN && m2::IsNegative(m2::AngleDifference(phy_.body->GetAngle(), flipper->initialRotation), 0.001f)) {
-				phy_.body->SetTransform(phy_.body->GetTransform().p, flipper->initialRotation);
+				phy_.body->SetAngle(flipper->initialRotation);
 				phy_.body->SetAngularVelocity(0.0f);
 				flipper->state = FlipperState::RESTING;
 			}
@@ -115,12 +92,12 @@ m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
 		};
 		phy.postStep = [flipper](m2::Physique& phy_) {
 			if (flipper->state == FlipperState::GOING_UP && m2::IsLess(MAX_FLIPPER_SWEEP_RADS, m2::AngleAbsoluteDifference(phy_.body->GetAngle(), flipper->initialRotation), 0.001f)) {
-				phy_.body->SetTransform(phy_.body->GetTransform().p, flipper->initialRotation - MAX_FLIPPER_SWEEP_RADS);
+				phy_.body->SetAngle(flipper->initialRotation - MAX_FLIPPER_SWEEP_RADS);
 				phy_.body->SetAngularVelocity(0.0f);
 				flipper->state = FlipperState::FULLY_UP;
 			}
 			if (flipper->state == FlipperState::GOING_DOWN && m2::IsNegative(m2::AngleDifference(flipper->initialRotation, phy_.body->GetAngle()), 0.001f)) {
-				phy_.body->SetTransform(phy_.body->GetTransform().p, flipper->initialRotation);
+				phy_.body->SetAngle(flipper->initialRotation);
 				phy_.body->SetAngularVelocity(0.0f);
 				flipper->state = FlipperState::RESTING;
 			}

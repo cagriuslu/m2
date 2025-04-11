@@ -152,65 +152,103 @@ namespace {
 				}
 			},
 			UiWidgetBlueprint{
-				.name = "LayerSelection",
-				.x = 1, .y = 6, .w = 17, .h = 3,
+				.name = "FixtureAdder",
+				.x = 1, .y = 6, .w = 12, .h = 3,
 				.variant = widget::TextSelectionBlueprint{
 					.options = {
-						{.text = "Background", .return_value = FIXTURE_LAYER_SELECTION_BACKGROUND_OPTION},
-						{.text = "Foreground", .return_value = FIXTURE_LAYER_SELECTION_FOREGROUND_OPTION}}
+						{.text = sheet_editor::gFixtureTypeName[sheet_editor::RECTANGLE], .return_value = sheet_editor::RECTANGLE},
+						{.text = sheet_editor::gFixtureTypeName[sheet_editor::CIRCLE], .return_value = sheet_editor::CIRCLE},
+						{.text = sheet_editor::gFixtureTypeName[sheet_editor::CHAIN], .return_value = sheet_editor::CHAIN}}
 				}
 			},
 			UiWidgetBlueprint{
-				.name = "ShapeSelection",
-				.x = 1, .y = 10, .w = 17, .h = 3,
-				.variant = widget::TextSelectionBlueprint{
-					.options = {
-						{.text = "Rectangle", .return_value = FIXTURE_SHAPE_SELECTION_RECTANGLE},
-						{.text = "Circle", .return_value = FIXTURE_SHAPE_SELECTION_CIRCLE},
-						{.text = "Chain Point", .return_value = FIXTURE_SHAPE_SELECTION_CHAIN_POINT}}
-				}
-			},
-			UiWidgetBlueprint{
-				.x = 1, .y = 14, .w = 17, .h = 4,
+				.x = 14, .y = 6, .w = 4, .h = 3,
 				.variant = widget::TextBlueprint{
 					.text = "Add",
 					.onAction = [](const widget::Text& self) -> UiAction {
-						if (auto* selection = M2_LEVEL.PrimarySelection(); selection->IsComplete()) {
-							const auto foreground = std::get<int>(self.Parent().find_first_widget_by_name<widget::TextSelection>("LayerSelection")->selections()[0]) == FIXTURE_LAYER_SELECTION_FOREGROUND_OPTION;
-							if (const auto shape = std::get<int>(self.Parent().find_first_widget_by_name<widget::TextSelection>("ShapeSelection")->selections()[0]);
-									shape == FIXTURE_SHAPE_SELECTION_RECTANGLE) {
-								const auto halfCellSelection = M2_LEVEL.PrimarySelection()->HalfCellSelectionRectM();
-								std::get<sheet_editor::State>(M2_LEVEL.stateVariant).AddRectangleFixture(foreground, *halfCellSelection);
-							} else if (shape == FIXTURE_SHAPE_SELECTION_CIRCLE) {
-								const auto halfCellSelection = M2_LEVEL.PrimarySelection()->HalfCellSelectionsM();
-								const auto center = halfCellSelection->first;
-								const auto radius = center.distance(halfCellSelection->second);
-								std::get<sheet_editor::State>(M2_LEVEL.stateVariant).AddCircleFixture(foreground, center, radius);
-							} else if (shape == FIXTURE_SHAPE_SELECTION_CHAIN_POINT) {
-								const auto halfCellSelection = M2_LEVEL.PrimarySelection()->HalfCellSelectionsM();
-								std::get<sheet_editor::State>(M2_LEVEL.stateVariant).AddChainFixturePoint(foreground, halfCellSelection->first);
+						const auto fixtureType = static_cast<sheet_editor::FixtureType>(std::get<int>(self.Parent().find_first_widget_by_name<widget::TextSelection>("FixtureAdder")->selections()[0]));
+						int selectedIndex;
+						// If no fixture is selected, add new one to the end
+						if (const auto selections = self.Parent().find_first_widget_by_name<widget::TextSelection>("FixtureSelection")->selections(); selections.empty()) {
+							selectedIndex = -1;
+						} else {
+							// Otherwise, add before the selection
+							selectedIndex = std::get<int>(selections[0]);
+						}
+						// Add fixture
+						const auto newIndex = std::get<sheet_editor::State>(M2_LEVEL.stateVariant).AddFixture(fixtureType, selectedIndex);
+						// Recreate fixture selection list
+						self.Parent().find_first_widget_by_name<widget::TextSelection>("FixtureSelection")->UpdateContent();
+						// Select newly added index
+						self.Parent().find_first_widget_by_name<widget::TextSelection>("FixtureSelection")->set_unique_selection(newIndex);
+						return MakeContinueAction();
+					}
+				}
+			},
+			UiWidgetBlueprint{
+				.name = "FixtureSelection",
+				.x = 1, .y = 10, .w = 17, .h = 24,
+				.variant = widget::TextSelectionBlueprint{
+					.line_count = 8,
+					.onUpdate = [](widget::TextSelection& self) -> UiAction {
+						if (self.GetOptions().size() != std::get<sheet_editor::State>(M2_LEVEL.stateVariant).SelectedSpriteFixtureCount()) {
+							const auto currentFixtureTypes = std::get<sheet_editor::State>(M2_LEVEL.stateVariant).SelectedSpriteFixtureTypes();
+							std::vector<widget::TextSelectionBlueprint::Option> newOptions;
+							for (int i = 0; i < currentFixtureTypes.size(); ++i) {
+								newOptions.emplace_back(widget::TextSelectionBlueprint::Option{
+									.text = sheet_editor::gFixtureTypeName[currentFixtureTypes[i]],
+									.return_value = i // Place the index of the fixture as the return value
+								});
 							}
-							selection->Reset();
+							self.set_options(std::move(newOptions));
 						}
 						return MakeContinueAction();
 					}
 				}
 			},
 			UiWidgetBlueprint{
-				.x = 1, .y = 19, .w = 17, .h = 4,
+				.x = 1, .y = 35, .w = 17, .h = 3,
 				.variant = widget::TextBlueprint{
-					.text = "Reset",
-					.onAction = [](MAYBE const widget::Text& self) -> UiAction {
-						const auto foreground = std::get<int>(self.Parent().find_first_widget_by_name<widget::TextSelection>("LayerSelection")->selections()[0]) == FIXTURE_LAYER_SELECTION_FOREGROUND_OPTION;
-						if (const auto shape = std::get<int>(self.Parent().find_first_widget_by_name<widget::TextSelection>("ShapeSelection")->selections()[0]);
-								shape == FIXTURE_SHAPE_SELECTION_RECTANGLE) {
-							std::get<sheet_editor::State>(M2_LEVEL.stateVariant).ResetRectangleFixtures(foreground);
-						} else if (shape == FIXTURE_SHAPE_SELECTION_CIRCLE) {
-							std::get<sheet_editor::State>(M2_LEVEL.stateVariant).ResetCircleFixtures(foreground);
-						} else if (shape == FIXTURE_SHAPE_SELECTION_CHAIN_POINT) {
-							std::get<sheet_editor::State>(M2_LEVEL.stateVariant).ResetChainFixturePoints(foreground);
+					.text = "Remove Fixture",
+					.onAction = [](const widget::Text& self) -> UiAction {
+						if (const auto selection = self.Parent().find_first_widget_by_name<widget::TextSelection>("FixtureSelection")->selections();
+								not selection.empty()) {
+							const auto selectedIndex = std::get<int>(selection[0]);
+							std::get<sheet_editor::State>(M2_LEVEL.stateVariant).RemoveFixture(selectedIndex);
 						}
-						M2_LEVEL.PrimarySelection()->Reset();
+						return MakeContinueAction();
+					}
+				}
+			},
+			UiWidgetBlueprint{
+				.x = 1, .y = 39, .w = 17, .h = 3,
+				.variant = widget::TextBlueprint{
+					.text = "Store Shape",
+					.onAction = [](const widget::Text& self) -> UiAction {
+						if (const auto fixtureSelection = self.Parent().find_first_widget_by_name<widget::TextSelection>("FixtureSelection")->selections();
+								not fixtureSelection.empty()) {
+							const auto selectedIndex = std::get<int>(fixtureSelection[0]);
+							if (auto* selection = M2_LEVEL.PrimarySelection(); selection->IsComplete()) {
+								std::get<sheet_editor::State>(M2_LEVEL.stateVariant).StoreFixture(selectedIndex,
+										*selection->HalfCellSelectionRectM(), selection->HalfCellSelectionsM()->first,
+										selection->HalfCellSelectionsM()->second);
+								selection->Reset();
+							}
+						}
+						return MakeContinueAction();
+					}
+				}
+			},
+			UiWidgetBlueprint{
+				.x = 1, .y = 43, .w = 17, .h = 3,
+				.variant = widget::TextBlueprint{
+					.text = "Undo Point",
+					.onAction = [](MAYBE const widget::Text& self) -> UiAction {
+						if (const auto fixtureSelection = self.Parent().find_first_widget_by_name<widget::TextSelection>("FixtureSelection")->selections();
+								not fixtureSelection.empty()) {
+							const auto selectedIndex = std::get<int>(fixtureSelection[0]);
+							std::get<sheet_editor::State>(M2_LEVEL.stateVariant).UndoChainFixturePoint(selectedIndex);
+						}
 						return MakeContinueAction();
 					}
 				}

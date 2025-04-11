@@ -1,20 +1,25 @@
 #include <rpg/Objects.h>
 #include <m2/Log.h>
-#include <m2/box2d/Detail.h>
+#include <m2/third_party/physics/ColliderCategory.h>
+#include <m2/Game.h>
 
 m2::void_expected rpg::init_finish_point(m2::Object& obj) {
 	auto sprite_type = M2_GAME.object_main_sprites[obj.GetType()];
 	auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(sprite_type));
 
 	auto& phy = obj.AddPhysique();
-	m2::pb::BodyBlueprint bp;
-	bp.set_type(m2::pb::BodyType::STATIC);
-	bp.set_allow_sleep(true);
-	bp.set_is_bullet(false);
-	bp.mutable_background_fixture()->mutable_circ()->set_radius(sprite.BackgroundColliderCircRadiusM());
-	bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_ITEM_ON_FOREGROUND);
-	bp.mutable_background_fixture()->set_is_sensor(true);
-	phy.body = m2::box2d::CreateBody(*M2_LEVEL.world, obj.GetPhysiqueId(), obj.position, bp);
+	m2::third_party::physics::RigidBodyDefinition rigidBodyDef{
+		.bodyType = m2::third_party::physics::RigidBodyType::STATIC,
+		.fixtures = {m2::third_party::physics::FixtureDefinition{
+			.shape = m2::third_party::physics::CircleShape::FromSpriteCircleFixture(sprite.OriginalPb().regular().fixtures(0).circle(), sprite.Ppm()),
+			.isSensor = true,
+			.colliderFilter = m2::third_party::physics::gColliderCategoryToParams[m2::I(m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_FRIENDLY_ITEM)]
+		}},
+		.allowSleeping = true,
+		.initiallyAwake = false,
+		.isBullet = false
+	};
+	phy.body = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
 
 	auto& gfx = obj.AddGraphic(sprite_type);
 	gfx.variantDrawOrder[0] = m2::pb::SpriteEffectType::SPRITE_EFFECT_GRAYSCALE;

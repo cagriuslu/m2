@@ -172,7 +172,7 @@ namespace m2 {
 		[[nodiscard]] VecI MousePositionPx() const { return events.MousePosition(); }
 		const VecF& MousePositionWorldM() const; // TODO move into Level?
 		const VecF& ScreenCenterToMousePositionM() const; // TODO move into Level?
-		sdl::TextureUniquePtr DrawGameToTexture(m2::VecF camera_position); // TODO move into Level?
+		sdl::TextureUniquePtr DrawGameToTexture(const VecF& camera_position); // TODO move into Level?
 		/// This function can be used to check if the mouse is resting on any UI panels. If not, the mouse must be
 		/// inside the game window.
 		[[nodiscard]] bool IsMouseOnAnyUiPanel() const;
