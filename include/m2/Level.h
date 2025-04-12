@@ -51,6 +51,8 @@ namespace m2 {
 		/// updated and the world is still simulated.
 		std::optional<UiPanel> _semiBlockingUiPanel;
 
+		/// Opaque pointer to box2d::DebugDraw
+		void* _debugDraw{};
 
 	public:
 		~Level();

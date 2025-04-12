@@ -121,9 +121,9 @@ protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS "${PROTO_FILES}" "${GAME_PROTO_FILES
 #        DEPENDS ${CMAKE_SOURCE_DIR}/resource    # TODO this does not check if a new directory is created inside
 #)
 
-file(GLOB M2_PUBLIC_HEADERS "include/m2/*.h" "include/m2/*/*.h")
+file(GLOB M2_PUBLIC_HEADERS "include/m2/*.h" "include/m2/*/*.h" "include/m2/*/*/*.h" "include/m2/*/*/*/*.h")
 file(GLOB M2_PRIVATE_HEADERS "src/*.h" "src/*/*.h" "src/*/*/*.h")
-file(GLOB M2_SOURCES "src/*.cc" "src/*/*.cc" "src/*/*/*.cc")
+file(GLOB M2_SOURCES "src/*.cc" "src/*/*.cc" "src/*/*/*.cc" "src/*/*/*/*.cc" "src/*/*/*/*/*.cc")
 # Add platform specific source files
 if (WIN32)
     file(GLOB M2_PLATFORM_SPECIFIC_SOURCES "platform/windows/*.h" "platform/windows/*.cc")

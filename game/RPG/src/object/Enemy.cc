@@ -173,13 +173,12 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 		m2::Graphic::DefaultDrawCallback(gfx);
 		// Draw the HP addon
 		DrawAddons(gfx, chr.GetResource(RESOURCE_HP));
-	};
-	phy.onDebugDraw = [&impl](m2::Physique& phy) {
-		m2::Physique::DefaultDebugDraw(phy);
+#ifdef DEBUG
 		std::visit(m2::overloaded {
 				[](ChaserFsm& v) { m2::Pathfinder::draw_path(v.reverse_path(), SDL_Color{127, 127, 255, 255}); },
 				[](MAYBE auto& v) { }
 		}, impl.ai_fsm);
+#endif
 	};
 
 	return {};

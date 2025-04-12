@@ -9,16 +9,15 @@
 #include <m2/game/object/Camera.h>
 #include <m2/game/object/God.h>
 #include <m2/game/object/Origin.h>
-#include <m2/game/object/Placeholder.h>
 #include <m2/game/object/Pointer.h>
 #include <m2/game/object/Tile.h>
 #include <m2/pixel_editor/Ui.h>
 #include <m2/protobuf/Detail.h>
 #include <m2/sheet_editor/Ui.h>
-
 #include <filesystem>
 #include <iterator>
 #include <m2/ui/widget/Text.h>
+#include <m2/third_party/physics/box2d/DebugDraw.h>
 
 m2::Level::~Level() {
 	// Custom destructor is provided because the order is important
@@ -32,6 +31,10 @@ m2::Level::~Level() {
 	objects.Clear();
 	groups.clear();
 
+	if (_debugDraw) {
+		delete static_cast<third_party::physics::box2d::DebugDraw*>(_debugDraw);
+		_debugDraw = nullptr;
+	}
 	delete contactListener;
 	contactListener = nullptr;
 	delete world;
@@ -69,7 +72,7 @@ m2::void_expected m2::Level::InitLevelEditor(const std::filesystem::path& lb_pat
 	_messageBoxUiPanel.emplace(&DefaultMessageBoxBlueprint, DefaultMessageBoxArea);
 	_messageBoxUiPanel->enabled = false;
 
-	if (std::filesystem::exists(*_lbPath)) {
+	if (exists(*_lbPath)) {
 		auto lb = pb::json_file_to_message<pb::Level>(*_lbPath);
 		m2ReflectUnexpected(lb);
 		_lb.emplace(*lb);
@@ -78,9 +81,9 @@ m2::void_expected m2::Level::InitLevelEditor(const std::filesystem::path& lb_pat
 	}
 
 	// Create default objects
-	playerId = m2::obj::create_god();
-	m2::obj::create_camera();
-	m2::obj::create_origin();
+	playerId = obj::create_god();
+	obj::create_camera();
+	obj::create_origin();
 
 	// UI Hud
 	_leftHudUiPanel.emplace(&level_editor::gLeftHudBlueprint, M2_GAME.Dimensions().LeftHud());
@@ -92,16 +95,16 @@ m2::void_expected m2::Level::InitLevelEditor(const std::filesystem::path& lb_pat
 	return {};
 }
 
-m2::void_expected m2::Level::InitPixelEditor(const std::filesystem::path& path, int x_offset, int y_offset) {
+m2::void_expected m2::Level::InitPixelEditor(const std::filesystem::path& path, const int x_offset, const int y_offset) {
 	_lbPath = path;
 	stateVariant.emplace<pixel_editor::State>();
 	auto& pe_state = std::get<pixel_editor::State>(stateVariant);
 
 	pe_state.image_offset = VecI{x_offset, y_offset};
 
-	if (std::filesystem::exists(path)) {
+	if (exists(path)) {
 		// Load image
-		sdl::SurfaceUniquePtr tmp_surface(IMG_Load(path.string().c_str()));
+		const sdl::SurfaceUniquePtr tmp_surface(IMG_Load(path.string().c_str()));
 		if (not tmp_surface) {
 			return make_unexpected("Unable to load image " + path.string() + ": " + IMG_GetError());
 		}
@@ -117,8 +120,8 @@ m2::void_expected m2::Level::InitPixelEditor(const std::filesystem::path& path, 
 
 		const auto& off = pe_state.image_offset;
 		const auto& sur = *pe_state.image_surface;
-		auto y_max = std::min(128, sur.h - off.y);
-		auto x_max = std::min(128, sur.w - off.x);
+		const auto y_max = std::min(128, sur.h - off.y);
+		const auto x_max = std::min(128, sur.w - off.x);
 		for (int y = off.y; y < y_max; ++y) {
 			for (int x = off.x; x < x_max; ++x) {
 				// Get pixel
@@ -141,9 +144,9 @@ m2::void_expected m2::Level::InitPixelEditor(const std::filesystem::path& path, 
 	}
 
 	// Create default objects
-	playerId = m2::obj::create_god();
-	m2::obj::create_camera();
-	m2::obj::create_origin();
+	playerId = obj::create_god();
+	obj::create_camera();
+	obj::create_origin();
 
 	// UI Hud
 	_leftHudUiPanel.emplace(&pixel_editor_left_hud, M2_GAME.Dimensions().LeftHud());
@@ -165,9 +168,9 @@ m2::void_expected m2::Level::InitSheetEditor(const std::filesystem::path& path) 
 	_messageBoxUiPanel->enabled = false;
 
 	// Create default objects
-	playerId = m2::obj::create_god();
-	m2::obj::create_camera();
-	m2::obj::create_origin();
+	playerId = obj::create_god();
+	obj::create_camera();
+	obj::create_origin();
 
 	// UI Hud
 	_leftHudUiPanel.emplace(&sheet_editor_left_hud, M2_GAME.Dimensions().LeftHud());
@@ -190,9 +193,9 @@ m2::void_expected m2::Level::InitBulkSheetEditor(const std::filesystem::path& pa
 	_messageBoxUiPanel->enabled = false;
 
 	// Create default objects
-	playerId = m2::obj::create_god();
-	m2::obj::create_camera();
-	m2::obj::create_origin();
+	playerId = obj::create_god();
+	obj::create_camera();
+	obj::create_origin();
 
 	// UI Hud
 	_messageBoxUiPanel->UpdateContents(0.0f);
@@ -286,13 +289,13 @@ void m2::Level::HideMessage() {
 	}
 }
 
-void m2::Level::RemoveCustomNonblockingUiPanel(std::list<UiPanel>::iterator it) {
+void m2::Level::RemoveCustomNonblockingUiPanel(const std::list<UiPanel>::iterator it) {
 	TRACE_FN();
 	_customNonblockingUiPanels.erase(it);
 }
 void m2::Level::RemoveCustomNonblockingUiPanelDeferred(std::list<UiPanel>::iterator it) {
 	TRACE_FN();
-	M2_DEFER(([this,it]() { _customNonblockingUiPanels.erase(it); }));
+	M2_DEFER(([this,it] { _customNonblockingUiPanels.erase(it); }));
 }
 void m2::Level::ShowSemiBlockingUiPanel(RectF position_ratio, std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> blueprint) {
 	_semiBlockingUiPanel.emplace(std::move(blueprint), position_ratio);
@@ -301,7 +304,7 @@ void m2::Level::DismissSemiBlockingUiPanel() {
 	_semiBlockingUiPanel.reset();
 }
 void m2::Level::DismissSemiBlockingUiPanelDeferred() {
-	M2_DEFER([this]() { this->DismissSemiBlockingUiPanel(); });
+	M2_DEFER([this] { this->DismissSemiBlockingUiPanel(); });
 }
 
 m2::void_expected m2::Level::InitAnyPlayer(
@@ -323,16 +326,21 @@ m2::void_expected m2::Level::InitAnyPlayer(
 
 	_leftHudUiPanel.emplace(M2G_PROXY.LeftHudBlueprint(), M2_GAME.Dimensions().LeftHud());
 	_rightHudUiPanel.emplace(M2G_PROXY.RightHudBlueprint(), M2_GAME.Dimensions().RightHud());
-	if (const auto messageBoxBlueprintAndArea = M2G_PROXY.MessageBoxBlueprintAndArea(); messageBoxBlueprintAndArea.first) {
-		_messageBoxUiPanel.emplace(messageBoxBlueprintAndArea.first, messageBoxBlueprintAndArea.second);
+	if (const auto [blueprint, area] = M2G_PROXY.MessageBoxBlueprintAndArea(); blueprint) {
+		_messageBoxUiPanel.emplace(blueprint, area);
 		_messageBoxUiPanel->enabled = false;
 	}
 
 	if (physical_world) {
 		world = new b2World(M2G_PROXY.gravity ? b2Vec2{0.0f, 10.0f} : b2Vec2{0.0f, 0.0f});
-		contactListener = new m2::box2d::ContactListener(
-		    m2::Physique::DefaultBeginContactCallback, m2::Physique::DefaultEndContactCallback);
+		contactListener = new box2d::ContactListener(
+		    Physique::DefaultBeginContactCallback, Physique::DefaultEndContactCallback);
 		world->SetContactListener(contactListener);
+#ifdef DEBUG
+		auto* debugDraw = new third_party::physics::box2d::DebugDraw{};
+		_debugDraw = debugDraw;
+		world->SetDebugDraw(debugDraw);
+#endif
 	}
 
 	// Create background tiles
@@ -372,8 +380,7 @@ m2::void_expected m2::Level::InitAnyPlayer(
 			GroupId group_id{fg_object.group()};
 
 			Group* group;
-			auto group_it = groups.find(group_id);
-			if (group_it != groups.end()) {
+			if (auto group_it = groups.find(group_id); group_it != groups.end()) {
 				group = group_it->second.get();
 			} else {
 				group = M2G_PROXY.create_group(group_id.type);

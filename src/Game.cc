@@ -782,9 +782,7 @@ void m2::Game::ExecutePostDraw() {
 
 void m2::Game::DebugDraw() {
 #ifdef DEBUG
-	for (auto& phy : _level->physics) {
-		IF(phy.onDebugDraw)(phy);
-	}
+	_level->world->DebugDraw();
 
 	if (IsProjectionTypePerspective(_level->ProjectionType())) {
 		SDL_SetRenderDrawColor(M2_GAME.renderer, 255, 255, 255, 127);

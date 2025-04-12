@@ -6,12 +6,9 @@
 
 namespace m2 {
 	struct Physique : Component {
-		static void DefaultDebugDraw(Physique& phy);
-
 		using Callback = std::function<void(Physique&)>;
 		Callback preStep{};
 		Callback postStep{};
-		Callback onDebugDraw{DefaultDebugDraw};
 
 		// An object has either body or rigidBodyIndex.
 		std::optional<third_party::physics::RigidBody> body;
