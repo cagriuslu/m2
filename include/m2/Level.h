@@ -102,6 +102,7 @@ namespace m2 {
 
 		// Accessors
 
+		[[nodiscard]] bool IsEditor() const;
 		[[nodiscard]] bool IsMarkedForDeletion() const { return _markedForDeletion; }
 		std::optional<std::filesystem::path> Path() const { return _lbPath; }
 		std::optional<pb::Level> LevelBlueprint() const { return _lb; }

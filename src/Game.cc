@@ -674,8 +674,11 @@ void m2::Game::ExecutePostStep() {
 		}
 	}
 
-	_proxy.OnPostStep();
-	ExecuteDeferredActions();
+	if (not _level->IsEditor()) {
+		_proxy.OnPostStep();
+		ExecuteDeferredActions();
+	}
+
 	for (auto& phy : _level->physics) {
 		IF(phy.postStep)(phy);
 	}
@@ -782,7 +785,9 @@ void m2::Game::ExecutePostDraw() {
 
 void m2::Game::DebugDraw() {
 #ifdef DEBUG
-	_level->world->DebugDraw();
+	if (_level->world) {
+		_level->world->DebugDraw();
+	}
 
 	if (IsProjectionTypePerspective(_level->ProjectionType())) {
 		SDL_SetRenderDrawColor(M2_GAME.renderer, 255, 255, 255, 127);

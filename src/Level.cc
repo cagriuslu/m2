@@ -224,6 +224,12 @@ m2::void_expected m2::Level::ResetBulkSheetEditor() {
 	return {};
 }
 
+bool m2::Level::IsEditor() const {
+	return std::holds_alternative<level_editor::State>(stateVariant)
+			|| std::holds_alternative<pixel_editor::State>(stateVariant)
+			|| std::holds_alternative<sheet_editor::State>(stateVariant)
+			|| std::holds_alternative<bulk_sheet_editor::State>(stateVariant);
+}
 float m2::Level::HorizontalFov() const { return _lb ? _lb->horizontal_fov() : M2_GAME.Dimensions().GameM().x; }
 
 m2::sdl::ticks_t m2::Level::GetLevelDuration() const {
