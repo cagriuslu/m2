@@ -114,6 +114,14 @@ float m2::AngleDifference(const float rads1, const float rads2) {
 	return ClampRadiansToPi(rads1 - rads2);
 }
 
+std::optional<float> m2::ToFloat(const std::string& s) {
+	try {
+		return std::stof(s);
+	} catch (...) {
+		return std::nullopt;
+	}
+}
+
 float m2::Normalize(const float value, const float min, const float max) {
 	if (max < min) {
 		throw M2_ERROR("Max is smaller than min");

@@ -47,6 +47,9 @@ namespace m2 {
 	/// Returns rads1 - rads2, clamped to [-PI, PI). The given angles will be clamped before difference calculation.
 	float AngleDifference(float rads1, float rads2);
 
+	// String to number conversion
+	std::optional<float> ToFloat(const std::string&);
+
 	/// Attempts to normalize the given value to [0,1] if it's in-between [min,max]. Otherwise, a scaled value is
 	/// returned. For example, if the value is min+2*max, 2.0 is returned. If the value is min-max, -1.0 is returned.
 	float Normalize(float value, float min, float max);

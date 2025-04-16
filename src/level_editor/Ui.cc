@@ -9,6 +9,7 @@
 #include <m2/Game.h>
 #include <m2/game/Selection.h>
 #include <m2/ui/widget/CheckboxWithText.h>
+#include <m2/ui/widget/TextInput.h>
 
 using namespace m2;
 using namespace m2::widget;
@@ -51,15 +52,61 @@ namespace {
 		}
 	};
 
+	const UiPanelBlueprint gCoordinateDialog = {
+		.name = "CoordinateDialog",
+		.w = 23, .h = 13,
+		.background_color = {0, 0, 0, 255},
+		.widgets = {
+			UiWidgetBlueprint{
+				.name = "XCoordinate",
+				.x = 1, .y = 1, .w = 10, .h = 5,
+				.variant = TextInputBlueprint{}
+			},
+			UiWidgetBlueprint{
+				.name = "YCoordinate",
+				.x = 1, .y = 7, .w = 10, .h = 5,
+				.variant = TextInputBlueprint{}
+			},
+			UiWidgetBlueprint{
+				.x = 12, .y = 1, .w = 10, .h = 5,
+				.variant = TextBlueprint{
+					.text = "OK",
+					.onAction = [](const Text& self) {
+						const auto xEntry = self.Parent().find_first_widget_by_name<TextInput>("XCoordinate")->text_input();
+						const auto yEntry = self.Parent().find_first_widget_by_name<TextInput>("YCoordinate")->text_input();
+						const auto xFloat = ToFloat(xEntry);
+						const auto yFloat = ToFloat(yEntry);
+						if (xFloat && yFloat) {
+							return MakeReturnAction(VecF{*xFloat, *yFloat});
+						}
+						return MakeContinueAction();
+					}
+				}
+			},
+			UiWidgetBlueprint{
+				.x = 12, .y = 7, .w = 10, .h = 5,
+				.variant = TextBlueprint{
+					.text = "Cancel",
+					.onAction = [](const Text& self) {
+						return MakeReturnAction();
+					}
+				}
+			}
+		}
+	};
+
 	const UiPanelBlueprint gPaintBgRightHud = {
 		.name = "PaintBgRightHud",
 		.w = 19,
 		.h = 72,
 		.background_color = {25, 25, 25, 255},
 		.onDestroy = [] {
-			// Delete ghost
-			if (const auto& levelEditorState = std::get<level_editor::State>(M2_LEVEL.stateVariant); levelEditorState.ghostId) {
-				M2_LEVEL.deferredActions.push(CreateObjectDeleter(levelEditorState.ghostId));
+			// If level isn't destroyed yet
+			if (std::holds_alternative<level_editor::State>(M2_LEVEL.stateVariant)) {
+				// Delete ghost
+				if (const auto& levelEditorState = std::get<level_editor::State>(M2_LEVEL.stateVariant); levelEditorState.ghostId) {
+					M2_LEVEL.deferredActions.push(CreateObjectDeleter(levelEditorState.ghostId));
+				}
 			}
 		},
 		.widgets = {
@@ -221,9 +268,12 @@ namespace {
 		.h = 72,
 		.background_color = {25, 25, 25, 255},
 		.onDestroy = [] {
-			// Delete ghost
-			if (const auto& levelEditorState = std::get<level_editor::State>(M2_LEVEL.stateVariant); levelEditorState.ghostId) {
-				M2_LEVEL.deferredActions.push(CreateObjectDeleter(levelEditorState.ghostId));
+			// If level isn't destroyed yet
+			if (std::holds_alternative<level_editor::State>(M2_LEVEL.stateVariant)) {
+				// Delete ghost
+				if (const auto& levelEditorState = std::get<level_editor::State>(M2_LEVEL.stateVariant); levelEditorState.ghostId) {
+					M2_LEVEL.deferredActions.push(CreateObjectDeleter(levelEditorState.ghostId));
+				}
 			}
 		},
 		.widgets = {
@@ -254,9 +304,9 @@ namespace {
 				.x = 2,
 				.y = 12,
 				.w = 15,
-				.h = 48,
+				.h = 40,
 				.variant = TextSelectionBlueprint{
-					.line_count = 12,
+					.line_count = 10,
 					.onCreate = [](TextSelection& self) {
 						// Fill object type selector with editor-enabled object types
 						TextSelectionBlueprint::Options options;
@@ -285,7 +335,7 @@ namespace {
 			UiWidgetBlueprint{
 				.name = "GroupTypeSelection",
 				.x = 2,
-				.y = 61,
+				.y = 53,
 				.w = 15,
 				.h = 4,
 				.variant = TextSelectionBlueprint{
@@ -303,13 +353,27 @@ namespace {
 			UiWidgetBlueprint{
 				.name = "GroupInstanceSelection",
 				.x = 2,
-				.y = 66,
+				.y = 58,
 				.w = 15,
 				.h = 4,
 				.variant = IntegerInputBlueprint{
 					.min_value = 0,
 					.max_value = 999,
 					.initial_value = 0
+				}
+			},
+			UiWidgetBlueprint{
+				.name = "PlaceButton",
+				.x = 2, .y = 63, .w = 15, .h = 4,
+				.variant = TextBlueprint{
+					.text = "Place",
+					.onAction = [](const Text&) -> UiAction {
+						(void) UiPanel::create_and_run_blocking(&gCoordinateDialog, RectF{0.25f, 0.4f, 0.5f, 0.3f})
+								.IfReturn<VecF>([](const auto& vec) {
+									std::get<level_editor::State>(M2_LEVEL.stateVariant).HandleMousePrimaryButton(vec);
+								});
+						return MakeContinueAction();
+					}
 				}
 			}
 		}

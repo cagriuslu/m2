@@ -68,6 +68,7 @@ namespace m2 {
 		[[nodiscard]] bool IsContinue() const { return std::holds_alternative<Continue>(_variant); }
 		[[nodiscard]] bool IsReturn() const { return std::holds_alternative<AnyReturnContainer>(_variant); }
 		template <typename T> [[nodiscard]] bool IsReturn() const { return IsReturn() && dynamic_cast<const Return<T>*>(std::get<AnyReturnContainer>(_variant).Get()); }
+		[[nodiscard]] bool IsVoidReturn() const { return IsReturn<Void>(); }
 		[[nodiscard]] bool IsClearStack() const { return std::holds_alternative<ClearStack>(_variant); }
 		[[nodiscard]] bool IsQuit() const { return std::holds_alternative<Quit>(_variant); }
 
