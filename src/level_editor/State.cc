@@ -231,7 +231,11 @@ void m2::level_editor::State::Draw() const {
 
 	// Draw grid if enabled
 	if (M2_LEVEL.LeftHud()->find_first_widget_by_name<widget::CheckboxWithText>("ShowGridCheckbox")->GetState()) {
-		Graphic::DrawGridLines({127, 127, 255, 80});
+		Graphic::DrawGridLines(-0.5f, 1.0f, {127, 127, 255, 80});
+		if (const auto splitCount = M2_LEVEL.LeftHud()->find_first_widget_by_name<widget::IntegerInput>("CellSplitCount")->value();
+				splitCount != 1) {
+			Graphic::DrawGridLines(-0.5f, 1.0f / F(splitCount), {127, 127, 255, 60});
+		}
 	}
 }
 m2::void_expected m2::level_editor::State::Save() const {

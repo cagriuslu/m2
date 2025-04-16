@@ -112,7 +112,7 @@ namespace m2 {
 		static void DrawVerticalLine(float x, const RGBA& color);
 		static void DrawHorizontalLine(float y, const RGBA& color);
 		static void DrawRectangle(const VecF& center, float width, float height, float orientationRads, const RGBA& color);
-		static void DrawGridLines(const RGBA& color, unsigned startFrom = 0, unsigned frequency = 1);
+		static void DrawGridLines(float startFrom = -0.5f, float frequency = 1.0f, const RGBA& color = {255, 255, 255, 255});
 
 		// Global Modifiers
 

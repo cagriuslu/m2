@@ -572,7 +572,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
 		UiWidgetBlueprint{
 			.name = "BackgroundLayerSelection",
 			.x = 2,
-			.y = 50,
+			.y = 45,
 			.w = 15,
 			.h = 4,
 			.variant = TextSelectionBlueprint{
@@ -590,7 +590,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
 		UiWidgetBlueprint{
 			.name = "SnapToGridCheckbox",
             .x = 2,
-            .y = 55,
+            .y = 50,
             .w = 15,
             .h = 4,
 			.variant = CheckboxWithTextBlueprint{
@@ -608,12 +608,24 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
 		UiWidgetBlueprint{
 			.name = "ShowGridCheckbox",
 			.x = 2,
-			.y = 60,
+			.y = 55,
 			.w = 15,
 			.h = 4,
 			.variant = CheckboxWithTextBlueprint{
 				.text = "Grid",
 				.initial_state = false,
+			}
+		},
+		UiWidgetBlueprint{
+			.name = "CellSplitCount",
+			.x = 2,
+			.y = 60,
+			.w = 15,
+			.h = 4,
+			.variant = IntegerInputBlueprint{
+				.min_value = 1,
+				.max_value = 100,
+				.initial_value = 1
 			}
 		},
         UiWidgetBlueprint{

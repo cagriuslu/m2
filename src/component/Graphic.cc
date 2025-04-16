@@ -341,18 +341,17 @@ void m2::Graphic::DrawRectangle(const VecF& center, float width, float height, f
 	DrawLine(bottomRight, bottomLeft, color);
 	DrawLine(bottomLeft, topLeft, color);
 }
-void m2::Graphic::DrawGridLines(const RGBA& color, const unsigned startFrom, const unsigned frequency) {
-	// Draw grid lines
+void m2::Graphic::DrawGridLines(const float startFrom, const float frequency, const RGBA& color) {
 	const auto viewport = ViewportM();
-	for (auto x = floorf(viewport.x); x <= ceilf(viewport.X2()); x += 1.0f) {
-		if (const auto xInt = RoundI(x); ((xInt % frequency) + frequency - startFrom) % frequency == 0) {
-			DrawVerticalLine(x - 0.5f, color);
-		}
+	// Remove the offset
+	const auto viewportNoOffset = viewport.shift({-startFrom, -startFrom});
+	// Divide by frequency
+	const auto multiple = VecF{std::ceilf(viewportNoOffset.x / frequency), std::floorf(viewportNoOffset.y / frequency)};
+	for (auto x = multiple.x * frequency + startFrom; x <= viewport.X2(); x += frequency) {
+		DrawVerticalLine(x, color);
 	}
-	for (auto y = floorf(viewport.y); y <= ceilf(viewport.Y2()); y += 1.0f) {
-		if (const auto yInt = RoundI(y); ((yInt % frequency) + frequency - startFrom) % frequency == 0) {
-			DrawHorizontalLine(y - 0.5f, color);
-		}
+	for (auto y = multiple.y * frequency + startFrom; y <= viewport.Y2(); y += frequency) {
+		DrawHorizontalLine(y, color);
 	}
 }
 
