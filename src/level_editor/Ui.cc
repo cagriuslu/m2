@@ -145,7 +145,7 @@ namespace {
 						}
 						if (const auto selections = self.selections(); not selections.empty()) {
 							levelEditorState.ghostId = obj::create_ghost(
-									static_cast<m2g::pb::SpriteType>(std::get<int>(selections[0])), true);
+									static_cast<m2g::pb::SpriteType>(std::get<int>(selections[0])), 1);
 						}
 						return MakeContinueAction();
 					}
@@ -325,8 +325,10 @@ namespace {
 						// Create ghost
 						if (const auto selections = self.selections(); not selections.empty()) {
 							const auto snapToGrid = M2_LEVEL.LeftHud()->find_first_widget_by_name<CheckboxWithText>("SnapToGridCheckbox")->GetState();
+							const auto splitCount = M2_LEVEL.LeftHud()->find_first_widget_by_name<IntegerInput>("CellSplitCount")->value();
 							levelEditorState.ghostId = obj::create_ghost(
-									M2_GAME.object_main_sprites[static_cast<m2g::pb::ObjectType>(std::get<int>(selections[0]))], snapToGrid);
+									M2_GAME.object_main_sprites[static_cast<m2g::pb::ObjectType>(std::get<int>(selections[0]))],
+										snapToGrid ? splitCount : 0);
 						}
 						return MakeContinueAction();
 					}

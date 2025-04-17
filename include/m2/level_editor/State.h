@@ -24,8 +24,8 @@ namespace m2::level_editor {
 
 		// Accessors
 
-		BackgroundLayer GetSelectedBackgroundLayer() const;
-		bool GetSnapToGridStatus() const;
+		[[nodiscard]] BackgroundLayer GetSelectedBackgroundLayer() const;
+		[[nodiscard]] bool GetSnapToGridStatus() const;
 
 		// Modifiers
 

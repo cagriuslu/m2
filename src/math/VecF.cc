@@ -1,4 +1,5 @@
 #include <m2/math/VecF.h>
+#include <m2/Math.h>
 #include <m2/m3/VecF.h>
 #include <m2/math/VecI.h>
 #include <sstream>
@@ -27,6 +28,9 @@ float m2::VecF::distance_sq(const VecI& other) const {
 	return this->distance_sq(VecF{other});
 }
 
+m2::VecF m2::VecF::RoundToBin(const int binCount) const {
+	return {m2::RoundToBin(x, binCount), m2::RoundToBin(y, binCount)};
+}
 m2::VecF m2::VecF::clamp(const std::optional<VecF>& min, const std::optional<VecF>& max) const {
 	auto cp = *this;
 	if (min) {

@@ -36,7 +36,7 @@ namespace m2 {
 
 	constexpr float ToRadians(const float degrees) { return degrees * PI / 180.0f; }
 	constexpr float ToRadians(const int degrees) { return ToRadians(static_cast<float>(degrees)); }
-	constexpr float ToDegrees(const float radians) { return radians / ::m2::PI * 180.0f; }
+	constexpr float ToDegrees(const float radians) { return radians / PI * 180.0f; }
 	/// Returned value is in-between [0, 2*PI).
 	float ClampRadiansTo2Pi(float rads);
 	/// Returned value is in-between [-PI, PI).
@@ -47,8 +47,12 @@ namespace m2 {
 	/// Returns rads1 - rads2, clamped to [-PI, PI). The given angles will be clamped before difference calculation.
 	float AngleDifference(float rads1, float rads2);
 
-	// String to number conversion
+	/// String to number conversion
 	std::optional<float> ToFloat(const std::string&);
+
+	/// Finds the closes bin the value falls into if the unit value (1) is split into `unitBinCount` bins.
+	/// Ex. if unitBinCount is 4, possible values are 0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, ...
+	float RoundToBin(float value, int unitBinCount);
 
 	/// Attempts to normalize the given value to [0,1] if it's in-between [min,max]. Otherwise, a scaled value is
 	/// returned. For example, if the value is min+2*max, 2.0 is returned. If the value is min-max, -1.0 is returned.

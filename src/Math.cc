@@ -122,6 +122,17 @@ std::optional<float> m2::ToFloat(const std::string& s) {
 	}
 }
 
+float m2::RoundToBin(const float value, const int unitBinCount) {
+	// Extract the whole and fractional part
+	const auto floor = floorf(value);
+	const auto fractional = value - floor;
+	// Apply binning only to the fractional part, we don't want to explode the whole number
+	const auto raised = fractional * F(unitBinCount);
+	const auto raisedBinned = roundf(raised);
+	const auto binned = raisedBinned / F(unitBinCount);
+	return floor + binned;
+}
+
 float m2::Normalize(const float value, const float min, const float max) {
 	if (max < min) {
 		throw M2_ERROR("Max is smaller than min");

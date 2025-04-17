@@ -3,6 +3,6 @@
 #include <m2/video/Sprite.h>
 
 namespace m2::obj {
-	/// Creates an object that follows the mouse pointer around
-	Id create_ghost(m2g::pb::SpriteType spriteType, bool roundPositionToInteger);
+	/// Creates an object that follows the mouse pointer around. roundToBin, if positive, applies binning to the position.
+	Id create_ghost(m2g::pb::SpriteType spriteType, int roundToBin = 1);
 }

@@ -68,6 +68,7 @@ namespace m2 {
 		}
 		[[nodiscard]] VecF ln() const { return {logf(x), logf(y)}; }
 		[[nodiscard]] VecF round() const { return {roundf(x), roundf(y)}; }
+		[[nodiscard]] VecF RoundToBin(int binCount) const;
 		[[nodiscard]] VecF floor() const { return {floorf(x), floorf(y)}; }
 		[[nodiscard]] VecF ceil() const { return {ceilf(x), ceilf(y)}; }
 		[[nodiscard]] VecF with_length(float len) const { return normalize() * len; }

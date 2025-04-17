@@ -78,7 +78,10 @@ void m2::level_editor::State::HandleMousePrimaryButton(const VecF& position) {
 						M2_LEVEL.RightHud()->find_first_widget_by_name<widget::TextSelection>("GroupTypeSelection")->selections()[0]));
 			const auto selectedGroupInstance = M2_LEVEL.RightHud()->find_first_widget_by_name<widget::IntegerInput>("GroupInstanceSelection")->value();
 			const auto orientation = ToRadians(M2_LEVEL.RightHud()->find_first_widget_by_name<widget::IntegerInput>("OrientationInput")->value());
-			PlaceForeground(GetSnapToGridStatus() ? position.round() : position, orientation, selectedObjectType, selectedGroupType, selectedGroupInstance);
+			const auto snapToGrid = M2_LEVEL.LeftHud()->find_first_widget_by_name<widget::CheckboxWithText>("SnapToGridCheckbox")->GetState();
+			const auto splitCount = M2_LEVEL.LeftHud()->find_first_widget_by_name<widget::IntegerInput>("CellSplitCount")->value();
+			const auto placePosition = snapToGrid ? M2_GAME.MousePositionWorldM().RoundToBin(splitCount) : position;
+			PlaceForeground(placePosition, orientation, selectedObjectType, selectedGroupType, selectedGroupInstance);
 		}
 	} else if (M2_LEVEL.RightHud()->Name() == "SampleFgRightHud") {
 		auto foundIt = _foregroundObjectPlaceholders.end();

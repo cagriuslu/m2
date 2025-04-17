@@ -4,12 +4,12 @@
 
 #include "m2/Game.h"
 
-m2::Id m2::obj::create_ghost(const m2g::pb::SpriteType spriteType, const bool roundPositionToInteger) {
+m2::Id m2::obj::create_ghost(const m2g::pb::SpriteType spriteType, const int roundToBin) {
 	const auto it = CreateObject({});
-	if (roundPositionToInteger) {
+	if (roundToBin != 0) {
 		auto& gfx = it->AddGraphic(spriteType);
-		gfx.preDraw = [](const Graphic& gfx) {
-			gfx.Owner().position = M2_GAME.MousePositionWorldM().round();
+		gfx.preDraw = [roundToBin](const Graphic& gfx) {
+			gfx.Owner().position = M2_GAME.MousePositionWorldM().RoundToBin(roundToBin);
 			if (const auto* orientationInput = M2_LEVEL.RightHud()->find_first_widget_by_name<widget::IntegerInput>("OrientationInput")) {
 				gfx.Owner().orientation = ToRadians(orientationInput->value());
 			}
