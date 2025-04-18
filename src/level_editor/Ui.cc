@@ -15,6 +15,14 @@ using namespace m2;
 using namespace m2::widget;
 
 namespace {
+	std::vector<m2g::pb::ObjectType> ObjectTypesWithMainSprite() {
+		std::vector<m2g::pb::ObjectType> objs;
+		for (const auto &objType: M2_GAME.object_main_sprites | std::views::keys) {
+			objs.emplace_back(objType);
+		}
+		return objs;
+	}
+
 	const UiPanelBlueprint gFillDialog = {
 		.name = "FillDialog",
 		.w = 32, .h = 18,
@@ -89,6 +97,45 @@ namespace {
 					.text = "Cancel",
 					.onAction = [](const Text& self) {
 						return MakeReturnAction();
+					}
+				}
+			}
+		}
+	};
+
+	const UiPanelBlueprint gObjectTypeSelectionDialog = {
+		.name = "ObjectTypeSelectionDialog",
+		.w = 32, .h = 13,
+		.background_color = {0, 0, 0, 255},
+		.widgets = {
+			UiWidgetBlueprint{
+				.name = "ObjectTypeSelection",
+				.x = 1, .y = 1, .w = 30, .h = 5,
+				.variant = TextSelectionBlueprint{
+					.onCreate = [](TextSelection& self) {
+						const auto objectTypes = ObjectTypesWithMainSprite();
+						self.set_options(ToTextSelectionOptions(objectTypes.begin(), objectTypes.end()));
+					}
+				}
+			},
+			UiWidgetBlueprint{
+				.x = 1, .y = 7, .w = 9, .h = 5,
+				.variant = TextBlueprint{
+					.text = "Cancel",
+					.onAction = [](MAYBE const Text& self) -> UiAction {
+						return MakeReturnAction();
+					}
+				}
+			},
+			UiWidgetBlueprint{
+				.x = 11, .y = 7, .w = 20, .h = 5,
+				.variant = TextBlueprint{
+					.text = "OK",
+					.onAction = [](const Text& self) -> UiAction {
+						const auto selectedObjectType = static_cast<m2g::pb::ObjectType>(
+								std::get<int>(
+									self.Parent().find_first_widget_by_name<TextSelection>("ObjectTypeSelection")->selections()[0]));
+						return MakeReturnAction(selectedObjectType);
 					}
 				}
 			}
@@ -308,12 +355,8 @@ namespace {
 				.variant = TextSelectionBlueprint{
 					.line_count = 10,
 					.onCreate = [](TextSelection& self) {
-						// Fill object type selector with editor-enabled object types
-						TextSelectionBlueprint::Options options;
-						for (const auto &objType: M2_GAME.object_main_sprites | std::views::keys) {
-							options.emplace_back(ObjectType_Name(objType), I(objType));
-						}
-						self.set_options(std::move(options));
+						const auto objectTypes = ObjectTypesWithMainSprite();
+						self.set_options(ToTextSelectionOptions(objectTypes.begin(), objectTypes.end()));
 						self.set_unique_selection(0);
 					},
 					.onAction = [](const TextSelection& self) {
@@ -469,6 +512,26 @@ namespace {
 			}
 		}
 	};
+
+	const UiPanelBlueprint gDrawFgRightHud = {
+		.name = "DrawFgRightHud",
+		.w = 19,
+		.h = 72,
+		.background_color = {25, 25, 25, 255},
+		.widgets = {
+			UiWidgetBlueprint{
+				.name = "ObjectSelection",
+				.x = 1, .y = 1, .w = 17, .h = 12,
+				.variant = TextSelectionBlueprint{
+					.line_count = 4,
+					.show_scroll_bar = true,
+					.onCreate = [](TextSelection& self) {
+
+					}
+				}
+			}
+		}
+	};
 }
 
 const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
@@ -558,9 +621,31 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
         	}
         },
 		UiWidgetBlueprint{
-			.name = "CancelButton",
 			.x = 2,
 			.y = 32,
+			.w = 15,
+			.h = 4,
+			.variant = TextBlueprint{
+				.text = "Draw Fg",
+				.onAction = [](MAYBE const Text& self) -> UiAction {
+					(void) UiPanel::create_and_run_blocking(&gObjectTypeSelectionDialog, RectF{0.25f, 0.4f, 0.5f, 0.3f})
+						.IfReturn<m2g::pb::ObjectType>([](const auto& typ) {
+							// Check if only one of the given object type exists
+							if (const auto objs = std::get<State>(M2_LEVEL.stateVariant).GetForegroundObjectsOfType(typ);
+									objs.size() == 1) {
+								M2_LEVEL.ReplaceRightHud(&gDrawFgRightHud, M2_GAME.Dimensions().RightHud());
+							} else {
+								LOG_ERROR("Only one instance of selected object type must be present in the level");
+							}
+						});
+					return MakeContinueAction();
+				}
+			}
+		},
+		UiWidgetBlueprint{
+			.name = "CancelButton",
+			.x = 2,
+			.y = 37,
 			.w = 15,
 			.h = 4,
 			.variant = TextBlueprint{

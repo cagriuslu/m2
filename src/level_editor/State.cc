@@ -21,6 +21,15 @@ m2::BackgroundLayer m2::level_editor::State::GetSelectedBackgroundLayer() const 
 bool m2::level_editor::State::GetSnapToGridStatus() const {
 	return M2_LEVEL.LeftHud()->find_first_widget_by_name<widget::CheckboxWithText>("SnapToGridCheckbox")->GetState();
 }
+std::vector<m2::level_editor::State::ForegroundObjectPlaceholderMap::const_iterator> m2::level_editor::State::GetForegroundObjectsOfType(m2g::pb::ObjectType objType) const {
+	std::vector<ForegroundObjectPlaceholderMap::const_iterator> its;
+	for (auto it = _foregroundObjectPlaceholders.begin(); it != _foregroundObjectPlaceholders.end(); ++it) {
+		if (std::get<pb::LevelObject>(it->second).type() == objType) {
+			its.emplace_back(it);
+		}
+	}
+	return its;
+}
 
 void m2::level_editor::State::LoadLevelBlueprint(const pb::Level& lb) {
 	// Create background tiles

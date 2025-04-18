@@ -26,6 +26,7 @@ namespace m2::level_editor {
 
 		[[nodiscard]] BackgroundLayer GetSelectedBackgroundLayer() const;
 		[[nodiscard]] bool GetSnapToGridStatus() const;
+		[[nodiscard]] std::vector<ForegroundObjectPlaceholderMap::const_iterator> GetForegroundObjectsOfType(m2g::pb::ObjectType) const;
 
 		// Modifiers
 
@@ -48,6 +49,6 @@ namespace m2::level_editor {
 	private:
 		void PaintBackground(const VecI& position, m2g::pb::SpriteType spriteType);
 		void PlaceForeground(const VecF& position, float orientation, m2g::pb::ObjectType objectType, m2g::pb::GroupType groupType, unsigned groupInstance);
-		RectF ForegroundSelectionArea() const;
+		[[nodiscard]] RectF ForegroundSelectionArea() const;
 	};
 }

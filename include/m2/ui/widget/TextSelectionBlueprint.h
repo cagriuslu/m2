@@ -1,4 +1,5 @@
 #pragma once
+#include <m2/protobuf/Detail.h>
 #include <string>
 #include <vector>
 
@@ -33,4 +34,15 @@ namespace m2::widget {
 		std::function<UiAction(TextSelection& self)> onUpdate{};
 		std::function<UiAction(TextSelection& self)> onAction{};
 	};
+
+	/// Converts a sequence of protobuf enum values into test selection options where the text is the name of the enum,
+	/// and the return value is the integer value of the enum.
+	template <typename PbEnumIteratorT>
+	TextSelectionBlueprint::Options ToTextSelectionOptions(PbEnumIteratorT first, PbEnumIteratorT last) {
+		TextSelectionBlueprint::Options options;
+		for (; first != last; ++first) {
+			options.emplace_back(pb::enum_name(*first), I(*first));
+		}
+		return options;
+	}
 }  // namespace m2::widget
