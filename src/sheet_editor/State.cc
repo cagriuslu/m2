@@ -25,7 +25,7 @@ expected<State> State::create(const std::filesystem::path& path) {
 			return make_unexpected(msg.error());
 		}
 	}
-	if (auto persistentSpriteSheets = pb::PersistentObject<pb::SpriteSheets>::LoadFile(path)) {
+	if (auto persistentSpriteSheets = PersistentSpriteSheets::LoadFile(path)) {
 		return State{std::move(*persistentSpriteSheets)};
 	} else {
 		return make_unexpected(persistentSpriteSheets.error());
@@ -35,44 +35,28 @@ expected<State> State::create(const std::filesystem::path& path) {
 int State::SelectedSpriteFixtureCount() const {
 	return SelectedSprite().regular().fixtures_size();
 }
-std::vector<FixtureType> State::SelectedSpriteFixtureTypes() const {
-	std::vector<FixtureType> fixtureTypes;
-	for (const auto& fixture : SelectedSprite().regular().fixtures()) {
-		if (fixture.has_rectangle()) {
-			fixtureTypes.emplace_back(RECTANGLE);
-		} else if (fixture.has_circle()) {
-			fixtureTypes.emplace_back(CIRCLE);
-		} else if (fixture.has_chain()) {
-			fixtureTypes.emplace_back(CHAIN);
-		}
-	}
-	return fixtureTypes;
+std::vector<pb::Fixture::FixtureTypeCase> State::SelectedSpriteFixtureTypes() const {
+	return _persistentSpriteSheets.SpriteFixtureTypes(_selected_sprite_type);
 }
 
 void State::Select(const m2g::pb::SpriteType spriteType) {
-	for (const auto& spriteSheets = this->SpriteSheets(); const auto& spriteSheet : spriteSheets.sheets()) {
-		for (const auto& sprite : spriteSheet.sprites()) {
-			if (sprite.type() == spriteType) {
-				_selected_sprite_type = spriteType;
-				// Load image
-				const auto& resourcePath = spriteSheet.resource();
-				const sdl::SurfaceUniquePtr surface(IMG_Load(resourcePath.c_str()));
-				if (!surface) {
-					throw M2_ERROR("Unable to load image: " + resourcePath + ", " + IMG_GetError());
-				}
-				_texture = sdl::TextureUniquePtr{SDL_CreateTextureFromSurface(M2_GAME.renderer, surface.get())};
-				if (!_texture) {
-					throw M2_ERROR("Unable to create texture from surface: " + std::string{SDL_GetError()});
-				}
-				_textureDimensions = {surface->w, surface->h};
-				_ppm = spriteSheet.ppm();
-
-				// Move God to center if rect is already selected
-				M2_PLAYER.position = SelectedSpriteCenter();
-
-				return;
-			}
+	if (const auto* sheet = _persistentSpriteSheets.SpriteSheetPbWithSprite(spriteType)) {
+		_selected_sprite_type = spriteType;
+		// Load image
+		const auto& resourcePath = sheet->resource();
+		const sdl::SurfaceUniquePtr surface(IMG_Load(resourcePath.c_str()));
+		if (!surface) {
+			throw M2_ERROR("Unable to load image: " + resourcePath + ", " + IMG_GetError());
 		}
+		_texture = sdl::TextureUniquePtr{SDL_CreateTextureFromSurface(M2_GAME.renderer, surface.get())};
+		if (!_texture) {
+			throw M2_ERROR("Unable to create texture from surface: " + std::string{SDL_GetError()});
+		}
+		_textureDimensions = {surface->w, surface->h};
+		_ppm = sheet->ppm();
+
+		// Move God to center if rect is already selected
+		M2_PLAYER.position = SelectedSpriteCenter();
 	}
 }
 
@@ -122,15 +106,16 @@ void State::ResetForegroundCompanion() {
 		sprite.mutable_regular()->clear_foreground_companion();
 	});
 }
-int State::AddFixture(const FixtureType type, const int insertIndex) {
+int State::AddFixture(const pb::Fixture::FixtureTypeCase type, const int insertIndex) {
 	int newIndex;
 	ModifySelectedSprite([&](pb::Sprite& sprite) {
 		newIndex = insertIndex < 0 ? sprite.regular().fixtures_size() : insertIndex;
 		auto* fixture = mutable_insert(sprite.mutable_regular()->mutable_fixtures(), newIndex);
 		switch (type) {
-			case RECTANGLE: fixture->mutable_rectangle(); break;
-			case CIRCLE: fixture->mutable_circle(); break;
-			case CHAIN: fixture->mutable_chain(); break;
+			case pb::Fixture::FixtureTypeCase::kRectangle: fixture->mutable_rectangle(); break;
+			case pb::Fixture::FixtureTypeCase::kCircle: fixture->mutable_circle(); break;
+			case pb::Fixture::FixtureTypeCase::kChain: fixture->mutable_chain(); break;
+			default: throw M2_ERROR("Invalid fixture type");
 		}
 	});
 	return newIndex;
@@ -280,19 +265,8 @@ void State::Draw() const {
 	Graphic::DrawHorizontalLine(F(_textureDimensions.y) - 0.5f, {255, 0, 0, 255});
 }
 
-const pb::Sprite& State::SelectedSprite() const {
-	for (const auto& sheets = SpriteSheets(); const auto& sheet : sheets.sheets()) {
-		for (const auto& sprite : sheet.sprites()) {
-			if (sprite.type() == _selected_sprite_type) {
-				return sprite;
-			}
-		}
-	}
-	throw M2_ERROR("Sprite sheet does not contain selected sprite");
-}
-
 void State::ModifySelectedSprite(const std::function<void(pb::Sprite&)>& modifier) {
-	ModifySpriteInSheets(_persistentSpriteSheets, _selected_sprite_type, modifier);
+	_persistentSpriteSheets.ModifySprite(_selected_sprite_type, modifier);
 }
 
 VecF State::SelectedSpriteCenter() const {
@@ -327,20 +301,4 @@ void sheet_editor::modify_sprite_in_sheet(
 		throw M2_ERROR("File is not a valid m2::pb::SpriteSheets: " + path.string());
 	}
 	throw M2_ERROR("Can't modify nonexistent file");
-}
-void sheet_editor::ModifySpriteInSheets(pb::PersistentObject<pb::SpriteSheets>& persistentObject,
-		const m2g::pb::SpriteType spriteType, const std::function<void(pb::Sprite&)>& modifier) {
-	auto expectSuccess = persistentObject.Mutate([&](pb::SpriteSheets& sheets) {
-		for (auto& sheet : *sheets.mutable_sheets()) {
-			for (auto& sprite : *sheet.mutable_sprites()) {
-				if (sprite.type() == spriteType) {
-					modifier(sprite);
-					return;
-				}
-			}
-		}
-	});
-	if (not expectSuccess) {
-		throw M2_ERROR("Unable to mutate sprite sheets: " + expectSuccess.error());
-	}
 }

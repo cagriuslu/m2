@@ -1,5 +1,6 @@
 #pragma once
 #include "UiPanelBlueprint.h"
+#include "UiPanelState.h"
 #include "UiWidget.h"
 #include "../math/RectI.h"
 #include "../math/RectF.h"
@@ -28,8 +29,10 @@ namespace m2 {
 
 	public:
 		bool enabled{true};
-		const UiPanelBlueprint* blueprint{};
-		std::vector<std::unique_ptr<UiWidget>> widgets;
+		const UiPanelBlueprint* blueprint{}; // TODO merge with _owned_blueprint, make private
+		/// Pointer to the state. State is often used to store information that's closely related to the UI panel.
+		std::unique_ptr<UiPanelStateBase> state;
+		std::vector<std::unique_ptr<UiWidget>> widgets; // TODO make private
 
 		/// Use this constructor for non-blocking operation
 		explicit UiPanel(std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> static_or_unique_blueprint,
@@ -86,6 +89,7 @@ namespace m2 {
 	public:
 		// Helpers
 
+		// TODO remove
 		template <typename WidgetBlueprintT>
 		[[nodiscard]] UiWidget* find_first_widget_of_blueprint_type() const {
 			for (auto& w : widgets) {
@@ -119,7 +123,7 @@ namespace m2 {
 
 	// Helpers
 	RectI CalculateWidgetRect(const RectI& root_rect_px, unsigned root_w, unsigned root_h, int child_x, int child_y, unsigned child_w, unsigned child_h);
-	UiWidget* FindTextWidget(UiPanel& state, const std::string& text);
+	UiWidget* FindTextWidget(UiPanel& state, const std::string& text); // TODO is this really necessary?
 
 	extern UiPanelBlueprint console_ui;
 }

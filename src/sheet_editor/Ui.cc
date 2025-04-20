@@ -156,9 +156,9 @@ namespace {
 				.x = 1, .y = 6, .w = 12, .h = 3,
 				.variant = widget::TextSelectionBlueprint{
 					.options = {
-						{.text = sheet_editor::gFixtureTypeName[sheet_editor::RECTANGLE], .return_value = sheet_editor::RECTANGLE},
-						{.text = sheet_editor::gFixtureTypeName[sheet_editor::CIRCLE], .return_value = sheet_editor::CIRCLE},
-						{.text = sheet_editor::gFixtureTypeName[sheet_editor::CHAIN], .return_value = sheet_editor::CHAIN}}
+						{.text = sheet_editor::gFixtureTypeNames.at(pb::Fixture::FixtureTypeCase::kRectangle), .return_value = pb::Fixture::FixtureTypeCase::kRectangle},
+						{.text = sheet_editor::gFixtureTypeNames.at(pb::Fixture::FixtureTypeCase::kCircle), .return_value = pb::Fixture::FixtureTypeCase::kCircle},
+						{.text = sheet_editor::gFixtureTypeNames.at(pb::Fixture::FixtureTypeCase::kChain), .return_value = pb::Fixture::FixtureTypeCase::kChain}}
 				}
 			},
 			UiWidgetBlueprint{
@@ -166,7 +166,7 @@ namespace {
 				.variant = widget::TextBlueprint{
 					.text = "Add",
 					.onAction = [](const widget::Text& self) -> UiAction {
-						const auto fixtureType = static_cast<sheet_editor::FixtureType>(std::get<int>(self.Parent().find_first_widget_by_name<widget::TextSelection>("FixtureAdder")->selections()[0]));
+						const auto fixtureType = static_cast<pb::Fixture::FixtureTypeCase>(std::get<int>(self.Parent().find_first_widget_by_name<widget::TextSelection>("FixtureAdder")->selections()[0]));
 						int selectedIndex;
 						// If no fixture is selected, add new one to the end
 						if (const auto selections = self.Parent().find_first_widget_by_name<widget::TextSelection>("FixtureSelection")->selections(); selections.empty()) {
@@ -193,12 +193,12 @@ namespace {
 					.onUpdate = [](widget::TextSelection& self) -> UiAction {
 						if (self.GetOptions().size() != std::get<sheet_editor::State>(M2_LEVEL.stateVariant).SelectedSpriteFixtureCount()) {
 							const auto currentFixtureTypes = std::get<sheet_editor::State>(M2_LEVEL.stateVariant).SelectedSpriteFixtureTypes();
-							std::vector<widget::TextSelectionBlueprint::Option> newOptions;
+							auto newOptions = std::vector<widget::TextSelectionBlueprint::Option>(currentFixtureTypes.size());
 							for (int i = 0; i < currentFixtureTypes.size(); ++i) {
-								newOptions.emplace_back(widget::TextSelectionBlueprint::Option{
-									.text = sheet_editor::gFixtureTypeName[currentFixtureTypes[i]],
+								newOptions[i] = widget::TextSelectionBlueprint::Option{
+									.text = sheet_editor::gFixtureTypeNames.at(currentFixtureTypes[i]),
 									.return_value = i // Place the index of the fixture as the return value
-								});
+								};
 							}
 							self.set_options(std::move(newOptions));
 						}
@@ -344,14 +344,7 @@ const UiPanelBlueprint m2::sheet_editor_main_menu = {
 			.x = 35 , .y = 55, .w = 90, .h = 10,
 			.variant = widget::TextSelectionBlueprint{
 				.onCreate = [](widget::TextSelection& self) {
-					const auto& pb_sheets = std::get<sheet_editor::State>(M2_LEVEL.stateVariant).SpriteSheets();
-					// Gather the list of sprites
-					std::vector<m2g::pb::SpriteType> sprite_types;
-					std::ranges::for_each(pb_sheets.sheets(), [&sprite_types](const auto& sheet) {
-						std::for_each(sheet.sprites().cbegin(), sheet.sprites().cend(), [&sprite_types](const auto& sprite) {
-							sprite_types.emplace_back(sprite.type());
-						});
-					});
+					auto sprite_types = std::get<sheet_editor::State>(M2_LEVEL.stateVariant).AllSpriteTypes();
 					// Sort the list
 					std::ranges::sort(sprite_types);
 					// Transform to sprite type names

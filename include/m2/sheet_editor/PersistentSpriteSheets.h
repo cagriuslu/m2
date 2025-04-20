@@ -1,0 +1,22 @@
+#pragma once
+#include <m2/protobuf/PersistentObject.h>
+#include <Sprite.pb.h>
+
+namespace m2::sheet_editor {
+	class PersistentSpriteSheets final : public pb::PersistentObject<pb::SpriteSheets> {
+		explicit PersistentSpriteSheets(pb::PersistentObject<pb::SpriteSheets>&& po) : pb::PersistentObject<pb::SpriteSheets>(std::move(po)) {}
+	public:
+		static expected<PersistentSpriteSheets> LoadFile(std::filesystem::path path);
+
+		// Accessors
+
+		std::vector<m2g::pb::SpriteType> AllSpriteTypes() const;
+		const pb::SpriteSheet* SpriteSheetPbWithSprite(m2g::pb::SpriteType spriteType) const;
+		const pb::Sprite& SpritePb(m2g::pb::SpriteType spriteType) const;
+		std::vector<pb::Fixture::FixtureTypeCase> SpriteFixtureTypes(m2g::pb::SpriteType spriteType) const;
+
+		// Modifiers
+
+		void ModifySprite(m2g::pb::SpriteType spriteType, const std::function<void(pb::Sprite&)>& modifier);
+	};
+}

@@ -20,6 +20,7 @@ namespace m2::level_editor {
 		ForegroundObjectClipboardMap _foregroundObjectClipboard;
 
 	public:
+		/// ID of the ghost object, the object that follows the mouse around.
 		Id ghostId{};
 
 		// Accessors
