@@ -10,6 +10,7 @@
 #include <m2/game/Selection.h>
 #include <m2/ui/widget/CheckboxWithText.h>
 #include <m2/ui/widget/TextInput.h>
+#include <m2/sheet_editor/PersistentSpriteSheets.h>
 
 using namespace m2;
 using namespace m2::widget;
@@ -532,6 +533,16 @@ namespace {
 			}
 		}
 	};
+	class DrawFgRightHudState final : public UiPanelStateBase {
+		sheet_editor::PersistentSpriteSheets _persistentSpriteSheets;
+		m2g::pb::ObjectType _selectedObjectType;
+	public:
+		explicit DrawFgRightHudState(const m2g::pb::ObjectType selectedObjectType_) : UiPanelStateBase(),
+				_persistentSpriteSheets(m2MoveOrThrowError(sheet_editor::PersistentSpriteSheets::LoadFile(M2_GAME.spriteSheetsPath))),
+				_selectedObjectType(selectedObjectType_) {}
+		[[nodiscard]] m2g::pb::ObjectType SelectedObjectType() const { return _selectedObjectType; }
+		[[nodiscard]] m2g::pb::SpriteType SelectedObjectMainSpriteType() const { M2_GAME.object_main_sprites[_selectedObjectType]; }
+	};
 }
 
 const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
@@ -630,13 +641,16 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
 				.onAction = [](MAYBE const Text& self) -> UiAction {
 					(void) UiPanel::create_and_run_blocking(&gObjectTypeSelectionDialog, RectF{0.25f, 0.4f, 0.5f, 0.3f})
 						.IfReturn<m2g::pb::ObjectType>([](const auto& typ) {
-							// Check if only one of the given object type exists
-							if (const auto objs = std::get<State>(M2_LEVEL.stateVariant).GetForegroundObjectsOfType(typ);
-									objs.size() == 1) {
-								M2_LEVEL.ReplaceRightHud(&gDrawFgRightHud, M2_GAME.Dimensions().RightHud());
-							} else {
-								LOG_ERROR("Only one instance of selected object type must be present in the level");
+							if (not M2_GAME.object_main_sprites.contains(typ)) {
+								M2_LEVEL.ShowMessage("Selected object doesn't have a main sprite", 8.0f);
+								return;
 							}
+							if (std::get<State>(M2_LEVEL.stateVariant).GetForegroundObjectsOfType(typ).size() != 1) {
+								M2_LEVEL.ShowMessage("Only one instance of selected object type must be present in the level", 8.0f);
+								return;
+							}
+							M2_LEVEL.ReplaceRightHud(&gDrawFgRightHud, M2_GAME.Dimensions().RightHud());
+							M2_LEVEL.RightHud()->state = std::make_unique<DrawFgRightHudState>(typ);
 						});
 					return MakeContinueAction();
 				}

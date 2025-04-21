@@ -128,8 +128,9 @@ m2::Game::Game() {
 	// Load game resources
 	resource_dir = ResourcePath() / "game" / _proxy.game_identifier;
 	levels_dir = ResourcePath() / "game" / _proxy.game_identifier / "levels";
+	spriteSheetsPath = resource_dir / "SpriteSheets.json";
 
-	auto sheets_pb = pb::json_file_to_message<pb::SpriteSheets>(resource_dir / "SpriteSheets.json");
+	auto sheets_pb = pb::json_file_to_message<pb::SpriteSheets>(spriteSheetsPath);
 	if (!sheets_pb) {
 		throw M2_ERROR(sheets_pb.error());
 	}
@@ -400,7 +401,7 @@ m2::void_expected m2::Game::LoadSheetEditor() {
 	// Reinit dimensions with default parameters
 	_dimensionsManager->SetGameAspectRatio(m2::Proxy{}.gameAspectRatioMul, m2::Proxy{}.gameAspectRatioDiv);
 	_level.emplace();
-	return _level->InitSheetEditor(resource_dir / "SpriteSheets.json");
+	return _level->InitSheetEditor(spriteSheetsPath);
 }
 
 m2::void_expected m2::Game::LoadBulkSheetEditor() {
@@ -409,7 +410,7 @@ m2::void_expected m2::Game::LoadBulkSheetEditor() {
 	// Reinit dimensions with default parameters
 	_dimensionsManager->SetGameAspectRatio(m2::Proxy{}.gameAspectRatioMul, m2::Proxy{}.gameAspectRatioDiv);
 	_level.emplace();
-	return _level->InitBulkSheetEditor(resource_dir / "SpriteSheets.json");
+	return _level->InitBulkSheetEditor(spriteSheetsPath);
 }
 
 void m2::Game::ResetState() { events.Clear(); }

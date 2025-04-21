@@ -5,6 +5,7 @@
 namespace m2::sheet_editor {
 	class PersistentSpriteSheets final : public pb::PersistentObject<pb::SpriteSheets> {
 		explicit PersistentSpriteSheets(pb::PersistentObject<pb::SpriteSheets>&& po) : pb::PersistentObject<pb::SpriteSheets>(std::move(po)) {}
+
 	public:
 		static expected<PersistentSpriteSheets> LoadFile(std::filesystem::path path);
 
