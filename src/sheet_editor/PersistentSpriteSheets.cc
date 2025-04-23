@@ -63,3 +63,17 @@ void PersistentSpriteSheets::ModifySprite(const m2g::pb::SpriteType spriteType, 
 		throw M2_ERROR("Unable to mutate sprite sheets: " + expectSuccess.error());
 	}
 }
+int PersistentSpriteSheets::AddFixtureToSprite(const m2g::pb::SpriteType spriteType, const pb::Fixture::FixtureTypeCase type, const int insertIndex) {
+	int newIndex;
+	ModifySprite(spriteType, [&](pb::Sprite& sprite) {
+		newIndex = insertIndex < 0 ? sprite.regular().fixtures_size() : insertIndex;
+		auto* fixture = mutable_insert(sprite.mutable_regular()->mutable_fixtures(), newIndex);
+		switch (type) {
+			case pb::Fixture::FixtureTypeCase::kRectangle: fixture->mutable_rectangle(); break;
+			case pb::Fixture::FixtureTypeCase::kCircle: fixture->mutable_circle(); break;
+			case pb::Fixture::FixtureTypeCase::kChain: fixture->mutable_chain(); break;
+			default: throw M2_ERROR("Invalid fixture type");
+		}
+	});
+	return newIndex;
+}

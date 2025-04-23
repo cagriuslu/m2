@@ -107,18 +107,7 @@ void State::ResetForegroundCompanion() {
 	});
 }
 int State::AddFixture(const pb::Fixture::FixtureTypeCase type, const int insertIndex) {
-	int newIndex;
-	ModifySelectedSprite([&](pb::Sprite& sprite) {
-		newIndex = insertIndex < 0 ? sprite.regular().fixtures_size() : insertIndex;
-		auto* fixture = mutable_insert(sprite.mutable_regular()->mutable_fixtures(), newIndex);
-		switch (type) {
-			case pb::Fixture::FixtureTypeCase::kRectangle: fixture->mutable_rectangle(); break;
-			case pb::Fixture::FixtureTypeCase::kCircle: fixture->mutable_circle(); break;
-			case pb::Fixture::FixtureTypeCase::kChain: fixture->mutable_chain(); break;
-			default: throw M2_ERROR("Invalid fixture type");
-		}
-	});
-	return newIndex;
+	return _persistentSpriteSheets.AddFixtureToSprite(_selected_sprite_type, type, insertIndex);
 }
 void State::RemoveFixture(const int index) {
 	ModifySelectedSprite([&](pb::Sprite& sprite) {

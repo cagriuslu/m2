@@ -19,5 +19,7 @@ namespace m2::sheet_editor {
 		// Modifiers
 
 		void ModifySprite(m2g::pb::SpriteType spriteType, const std::function<void(pb::Sprite&)>& modifier);
+		/// Returns the index of the newly added fixture. If insertIndex is negative, the new fixture is added at the end.
+		int AddFixtureToSprite(m2g::pb::SpriteType spriteType, pb::Fixture::FixtureTypeCase type, int insertIndex = -1);
 	};
 }
