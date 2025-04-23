@@ -167,14 +167,8 @@ namespace {
 					.text = "Add",
 					.onAction = [](const widget::Text& self) -> UiAction {
 						const auto fixtureType = static_cast<pb::Fixture::FixtureTypeCase>(std::get<int>(self.Parent().find_first_widget_by_name<widget::TextSelection>("FixtureAdder")->selections()[0]));
-						int selectedIndex;
-						// If no fixture is selected, add new one to the end
-						if (const auto selections = self.Parent().find_first_widget_by_name<widget::TextSelection>("FixtureSelection")->selections(); selections.empty()) {
-							selectedIndex = -1;
-						} else {
-							// Otherwise, add before the selection
-							selectedIndex = std::get<int>(selections[0]);
-						}
+						const auto selectedIndexes = self.Parent().find_first_widget_by_name<widget::TextSelection>("FixtureSelection")->SelectedIndexes();
+						const auto selectedIndex = selectedIndexes.empty() ? -1 : selectedIndexes[0];
 						// Add fixture
 						const auto newIndex = std::get<sheet_editor::State>(M2_LEVEL.stateVariant).AddFixture(fixtureType, selectedIndex);
 						// Recreate fixture selection list

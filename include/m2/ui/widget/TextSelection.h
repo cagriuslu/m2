@@ -29,6 +29,7 @@ namespace m2::widget {
 
 		[[nodiscard]] const std::vector<Option>& GetOptions() const { return _options; }
 		[[nodiscard]] std::vector<TextSelectionBlueprint::ReturnValue> selections() const;
+		[[nodiscard]] std::vector<int> SelectedIndexes() const;
 
 		// Modifiers
 

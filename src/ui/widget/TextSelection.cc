@@ -241,6 +241,15 @@ std::vector<TextSelectionBlueprint::ReturnValue> TextSelection::selections() con
 	}
 	return selections;
 }
+std::vector<int> TextSelection::SelectedIndexes() const {
+	std::vector<int> indexes;
+	for (int i = 0; i < _options.size(); ++i) {
+		if (_options[i].is_selected) {
+			indexes.emplace_back(i);
+		}
+	}
+	return indexes;
+}
 
 void TextSelection::set_options(const TextSelectionBlueprint::Options& options) {
 	auto copy = options;
