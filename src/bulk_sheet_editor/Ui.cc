@@ -8,7 +8,7 @@ using namespace m2;
 
 namespace {
 	std::optional<m2g::pb::SpriteType> SelectedSprite() {
-		if (const auto selections = M2_LEVEL.LeftHud()->find_first_widget_by_name<widget::TextSelection>("SpriteTypeSelection")->selections();
+		if (const auto selections = M2_LEVEL.LeftHud()->FindWidget<widget::TextSelection>("SpriteTypeSelection")->selections();
 				not selections.empty()) {
 			return static_cast<m2g::pb::SpriteType>(std::get<int>(selections[0]));
 		}
@@ -118,7 +118,7 @@ const UiPanelBlueprint m2::bulk_sheet_editor::gMainMenu = {
                 .text = "SELECT",
                 .keyboardShortcut = m2g::pb::RETURN,
                 .onAction = [](MAYBE const widget::Text& self) -> UiAction {
-	                if (const auto selections = self.Parent().find_first_widget_by_name<widget::TextSelection>("ResourceSelection")->selections();
+	                if (const auto selections = self.Parent().FindWidget<widget::TextSelection>("ResourceSelection")->selections();
 	                		not selections.empty()) {
 		                if (const auto spriteSheet = std::get<State>(M2_LEVEL.stateVariant).SelectResource(std::get<std::string>(selections[0]))) {
 		                	M2_LEVEL.ReplaceLeftHud(std::make_unique<UiPanelBlueprint>(GenerateLeftHud(*spriteSheet)), M2_GAME.Dimensions().LeftHud());

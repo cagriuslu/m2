@@ -50,7 +50,7 @@ namespace {
 				.variant = TextBlueprint {
 					.text = "Fill",
 					.onAction = [](MAYBE const Text& self) -> UiAction {
-						const auto* spriteSelectionWidget = self.Parent().find_first_widget_by_name<TextSelection>("SpriteSelection");
+						const auto* spriteSelectionWidget = self.Parent().FindWidget<TextSelection>("SpriteSelection");
 						std::vector<m2g::pb::SpriteType> selectedSprites;
 						for (const auto& selection : spriteSelectionWidget->selections()) {
 							selectedSprites.emplace_back(static_cast<m2g::pb::SpriteType>(std::get<int>(selection)));
@@ -82,8 +82,8 @@ namespace {
 				.variant = TextBlueprint{
 					.text = "OK",
 					.onAction = [](const Text& self) {
-						const auto xEntry = self.Parent().find_first_widget_by_name<TextInput>("XCoordinate")->text_input();
-						const auto yEntry = self.Parent().find_first_widget_by_name<TextInput>("YCoordinate")->text_input();
+						const auto xEntry = self.Parent().FindWidget<TextInput>("XCoordinate")->text_input();
+						const auto yEntry = self.Parent().FindWidget<TextInput>("YCoordinate")->text_input();
 						const auto xFloat = ToFloat(xEntry);
 						const auto yFloat = ToFloat(yEntry);
 						if (xFloat && yFloat) {
@@ -136,7 +136,7 @@ namespace {
 					.onAction = [](const Text& self) -> UiAction {
 						const auto selectedObjectType = static_cast<m2g::pb::ObjectType>(
 								std::get<int>(
-									self.Parent().find_first_widget_by_name<TextSelection>("ObjectTypeSelection")->selections()[0]));
+									self.Parent().FindWidget<TextSelection>("ObjectTypeSelection")->selections()[0]));
 						return MakeReturnAction(selectedObjectType);
 					}
 				}
@@ -369,8 +369,8 @@ namespace {
 						}
 						// Create ghost
 						if (const auto selections = self.selections(); not selections.empty()) {
-							const auto snapToGrid = M2_LEVEL.LeftHud()->find_first_widget_by_name<CheckboxWithText>("SnapToGridCheckbox")->GetState();
-							const auto splitCount = M2_LEVEL.LeftHud()->find_first_widget_by_name<IntegerInput>("CellSplitCount")->value();
+							const auto snapToGrid = M2_LEVEL.LeftHud()->FindWidget<CheckboxWithText>("SnapToGridCheckbox")->GetState();
+							const auto splitCount = M2_LEVEL.LeftHud()->FindWidget<IntegerInput>("CellSplitCount")->value();
 							levelEditorState.ghostId = obj::create_ghost(
 									M2_GAME.object_main_sprites[static_cast<m2g::pb::ObjectType>(std::get<int>(selections[0]))],
 										snapToGrid ? splitCount : 0);
@@ -723,7 +723,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
 				.onAction = [](const CheckboxWithText& self) {
 					// Press the cancel button if PlaceFgRightHud is active because the Ghost needs to be recreated
 					if (M2_LEVEL.RightHud()->Name() == "PlaceFgRightHud") {
-						self.Parent().find_first_widget_by_name<Text>("CancelButton")->trigger_action();
+						self.Parent().FindWidget<Text>("CancelButton")->trigger_action();
 					}
 					return MakeContinueAction();
 				}

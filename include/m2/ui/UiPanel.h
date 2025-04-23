@@ -89,19 +89,8 @@ namespace m2 {
 	public:
 		// Helpers
 
-		// TODO remove
-		template <typename WidgetBlueprintT>
-		[[nodiscard]] UiWidget* find_first_widget_of_blueprint_type() const {
-			for (auto& w : widgets) {
-				if (std::holds_alternative<WidgetBlueprintT>(w->blueprint->variant)) {
-					return w.get();
-				}
-			}
-			return nullptr;
-		}
-
 		template <typename WidgetT>
-		[[nodiscard]] WidgetT* find_first_widget_of_type() const {
+		[[nodiscard]] WidgetT* FindWidget() const {
 			for (auto& w : widgets) {
 				if (auto* widget = dynamic_cast<WidgetT*>(w.get())) {
 					return widget;
@@ -109,9 +98,8 @@ namespace m2 {
 			}
 			return nullptr;
 		}
-
 		template <typename WidgetT>
-		[[nodiscard]] WidgetT* find_first_widget_by_name(const std::string& name) const {
+		[[nodiscard]] WidgetT* FindWidget(const std::string& name) const {
 			for (auto& w : widgets) {
 				if (auto* widget = dynamic_cast<WidgetT*>(w.get()); widget && widget->blueprint->name == name) {
 					return widget;

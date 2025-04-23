@@ -107,7 +107,7 @@ UiPanelBlueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType
 					.text = blocking_window ? "OK" : "Close",
 					.onAction = [](const Text& self) -> UiAction {
 						// Find the other blueprint
-						if (auto* card_selection = self.Parent().find_first_widget_by_name<TextSelection>("CardSelection")) {
+						if (auto* card_selection = self.Parent().FindWidget<TextSelection>("CardSelection")) {
 							if (auto selections = card_selection->selections(); not selections.empty()) {
 								auto item_type = static_cast<m2g::pb::ItemType>(std::get<int>(selections[0]));
 								return MakeReturnAction<m2g::pb::ItemType>(item_type);

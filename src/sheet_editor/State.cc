@@ -196,7 +196,7 @@ void State::Draw() const {
 		const auto fCompCenterToOriginVecPx = VecF{sprite.regular().foreground_companion().center_to_origin_vec_px()};
 		Graphic::DrawCross(rectCenter + fCompCenterToOriginVecPx, CONFIRMED_CROSS_COLOR);
 	} else if (M2_LEVEL.RightHud()->Name() == "FixtureModeRightHud") {
-		if (const auto fixtureSelection = M2_LEVEL.RightHud()->find_first_widget_by_name<widget::TextSelection>("FixtureSelection")->selections();
+		if (const auto fixtureSelection = M2_LEVEL.RightHud()->FindWidget<widget::TextSelection>("FixtureSelection")->selections();
 				not fixtureSelection.empty()) {
 			const auto selectedIndex = std::get<int>(fixtureSelection[0]);
 			if (const auto& fixture = sprite.regular().fixtures(selectedIndex); fixture.has_rectangle()) {

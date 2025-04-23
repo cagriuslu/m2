@@ -10,7 +10,7 @@ m2::Id m2::obj::create_ghost(const m2g::pb::SpriteType spriteType, const int rou
 		auto& gfx = it->AddGraphic(spriteType);
 		gfx.preDraw = [roundToBin](const Graphic& gfx) {
 			gfx.Owner().position = M2_GAME.MousePositionWorldM().RoundToBin(roundToBin);
-			if (const auto* orientationInput = M2_LEVEL.RightHud()->find_first_widget_by_name<widget::IntegerInput>("OrientationInput")) {
+			if (const auto* orientationInput = M2_LEVEL.RightHud()->FindWidget<widget::IntegerInput>("OrientationInput")) {
 				gfx.Owner().orientation = ToRadians(orientationInput->value());
 			}
 		};
@@ -18,7 +18,7 @@ m2::Id m2::obj::create_ghost(const m2g::pb::SpriteType spriteType, const int rou
 		auto& gfx = it->AddGraphic(spriteType);
 		gfx.preDraw = [](const Graphic& gfx) {
 			gfx.Owner().position = M2_GAME.MousePositionWorldM();
-			if (const auto* orientationInput = M2_LEVEL.RightHud()->find_first_widget_by_name<widget::IntegerInput>("OrientationInput")) {
+			if (const auto* orientationInput = M2_LEVEL.RightHud()->FindWidget<widget::IntegerInput>("OrientationInput")) {
 				gfx.Owner().orientation = ToRadians(orientationInput->value());
 			}
 		};

@@ -271,7 +271,7 @@ void m2::Level::DisableHud() {
 
 void m2::Level::ShowMessage(const std::string& msg, const float timeoutS) {
 	if (_messageBoxUiPanel) {
-		auto* messageTextWidget = _messageBoxUiPanel->find_first_widget_by_name<widget::Text>("MessageText");
+		auto* messageTextWidget = _messageBoxUiPanel->FindWidget<widget::Text>("MessageText");
 		if (not messageTextWidget) {
 			throw M2_ERROR("MessageBox does not contain a widget with name MessageText");
 		}

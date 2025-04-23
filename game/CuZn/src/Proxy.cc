@@ -573,13 +573,13 @@ namespace {
 
 void m2g::Proxy::enable_action_buttons() {
 	for (const auto& button_name : action_button_names) {
-		auto* button = M2_LEVEL.LeftHud()->find_first_widget_by_name<m2::widget::Text>(button_name);
+		auto* button = M2_LEVEL.LeftHud()->FindWidget<m2::widget::Text>(button_name);
 		button->enabled = true;
 	}
 }
 void m2g::Proxy::disable_action_buttons() {
 	for (const auto& button_name : action_button_names) {
-		auto* button = M2_LEVEL.LeftHud()->find_first_widget_by_name<m2::widget::Text>(button_name);
+		auto* button = M2_LEVEL.LeftHud()->FindWidget<m2::widget::Text>(button_name);
 		button->enabled = false;
 	}
 }

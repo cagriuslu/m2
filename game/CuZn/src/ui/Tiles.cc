@@ -99,22 +99,22 @@ UiPanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType
 								return TextSelectionBlueprint::Option{M2_GAME.GetNamedItem(tile).in_game_name(), I(tile)};
 							});
 							// Look for the other widget
-							self.Parent().find_first_widget_by_name<TextSelection>("TileLevelSelection")
+							self.Parent().FindWidget<TextSelection>("TileLevelSelection")
 									->set_options(std::move(options)); // Trigger the other widget to recreate itself
 							const auto industry = industry_of_industry_tile_category(industry_type);
-							self.Parent().find_first_widget_by_name<Image>("IndustryVisual")
+							self.Parent().FindWidget<Image>("IndustryVisual")
 									->SetSpriteType(M2_GAME.GetNamedItem(industry).UiSprite()); // Set the industry image
 						} else {
-							self.Parent().find_first_widget_by_name<TextSelection>("TileLevelSelection")
+							self.Parent().FindWidget<TextSelection>("TileLevelSelection")
 									->set_options({}); // Trigger the other widget to recreate itself
-							self.Parent().find_first_widget_by_name<Image>("IndustryVisual")
+							self.Parent().FindWidget<Image>("IndustryVisual")
 									->SetSpriteType({}); // Clear the industry image
 						}
 						// Clear details
-						self.Parent().find_first_widget_by_name<Text>("BuildRequirements")->set_text("");
-						self.Parent().find_first_widget_by_name<Text>("ResourceGain")->set_text("");
-						self.Parent().find_first_widget_by_name<Text>("SellRequirements")->set_text("");
-						self.Parent().find_first_widget_by_name<Text>("SellBenefits")->set_text("");
+						self.Parent().FindWidget<Text>("BuildRequirements")->set_text("");
+						self.Parent().FindWidget<Text>("ResourceGain")->set_text("");
+						self.Parent().FindWidget<Text>("SellRequirements")->set_text("");
+						self.Parent().FindWidget<Text>("SellBenefits")->set_text("");
 						return MakeContinueAction();
 					}
 				}
@@ -140,16 +140,16 @@ UiPanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType
 					.onAction = [](const TextSelection &self) -> UiAction {
 						if (auto selections = self.selections(); not selections.empty()) {
 							const auto selectedTileType = static_cast<m2g::pb::ItemType>(std::get<int>(selections[0]));
-							self.Parent().find_first_widget_by_name<Text>("BuildRequirements")->set_text(GetIndustryTileBuildRequirementsString(selectedTileType));
-							self.Parent().find_first_widget_by_name<Text>("ResourceGain")->set_text(GetIndustryTileResourceGainString(selectedTileType));
-							self.Parent().find_first_widget_by_name<Text>("SellRequirements")->set_text(GetIndustryTileSellRequirementsString(selectedTileType));
-							self.Parent().find_first_widget_by_name<Text>("SellBenefits")->set_text(GetIndustryTileSellBenefitsString(selectedTileType));
+							self.Parent().FindWidget<Text>("BuildRequirements")->set_text(GetIndustryTileBuildRequirementsString(selectedTileType));
+							self.Parent().FindWidget<Text>("ResourceGain")->set_text(GetIndustryTileResourceGainString(selectedTileType));
+							self.Parent().FindWidget<Text>("SellRequirements")->set_text(GetIndustryTileSellRequirementsString(selectedTileType));
+							self.Parent().FindWidget<Text>("SellBenefits")->set_text(GetIndustryTileSellBenefitsString(selectedTileType));
 						} else {
 							// Clear details
-							self.Parent().find_first_widget_by_name<Text>("BuildRequirements")->set_text("");
-							self.Parent().find_first_widget_by_name<Text>("ResourceGain")->set_text("");
-							self.Parent().find_first_widget_by_name<Text>("SellRequirements")->set_text("");
-							self.Parent().find_first_widget_by_name<Text>("SellBenefits")->set_text("");
+							self.Parent().FindWidget<Text>("BuildRequirements")->set_text("");
+							self.Parent().FindWidget<Text>("ResourceGain")->set_text("");
+							self.Parent().FindWidget<Text>("SellRequirements")->set_text("");
+							self.Parent().FindWidget<Text>("SellBenefits")->set_text("");
 						}
 						return MakeContinueAction();
 					}
@@ -263,7 +263,7 @@ UiPanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType
 					.text = "OK",
 					.onAction = [](const Text& self) -> UiAction {
 						// Find the other blueprint
-						if (auto* tile_selection = self.Parent().find_first_widget_by_name<TextSelection>("TileLevelSelection")) {
+						if (auto* tile_selection = self.Parent().FindWidget<TextSelection>("TileLevelSelection")) {
 							if (auto selections = tile_selection->selections(); not selections.empty()) {
 								auto item_type = static_cast<m2g::pb::ItemType>(std::get<int>(selections[0]));
 								return MakeReturnAction<m2g::pb::ItemType>(item_type);
