@@ -77,3 +77,8 @@ int PersistentSpriteSheets::AddFixtureToSprite(const m2g::pb::SpriteType spriteT
 	});
 	return newIndex;
 }
+void PersistentSpriteSheets::RemoveFixtureFromSprite(const m2g::pb::SpriteType spriteType, const int index) {
+	ModifySprite(spriteType, [&](pb::Sprite& sprite) {
+		sprite.mutable_regular()->mutable_fixtures()->erase(sprite.mutable_regular()->mutable_fixtures()->begin() + index);
+	});
+}

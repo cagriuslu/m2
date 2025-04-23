@@ -110,9 +110,7 @@ int State::AddFixture(const pb::Fixture::FixtureTypeCase type, const int insertI
 	return _persistentSpriteSheets.AddFixtureToSprite(_selected_sprite_type, type, insertIndex);
 }
 void State::RemoveFixture(const int index) {
-	ModifySelectedSprite([&](pb::Sprite& sprite) {
-		sprite.mutable_regular()->mutable_fixtures()->erase(sprite.mutable_regular()->mutable_fixtures()->begin() + index);
-	});
+	_persistentSpriteSheets.RemoveFixtureFromSprite(_selected_sprite_type, index);
 }
 void State::StoreFixture(const int index, const RectF& rect, const VecF& point1, const VecF& point2) {
 	ModifySelectedSprite([&](pb::Sprite& sprite) {
