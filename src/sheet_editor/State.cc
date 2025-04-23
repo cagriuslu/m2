@@ -10,13 +10,6 @@
 using namespace m2;
 using namespace m2::sheet_editor;
 
-namespace {
-	constexpr SDL_Color SELECTION_COLOR = {0, 127, 255, 180};
-	constexpr SDL_Color CONFIRMED_SELECTION_COLOR = {0, 255, 0, 80};
-	constexpr SDL_Color CROSS_COLOR = {0, 127, 255, 255};
-	constexpr SDL_Color CONFIRMED_CROSS_COLOR = {0, 255, 0, 255};
-}
-
 expected<State> State::create(const std::filesystem::path& path) {
 	// If path exists,
 	if (exists(path)) {

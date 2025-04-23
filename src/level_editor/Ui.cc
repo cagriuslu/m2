@@ -515,38 +515,17 @@ namespace {
 		}
 	};
 
-	class DrawFgRightHudState final : public UiPanelStateBase {
-		sheet_editor::PersistentSpriteSheets _persistentSpriteSheets;
-		m2g::pb::ObjectType _selectedObjectType;
-	public:
-		explicit DrawFgRightHudState(const m2g::pb::ObjectType selectedObjectType_) : UiPanelStateBase(),
-				_persistentSpriteSheets(m2MoveOrThrowError(sheet_editor::PersistentSpriteSheets::LoadFile(M2_GAME.spriteSheetsPath))),
-				_selectedObjectType(selectedObjectType_) {}
-		[[nodiscard]] m2g::pb::ObjectType SelectedObjectType() const {
-			return _selectedObjectType;
-		}
-		[[nodiscard]] m2g::pb::SpriteType SelectedObjectMainSpriteType() const {
-			return M2_GAME.object_main_sprites[_selectedObjectType];
-		}
-		[[nodiscard]] int SelectedSpriteFixtureCount() const {
-			return _persistentSpriteSheets.SpritePb(SelectedObjectMainSpriteType()).regular().fixtures_size();
-		}
-		[[nodiscard]] std::vector<pb::Fixture::FixtureTypeCase> SelectedSpriteFixtureTypes() const {
-			return _persistentSpriteSheets.SpriteFixtureTypes(SelectedObjectMainSpriteType());
-		}
-		int AddChain(const int insertIndex) {
-			return _persistentSpriteSheets.AddFixtureToSprite(SelectedObjectMainSpriteType(),
-					pb::Fixture::FixtureTypeCase::kChain, insertIndex);
-		}
-		void RemoveFixture(const int index) {
-			_persistentSpriteSheets.RemoveFixtureFromSprite(SelectedObjectMainSpriteType(), index);
-		}
-	};
 	const UiPanelBlueprint gDrawFgRightHud = {
 		.name = "DrawFgRightHud",
 		.w = 19,
 		.h = 72,
 		.background_color = {25, 25, 25, 255},
+		.onCreate = [](UiPanel&) {
+			M2_LEVEL.EnablePrimarySelection(M2_GAME.Dimensions().Game());
+		},
+		.onDestroy = [] {
+			M2_LEVEL.DisablePrimarySelection();
+		},
 		.widgets = {
 			UiWidgetBlueprint{
 				.name = "FixtureSelection",
@@ -555,7 +534,7 @@ namespace {
 					.line_count = 5,
 					.show_scroll_bar = true,
 					.onUpdate = [](TextSelection& self) -> UiAction {
-						if (const auto& state = dynamic_cast<DrawFgRightHudState&>(*self.Parent().state);
+						if (const auto& state = dynamic_cast<level_editor::DrawFgRightHudState&>(*self.Parent().state);
 								self.GetOptions().size() != state.SelectedSpriteFixtureCount()) {
 							const auto currentFixtureTypes = state.SelectedSpriteFixtureTypes();
 							TextSelectionBlueprint::Options options;
@@ -576,7 +555,7 @@ namespace {
 						auto* fixtureSelectionWidget = self.Parent().FindWidget<TextSelection>("FixtureSelection");
 						const auto selectedIndexes = fixtureSelectionWidget->SelectedIndexes();
 						const auto selectedIndex = selectedIndexes.empty() ? -1 : selectedIndexes[0];
-						auto& state = dynamic_cast<DrawFgRightHudState&>(*self.Parent().state);
+						auto& state = dynamic_cast<level_editor::DrawFgRightHudState&>(*self.Parent().state);
 						const auto newIndex = state.AddChain(selectedIndex);
 						fixtureSelectionWidget->UpdateContent();
 						fixtureSelectionWidget->set_unique_selection(newIndex);
@@ -592,7 +571,7 @@ namespace {
 						const auto* fixtureSelectionWidget = self.Parent().FindWidget<TextSelection>("FixtureSelection");
 						if (const auto selectedIndexes = fixtureSelectionWidget->SelectedIndexes(); not selectedIndexes.empty()) {
 							const auto selectedIndex = selectedIndexes[0];
-							auto& state = dynamic_cast<DrawFgRightHudState&>(*self.Parent().state);
+							auto& state = dynamic_cast<level_editor::DrawFgRightHudState&>(*self.Parent().state);
 							state.RemoveFixture(selectedIndex);
 						}
 						return MakeContinueAction();

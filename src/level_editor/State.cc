@@ -8,6 +8,7 @@
 #include <m2/ui/widget/IntegerInput.h>
 #include <m2/ui/widget/Text.h>
 #include <m2/ui/widget/TextSelection.h>
+#include <m2/sheet_editor/Ui.h>
 
 namespace {
 	constexpr SDL_Color SELECTION_COLOR = {0, 127, 255, 80};
@@ -218,6 +219,8 @@ void m2::level_editor::State::PasteForeground() {
 }
 
 void m2::level_editor::State::Draw() const {
+	const auto splitCount = M2_LEVEL.LeftHud()->FindWidget<widget::IntegerInput>("CellSplitCount")->value();
+
 	const auto drawGridSelectionIfActive = [] {
 		if (const auto* selection = M2_LEVEL.PrimarySelection()) {
 			if (const auto integerSelection = selection->IntegerSelectionRectM()) {
@@ -239,13 +242,36 @@ void m2::level_editor::State::Draw() const {
 				}
 			}
 		}
+	} else if (M2_LEVEL.RightHud()->Name() == "DrawFgRightHud") {
+		// Draw selection (as cross)
+		if (const auto selections = M2_LEVEL.PrimarySelection()->SelectionsM()) {
+			const auto point = selections->first.RoundToBin(splitCount);
+			Graphic::DrawCross(point, sheet_editor::CROSS_COLOR);
+		}
+		// Draw already existing fixtures
+		const auto& state = dynamic_cast<DrawFgRightHudState&>(*M2_LEVEL.RightHud()->state);
+		const auto& spritePb = state.SelectedObjectMainSpritePb();
+		const auto ppm = std::get<Sprite>(M2_GAME.GetSpriteOrTextLabel(state.SelectedObjectMainSpriteType())).Ppm();
+		for (const auto& fixture : spritePb.regular().fixtures()) {
+			if (fixture.has_chain()) {
+				const auto fgObjectIt = GetForegroundObjectsOfType(state.SelectedObjectType())[0];
+				const auto ObjectOrigin = fgObjectIt->first;
+				if (const auto& points = fixture.chain().points(); points.size() == 1) {
+					Graphic::DrawCross(ObjectOrigin + VecF{points[0]} / ppm, sheet_editor::CONFIRMED_CROSS_COLOR);
+				} else if (1 < points.size()) {
+					auto end = points.cend() - 1;
+					for (auto it = points.cbegin(); it != end; ++it) {
+						Graphic::DrawLine(ObjectOrigin + VecF{*it} / ppm, ObjectOrigin + VecF{*(it+1)} / ppm, sheet_editor::CONFIRMED_CROSS_COLOR);
+					}
+				}
+			}
+		}
 	}
 
 	// Draw grid if enabled
 	if (M2_LEVEL.LeftHud()->FindWidget<widget::CheckboxWithText>("ShowGridCheckbox")->GetState()) {
 		Graphic::DrawGridLines(-0.5f, 1.0f, {127, 127, 255, 80});
-		if (const auto splitCount = M2_LEVEL.LeftHud()->FindWidget<widget::IntegerInput>("CellSplitCount")->value();
-				splitCount != 1) {
+		if (splitCount != 1) {
 			Graphic::DrawGridLines(-0.5f, 1.0f / F(splitCount), {127, 127, 255, 60});
 		}
 	}
