@@ -187,14 +187,11 @@ namespace {
 					.onUpdate = [](widget::TextSelection& self) -> UiAction {
 						if (self.GetOptions().size() != std::get<sheet_editor::State>(M2_LEVEL.stateVariant).SelectedSpriteFixtureCount()) {
 							const auto currentFixtureTypes = std::get<sheet_editor::State>(M2_LEVEL.stateVariant).SelectedSpriteFixtureTypes();
-							auto newOptions = std::vector<widget::TextSelectionBlueprint::Option>(currentFixtureTypes.size());
-							for (int i = 0; i < currentFixtureTypes.size(); ++i) {
-								newOptions[i] = widget::TextSelectionBlueprint::Option{
-									.text = sheet_editor::gFixtureTypeNames.at(currentFixtureTypes[i]),
-									.return_value = i // Place the index of the fixture as the return value
-								};
-							}
-							self.set_options(std::move(newOptions));
+							widget::TextSelectionBlueprint::Options options;
+							std::ranges::transform(currentFixtureTypes, std::back_inserter(options), [](const auto type) -> widget::TextSelectionBlueprint::Option {
+								return {.text = sheet_editor::gFixtureTypeNames.at(type)};
+							});
+							self.set_options(std::move(options));
 						}
 						return MakeContinueAction();
 					}

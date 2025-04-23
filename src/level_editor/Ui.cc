@@ -534,6 +534,13 @@ namespace {
 		[[nodiscard]] std::vector<pb::Fixture::FixtureTypeCase> SelectedSpriteFixtureTypes() const {
 			return _persistentSpriteSheets.SpriteFixtureTypes(SelectedObjectMainSpriteType());
 		}
+		int AddChain(const int insertIndex) {
+			return _persistentSpriteSheets.AddFixtureToSprite(SelectedObjectMainSpriteType(),
+					pb::Fixture::FixtureTypeCase::kChain, insertIndex);
+		}
+		void RemoveFixture(const int index) {
+			_persistentSpriteSheets.RemoveFixtureFromSprite(SelectedObjectMainSpriteType(), index);
+		}
 	};
 	const UiPanelBlueprint gDrawFgRightHud = {
 		.name = "DrawFgRightHud",
@@ -542,23 +549,51 @@ namespace {
 		.background_color = {25, 25, 25, 255},
 		.widgets = {
 			UiWidgetBlueprint{
-				.name = "ObjectSelection",
+				.name = "FixtureSelection",
 				.x = 1, .y = 1, .w = 17, .h = 15,
 				.variant = TextSelectionBlueprint{
 					.line_count = 5,
 					.show_scroll_bar = true,
 					.onUpdate = [](TextSelection& self) -> UiAction {
-						if (auto& state = dynamic_cast<DrawFgRightHudState&>(*self.Parent().state);
+						if (const auto& state = dynamic_cast<DrawFgRightHudState&>(*self.Parent().state);
 								self.GetOptions().size() != state.SelectedSpriteFixtureCount()) {
 							const auto currentFixtureTypes = state.SelectedSpriteFixtureTypes();
-							auto newOptions = std::vector<TextSelectionBlueprint::Option>(currentFixtureTypes.size());
-							for (int i = 0; i < currentFixtureTypes.size(); ++i) {
-								newOptions[i] = TextSelectionBlueprint::Option{
-									.text = sheet_editor::gFixtureTypeNames.at(currentFixtureTypes[i]),
-									.return_value = i // Place the index of the fixture as the return value
-								};
-							}
-							self.set_options(std::move(newOptions));
+							TextSelectionBlueprint::Options options;
+							std::ranges::transform(currentFixtureTypes, std::back_inserter(options), [](const auto type) -> TextSelectionBlueprint::Option {
+								return {.text = sheet_editor::gFixtureTypeNames.at(type)};
+							});
+							self.set_options(std::move(options));
+						}
+						return MakeContinueAction();
+					}
+				}
+			},
+			UiWidgetBlueprint{
+				.x = 1, .y = 17, .w = 17, .h = 3,
+				.variant = TextBlueprint{
+					.text = "Add Chain",
+					.onAction = [](const Text& self) -> UiAction {
+						auto* fixtureSelectionWidget = self.Parent().FindWidget<TextSelection>("FixtureSelection");
+						const auto selectedIndexes = fixtureSelectionWidget->SelectedIndexes();
+						const auto selectedIndex = selectedIndexes.empty() ? -1 : selectedIndexes[0];
+						auto& state = dynamic_cast<DrawFgRightHudState&>(*self.Parent().state);
+						const auto newIndex = state.AddChain(selectedIndex);
+						fixtureSelectionWidget->UpdateContent();
+						fixtureSelectionWidget->set_unique_selection(newIndex);
+						return MakeContinueAction();
+					}
+				}
+			},
+			UiWidgetBlueprint{
+				.x = 1, .y = 21, .w = 17, .h = 3,
+				.variant = TextBlueprint{
+					.text = "Remove Fixture",
+					.onAction = [](const Text& self) -> UiAction {
+						const auto* fixtureSelectionWidget = self.Parent().FindWidget<TextSelection>("FixtureSelection");
+						if (const auto selectedIndexes = fixtureSelectionWidget->SelectedIndexes(); not selectedIndexes.empty()) {
+							const auto selectedIndex = selectedIndexes[0];
+							auto& state = dynamic_cast<DrawFgRightHudState&>(*self.Parent().state);
+							state.RemoveFixture(selectedIndex);
 						}
 						return MakeContinueAction();
 					}
