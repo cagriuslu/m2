@@ -1,4 +1,5 @@
 #include <m2/level_editor/Ui.h>
+#include <m2/sheet_editor/Ui.h>
 #include <m2/ui/widget/ImageSelection.h>
 #include <m2/ui/widget/IntegerInput.h>
 #include <m2/ui/widget/Text.h>
@@ -514,6 +515,26 @@ namespace {
 		}
 	};
 
+	class DrawFgRightHudState final : public UiPanelStateBase {
+		sheet_editor::PersistentSpriteSheets _persistentSpriteSheets;
+		m2g::pb::ObjectType _selectedObjectType;
+	public:
+		explicit DrawFgRightHudState(const m2g::pb::ObjectType selectedObjectType_) : UiPanelStateBase(),
+				_persistentSpriteSheets(m2MoveOrThrowError(sheet_editor::PersistentSpriteSheets::LoadFile(M2_GAME.spriteSheetsPath))),
+				_selectedObjectType(selectedObjectType_) {}
+		[[nodiscard]] m2g::pb::ObjectType SelectedObjectType() const {
+			return _selectedObjectType;
+		}
+		[[nodiscard]] m2g::pb::SpriteType SelectedObjectMainSpriteType() const {
+			return M2_GAME.object_main_sprites[_selectedObjectType];
+		}
+		[[nodiscard]] int SelectedSpriteFixtureCount() const {
+			return _persistentSpriteSheets.SpritePb(SelectedObjectMainSpriteType()).regular().fixtures_size();
+		}
+		[[nodiscard]] std::vector<pb::Fixture::FixtureTypeCase> SelectedSpriteFixtureTypes() const {
+			return _persistentSpriteSheets.SpriteFixtureTypes(SelectedObjectMainSpriteType());
+		}
+	};
 	const UiPanelBlueprint gDrawFgRightHud = {
 		.name = "DrawFgRightHud",
 		.w = 19,
@@ -522,26 +543,28 @@ namespace {
 		.widgets = {
 			UiWidgetBlueprint{
 				.name = "ObjectSelection",
-				.x = 1, .y = 1, .w = 17, .h = 12,
+				.x = 1, .y = 1, .w = 17, .h = 15,
 				.variant = TextSelectionBlueprint{
-					.line_count = 4,
+					.line_count = 5,
 					.show_scroll_bar = true,
-					.onCreate = [](TextSelection& self) {
-
+					.onUpdate = [](TextSelection& self) -> UiAction {
+						if (auto& state = dynamic_cast<DrawFgRightHudState&>(*self.Parent().state);
+								self.GetOptions().size() != state.SelectedSpriteFixtureCount()) {
+							const auto currentFixtureTypes = state.SelectedSpriteFixtureTypes();
+							auto newOptions = std::vector<TextSelectionBlueprint::Option>(currentFixtureTypes.size());
+							for (int i = 0; i < currentFixtureTypes.size(); ++i) {
+								newOptions[i] = TextSelectionBlueprint::Option{
+									.text = sheet_editor::gFixtureTypeNames.at(currentFixtureTypes[i]),
+									.return_value = i // Place the index of the fixture as the return value
+								};
+							}
+							self.set_options(std::move(newOptions));
+						}
+						return MakeContinueAction();
 					}
 				}
 			}
 		}
-	};
-	class DrawFgRightHudState final : public UiPanelStateBase {
-		sheet_editor::PersistentSpriteSheets _persistentSpriteSheets;
-		m2g::pb::ObjectType _selectedObjectType;
-	public:
-		explicit DrawFgRightHudState(const m2g::pb::ObjectType selectedObjectType_) : UiPanelStateBase(),
-				_persistentSpriteSheets(m2MoveOrThrowError(sheet_editor::PersistentSpriteSheets::LoadFile(M2_GAME.spriteSheetsPath))),
-				_selectedObjectType(selectedObjectType_) {}
-		[[nodiscard]] m2g::pb::ObjectType SelectedObjectType() const { return _selectedObjectType; }
-		[[nodiscard]] m2g::pb::SpriteType SelectedObjectMainSpriteType() const { M2_GAME.object_main_sprites[_selectedObjectType]; }
 	};
 }
 
