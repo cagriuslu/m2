@@ -14,6 +14,8 @@ namespace m2 {
 
 	extern bool god_mode;
 
+	extern std::string gOverrideResourceDir;
+
 	/// Load options by parsing the program arguments
 	void_expected load_options(int argc, char** argv);
 }

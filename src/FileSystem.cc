@@ -1,12 +1,16 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <m2/FileSystem.h>
 #include <sstream>
+#include <m2/Options.h>
 
 #if defined(__APPLE__)
 #include <CoreFoundation/CFBundle.h>
 #endif
 
 std::filesystem::path m2::ResourcePath() {
+	if (not gOverrideResourceDir.empty()) {
+		return gOverrideResourceDir;
+	}
 #if defined(__APPLE__)
 	auto main_bundle_handle = CFBundleGetMainBundle();
 	auto resources_directory_url_ref = CFBundleCopyResourcesDirectoryURL(main_bundle_handle);

@@ -8,6 +8,7 @@ bool m2::silent = false;
 int m2::time_slowdown_factor = 1;
 std::string m2::console_command;
 bool m2::god_mode = false;
+std::string m2::gOverrideResourceDir;
 
 namespace {
 	std::vector<std::string_view> to_argument_list(int argc, char** argv) {
@@ -32,8 +33,8 @@ namespace {
 				if (2 <= raw_value.size() &&
 					((raw_value.front() == '"' && raw_value.back() == '"') ||
 					(raw_value.front() == '\'' && raw_value.back() == '\''))) {
-					// Remove quotes
-					return raw_value.substr(1, raw_value.size() - 2);
+						// Remove quotes
+						return raw_value.substr(1, raw_value.size() - 2);
 					}
 				return raw_value;
 			}
@@ -87,6 +88,11 @@ m2::void_expected m2::load_options(int argc, char** argv) {
 	if (parse_argument(arg_list, "god-mode")) {
 		LOG_INFO("God mode");
 		god_mode = true;
+	}
+
+	if (const auto resourceDir = parse_argument(arg_list, "resource-dir")) {
+		LOG_INFO("Overriding resource dir", *resourceDir);
+		gOverrideResourceDir = *resourceDir;
 	}
 
 	return {};
