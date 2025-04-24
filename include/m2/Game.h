@@ -57,9 +57,10 @@ namespace m2 {
 		////////////////////////////// RESOURCES ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 		Rational _font_letter_width_to_height_ratio; // letter w/h // TODO get rid of this, because this is only accurate if the font is used in default size, which isn't always the case
-		std::vector<std::variant<Sprite, pb::TextLabel>> _sprites;
 		std::optional<TextLabelCache> _textLabelCache;
 		std::optional<ShapeCache> _shapeCache;
+		std::vector<std::variant<Sprite, pb::TextLabel>> _sprites;
+		std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> _mainSpriteOfObject;
 
 	public:  // TODO private
 		std::optional<Level> _level;
@@ -96,7 +97,6 @@ namespace m2 {
 		std::vector<SpriteSheet> spriteSheets;
 		std::optional<SpriteEffectsSheet> spriteEffectsSheet;
 		std::vector<m2g::pb::SpriteType> level_editor_background_sprites;
-		std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> object_main_sprites;
 		pb::LUT<pb::Item, NamedItem> named_items;
 		pb::LUT<pb::Animation, Animation> animations;
 		pb::LUT<pb::Song, Song> songs;
@@ -169,6 +169,8 @@ namespace m2 {
 		void ForEachSprite(const std::function<bool(m2g::pb::SpriteType, const Sprite&)>& op) const;
 		const NamedItem& GetNamedItem(const m2g::pb::ItemType item_type) const { return named_items[item_type]; }
 		void ForEachNamedItem(const std::function<bool(m2g::pb::ItemType, const NamedItem&)>& op) const;
+		std::optional<m2g::pb::SpriteType> GetMainSpriteOfObject(m2g::pb::ObjectType) const;
+		void ForEachObjectWithMainSprite(const std::function<bool(m2g::pb::ObjectType, m2g::pb::SpriteType)>& op) const;
 		float DeltaTimeS() const { return _delta_time_s; }
 		[[nodiscard]] VecI MousePositionPx() const { return events.MousePosition(); }
 		const VecF& MousePositionWorldM() const; // TODO move into Level?

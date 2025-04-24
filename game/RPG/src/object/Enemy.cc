@@ -37,7 +37,7 @@ Enemy::Enemy(m2::Object& obj, const pb::Enemy* enemy) : animation_fsm(enemy->ani
 }
 
 m2::void_expected Enemy::init(m2::Object& obj) {
-	const auto main_sprite_type = M2_GAME.object_main_sprites[obj.GetType()];
+	const auto main_sprite_type = *M2_GAME.GetMainSpriteOfObject(obj.GetType());
 	const auto& mainSprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(main_sprite_type));
 	auto& gfx = obj.AddGraphic(main_sprite_type);
 

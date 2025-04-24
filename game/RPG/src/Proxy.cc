@@ -80,7 +80,7 @@ m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object&
 		case pb::TREE_DEAD_03:
 		case pb::FENCE_HORIZONTAL:
 		case pb::FENCE_VERTICAL:
-			return rpg::create_decoration(obj, M2_GAME.object_main_sprites[obj.GetType()]);
+			return rpg::create_decoration(obj, *M2_GAME.GetMainSpriteOfObject(obj.GetType()));
 		case pb::SPIKES:
 			return rpg::create_spikes(obj);
 		default:

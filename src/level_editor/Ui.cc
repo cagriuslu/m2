@@ -19,9 +19,10 @@ using namespace m2::widget;
 namespace {
 	std::vector<m2g::pb::ObjectType> ObjectTypesWithMainSprite() {
 		std::vector<m2g::pb::ObjectType> objs;
-		for (const auto &objType: M2_GAME.object_main_sprites | std::views::keys) {
+		M2_GAME.ForEachObjectWithMainSprite([&objs](const auto objType, MAYBE const auto spriteType) {
 			objs.emplace_back(objType);
-		}
+			return true;
+		});
 		return objs;
 	}
 
@@ -371,9 +372,7 @@ namespace {
 						if (const auto selections = self.selections(); not selections.empty()) {
 							const auto snapToGrid = M2_LEVEL.LeftHud()->FindWidget<CheckboxWithText>("SnapToGridCheckbox")->GetState();
 							const auto splitCount = M2_LEVEL.LeftHud()->FindWidget<IntegerInput>("CellSplitCount")->value();
-							levelEditorState.ghostId = obj::create_ghost(
-									M2_GAME.object_main_sprites[static_cast<m2g::pb::ObjectType>(std::get<int>(selections[0]))],
-										snapToGrid ? splitCount : 0);
+							levelEditorState.ghostId = obj::create_ghost(*M2_GAME.GetMainSpriteOfObject(static_cast<m2g::pb::ObjectType>(std::get<int>(selections[0]))), snapToGrid ? splitCount : 0);
 						}
 						return MakeContinueAction();
 					}
@@ -717,7 +716,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
 				.onAction = [](MAYBE const Text& self) -> UiAction {
 					(void) UiPanel::create_and_run_blocking(&gObjectTypeSelectionDialog, RectF{0.25f, 0.4f, 0.5f, 0.3f})
 						.IfReturn<m2g::pb::ObjectType>([](const auto& typ) {
-							if (not M2_GAME.object_main_sprites.contains(typ)) {
+							if (not M2_GAME.GetMainSpriteOfObject(typ)) {
 								M2_LEVEL.ShowMessage("Selected object doesn't have a main sprite", 8.0f);
 								return;
 							}

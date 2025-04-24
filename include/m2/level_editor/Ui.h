@@ -19,7 +19,7 @@ namespace m2::level_editor {
 			return _selectedObjectType;
 		}
 		[[nodiscard]] m2g::pb::SpriteType SelectedObjectMainSpriteType() const {
-			return M2_GAME.object_main_sprites[_selectedObjectType];
+			return *M2_GAME.GetMainSpriteOfObject(_selectedObjectType);
 		}
 		const pb::Sprite& SelectedObjectMainSpritePb() const {
 			return _persistentSpriteSheets.SpritePb(SelectedObjectMainSpriteType());

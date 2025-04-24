@@ -4,7 +4,7 @@
 #include <m2/Game.h>
 
 m2::void_expected rpg::init_finish_point(m2::Object& obj) {
-	auto sprite_type = M2_GAME.object_main_sprites[obj.GetType()];
+	auto sprite_type = *M2_GAME.GetMainSpriteOfObject(obj.GetType());
 	auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(sprite_type));
 
 	auto& phy = obj.AddPhysique();

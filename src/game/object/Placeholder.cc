@@ -6,9 +6,11 @@ m2::Id m2::obj::create_background_placeholder(const VecF& pos, m2g::pb::SpriteTy
 	return it.GetId();
 }
 
-m2::Id m2::obj::create_foreground_placeholder(const VecF& pos, float orientation, m2g::pb::SpriteType spriteType) {
+m2::Id m2::obj::create_foreground_placeholder(const VecF& pos, float orientation, const std::optional<m2g::pb::SpriteType>& spriteType) {
 	auto it = CreateObject(pos);
 	it->orientation = orientation;
-	it->AddGraphic(spriteType);
+	if (spriteType) {
+		it->AddGraphic(*spriteType);
+	}
 	return it.GetId();
 }

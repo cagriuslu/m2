@@ -328,7 +328,7 @@ void m2::level_editor::State::PaintBackground(const VecI& position, m2g::pb::Spr
 			.emplace(position, std::make_tuple(bgPlaceholderId, spriteType));
 }
 void m2::level_editor::State::PlaceForeground(const VecF& position, float orientation, m2g::pb::ObjectType objectType, m2g::pb::GroupType groupType, unsigned groupInstance) {
-	const auto fgPlaceholderId = obj::create_foreground_placeholder(position, orientation, M2_GAME.object_main_sprites[objectType]);
+	const auto fgPlaceholderId = obj::create_foreground_placeholder(position, orientation, M2_GAME.GetMainSpriteOfObject(objectType));
 	m2::pb::LevelObject levelObject;
 	levelObject.mutable_position()->set_x(position.x);
 	levelObject.mutable_position()->set_y(position.y);

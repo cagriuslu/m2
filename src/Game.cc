@@ -142,8 +142,8 @@ m2::Game::Game() {
 	level_editor_background_sprites = std::vector<m2g::pb::SpriteType>{backgroundSprites.begin(), backgroundSprites.end()};
 	LOG_INFO("Loaded level editor background sprites", level_editor_background_sprites.size());
 
-	object_main_sprites = ListLevelEditorObjectSprites(resource_dir / "Objects.json");
-	LOG_INFO("Loaded objects", object_main_sprites.size());
+	_mainSpriteOfObject = ListLevelEditorObjectSprites(resource_dir / "Objects.json");
+	LOG_INFO("Loaded objects", _mainSpriteOfObject.size());
 
 	named_items = pb::LUT<pb::Item, NamedItem>::load(resource_dir / "Items.json", &pb::Items::items);
 	LOG_INFO("Loaded named items", named_items.size());
@@ -895,7 +895,21 @@ void m2::Game::ForEachSprite(const std::function<bool(m2g::pb::SpriteType, const
 
 void m2::Game::ForEachNamedItem(const std::function<bool(m2g::pb::ItemType, const NamedItem&)>& op) const {
 	for (int i = 0; i < pb::enum_value_count<m2g::pb::ItemType>(); ++i) {
-		if (const auto type = pb::enum_value<m2g::pb::ItemType>(i); !op(type, GetNamedItem(type))) {
+		if (const auto type = pb::enum_value<m2g::pb::ItemType>(i); not op(type, GetNamedItem(type))) {
+			return;
+		}
+	}
+}
+std::optional<m2g::pb::SpriteType> m2::Game::GetMainSpriteOfObject(const m2g::pb::ObjectType ot) const {
+	const auto it = _mainSpriteOfObject.find(ot);
+	if (it == _mainSpriteOfObject.end()) {
+		return std::nullopt;
+	}
+	return it->second;
+}
+void m2::Game::ForEachObjectWithMainSprite(const std::function<bool(m2g::pb::ObjectType, m2g::pb::SpriteType)>& op) const {
+	for (const auto [objType, spriteType]: M2_GAME._mainSpriteOfObject) {
+		if (not op(objType, spriteType)) {
 			return;
 		}
 	}

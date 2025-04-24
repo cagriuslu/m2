@@ -22,7 +22,7 @@ rpg::Player::Player(m2::Object& obj) : animation_fsm(m2g::pb::ANIMATION_TYPE_PLA
 
 m2::void_expected rpg::Player::init(m2::Object& obj) {
 	auto id = obj.GetId();
-	auto main_sprite_type = M2_GAME.object_main_sprites[m2g::pb::PLAYER];
+	auto main_sprite_type = *M2_GAME.GetMainSpriteOfObject(m2g::pb::PLAYER);
 	const auto& mainSprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(main_sprite_type));
 
 	auto& phy = obj.AddPhysique();

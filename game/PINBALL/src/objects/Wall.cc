@@ -4,7 +4,7 @@
 
 m2::void_expected LoadWall(m2::Object& obj) {
 	const auto type = obj.GetType();
-	const auto spriteType = M2_GAME.object_main_sprites[type];
+	const auto spriteType = *M2_GAME.GetMainSpriteOfObject(type);
 	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(spriteType));
 
 	auto& phy = obj.AddPhysique();
