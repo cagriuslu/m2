@@ -44,6 +44,9 @@ namespace m2::level_editor {
 		void CopyForeground();
 		void PasteForeground();
 
+		void StorePoint(int selectedIndex, const VecF& pointM);
+		void UndoPoint(int selectedIndex);
+
 		void Draw() const;
 		[[nodiscard]] void_expected Save() const;
 

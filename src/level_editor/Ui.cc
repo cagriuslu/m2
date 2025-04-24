@@ -577,6 +577,45 @@ namespace {
 						return MakeContinueAction();
 					}
 				}
+			},
+			UiWidgetBlueprint{
+				.x = 1, .y = 25, .w = 17, .h = 3,
+				.variant = TextBlueprint{
+					.text = "Store Point",
+					.onAction = [](const Text& self) -> UiAction {
+						if (auto* selection = M2_LEVEL.PrimarySelection(); selection->IsComplete()) {
+							const auto* fixtureSelectionWidget = self.Parent().FindWidget<TextSelection>("FixtureSelection");
+							if (const auto selectedIndexes = fixtureSelectionWidget->SelectedIndexes(); not selectedIndexes.empty()) {
+								const auto selectedIndex = selectedIndexes[0];
+								const auto& state = dynamic_cast<level_editor::DrawFgRightHudState&>(*self.Parent().state);
+								if (const auto fixtureType = state.SelectedSpriteFixtureTypes()[selectedIndex];
+										fixtureType == pb::Fixture::FixtureTypeCase::kChain) {
+									std::get<level_editor::State>(M2_LEVEL.stateVariant).StorePoint(selectedIndex, selection->SelectionsM()->first);
+									selection->Reset();
+								}
+							}
+						}
+						return MakeContinueAction();
+					}
+				}
+			},
+			UiWidgetBlueprint{
+				.x = 1, .y = 29, .w = 17, .h = 3,
+				.variant = TextBlueprint{
+					.text = "Undo Point",
+					.onAction = [](const Text& self) -> UiAction {
+						const auto* fixtureSelectionWidget = self.Parent().FindWidget<TextSelection>("FixtureSelection");
+						if (const auto selectedIndexes = fixtureSelectionWidget->SelectedIndexes(); not selectedIndexes.empty()) {
+							const auto selectedIndex = selectedIndexes[0];
+							const auto& state = dynamic_cast<level_editor::DrawFgRightHudState&>(*self.Parent().state);
+							if (const auto fixtureType = state.SelectedSpriteFixtureTypes()[selectedIndex];
+									fixtureType == pb::Fixture::FixtureTypeCase::kChain) {
+								std::get<level_editor::State>(M2_LEVEL.stateVariant).UndoPoint(selectedIndex);
+							}
+						}
+						return MakeContinueAction();
+					}
+				}
 			}
 		}
 	};

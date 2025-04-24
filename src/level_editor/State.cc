@@ -218,6 +218,25 @@ void m2::level_editor::State::PasteForeground() {
 	}
 }
 
+void m2::level_editor::State::StorePoint(const int selectedIndex, const VecF& pointM) {
+	const auto splitCount = M2_LEVEL.LeftHud()->FindWidget<widget::IntegerInput>("CellSplitCount")->value();
+	const auto binnedPointM = pointM.RoundToBin(splitCount);
+
+	auto& state = dynamic_cast<DrawFgRightHudState&>(*M2_LEVEL.RightHud()->state);
+	const auto fgObjectIt = GetForegroundObjectsOfType(state.SelectedObjectType())[0];
+	const auto objectOriginM = fgObjectIt->first;
+	const auto pointOffsetM = binnedPointM - objectOriginM;
+
+	const auto ppm = std::get<Sprite>(M2_GAME.GetSpriteOrTextLabel(state.SelectedObjectMainSpriteType())).Ppm();
+	const auto pointOffset = pointOffsetM * ppm;
+
+	state.StorePoint(selectedIndex, pointOffset);
+}
+void m2::level_editor::State::UndoPoint(const int selectedIndex) {
+	auto& state = dynamic_cast<DrawFgRightHudState&>(*M2_LEVEL.RightHud()->state);
+	state.UndoPoint(selectedIndex);
+}
+
 void m2::level_editor::State::Draw() const {
 	const auto splitCount = M2_LEVEL.LeftHud()->FindWidget<widget::IntegerInput>("CellSplitCount")->value();
 
@@ -255,13 +274,13 @@ void m2::level_editor::State::Draw() const {
 		for (const auto& fixture : spritePb.regular().fixtures()) {
 			if (fixture.has_chain()) {
 				const auto fgObjectIt = GetForegroundObjectsOfType(state.SelectedObjectType())[0];
-				const auto ObjectOrigin = fgObjectIt->first;
+				const auto objectOrigin = fgObjectIt->first;
 				if (const auto& points = fixture.chain().points(); points.size() == 1) {
-					Graphic::DrawCross(ObjectOrigin + VecF{points[0]} / ppm, sheet_editor::CONFIRMED_CROSS_COLOR);
+					Graphic::DrawCross(objectOrigin + VecF{points[0]} / ppm, sheet_editor::CONFIRMED_CROSS_COLOR);
 				} else if (1 < points.size()) {
 					auto end = points.cend() - 1;
 					for (auto it = points.cbegin(); it != end; ++it) {
-						Graphic::DrawLine(ObjectOrigin + VecF{*it} / ppm, ObjectOrigin + VecF{*(it+1)} / ppm, sheet_editor::CONFIRMED_CROSS_COLOR);
+						Graphic::DrawLine(objectOrigin + VecF{*it} / ppm, objectOrigin + VecF{*(it+1)} / ppm, sheet_editor::CONFIRMED_CROSS_COLOR);
 					}
 				}
 			}

@@ -40,6 +40,26 @@ namespace m2::level_editor {
 		void RemoveFixture(const int index) {
 			_persistentSpriteSheets.RemoveFixtureFromSprite(SelectedObjectMainSpriteType(), index);
 		}
+		void StorePoint(const int index, const VecF& spriteOriginToPointVec) {
+			_persistentSpriteSheets.ModifySprite(SelectedObjectMainSpriteType(), [&](pb::Sprite& sprite) {
+				if (auto* fixture = sprite.mutable_regular()->mutable_fixtures(index); fixture->has_chain()) {
+					auto* chain = fixture->mutable_chain();
+					auto* point = chain->add_points();
+					point->set_x(spriteOriginToPointVec.x);
+					point->set_y(spriteOriginToPointVec.y);
+				}
+			});
+		}
+		void UndoPoint(const int index) {
+			_persistentSpriteSheets.ModifySprite(SelectedObjectMainSpriteType(), [&](pb::Sprite& sprite) {
+				if (auto* fixture = sprite.mutable_regular()->mutable_fixtures(index); fixture->has_chain()) {
+					if (auto* chain = fixture->mutable_chain(); chain->points_size()) {
+						auto* points = chain->mutable_points();
+						points->erase(points->end() - 1);
+					}
+				}
+			});
+		}
 	};
 
 	extern const UiPanelBlueprint gLeftHudBlueprint;
