@@ -60,10 +60,11 @@ message Fixture {
     repeated VecF points = 1;
   }
 
+  string name = 1;
   oneof fixture_type {
-      RectangleFixture rectangle = 1;
-      CircleFixture circle = 2;
-      ChainFixture chain = 3;
+      RectangleFixture rectangle = 2;
+      CircleFixture circle = 3;
+      ChainFixture chain = 4;
   }
 }
 

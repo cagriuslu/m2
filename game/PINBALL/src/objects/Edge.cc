@@ -32,14 +32,6 @@ void LoadEdge() {
 					.belongsTo = 1,
 					.collidesWith = 0xFFFF
 				}
-			},
-			m2::third_party::physics::FixtureDefinition{
-				.shape = m2::third_party::physics::EdgeShape{.pointA = {0.0f, gLevelDimensions.y / 2.0f}, .pointB = {gLevelDimensions.x, gLevelDimensions.y / 2.0f}},
-				.restitution = 1.0f,
-				.colliderFilter = m2::third_party::physics::ColliderParams{
-					.belongsTo = 1,
-					.collidesWith = 0xFFFF
-				}
 			}
 		},
 

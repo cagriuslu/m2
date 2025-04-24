@@ -129,21 +129,91 @@
           }
         },
         {
-          "type": "SPRITE_BASIC_WALL_2X1",
+          "type": "SPRITE_BASIC_WALLS",
           "regular": {
-            "rect": {
-              "x": 96,
-              "y": 8,
-              "w": 64,
-              "h": 16
-            },
             "fixtures": [
               {
-                "rectangle": {
-                  "dimsPx": {
-                    "w": 64,
-                    "h": 16
-                  }
+                "name": "BottomLeftSlab",
+                "chain": {
+                  "points": [
+                    {
+                      "x": -256,
+                      "y": 400
+                    },
+                    {
+                      "x": -256,
+                      "y": 304
+                    },
+                    {
+                      "x": -32,
+                      "y": 400
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "BottomRightSlab",
+                "chain": {
+                  "points": [
+                    {
+                      "x": 32,
+                      "y": 400
+                    },
+                    {
+                      "x": 224,
+                      "y": 320
+                    },
+                    {
+                      "x": 256,
+                      "y": 320
+                    },
+                    {
+                      "x": 256,
+                      "y": 400
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "RightColumn",
+                "chain": {
+                  "points": [
+                    {
+                      "x": 224,
+                      "y": 320
+                    },
+                    {
+                      "x": 224,
+                      "y": -400
+                    },
+                    {
+                      "x": 236,
+                      "y": -400
+                    },
+                    {
+                      "x": 236,
+                      "y": 320
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "TopRightSlab",
+                "chain": {
+                  "points": [
+                    {
+                      "x": 256,
+                      "y": -432
+                    },
+                    {
+                      "x": 256,
+                      "y": -416
+                    },
+                    {
+                      "x": 240,
+                      "y": -432
+                    }
+                  ]
                 }
               }
             ]

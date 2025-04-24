@@ -8,5 +8,5 @@ enum ObjectType {
   FLIPPER_LEFT = 3;
   FLIPPER_RIGHT = 4;
 
-  OBJECT_BASIC_WALL_2X1 = 10;
+  OBJECT_BASIC_WALLS = 10;
 }

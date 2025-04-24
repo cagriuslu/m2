@@ -306,7 +306,7 @@ m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object&
 			return LoadFlipper(obj, false);
 		case pb::ObjectType::FLIPPER_RIGHT:
 			return LoadFlipper(obj, true);
-		case pb::ObjectType::OBJECT_BASIC_WALL_2X1:
+		case pb::ObjectType::OBJECT_BASIC_WALLS:
 			return LoadWall(obj);
 		default:
 			throw M2_ERROR("Missing loader for type: " + m2::ToString(obj.GetType()));

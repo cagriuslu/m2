@@ -9,18 +9,20 @@ m2::void_expected LoadWall(m2::Object& obj) {
 
 	auto& phy = obj.AddPhysique();
 	m2::third_party::physics::RigidBodyDefinition rigidBodyDef{
-		.bodyType = m2::third_party::physics::RigidBodyType::STATIC,
-		.fixtures = {
-			m2::third_party::physics::FixtureDefinition{
-				.shape = m2::third_party::physics::ToShape(sprite.OriginalPb().regular().fixtures(0), sprite.Ppm()),
-				.restitution = 1.0f,
-				.colliderFilter = m2::third_party::physics::ColliderParams{
-					.belongsTo = 1,
-					.collidesWith = 0xFFFF
-				}
-			}
-		}
+		.bodyType = m2::third_party::physics::RigidBodyType::STATIC
 	};
+	for (const auto& fixturePb : sprite.OriginalPb().regular().fixtures()) {
+		rigidBodyDef.fixtures.emplace_back(m2::third_party::physics::FixtureDefinition{
+			.shape = m2::third_party::physics::ToShape(fixturePb, sprite.Ppm()),
+			.friction = 0.2f,
+			.restitution = 0.75f,
+			.restitutionThresholdVelocity = 0.2f,
+			.colliderFilter = m2::third_party::physics::ColliderParams{
+				.belongsTo = 1,
+				.collidesWith = 0xFFFF
+			}
+		});
+	}
 	phy.body = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
 
 	obj.AddGraphic(spriteType);

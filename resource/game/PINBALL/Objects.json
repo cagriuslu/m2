@@ -19,8 +19,8 @@
       "mainSprite": "SPRITE_BASIC_FLIPPER_RIGHT"
     },
     {
-      "type": "OBJECT_BASIC_WALL_2X1",
-      "mainSprite": "SPRITE_BASIC_WALL_2X1"
+      "type": "OBJECT_BASIC_WALLS",
+      "mainSprite": "SPRITE_BASIC_WALLS"
     }
   ]
 }

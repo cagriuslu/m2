@@ -8,45 +8,36 @@
     },
     {
       "position": {
-        "x": 5.69422722,
-        "y": 3.97078037
+        "x": 8,
+        "y": 13.5
+      },
+      "type": "OBJECT_BASIC_WALLS",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 15.6875,
+        "y": 23.188
       },
       "type": "BALL",
       "group": {}
     },
     {
       "position": {
-        "x": 9.13061619,
-        "y": 10.3337364
+        "x": 6,
+        "y": 24.5
       },
-      "orientation": 1.81514251,
-      "type": "OBJECT_BASIC_WALL_2X1",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 3.05931568,
-        "y": 11.5221424
-      },
-      "orientation": 0.104719758,
-      "type": "OBJECT_BASIC_WALL_2X1",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 8.48336315,
-        "y": 11.5880318
-      },
-      "orientation": 2.53072739,
-      "type": "FLIPPER_RIGHT",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 4.40324402,
-        "y": 11.6797962
-      },
+      "orientation": 0.52359879,
       "type": "FLIPPER_LEFT",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 10,
+        "y": 24.5
+      },
+      "orientation": 2.61799407,
+      "type": "FLIPPER_RIGHT",
       "group": {}
     }
   ]
