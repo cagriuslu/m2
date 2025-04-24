@@ -53,6 +53,10 @@
       "sdlScancodes": [79]
     },
     {
+      "type": "BALL_LAUNCHER",
+      "sdlScancodes": [44]
+    },
+    {
       "type": "TOGGLE_LIGHT",
       "sdlScancodes": [15]
     },

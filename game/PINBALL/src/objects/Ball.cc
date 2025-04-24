@@ -35,5 +35,11 @@ m2::void_expected LoadBall(m2::Object& obj) {
 
 	MAYBE auto& gfx = obj.AddGraphic(m2g::pb::SPRITE_BASIC_BALL);
 
+	phy.preStep = [](m2::Physique& phy_) {
+		if (M2_GAME.events.PopKeyRelease(m2g::pb::BALL_LAUNCHER) && M2G_PROXY.isOnBallLauncher) {
+			phy_.body->ApplyForceToCenter({0.0f, -6000.0f});
+		}
+	};
+
 	return {};
 }

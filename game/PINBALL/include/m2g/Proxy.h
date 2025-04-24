@@ -26,6 +26,10 @@ namespace m2g {
 
 		void OnPostStep();
 
+		// Custom properties
+
+		bool isOnBallLauncher{};
+
 		// Accessors
 
 		const pinball::pb::SimulationState& SimulationState() const { return *_lastSimulationState; }

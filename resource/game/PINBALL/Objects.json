@@ -21,6 +21,10 @@
     {
       "type": "OBJECT_BASIC_WALLS",
       "mainSprite": "SPRITE_BASIC_WALLS"
+    },
+    {
+      "type": "OBJECT_BALL_LAUNCHER_SENSOR",
+      "mainSprite": "SPRITE_BALL_LAUNCHER_SENSOR"
     }
   ]
 }

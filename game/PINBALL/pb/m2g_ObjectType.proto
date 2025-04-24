@@ -9,4 +9,5 @@ enum ObjectType {
   FLIPPER_RIGHT = 4;
 
   OBJECT_BASIC_WALLS = 10;
+  OBJECT_BALL_LAUNCHER_SENSOR = 20;
 }

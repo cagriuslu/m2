@@ -17,6 +17,7 @@ enum KeyType {
 
   LEFT_FLIPPER = 20;
   RIGHT_FLIPPER = 21;
+  BALL_LAUNCHER = 22;
 
   TOGGLE_LIGHT = 30;
   ADD_WATER = 31;

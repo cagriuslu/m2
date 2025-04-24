@@ -24,6 +24,14 @@
     },
     {
       "position": {
+        "x": 15.5,
+        "y": 23.375
+      },
+      "type": "OBJECT_BALL_LAUNCHER_SENSOR",
+      "group": {}
+    },
+    {
+      "position": {
         "x": 6,
         "y": 24.5
       },
