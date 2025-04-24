@@ -155,7 +155,6 @@ namespace m2 {
 		void_expected LoadMultiPlayerAsHost(const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& level_name = "");
 		void_expected LoadMultiPlayerAsGuest(const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& level_name = "");
 		void_expected LoadLevelEditor(const std::string& level_resource_path);
-		void_expected LoadPixelEditor(const std::string& image_resource_path, int x_offset, int y_offset);
 		void_expected LoadSheetEditor();
 		void_expected LoadBulkSheetEditor();
 		bool HasLevel() const { return static_cast<bool>(_level); }

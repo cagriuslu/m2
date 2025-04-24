@@ -8,14 +8,6 @@ namespace {
 	void handle_primary_button_press(const VecF& mousePosition) {
 		std::visit(overloaded{
 		        [=](level_editor::State& le) { le.HandleMousePrimaryButton(mousePosition); },
-		        [=](pixel_editor::State& pe) {
-			        std::visit(overloaded{
-			                [=](pixel_editor::State::PaintMode& v) { v.paint_color(mousePosition.iround()); },
-			                [=](pixel_editor::State::EraseMode& v) { v.erase_color(mousePosition.iround()); },
-			                [=](pixel_editor::State::ColorPickerMode& v) { v.pick_color(mousePosition.iround()); },
-			                DEFAULT_OVERLOAD},
-			            pe.mode);
-		        },
 		        DEFAULT_OVERLOAD},
 		    M2_LEVEL.stateVariant);
 	}

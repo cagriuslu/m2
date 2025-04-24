@@ -11,7 +11,6 @@
 #include <m2/game/object/Origin.h>
 #include <m2/game/object/Pointer.h>
 #include <m2/game/object/Tile.h>
-#include <m2/pixel_editor/Ui.h>
 #include <m2/protobuf/Detail.h>
 #include <m2/sheet_editor/Ui.h>
 #include <filesystem>
@@ -95,68 +94,6 @@ m2::void_expected m2::Level::InitLevelEditor(const std::filesystem::path& lb_pat
 	return {};
 }
 
-m2::void_expected m2::Level::InitPixelEditor(const std::filesystem::path& path, const int x_offset, const int y_offset) {
-	_lbPath = path;
-	stateVariant.emplace<pixel_editor::State>();
-	auto& pe_state = std::get<pixel_editor::State>(stateVariant);
-
-	pe_state.image_offset = VecI{x_offset, y_offset};
-
-	if (exists(path)) {
-		// Load image
-		const sdl::SurfaceUniquePtr tmp_surface(IMG_Load(path.string().c_str()));
-		if (not tmp_surface) {
-			return make_unexpected("Unable to load image " + path.string() + ": " + IMG_GetError());
-		}
-		// Convert to a more conventional format
-		pe_state.image_surface.reset(SDL_ConvertSurfaceFormat(tmp_surface.get(), SDL_PIXELFORMAT_BGRA32, 0));
-		if (not pe_state.image_surface) {
-			return make_unexpected("Unable to convert image format: " + std::string(SDL_GetError()));
-		}
-		// Iterate over pixels
-		SDL_LockSurface(pe_state.image_surface.get());
-		// Activate paint mode
-		pe_state.activate_paint_mode();
-
-		const auto& off = pe_state.image_offset;
-		const auto& sur = *pe_state.image_surface;
-		const auto y_max = std::min(128, sur.h - off.y);
-		const auto x_max = std::min(128, sur.w - off.x);
-		for (int y = off.y; y < y_max; ++y) {
-			for (int x = off.x; x < x_max; ++x) {
-				// Get pixel
-				auto pixel = sdl::get_pixel(&sur, x, y);
-				if (!pixel) {
-					throw std::runtime_error("Implementation error! Pixel should have been in bounds");
-				}
-				// Map pixel to color
-				SDL_Color color;
-				SDL_GetRGBA(*pixel, sur.format, &color.r, &color.g, &color.b, &color.a);
-				// Select color
-				pe_state.selected_color = color;
-				// Paint pixel
-				pixel_editor::State::PaintMode::paint_color(VecI{x, y});
-			}
-		}
-
-		pe_state.deactivate_mode();
-		SDL_UnlockSurface(pe_state.image_surface.get());
-	}
-
-	// Create default objects
-	playerId = obj::create_god();
-	obj::create_camera();
-	obj::create_origin();
-
-	// UI Hud
-	_leftHudUiPanel.emplace(&pixel_editor_left_hud, M2_GAME.Dimensions().LeftHud());
-	_leftHudUiPanel->UpdateContents(0.0f);
-	_rightHudUiPanel.emplace(&pixel_editor_right_hud, M2_GAME.Dimensions().RightHud());
-	_rightHudUiPanel->UpdateContents(0.0f);
-
-	return {};
-}
-
 m2::void_expected m2::Level::InitSheetEditor(const std::filesystem::path& path) {
 	// Create state
 	auto state = sheet_editor::State::create(path);
@@ -226,7 +163,6 @@ m2::void_expected m2::Level::ResetBulkSheetEditor() {
 
 bool m2::Level::IsEditor() const {
 	return std::holds_alternative<level_editor::State>(stateVariant)
-			|| std::holds_alternative<pixel_editor::State>(stateVariant)
 			|| std::holds_alternative<sheet_editor::State>(stateVariant)
 			|| std::holds_alternative<bulk_sheet_editor::State>(stateVariant);
 }

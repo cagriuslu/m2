@@ -47,22 +47,6 @@ namespace {
 			return MakeContinueAction();
 		} else if (std::regex_match(command, std::regex{"medit(\\s.*)?"})) {
 			// MIDI editor (?)
-		} else if (std::regex_match(command, std::regex{"pedit(\\s.*)?"})) {
-			if (std::smatch match_results;
-			    std::regex_match(command, match_results, std::regex{R"(pedit\s+([0-9]+)\s+([0-9]+)\s+(.+))"})) {
-				auto x_offset = strtol(match_results.str(1).c_str(), nullptr, 0);
-				auto y_offset = strtol(match_results.str(2).c_str(), nullptr, 0);
-				auto load_result = M2_GAME.LoadPixelEditor(
-				    match_results.str(3), static_cast<int>(x_offset), static_cast<int>(y_offset));
-				if (load_result) {
-					return MakeClearStackAction();
-				}
-				M2_GAME.console_output.emplace_back(load_result.error());
-			} else {
-				M2_GAME.console_output.emplace_back("pedit usage:");
-				M2_GAME.console_output.emplace_back(".. x_offset y_offset file_name - open pixel editor with file");
-			}
-			return MakeContinueAction();
 		} else if (command == "sedit") {
 			auto load_result = M2_GAME.LoadSheetEditor();
 			if (load_result) {
@@ -106,7 +90,6 @@ namespace {
 			M2_GAME.console_output.emplace_back("help - display this help");
 			M2_GAME.console_output.emplace_back("ledit - open level editor");
 			M2_GAME.console_output.emplace_back("medit - open midi editor");
-			M2_GAME.console_output.emplace_back("pedit - open pixel editor");
 			M2_GAME.console_output.emplace_back("sedit - open sheet editor");
 			M2_GAME.console_output.emplace_back("bsedit - open bulk sheet editor");
 			M2_GAME.console_output.emplace_back("mvbg - move background");

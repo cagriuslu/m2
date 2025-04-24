@@ -17,7 +17,6 @@
 #include "m3/VecF.h"
 #include "multi_player/State.h"
 #include "multi_player/Type.h"
-#include "pixel_editor/State.h"
 #include "sheet_editor/State.h"
 #include "single_player/State.h"
 #include "ui/UiPanel.h"
@@ -80,7 +79,7 @@ namespace m2 {
 		std::optional<sdl::ticks_t> rootBlockingUiBeginTicks;  // Exists only if there is an ongoing blocking UI
 		std::queue<std::function<void()>> deferredActions;
 		std::variant<
-		    std::monostate, splayer::State, mplayer::State, level_editor::State, pixel_editor::State, sheet_editor::State, bulk_sheet_editor::State>
+		    std::monostate, splayer::State, mplayer::State, level_editor::State, sheet_editor::State, bulk_sheet_editor::State>
 		    stateVariant;
 
 		/// In panning mode, mouse states are not cleared by UI elements so that panning the map is possible even
@@ -94,7 +93,6 @@ namespace m2 {
 		void_expected InitMultiPlayerAsGuest(
 		    const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name);
 		void_expected InitLevelEditor(const std::filesystem::path& lb_path);
-		void_expected InitPixelEditor(const std::filesystem::path& path, int x_offset, int y_offset);
 		void_expected InitSheetEditor(const std::filesystem::path& path);
 		void_expected InitBulkSheetEditor(const std::filesystem::path& path);
 		void_expected ResetSheetEditor();

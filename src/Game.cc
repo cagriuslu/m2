@@ -385,16 +385,6 @@ m2::void_expected m2::Game::LoadLevelEditor(const std::string& level_resource_pa
 	return _level->InitLevelEditor(level_resource_path);
 }
 
-m2::void_expected m2::Game::LoadPixelEditor(
-	const std::string& image_resource_path, const int x_offset, const int y_offset) {
-	_level.reset();
-	ResetState();
-	// Reinit dimensions with default parameters
-	_dimensionsManager->SetGameAspectRatio(m2::Proxy{}.gameAspectRatioMul, m2::Proxy{}.gameAspectRatioDiv);
-	_level.emplace();
-	return _level->InitPixelEditor(image_resource_path, x_offset, y_offset);
-}
-
 m2::void_expected m2::Game::LoadSheetEditor() {
 	_level.reset();
 	ResetState();
