@@ -11,13 +11,69 @@ TextSelection::TextSelection(UiPanel* parent, const UiWidgetBlueprint* blueprint
 	}
 }
 
-UiAction TextSelection::OnUpdate() {
-	if (VariantBlueprint().onUpdate) {
-		return VariantBlueprint().onUpdate(*this);
+std::vector<TextSelectionBlueprint::ReturnValue> TextSelection::selections() const {
+	std::vector<TextSelectionBlueprint::ReturnValue> selections;
+	for (auto& option : _options) {
+		if (option.is_selected) {
+			selections.emplace_back(option.blueprint_option.return_value);
+		}
 	}
-	return MakeContinueAction();
+	return selections;
+}
+std::vector<int> TextSelection::SelectedIndexes() const {
+	std::vector<int> indexes;
+	for (int i = 0; i < _options.size(); ++i) {
+		if (_options[i].is_selected) {
+			indexes.emplace_back(i);
+		}
+	}
+	return indexes;
 }
 
+void TextSelection::set_options(const TextSelectionBlueprint::Options& options) {
+	auto copy = options;
+	set_options(std::move(copy));
+}
+void TextSelection::set_options(TextSelectionBlueprint::Options&& options) {
+	_options.clear();
+	_options.resize(options.size());
+	for (size_t i = 0; i < options.size(); ++i) {
+		_options[i].blueprint_option = std::move(options[i]);
+	}
+	// Applicable to +/- selection and dropdown, select the first item
+	if (VariantBlueprint().line_count == 0 || VariantBlueprint().line_count == 1) {
+		if (not _options.empty()) {
+			_options[0].is_selected = true;
+			if (VariantBlueprint().onAction) {
+				VariantBlueprint().onAction(*this);
+			}
+		}
+	}
+}
+void TextSelection::set_unique_selection(const int index) {
+	if (0 <= index && index < I(_options.size())) {
+		// Clear all selections
+		for (auto& option : _options) {
+			option.is_selected = false;
+		}
+		// Select the given option
+		_options[index].is_selected = true;
+		if (VariantBlueprint().onAction) {
+			VariantBlueprint().onAction(*this);
+		}
+	}
+}
+
+void TextSelection::OnResize(MAYBE const RectI& oldRect, MAYBE const RectI& newRect) {
+	// Invalidate every font texture cache
+	for (auto& option : _options) {
+		option.text_texture_and_destination.reset();
+	}
+	_plus_texture.reset();
+	_minus_texture.reset();
+	_up_arrow_texture.reset();
+	_down_arrow_texture.reset();
+}
 UiAction TextSelection::OnEvent(Events& events) {
 	// +/- selection
 	if (auto line_count = VariantBlueprint().line_count; line_count == 0) {
@@ -120,7 +176,12 @@ UiAction TextSelection::OnEvent(Events& events) {
 	}
 	return MakeContinueAction();
 }
-
+UiAction TextSelection::OnUpdate() {
+	if (VariantBlueprint().onUpdate) {
+		return VariantBlueprint().onUpdate(*this);
+	}
+	return MakeContinueAction();
+}
 void TextSelection::OnDraw() {
 	draw_background_color();
 
@@ -232,70 +293,6 @@ void TextSelection::OnDraw() {
 	draw_border(Rect(), vertical_border_width_px(), horizontal_border_width_px());
 }
 
-std::vector<TextSelectionBlueprint::ReturnValue> TextSelection::selections() const {
-	std::vector<TextSelectionBlueprint::ReturnValue> selections;
-	for (auto& option : _options) {
-		if (option.is_selected) {
-			selections.emplace_back(option.blueprint_option.return_value);
-		}
-	}
-	return selections;
-}
-std::vector<int> TextSelection::SelectedIndexes() const {
-	std::vector<int> indexes;
-	for (int i = 0; i < _options.size(); ++i) {
-		if (_options[i].is_selected) {
-			indexes.emplace_back(i);
-		}
-	}
-	return indexes;
-}
-
-void TextSelection::set_options(const TextSelectionBlueprint::Options& options) {
-	auto copy = options;
-	set_options(std::move(copy));
-}
-void TextSelection::set_options(TextSelectionBlueprint::Options&& options) {
-	_options.clear();
-	_options.resize(options.size());
-	for (size_t i = 0; i < options.size(); ++i) {
-		_options[i].blueprint_option = std::move(options[i]);
-	}
-	// Applicable to +/- selection and dropdown, select the first item
-	if (VariantBlueprint().line_count == 0 || VariantBlueprint().line_count == 1) {
-		if (not _options.empty()) {
-			_options[0].is_selected = true;
-			if (VariantBlueprint().onAction) {
-				VariantBlueprint().onAction(*this);
-			}
-		}
-	}
-}
-void TextSelection::set_unique_selection(const int index) {
-	if (0 <= index && index < I(_options.size())) {
-		// Clear all selections
-		for (auto& option : _options) {
-			option.is_selected = false;
-		}
-		// Select the given option
-		_options[index].is_selected = true;
-		if (VariantBlueprint().onAction) {
-			VariantBlueprint().onAction(*this);
-		}
-	}
-}
-
-void TextSelection::OnResize(MAYBE const RectI& oldRect, MAYBE const RectI& newRect) {
-	// Invalidate every font texture cache
-	for (auto& option : _options) {
-		option.text_texture_and_destination.reset();
-	}
-	_plus_texture.reset();
-	_minus_texture.reset();
-	_up_arrow_texture.reset();
-	_down_arrow_texture.reset();
-}
-
 UiAction TextSelection::increment_selection() {
 	if (auto current_selection = std::ranges::find_if(_options, [](auto& o) { return o.is_selected == true; });
 		current_selection != _options.end()) {
@@ -309,7 +306,6 @@ UiAction TextSelection::increment_selection() {
 	}
 	return MakeContinueAction();
 }
-
 UiAction TextSelection::decrement_selection() {
 	if (auto current_selection = std::find_if(_options.rbegin(), _options.rend(), [](auto& o) { return o.is_selected == true; });
 		current_selection != _options.rend()) {
