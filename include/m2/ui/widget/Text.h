@@ -12,8 +12,6 @@ namespace m2::widget {
 
 	public:
 		explicit Text(UiPanel* parent, const UiWidgetBlueprint* blueprint);
-		UiAction UpdateContent() override;
-		void Draw() override;
 
 		// Accessors
 		[[nodiscard]] std::string_view text() const { return _current_text; }
@@ -24,7 +22,9 @@ namespace m2::widget {
 		void set_color(RGB&& c) { _current_color = c; }
 
 	protected:
-		void HandleResize(const RectI& oldRect, const RectI& newRect) override;
+		void OnResize(const RectI& oldRect, const RectI& newRect) override;
+		UiAction OnUpdate() override;
+		void OnDraw() override;
 
 	private:
 		[[nodiscard]] const TextBlueprint& VariantBlueprint() const { return std::get<TextBlueprint>(blueprint->variant); }

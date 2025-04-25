@@ -22,7 +22,7 @@ IntegerInput::IntegerInput(UiPanel* parent, const UiWidgetBlueprint* blueprint)
 	}
 }
 
-UiAction IntegerInput::HandleEvents(Events& events) {
+UiAction IntegerInput::OnEvent(Events& events) {
 	auto buttons_rect = Rect().trim_left(Rect().w - Rect().h / 2);
 	auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2);
 	auto dec_button_rect = buttons_rect.trim_top(buttons_rect.h / 2);
@@ -61,7 +61,7 @@ UiAction IntegerInput::select(int v) {
 	return MakeContinueAction();
 }
 
-UiAction IntegerInput::UpdateContent() {
+UiAction IntegerInput::OnUpdate() {
 	auto& pb_blueprint = std::get<IntegerInputBlueprint>(blueprint->variant);
 	if (pb_blueprint.onUpdate) {
 		auto optional_value = pb_blueprint.onUpdate(*this);
@@ -73,7 +73,7 @@ UiAction IntegerInput::UpdateContent() {
 	return MakeContinueAction();
 }
 
-void IntegerInput::Draw() {
+void IntegerInput::OnDraw() {
 	draw_background_color();
 
 	if (const auto texture = _textTexture.texture(); texture) {

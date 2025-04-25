@@ -21,9 +21,6 @@ namespace m2::widget {
 
 	public:
 		explicit TextSelection(UiPanel* parent, const UiWidgetBlueprint* blueprint);
-		UiAction UpdateContent() override;
-		UiAction HandleEvents(Events& events) override;
-		void Draw() override;
 
 		// Accessors
 
@@ -38,7 +35,10 @@ namespace m2::widget {
 		void set_unique_selection(int index);
 
 	protected:
-		void HandleResize(const RectI& oldRect, const RectI& newRect) override;
+		void OnResize(const RectI& oldRect, const RectI& newRect) override;
+		UiAction OnEvent(Events& events) override;
+		UiAction OnUpdate() override;
+		void OnDraw() override;
 
 	private:
 		[[nodiscard]] const TextSelectionBlueprint& VariantBlueprint() const { return std::get<TextSelectionBlueprint>(blueprint->variant); }

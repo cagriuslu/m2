@@ -11,14 +11,14 @@ TextSelection::TextSelection(UiPanel* parent, const UiWidgetBlueprint* blueprint
 	}
 }
 
-UiAction TextSelection::UpdateContent() {
+UiAction TextSelection::OnUpdate() {
 	if (VariantBlueprint().onUpdate) {
 		return VariantBlueprint().onUpdate(*this);
 	}
 	return MakeContinueAction();
 }
 
-UiAction TextSelection::HandleEvents(Events& events) {
+UiAction TextSelection::OnEvent(Events& events) {
 	// +/- selection
 	if (auto line_count = VariantBlueprint().line_count; line_count == 0) {
 		auto buttons_rect = Rect().trim_left(Rect().w - Rect().h / 2);
@@ -121,7 +121,7 @@ UiAction TextSelection::HandleEvents(Events& events) {
 	return MakeContinueAction();
 }
 
-void TextSelection::Draw() {
+void TextSelection::OnDraw() {
 	draw_background_color();
 
 	// +/- selection
@@ -285,7 +285,7 @@ void TextSelection::set_unique_selection(const int index) {
 	}
 }
 
-void TextSelection::HandleResize(MAYBE const RectI& oldRect, MAYBE const RectI& newRect) {
+void TextSelection::OnResize(MAYBE const RectI& oldRect, MAYBE const RectI& newRect) {
 	// Invalidate every font texture cache
 	for (auto& option : _options) {
 		option.text_texture_and_destination.reset();

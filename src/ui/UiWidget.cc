@@ -6,7 +6,20 @@ using namespace m2;
 void UiWidget::SetRect(const RectI& rect_px) {
 	const auto oldRect = _rect_px;
 	_rect_px = rect_px;
-	HandleResize(oldRect, _rect_px);
+	OnResize(oldRect, _rect_px);
+}
+UiAction UiWidget::HandleEvents(Events& e) {
+	return OnEvent(e);
+}
+void UiWidget::SetFocusState(bool newState) {
+	_focused = newState;
+	OnFocusChange();
+}
+UiAction UiWidget::UpdateContents() {
+	return OnUpdate();
+}
+void UiWidget::Draw() {
+	OnDraw();
 }
 
 void m2::UiWidget::draw_background_color() const {

@@ -19,7 +19,7 @@ AbstractButton::AbstractButton(UiPanel* parent, const UiWidgetBlueprint *bluepri
 		),
 		depressed(false) {}
 
-UiAction AbstractButton::HandleEvents(Events &events) {
+UiAction AbstractButton::OnEvent(Events &events) {
 	// Return early if there is no action callback
 	const bool has_action_callback = std::visit(overloaded {
 			[](const TextBlueprint& v) -> bool { return (bool) v.onAction; },

@@ -13,7 +13,7 @@ Text::Text(UiPanel* parent, const UiWidgetBlueprint* blueprint) : AbstractButton
 	}
 }
 
-UiAction Text::UpdateContent() {
+UiAction Text::OnUpdate() {
 	if (VariantBlueprint().onUpdate) {
 		return VariantBlueprint().onUpdate(*this);
 	} else {
@@ -21,7 +21,7 @@ UiAction Text::UpdateContent() {
 	}
 }
 
-void Text::Draw() {
+void Text::OnDraw() {
 	draw_background_color();
 
 	// Generate font texture if necessary
@@ -60,7 +60,7 @@ void Text::set_text(const std::string& text) {
 	}
 }
 
-void Text::HandleResize(const RectI& oldRect, const RectI& newRect) {
+void Text::OnResize(const RectI& oldRect, const RectI& newRect) {
 	// Check if size has changed
 	if (oldRect.w != newRect.w || oldRect.h != newRect.h) {
 		_text_texture_and_destination_cache = std::nullopt;

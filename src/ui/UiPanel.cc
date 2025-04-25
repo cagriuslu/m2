@@ -26,7 +26,7 @@ using namespace m2;
 namespace {
 	// Filters
 	constexpr auto is_widget_enabled = [](const auto &w) { return w->enabled; };
-	constexpr auto is_widget_focused = [](const auto &w) { return w->focused; };
+	constexpr auto IsWidgetFocused = [](const auto &w) { return w->IsFocused(); };
 	// Actions
 	constexpr auto draw_widget = [](const auto &w) { w->Draw(); };
 
@@ -363,11 +363,7 @@ UiAction UiPanel::HandleEvents(Events& events, bool IsPanning) {
 		// Then, deliver the event to the widgets
 		for (auto &widget : widgets | std::views::filter(is_widget_enabled)) {
 			action = widget->HandleEvents(events);
-			action->IfContinueWithFocusState(
-					[&](const bool focus_state) {
-						set_widget_focus_state(*widget, focus_state);
-					});
-
+			action->IfContinueWithFocusState([&](const bool focus_state) { set_widget_focus_state(*widget, focus_state); });
 			if (not action->IsContinue()) {
 				break;
 			}
@@ -408,10 +404,8 @@ UiAction UiPanel::UpdateContents(float delta_time_s) {
 		}
 	}
 	for (const auto &widget : widgets | std::views::filter(is_widget_enabled)) {
-		if (auto action = widget->UpdateContent(); not action.IsContinue()) {
+		if (auto action = widget->UpdateContents(); not action.IsContinue()) {
 			return action;
-		} else {
-			continue;
 		}
 	}
 
@@ -484,27 +478,17 @@ std::unique_ptr<UiWidget> UiPanel::create_widget_state(const UiWidgetBlueprint &
 }
 
 void UiPanel::set_widget_focus_state(UiWidget &w, const bool state) {
-	if (state) {
-		if (!w.focused) {
-			// Clear existing focus
-			clear_focus();
-			// Set focus
-			w.focused = true;
-			w.HandleFocusChange();
-		}
-	} else {
-		// Reset focus
-		if (w.focused) {
-			w.focused = false;
-			w.HandleFocusChange();
-		}
+	// Clear the other focused widget
+	if (state && not w.IsFocused()) {
+		clear_focus();
 	}
+	w.SetFocusState(state);
 }
 
 void UiPanel::clear_focus() {
 	// Check if there's an already focused widget
 	std::ranges::for_each(
-	    widgets | std::views::filter(is_widget_focused), [&](const auto &it) { set_widget_focus_state(*it, false); });
+	    widgets | std::views::filter(IsWidgetFocused), [&](const auto &it) { set_widget_focus_state(*it, false); });
 }
 
 RectI m2::CalculateWidgetRect(

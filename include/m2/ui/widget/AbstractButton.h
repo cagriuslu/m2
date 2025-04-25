@@ -8,10 +8,12 @@ namespace m2::widget {
 		bool depressed;
 
 		explicit AbstractButton(UiPanel* parent, const UiWidgetBlueprint* blueprint);
-		UiAction HandleEvents(Events& events) final;
 
 		// Modifiers
 
 		UiAction trigger_action();
+
+	protected:
+		UiAction OnEvent(Events& events) final;
 	};
 }

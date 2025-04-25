@@ -13,7 +13,7 @@ CheckboxWithText::CheckboxWithText(UiPanel* parent, const UiWidgetBlueprint* blu
 	}
 }
 
-void CheckboxWithText::Draw() {
+void CheckboxWithText::OnDraw() {
 	// Background
 	draw_background_color();
 

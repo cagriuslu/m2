@@ -18,11 +18,11 @@ namespace m2 {
 	private:
 		UiPanel* _parent;
 		RectI _rect_px{}; // Position on screen
+		bool _focused{};
 
 	public:
 		/// For a widget, being enabled and being shown are the same things
 		bool enabled{true};
-		bool focused{false};
 		const UiWidgetBlueprint* blueprint;
 
 		UiWidget(UiPanel* parent, const UiWidgetBlueprint* blueprint)
@@ -33,20 +33,26 @@ namespace m2 {
 
 		[[nodiscard]] UiPanel& Parent() const { return *_parent; }
 		[[nodiscard]] const RectI& Rect() const { return _rect_px; }
+		[[nodiscard]] bool IsFocused() const { return _focused; }
 
 		// Modifiers
 
 		void SetRect(const RectI& rect_px);
-		virtual UiAction HandleEvents(MAYBE Events& events) { return MakeContinueAction(); }
-		virtual void HandleFocusChange() {}
-		virtual UiAction UpdateContent() { return MakeContinueAction(); }
-		virtual void Draw() {}
+		UiAction HandleEvents(Events&);
+		void SetFocusState(bool);
+		UiAction UpdateContents();
+		void Draw();
 
 	protected:
-		// Virtual functions for children to implement
-		virtual void HandleResize(MAYBE const RectI& oldRect, MAYBE const RectI& newRect) {}
+		// Virtual functions for widgets to implement
 
-		// Utilities for child classes to use
+		virtual void OnResize(MAYBE const RectI& oldRect, MAYBE const RectI& newRect) {}
+		virtual UiAction OnEvent(MAYBE Events& events) { return MakeContinueAction(); }
+		virtual void OnFocusChange() {}
+		virtual UiAction OnUpdate() { return MakeContinueAction(); }
+		virtual void OnDraw() {}
+
+		// Utilities for widgets to use
 
 		void draw_background_color() const;
 

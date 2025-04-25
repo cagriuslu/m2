@@ -21,13 +21,13 @@ TextInput::TextInput(UiPanel* parent, const UiWidgetBlueprint* blueprint) : UiWi
 	}
 }
 
-UiAction TextInput::HandleEvents(Events& events) {
+UiAction TextInput::OnEvent(Events& events) {
 	if (events.PopMouseButtonPress(MouseButton::PRIMARY, RectI{Rect()})) {
 		LOG_INFO("Regaining focus");
 		return MakeContinueAction(true);
 	}
 	// Ignore all events if not focused
-	if (!focused) {
+	if (not IsFocused()) {
 		return MakeContinueAction();
 	}
 
@@ -52,8 +52,8 @@ UiAction TextInput::HandleEvents(Events& events) {
 	return MakeContinueAction();
 }
 
-void TextInput::HandleFocusChange() {
-	if (focused) {
+void TextInput::OnFocusChange() {
+	if (IsFocused()) {
 		LOG_DEBUG("Starting text input");
 		SDL_StartTextInput();
 	} else {
@@ -61,13 +61,13 @@ void TextInput::HandleFocusChange() {
 	}
 }
 
-void TextInput::Draw() {
+void TextInput::OnDraw() {
 	draw_background_color();
 
 	auto str = _text_input.str();
 	if (not _text_texture_and_destination_cache || _text_texture_and_destination_cache->textTexture.string() != str) {
 		// Add '_' if focused
-		if (focused) {
+		if (IsFocused()) {
 			str += '_';
 		}
 		// Generate text texture

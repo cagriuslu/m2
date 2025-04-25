@@ -10,7 +10,7 @@ ProgressBar::ProgressBar(UiPanel* parent, const UiWidgetBlueprint* blueprint) : 
 	}
 }
 
-UiAction ProgressBar::UpdateContent() {
+UiAction ProgressBar::OnUpdate() {
 	auto& pb_blueprint = std::get<ProgressBarBlueprint>(blueprint->variant);
 	if (pb_blueprint.onUpdate) {
 		pb_blueprint.onUpdate(*this);
@@ -18,7 +18,7 @@ UiAction ProgressBar::UpdateContent() {
 	return MakeContinueAction();
 }
 
-void ProgressBar::Draw() {
+void ProgressBar::OnDraw() {
 	auto& pb_blueprint = std::get<ProgressBarBlueprint>(blueprint->variant);
 	// Background
 	draw_background_color();

@@ -11,7 +11,7 @@ Image::Image(UiPanel* parent, const UiWidgetBlueprint* blueprint) : AbstractButt
 	}
 }
 
-UiAction Image::UpdateContent() {
+UiAction Image::OnUpdate() {
 	auto& image_blueprint = std::get<ImageBlueprint>(blueprint->variant);
 	if (image_blueprint.onUpdate) {
 		auto[action, opt_sprite] = image_blueprint.onUpdate(*this);
@@ -24,7 +24,7 @@ UiAction Image::UpdateContent() {
 	}
 }
 
-void Image::Draw() {
+void Image::OnDraw() {
 	draw_background_color();
 	if (_spriteType) {
 		DrawSpriteOrTextLabel(M2_GAME.GetSpriteOrTextLabel(_spriteType), Rect());

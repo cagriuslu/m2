@@ -556,7 +556,7 @@ namespace {
 						const auto selectedIndex = selectedIndexes.empty() ? -1 : selectedIndexes[0];
 						auto& state = dynamic_cast<level_editor::DrawFgRightHudState&>(*self.Parent().state);
 						const auto newIndex = state.AddChain(selectedIndex);
-						fixtureSelectionWidget->UpdateContent();
+						fixtureSelectionWidget->UpdateContents();
 						fixtureSelectionWidget->set_unique_selection(newIndex);
 						return MakeContinueAction();
 					}

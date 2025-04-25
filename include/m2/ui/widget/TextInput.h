@@ -11,9 +11,6 @@ namespace m2::widget {
 
 	public:
 		explicit TextInput(UiPanel* parent, const UiWidgetBlueprint* blueprint);
-		UiAction HandleEvents(Events& events) override;
-		void HandleFocusChange() override;
-		void Draw() override;
 
 		// Accessors
 		std::string text_input() const { return _text_input.str(); }
@@ -21,6 +18,11 @@ namespace m2::widget {
 		// Modifiers
 
 		UiAction trigger_action(std::string new_value);
+
+	protected:
+		UiAction OnEvent(Events& events) override;
+		void OnFocusChange() override;
+		void OnDraw() override;
 
 	private:
 		[[nodiscard]] const TextInputBlueprint& VariantBlueprint() const { return std::get<TextInputBlueprint>(blueprint->variant); }

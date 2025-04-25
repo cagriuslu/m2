@@ -15,7 +15,7 @@ ImageSelection::ImageSelection(UiPanel* parent, const UiWidgetBlueprint* bluepri
 	}
 }
 
-UiAction ImageSelection::HandleEvents(Events& events) {
+UiAction ImageSelection::OnEvent(Events& events) {
 	auto buttons_rect = Rect().trim_top(Rect().w);
 	auto inc_button_rect = buttons_rect.trim_left(buttons_rect.w / 2);
 	auto dec_button_rect = buttons_rect.trim_right(buttons_rect.w / 2);
@@ -69,7 +69,7 @@ UiAction ImageSelection::select(unsigned index) {
 	return MakeContinueAction();
 }
 
-void ImageSelection::Draw() {
+void ImageSelection::OnDraw() {
 	draw_background_color();
 
 	const auto& image_selection = std::get<ImageSelectionBlueprint>(blueprint->variant);

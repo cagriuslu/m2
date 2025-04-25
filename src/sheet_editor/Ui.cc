@@ -172,7 +172,7 @@ namespace {
 						// Add fixture
 						const auto newIndex = std::get<sheet_editor::State>(M2_LEVEL.stateVariant).AddFixture(fixtureType, selectedIndex);
 						// Recreate fixture selection list
-						self.Parent().FindWidget<widget::TextSelection>("FixtureSelection")->UpdateContent();
+						self.Parent().FindWidget<widget::TextSelection>("FixtureSelection")->UpdateContents();
 						// Select newly added index
 						self.Parent().FindWidget<widget::TextSelection>("FixtureSelection")->set_unique_selection(newIndex);
 						return MakeContinueAction();
