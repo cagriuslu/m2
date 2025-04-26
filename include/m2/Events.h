@@ -74,9 +74,11 @@ namespace m2 {
 		std::optional<std::string> PopTextInput();
 
 		// Continuous states
+
 		bool IsKeyDown(m2g::pb::KeyType key) const;
 		bool IsMouseButtonDown(MouseButton mb) const;
 		void ClearMouseButtonDown(const RectI& rect);
+		/// Position of the mouse in window coordinates where top left is (0,0).
 		VecI MousePosition() const;
 	};
 }

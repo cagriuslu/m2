@@ -19,15 +19,14 @@ namespace m2 {
 		UiPanel* _parent;
 		RectI _rect_px{}; // Position on screen
 		bool _focused{};
+		bool _hoverActive{}; // Indicates that the mouse is currently hovering over the widget
 
 	public:
-		/// For a widget, being enabled and being shown are the same things
-		bool enabled{true};
+		bool enabled{true}; // A widget is shown only if it's enabled
 		const UiWidgetBlueprint* blueprint;
 
-		UiWidget(UiPanel* parent, const UiWidgetBlueprint* blueprint)
-		    : _parent(parent), enabled(blueprint->initially_enabled), blueprint(blueprint) {}
-		virtual ~UiWidget() = default;
+		UiWidget(UiPanel* parent, const UiWidgetBlueprint* blueprint);
+		virtual ~UiWidget();
 
 		// Accessors
 
@@ -47,6 +46,8 @@ namespace m2 {
 		// Virtual functions for widgets to implement
 
 		virtual void OnResize(MAYBE const RectI& oldRect, MAYBE const RectI& newRect) {}
+		virtual void OnHover() {}
+		virtual void OffHover() {}
 		virtual UiAction OnEvent(MAYBE Events& events) { return MakeContinueAction(); }
 		virtual void OnFocusChange() {}
 		virtual UiAction OnUpdate() { return MakeContinueAction(); }

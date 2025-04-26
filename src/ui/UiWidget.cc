@@ -1,7 +1,11 @@
 #include <m2/Game.h>
 #include <m2/ui/UiWidget.h>
+#include <m2/ui/UiPanel.h>
 
 using namespace m2;
+
+UiWidget::UiWidget(UiPanel* parent, const UiWidgetBlueprint* blueprint) : _parent(parent), enabled(blueprint->initially_enabled), blueprint(blueprint) {}
+UiWidget::~UiWidget() = default;
 
 void UiWidget::SetRect(const RectI& rect_px) {
 	const auto oldRect = _rect_px;
@@ -9,6 +13,13 @@ void UiWidget::SetRect(const RectI& rect_px) {
 	OnResize(oldRect, _rect_px);
 }
 UiAction UiWidget::HandleEvents(Events& e) {
+	if (const auto mouseIsAbove = Rect().contains(e.MousePosition()); mouseIsAbove && not _hoverActive) {
+		OnHover();
+		_hoverActive = true;
+	} else if (not mouseIsAbove && _hoverActive) {
+		OffHover();
+		_hoverActive = false;
+	}
 	return OnEvent(e);
 }
 void UiWidget::SetFocusState(bool newState) {

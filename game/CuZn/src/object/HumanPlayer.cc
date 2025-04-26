@@ -121,11 +121,11 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj) {
 					// Look up factory if exists, otherwise the background sprite
 					if (FindFactoryAtLocation(*industry_location)) {
 						auto [bp, rectf] = GenerateBuiltIndustryLocationMouseHoverUiBlueprint(*industry_location);
-						M2_LEVEL.AddMouseHoverUiPanel(std::make_unique<m2::UiPanelBlueprint>(bp), rectf);
+						M2_LEVEL.SetMouseHoverUiPanel(std::make_unique<m2::UiPanelBlueprint>(bp), rectf);
 						impl.currentMouseHoverLocation = *industry_location;
 					} else {
 						auto [bp, rectf] = GenerateEmptyIndustryLocationMouseHoverUiBlueprint(*industry_location);
-						M2_LEVEL.AddMouseHoverUiPanel(std::make_unique<m2::UiPanelBlueprint>(bp), rectf);
+						M2_LEVEL.SetMouseHoverUiPanel(std::make_unique<m2::UiPanelBlueprint>(bp), rectf);
 						impl.currentMouseHoverLocation = *industry_location;
 					}
 				}
@@ -136,7 +136,7 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj) {
 						impl.currentMouseHoverLocation.reset();
 					}
 					auto [bp, rectf] = GenerateMerchantLocationMouseHoverUiBlueprint(*merchant_location);
-					M2_LEVEL.AddMouseHoverUiPanel(std::make_unique<m2::UiPanelBlueprint>(bp), rectf);
+					M2_LEVEL.SetMouseHoverUiPanel(std::make_unique<m2::UiPanelBlueprint>(bp), rectf);
 					impl.currentMouseHoverLocation = *merchant_location;
 				}
 			} else if (const auto connection = connection_on_position(mousePositionInWorld)) {
@@ -146,7 +146,7 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj) {
 						impl.currentMouseHoverLocation.reset();
 					}
 					auto [bp, rectf] = GenerateConnectionMouseHoverUiBlueprint(*connection);
-					M2_LEVEL.AddMouseHoverUiPanel(std::make_unique<m2::UiPanelBlueprint>(bp), rectf);
+					M2_LEVEL.SetMouseHoverUiPanel(std::make_unique<m2::UiPanelBlueprint>(bp), rectf);
 					impl.currentMouseHoverLocation = *connection;
 				}
 			} else {

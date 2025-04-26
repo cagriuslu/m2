@@ -209,8 +209,8 @@ m2::RectI m2::RectI::align_center_to(int _x, int _y) const {
 m2::RectI m2::RectI::expand(int amount) const {
 	return trim(-amount);
 }
-m2::RectI m2::RectI::horizontal_split(int split_count, int piece_idx) const {
-    return RectI{x, y + h * piece_idx / split_count, w, h / split_count};
+m2::RectI m2::RectI::GetRow(const int totalRowCount, const int rowIndex) const {
+    return RectI{x, y + h * rowIndex / totalRowCount, w, h / totalRowCount};
 }
 std::optional<m2::RectI> m2::RectI::intersect(const m2::RectI& other) const {
 	auto a = static_cast<SDL_Rect>(*this);

@@ -177,7 +177,7 @@ namespace m2 {
 		/// Add a UI panel that follows the location of the mouse. The given position of the UiPanel will be overridden,
 		/// but the size of the panel is preserved.
 		template <typename... Args>
-		void AddMouseHoverUiPanel(Args&&... args) {
+		void SetMouseHoverUiPanel(Args&&... args) {
 			_mouseHoverUiPanel.emplace(std::forward<Args>(args)...);
 			_mouseHoverUiPanel->SetTopLeftPosition(CalculateMouseHoverUiPanelTopLeftPosition());
 		}

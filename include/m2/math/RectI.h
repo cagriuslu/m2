@@ -69,7 +69,7 @@ namespace m2 {
 		[[nodiscard]] RectI align_bottom_to(int _y) const;
 		[[nodiscard]] RectI align_center_to(int _x, int _y) const;
 		[[nodiscard]] RectI expand(int amount) const;
-		[[nodiscard]] RectI horizontal_split(int split_count, int piece_idx) const;
+		[[nodiscard]] RectI GetRow(int totalRowCount, int rowIndex) const;
 		[[nodiscard]] std::optional<RectI> intersect(const RectI& other) const;
 		[[nodiscard]] RectI ratio(const RectF& ratio_rect) const;
 	};
