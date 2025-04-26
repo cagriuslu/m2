@@ -589,9 +589,9 @@ void m2::Game::UpdateCharacters() {
 }
 
 void m2::Game::ExecuteStep() {
-	if (_level->world) {
+	if (_level->world[I(ForegroundLayer::F0)]) {
 		LOGF_TRACE("Stepping world %f seconds...", phy_period);
-		_level->world->Step(phy_period, velocity_iterations, position_iterations);
+		_level->world[I(ForegroundLayer::F0)]->Step(phy_period, velocity_iterations, position_iterations);
 		_level->World2().Integrate();
 		LOG_TRACE("World stepped");
 		// Update positions
@@ -603,7 +603,7 @@ void m2::Game::ExecuteStep() {
 				object.orientation = phy.body->GetAngle();
 				// Update draw list
 				if (old_pos != object.position) {
-					_level->drawList.QueueUpdate(phy.OwnerId(), object.position);
+					_level->drawList[I(ForegroundLayer::F0)].QueueUpdate(phy.OwnerId(), object.position);
 				}
 			} else if (phy.rigidBodyIndex) {
 				const auto& rigidBody = _level->World2().GetRigidBody(*phy.rigidBodyIndex);
@@ -615,17 +615,17 @@ void m2::Game::ExecuteStep() {
 				object.orientation = rigidBody.OrientationAboutCenterOfMass().ToFloat();
 				// Update draw list
 				if (oldPosition != object.position) {
-					_level->drawList.QueueUpdate(phy.OwnerId(), object.position);
+					_level->drawList[I(ForegroundLayer::F0)].QueueUpdate(phy.OwnerId(), object.position);
 				}
 			}
 		}
 	}
 	// Re-sort draw list
-	_level->drawList.Update();
+	_level->drawList[I(ForegroundLayer::F0)].Update();
 	if (not _proxy.world_is_static) {
 		// If the world is NOT static, the pathfinder's cache should be cleared, because the objects might have been
 		// moved
-		_level->pathfinder->clear_cache();
+		_level->pathfinder[I(ForegroundLayer::F0)]->clear_cache();
 	}
 }
 
@@ -753,7 +753,7 @@ void m2::Game::DrawBackground() {
 }
 
 void m2::Game::DrawForeground() {
-	for (const auto& gfx_id : _level->drawList) {
+	for (const auto& gfx_id : _level->drawList[I(ForegroundLayer::F0)]) {
 		if (auto& gfx = _level->fgGraphics[gfx_id]; gfx.enabled && gfx.draw) {
 			IF(gfx.onDraw)(gfx);
 		}
@@ -776,8 +776,8 @@ void m2::Game::ExecutePostDraw() {
 
 void m2::Game::DebugDraw() {
 #ifdef DEBUG
-	if (_level->world) {
-		_level->world->DebugDraw();
+	if (_level->world[I(ForegroundLayer::F0)]) {
+		_level->world[I(ForegroundLayer::F0)]->DebugDraw();
 	}
 
 	if (IsProjectionTypePerspective(_level->ProjectionType())) {

@@ -73,7 +73,7 @@ RigidBody RigidBody::CreateFromDefinition(const RigidBodyDefinition& definition,
 	box2dBodyDef.enabled = definition.initiallyEnabled;
 	box2dBodyDef.userData.pointer = physiqueId;
 	box2dBodyDef.gravityScale = definition.gravityScale;
-	b2Body* body = M2_LEVEL.world->CreateBody(&box2dBodyDef);
+	b2Body* body = M2_LEVEL.world[I(ForegroundLayer::F0)]->CreateBody(&box2dBodyDef);
 
 	for (const auto& fixture : definition.fixtures) {
 		b2FixtureDef box2dFixtureDef = {};
@@ -143,11 +143,11 @@ RigidBody& RigidBody::operator=(RigidBody&& other) noexcept {
 }
 RigidBody::~RigidBody() {
 	if (_ptr) {
-		if (M2_LEVEL.world->IsLocked()) {
+		if (M2_LEVEL.world[I(ForegroundLayer::F0)]->IsLocked()) {
 			LOG_FATAL("Body destroyed during physics step");
 			std::terminate();
 		}
-		M2_LEVEL.world->DestroyBody(static_cast<b2Body*>(_ptr));
+		M2_LEVEL.world[I(ForegroundLayer::F0)]->DestroyBody(static_cast<b2Body*>(_ptr));
 	}
 }
 

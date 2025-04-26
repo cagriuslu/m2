@@ -140,14 +140,14 @@ m2::Physique& m2::Object::AddPhysique() {
 m2::Graphic& m2::Object::AddGraphic() {
 	auto gfx = M2_LEVEL.fgGraphics.Emplace(GetId());
 	_graphic_id = gfx.GetId();
-	M2_LEVEL.drawList.Insert(GetId());
+	M2_LEVEL.drawList[I(ForegroundLayer::F0)].Insert(GetId());
     LOG_TRACE("Added graphic component", _graphic_id);
 	return *gfx;
 }
 m2::Graphic& m2::Object::AddGraphic(const m2g::pb::SpriteType spriteType) {
 	auto gfx = M2_LEVEL.fgGraphics.Emplace(GetId(), M2_GAME.GetSpriteOrTextLabel(spriteType));
 	_graphic_id = gfx.GetId();
-	M2_LEVEL.drawList.Insert(GetId());
+	M2_LEVEL.drawList[I(ForegroundLayer::F0)].Insert(GetId());
 	LOG_TRACE("Added graphic component", _graphic_id);
 	return *gfx;
 }
@@ -188,6 +188,13 @@ m2::Character& m2::Object::AddFullCharacter() {
     return std::get<FullCharacter>(*character);
 }
 
+void m2::Object::MoveToBackgroundLayer(BackgroundLayer bl) {
+	throw M2_ERROR("Not yet implemented");
+}
+void m2::Object::MoveToForegroundLayer(ForegroundLayer fl) {
+	throw M2_ERROR("Not yet implemented");
+}
+
 void m2::Object::RemovePhysique() {
 	if (_physique_id) {
 		M2_LEVEL.physics.Free(_physique_id);
@@ -196,7 +203,7 @@ void m2::Object::RemovePhysique() {
 }
 void m2::Object::RemoveGraphic() {
 	if (_graphic_id) {
-		M2_LEVEL.drawList.Remove(GetId());
+		M2_LEVEL.drawList[I(ForegroundLayer::F0)].Remove(GetId());
 		M2_LEVEL.fgGraphics.Free(_graphic_id);
 		_graphic_id = 0;
 	}

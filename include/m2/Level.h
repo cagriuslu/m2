@@ -60,19 +60,19 @@ namespace m2 {
 		// is using that component is created/destroyed very rapidly.
 		Pool<Object> objects;
 		std::map<GroupId, std::unique_ptr<Group>, GroupId::Less> groups;
-		DrawList drawList;
+		std::array<DrawList, gForegroundLayerCount> drawList;
 		Pool<Physique> physics;
 		Pool<Graphic> fgGraphics;
 		std::array<Pool<Graphic>, gBackgroundLayerCount> bgGraphics;
 		Pool<Light> lights;
 		Pool<SoundEmitter> soundEmitters;
 		Pool<CharacterVariant> characters;
-		b2World* world{};
+		std::array<b2World*, gForegroundLayerCount> world{};
 		World world2;
 		box2d::ContactListener* contactListener{};
 		Id cameraId{}, playerId{}, pointer_id{};
 		std::optional<SoundListener> leftListener, rightListener;
-		std::optional<Pathfinder> pathfinder;
+		std::array<std::optional<Pathfinder>, gForegroundLayerCount> pathfinder;
 
 		std::optional<sdl::ticks_t> rootBlockingUiBeginTicks;  // Exists only if there is an ongoing blocking UI
 		std::queue<std::function<void()>> deferredActions;

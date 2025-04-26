@@ -8,7 +8,9 @@
 namespace m2 {
 	extern const std::string gEmptyString;
 
-	/// Background layers are drawn from back to front. B0 is drawn the last, thus it's on the front.
+	/// Background layers are drawn from back to front. B0 is drawn the last, thus it's on the front. The only
+	/// difference between the background layers is the drawing order. The rigid bodies of background objects are still
+	/// placed on the same physics world as F0.
 	enum class BackgroundLayer {
 		B0 = 0,
 		B1 = 1,
@@ -19,7 +21,9 @@ namespace m2 {
 	constexpr int gBackgroundLayerCount = static_cast<int>(BackgroundLayer::_n);
 	std::string ToString(BackgroundLayer layer);
 
-	/// Foreground layers are drawn from back to front. L0 is drawn the first, thus it's on the back.
+	/// Foreground layers are drawn from back to front. L0 is drawn the first, thus it's on the back. Each foreground
+	/// layer designates a distinct physics world, thus the objects in different layers cannot collide with each other.
+	/// Since all background objects place their bodies into F0, objects in other layers cannot collide with them.
 	enum class ForegroundLayer {
 		F0 = 0,
 		F1 = 1,

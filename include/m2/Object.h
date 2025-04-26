@@ -79,6 +79,13 @@ namespace m2 {
 		// TODO mini(2),small(4),medium(8),large(16),huge(32)
 		Character& AddFullCharacter();
 
+		/// If the object has background elements, they are moved between different layers of the background. This may
+		/// cause some of the components IDs to change.
+		void MoveToBackgroundLayer(BackgroundLayer);
+		/// If the object has foreground elements, they are moved between different layers of the foreground. This may
+		/// cause some of the components IDs to change.
+		void MoveToForegroundLayer(ForegroundLayer);
+
 		void RemovePhysique();
 		void RemoveGraphic();
 		void RemoveTerrainGraphic();
