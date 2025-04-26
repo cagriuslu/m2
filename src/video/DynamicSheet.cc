@@ -1,6 +1,7 @@
 #include <m2/video/DynamicSheet.h>
 #include <m2/Error.h>
 #include <m2/Game.h>
+#include <m2/Log.h>
 
 m2::DynamicSheet::DynamicSheet(SDL_Renderer *renderer) : _renderer(renderer) {
 	int bpp;

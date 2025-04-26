@@ -682,7 +682,7 @@ void m2::Game::UpdateSounds() {
 }
 
 void m2::Game::ExecutePreDraw() {
-	for (auto& gfx : _level->graphics) {
+	for (auto& gfx : _level->fgGraphics) {
 		if (gfx.enabled) {
 			IF(gfx.preDraw)(gfx);
 		}
@@ -732,7 +732,7 @@ namespace {
 
 	void draw_all_background_layers(m2::Level& level) {
 		// Draw all background layers
-		for (auto& terrainGraphics : std::ranges::reverse_view(level.terrainGraphics)) {
+		for (auto& terrainGraphics : std::ranges::reverse_view(level.bgGraphics)) {
 			draw_one_background_layer(terrainGraphics);
 		}
 	}
@@ -743,7 +743,7 @@ void m2::Game::DrawBackground() {
 		if (const auto& rightHudName = _level->RightHud()->Name();
 				rightHudName == "PaintBgRightHud" || rightHudName == "SampleBgRightHud" || rightHudName == "SelectBgRightHud") {
 			const auto& levelEditorState = std::get<level_editor::State>(_level->stateVariant);
-			draw_one_background_layer(_level->terrainGraphics[I(levelEditorState.GetSelectedBackgroundLayer())]);
+			draw_one_background_layer(_level->bgGraphics[I(levelEditorState.GetSelectedBackgroundLayer())]);
 		} else {
 			draw_all_background_layers(*_level);
 		}
@@ -754,7 +754,7 @@ void m2::Game::DrawBackground() {
 
 void m2::Game::DrawForeground() {
 	for (const auto& gfx_id : _level->drawList) {
-		if (auto& gfx = _level->graphics[gfx_id]; gfx.enabled && gfx.draw) {
+		if (auto& gfx = _level->fgGraphics[gfx_id]; gfx.enabled && gfx.draw) {
 			IF(gfx.onDraw)(gfx);
 		}
 	}
@@ -767,7 +767,7 @@ void m2::Game::DrawLights() {
 }
 
 void m2::Game::ExecutePostDraw() {
-	for (auto& gfx : _level->graphics) {
+	for (auto& gfx : _level->fgGraphics) {
 		if (gfx.enabled) {
 			IF(gfx.postDraw)(gfx);
 		}
@@ -834,10 +834,10 @@ void m2::Game::OnWindowResize() {
 		IF (_level->_semiBlockingUiPanel)->RecalculateRects();
 
 		// Clear text label rectangles so that they are regenerated with new size
-		for (auto& gfx : _level->graphics) {
+		for (auto& gfx : _level->fgGraphics) {
 			gfx.textLabelRect = {};
 		}
-		for (auto& terrainGraphics : std::ranges::reverse_view(_level->terrainGraphics)) {
+		for (auto& terrainGraphics : std::ranges::reverse_view(_level->bgGraphics)) {
 			for (auto& gfx : terrainGraphics) {
 				gfx.textLabelRect = {};
 			}
@@ -848,10 +848,10 @@ void m2::Game::SetScale(const float scale) {
 	_dimensionsManager->SetScale(scale);
 	if (_level) {
 		// Clear text label rectangles so that they are regenerated with new size
-		for (auto& gfx : _level->graphics) {
+		for (auto& gfx : _level->fgGraphics) {
 			gfx.textLabelRect = {};
 		}
-		for (auto& terrainGraphics : std::ranges::reverse_view(_level->terrainGraphics)) {
+		for (auto& terrainGraphics : std::ranges::reverse_view(_level->bgGraphics)) {
 			for (auto& gfx : terrainGraphics) {
 				gfx.textLabelRect = {};
 			}
@@ -862,10 +862,10 @@ void m2::Game::SetGameHeightM(const float heightM) {
 	_dimensionsManager->SetGameHeightM(heightM);
 	if (_level) {
 		// Clear text label rectangles so that they are regenerated with new size
-		for (auto& gfx : _level->graphics) {
+		for (auto& gfx : _level->fgGraphics) {
 			gfx.textLabelRect = {};
 		}
-		for (auto& terrainGraphics : std::ranges::reverse_view(_level->terrainGraphics)) {
+		for (auto& terrainGraphics : std::ranges::reverse_view(_level->bgGraphics)) {
 			for (auto& gfx : terrainGraphics) {
 				gfx.textLabelRect = {};
 			}

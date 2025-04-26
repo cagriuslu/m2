@@ -15,6 +15,7 @@
 #include <m2/single_player/State.h>
 #include <m2/ui/UiPanel.h>
 #include <Level.pb.h>
+#include <box2d/b2_world.h>
 #include <string>
 #include <queue>
 #include <functional>
@@ -61,8 +62,8 @@ namespace m2 {
 		std::map<GroupId, std::unique_ptr<Group>, GroupId::Less> groups;
 		DrawList drawList;
 		Pool<Physique> physics;
-		Pool<Graphic> graphics;
-		std::array<Pool<Graphic>, gBackgroundLayerCount> terrainGraphics;
+		Pool<Graphic> fgGraphics;
+		std::array<Pool<Graphic>, gBackgroundLayerCount> bgGraphics;
 		Pool<Light> lights;
 		Pool<SoundEmitter> soundEmitters;
 		Pool<CharacterVariant> characters;

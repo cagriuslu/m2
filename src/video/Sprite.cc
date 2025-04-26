@@ -1,6 +1,7 @@
 #include <m2/video/Sprite.h>
 #include <m2/Math.h>
 #include <m2/Game.h>
+#include <m2/Log.h>
 #include <Object.pb.h>
 
 m2::Sprite::Sprite(const std::vector<SpriteSheet>& spriteSheets, const SpriteSheet& spriteSheet,

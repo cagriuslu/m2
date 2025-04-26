@@ -1,6 +1,7 @@
 #include <pinball/objects/BallLauncherSensor.h>
 #include <m2/third_party/physics/ColliderCategory.h>
 #include <m2/Game.h>
+#include <m2/Log.h>
 
 m2::void_expected LoadBallLauncherSensor(m2::Object& obj) {
 	const auto type = obj.GetType();

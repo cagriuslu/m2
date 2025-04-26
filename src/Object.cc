@@ -110,10 +110,10 @@ m2::Physique& m2::Object::GetPhysique() const {
 	return M2_LEVEL.physics[_physique_id];
 }
 m2::Graphic& m2::Object::GetGraphic() const {
-	return M2_LEVEL.graphics[_graphic_id];
+	return M2_LEVEL.fgGraphics[_graphic_id];
 }
 m2::Graphic& m2::Object::GetTerrainGraphic() const {
-	return M2_LEVEL.terrainGraphics[I(_terrain_graphic_id.second)][_terrain_graphic_id.first];
+	return M2_LEVEL.bgGraphics[I(_terrain_graphic_id.second)][_terrain_graphic_id.first];
 }
 m2::Light& m2::Object::GetLight() const {
 	return M2_LEVEL.lights[_light_id];
@@ -138,27 +138,27 @@ m2::Physique& m2::Object::AddPhysique() {
 	return *phy;
 }
 m2::Graphic& m2::Object::AddGraphic() {
-	auto gfx = M2_LEVEL.graphics.Emplace(GetId());
+	auto gfx = M2_LEVEL.fgGraphics.Emplace(GetId());
 	_graphic_id = gfx.GetId();
 	M2_LEVEL.drawList.Insert(GetId());
     LOG_TRACE("Added graphic component", _graphic_id);
 	return *gfx;
 }
 m2::Graphic& m2::Object::AddGraphic(const m2g::pb::SpriteType spriteType) {
-	auto gfx = M2_LEVEL.graphics.Emplace(GetId(), M2_GAME.GetSpriteOrTextLabel(spriteType));
+	auto gfx = M2_LEVEL.fgGraphics.Emplace(GetId(), M2_GAME.GetSpriteOrTextLabel(spriteType));
 	_graphic_id = gfx.GetId();
 	M2_LEVEL.drawList.Insert(GetId());
 	LOG_TRACE("Added graphic component", _graphic_id);
 	return *gfx;
 }
 m2::Graphic& m2::Object::AddTerrainGraphic(BackgroundLayer layer) {
-	auto terrain_gfx = M2_LEVEL.terrainGraphics[I(layer)].Emplace(GetId());
+	auto terrain_gfx = M2_LEVEL.bgGraphics[I(layer)].Emplace(GetId());
 	_terrain_graphic_id = std::make_pair(terrain_gfx.GetId(), layer);
 	LOG_TRACE("Added terrain graphic component", _terrain_graphic_id);
 	return *terrain_gfx;
 }
 m2::Graphic& m2::Object::AddTerrainGraphic(BackgroundLayer layer, const m2g::pb::SpriteType spriteType) {
-	auto terrain_gfx = M2_LEVEL.terrainGraphics[I(layer)].Emplace(GetId(), M2_GAME.GetSpriteOrTextLabel(spriteType));
+	auto terrain_gfx = M2_LEVEL.bgGraphics[I(layer)].Emplace(GetId(), M2_GAME.GetSpriteOrTextLabel(spriteType));
 	_terrain_graphic_id = std::make_pair(terrain_gfx.GetId(), layer);
 	LOG_TRACE("Added terrain graphic component", _terrain_graphic_id);
 	return *terrain_gfx;
@@ -197,13 +197,13 @@ void m2::Object::RemovePhysique() {
 void m2::Object::RemoveGraphic() {
 	if (_graphic_id) {
 		M2_LEVEL.drawList.Remove(GetId());
-		M2_LEVEL.graphics.Free(_graphic_id);
+		M2_LEVEL.fgGraphics.Free(_graphic_id);
 		_graphic_id = 0;
 	}
 }
 void m2::Object::RemoveTerrainGraphic() {
 	if (_terrain_graphic_id.first) {
-		M2_LEVEL.terrainGraphics[I(_terrain_graphic_id.second)].Free(_terrain_graphic_id.first);
+		M2_LEVEL.bgGraphics[I(_terrain_graphic_id.second)].Free(_terrain_graphic_id.first);
 		_terrain_graphic_id = {};
 	}
 }

@@ -22,10 +22,10 @@ m2::Level::~Level() {
 	// Custom destructor is provided because the order is important
 	characters.Clear();
 	lights.Clear();
-	for (auto& terrain : terrainGraphics) {
+	for (auto& terrain : bgGraphics) {
 		terrain.Clear();
 	}
-	graphics.Clear();
+	fgGraphics.Clear();
 	physics.Clear();
 	objects.Clear();
 	groups.clear();

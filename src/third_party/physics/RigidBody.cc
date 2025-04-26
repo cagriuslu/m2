@@ -1,5 +1,6 @@
 #include <m2/third_party/physics/RigidBody.h>
 #include <m2/Game.h>
+#include <m2/Log.h>
 #include <box2d/b2_body.h>
 #include <box2d/b2_polygon_shape.h>
 #include <box2d/b2_circle_shape.h>

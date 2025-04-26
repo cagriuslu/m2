@@ -182,7 +182,7 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 		const auto& sprite = *std::get<const Sprite*>(gfx.visual);
 
 		// Check if foreground or background
-		const bool is_foreground = M2_LEVEL.graphics.GetId(&gfx);
+		const bool is_foreground = M2_LEVEL.fgGraphics.GetId(&gfx);
 		const auto projector = IsProjectionTypePerspective(M2_LEVEL.ProjectionType())
 				? &Sprite::DrawIn3dWorld
 				: &Sprite::DrawIn2dWorld;
@@ -237,7 +237,7 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 			DrawTextLabelBackgroundIn2dWorld(textLabel, gfx.textLabelRect, gfx.Owner().position, dimmed);
 		}
 		// Draw text label
-		const bool is_foreground = M2_LEVEL.graphics.GetId(&gfx);
+		const bool is_foreground = M2_LEVEL.fgGraphics.GetId(&gfx);
 		const auto projector = IsProjectionTypePerspective(M2_LEVEL.ProjectionType())
 				? &DrawTextLabelIn3dWorld
 				: &DrawTextLabelIn2dWorld;
