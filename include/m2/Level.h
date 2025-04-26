@@ -1,27 +1,24 @@
 #pragma once
-#include <Level.pb.h>
-#include <box2d/b2_world.h>
 #include <m2g/Proxy.h>
-#include <m2/Log.h>
+#include <m2/Meta.h>
+#include <m2/Object.h>
+#include <m2/bulk_sheet_editor/State.h>
+#include <m2/containers/DrawList.h>
+#include <m2/game/Pathfinder.h>
+#include <m2/game/Selection.h>
+#include <m2/level_editor/State.h>
+#include <m2/multi_player/State.h>
+#include <m2/m3/VecF.h>
+#include <m2/physics/World.h>
+#include <m2/sdl/Detail.h>
+#include <m2/sheet_editor/State.h>
+#include <m2/single_player/State.h>
+#include <m2/ui/UiPanel.h>
+#include <Level.pb.h>
+#include <string>
+#include <queue>
 #include <functional>
 #include <optional>
-#include <string>
-#include <m2/sdl/Detail.h>
-#include <m2/physics/World.h>
-#include <m2/containers/DrawList.h>
-#include "Meta.h"
-#include "Object.h"
-#include "bulk_sheet_editor/State.h"
-#include "level_editor/State.h"
-#include "m2/game/Pathfinder.h"
-#include "m3/VecF.h"
-#include "multi_player/State.h"
-#include "multi_player/Type.h"
-#include "sheet_editor/State.h"
-#include "single_player/State.h"
-#include "ui/UiPanel.h"
-#include <queue>
-#include <m2/game/Selection.h>
 
 namespace m2 {
 	// Forward declarations
@@ -78,20 +75,15 @@ namespace m2 {
 
 		std::optional<sdl::ticks_t> rootBlockingUiBeginTicks;  // Exists only if there is an ongoing blocking UI
 		std::queue<std::function<void()>> deferredActions;
-		std::variant<
-		    std::monostate, splayer::State, mplayer::State, level_editor::State, sheet_editor::State, bulk_sheet_editor::State>
-		    stateVariant;
+		std::variant<std::monostate, splayer::State, mplayer::State, level_editor::State, sheet_editor::State, bulk_sheet_editor::State> stateVariant;
 
 		/// In panning mode, mouse states are not cleared by UI elements so that panning the map is possible even
 		/// thought the mouse spills into UI elements.
 		bool isPanning{};
 
-		void_expected InitSinglePlayer(
-		    const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name);
-		void_expected InitMultiPlayerAsHost(
-		    const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name);
-		void_expected InitMultiPlayerAsGuest(
-		    const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name);
+		void_expected InitSinglePlayer(const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name);
+		void_expected InitMultiPlayerAsHost(const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name);
+		void_expected InitMultiPlayerAsGuest(const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name);
 		void_expected InitLevelEditor(const std::filesystem::path& lb_path);
 		void_expected InitSheetEditor(const std::filesystem::path& path);
 		void_expected InitBulkSheetEditor(const std::filesystem::path& path);
@@ -138,8 +130,8 @@ namespace m2 {
 		void EnableDimmingWithExceptions(std::set<ObjectId>&& exceptions);
 		void DisableDimmingWithExceptions();
 
-		void EnablePrimarySelection(RectI screenBoundaryPx) { _primarySelection.emplace(std::move(screenBoundaryPx)); }
-		void EnableSecondarySelection(RectI screenBoundaryPx) { _secondarySelection.emplace(std::move(screenBoundaryPx)); }
+		void EnablePrimarySelection(RectI screenBoundaryPx) { _primarySelection.emplace(screenBoundaryPx); }
+		void EnableSecondarySelection(RectI screenBoundaryPx) { _secondarySelection.emplace(screenBoundaryPx); }
 		Selection* PrimarySelection() { return _primarySelection ? &*_primarySelection : nullptr; }
 		Selection* SecondarySelection() { return _secondarySelection ? &*_secondarySelection : nullptr; }
 		void DisablePrimarySelection() { _primarySelection.reset(); }
@@ -204,4 +196,4 @@ namespace m2 {
 
 		friend class Game;
 	};
-}  // namespace m2
+}
