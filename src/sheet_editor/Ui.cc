@@ -185,7 +185,7 @@ namespace {
 				.variant = widget::TextSelectionBlueprint{
 					.line_count = 8,
 					.onUpdate = [](widget::TextSelection& self) -> UiAction {
-						if (self.GetOptions().size() != std::get<sheet_editor::State>(M2_LEVEL.stateVariant).SelectedSpriteFixtureCount()) {
+						if (I(self.GetOptions().size()) != std::get<sheet_editor::State>(M2_LEVEL.stateVariant).SelectedSpriteFixtureCount()) {
 							const auto currentFixtureTypes = std::get<sheet_editor::State>(M2_LEVEL.stateVariant).SelectedSpriteFixtureTypes();
 							widget::TextSelectionBlueprint::Options options;
 							std::ranges::transform(currentFixtureTypes, std::back_inserter(options), [](const auto type) -> widget::TextSelectionBlueprint::Option {

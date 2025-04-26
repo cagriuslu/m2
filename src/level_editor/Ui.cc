@@ -111,7 +111,7 @@ namespace {
 				.x = 12, .y = 7, .w = 10, .h = 5,
 				.variant = TextBlueprint{
 					.text = "Cancel",
-					.onAction = [](const Text& self) {
+					.onAction = [](const Text&) {
 						return MakeReturnAction();
 					}
 				}
@@ -549,7 +549,7 @@ namespace {
 						if (indexUnderMouse) {
 							const auto& state = dynamic_cast<level_editor::DrawFgRightHudState&>(*self.Parent().state);
 							const auto fixtureName = state.SelectedObjectMainSpritePb().regular().fixtures(*indexUnderMouse).name();
-							M2_LEVEL.SetMouseHoverUiPanel(std::make_unique<UiPanelBlueprint>(std::move(CreateTextTooltipBlueprint(fixtureName))), gTextTooltipRatio);
+							M2_LEVEL.SetMouseHoverUiPanel(std::make_unique<UiPanelBlueprint>(CreateTextTooltipBlueprint(fixtureName)), gTextTooltipRatio);
 						}
 					},
 					.offHover = [](MAYBE TextSelection& self) {
@@ -557,7 +557,7 @@ namespace {
 					},
 					.onUpdate = [](TextSelection& self) -> UiAction {
 						if (const auto& state = dynamic_cast<level_editor::DrawFgRightHudState&>(*self.Parent().state);
-								self.GetOptions().size() != state.SelectedSpriteFixtureCount()) {
+								I(self.GetOptions().size()) != state.SelectedSpriteFixtureCount()) {
 							const auto currentFixtureTypes = state.SelectedSpriteFixtureTypes();
 							TextSelectionBlueprint::Options options;
 							std::ranges::transform(currentFixtureTypes, std::back_inserter(options), [](const auto type) -> TextSelectionBlueprint::Option {

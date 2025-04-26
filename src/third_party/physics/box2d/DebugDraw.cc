@@ -66,10 +66,10 @@ void DebugDraw::DrawCircle(const b2Vec2& center, const float radius, const b2Col
 		}
 	}
 }
-void DebugDraw::DrawSolidCircle(const b2Vec2& center, const float radius, const b2Vec2& axis, const b2Color& color) {
+void DebugDraw::DrawSolidCircle(const b2Vec2& center, const float radius, MAYBE const b2Vec2& axis, const b2Color& color) {
 	DrawCircle(center, radius, color);
 }
-void DebugDraw::DrawSegment(const b2Vec2& p1, const b2Vec2& p2, const b2Color& color) {
+void DebugDraw::DrawSegment(const b2Vec2& p1, const b2Vec2& p2, MAYBE const b2Color& color) {
 	// Segments of a chain
 	Graphic::DrawLine(VecF{p1}, VecF{p2}, RGBA{255, 0, 0, 255});
 }

@@ -21,10 +21,6 @@ namespace {
 
 m2::Pool<m2::Object>::Iterator m2::obj::create_tile(const BackgroundLayer layer, const VecF& position,
 		const m2g::pb::SpriteType spriteType) {
-	if (layer == BackgroundLayer::ALL) {
-		throw M2_ERROR("Invalid background layer");
-	}
-
     const auto it = CreateObject(position);
 	it->AddTerrainGraphic(layer, spriteType);
 

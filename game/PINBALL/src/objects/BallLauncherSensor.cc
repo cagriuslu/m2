@@ -25,11 +25,11 @@ m2::void_expected LoadBallLauncherSensor(m2::Object& obj) {
 	};
 	phy.body = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
 
-	phy.onCollision = [](m2::Physique& self, m2::Physique& other, const m2::box2d::Contact&) {
+	phy.onCollision = [](m2::Physique&, m2::Physique&, const m2::box2d::Contact&) {
 		LOG_INFO("Colliding");
 		M2G_PROXY.isOnBallLauncher = true;
 	};
-	phy.offCollision = [](m2::Physique& self, m2::Physique& other) {
+	phy.offCollision = [](m2::Physique&, m2::Physique&) {
 		LOG_INFO("Not Colliding");
 		M2G_PROXY.isOnBallLauncher = false;
 	};

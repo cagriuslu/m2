@@ -10,7 +10,6 @@ namespace m2 {
 
 	/// Background layers are drawn from back to front. L0 is drawn the last, thus it's on the front.
 	enum class BackgroundLayer {
-		ALL = -1,
 		L0 = 0,
 		L1 = 1,
 		L2 = 2,

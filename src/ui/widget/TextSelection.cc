@@ -29,7 +29,7 @@ std::optional<int> TextSelection::GetIndexOfFirstSelection() const {
 }
 std::vector<int> TextSelection::GetSelectedIndexes() const {
 	std::vector<int> indexes;
-	for (int i = 0; i < _options.size(); ++i) {
+	for (int i = 0; i < I(_options.size()); ++i) {
 		if (_options[i].is_selected) {
 			indexes.emplace_back(i);
 		}
@@ -352,7 +352,7 @@ void TextSelection::RenewHoverIfNecessary() {
 	}
 
 	// Find the current hovered index
-	const auto newHoveredIndex = [this] -> std::optional<int> {
+	const auto newHoveredIndex = [this]() -> std::optional<int> {
 		if (VariantBlueprint().line_count == 0 || VariantBlueprint().line_count == 1) {
 			return GetIndexOfFirstSelection();
 		}
