@@ -17,7 +17,7 @@ namespace {
 m2::BackgroundLayer m2::level_editor::State::GetSelectedBackgroundLayer() const {
 	return static_cast<BackgroundLayer>(
 			std::get<int>(
-				M2_LEVEL.LeftHud()->FindWidget<widget::TextSelection>("BackgroundLayerSelection")->selections()[0]));
+				M2_LEVEL.LeftHud()->FindWidget<widget::TextSelection>("BackgroundLayerSelection")->GetSelectedOptions()[0]));
 }
 bool m2::level_editor::State::GetSnapToGridStatus() const {
 	return M2_LEVEL.LeftHud()->FindWidget<widget::CheckboxWithText>("SnapToGridCheckbox")->GetState();
@@ -54,7 +54,7 @@ void m2::level_editor::State::HandleMousePrimaryButton(const VecF& position) {
 	// Background operations are supported only for the positive quadrant
 	if (not position.iround().is_negative()) {
 		if (M2_LEVEL.RightHud()->Name() == "PaintBgRightHud") {
-			if (const auto selections = M2_LEVEL.RightHud()->FindWidget<widget::TextSelection>("SpriteTypeSelection")->selections();
+			if (const auto selections = M2_LEVEL.RightHud()->FindWidget<widget::TextSelection>("SpriteTypeSelection")->GetSelectedOptions();
 					not selections.empty()) {
 				const auto selectedSpriteType = static_cast<m2g::pb::SpriteType>(std::get<int>(selections[0]));
 				PaintBackground(VecI{position.iround().x, position.iround().y}, selectedSpriteType);
@@ -70,7 +70,7 @@ void m2::level_editor::State::HandleMousePrimaryButton(const VecF& position) {
 				const auto& options = spriteTypeSelection->GetOptions();
 				for (size_t i = 0; i < options.size(); ++i) {
 					if (std::get<int>(options[i].blueprint_option.return_value) == static_cast<int>(std::get<m2g::pb::SpriteType>(it->second))) {
-						spriteTypeSelection->set_unique_selection(i);
+						spriteTypeSelection->SetUniqueSelectionIndex(i);
 						break;
 					}
 				}
@@ -80,12 +80,12 @@ void m2::level_editor::State::HandleMousePrimaryButton(const VecF& position) {
 
 	// Foreground operations can be on any quadrant
 	if (M2_LEVEL.RightHud()->Name() == "PlaceFgRightHud") {
-		if (const auto selections = M2_LEVEL.RightHud()->FindWidget<widget::TextSelection>("ObjectTypeSelection")->selections();
+		if (const auto selections = M2_LEVEL.RightHud()->FindWidget<widget::TextSelection>("ObjectTypeSelection")->GetSelectedOptions();
 					not selections.empty()) {
 			const auto selectedObjectType = static_cast<m2g::pb::ObjectType>(std::get<int>(selections[0]));
 			const auto selectedGroupType = static_cast<m2g::pb::GroupType>(
 					std::get<int>(
-						M2_LEVEL.RightHud()->FindWidget<widget::TextSelection>("GroupTypeSelection")->selections()[0]));
+						M2_LEVEL.RightHud()->FindWidget<widget::TextSelection>("GroupTypeSelection")->GetSelectedOptions()[0]));
 			const auto selectedGroupInstance = M2_LEVEL.RightHud()->FindWidget<widget::IntegerInput>("GroupInstanceSelection")->value();
 			const auto orientation = ToRadians(M2_LEVEL.RightHud()->FindWidget<widget::IntegerInput>("OrientationInput")->value());
 			const auto snapToGrid = M2_LEVEL.LeftHud()->FindWidget<widget::CheckboxWithText>("SnapToGridCheckbox")->GetState();
@@ -121,7 +121,7 @@ void m2::level_editor::State::HandleMousePrimaryButton(const VecF& position) {
 			const auto& objectTypeOptions = objectTypeSelection->GetOptions();
 			for (size_t i = 0; i < objectTypeOptions.size(); ++i) {
 				if (std::get<int>(objectTypeOptions[i].blueprint_option.return_value) == I(objectType)) {
-					objectTypeSelection->set_unique_selection(i);
+					objectTypeSelection->SetUniqueSelectionIndex(i);
 					break;
 				}
 			}
@@ -132,7 +132,7 @@ void m2::level_editor::State::HandleMousePrimaryButton(const VecF& position) {
 			const auto& groupTypeOptions = groupTypeSelection->GetOptions();
 			for (size_t i = 0; i < groupTypeOptions.size(); ++i) {
 				if (std::get<int>(groupTypeOptions[i].blueprint_option.return_value) == I(groupType)) {
-					groupTypeSelection->set_unique_selection(i);
+					groupTypeSelection->SetUniqueSelectionIndex(i);
 					break;
 				}
 			}

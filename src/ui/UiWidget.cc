@@ -17,8 +17,8 @@ UiAction UiWidget::HandleEvents(Events& e) {
 		OnHover();
 		_hoverActive = true;
 	} else if (not mouseIsAbove && _hoverActive) {
-		OffHover();
 		_hoverActive = false;
+		OffHover();
 	}
 	return OnEvent(e);
 }

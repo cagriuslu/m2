@@ -5,13 +5,13 @@ using namespace m2;
 using namespace m2::widget;
 
 TextSelection::TextSelection(UiPanel* parent, const UiWidgetBlueprint* blueprint) : UiWidget(parent, blueprint) {
-	set_options(VariantBlueprint().options);
+	SetOptions(VariantBlueprint().options);
 	if (VariantBlueprint().onCreate) {
 		VariantBlueprint().onCreate(*this);
 	}
 }
 
-std::vector<TextSelectionBlueprint::ReturnValue> TextSelection::selections() const {
+std::vector<TextSelectionBlueprint::ReturnValue> TextSelection::GetSelectedOptions() const {
 	std::vector<TextSelectionBlueprint::ReturnValue> selections;
 	for (auto& option : _options) {
 		if (option.is_selected) {
@@ -20,7 +20,14 @@ std::vector<TextSelectionBlueprint::ReturnValue> TextSelection::selections() con
 	}
 	return selections;
 }
-std::vector<int> TextSelection::SelectedIndexes() const {
+std::optional<int> TextSelection::GetIndexOfFirstSelection() const {
+	const auto currentSelectionIt = std::ranges::find_if(_options, [](auto& o) { return o.is_selected == true; });
+	if (currentSelectionIt == _options.end()) {
+		return std::nullopt;
+	}
+	return std::distance(_options.begin(), currentSelectionIt);
+}
+std::vector<int> TextSelection::GetSelectedIndexes() const {
 	std::vector<int> indexes;
 	for (int i = 0; i < _options.size(); ++i) {
 		if (_options[i].is_selected) {
@@ -30,15 +37,19 @@ std::vector<int> TextSelection::SelectedIndexes() const {
 	return indexes;
 }
 
-void TextSelection::set_options(const TextSelectionBlueprint::Options& options) {
+void TextSelection::SetOptions(const TextSelectionBlueprint::Options& options) {
 	auto copy = options;
-	set_options(std::move(copy));
+	SetOptions(std::move(copy));
 }
-void TextSelection::set_options(TextSelectionBlueprint::Options&& options) {
+void TextSelection::SetOptions(TextSelectionBlueprint::Options&& options) {
 	_options.clear();
 	_options.resize(options.size());
 	for (size_t i = 0; i < options.size(); ++i) {
 		_options[i].blueprint_option = std::move(options[i]);
+	}
+	// Option under the mouse might have changed
+	if (IsHoverActive()) {
+		RenewHoverIfNecessary();
 	}
 	// Applicable to +/- selection and dropdown, select the first item
 	if (VariantBlueprint().line_count == 0 || VariantBlueprint().line_count == 1) {
@@ -50,11 +61,15 @@ void TextSelection::set_options(TextSelectionBlueprint::Options&& options) {
 		}
 	}
 }
-void TextSelection::set_unique_selection(const int index) {
+void TextSelection::SetUniqueSelectionIndex(const int index) {
 	if (0 <= index && index < I(_options.size())) {
 		// Clear all selections
 		for (auto& option : _options) {
 			option.is_selected = false;
+		}
+		// Option under the mouse might have changed
+		if (IsHoverActive()) {
+			RenewHoverIfNecessary();
 		}
 		// Select the given option
 		_options[index].is_selected = true;
@@ -69,10 +84,19 @@ void TextSelection::OnResize(MAYBE const RectI& oldRect, MAYBE const RectI& newR
 	for (auto& option : _options) {
 		option.text_texture_and_destination.reset();
 	}
-	_plus_texture.reset();
-	_minus_texture.reset();
-	_up_arrow_texture.reset();
-	_down_arrow_texture.reset();
+	_plusTexture.reset();
+	_minusTexture.reset();
+	_upArrowTexture.reset();
+	_downArrowTexture.reset();
+}
+void TextSelection::OnHover() {
+	RenewHoverIfNecessary();
+}
+void TextSelection::OffHover() {
+	_hoveredIndex.reset();
+	if (VariantBlueprint().offHover) {
+		VariantBlueprint().offHover(*this);
+	}
 }
 UiAction TextSelection::OnEvent(Events& events) {
 	// +/- selection
@@ -80,30 +104,30 @@ UiAction TextSelection::OnEvent(Events& events) {
 		auto buttons_rect = Rect().trim_left(Rect().w - Rect().h / 2);
 		auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2);
 		auto dec_button_rect = buttons_rect.trim_top(buttons_rect.h / 2);
-		if (!_plus_depressed && events.PopMouseButtonPress(MouseButton::PRIMARY, inc_button_rect)) {
-			_plus_depressed = true;
-			_minus_depressed = false;
-		} else if (!_minus_depressed && events.PopMouseButtonPress(MouseButton::PRIMARY, dec_button_rect)) {
-			_minus_depressed = true;
-			_plus_depressed = false;
-		} else if (_plus_depressed && events.PopMouseButtonRelease(MouseButton::PRIMARY, inc_button_rect)) {
-			_plus_depressed = false;
-			return increment_selection();
-		} else if (_minus_depressed && events.PopMouseButtonRelease(MouseButton::PRIMARY, dec_button_rect)) {
-			_minus_depressed = false;
-			return decrement_selection();
+		if (!_plusDepressed && events.PopMouseButtonPress(MouseButton::PRIMARY, inc_button_rect)) {
+			_plusDepressed = true;
+			_minusDepressed = false;
+		} else if (!_minusDepressed && events.PopMouseButtonPress(MouseButton::PRIMARY, dec_button_rect)) {
+			_minusDepressed = true;
+			_plusDepressed = false;
+		} else if (_plusDepressed && events.PopMouseButtonRelease(MouseButton::PRIMARY, inc_button_rect)) {
+			_plusDepressed = false;
+			return IncrementSelection();
+		} else if (_minusDepressed && events.PopMouseButtonRelease(MouseButton::PRIMARY, dec_button_rect)) {
+			_minusDepressed = false;
+			return DecrementSelection();
 		} else {
 			// Check if scrolled
 			if (auto scroll_amount = events.PopMouseWheelVerticalScroll(Rect()); 0 < scroll_amount) {
 				m2Repeat(scroll_amount) {
-					if (auto action = increment_selection(); not action.IsContinue()) {
+					if (auto action = IncrementSelection(); not action.IsContinue()) {
 						return action;
 					}
 				}
 				return MakeContinueAction();
 			} else if (scroll_amount < 0) {
 				m2Repeat(scroll_amount) {
-					if (auto action = decrement_selection(); not action.IsContinue()) {
+					if (auto action = DecrementSelection(); not action.IsContinue()) {
 						return action;
 					}
 				}
@@ -116,42 +140,43 @@ UiAction TextSelection::OnEvent(Events& events) {
 	} else {
 		// Scrollable selection
 		auto scroll_bar_rect = Rect().trim_left(Rect().w - Rect().h / I(VariantBlueprint().line_count));
-		auto up_arrow_rect = scroll_bar_rect.horizontal_split(I(VariantBlueprint().line_count), 0);
-		auto down_button_rect = scroll_bar_rect.horizontal_split(I(VariantBlueprint().line_count),
-			I(VariantBlueprint().line_count) - 1);
+		auto up_arrow_rect = scroll_bar_rect.GetRow(I(VariantBlueprint().line_count), 0);
+		auto down_button_rect = scroll_bar_rect.GetRow(I(VariantBlueprint().line_count), I(VariantBlueprint().line_count) - 1);
 
 		// Check if scroll buttons are pressed
 		if (events.PopMouseButtonPress(MouseButton::PRIMARY, up_arrow_rect)) {
-			if (0 < _top_index) {
-				_top_index--;
+			if (0 < _topIndex) {
+				_topIndex--;
 			}
 		} else if (events.PopMouseButtonPress(MouseButton::PRIMARY, down_button_rect)) {
-			if (_top_index + VariantBlueprint().line_count < I(_options.size())) {
-				_top_index++;
+			if (_topIndex + VariantBlueprint().line_count < I(_options.size())) {
+				_topIndex++;
 			}
 		} else {
 			// Check if scrolled via mouse
 			if (auto scroll_amount = events.PopMouseWheelVerticalScroll(Rect()); 0 < scroll_amount) {
-				auto min_scroll_amount = std::min(static_cast<size_t>(scroll_amount), _options.size() - _top_index - VariantBlueprint().line_count);
-				if (min_scroll_amount) {
-					_top_index += I(min_scroll_amount);
+				if (auto min_scroll_amount = std::min(static_cast<size_t>(scroll_amount), _options.size() - _topIndex - VariantBlueprint().line_count)) {
+					_topIndex += I(min_scroll_amount);
 				}
 			} else if (scroll_amount < 0) {
-				auto min_scroll_amount = std::min(-scroll_amount, _top_index);
-				if (min_scroll_amount) {
-					_top_index -= min_scroll_amount;
+				if (auto min_scroll_amount = std::min(-scroll_amount, _topIndex)) {
+					_topIndex -= min_scroll_amount;
 				}
 			}
+		}
+
+		// Option under the mouse might have changed
+		if (IsHoverActive()) {
+			RenewHoverIfNecessary();
 		}
 
 		// Check line items
 		for (auto i = 0; i < VariantBlueprint().line_count; ++i) {
 			// If the entry is in window
-			if (_top_index + i < I(_options.size())) {
-				auto text_rect = Rect().horizontal_split(VariantBlueprint().line_count, i).trim_right(scroll_bar_rect.w);
-				if (events.PopMouseButtonPress(MouseButton::PRIMARY, text_rect)) {
-					int pressed_item = _top_index + i;
-					if (_options[pressed_item].is_selected) {
+			if (_topIndex + i < I(_options.size())) {
+				if (auto text_rect = Rect().GetRow(VariantBlueprint().line_count, i).trim_right(scroll_bar_rect.w);
+						events.PopMouseButtonPress(MouseButton::PRIMARY, text_rect)) {
+					if (int pressed_item = _topIndex + i; _options[pressed_item].is_selected) {
 						// If already selected
 						_options[pressed_item].is_selected = false; // Deselect
 						if (VariantBlueprint().onAction) {
@@ -192,9 +217,9 @@ void TextSelection::OnDraw() {
 			current_selection != _options.end()) {
 			if (not current_selection->text_texture_and_destination) {
 				auto drawable_area = Rect().trim_right(Rect().h / 2);
-				auto fontSize = calculate_filled_text_rect(drawable_area, TextHorizontalAlignment::LEFT, I(m2::Utf8CodepointCount(current_selection->blueprint_option.text.c_str()))).h;
+				auto fontSize = calculate_filled_text_rect(drawable_area, TextHorizontalAlignment::LEFT, I(Utf8CodepointCount(current_selection->blueprint_option.text.c_str()))).h;
 				auto textTexture = m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, fontSize, current_selection->blueprint_option.text));
-				auto destination_rect = calculate_filled_text_rect(drawable_area, TextHorizontalAlignment::LEFT, I(m2::Utf8CodepointCount(current_selection->blueprint_option.text.c_str())));
+				auto destination_rect = calculate_filled_text_rect(drawable_area, TextHorizontalAlignment::LEFT, I(Utf8CodepointCount(current_selection->blueprint_option.text.c_str())));
 				current_selection->text_texture_and_destination = sdl::TextTextureAndDestination{std::move(textTexture), destination_rect};
 			}
 			sdl::render_texture_with_color_mod(current_selection->text_texture_and_destination->textTexture.texture(),
@@ -204,27 +229,27 @@ void TextSelection::OnDraw() {
 		auto buttons_rect = Rect().trim_left(Rect().w - Rect().h / 2);
 		{
 			auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2);
-			if (not _plus_texture) {
+			if (not _plusTexture) {
 				auto fontSize = inc_button_rect.h;
 				auto textTexture = m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, fontSize, "+"));
 				auto destination_rect = RectI::centered_around(inc_button_rect.center(), textTexture.texture_dimensions().x, textTexture.texture_dimensions().y);
 				// TODO we may need to move the texture slightly up, check the font properties
-				_plus_texture = {std::move(textTexture), destination_rect};
+				_plusTexture = {std::move(textTexture), destination_rect};
 			}
-			sdl::render_texture_with_color_mod(_plus_texture->textTexture.texture(), _plus_texture->destinationRect);
+			sdl::render_texture_with_color_mod(_plusTexture->textTexture.texture(), _plusTexture->destinationRect);
 			draw_border(inc_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 		}
 		// - button
 		{
 			auto dec_button_rect = buttons_rect.trim_top(buttons_rect.h / 2);
-			if (not _minus_texture) {
+			if (not _minusTexture) {
 				auto fontSize = dec_button_rect.h;
 				auto textTexture = m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, fontSize, "-"));
 				auto destination_rect = RectI::centered_around(dec_button_rect.center(), textTexture.texture_dimensions().x, textTexture.texture_dimensions().y);
 				// TODO we may need to move the texture slightly up, check the font properties
-				_minus_texture = {std::move(textTexture), destination_rect};
+				_minusTexture = {std::move(textTexture), destination_rect};
 			}
-			sdl::render_texture_with_color_mod(_minus_texture->textTexture.texture(), _minus_texture->destinationRect);
+			sdl::render_texture_with_color_mod(_minusTexture->textTexture.texture(), _minusTexture->destinationRect);
 			draw_border(dec_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 		}
 	} else if (line_count == 1) {
@@ -233,23 +258,22 @@ void TextSelection::OnDraw() {
 	} else {
 		// Scrollable selection
 		for (auto i = 0; i < VariantBlueprint().line_count; ++i) {
-			// If the entry is in window
-			if (_top_index + i < I(_options.size())) {
-				auto text_rect = Rect().horizontal_split(VariantBlueprint().line_count, i);
+			if (const auto optionIndexAndTextRect = GetOptionIndexAndTextRectOfRow(i)) {
+				const auto [optionIndex, textRect] = *optionIndexAndTextRect;
 				// If selected
-				if (_options[_top_index + i].is_selected) {
-					draw_rectangle(text_rect, {0, 0, 255, 127});
+				if (_options[optionIndex].is_selected) {
+					draw_rectangle(textRect, {0, 0, 255, 127});
 				}
 				// Draw text
-				auto& current_line = _options[_top_index + i];
+				auto& current_line = _options[optionIndex];
 				if (not current_line.text_texture_and_destination) {
-					auto fontSize = calculate_filled_text_rect(text_rect, TextHorizontalAlignment::LEFT, I(m2::Utf8CodepointCount(current_line.blueprint_option.text.c_str()))).h;
+					auto fontSize = calculate_filled_text_rect(textRect, TextHorizontalAlignment::LEFT, I(Utf8CodepointCount(current_line.blueprint_option.text.c_str()))).h;
 					auto textTexture = m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, fontSize, current_line.blueprint_option.text));
 					// Don't bother with destination_rect, because we're going to calculate that every time
 					current_line.text_texture_and_destination = sdl::TextTextureAndDestination{std::move(textTexture), {}};
 				}
 				// Upon scroll, the destination might still have changed, calculate it again.
-				auto destination_rect = calculate_filled_text_rect(text_rect, TextHorizontalAlignment::LEFT, I(m2::Utf8CodepointCount(current_line.blueprint_option.text.c_str())));
+				auto destination_rect = calculate_filled_text_rect(textRect, TextHorizontalAlignment::LEFT, I(Utf8CodepointCount(current_line.blueprint_option.text.c_str())));
 				current_line.text_texture_and_destination->destinationRect = destination_rect;
 				sdl::render_texture_with_color_mod(current_line.text_texture_and_destination->textTexture.texture(),
 					current_line.text_texture_and_destination->destinationRect, current_line.blueprint_option.text_color);
@@ -262,29 +286,29 @@ void TextSelection::OnDraw() {
 			draw_border(scroll_bar_rect, vertical_border_width_px(), horizontal_border_width_px());
 			// Up arrow
 			{
-				auto up_arrow_rect = scroll_bar_rect.horizontal_split(VariantBlueprint().line_count, 0);
-				if (not _up_arrow_texture) {
+				auto up_arrow_rect = scroll_bar_rect.GetRow(VariantBlueprint().line_count, 0);
+				if (not _upArrowTexture) {
 					auto fontSize = up_arrow_rect.h;
 					auto textTexture = m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, fontSize, "-"));
 					auto destination_rect = RectI::centered_around(up_arrow_rect.center(), textTexture.texture_dimensions().x, textTexture.texture_dimensions().y);
 					// TODO we may need to move the texture slightly up, check the font properties
-					_up_arrow_texture = {std::move(textTexture), destination_rect};
+					_upArrowTexture = {std::move(textTexture), destination_rect};
 				}
-				sdl::render_texture_with_color_mod(_up_arrow_texture->textTexture.texture(), _up_arrow_texture->destinationRect);
+				sdl::render_texture_with_color_mod(_upArrowTexture->textTexture.texture(), _upArrowTexture->destinationRect);
 				draw_border(up_arrow_rect, vertical_border_width_px(), horizontal_border_width_px());
 			}
 			// Down arrow
 			{
-				auto down_button_rect = scroll_bar_rect.horizontal_split(VariantBlueprint().line_count,
+				auto down_button_rect = scroll_bar_rect.GetRow(VariantBlueprint().line_count,
 					VariantBlueprint().line_count - 1);
-				if (not _down_arrow_texture) {
+				if (not _downArrowTexture) {
 					auto fontSize = down_button_rect.h;
 					auto textTexture = m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, fontSize, "+"));
 					auto destination_rect = RectI::centered_around(down_button_rect.center(), textTexture.texture_dimensions().x, textTexture.texture_dimensions().y);
 					// TODO we may need to move the texture slightly up, check the font properties
-					_down_arrow_texture = {std::move(textTexture), destination_rect};
+					_downArrowTexture = {std::move(textTexture), destination_rect};
 				}
-				sdl::render_texture_with_color_mod(_down_arrow_texture->textTexture.texture(), _down_arrow_texture->destinationRect);
+				sdl::render_texture_with_color_mod(_downArrowTexture->textTexture.texture(), _downArrowTexture->destinationRect);
 				draw_border(down_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 			}
 		}
@@ -293,12 +317,79 @@ void TextSelection::OnDraw() {
 	draw_border(Rect(), vertical_border_width_px(), horizontal_border_width_px());
 }
 
-UiAction TextSelection::increment_selection() {
+RectI TextSelection::GetTextRects() const {
+	if (VariantBlueprint().line_count == 0 || VariantBlueprint().line_count == 1) {
+		return Rect().trim_right(Rect().h / 2);
+	}
+	return Rect().trim_right(Rect().h / VariantBlueprint().line_count);
+}
+RectI TextSelection::GetTextRectOfRow(const int row) const {
+	if (VariantBlueprint().line_count == 0 || VariantBlueprint().line_count == 1) {
+		return GetTextRects();
+	}
+	return GetTextRects().GetRow(VariantBlueprint().line_count, row);
+}
+std::optional<std::pair<int,RectI>> TextSelection::GetOptionIndexAndTextRectOfRow(const int row) const {
+	if (_options.empty()) {
+		return std::nullopt;
+	}
+
+	if (VariantBlueprint().line_count == 0 || VariantBlueprint().line_count == 1) {
+		const auto currentSelectionIt = std::ranges::find_if(_options, [](auto& o) { return o.is_selected == true; });
+		const auto index = std::distance(_options.begin(), currentSelectionIt);
+		return {{index, GetTextRectOfRow(0)}};
+	}
+
+	// If the index corresponding to the row is a valid index
+	if (const auto optionIndex = _topIndex + row; optionIndex < I(_options.size())) {
+		return {{optionIndex, GetTextRectOfRow(row)}};
+	}
+	return std::nullopt;
+}
+void TextSelection::RenewHoverIfNecessary() {
+	if (not VariantBlueprint().onHover) {
+		return;
+	}
+
+	// Find the current hovered index
+	const auto newHoveredIndex = [this] -> std::optional<int> {
+		if (VariantBlueprint().line_count == 0 || VariantBlueprint().line_count == 1) {
+			return GetIndexOfFirstSelection();
+		}
+		const auto widgetY = Rect().y;
+		const auto widgetH = Rect().h;
+		const auto rowH = widgetH / VariantBlueprint().line_count;
+		const auto mouseY = M2_GAME.events.MousePosition().y;
+		const auto mouseYOffset = mouseY - widgetY;
+		if (const auto indexBeingHovered = mouseYOffset / rowH; indexBeingHovered < I(_options.size())) {
+			return indexBeingHovered;
+		}
+		return std::nullopt;
+	}();
+
+	// If state changed
+	if (newHoveredIndex != _hoveredIndex) {
+		// Turn off the old hover context
+		if (_hoveredIndex) {
+			OffHover();
+		}
+		// Turn on the new hover context
+		if (newHoveredIndex) {
+			VariantBlueprint().onHover(*this, *newHoveredIndex);
+		}
+		_hoveredIndex = newHoveredIndex;
+	}
+}
+UiAction TextSelection::IncrementSelection() {
 	if (auto current_selection = std::ranges::find_if(_options, [](auto& o) { return o.is_selected == true; });
 		current_selection != _options.end()) {
-		if (auto next_selection = std::next(current_selection); next_selection != _options.end()) {
+		if (const auto next_selection = std::next(current_selection); next_selection != _options.end()) {
 			current_selection->is_selected = false;
 			next_selection->is_selected = true;
+			// Option under the mouse might have changed
+			if (IsHoverActive()) {
+				RenewHoverIfNecessary();
+			}
 			if (VariantBlueprint().onAction) {
 				return VariantBlueprint().onAction(*this);
 			}
@@ -306,12 +397,16 @@ UiAction TextSelection::increment_selection() {
 	}
 	return MakeContinueAction();
 }
-UiAction TextSelection::decrement_selection() {
+UiAction TextSelection::DecrementSelection() {
 	if (auto current_selection = std::find_if(_options.rbegin(), _options.rend(), [](auto& o) { return o.is_selected == true; });
 		current_selection != _options.rend()) {
-		if (auto prev_selection = std::next(current_selection); prev_selection != _options.rend()) {
+		if (const auto prev_selection = std::next(current_selection); prev_selection != _options.rend()) {
 			current_selection->is_selected = false;
 			prev_selection->is_selected = true;
+			// Option under the mouse might have changed
+			if (IsHoverActive()) {
+				RenewHoverIfNecessary();
+			}
 			if (VariantBlueprint().onAction) {
 				return VariantBlueprint().onAction(*this);
 			}

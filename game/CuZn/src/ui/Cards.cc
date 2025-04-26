@@ -94,7 +94,7 @@ UiPanelBlueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType
 					.allow_multiple_selection = false,
 					.show_scroll_bar = false,
 					.onCreate = [=](MAYBE TextSelection& self) {
-						self.set_options(list_cards_as_selection_options(exclude_card_1, exclude_card_2));
+						self.SetOptions(list_cards_as_selection_options(exclude_card_1, exclude_card_2));
 					}
 				}
 			},
@@ -108,7 +108,7 @@ UiPanelBlueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType
 					.onAction = [](const Text& self) -> UiAction {
 						// Find the other blueprint
 						if (auto* card_selection = self.Parent().FindWidget<TextSelection>("CardSelection")) {
-							if (auto selections = card_selection->selections(); not selections.empty()) {
+							if (auto selections = card_selection->GetSelectedOptions(); not selections.empty()) {
 								auto item_type = static_cast<m2g::pb::ItemType>(std::get<int>(selections[0]));
 								return MakeReturnAction<m2g::pb::ItemType>(item_type);
 							}

@@ -31,6 +31,8 @@ namespace m2::widget {
 		bool show_scroll_bar{true};
 
 		std::function<void(TextSelection& self)> onCreate{};
+		std::function<void(TextSelection& self, std::optional<int> indexUnderMouse)> onHover{};
+		std::function<void(TextSelection& self)> offHover{};
 		std::function<UiAction(TextSelection& self)> onUpdate{};
 		std::function<UiAction(TextSelection& self)> onAction{};
 	};

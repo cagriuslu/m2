@@ -33,6 +33,7 @@ namespace m2 {
 		[[nodiscard]] UiPanel& Parent() const { return *_parent; }
 		[[nodiscard]] const RectI& Rect() const { return _rect_px; }
 		[[nodiscard]] bool IsFocused() const { return _focused; }
+		[[nodiscard]] bool IsHoverActive() const { return _hoverActive; }
 
 		// Modifiers
 

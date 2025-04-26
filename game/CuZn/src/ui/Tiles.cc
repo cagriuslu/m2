@@ -77,7 +77,7 @@ UiPanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType
 					.show_scroll_bar = false,
 					.onAction = [exclude_tile](const TextSelection &self) -> UiAction {
 						auto tile_to_filter = exclude_tile; // Create a copy because it'll be mutated once the filtered tile is encountered
-						if (auto industry_type_selections = self.selections(); not industry_type_selections.empty()) {
+						if (auto industry_type_selections = self.GetSelectedOptions(); not industry_type_selections.empty()) {
 							auto industry_type_selection = industry_type_selections[0];
 							auto industry_type_selection_int = std::get<int>(industry_type_selection);
 							auto industry_type = static_cast<m2g::pb::ItemCategory>(industry_type_selection_int);
@@ -100,13 +100,13 @@ UiPanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType
 							});
 							// Look for the other widget
 							self.Parent().FindWidget<TextSelection>("TileLevelSelection")
-									->set_options(std::move(options)); // Trigger the other widget to recreate itself
+									->SetOptions(std::move(options)); // Trigger the other widget to recreate itself
 							const auto industry = industry_of_industry_tile_category(industry_type);
 							self.Parent().FindWidget<Image>("IndustryVisual")
 									->SetSpriteType(M2_GAME.GetNamedItem(industry).UiSprite()); // Set the industry image
 						} else {
 							self.Parent().FindWidget<TextSelection>("TileLevelSelection")
-									->set_options({}); // Trigger the other widget to recreate itself
+									->SetOptions({}); // Trigger the other widget to recreate itself
 							self.Parent().FindWidget<Image>("IndustryVisual")
 									->SetSpriteType({}); // Clear the industry image
 						}
@@ -138,7 +138,7 @@ UiPanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType
 					.allow_multiple_selection = false,
 					.show_scroll_bar = false,
 					.onAction = [](const TextSelection &self) -> UiAction {
-						if (auto selections = self.selections(); not selections.empty()) {
+						if (auto selections = self.GetSelectedOptions(); not selections.empty()) {
 							const auto selectedTileType = static_cast<m2g::pb::ItemType>(std::get<int>(selections[0]));
 							self.Parent().FindWidget<Text>("BuildRequirements")->set_text(GetIndustryTileBuildRequirementsString(selectedTileType));
 							self.Parent().FindWidget<Text>("ResourceGain")->set_text(GetIndustryTileResourceGainString(selectedTileType));
@@ -264,7 +264,7 @@ UiPanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType
 					.onAction = [](const Text& self) -> UiAction {
 						// Find the other blueprint
 						if (auto* tile_selection = self.Parent().FindWidget<TextSelection>("TileLevelSelection")) {
-							if (auto selections = tile_selection->selections(); not selections.empty()) {
+							if (auto selections = tile_selection->GetSelectedOptions(); not selections.empty()) {
 								auto item_type = static_cast<m2g::pb::ItemType>(std::get<int>(selections[0]));
 								return MakeReturnAction<m2g::pb::ItemType>(item_type);
 							}

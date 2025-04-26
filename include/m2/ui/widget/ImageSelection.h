@@ -6,7 +6,7 @@
 
 namespace m2::widget {
 	class ImageSelection : public UiWidget {
-		sdl::TextTexture _plus_texture, _minus_texture;
+		sdl::TextTexture _plusTexture, _minusTexture;
 		unsigned _selection{};
 		bool _inc_depressed{};
 		bool _dec_depressed{};

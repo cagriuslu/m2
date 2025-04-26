@@ -7,8 +7,8 @@ using namespace m2::widget;
 
 IntegerInput::IntegerInput(UiPanel* parent, const UiWidgetBlueprint* blueprint)
     : UiWidget(parent, blueprint), _value(std::get<IntegerInputBlueprint>(blueprint->variant).initial_value),
-      _plus_texture(m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "+"))),
-      _minus_texture(m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "-"))) {
+      _plusTexture(m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "+"))),
+      _minusTexture(m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "-"))) {
 	_textTexture = m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, ToString(_value)));
 
 	// Execute onCreate
@@ -84,15 +84,15 @@ void IntegerInput::OnDraw() {
 
 	auto buttons_rect = Rect().trim_left(Rect().w - Rect().h / 2);
 	auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2);
-	sdl::render_texture_with_color_mod(_plus_texture.texture(),
+	sdl::render_texture_with_color_mod(_plusTexture.texture(),
 			calculate_filled_text_rect(inc_button_rect,
-				TextHorizontalAlignment::LEFT, I(Utf8CodepointCount(_plus_texture.string().c_str()))));
+				TextHorizontalAlignment::LEFT, I(Utf8CodepointCount(_plusTexture.string().c_str()))));
 	draw_border(inc_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 
 	auto dec_button_rect = buttons_rect.trim_top(buttons_rect.h / 2);
-	sdl::render_texture_with_color_mod(_minus_texture.texture(),
+	sdl::render_texture_with_color_mod(_minusTexture.texture(),
 			calculate_filled_text_rect(dec_button_rect,
-				TextHorizontalAlignment::LEFT, I(Utf8CodepointCount(_minus_texture.string().c_str()))));
+				TextHorizontalAlignment::LEFT, I(Utf8CodepointCount(_minusTexture.string().c_str()))));
 	draw_border(dec_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 
 	draw_border(Rect(), vertical_border_width_px(), horizontal_border_width_px());

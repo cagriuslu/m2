@@ -17,6 +17,19 @@ using namespace m2;
 using namespace m2::widget;
 
 namespace {
+	UiPanelBlueprint CreateTextTooltipBlueprint(const std::string& s) {
+		return UiPanelBlueprint{
+			.name = "Tooltip",
+			.background_color = {0, 0, 0, 255},
+			.widgets = {UiWidgetBlueprint{
+				.variant = TextBlueprint{
+					.text = s
+				}
+			}}
+		};
+	}
+	const RectF gTextTooltipRatio{0.0f, 0.0f, 0.2f, 0.05f};
+
 	std::vector<m2g::pb::ObjectType> ObjectTypesWithMainSprite() {
 		std::vector<m2g::pb::ObjectType> objs;
 		M2_GAME.ForEachObjectWithMainSprite([&objs](const auto objType, MAYBE const auto spriteType) {
@@ -42,7 +55,7 @@ namespace {
 						for (const auto& sprite : M2_GAME.level_editor_background_sprites) {
 							options.emplace_back(pb::enum_name(sprite), I(sprite));
 						}
-						self.set_options(std::move(options));
+						self.SetOptions(std::move(options));
 					}
 				}
 			},
@@ -53,7 +66,7 @@ namespace {
 					.onAction = [](MAYBE const Text& self) -> UiAction {
 						const auto* spriteSelectionWidget = self.Parent().FindWidget<TextSelection>("SpriteSelection");
 						std::vector<m2g::pb::SpriteType> selectedSprites;
-						for (const auto& selection : spriteSelectionWidget->selections()) {
+						for (const auto& selection : spriteSelectionWidget->GetSelectedOptions()) {
 							selectedSprites.emplace_back(static_cast<m2g::pb::SpriteType>(std::get<int>(selection)));
 						}
 						return MakeReturnAction(std::move(selectedSprites));
@@ -117,7 +130,7 @@ namespace {
 				.variant = TextSelectionBlueprint{
 					.onCreate = [](TextSelection& self) {
 						const auto objectTypes = ObjectTypesWithMainSprite();
-						self.set_options(ToTextSelectionOptions(objectTypes.begin(), objectTypes.end()));
+						self.SetOptions(ToTextSelectionOptions(objectTypes.begin(), objectTypes.end()));
 					}
 				}
 			},
@@ -137,7 +150,7 @@ namespace {
 					.onAction = [](const Text& self) -> UiAction {
 						const auto selectedObjectType = static_cast<m2g::pb::ObjectType>(
 								std::get<int>(
-									self.Parent().FindWidget<TextSelection>("ObjectTypeSelection")->selections()[0]));
+									self.Parent().FindWidget<TextSelection>("ObjectTypeSelection")->GetSelectedOptions()[0]));
 						return MakeReturnAction(selectedObjectType);
 					}
 				}
@@ -184,8 +197,8 @@ namespace {
 						for (const auto &spriteType: M2_GAME.level_editor_background_sprites) {
 							options.emplace_back(SpriteType_Name(spriteType), I(spriteType));
 						}
-						self.set_options(std::move(options));
-						self.set_unique_selection(0);
+						self.SetOptions(std::move(options));
+						self.SetUniqueSelectionIndex(0);
 					},
 					.onAction = [](const TextSelection& self) {
 						// Create ghost
@@ -193,7 +206,7 @@ namespace {
 						if (levelEditorState.ghostId) {
 							M2_LEVEL.deferredActions.push(CreateObjectDeleter(levelEditorState.ghostId));
 						}
-						if (const auto selections = self.selections(); not selections.empty()) {
+						if (const auto selections = self.GetSelectedOptions(); not selections.empty()) {
 							levelEditorState.ghostId = obj::create_ghost(
 									static_cast<m2g::pb::SpriteType>(std::get<int>(selections[0])), 1);
 						}
@@ -359,8 +372,8 @@ namespace {
 					.line_count = 10,
 					.onCreate = [](TextSelection& self) {
 						const auto objectTypes = ObjectTypesWithMainSprite();
-						self.set_options(ToTextSelectionOptions(objectTypes.begin(), objectTypes.end()));
-						self.set_unique_selection(0);
+						self.SetOptions(ToTextSelectionOptions(objectTypes.begin(), objectTypes.end()));
+						self.SetUniqueSelectionIndex(0);
 					},
 					.onAction = [](const TextSelection& self) {
 						// Delete previous ghost
@@ -369,7 +382,7 @@ namespace {
 							M2_LEVEL.deferredActions.push(CreateObjectDeleter(levelEditorState.ghostId));
 						}
 						// Create ghost
-						if (const auto selections = self.selections(); not selections.empty()) {
+						if (const auto selections = self.GetSelectedOptions(); not selections.empty()) {
 							const auto snapToGrid = M2_LEVEL.LeftHud()->FindWidget<CheckboxWithText>("SnapToGridCheckbox")->GetState();
 							const auto splitCount = M2_LEVEL.LeftHud()->FindWidget<IntegerInput>("CellSplitCount")->value();
 							levelEditorState.ghostId = obj::create_ghost(*M2_GAME.GetMainSpriteOfObject(static_cast<m2g::pb::ObjectType>(std::get<int>(selections[0]))), snapToGrid ? splitCount : 0);
@@ -392,7 +405,7 @@ namespace {
 						for (int e = 0; e < pb::enum_value_count<m2g::pb::GroupType>(); ++e) {
 							options.emplace_back(pb::enum_name<m2g::pb::GroupType>(e), pb::enum_value<m2g::pb::GroupType>(e));
 						}
-						self.set_options(std::move(options));
+						self.SetOptions(std::move(options));
 					}
 				}
 			},
@@ -528,10 +541,20 @@ namespace {
 		.widgets = {
 			UiWidgetBlueprint{
 				.name = "FixtureSelection",
-				.x = 1, .y = 1, .w = 17, .h = 15,
+				.x = 1, .y = 1, .w = 17, .h = 54,
 				.variant = TextSelectionBlueprint{
-					.line_count = 5,
+					.line_count = 18,
 					.show_scroll_bar = true,
+					.onHover = [](const TextSelection& self, const std::optional<int> indexUnderMouse) {
+						if (indexUnderMouse) {
+							const auto& state = dynamic_cast<level_editor::DrawFgRightHudState&>(*self.Parent().state);
+							const auto fixtureName = state.SelectedObjectMainSpritePb().regular().fixtures(*indexUnderMouse).name();
+							M2_LEVEL.SetMouseHoverUiPanel(std::make_unique<UiPanelBlueprint>(std::move(CreateTextTooltipBlueprint(fixtureName))), gTextTooltipRatio);
+						}
+					},
+					.offHover = [](MAYBE TextSelection& self) {
+						M2_LEVEL.RemoveMouseHoverUiPanel();
+					},
 					.onUpdate = [](TextSelection& self) -> UiAction {
 						if (const auto& state = dynamic_cast<level_editor::DrawFgRightHudState&>(*self.Parent().state);
 								self.GetOptions().size() != state.SelectedSpriteFixtureCount()) {
@@ -540,35 +563,35 @@ namespace {
 							std::ranges::transform(currentFixtureTypes, std::back_inserter(options), [](const auto type) -> TextSelectionBlueprint::Option {
 								return {.text = sheet_editor::gFixtureTypeNames.at(type)};
 							});
-							self.set_options(std::move(options));
+							self.SetOptions(std::move(options));
 						}
 						return MakeContinueAction();
 					}
 				}
 			},
 			UiWidgetBlueprint{
-				.x = 1, .y = 17, .w = 17, .h = 3,
+				.x = 1, .y = 56, .w = 17, .h = 3,
 				.variant = TextBlueprint{
 					.text = "Add Chain",
 					.onAction = [](const Text& self) -> UiAction {
 						auto* fixtureSelectionWidget = self.Parent().FindWidget<TextSelection>("FixtureSelection");
-						const auto selectedIndexes = fixtureSelectionWidget->SelectedIndexes();
+						const auto selectedIndexes = fixtureSelectionWidget->GetSelectedIndexes();
 						const auto selectedIndex = selectedIndexes.empty() ? -1 : selectedIndexes[0];
 						auto& state = dynamic_cast<level_editor::DrawFgRightHudState&>(*self.Parent().state);
 						const auto newIndex = state.AddChain(selectedIndex);
 						fixtureSelectionWidget->UpdateContents();
-						fixtureSelectionWidget->set_unique_selection(newIndex);
+						fixtureSelectionWidget->SetUniqueSelectionIndex(newIndex);
 						return MakeContinueAction();
 					}
 				}
 			},
 			UiWidgetBlueprint{
-				.x = 1, .y = 21, .w = 17, .h = 3,
+				.x = 1, .y = 60, .w = 17, .h = 3,
 				.variant = TextBlueprint{
 					.text = "Remove Fixture",
 					.onAction = [](const Text& self) -> UiAction {
 						const auto* fixtureSelectionWidget = self.Parent().FindWidget<TextSelection>("FixtureSelection");
-						if (const auto selectedIndexes = fixtureSelectionWidget->SelectedIndexes(); not selectedIndexes.empty()) {
+						if (const auto selectedIndexes = fixtureSelectionWidget->GetSelectedIndexes(); not selectedIndexes.empty()) {
 							const auto selectedIndex = selectedIndexes[0];
 							auto& state = dynamic_cast<level_editor::DrawFgRightHudState&>(*self.Parent().state);
 							state.RemoveFixture(selectedIndex);
@@ -578,13 +601,13 @@ namespace {
 				}
 			},
 			UiWidgetBlueprint{
-				.x = 1, .y = 25, .w = 17, .h = 3,
+				.x = 1, .y = 64, .w = 17, .h = 3,
 				.variant = TextBlueprint{
 					.text = "Store Point",
 					.onAction = [](const Text& self) -> UiAction {
 						if (auto* selection = M2_LEVEL.PrimarySelection(); selection->IsComplete()) {
 							const auto* fixtureSelectionWidget = self.Parent().FindWidget<TextSelection>("FixtureSelection");
-							if (const auto selectedIndexes = fixtureSelectionWidget->SelectedIndexes(); not selectedIndexes.empty()) {
+							if (const auto selectedIndexes = fixtureSelectionWidget->GetSelectedIndexes(); not selectedIndexes.empty()) {
 								const auto selectedIndex = selectedIndexes[0];
 								const auto& state = dynamic_cast<level_editor::DrawFgRightHudState&>(*self.Parent().state);
 								if (const auto fixtureType = state.SelectedSpriteFixtureTypes()[selectedIndex];
@@ -599,12 +622,12 @@ namespace {
 				}
 			},
 			UiWidgetBlueprint{
-				.x = 1, .y = 29, .w = 17, .h = 3,
+				.x = 1, .y = 68, .w = 17, .h = 3,
 				.variant = TextBlueprint{
 					.text = "Undo Point",
 					.onAction = [](const Text& self) -> UiAction {
 						const auto* fixtureSelectionWidget = self.Parent().FindWidget<TextSelection>("FixtureSelection");
-						if (const auto selectedIndexes = fixtureSelectionWidget->SelectedIndexes(); not selectedIndexes.empty()) {
+						if (const auto selectedIndexes = fixtureSelectionWidget->GetSelectedIndexes(); not selectedIndexes.empty()) {
 							const auto selectedIndex = selectedIndexes[0];
 							const auto& state = dynamic_cast<level_editor::DrawFgRightHudState&>(*self.Parent().state);
 							if (const auto fixtureType = state.SelectedSpriteFixtureTypes()[selectedIndex];
