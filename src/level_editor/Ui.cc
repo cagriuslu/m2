@@ -776,10 +776,10 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
 			.h = 4,
 			.variant = TextSelectionBlueprint{
 				.options = {
-					TextSelectionBlueprint::Option{.text = "L0-Front", .return_value = I(BackgroundLayer::L0)},
-					TextSelectionBlueprint::Option{.text = "L1", .return_value = I(BackgroundLayer::L1)},
-					TextSelectionBlueprint::Option{.text = "L2", .return_value = I(BackgroundLayer::L2)},
-					TextSelectionBlueprint::Option{.text = "L3-Back", .return_value = I(BackgroundLayer::L3)}
+					TextSelectionBlueprint::Option{.text = "B0-Front", .return_value = I(BackgroundLayer::B0)},
+					TextSelectionBlueprint::Option{.text = "B1", .return_value = I(BackgroundLayer::B1)},
+					TextSelectionBlueprint::Option{.text = "B2", .return_value = I(BackgroundLayer::B2)},
+					TextSelectionBlueprint::Option{.text = "B3-Back", .return_value = I(BackgroundLayer::B3)}
 				},
 				.line_count = 0,
 				.allow_multiple_selection = false,

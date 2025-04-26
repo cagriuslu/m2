@@ -12,8 +12,11 @@ namespace {
 	}
 }
 
-std::string m2::ToString(BackgroundLayer layer) {
-	return ToString(I(layer));
+std::string m2::ToString(const BackgroundLayer layer) {
+	return "B" + ToString(I(layer));
+}
+std::string m2::ToString(const ForegroundLayer layer) {
+	return "F" + ToString(I(layer));
 }
 
 size_t m2::Utf8CodepointCount(const char* s) {

@@ -8,16 +8,25 @@
 namespace m2 {
 	extern const std::string gEmptyString;
 
-	/// Background layers are drawn from back to front. L0 is drawn the last, thus it's on the front.
+	/// Background layers are drawn from back to front. B0 is drawn the last, thus it's on the front.
 	enum class BackgroundLayer {
-		L0 = 0,
-		L1 = 1,
-		L2 = 2,
-		L3 = 3,
+		B0 = 0,
+		B1 = 1,
+		B2 = 2,
+		B3 = 3,
 		_n // End sentinel
 	};
 	constexpr int gBackgroundLayerCount = static_cast<int>(BackgroundLayer::_n);
 	std::string ToString(BackgroundLayer layer);
+
+	/// Foreground layers are drawn from back to front. L0 is drawn the first, thus it's on the back.
+	enum class ForegroundLayer {
+		F0 = 0,
+		F1 = 1,
+		_n // End sentinel
+	};
+	constexpr int gForegroundLayerCount = static_cast<int>(ForegroundLayer::_n);
+	std::string ToString(ForegroundLayer layer);
 
 	/// Returns the number of codepoints in a UTF-8 string.
 	/// One codepoint does not always equate to one glyph, but it's a good estimation for most characters.

@@ -5,7 +5,7 @@
 m2::Id m2::obj::create_pixel(const VecF &pos, SDL_Color color) {
 	auto it = CreateObject(pos);
 
-	auto& gfx = it->AddTerrainGraphic(BackgroundLayer::L0);
+	auto& gfx = it->AddTerrainGraphic(BackgroundLayer::B0);
 	gfx.onDraw = [=](Graphic& gfx) {
 		auto screen_origin_to_position_px_vec = ScreenOriginToPositionVecPx(gfx.Owner().position);
 		auto dst_rect = SDL_Rect{
