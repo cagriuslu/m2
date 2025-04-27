@@ -72,7 +72,7 @@ namespace m2 {
 		box2d::ContactListener* contactListener{};
 		Id cameraId{}, playerId{}, pointer_id{};
 		std::optional<SoundListener> leftListener, rightListener;
-		std::array<std::optional<Pathfinder>, gForegroundLayerCount> pathfinder;
+		std::optional<Pathfinder> pathfinder; // Pathfinder works only on ForegroundLayer::F0 and background layers.
 
 		std::optional<sdl::ticks_t> rootBlockingUiBeginTicks;  // Exists only if there is an ongoing blocking UI
 		std::queue<std::function<void()>> deferredActions;

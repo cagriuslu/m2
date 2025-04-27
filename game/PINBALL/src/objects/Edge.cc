@@ -36,5 +36,6 @@ void LoadEdge() {
 		},
 
 	};
-	phy.body = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, it->GetPhysiqueId(), {}, {});
+	phy.body[I(m2::ForegroundLayer::F0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, it->GetPhysiqueId(), {}, {});
+	phy.body[I(m2::ForegroundLayer::F1)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, it->GetPhysiqueId(), {}, {}, m2::ForegroundLayer::F1);
 }

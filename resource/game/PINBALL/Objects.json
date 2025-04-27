@@ -29,6 +29,10 @@
     {
       "type": "OBJECT_BALL_LAUNCHER_SENSOR",
       "mainSprite": "SPRITE_BALL_LAUNCHER_SENSOR"
+    },
+    {
+      "type": "OBJECT_BALL_PLATFORM_ENTRY_SENSOR",
+      "mainSprite": "SPRITE_BALL_PLATFORM_ENTRY_SENSOR"
     }
   ]
 }

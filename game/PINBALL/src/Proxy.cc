@@ -5,7 +5,7 @@
 #include <pinball/Simulation.h>
 #include <pinball/objects/Animal.h>
 #include <pinball/objects/Wall.h>
-#include <pinball/objects/BallLauncherSensor.h>
+#include <pinball/objects/Sensor.h>
 #include <m2/Game.h>
 #include <m2/ui/widget/ProgressBar.h>
 #include <m2/ui/widget/Text.h>
@@ -313,6 +313,8 @@ m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object&
 			return LoadPlatform(obj);
 		case pb::ObjectType::OBJECT_BALL_LAUNCHER_SENSOR:
 			return LoadBallLauncherSensor(obj);
+		case pb::ObjectType::OBJECT_BALL_PLATFORM_ENTRY_SENSOR:
+			return LoadPlatformEntrySensor(obj);
 		default:
 			throw M2_ERROR("Missing loader for type: " + m2::ToString(obj.GetType()));
 	}

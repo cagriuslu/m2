@@ -39,8 +39,7 @@ m2::Pool<m2::Object>::Iterator m2::obj::create_tile(const BackgroundLayer layer,
 				.initiallyEnabled = true
 			};
 			auto& phy = it->AddPhysique();
-			phy.body = third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, it->GetPhysiqueId(),
-					it->position, 0.0f);
+			phy.body[I(ForegroundLayer::F0)] = third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, it->GetPhysiqueId(), it->position, 0.0f);
 		}
 
 		// Add foreground companion if necessary

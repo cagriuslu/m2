@@ -1,21 +1,26 @@
 #include <m2/containers/DrawList.h>
 #include <m2/Game.h>
 
-bool m2::DrawList::Vec2fComparator::operator()(const VecF& lhs, const VecF& rhs) const {
+bool m2::DrawList::VecFComparator::operator()(const VecF& lhs, const VecF& rhs) const {
 	return lhs.y < rhs.y;
 }
 
 m2::DrawList::ConstIterator& m2::DrawList::ConstIterator::operator++() {
-	mapIt++;
+	++mapIt;
 	return *this;
 }
-
 bool m2::DrawList::ConstIterator::operator==(const ConstIterator& other) const {
 	return mapIt == other.mapIt;
 }
-
 m2::GraphicId m2::DrawList::ConstIterator::operator*() const {
 	return mapIt->second.gfxId;
+}
+
+m2::DrawList::ConstIterator m2::DrawList::begin() const {
+	return {drawMap.begin()};
+}
+m2::DrawList::ConstIterator m2::DrawList::end() const {
+	return {drawMap.end()};
 }
 
 void m2::DrawList::Insert(ObjectId id) {
@@ -23,11 +28,9 @@ void m2::DrawList::Insert(ObjectId id) {
 	auto it = drawMap.insert({obj.position, {id, obj.GetGraphicId()}});
 	idLookup.insert({id, it});
 }
-
 void m2::DrawList::QueueUpdate(ObjectId id, const VecF& pos) {
 	updateQueue.emplace_back(id, pos);
 }
-
 void m2::DrawList::Update() {
 	for (auto& [id, pos]: updateQueue) {
 		auto id_lookup_it = idLookup.find(id);
@@ -40,19 +43,10 @@ void m2::DrawList::Update() {
 	}
 	updateQueue.clear();
 }
-
 void m2::DrawList::Remove(ObjectId id) {
 	auto it = idLookup.find(id);
 	if (it != idLookup.end()) {
 		drawMap.erase(it->second);
 		idLookup.erase(it);
 	}
-}
-
-m2::DrawList::ConstIterator m2::DrawList::begin() const {
-	return {drawMap.begin()};
-}
-
-m2::DrawList::ConstIterator m2::DrawList::end() const {
-	return {drawMap.end()};
 }

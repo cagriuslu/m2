@@ -23,9 +23,7 @@ m2::void_expected LoadPlatform(m2::Object& obj) {
 			}
 		});
 	}
-	phy.body = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
-
-	obj.AddGraphic(spriteType);
+	phy.body[I(m2::ForegroundLayer::F1)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::ForegroundLayer::F1);
 
 	return {};
 }

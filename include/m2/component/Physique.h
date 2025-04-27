@@ -5,13 +5,13 @@
 #include <functional>
 
 namespace m2 {
-	struct Physique : Component {
+	struct Physique final : Component {
 		using Callback = std::function<void(Physique&)>;
 		Callback preStep{};
 		Callback postStep{};
 
 		// An object has either body or rigidBodyIndex.
-		std::optional<third_party::physics::RigidBody> body;
+		std::array<std::optional<third_party::physics::RigidBody>, gForegroundLayerCount> body{};
 		std::optional<int> rigidBodyIndex;
 
 		std::function<void(Physique&, Physique&, const box2d::Contact&)> onCollision;

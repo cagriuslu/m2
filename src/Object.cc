@@ -188,11 +188,48 @@ m2::Character& m2::Object::AddFullCharacter() {
     return std::get<FullCharacter>(*character);
 }
 
-void m2::Object::MoveToBackgroundLayer(BackgroundLayer bl) {
+void m2::Object::MoveToBackgroundLayer(MAYBE const BackgroundLayer bl) {
 	throw M2_ERROR("Not yet implemented");
 }
-void m2::Object::MoveToForegroundLayer(ForegroundLayer fl) {
-	throw M2_ERROR("Not yet implemented");
+void m2::Object::MoveToForegroundLayer(const ForegroundLayer fl) {
+	if (not _graphic_id) {
+		throw M2_ERROR("Object is not on the foreground");
+	}
+	// Find current layer
+	const auto objId = GetId();
+	std::optional<ForegroundLayer> currentLayer;
+	for (auto i = I(ForegroundLayer::F0); i < I(ForegroundLayer::_n); ++i) {
+		if (M2_LEVEL.drawList[i].ContainsObject(objId)) {
+			currentLayer = static_cast<ForegroundLayer>(i);
+			break;
+		}
+	}
+	if (not currentLayer) {
+		throw M2_ERROR("Object is not in any draw list");
+	}
+	// Move if necessary
+	if (*currentLayer != fl) {
+		// Remove from the current draw list
+		M2_LEVEL.drawList[I(*currentLayer)].Remove(objId);
+		// Add to the new draw list
+		M2_LEVEL.drawList[I(fl)].Insert(objId);
+
+		if (GetPhysiqueId()) {
+			// TODO Mover is not capable of moving all the fixtures from one world to the other, thus the object loader
+			//  must have loaded the same object to both worlds. Bodies with joints cannot be moved as well, for the
+			//  same reason.
+			auto& phy = GetPhysique();
+			if (not phy.body[I(*currentLayer)] || phy.body[I(*currentLayer)]->HasJoint()) {
+				throw M2_ERROR("Moving an object with a joint is not yet implemented");
+			}
+			if (not phy.body[I(fl)]) {
+				throw M2_ERROR("Rigid body is not created in the destination foreground layer");
+			}
+			phy.body[I(fl)]->TeleportToAnother(*phy.body[I(*currentLayer)]);
+			phy.body[I(fl)]->SetEnabled(true);
+			phy.body[I(*currentLayer)]->SetEnabled(false);
+		}
+	}
 }
 
 void m2::Object::RemovePhysique() {
@@ -280,6 +317,13 @@ std::function<void(void)> m2::CreateCharacterDeleter(ObjectId id) {
 	return [id]() {
 		if (auto* object = M2_LEVEL.objects.Get(id); object) {
 			object->RemoveCharacter();
+		}
+	};
+}
+std::function<void()> m2::CreateForegroundLayerMover(ObjectId id, ForegroundLayer toLayer) {
+	return [id, toLayer]() {
+		if (auto* object = M2_LEVEL.objects.Get(id)) {
+			object->MoveToForegroundLayer(toLayer);
 		}
 	};
 }

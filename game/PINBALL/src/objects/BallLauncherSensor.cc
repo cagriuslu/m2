@@ -1,4 +1,4 @@
-#include <pinball/objects/BallLauncherSensor.h>
+#include <pinball/objects/Sensor.h>
 #include <m2/third_party/physics/ColliderCategory.h>
 #include <m2/Game.h>
 #include <m2/Log.h>
@@ -24,7 +24,7 @@ m2::void_expected LoadBallLauncherSensor(m2::Object& obj) {
 		.isBullet = false,
 		.initiallyEnabled = true
 	};
-	phy.body = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
+	phy.body[I(m2::ForegroundLayer::F0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
 
 	phy.onCollision = [](m2::Physique&, m2::Physique&, const m2::box2d::Contact&) {
 		LOG_INFO("Colliding");

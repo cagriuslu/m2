@@ -39,6 +39,9 @@
       "group": {}
     },
     {
+      "type": "OBJECT_BALL_PLATFORM_ENTRY_SENSOR"
+    },
+    {
       "position": {
         "x": 6,
         "y": 24.5

@@ -275,13 +275,16 @@ m2::void_expected m2::Level::InitAnyPlayer(
 
 	if (physical_world) {
 		world[I(ForegroundLayer::F0)] = new b2World(M2G_PROXY.gravity ? b2Vec2{0.0f, 10.0f} : b2Vec2{0.0f, 0.0f});
+		world[I(ForegroundLayer::F1)] = new b2World(M2G_PROXY.gravity ? b2Vec2{0.0f, 10.0f} : b2Vec2{0.0f, 0.0f});
 		contactListener = new box2d::ContactListener(
 		    Physique::DefaultBeginContactCallback, Physique::DefaultEndContactCallback);
 		world[I(ForegroundLayer::F0)]->SetContactListener(contactListener);
+		world[I(ForegroundLayer::F1)]->SetContactListener(contactListener);
 #ifdef DEBUG
 		auto* debugDraw = new third_party::physics::box2d::DebugDraw{};
 		_debugDraw = debugDraw;
 		world[I(ForegroundLayer::F0)]->SetDebugDraw(debugDraw);
+		world[I(ForegroundLayer::F1)]->SetDebugDraw(debugDraw);
 #endif
 	}
 
@@ -338,7 +341,7 @@ m2::void_expected m2::Level::InitAnyPlayer(
 
 	if (physical_world) {
 		// Init pathfinder map
-		pathfinder[I(ForegroundLayer::F0)] = Pathfinder{*_lb};
+		pathfinder = Pathfinder{*_lb};
 	}
 
 	// Create default objects

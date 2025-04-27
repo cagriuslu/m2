@@ -31,13 +31,15 @@ m2::void_expected LoadBall(m2::Object& obj) {
 		.isBullet = true,
 		.initiallyEnabled = true
 	};
-	phy.body = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
+	phy.body[I(m2::ForegroundLayer::F0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
+	phy.body[I(m2::ForegroundLayer::F1)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::ForegroundLayer::F1);
+	phy.body[I(m2::ForegroundLayer::F1)]->SetEnabled(false);
 
 	MAYBE auto& gfx = obj.AddGraphic(m2g::pb::SPRITE_BASIC_BALL);
 
 	phy.preStep = [](m2::Physique& phy_) {
 		if (M2_GAME.events.PopKeyRelease(m2g::pb::BALL_LAUNCHER) && M2G_PROXY.isOnBallLauncher) {
-			phy_.body->ApplyForceToCenter({0.0f, -6000.0f});
+			phy_.body[I(m2::ForegroundLayer::F0)]->ApplyForceToCenter({0.0f, -6000.0f});
 		}
 	};
 

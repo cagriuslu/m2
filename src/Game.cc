@@ -590,17 +590,17 @@ void m2::Game::UpdateCharacters() {
 
 void m2::Game::ExecuteStep() {
 	if (_level->world[I(ForegroundLayer::F0)]) {
-		LOGF_TRACE("Stepping world %f seconds...", phy_period);
+		LOGF_TRACE("Stepping world F0 %f seconds...", phy_period);
 		_level->world[I(ForegroundLayer::F0)]->Step(phy_period, velocity_iterations, position_iterations);
 		_level->World2().Integrate();
 		LOG_TRACE("World stepped");
 		// Update positions
 		for (auto& phy : _level->physics) {
-			if (phy.body) {
+			if (phy.body[I(ForegroundLayer::F0)] && phy.body[I(ForegroundLayer::F0)]->IsEnabled()) {
 				auto& object = phy.Owner();
 				auto old_pos = object.position;
-				object.position = VecF{phy.body->GetPosition()};
-				object.orientation = phy.body->GetAngle();
+				object.position = VecF{phy.body[I(ForegroundLayer::F0)]->GetPosition()};
+				object.orientation = phy.body[I(ForegroundLayer::F0)]->GetAngle();
 				// Update draw list
 				if (old_pos != object.position) {
 					_level->drawList[I(ForegroundLayer::F0)].QueueUpdate(phy.OwnerId(), object.position);
@@ -620,12 +620,30 @@ void m2::Game::ExecuteStep() {
 			}
 		}
 	}
+	if (_level->world[I(ForegroundLayer::F1)]) {
+		LOGF_TRACE("Stepping world F1 %f seconds...", phy_period);
+		_level->world[I(ForegroundLayer::F1)]->Step(phy_period, velocity_iterations, position_iterations);
+		LOG_TRACE("World stepped");
+		// Update positions
+		for (auto& phy : _level->physics) {
+			if (phy.body[I(ForegroundLayer::F1)] && phy.body[I(ForegroundLayer::F1)]->IsEnabled()) {
+				auto& object = phy.Owner();
+				auto old_pos = object.position;
+				object.position = VecF{phy.body[I(ForegroundLayer::F1)]->GetPosition()};
+				object.orientation = phy.body[I(ForegroundLayer::F1)]->GetAngle();
+				// Update draw list
+				if (old_pos != object.position) {
+					_level->drawList[I(ForegroundLayer::F1)].QueueUpdate(phy.OwnerId(), object.position);
+				}
+			}
+		}
+	}
 	// Re-sort draw list
 	_level->drawList[I(ForegroundLayer::F0)].Update();
 	if (not _proxy.world_is_static) {
 		// If the world is NOT static, the pathfinder's cache should be cleared, because the objects might have been
 		// moved
-		_level->pathfinder[I(ForegroundLayer::F0)]->clear_cache();
+		_level->pathfinder->clear_cache();
 	}
 }
 
@@ -758,6 +776,11 @@ void m2::Game::DrawForeground() {
 			IF(gfx.onDraw)(gfx);
 		}
 	}
+	for (const auto& gfx_id : _level->drawList[I(ForegroundLayer::F1)]) {
+		if (auto& gfx = _level->fgGraphics[gfx_id]; gfx.enabled && gfx.draw) {
+			IF(gfx.onDraw)(gfx);
+		}
+	}
 }
 
 void m2::Game::DrawLights() {
@@ -778,6 +801,9 @@ void m2::Game::DebugDraw() {
 #ifdef DEBUG
 	if (_level->world[I(ForegroundLayer::F0)]) {
 		_level->world[I(ForegroundLayer::F0)]->DebugDraw();
+	}
+	if (_level->world[I(ForegroundLayer::F1)]) {
+		_level->world[I(ForegroundLayer::F1)]->DebugDraw();
 	}
 
 	if (IsProjectionTypePerspective(_level->ProjectionType())) {

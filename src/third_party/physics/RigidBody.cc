@@ -57,7 +57,7 @@ std::variant<RectangleShape,CircleShape,ChainShape,EdgeShape> m2::third_party::p
 }
 
 RigidBody RigidBody::CreateFromDefinition(const RigidBodyDefinition& definition, PhysiqueId physiqueId,
-		const VecF& position, const float angleInRads) {
+		const VecF& position, const float angleInRads, const ForegroundLayer fl) {
 	b2BodyDef box2dBodyDef = {};
 	box2dBodyDef.type = ToBox2dBodyType(definition.bodyType);
 	box2dBodyDef.position = static_cast<b2Vec2>(position);
@@ -73,7 +73,7 @@ RigidBody RigidBody::CreateFromDefinition(const RigidBodyDefinition& definition,
 	box2dBodyDef.enabled = definition.initiallyEnabled;
 	box2dBodyDef.userData.pointer = physiqueId;
 	box2dBodyDef.gravityScale = definition.gravityScale;
-	b2Body* body = M2_LEVEL.world[I(ForegroundLayer::F0)]->CreateBody(&box2dBodyDef);
+	b2Body* body = M2_LEVEL.world[I(fl)]->CreateBody(&box2dBodyDef);
 
 	for (const auto& fixture : definition.fixtures) {
 		b2FixtureDef box2dFixtureDef = {};
@@ -132,25 +132,29 @@ RigidBody RigidBody::CreateFromDefinition(const RigidBodyDefinition& definition,
 		body->SetMassData(&massData);
 	}
 
-	return RigidBody{body};
+	return RigidBody{body, fl};
 }
-RigidBody::RigidBody(RigidBody&& other) noexcept : _ptr(other._ptr) {
+RigidBody::RigidBody(RigidBody&& other) noexcept : _ptr(other._ptr), _foregroundLayer(other._foregroundLayer) {
 	other._ptr = nullptr;
 }
 RigidBody& RigidBody::operator=(RigidBody&& other) noexcept {
 	std::swap(_ptr, other._ptr);
+	std::swap(_foregroundLayer, other._foregroundLayer);
 	return *this;
 }
 RigidBody::~RigidBody() {
 	if (_ptr) {
-		if (M2_LEVEL.world[I(ForegroundLayer::F0)]->IsLocked()) {
+		if (M2_LEVEL.world[I(_foregroundLayer)]->IsLocked()) {
 			LOG_FATAL("Body destroyed during physics step");
 			std::terminate();
 		}
-		M2_LEVEL.world[I(ForegroundLayer::F0)]->DestroyBody(static_cast<b2Body*>(_ptr));
+		M2_LEVEL.world[I(_foregroundLayer)]->DestroyBody(static_cast<b2Body*>(_ptr));
 	}
 }
 
+bool RigidBody::IsEnabled() const {
+	return static_cast<b2Body*>(_ptr)->IsEnabled();
+}
 m2::VecF RigidBody::GetPosition() const {
 	return VecF{static_cast<b2Body*>(_ptr)->GetPosition()};
 }
@@ -162,6 +166,9 @@ m2::VecF RigidBody::GetLinearVelocity() const {
 }
 float RigidBody::GetAngularVelocity() const {
 	return static_cast<b2Body*>(_ptr)->GetAngularVelocity();
+}
+bool RigidBody::HasJoint() const {
+	return static_cast<b2Body*>(_ptr)->GetJointList();
 }
 
 uint16_t RigidBody::GetAllLayersBelongingTo() const {
@@ -181,6 +188,9 @@ uint16_t RigidBody::GetAllLayersCollidingTo() const {
 	return out;
 }
 
+void RigidBody::SetEnabled(const bool state) {
+	static_cast<b2Body*>(_ptr)->SetEnabled(state);
+}
 void RigidBody::SetPosition(const VecF& pos) {
 	const auto currentAngle = static_cast<b2Body*>(_ptr)->GetAngle();
 	static_cast<b2Body*>(_ptr)->SetTransform(static_cast<b2Vec2>(pos), currentAngle);
@@ -197,4 +207,13 @@ void RigidBody::SetAngularVelocity(const float w) {
 }
 void RigidBody::ApplyForceToCenter(const VecF& f) {
 	static_cast<b2Body*>(_ptr)->ApplyForceToCenter(static_cast<b2Vec2>(f), true);
+}
+
+void RigidBody::TeleportToAnother(const RigidBody& other) {
+	auto* thisBody = static_cast<b2Body*>(_ptr);
+	const auto* otherBody = static_cast<b2Body*>(other._ptr);
+	thisBody->SetTransform(otherBody->GetPosition(), otherBody->GetAngle());
+	thisBody->SetLinearVelocity(otherBody->GetLinearVelocity());
+	thisBody->SetAngularVelocity(otherBody->GetAngularVelocity());
+	thisBody->SetAwake(otherBody->IsAwake());
 }

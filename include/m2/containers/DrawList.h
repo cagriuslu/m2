@@ -16,13 +16,13 @@ namespace m2 {
 		};
 
 	   private:
-		/// Special Vec2f comparator that sorts based on Y-axis because that's how we draw items
-		struct Vec2fComparator {
+		/// Special comparator that sorts based on Y-axis because that's how we draw items
+		struct VecFComparator {
 			bool operator()(const VecF& lhs, const VecF& rhs) const;
 		};
 
 		/// A map is used to order the items
-		std::multimap<VecF, DrawItem, Vec2fComparator> drawMap;
+		std::multimap<VecF, DrawItem, VecFComparator> drawMap;
 
 		/// A map that maps an ObjectId to an item in the draw_map
 		std::unordered_map<ObjectId, decltype(drawMap)::iterator> idLookup;
@@ -39,19 +39,21 @@ namespace m2 {
 			GraphicId operator*() const;
 		};
 
-		/// Add new object to the DrawList
-		void Insert(ObjectId id);
-
-		/// Queue a position update for an object for later
-		void QueueUpdate(ObjectId id, const VecF& pos);
-
-		/// Apply the queued updates
-		void Update();
-
-		/// Remove an object from the DrawList
-		void Remove(ObjectId id);
+		// Accessors
 
 		[[nodiscard]] ConstIterator begin() const;
 		[[nodiscard]] ConstIterator end() const;
+		[[nodiscard]] bool ContainsObject(const ObjectId id) const { return idLookup.contains(id); }
+
+		// Modifiers
+
+		/// Add new object to the DrawList
+		void Insert(ObjectId id);
+		/// Queue a position update for an object for later
+		void QueueUpdate(ObjectId id, const VecF& pos);
+		/// Apply the queued updates
+		void Update();
+		/// Remove an object from the DrawList
+		void Remove(ObjectId id);
 	};
 }  // namespace m2

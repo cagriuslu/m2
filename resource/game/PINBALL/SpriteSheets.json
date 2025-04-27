@@ -265,6 +265,33 @@
               }
             ]
           }
+        },
+        {
+          "type": "SPRITE_BALL_PLATFORM_ENTRY_SENSOR",
+          "regular": {
+            "fixtures": [
+              {
+                "chain": {
+                  "points": [
+                    {
+                      "x": 224
+                    },
+                    {
+                      "x": 256
+                    },
+                    {
+                      "x": 256,
+                      "y": 128
+                    },
+                    {
+                      "x": 224,
+                      "y": 128
+                    }
+                  ]
+                }
+              }
+            ]
+          }
         }
       ]
     }

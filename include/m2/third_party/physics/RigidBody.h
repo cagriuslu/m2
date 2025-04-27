@@ -2,10 +2,12 @@
 #include <m2/containers/Pool.h>
 #include <m2/math/VecF.h>
 #include <m2/Meta.h>
+#include <m2/M2.h>
 #include <Sprite.pb.h>
 #include <variant>
 #include <vector>
 #include <cstdint>
+
 
 namespace m2::third_party::physics {
 	enum class RigidBodyType {
@@ -86,11 +88,12 @@ namespace m2::third_party::physics {
 
 	class RigidBody {
 		void* _ptr{};
+		ForegroundLayer _foregroundLayer;
 
-		explicit RigidBody(void* ptr) : _ptr(ptr) {}
+		RigidBody(void* ptr, const ForegroundLayer fl) : _ptr(ptr), _foregroundLayer(fl) {}
 
 	public:
-		static RigidBody CreateFromDefinition(const RigidBodyDefinition&, Id physiqueId, const VecF& position, float angleInRads);
+		static RigidBody CreateFromDefinition(const RigidBodyDefinition&, Id physiqueId, const VecF& position, float angleInRads, ForegroundLayer fl = ForegroundLayer::F0);
 		// Copy not allowed
 		RigidBody(const RigidBody& other) = delete;
 		RigidBody& operator=(const RigidBody& other) = delete;
@@ -102,21 +105,27 @@ namespace m2::third_party::physics {
 
 		// Accessors
 
-		void* GetThirdPartObject() const { return _ptr; }
-		VecF GetPosition() const;
-		float GetAngle() const; // In radians
-		VecF GetLinearVelocity() const;
-		float GetAngularVelocity() const;
+		[[nodiscard]] void* GetThirdPartObject() const { return _ptr; }
+		[[nodiscard]] bool IsEnabled() const;
+		[[nodiscard]] VecF GetPosition() const;
+		[[nodiscard]] float GetAngle() const; // In radians
+		[[nodiscard]] VecF GetLinearVelocity() const;
+		[[nodiscard]] float GetAngularVelocity() const;
+		[[nodiscard]] bool HasJoint() const;
 
-		uint16_t GetAllLayersBelongingTo() const;
-		uint16_t GetAllLayersCollidingTo() const;
+		[[nodiscard]] uint16_t GetAllLayersBelongingTo() const;
+		[[nodiscard]] uint16_t GetAllLayersCollidingTo() const;
 
 		// Modifiers
 
+		void SetEnabled(bool);
 		void SetPosition(const VecF&);
 		void SetAngle(float angle); // In radians
 		void SetLinearVelocity(const VecF&);
 		void SetAngularVelocity(float w);
 		void ApplyForceToCenter(const VecF&);
+
+		/// Clone the properties (position, orientation, speed, etc.) of another body to self
+		void TeleportToAnother(const RigidBody& other);
 	};
 }

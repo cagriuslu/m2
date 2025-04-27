@@ -80,10 +80,10 @@ namespace m2 {
 		Character& AddFullCharacter();
 
 		/// If the object has background elements, they are moved between different layers of the background. This may
-		/// cause some of the components IDs to change.
+		/// cause some of the components IDs to change. Must be called from a deferred action.
 		void MoveToBackgroundLayer(BackgroundLayer);
 		/// If the object has foreground elements, they are moved between different layers of the foreground. This may
-		/// cause some of the components IDs to change.
+		/// cause some of the components IDs to change. Must be called from a deferred action.
 		void MoveToForegroundLayer(ForegroundLayer);
 
 		void RemovePhysique();
@@ -102,7 +102,7 @@ namespace m2 {
 		// Components
 		PhysiqueId _physique_id{};
 		GraphicId _graphic_id{}; // TODO an object shouldn't have both foreground and background texture. should we infer the graphic id based on Pool Id?
-		std::pair<GraphicId, BackgroundLayer> _terrain_graphic_id{};
+		std::pair<GraphicId, BackgroundLayer> _terrain_graphic_id{}; // TODO background layer shouldn't be necessary, we can learn it from the GraphicId
 		LightId _light_id{}; // TODO make part of another component?
 		SoundEmitterId _sound_emitter_id{};
 		CharacterId _character_id{};
@@ -116,6 +116,7 @@ namespace m2 {
 	std::function<void()> CreateLightDeleter(ObjectId id);
 	std::function<void()> CreateSoundEmitterDeleter(ObjectId id);
 	std::function<void()> CreateCharacterDeleter(ObjectId id);
+	std::function<void()> CreateForegroundLayerMover(ObjectId id, ForegroundLayer toLayer);
 
 	// Filters
 
