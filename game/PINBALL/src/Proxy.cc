@@ -309,6 +309,8 @@ m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object&
 			return LoadFlipper(obj, true);
 		case pb::ObjectType::OBJECT_BASIC_WALLS:
 			return LoadWall(obj);
+		case pb::ObjectType::OBJECT_BASIC_PLATFORM:
+			return LoadPlatform(obj);
 		case pb::ObjectType::OBJECT_BALL_LAUNCHER_SENSOR:
 			return LoadBallLauncherSensor(obj);
 		default:
