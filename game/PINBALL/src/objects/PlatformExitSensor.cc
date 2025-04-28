@@ -3,7 +3,7 @@
 #include <m2/Game.h>
 #include <m2/Log.h>
 
-m2::void_expected LoadPlatformEntrySensor(m2::Object& obj) {
+m2::void_expected LoadPlatformExitSensor(m2::Object& obj) {
 	const auto type = obj.GetType();
 	const auto spriteType = *M2_GAME.GetMainSpriteOfObject(type);
 	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(spriteType));
@@ -22,13 +22,13 @@ m2::void_expected LoadPlatformEntrySensor(m2::Object& obj) {
 			}
 		});
 	}
-	phy.body[I(m2::ForegroundLayer::F0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
+	phy.body[I(m2::ForegroundLayer::F1)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::ForegroundLayer::F1);
 
 	// The sensor collides with only the ball
 	phy.onCollision = [](m2::Physique&, const m2::Physique& ball, const m2::box2d::Contact&) {
 		// Move the ball up to the platform
-		LOG_INFO("Moving to platform level");
-		M2_DEFER(m2::CreateForegroundLayerMover(ball.OwnerId(), m2::ForegroundLayer::F1));
+		LOG_INFO("Moving to ground level");
+		M2_DEFER(m2::CreateForegroundLayerMover(ball.OwnerId(), m2::ForegroundLayer::F0));
 	};
 
 	return {};

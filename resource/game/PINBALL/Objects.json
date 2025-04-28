@@ -33,6 +33,10 @@
     {
       "type": "OBJECT_BALL_PLATFORM_ENTRY_SENSOR",
       "mainSprite": "SPRITE_BALL_PLATFORM_ENTRY_SENSOR"
+    },
+    {
+      "type": "OBJECT_BALL_PLATFORM_EXIT_SENSOR",
+      "mainSprite": "SPRITE_BALL_PLATFORM_EXIT_SENSOR"
     }
   ]
 }

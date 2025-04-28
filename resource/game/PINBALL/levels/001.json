@@ -42,6 +42,9 @@
       "type": "OBJECT_BALL_PLATFORM_ENTRY_SENSOR"
     },
     {
+      "type": "OBJECT_BALL_PLATFORM_EXIT_SENSOR"
+    },
+    {
       "position": {
         "x": 6,
         "y": 24.5

@@ -3,3 +3,4 @@
 
 m2::void_expected LoadBallLauncherSensor(m2::Object& obj);
 m2::void_expected LoadPlatformEntrySensor(m2::Object& obj);
+m2::void_expected LoadPlatformExitSensor(m2::Object& obj);

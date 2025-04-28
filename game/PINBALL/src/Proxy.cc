@@ -315,6 +315,8 @@ m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object&
 			return LoadBallLauncherSensor(obj);
 		case pb::ObjectType::OBJECT_BALL_PLATFORM_ENTRY_SENSOR:
 			return LoadPlatformEntrySensor(obj);
+		case pb::ObjectType::OBJECT_BALL_PLATFORM_EXIT_SENSOR:
+			return LoadPlatformExitSensor(obj);
 		default:
 			throw M2_ERROR("Missing loader for type: " + m2::ToString(obj.GetType()));
 	}
