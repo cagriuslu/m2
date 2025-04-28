@@ -202,9 +202,9 @@ namespace {
 				.variant = widget::TextBlueprint{
 					.text = "Remove Fixture",
 					.onAction = [](const widget::Text& self) -> UiAction {
-						if (const auto selection = self.Parent().FindWidget<widget::TextSelection>("FixtureSelection")->GetSelectedOptions();
-								not selection.empty()) {
-							const auto selectedIndex = std::get<int>(selection[0]);
+						if (const auto selectedIndexes = self.Parent().FindWidget<widget::TextSelection>("FixtureSelection")->GetSelectedIndexes();
+								not selectedIndexes.empty()) {
+							const auto selectedIndex = selectedIndexes[0];
 							std::get<sheet_editor::State>(M2_LEVEL.stateVariant).RemoveFixture(selectedIndex);
 						}
 						return MakeContinueAction();
@@ -216,9 +216,9 @@ namespace {
 				.variant = widget::TextBlueprint{
 					.text = "Store Shape",
 					.onAction = [](const widget::Text& self) -> UiAction {
-						if (const auto fixtureSelection = self.Parent().FindWidget<widget::TextSelection>("FixtureSelection")->GetSelectedOptions();
-								not fixtureSelection.empty()) {
-							const auto selectedIndex = std::get<int>(fixtureSelection[0]);
+						if (const auto selectedIndexes = self.Parent().FindWidget<widget::TextSelection>("FixtureSelection")->GetSelectedIndexes();
+								not selectedIndexes.empty()) {
+							const auto selectedIndex = selectedIndexes[0];
 							if (auto* selection = M2_LEVEL.PrimarySelection(); selection->IsComplete()) {
 								std::get<sheet_editor::State>(M2_LEVEL.stateVariant).StoreFixture(selectedIndex,
 										*selection->HalfCellSelectionRectM(), selection->HalfCellSelectionsM()->first,
@@ -235,9 +235,9 @@ namespace {
 				.variant = widget::TextBlueprint{
 					.text = "Undo Point",
 					.onAction = [](MAYBE const widget::Text& self) -> UiAction {
-						if (const auto fixtureSelection = self.Parent().FindWidget<widget::TextSelection>("FixtureSelection")->GetSelectedOptions();
-								not fixtureSelection.empty()) {
-							const auto selectedIndex = std::get<int>(fixtureSelection[0]);
+						if (const auto selectedIndexes = self.Parent().FindWidget<widget::TextSelection>("FixtureSelection")->GetSelectedIndexes();
+								not selectedIndexes.empty()) {
+							const auto selectedIndex = selectedIndexes[0];
 							std::get<sheet_editor::State>(M2_LEVEL.stateVariant).UndoChainFixturePoint(selectedIndex);
 						}
 						return MakeContinueAction();
