@@ -813,10 +813,15 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
 			.variant = CheckboxWithTextBlueprint{
 				.text = "Grid",
 				.initial_state = false,
+				.onAction = [](const CheckboxWithText& self) -> UiAction {
+					self.Parent().FindWidget<IntegerInput>("CellSplitCount")->enabled = self.GetState();
+					return MakeContinueAction();
+				}
 			}
 		},
 		UiWidgetBlueprint{
 			.name = "CellSplitCount",
+			.initially_enabled = false,
 			.x = 2,
 			.y = 60,
 			.w = 15,
