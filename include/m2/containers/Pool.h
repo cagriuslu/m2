@@ -23,13 +23,13 @@ namespace m2 {
 	constexpr auto pool_iterator_to_data = [](const auto &it) { return it.Data(); };
 	constexpr auto to_id = [](const auto &it) { return it.GetId(); };
 
-    template <typename T, uint64_t Capacity = 65536>
-    class Pool {
-        static_assert(Capacity <= 16777216, "Max Pool capacity is 16777216 because the index is limited to 24 bits");
+	template <typename T, uint64_t Capacity = 65536>
+	class Pool {
+		static_assert(Capacity <= 16777216, "Max Pool capacity is 16777216 because the index is limited to 24 bits");
 
 	public:
 		//<editor-fold desc="Iterator">
-        class Iterator {
+		class Iterator {
 			Pool<T,Capacity>* _pool{};
 			T* _data{};
 			Id _id{};
@@ -49,26 +49,26 @@ namespace m2 {
 			T* operator->() const { return _data; }
 			T& operator*() const { return *_data; }
 			// Modifiers
-            Iterator& operator++() {
-                for (uint64_t i = IdToIndex(_id) + 1; i <= _pool->_highestAllocatedIndex; ++i) {
-                    auto& item = _pool->_array[i];
-                    if (IdToKey(item.id)) {
+			Iterator& operator++() {
+				for (uint64_t i = IdToIndex(_id) + 1; i <= _pool->_highestAllocatedIndex; ++i) {
+					auto& item = _pool->_array[i];
+					if (IdToKey(item.id)) {
 						_data = &item.data;
 						_id = item.id;
-                        return *this;
-                    }
-                }
-                // Failed
+						return *this;
+					}
+				}
+				// Failed
 				_data = nullptr;
 				_id = 0;
-                return *this;
-            }
+				return *this;
+			}
 			Iterator operator++(int) {
 				auto temp = *this;
 				++*this;
 				return temp;
 			}
-        };
+		};
 		//</editor-fold>
 
 		//<editor-fold desc="Item">
@@ -80,18 +80,18 @@ namespace m2 {
 		};
 		//</editor-fold>
 
-    private:
+	private:
 		std::array<Item,Capacity> _array;
 		ShiftedPoolId _shiftedPoolId{NextShiftedPoolId()};
-        uint64_t _size{0}; // [0, Capacity]
-        uint64_t _nextKey{1}; // [1, Capacity]
-	    uint64_t _highestAllocatedIndex{0};
-	    uint64_t _lowestAllocatedIndex{0};
-	    uint64_t _nextFreeIndex{0};
+		uint64_t _size{0}; // [0, Capacity]
+		uint64_t _nextKey{1}; // [1, Capacity]
+		uint64_t _highestAllocatedIndex{0};
+		uint64_t _lowestAllocatedIndex{0};
+		uint64_t _nextFreeIndex{0};
 
-    public:
+	public:
 		// Constructors
-        Pool() {
+		Pool() {
 			if (_shiftedPoolId == 0) {
 				throw M2_ERROR("PoolId overflow");
 			}
@@ -99,7 +99,7 @@ namespace m2 {
 				// Each item points to the next item as next free index.
 				_array[i].id = IdToIndex(i + 1);
 			}
-        }
+		}
 
 		// Accessors
 		[[nodiscard]] uint64_t Size() const { return _size; }
@@ -194,61 +194,61 @@ namespace m2 {
 		// TODO provide index to iterator function to replace free_index
 		void Free(Id id) {
 			auto* item_ptr = GetArrayItem(id);
-            if (item_ptr) {
-                // Get index of item
-                auto index = IdToIndex(item_ptr->id);
-                // Clear item (avoid swap-delete, objects might rely on `this`, ex. Pool ID lookups)
+			if (item_ptr) {
+				// Get index of item
+				auto index = IdToIndex(item_ptr->id);
+				// Clear item (avoid swap-delete, objects might rely on `this`, ex. Pool ID lookups)
 				item_ptr->data.~T();
 				new (&item_ptr->data) T();
-                item_ptr->id = IdToIndex(_nextFreeIndex);
-                // Set next free index
-                _nextFreeIndex = index;
+				item_ptr->id = IdToIndex(_nextFreeIndex);
+				// Set next free index
+				_nextFreeIndex = index;
 
-                --_size;
-                if (_highestAllocatedIndex == index) {
-                    // Search backwards until highest allocated index is found
-                    for (uint64_t i = index; i-- > 0; ) {
-                        _highestAllocatedIndex = i;
-                        if (IdToKey(_array[i].id)) {
-                            break;
-                        }
-                    }
-                }
-                if (_lowestAllocatedIndex == index) {
-                    // Search forward until lowest allocated index is found
-                    for (uint64_t i = index + 1; i < Capacity; i++) {
-                        _lowestAllocatedIndex = i;
-                        if (IdToKey(_array[i].id)) {
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        void Free(const T* data) {
-            Free(GetId(data));
-        }
+				--_size;
+				if (_highestAllocatedIndex == index) {
+					// Search backwards until highest allocated index is found
+					for (uint64_t i = index; i-- > 0; ) {
+						_highestAllocatedIndex = i;
+						if (IdToKey(_array[i].id)) {
+							break;
+						}
+					}
+				}
+				if (_lowestAllocatedIndex == index) {
+					// Search forward until lowest allocated index is found
+					for (uint64_t i = index + 1; i < Capacity; i++) {
+						_lowestAllocatedIndex = i;
+						if (IdToKey(_array[i].id)) {
+							break;
+						}
+					}
+				}
+			}
+		}
+		void Free(const T* data) {
+			Free(GetId(data));
+		}
 		void FreeIndex(uint64_t idx) {
 			auto& item = _array[idx];
 			if (IdToKey(item.id)) {
 				Free(GetId(&item.data));
 			}
 		}
-        void Clear() {
-            while (_size) {
-                auto it = begin();
-                Free(it.GetId());
-            }
-        }
+		void Clear() {
+			while (_size) {
+				auto it = begin();
+				Free(it.GetId());
+			}
+		}
 
 	private:
 		Item* GetArrayItem(Id id) {
 			auto& item = _array[IdToIndex(id)];
 			return item.id == id ? &item : nullptr;
 		}
-    	const Item* GetArrayItem(Id id) const {
+		const Item* GetArrayItem(Id id) const {
 			auto& item = _array[IdToIndex(id)];
 			return item.id == id ? &item : nullptr;
 		}
-    };
+	};
 }
