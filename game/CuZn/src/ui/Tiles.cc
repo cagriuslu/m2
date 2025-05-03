@@ -79,7 +79,7 @@ UiPanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType
 						auto tile_to_filter = exclude_tile; // Create a copy because it'll be mutated once the filtered tile is encountered
 						if (auto industry_type_selections = self.GetSelectedOptions(); not industry_type_selections.empty()) {
 							auto industry_type_selection = industry_type_selections[0];
-							auto industry_type_selection_int = std::get<int>(industry_type_selection);
+							auto industry_type_selection_int = I(industry_type_selection);
 							auto industry_type = static_cast<m2g::pb::ItemCategory>(industry_type_selection_int);
 							// Gather the industry tiles
 							std::vector<IndustryTile> industry_tiles;
@@ -139,7 +139,7 @@ UiPanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType
 					.show_scroll_bar = false,
 					.onAction = [](const TextSelection &self) -> UiAction {
 						if (auto selections = self.GetSelectedOptions(); not selections.empty()) {
-							const auto selectedTileType = static_cast<m2g::pb::ItemType>(std::get<int>(selections[0]));
+							const auto selectedTileType = static_cast<m2g::pb::ItemType>(I(selections[0]));
 							self.Parent().FindWidget<Text>("BuildRequirements")->set_text(GetIndustryTileBuildRequirementsString(selectedTileType));
 							self.Parent().FindWidget<Text>("ResourceGain")->set_text(GetIndustryTileResourceGainString(selectedTileType));
 							self.Parent().FindWidget<Text>("SellRequirements")->set_text(GetIndustryTileSellRequirementsString(selectedTileType));
@@ -265,7 +265,7 @@ UiPanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType
 						// Find the other blueprint
 						if (auto* tile_selection = self.Parent().FindWidget<TextSelection>("TileLevelSelection")) {
 							if (auto selections = tile_selection->GetSelectedOptions(); not selections.empty()) {
-								auto item_type = static_cast<m2g::pb::ItemType>(std::get<int>(selections[0]));
+								auto item_type = static_cast<m2g::pb::ItemType>(I(selections[0]));
 								return MakeReturnAction<m2g::pb::ItemType>(item_type);
 							}
 						}

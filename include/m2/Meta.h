@@ -3,9 +3,11 @@
 #include <tl/expected.hpp>
 #include <string>
 #include <vector>
+#include <variant>
 #include <set>
 #include <ranges>
 #include <optional>
+#include <tuple>
 #include <memory>
 #include <cmath>
 
@@ -26,6 +28,15 @@ namespace m2 {
 	inline int FloorI(const float t) { return static_cast<int>(floorf(t)); }
 	inline int CeilI(const float t) { return static_cast<int>(ceilf(t)); }
 	int RoundDownToEvenI(float);
+
+	template <typename... Types>
+	constexpr int I(const std::tuple<Types...>& v) {
+		return std::get<int>(v);
+	}
+	template <typename... Types>
+	constexpr int I(const std::variant<Types...>& v) {
+		return std::get<int>(v);
+	}
 
 	inline std::string ToString(const bool b) { return b ? "true" : "false"; }
 	inline std::string ToString(const int i) { return std::to_string(i); }

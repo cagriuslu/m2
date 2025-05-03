@@ -10,7 +10,7 @@ namespace {
 	std::optional<m2g::pb::SpriteType> SelectedSprite() {
 		if (const auto selections = M2_LEVEL.LeftHud()->FindWidget<widget::TextSelection>("SpriteTypeSelection")->GetSelectedOptions();
 				not selections.empty()) {
-			return static_cast<m2g::pb::SpriteType>(std::get<int>(selections[0]));
+			return static_cast<m2g::pb::SpriteType>(I(selections[0]));
 		}
 		return std::nullopt;
 	}
@@ -71,7 +71,7 @@ namespace {
 						},
 						.onAction = [](const widget::TextSelection& self) -> UiAction {
 							if (const auto selections = self.GetSelectedOptions(); not selections.empty()) {
-								const auto selectedSpriteType = static_cast<m2g::pb::SpriteType>(std::get<int>(selections[0]));
+								const auto selectedSpriteType = static_cast<m2g::pb::SpriteType>(I(selections[0]));
 								std::get<bulk_sheet_editor::State>(M2_LEVEL.stateVariant).LookUpAndStoreSpriteRect(selectedSpriteType);
 								const auto sprite_name = pb::enum_name(selectedSpriteType);
 								M2_LEVEL.ShowMessage(sprite_name);

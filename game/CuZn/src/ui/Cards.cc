@@ -44,8 +44,8 @@ namespace {
 		// Sort first by type, then by alphabetically
 		std::ranges::sort(options,
 				[](const TextSelectionBlueprint::Option& a, const TextSelectionBlueprint::Option& b) {
-					const auto a_category = M2_GAME.named_items[static_cast<Card>(std::get<int>(a.return_value))].Category();
-					const auto b_category = M2_GAME.named_items[static_cast<Card>(std::get<int>(b.return_value))].Category();
+					const auto a_category = M2_GAME.named_items[static_cast<Card>(I(a.return_value))].Category();
+					const auto b_category = M2_GAME.named_items[static_cast<Card>(I(b.return_value))].Category();
 					if (a_category != b_category) {
 						return a_category < b_category;
 					}
@@ -109,7 +109,7 @@ UiPanelBlueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType
 						// Find the other blueprint
 						if (auto* card_selection = self.Parent().FindWidget<TextSelection>("CardSelection")) {
 							if (auto selections = card_selection->GetSelectedOptions(); not selections.empty()) {
-								auto item_type = static_cast<m2g::pb::ItemType>(std::get<int>(selections[0]));
+								auto item_type = static_cast<m2g::pb::ItemType>(I(selections[0]));
 								return MakeReturnAction<m2g::pb::ItemType>(item_type);
 							}
 						}

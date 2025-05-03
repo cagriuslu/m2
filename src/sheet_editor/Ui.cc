@@ -166,7 +166,7 @@ namespace {
 				.variant = widget::TextBlueprint{
 					.text = "Add",
 					.onAction = [](const widget::Text& self) -> UiAction {
-						const auto fixtureType = static_cast<pb::Fixture::FixtureTypeCase>(std::get<int>(self.Parent().FindWidget<widget::TextSelection>("FixtureAdder")->GetSelectedOptions()[0]));
+						const auto fixtureType = static_cast<pb::Fixture::FixtureTypeCase>(I(self.Parent().FindWidget<widget::TextSelection>("FixtureAdder")->GetSelectedOptions()[0]));
 						const auto selectedIndexes = self.Parent().FindWidget<widget::TextSelection>("FixtureSelection")->GetSelectedIndexes();
 						const auto selectedIndex = selectedIndexes.empty() ? -1 : selectedIndexes[0];
 						// Add fixture
@@ -347,7 +347,7 @@ const UiPanelBlueprint m2::sheet_editor_main_menu = {
 				},
 				.onAction = [](const widget::TextSelection& self) {
 					if (const auto selections = self.GetSelectedOptions(); not selections.empty()) {
-						const auto selectedSprite = static_cast<m2g::pb::SpriteType>(std::get<int>(selections[0]));
+						const auto selectedSprite = static_cast<m2g::pb::SpriteType>(I(selections[0]));
 						self.Parent().FindWidget<widget::Image>("SpriteDisplay")->SetSpriteType(selectedSprite);
 					}
 					return MakeContinueAction();
@@ -369,7 +369,7 @@ const UiPanelBlueprint m2::sheet_editor_main_menu = {
 					if (const auto selections = self.Parent().FindWidget<widget::TextSelection>("SpriteTypeSelection")->GetSelectedOptions();
 							not selections.empty()) {
 						M2_LEVEL.ReplaceRightHud(&sheet_editor_right_hud, M2_GAME.Dimensions().RightHud());
-						const auto selectedSprite = static_cast<m2g::pb::SpriteType>(std::get<int>(selections[0]));
+						const auto selectedSprite = static_cast<m2g::pb::SpriteType>(I(selections[0]));
 						std::get<sheet_editor::State>(M2_LEVEL.stateVariant).Select(selectedSprite);
 						return MakeReturnAction();
 					}
