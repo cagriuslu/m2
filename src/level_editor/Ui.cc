@@ -67,7 +67,7 @@ namespace {
 						const auto* spriteSelectionWidget = self.Parent().FindWidget<TextSelection>("SpriteSelection");
 						std::vector<m2g::pb::SpriteType> selectedSprites;
 						for (const auto& selection : spriteSelectionWidget->GetSelectedOptions()) {
-							selectedSprites.emplace_back(static_cast<m2g::pb::SpriteType>(std::get<int>(selection)));
+							selectedSprites.emplace_back(static_cast<m2g::pb::SpriteType>(I(selection)));
 						}
 						return MakeReturnAction(std::move(selectedSprites));
 					}
@@ -149,8 +149,7 @@ namespace {
 					.text = "OK",
 					.onAction = [](const Text& self) -> UiAction {
 						const auto selectedObjectType = static_cast<m2g::pb::ObjectType>(
-								std::get<int>(
-									self.Parent().FindWidget<TextSelection>("ObjectTypeSelection")->GetSelectedOptions()[0]));
+								I(self.Parent().FindWidget<TextSelection>("ObjectTypeSelection")->GetSelectedOptions()[0]));
 						return MakeReturnAction(selectedObjectType);
 					}
 				}
@@ -158,10 +157,59 @@ namespace {
 		}
 	};
 
+	const UiPanelBlueprint gDisplayOptionsDialog = {
+		.name = "DisplayOptionsDialog",
+		.w = 12, .h = 40,
+		.background_color = {0, 0, 0, 255},
+		.widgets = {
+			UiWidgetBlueprint{
+				.x = 1, .y = 1, .w = 10, .h = 3,
+				.border_width = 0.0f,
+				.variant = TextBlueprint{
+					.text = "Physics"
+				}
+			},
+			UiWidgetBlueprint{
+				.x = 1, .y = 5, .w = 10, .h = 30,
+				.variant = TextSelectionBlueprint{
+					.line_count = 10,
+					.allow_multiple_selection = true,
+					.show_scroll_bar = true,
+					.onCreate = [](TextSelection& self) {
+						const auto objectTypes = ObjectTypesWithMainSprite();
+						auto selectionOptions = ToTextSelectionOptions(objectTypes.begin(), objectTypes.end());
+						const auto& objectSet = dynamic_cast<level_editor::DrawFgRightHudState&>(*M2_LEVEL.RightHud()->state).physicsObjectsToDraw;
+						for (auto& option : selectionOptions) {
+							if (objectSet.contains(static_cast<m2g::pb::ObjectType>(I(option.return_value)))) {
+								option.initiallySelected = true;
+							}
+						}
+						self.SetOptions(selectionOptions);
+					},
+					.onAction = [](const TextSelection& self) -> UiAction {
+						auto& objectSet = dynamic_cast<level_editor::DrawFgRightHudState&>(*M2_LEVEL.RightHud()->state).physicsObjectsToDraw;
+						objectSet.clear();
+						std::ranges::transform(self.GetSelectedOptions(), std::inserter(objectSet, objectSet.begin()),
+							[](const auto& retval) { return static_cast<m2g::pb::ObjectType>(I(retval)); });
+						return MakeContinueAction();
+					}
+				}
+			},
+			UiWidgetBlueprint{
+				.x = 1, .y = 36, .w = 10, .h = 3,
+				.variant = TextBlueprint{
+					.text = "OK",
+					.onAction = [](const Text&) -> UiAction {
+						return MakeReturnAction();
+					}
+				}
+			},
+		}
+	};
+
 	const UiPanelBlueprint gPaintBgRightHud = {
 		.name = "PaintBgRightHud",
-		.w = 19,
-		.h = 72,
+		.w = 19, .h = 72,
 		.background_color = {25, 25, 25, 255},
 		.onDestroy = [] {
 			// If level isn't destroyed yet
@@ -174,10 +222,7 @@ namespace {
 		},
 		.widgets = {
 			UiWidgetBlueprint{
-				.x = 2,
-				.y = 2,
-				.w = 15,
-				.h = 4,
+				.x = 2, .y = 2, .w = 15, .h = 4,
 				.border_width = 0,
 				.variant = TextBlueprint{
 					.text = "Paint Bg"
@@ -185,10 +230,7 @@ namespace {
 			},
 			UiWidgetBlueprint{
 				.name = "SpriteTypeSelection",
-				.x = 2,
-				.y = 7,
-				.w = 15,
-				.h = 48,
+				.x = 2, .y = 7, .w = 15, .h = 48,
 				.variant = TextSelectionBlueprint{
 					.line_count = 12,
 					.onCreate = [](TextSelection& self) {
@@ -208,7 +250,7 @@ namespace {
 						}
 						if (const auto selections = self.GetSelectedOptions(); not selections.empty()) {
 							levelEditorState.ghostId = obj::create_ghost(
-									static_cast<m2g::pb::SpriteType>(std::get<int>(selections[0])), 1);
+									static_cast<m2g::pb::SpriteType>(I(selections[0])), 1);
 						}
 						return MakeContinueAction();
 					}
@@ -219,15 +261,11 @@ namespace {
 
 	const UiPanelBlueprint gSampleBgRightHud = {
 		.name = "SampleBgRightHud",
-		.w = 19,
-		.h = 72,
+		.w = 19, .h = 72,
 		.background_color = {25, 25, 25, 255},
 		.widgets = {
 			UiWidgetBlueprint{
-				.x = 2,
-				.y = 2,
-				.w = 15,
-				.h = 4,
+				.x = 2, .y = 2, .w = 15, .h = 4,
 				.border_width = 0,
 				.variant = TextBlueprint{
 					.text = "Sample Bg"
@@ -238,8 +276,7 @@ namespace {
 
 	const UiPanelBlueprint gSelectBgRightHud = {
 		.name = "SelectBgRightHud",
-		.w = 19,
-		.h = 72,
+		.w = 19, .h = 72,
 		.background_color = {25, 25, 25, 255},
 		.onCreate = [](MAYBE UiPanel& self) {
 			M2_LEVEL.EnablePrimarySelection(M2_GAME.Dimensions().Game());
@@ -249,20 +286,14 @@ namespace {
 		},
 		.widgets = {
 			UiWidgetBlueprint{
-				.x = 2,
-				.y = 2,
-				.w = 15,
-				.h = 4,
+				.x = 2, .y = 2, .w = 15, .h = 4,
 				.border_width = 0,
 				.variant = TextBlueprint{
 					.text = "Select Bg"
 				}
 			},
 			UiWidgetBlueprint{
-				.x = 2,
-				.y = 7,
-				.w = 15,
-				.h = 4,
+				.x = 2, .y = 7, .w = 15, .h = 4,
 				.variant = TextBlueprint{
 					.text = "Copy",
 					.onAction = [](MAYBE const Text& self) -> UiAction {
@@ -274,10 +305,7 @@ namespace {
 				}
 			},
 			UiWidgetBlueprint{
-				.x = 2,
-				.y = 12,
-				.w = 15,
-				.h = 4,
+				.x = 2, .y = 12, .w = 15, .h = 4,
 				.variant = TextBlueprint{
 					.text = "Paste",
 					.onAction = [](MAYBE const Text& self) -> UiAction {
@@ -289,10 +317,7 @@ namespace {
 				}
 			},
 			UiWidgetBlueprint{
-				.x = 2,
-				.y = 17,
-				.w = 15,
-				.h = 4,
+				.x = 2, .y = 17, .w = 15, .h = 4,
 				.variant = TextBlueprint{
 					.text = "Erase",
 					.onAction = [](MAYBE const Text& self) -> UiAction {
@@ -304,10 +329,7 @@ namespace {
 				}
 			},
 			UiWidgetBlueprint{
-				.x = 2,
-				.y = 22,
-				.w = 15,
-				.h = 4,
+				.x = 2, .y = 22, .w = 15, .h = 4,
 				.variant = TextBlueprint{
 					.text = "Fill",
 					.onAction = [](MAYBE const Text& self) -> UiAction {
@@ -327,8 +349,7 @@ namespace {
 
 	const UiPanelBlueprint gPlaceFgRightHud = {
 		.name = "PlaceFgRightHud",
-		.w = 19,
-		.h = 72,
+		.w = 19, .h = 72,
 		.background_color = {25, 25, 25, 255},
 		.onDestroy = [] {
 			// If level isn't destroyed yet
@@ -341,10 +362,7 @@ namespace {
 		},
 		.widgets = {
 			UiWidgetBlueprint{
-				.x = 2,
-				.y = 2,
-				.w = 15,
-				.h = 4,
+				.x = 2, .y = 2, .w = 15, .h = 4,
 				.border_width = 0,
 				.variant = TextBlueprint{
 					.text = "Place Fg"
@@ -352,10 +370,7 @@ namespace {
 			},
 			UiWidgetBlueprint{
 				.name = "OrientationInput",
-				.x = 2,
-				.y = 7,
-				.w = 15,
-				.h = 4,
+				.x = 2, .y = 7, .w = 15, .h = 4,
 				.variant = IntegerInputBlueprint{
 					.min_value = 0,
 					.max_value = 359,
@@ -364,10 +379,7 @@ namespace {
 			},
 			UiWidgetBlueprint{
 				.name = "ObjectTypeSelection",
-				.x = 2,
-				.y = 12,
-				.w = 15,
-				.h = 40,
+				.x = 2, .y = 12, .w = 15, .h = 40,
 				.variant = TextSelectionBlueprint{
 					.line_count = 10,
 					.onCreate = [](TextSelection& self) {
@@ -385,7 +397,7 @@ namespace {
 						if (const auto selections = self.GetSelectedOptions(); not selections.empty()) {
 							const auto snapToGrid = M2_LEVEL.LeftHud()->FindWidget<CheckboxWithText>("SnapToGridCheckbox")->GetState();
 							const auto splitCount = M2_LEVEL.LeftHud()->FindWidget<IntegerInput>("CellSplitCount")->value();
-							levelEditorState.ghostId = obj::create_ghost(*M2_GAME.GetMainSpriteOfObject(static_cast<m2g::pb::ObjectType>(std::get<int>(selections[0]))), snapToGrid ? splitCount : 0);
+							levelEditorState.ghostId = obj::create_ghost(*M2_GAME.GetMainSpriteOfObject(static_cast<m2g::pb::ObjectType>(I(selections[0]))), snapToGrid ? splitCount : 0);
 						}
 						return MakeContinueAction();
 					}
@@ -393,10 +405,7 @@ namespace {
 			},
 			UiWidgetBlueprint{
 				.name = "GroupTypeSelection",
-				.x = 2,
-				.y = 53,
-				.w = 15,
-				.h = 4,
+				.x = 2, .y = 53, .w = 15, .h = 4,
 				.variant = TextSelectionBlueprint{
 					.line_count = 0,
 					.onCreate = [](TextSelection& self) {
@@ -411,10 +420,7 @@ namespace {
 			},
 			UiWidgetBlueprint{
 				.name = "GroupInstanceSelection",
-				.x = 2,
-				.y = 58,
-				.w = 15,
-				.h = 4,
+				.x = 2, .y = 58, .w = 15, .h = 4,
 				.variant = IntegerInputBlueprint{
 					.min_value = 0,
 					.max_value = 999,
@@ -440,15 +446,11 @@ namespace {
 
 	const UiPanelBlueprint gSampleFgRightHud = {
 		.name = "SampleFgRightHud",
-		.w = 19,
-		.h = 72,
+		.w = 19, .h = 72,
 		.background_color = {25, 25, 25, 255},
 		.widgets = {
 			UiWidgetBlueprint{
-				.x = 2,
-				.y = 2,
-				.w = 15,
-				.h = 4,
+				.x = 2, .y = 2, .w = 15, .h = 4,
 				.border_width = 0,
 				.variant = TextBlueprint{
 					.text = "Sample Fg"
@@ -459,8 +461,7 @@ namespace {
 
 	const UiPanelBlueprint gSelectFgRightHud = {
 		.name = "SelectFgRightHud",
-		.w = 19,
-		.h = 72,
+		.w = 19, .h = 72,
 		.background_color = {25, 25, 25, 255},
 		.onCreate = [](MAYBE UiPanel& self) {
 			M2_LEVEL.EnablePrimarySelection(M2_GAME.Dimensions().Game());
@@ -470,20 +471,14 @@ namespace {
 		},
 		.widgets = {
 			UiWidgetBlueprint{
-				.x = 2,
-				.y = 2,
-				.w = 15,
-				.h = 4,
+				.x = 2, .y = 2, .w = 15, .h = 4,
 				.border_width = 0,
 				.variant = TextBlueprint{
 					.text = "Select Fg"
 				}
 			},
 			UiWidgetBlueprint{
-				.x = 2,
-				.y = 7,
-				.w = 15,
-				.h = 4,
+				.x = 2, .y = 7, .w = 15, .h = 4,
 				.variant = TextBlueprint{
 					.text = "Copy",
 					.onAction = [](MAYBE const Text& self) -> UiAction {
@@ -495,10 +490,7 @@ namespace {
 				}
 			},
 			UiWidgetBlueprint{
-				.x = 2,
-				.y = 12,
-				.w = 15,
-				.h = 4,
+				.x = 2, .y = 12, .w = 15, .h = 4,
 				.variant = TextBlueprint{
 					.text = "Paste",
 					.onAction = [](MAYBE const Text& self) -> UiAction {
@@ -510,10 +502,7 @@ namespace {
 				}
 			},
 			UiWidgetBlueprint{
-				.x = 2,
-				.y = 17,
-				.w = 15,
-				.h = 4,
+				.x = 2, .y = 17, .w = 15, .h = 4,
 				.variant = TextBlueprint{
 					.text = "Remove",
 					.onAction = [](MAYBE const Text& self) -> UiAction {
@@ -529,8 +518,7 @@ namespace {
 
 	const UiPanelBlueprint gDrawFgRightHud = {
 		.name = "DrawFgRightHud",
-		.w = 19,
-		.h = 72,
+		.w = 19, .h = 72,
 		.background_color = {25, 25, 25, 255},
 		.onCreate = [](UiPanel&) {
 			M2_LEVEL.EnablePrimarySelection(M2_GAME.Dimensions().Game());
@@ -541,9 +529,9 @@ namespace {
 		.widgets = {
 			UiWidgetBlueprint{
 				.name = "FixtureSelection",
-				.x = 1, .y = 1, .w = 17, .h = 54,
+				.x = 1, .y = 1, .w = 17, .h = 45,
 				.variant = TextSelectionBlueprint{
-					.line_count = 18,
+					.line_count = 15,
 					.show_scroll_bar = true,
 					.onHover = [](const TextSelection& self, const std::optional<int> indexUnderMouse) {
 						if (indexUnderMouse) {
@@ -570,7 +558,7 @@ namespace {
 				}
 			},
 			UiWidgetBlueprint{
-				.x = 1, .y = 56, .w = 17, .h = 3,
+				.x = 1, .y = 47, .w = 17, .h = 3,
 				.variant = TextBlueprint{
 					.text = "Add Chain",
 					.onAction = [](const Text& self) -> UiAction {
@@ -586,7 +574,7 @@ namespace {
 				}
 			},
 			UiWidgetBlueprint{
-				.x = 1, .y = 60, .w = 17, .h = 3,
+				.x = 1, .y = 51, .w = 17, .h = 3,
 				.variant = TextBlueprint{
 					.text = "Remove Fixture",
 					.onAction = [](const Text& self) -> UiAction {
@@ -601,7 +589,7 @@ namespace {
 				}
 			},
 			UiWidgetBlueprint{
-				.x = 1, .y = 64, .w = 17, .h = 3,
+				.x = 1, .y = 55, .w = 17, .h = 3,
 				.variant = TextBlueprint{
 					.text = "Store Point",
 					.onAction = [](const Text& self) -> UiAction {
@@ -622,7 +610,7 @@ namespace {
 				}
 			},
 			UiWidgetBlueprint{
-				.x = 1, .y = 68, .w = 17, .h = 3,
+				.x = 1, .y = 59, .w = 17, .h = 3,
 				.variant = TextBlueprint{
 					.text = "Undo Point",
 					.onAction = [](const Text& self) -> UiAction {
@@ -638,23 +626,29 @@ namespace {
 						return MakeContinueAction();
 					}
 				}
-			}
+			},
+			UiWidgetBlueprint{
+				.x = 1, .y = 68, .w = 17, .h = 3,
+				.variant = TextBlueprint{
+					.text = "Display Options",
+					.onAction = [](MAYBE const Text& self) -> UiAction {
+						UiPanel::create_and_run_blocking(&gDisplayOptionsDialog, RectF{0.3f, 0.1f, 0.4f, 0.8f});
+						return MakeContinueAction();
+					}
+				}
+			},
 		}
 	};
 }
 
 const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
 	.name = "LeftHud",
-    .w = 19,
-    .h = 72,
+    .w = 19, .h = 72,
     .background_color = {25, 25, 25, 255},
     .widgets = {
         UiWidgetBlueprint{
         	.name = "PaintBgButton",
-            .x = 2,
-            .y = 2,
-            .w = 15,
-            .h = 4,
+            .x = 1, .y = 1, .w = 17, .h = 3,
         	.variant = TextBlueprint{
         		.text = "Paint Bg",
 				.onAction = [](MAYBE const Text& self) -> UiAction {
@@ -664,10 +658,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
         	}
         },
         UiWidgetBlueprint{
-            .x = 2,
-            .y = 7,
-            .w = 15,
-            .h = 4,
+            .x = 1, .y = 5, .w = 17, .h = 3,
         	.variant = TextBlueprint{
         		.text = "Sample Bg",
 				.onAction = [](MAYBE const Text& self) -> UiAction {
@@ -677,10 +668,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
         	}
         },
         UiWidgetBlueprint{
-            .x = 2,
-            .y = 12,
-            .w = 15,
-            .h = 4,
+            .x = 1, .y = 9, .w = 17, .h = 3,
         	.variant = TextBlueprint{
         		.text = "Select Bg",
 				.onAction = [](MAYBE const Text& self) -> UiAction {
@@ -691,10 +679,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
         },
         UiWidgetBlueprint{
         	.name = "PlaceFgButton",
-            .x = 2,
-            .y = 17,
-            .w = 15,
-            .h = 4,
+            .x = 1, .y = 13, .w = 17, .h = 3,
         	.variant = TextBlueprint{
         		.text = "Place Fg",
 				.onAction = [](MAYBE const Text& self) -> UiAction {
@@ -704,10 +689,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
         	}
         },
         UiWidgetBlueprint{
-            .x = 2,
-            .y = 22,
-            .w = 15,
-            .h = 4,
+            .x = 1, .y = 17, .w = 17, .h = 3,
             .variant = TextBlueprint{
 				.text = "Sample Fg",
 				.onAction = [](MAYBE const Text& self) -> UiAction {
@@ -717,10 +699,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
 			}
 		},
         UiWidgetBlueprint{
-            .x = 2,
-            .y = 27,
-            .w = 15,
-            .h = 4,
+            .x = 1, .y = 21, .w = 17, .h = 3,
         	.variant = TextBlueprint{
         		.text = "Select Fg",
 				.onAction = [](MAYBE const Text& self) -> UiAction {
@@ -730,10 +709,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
         	}
         },
 		UiWidgetBlueprint{
-			.x = 2,
-			.y = 32,
-			.w = 15,
-			.h = 4,
+			.x = 1, .y = 25, .w = 17, .h = 3,
 			.variant = TextBlueprint{
 				.text = "Draw Fg",
 				.onAction = [](MAYBE const Text& self) -> UiAction {
@@ -756,10 +732,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
 		},
 		UiWidgetBlueprint{
 			.name = "CancelButton",
-			.x = 2,
-			.y = 37,
-			.w = 15,
-			.h = 4,
+			.x = 1, .y = 29, .w = 17, .h = 3,
 			.variant = TextBlueprint{
 				.text = "Cancel",
 				.onAction = [](MAYBE const Text& self) -> UiAction {
@@ -770,10 +743,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
 		},
 		UiWidgetBlueprint{
 			.name = "BackgroundLayerSelection",
-			.x = 2,
-			.y = 45,
-			.w = 15,
-			.h = 4,
+			.x = 1, .y = 47, .w = 17, .h = 3,
 			.variant = TextSelectionBlueprint{
 				.options = {
 					TextSelectionBlueprint::Option{.text = "B0-Front", .return_value = I(BackgroundLayer::B0)},
@@ -788,10 +758,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
 		},
 		UiWidgetBlueprint{
 			.name = "SnapToGridCheckbox",
-            .x = 2,
-            .y = 50,
-            .w = 15,
-            .h = 4,
+            .x = 1, .y = 51, .w = 17, .h = 3,
 			.variant = CheckboxWithTextBlueprint{
 				.text = "Snap",
 				.initial_state = false,
@@ -806,10 +773,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
 		},
 		UiWidgetBlueprint{
 			.name = "ShowGridCheckbox",
-			.x = 2,
-			.y = 55,
-			.w = 15,
-			.h = 4,
+			.x = 1, .y = 55, .w = 17, .h = 3,
 			.variant = CheckboxWithTextBlueprint{
 				.text = "Grid",
 				.initial_state = false,
@@ -822,10 +786,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
 		UiWidgetBlueprint{
 			.name = "CellSplitCount",
 			.initially_enabled = false,
-			.x = 2,
-			.y = 60,
-			.w = 15,
-			.h = 4,
+			.x = 1, .y = 59, .w = 17, .h = 3,
 			.variant = IntegerInputBlueprint{
 				.min_value = 1,
 				.max_value = 100,
@@ -833,10 +794,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
 			}
 		},
         UiWidgetBlueprint{
-            .x = 2,
-            .y = 65,
-            .w = 15,
-            .h = 4,
+            .x = 1, .y = 67, .w = 17, .h = 3,
             .variant = TextBlueprint{
             	.text = "Save",
             	.onAction = [](MAYBE const Text& self) -> UiAction {
@@ -849,10 +807,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
             }
         },
         UiWidgetBlueprint{
-        	.x = 0,
-        	.y = 70,
-        	.w = 19,
-        	.h = 2,
+        	.x = 0, .y = 70, .w = 19, .h = 2,
         	.border_width = 0,
         	.variant = TextBlueprint{
         		.text = "0:0",

@@ -73,7 +73,7 @@ void m2::DrawTextLabelIn3dWorld(const pb::TextLabel& tl, const RectI& sourceRect
 
 m2::RectI m2::TextLabelCache::TextLabelGenerator::operator()(const std::tuple<std::string,int>& item) {
 	// Change the font size. This operation clears the glyph caches, but that's a sacrifice I'm willing to make.
-	TTF_SetFontSize(_font, std::get<int>(item));
+	TTF_SetFontSize(_font, I(item));
 
 	// Estimate the size of the final text
 	int w, h;

@@ -33,8 +33,8 @@ namespace m2::widget {
 
 		// Modifiers
 
-		void SetOptions(const TextSelectionBlueprint::Options& options);
-		void SetOptions(TextSelectionBlueprint::Options&& options);
+		void SetOptions(const TextSelectionBlueprint::Options& newOptions);
+		void SetOptions(TextSelectionBlueprint::Options&& newOptions);
 		[[nodiscard]] Option& GetOption(const int i) { return _options[i]; }
 		void SetUniqueSelectionIndex(int index);
 

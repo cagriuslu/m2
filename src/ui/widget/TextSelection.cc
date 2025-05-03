@@ -37,15 +37,16 @@ std::vector<int> TextSelection::GetSelectedIndexes() const {
 	return indexes;
 }
 
-void TextSelection::SetOptions(const TextSelectionBlueprint::Options& options) {
-	auto copy = options;
+void TextSelection::SetOptions(const TextSelectionBlueprint::Options& newOptions) {
+	auto copy = newOptions;
 	SetOptions(std::move(copy));
 }
-void TextSelection::SetOptions(TextSelectionBlueprint::Options&& options) {
+void TextSelection::SetOptions(TextSelectionBlueprint::Options&& newOptions) {
 	_options.clear();
-	_options.resize(options.size());
-	for (size_t i = 0; i < options.size(); ++i) {
-		_options[i].blueprint_option = std::move(options[i]);
+	_options.resize(newOptions.size());
+	for (size_t i = 0; i < newOptions.size(); ++i) {
+		_options[i].blueprint_option = std::move(newOptions[i]);
+		_options[i].is_selected = _options[i].blueprint_option.initiallySelected;
 	}
 	// Option under the mouse might have changed
 	if (IsHoverActive()) {

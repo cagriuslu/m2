@@ -248,6 +248,24 @@ void m2::level_editor::State::Draw() const {
 			}
 		}
 	};
+	const auto drawFixturesOfObject = [this](const m2g::pb::ObjectType ot, const pb::Sprite& spritePb, const int ppm, const bool background) {
+		const auto color = background ? sheet_editor::CONFIRMED_CROSS_COLOR2 : sheet_editor::CONFIRMED_CROSS_COLOR;
+		for (const auto& fixture : spritePb.regular().fixtures()) {
+			if (fixture.has_chain()) {
+				const auto fgObjectIt = GetForegroundObjectsOfType(ot)[0];
+				const auto objectOrigin = fgObjectIt->first;
+				if (const auto& points = fixture.chain().points(); points.size() == 1) {
+					Graphic::DrawCross(objectOrigin + VecF{points[0]} / ppm, color);
+				} else if (1 < points.size()) {
+					auto end = points.cend() - 1;
+					for (auto it = points.cbegin(); it != end; ++it) {
+						Graphic::DrawLine(objectOrigin + VecF{*it} / ppm, objectOrigin + VecF{*(it+1)} / ppm, color);
+					}
+				}
+			}
+		}
+	};
+
 	if (M2_LEVEL.RightHud()->Name() == "SelectBgRightHud") {
 		drawGridSelectionIfActive();
 	} else if (M2_LEVEL.RightHud()->Name() == "SelectFgRightHud") {
@@ -268,21 +286,13 @@ void m2::level_editor::State::Draw() const {
 		}
 		// Draw already existing fixtures
 		const auto& state = dynamic_cast<DrawFgRightHudState&>(*M2_LEVEL.RightHud()->state);
-		const auto& spritePb = state.SelectedObjectMainSpritePb();
 		const auto ppm = std::get<Sprite>(M2_GAME.GetSpriteOrTextLabel(state.SelectedObjectMainSpriteType())).Ppm();
-		for (const auto& fixture : spritePb.regular().fixtures()) {
-			if (fixture.has_chain()) {
-				const auto fgObjectIt = GetForegroundObjectsOfType(state.SelectedObjectType())[0];
-				const auto objectOrigin = fgObjectIt->first;
-				if (const auto& points = fixture.chain().points(); points.size() == 1) {
-					Graphic::DrawCross(objectOrigin + VecF{points[0]} / ppm, sheet_editor::CONFIRMED_CROSS_COLOR);
-				} else if (1 < points.size()) {
-					auto end = points.cend() - 1;
-					for (auto it = points.cbegin(); it != end; ++it) {
-						Graphic::DrawLine(objectOrigin + VecF{*it} / ppm, objectOrigin + VecF{*(it+1)} / ppm, sheet_editor::CONFIRMED_CROSS_COLOR);
-					}
-				}
-			}
+		drawFixturesOfObject(state.SelectedObjectType(), state.SelectedObjectMainSpritePb(), ppm, false);
+
+		for (const auto objType : state.physicsObjectsToDraw) {
+			const auto mainSpriteType = *M2_GAME.GetMainSpriteOfObject(objType);
+			const auto mainSpritePpm = std::get<Sprite>(M2_GAME.GetSpriteOrTextLabel(mainSpriteType)).Ppm();
+			drawFixturesOfObject(objType, state.SpritePb(mainSpriteType), mainSpritePpm, true);
 		}
 	}
 

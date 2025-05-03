@@ -8,10 +8,13 @@ namespace m2::level_editor {
 	class DrawFgRightHudState final : public UiPanelStateBase {
 		sheet_editor::PersistentSpriteSheets _persistentSpriteSheets;
 		m2g::pb::ObjectType _selectedObjectType;
+
 	public:
 		explicit DrawFgRightHudState(const m2g::pb::ObjectType selectedObjectType_) : UiPanelStateBase(),
 				_persistentSpriteSheets(m2MoveOrThrowError(sheet_editor::PersistentSpriteSheets::LoadFile(M2_GAME.spriteSheetsPath))),
 				_selectedObjectType(selectedObjectType_) {}
+
+		std::set<m2g::pb::ObjectType> physicsObjectsToDraw;
 
 		// Accessors
 
@@ -23,6 +26,9 @@ namespace m2::level_editor {
 		}
 		const pb::Sprite& SelectedObjectMainSpritePb() const {
 			return _persistentSpriteSheets.SpritePb(SelectedObjectMainSpriteType());
+		}
+		const pb::Sprite& SpritePb(const m2g::pb::SpriteType st) const {
+			return _persistentSpriteSheets.SpritePb(st);
 		}
 		[[nodiscard]] int SelectedSpriteFixtureCount() const {
 			return _persistentSpriteSheets.SpritePb(SelectedObjectMainSpriteType()).regular().fixtures_size();

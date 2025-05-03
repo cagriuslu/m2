@@ -12,6 +12,7 @@ namespace m2::widget {
 		struct Option {
 			std::string text;
 			ReturnValue return_value;
+			bool initiallySelected{};
 			RGB text_color{255, 255, 255};
 		};
 		using Options = std::vector<Option>;
