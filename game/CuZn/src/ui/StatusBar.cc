@@ -23,7 +23,7 @@ UiPanelBlueprint generate_status_bar_blueprint() {
 		.name = "StatusBar",
 		.w = 70, .h = 8,
 		.border_width = 0.0f,
-		.OnEvent = [=](const UiPanel& panel, const Events& events) -> UiAction {
+		.onEvent = [=](const UiPanel& panel, const Events& events) -> UiAction {
 			if (panel.Rect().contains(events.MousePosition())) {
 				if (not M2G_PROXY.custom_hud_panel) {
 					M2G_PROXY.custom_hud_panel = M2_LEVEL.AddCustomNonblockingUiPanel(

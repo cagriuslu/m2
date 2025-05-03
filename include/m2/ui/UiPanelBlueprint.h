@@ -30,7 +30,7 @@ namespace m2 {
 		float timeout_s{}; // If set, the UiPanel is destroyed once the timeout runs out
 
 		std::function<void(UiPanel&)> onCreate{};
-		std::function<UiAction(UiPanel&, Events&)> OnEvent{};
+		std::function<UiAction(UiPanel&, Events&)> onEvent{};
 		std::function<UiAction(UiPanel&)> onUpdate{};
 		std::function<void()> onDestroy{};
 

@@ -272,7 +272,9 @@ UiAction UiPanel::create_and_run_blocking(std::variant<const UiPanelBlueprint*,
 }
 
 UiPanel::~UiPanel() {
-	IF(blueprint->onDestroy)();
+	if (blueprint && blueprint->onDestroy) {
+		blueprint->onDestroy();
+	}
 
 	clear_focus();
 
@@ -355,8 +357,8 @@ UiAction UiPanel::HandleEvents(Events& events, bool IsPanning) {
 	std::optional<UiAction> action;
 
 	// First, deliver the event to the panel
-	if (blueprint->OnEvent) {
-		action = blueprint->OnEvent(*this, events);
+	if (blueprint->onEvent) {
+		action = blueprint->onEvent(*this, events);
 	}
 
 	if (not action || action->IsContinue()) {
