@@ -59,6 +59,7 @@ namespace m2 {
 		[[nodiscard]] float distance_sq(const VecI& other) const;
 		[[nodiscard]] float distance(const VecF& other) const { return (other - *this).length(); }
 		[[nodiscard]] float angle_rads() const { return atan2f(y, x); }
+		[[nodiscard]] VecF CenterBetween(const VecF& other) const { return {(x + other.x) / 2.0f, (y + other.y) / 2.0f}; }
 
 		// Modifiers
 
@@ -71,11 +72,12 @@ namespace m2 {
 		[[nodiscard]] VecF RoundToBin(int binCount) const;
 		[[nodiscard]] VecF floor() const { return {floorf(x), floorf(y)}; }
 		[[nodiscard]] VecF ceil() const { return {ceilf(x), ceilf(y)}; }
-		[[nodiscard]] VecF with_length(float len) const { return normalize() * len; }
-		[[nodiscard]] VecF floor_length(float len) const { return length() < len ? with_length(len) : *this; }
-		[[nodiscard]] VecF ceil_length(float len) const { return len < length() ? with_length(len) : *this; }
-		[[nodiscard]] VecF lerp(const VecF& to, float ratio) const { return *this + (to - *this) * ratio; }
-		[[nodiscard]] VecF rotate(float rads) const { return CreateUnitVectorWithAngle(angle_rads() + rads).with_length(length()); }
+		[[nodiscard]] VecF with_length(const float len) const { return normalize() * len; }
+		[[nodiscard]] VecF floor_length(const float len) const { return length() < len ? with_length(len) : *this; }
+		[[nodiscard]] VecF ceil_length(const float len) const { return len < length() ? with_length(len) : *this; }
+		[[nodiscard]] VecF lerp(const VecF& to, const float ratio) const { return *this + (to - *this) * ratio; }
+		/// Rotates the vector around origin
+		[[nodiscard]] VecF rotate(const float rads) const { return CreateUnitVectorWithAngle(angle_rads() + rads).with_length(length()); }
 		[[nodiscard]] VecF clamp(const std::optional<VecF>& min, const std::optional<VecF>& max) const;
 
 		/// Order of corners: Bottom-right, Bottom-left, Top-left, Top-right
@@ -85,7 +87,7 @@ namespace m2 {
 		[[nodiscard]] VecF hround() const;  // Round to halves (ex. 0.0, 0.5, 1.0, 1.5, ...)
 
 		static VecF nan() { return {NAN, NAN}; }
-		static VecF CreateUnitVectorWithAngle(float rads) { return {cosf(rads), sinf(rads)}; }
+		static VecF CreateUnitVectorWithAngle(const float rads) { return {cosf(rads), sinf(rads)}; }
 	};
 
 	std::string ToString(const VecF&);

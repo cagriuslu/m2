@@ -157,6 +157,64 @@ namespace {
 		}
 	};
 
+	const UiPanelBlueprint gAngleDialog = {
+		.w = 23, .h = 17,
+		.background_color = {0, 0, 0, 255},
+		.widgets = {
+			UiWidgetBlueprint{
+				.x = 1, .y = 1, .w = 10, .h = 3,
+				.variant = TextBlueprint{ .text = "Angle:" }
+			},
+			UiWidgetBlueprint{
+				.name = "DegreeInput",
+				.x = 12, .y = 1, .w = 10, .h = 3,
+				.variant = IntegerInputBlueprint{
+					.min_value = 0, .max_value = 360
+				}
+			},
+			UiWidgetBlueprint{
+				.x = 1, .y = 5, .w = 10, .h = 3,
+				.variant = TextBlueprint{ .text = "Piece Count:" }
+			},
+			UiWidgetBlueprint{
+				.name = "PieceCountInput",
+				.x = 12, .y = 5, .w = 10, .h = 3,
+				.variant = IntegerInputBlueprint{
+					.min_value = 1, .max_value = 1000,
+					.initial_value = 1
+				}
+			},
+			UiWidgetBlueprint{
+				.name = "DrawTowardsRightCheckbox",
+				.x = 1, .y = 9, .w = 21, .h = 3,
+				.variant = CheckboxWithTextBlueprint{
+					.text = "Draw Towards Right"
+				}
+			},
+			UiWidgetBlueprint{
+				.x = 1, .y = 13, .w = 10, .h = 3,
+				.variant = TextBlueprint{
+					.text = "Cancel",
+					.onAction = [](const auto&) {
+						return MakeReturnAction();
+					}
+				}
+			},
+			UiWidgetBlueprint{
+				.x = 12, .y = 13, .w = 10, .h = 3,
+				.variant = TextBlueprint{
+					.text = "OK",
+					.onAction = [](const Text& self) {
+						const auto angle = self.Parent().FindWidget<IntegerInput>("DegreeInput")->value();
+						const auto pieceCount = self.Parent().FindWidget<IntegerInput>("PieceCountInput")->value();
+						const auto drawTowardsRight = self.Parent().FindWidget<CheckboxWithText>("DrawTowardsRightCheckbox")->GetState();
+						return MakeReturnAction<level_editor::ArcDescription>(level_editor::ArcDescription{angle, pieceCount, drawTowardsRight});
+					}
+				}
+			}
+		}
+	};
+
 	const UiPanelBlueprint gDisplayOptionsDialog = {
 		.name = "DisplayOptionsDialog",
 		.w = 12, .h = 40,
@@ -611,6 +669,33 @@ namespace {
 			},
 			UiWidgetBlueprint{
 				.x = 1, .y = 59, .w = 17, .h = 3,
+				.variant = TextBlueprint{
+					.text = "Store Arc",
+					.onAction = [](const Text& self) -> UiAction {
+						if (auto* selection = M2_LEVEL.PrimarySelection(); selection->IsComplete()) {
+							const auto point = selection->SelectionsM()->first;
+
+							const auto* fixtureSelectionWidget = self.Parent().FindWidget<TextSelection>("FixtureSelection");
+							if (const auto selectedIndexes = fixtureSelectionWidget->GetSelectedIndexes(); not selectedIndexes.empty()) {
+								const auto selectedIndex = selectedIndexes[0];
+
+								const auto& state = dynamic_cast<level_editor::DrawFgRightHudState&>(*self.Parent().state);
+								if (const auto fixtureType = state.SelectedSpriteFixtureTypes()[selectedIndex];
+										fixtureType == pb::Fixture::FixtureTypeCase::kChain) {
+									UiPanel::create_and_run_blocking(&gAngleDialog, RectF{0.27f, 0.37f, 0.46f, 0.26f})
+										.IfReturn<level_editor::ArcDescription>([=](const auto& arcDesc) {
+											std::get<level_editor::State>(M2_LEVEL.stateVariant).StoreArc(selectedIndex, point, arcDesc);
+										});
+									selection->Reset();
+								}
+							}
+						}
+						return MakeContinueAction();
+					}
+				}
+			},
+			UiWidgetBlueprint{
+				.x = 1, .y = 63, .w = 17, .h = 3,
 				.variant = TextBlueprint{
 					.text = "Undo Point",
 					.onAction = [](const Text& self) -> UiAction {

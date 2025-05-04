@@ -68,6 +68,12 @@ namespace m2::level_editor {
 		}
 	};
 
+	struct ArcDescription {
+		int angleInDegrees;
+		int pieceCount;
+		bool drawTowardsRight;
+	};
+
 	extern const UiPanelBlueprint gLeftHudBlueprint;
 	extern const UiPanelBlueprint gRightHudBlueprint;
 }

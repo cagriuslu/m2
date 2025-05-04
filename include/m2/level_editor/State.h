@@ -8,6 +8,9 @@
 #include <Level.pb.h>
 
 namespace m2::level_editor {
+	// Forward declarations
+	struct ArcDescription;
+
 	class State {
 		using BackgroundSpritePlaceholderMap = std::map<VecI, std::tuple<Id, m2g::pb::SpriteType>, VecICompareTopLeftToBottomRight>;
 		using BackgroundSpriteClipboardMap = std::map<VecI, m2g::pb::SpriteType, VecICompareTopLeftToBottomRight>;
@@ -45,6 +48,7 @@ namespace m2::level_editor {
 		void PasteForeground();
 
 		void StorePoint(int selectedIndex, const VecF& pointM);
+		void StoreArc(int selectedIndex, const VecF& pointM, const ArcDescription& arc);
 		void UndoPoint(int selectedIndex);
 
 		void Draw() const;
@@ -54,5 +58,6 @@ namespace m2::level_editor {
 		void PaintBackground(const VecI& position, m2g::pb::SpriteType spriteType);
 		void PlaceForeground(const VecF& position, float orientation, m2g::pb::ObjectType objectType, m2g::pb::GroupType groupType, unsigned groupInstance);
 		[[nodiscard]] RectF ForegroundSelectionArea() const;
+		static VecF WorldCoordinateToSpriteCoordinate(ForegroundObjectPlaceholderMap::const_iterator fgObject, const VecF& worldCoordinate);
 	};
 }

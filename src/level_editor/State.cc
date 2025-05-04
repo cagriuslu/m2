@@ -9,6 +9,7 @@
 #include <m2/ui/widget/Text.h>
 #include <m2/ui/widget/TextSelection.h>
 #include <m2/sheet_editor/Ui.h>
+#include <m2/Log.h>
 
 namespace {
 	constexpr SDL_Color SELECTION_COLOR = {0, 127, 255, 80};
@@ -223,13 +224,48 @@ void m2::level_editor::State::StorePoint(const int selectedIndex, const VecF& po
 
 	auto& state = dynamic_cast<DrawFgRightHudState&>(*M2_LEVEL.RightHud()->state);
 	const auto fgObjectIt = GetForegroundObjectsOfType(state.SelectedObjectType())[0];
-	const auto objectOriginM = fgObjectIt->first;
-	const auto pointOffsetM = binnedPointM - objectOriginM;
-
-	const auto ppm = std::get<Sprite>(M2_GAME.GetSpriteOrTextLabel(state.SelectedObjectMainSpriteType())).Ppm();
-	const auto pointOffset = pointOffsetM * ppm;
-
+	const auto pointOffset = WorldCoordinateToSpriteCoordinate(fgObjectIt, binnedPointM);
 	state.StorePoint(selectedIndex, pointOffset);
+}
+void m2::level_editor::State::StoreArc(int selectedIndex, const VecF& pointM, const ArcDescription& arc) {
+	const auto splitCount = M2_LEVEL.LeftHud()->FindWidget<widget::IntegerInput>("CellSplitCount")->value();
+	const auto binnedPointM = pointM.RoundToBin(splitCount);
+
+	auto& state = dynamic_cast<DrawFgRightHudState&>(*M2_LEVEL.RightHud()->state);
+	const auto fgObjectIt = GetForegroundObjectsOfType(state.SelectedObjectType())[0];
+	const auto pointOffset = WorldCoordinateToSpriteCoordinate(fgObjectIt, binnedPointM);
+
+	const auto& spritePb = state.SelectedObjectMainSpritePb();
+	const auto& chain = spritePb.regular().fixtures(selectedIndex).chain();
+	if (chain.points_size() == 0) {
+		LOG_WARN("Unable to draw arc with single point");
+		return;
+	}
+	const auto& prevPointOffset = VecF{chain.points(chain.points_size() - 1)};
+	const auto vectorBetweenPoints = pointOffset - prevPointOffset;
+	const auto distanceBetweenPoints = vectorBetweenPoints.length();
+
+	// Find the radius of the circle
+	const auto smallAngleInDegrees = 180 < arc.angleInDegrees ? 360 - arc.angleInDegrees : arc.angleInDegrees;
+	const auto smallAngleInRads = ToRadians(smallAngleInDegrees);
+	const auto radius = distanceBetweenPoints / 2.0f / sinf(smallAngleInRads / 2.0f);
+	// To find the center of the circle, rotate the vector between the points, and walk the line
+	const auto angleToRotate = PI_DIV2 - (smallAngleInRads / 2.0f);
+	const auto angleToRotateWithSelectedDirection = arc.drawTowardsRight ? -angleToRotate : angleToRotate;
+	const auto rotatedVectorBetweenPoints = vectorBetweenPoints.rotate(180 < arc.angleInDegrees ? -angleToRotateWithSelectedDirection : angleToRotateWithSelectedDirection);
+	const auto prevPointOffsetToCircleCenter = rotatedVectorBetweenPoints.with_length(radius);
+	const auto circleCenter = prevPointOffset + prevPointOffsetToCircleCenter;
+
+	// Generate points from center and radius
+	const auto circleCenterToPrevPoint = prevPointOffsetToCircleCenter * -1.0f;
+	const auto angleInRads = ToRadians(arc.angleInDegrees);
+	const auto angleStep = angleInRads / F(arc.pieceCount);
+	for (auto i = 0; i < arc.pieceCount; ++i) {
+		const auto rotationAmount = F(i + 1) * (arc.drawTowardsRight ? angleStep * -1.0f : angleStep);
+		const auto circleCenterToArcPoint = circleCenterToPrevPoint.rotate(rotationAmount);
+		const auto arcPoint = circleCenterToArcPoint + circleCenter;
+		state.StorePoint(selectedIndex, arcPoint);
+	}
 }
 void m2::level_editor::State::UndoPoint(const int selectedIndex) {
 	auto& state = dynamic_cast<DrawFgRightHudState&>(*M2_LEVEL.RightHud()->state);
@@ -354,4 +390,13 @@ m2::RectF m2::level_editor::State::ForegroundSelectionArea() const {
 	} else {
 		return *selection->SelectionRectM();
 	}
+}
+m2::VecF m2::level_editor::State::WorldCoordinateToSpriteCoordinate(const ForegroundObjectPlaceholderMap::const_iterator fgObject, const VecF& worldCoordinate) {
+	const auto objectOriginM = fgObject->first;
+	const auto pointOffsetM = worldCoordinate - objectOriginM;
+	const auto objectType = std::get<pb::LevelObject>(fgObject->second).type();
+	const auto spriteType = *M2_GAME.GetMainSpriteOfObject(objectType);
+	const auto& sprite = std::get<Sprite>(M2_GAME.GetSpriteOrTextLabel(spriteType));
+	const auto ppm = sprite.Ppm();
+	return pointOffsetM * ppm;
 }
