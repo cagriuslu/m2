@@ -23,27 +23,32 @@ IntegerInput::IntegerInput(UiPanel* parent, const UiWidgetBlueprint* blueprint)
 }
 
 UiAction IntegerInput::OnEvent(Events& events) {
-	auto buttons_rect = Rect().trim_left(Rect().w - Rect().h / 2);
-	auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2);
-	auto dec_button_rect = buttons_rect.trim_top(buttons_rect.h / 2);
+	const auto buttonsRect = Rect().trim_left(Rect().w - Rect().h / 2);
+	const auto incButtonRect = buttonsRect.trim_bottom(buttonsRect.h / 2);
+	const auto decButtonRect = buttonsRect.trim_top(buttonsRect.h / 2);
 
-	const auto& integer_selection = std::get<IntegerInputBlueprint>(blueprint->variant);
-
-	if (!_inc_depressed && events.PopMouseButtonPress(MouseButton::PRIMARY, inc_button_rect)) {
+	if (!_inc_depressed && events.PopMouseButtonPress(MouseButton::PRIMARY, incButtonRect)) {
 		_inc_depressed = true;
 		_dec_depressed = false;
-	} else if (!_dec_depressed && events.PopMouseButtonPress(MouseButton::PRIMARY, dec_button_rect)) {
+	} else if (!_dec_depressed && events.PopMouseButtonPress(MouseButton::PRIMARY, decButtonRect)) {
 		_dec_depressed = true;
 		_inc_depressed = false;
-	} else if (_inc_depressed && events.PopMouseButtonRelease(MouseButton::PRIMARY, inc_button_rect)) {
+	} else if (_inc_depressed && events.PopMouseButtonRelease(MouseButton::PRIMARY, incButtonRect)) {
 		_inc_depressed = false;
-		if (value() < integer_selection.max_value) {
+		if (value() < VariantBlueprint().max_value) {
 			select(value() + 1);
 		}
-	} else if (_dec_depressed && events.PopMouseButtonRelease(MouseButton::PRIMARY, dec_button_rect)) {
+	} else if (_dec_depressed && events.PopMouseButtonRelease(MouseButton::PRIMARY, decButtonRect)) {
 		_dec_depressed = false;
-		if (integer_selection.min_value < value()) {
+		if (VariantBlueprint().min_value < value()) {
 			select(value() - 1);
+		}
+	} else {
+		// Check if scrolled
+		if (const auto scrollAmount = events.PopMouseWheelVerticalScroll(Rect()); 0 < scrollAmount) {
+			select(std::min(value() + scrollAmount, VariantBlueprint().max_value));
+		} else if (scrollAmount < 0) {
+			select(std::max(value() + scrollAmount, VariantBlueprint().min_value));
 		}
 	}
 	return MakeContinueAction();
