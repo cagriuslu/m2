@@ -19,7 +19,7 @@ m2::void_expected rpg::init_finish_point(m2::Object& obj) {
 		.initiallyAwake = false,
 		.isBullet = false
 	};
-	phy.body = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
+	phy.body[I(m2::ForegroundLayer::F0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
 
 	auto& gfx = obj.AddGraphic(sprite_type);
 	gfx.variantDrawOrder[0] = m2::pb::SpriteEffectType::SPRITE_EFFECT_GRAYSCALE;

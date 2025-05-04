@@ -78,7 +78,7 @@ std::optional<m2::VecF> rpg::EscaperFsm::find_direction_to_escape() {
 
 	auto can_escape = [=, this](float offset) -> bool {
 		auto radians_offset = angle_from_player_to_obj + offset;
-		auto raycast_target = obj->position + m2::VecF::from_angle(radians_offset).with_length(raycast_length);
+		auto raycast_target = obj->position + m2::VecF::CreateUnitVectorWithAngle(radians_offset).with_length(raycast_length);
 		auto raycast_distance = m2::box2d::CheckDistance(*M2_LEVEL.world[I(m2::ForegroundLayer::F0)], obj->position, raycast_target, m2::third_party::physics::gColliderCategoryToParams[m2::I(m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_OBSTACLE)].belongsTo);
 		return (raycast_length - raycast_distance) < 0.1f; // 0.1 comparison error
 	};
@@ -91,7 +91,7 @@ std::optional<m2::VecF> rpg::EscaperFsm::find_direction_to_escape() {
 		auto second_sweep_rads = -first_sweep_rads;
 		for (auto offset : {first_sweep_rads, second_sweep_rads}) {
 			if (can_escape(offset)) {
-				return m2::VecF::from_angle(angle_from_player_to_obj + offset);
+				return m2::VecF::CreateUnitVectorWithAngle(angle_from_player_to_obj + offset);
 			}
 		}
 	}

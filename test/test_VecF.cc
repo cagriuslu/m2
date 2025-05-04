@@ -110,7 +110,7 @@ TEST(VecF, basic) {
 	EXPECT_TRUE(isnan(v29.x));
 	EXPECT_TRUE(isnan(v29.y));
 
-	auto v30 = VecF::from_angle(PI / 4.0f);
+	auto v30 = VecF::CreateUnitVectorWithAngle(PI / 4.0f);
 	EXPECT_FLOAT_EQ(v30.length(), 1.0f);
 	EXPECT_FLOAT_EQ(v30.x, 1.0f / sqrtf(2.0f));
 

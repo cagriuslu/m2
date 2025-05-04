@@ -45,7 +45,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 		.initiallyAwake = true,
 		.isBullet = false
 	};
-	phy.body = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
+	phy.body[I(m2::ForegroundLayer::F0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
 
 	auto& gfx = obj.AddGraphic(main_sprite_type);
 
@@ -83,7 +83,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 		}
 		if (direction_vector) {
 			// Apply force
-			phy.body->ApplyForceToCenter(direction_vector * (move_force * M2_GAME.DeltaTimeS()));
+			phy.body[I(m2::ForegroundLayer::F0)]->ApplyForceToCenter(direction_vector * (move_force * M2_GAME.DeltaTimeS()));
 		}
 
 		// Primary weapon
@@ -92,7 +92,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 				rpg::create_projectile(*m2::CreateObject(obj.position, {}, id),
 					vector_to_mouse, weapon, true);
 				// Knock-back
-				phy.body->ApplyForceToCenter(m2::VecF::from_angle(vector_to_mouse.angle_rads() + m2::PI) * 50000.0f);
+				phy.body[I(m2::ForegroundLayer::F0)]->ApplyForceToCenter(m2::VecF::CreateUnitVectorWithAngle(vector_to_mouse.angle_rads() + m2::PI) * 50000.0f);
 			};
 
 			// Check if there is a special ranged weapon and try to use the item
@@ -151,7 +151,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 		M2G_PROXY.set_ammo_display_state((bool) chr.FindItems(m2g::pb::ITEM_CATEGORY_SPECIAL_RANGED_WEAPON));
 	};
 	phy.onCollision = [](MAYBE m2::Physique& me, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
-		if (auto* other_char = other.Owner().TryGetCharacter(); other_char && 10.0f < m2::VecF{me.body->GetLinearVelocity()}.length()) {
+		if (auto* other_char = other.Owner().TryGetCharacter(); other_char && 10.0f < m2::VecF{me.body[I(m2::ForegroundLayer::F0)]->GetLinearVelocity()}.length()) {
 			InteractionData data;
 			data.set_stun_duration(2.0f);
 			other_char->ExecuteInteraction(data);

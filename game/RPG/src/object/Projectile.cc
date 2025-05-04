@@ -33,7 +33,7 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& intend
 	float ttl_accuracy = ranged_weapon.TryGetAttribute(ATTRIBUTE_TTL_ACCURACY, 1.0f);
 
 	float angle = m2::ApplyAccuracy(intended_direction.angle_rads(), m2::PI, angular_accuracy);
-	auto direction = m2::VecF::from_angle(angle);
+	auto direction = m2::VecF::CreateUnitVectorWithAngle(angle);
 	float ttl = m2::ApplyAccuracy(average_ttl, average_ttl, ttl_accuracy);
 
 	obj.orientation = angle;
@@ -50,8 +50,8 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& intend
 				? m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_FRIENDLY_DAMAGE
 				: m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_HOSTILE_DAMAGE)]
 	}};
-	phy.body = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
-	phy.body->SetLinearVelocity(direction * linear_speed);
+	phy.body[I(m2::ForegroundLayer::F0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
+	phy.body[I(m2::ForegroundLayer::F0)]->SetLinearVelocity(direction * linear_speed);
 
 	// Add graphics
 	auto& gfx = obj.AddGraphic(ranged_weapon.GameSprite());
@@ -72,7 +72,7 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& intend
 					.isSensor = true,
 					.colliderFilter = m2::third_party::physics::gColliderCategoryToParams[m2::I(m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_FRIENDLY_DAMAGE)]
 				}};
-				phy.body = m2::third_party::physics::RigidBody::CreateFromDefinition(explosionBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
+				phy.body[I(m2::ForegroundLayer::F0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(explosionBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
 				chr.AddNamedItem(M2_GAME.GetNamedItem(ITEM_AUTOMATIC_EXPLOSIVE_TTL));
 				// RESOURCE_EXPLOSION_TTL only means the object is currently exploding
 				chr.SetResource(RESOURCE_EXPLOSION_TTL, 1.0f); // 1.0f is just symbolic

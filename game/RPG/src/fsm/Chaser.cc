@@ -135,7 +135,7 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_physics_step_while_gave_up
 }
 
 bool rpg::ChaserFsm::find_path(const m2::VecF& target, float max_distance) {
-	auto smooth_path = M2_LEVEL.pathfinder[I(m2::ForegroundLayer::F0)]->find_grid_path(obj->position, target, max_distance);
+	auto smooth_path = M2_LEVEL.pathfinder->find_grid_path(obj->position, target, max_distance);
 	if (not smooth_path.empty()) {
 		_reverse_path = std::move(smooth_path);
 		return true;

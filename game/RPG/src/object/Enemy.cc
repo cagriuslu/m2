@@ -61,7 +61,7 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 		.initiallyAwake = false,
 		.isBullet = false
 	};
-	phy.body = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
+	phy.body[I(m2::ForegroundLayer::F0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
 
 	auto& chr = obj.AddFullCharacter();
 	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_GUN));
@@ -154,7 +154,7 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 		return std::nullopt;
 	};
 	phy.postStep = [&](MAYBE m2::Physique& phy) {
-		m2::VecF velocity = m2::VecF{phy.body->GetLinearVelocity()};
+		m2::VecF velocity = m2::VecF{phy.body[I(m2::ForegroundLayer::F0)]->GetLinearVelocity()};
 		if (velocity.is_near(m2::VecF{}, 0.1f)) {
 			impl.animation_fsm.signal(m2::AnimationFsmSignal{m2g::pb::ANIMATION_STATE_IDLE});
 		}
@@ -194,7 +194,7 @@ void rpg::Enemy::move_towards(m2::Object& obj, m2::VecF direction, float force) 
 		dynamic_cast<Enemy&>(*obj.impl).animation_fsm.signal(m2::AnimationFsmSignal{anim_state_type});
 		// Apply force
 		m2::VecF force_direction = direction * (M2_GAME.DeltaTimeS() * force);
-		obj.GetPhysique().body->ApplyForceToCenter(force_direction);
+		obj.GetPhysique().body[I(m2::ForegroundLayer::F0)]->ApplyForceToCenter(force_direction);
 	}
 }
 
@@ -213,7 +213,7 @@ void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
 						rpg::create_projectile(*m2::CreateObject(obj.position, {}, obj.GetId()),
 							shoot_direction, *it, false);
 						// Knock-back
-						obj.GetPhysique().body->ApplyForceToCenter(m2::VecF::from_angle(shoot_direction.angle_rads() + m2::PI) * 5000.0f);
+						obj.GetPhysique().body[I(m2::ForegroundLayer::F0)]->ApplyForceToCenter(m2::VecF::CreateUnitVectorWithAngle(shoot_direction.angle_rads() + m2::PI) * 5000.0f);
 					}
 					break;
 				}

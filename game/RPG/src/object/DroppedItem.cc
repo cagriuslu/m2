@@ -18,7 +18,7 @@ m2::void_expected rpg::create_dropped_item(m2::Object &obj, m2g::pb::ItemType it
 		.initiallyAwake = false,
 		.isBullet = false
 	};
-	phy.body = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
+	phy.body[I(m2::ForegroundLayer::F0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
 
 	obj.AddGraphic(M2_GAME.GetNamedItem(item_type).UiSprite());
 

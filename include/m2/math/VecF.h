@@ -75,7 +75,7 @@ namespace m2 {
 		[[nodiscard]] VecF floor_length(float len) const { return length() < len ? with_length(len) : *this; }
 		[[nodiscard]] VecF ceil_length(float len) const { return len < length() ? with_length(len) : *this; }
 		[[nodiscard]] VecF lerp(const VecF& to, float ratio) const { return *this + (to - *this) * ratio; }
-		[[nodiscard]] VecF rotate(float rads) const { return from_angle(angle_rads() + rads).with_length(length()); }
+		[[nodiscard]] VecF rotate(float rads) const { return CreateUnitVectorWithAngle(angle_rads() + rads).with_length(length()); }
 		[[nodiscard]] VecF clamp(const std::optional<VecF>& min, const std::optional<VecF>& max) const;
 
 		/// Order of corners: Bottom-right, Bottom-left, Top-left, Top-right
@@ -85,7 +85,7 @@ namespace m2 {
 		[[nodiscard]] VecF hround() const;  // Round to halves (ex. 0.0, 0.5, 1.0, 1.5, ...)
 
 		static VecF nan() { return {NAN, NAN}; }
-		static VecF from_angle(float rads) { return {cosf(rads), sinf(rads)}; }
+		static VecF CreateUnitVectorWithAngle(float rads) { return {cosf(rads), sinf(rads)}; }
 	};
 
 	std::string ToString(const VecF&);
