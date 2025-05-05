@@ -651,7 +651,7 @@ namespace {
 				.variant = TextBlueprint{
 					.text = "Store Point",
 					.onAction = [](const Text& self) -> UiAction {
-						if (auto* selection = M2_LEVEL.PrimarySelection(); selection->IsComplete()) {
+						if (const auto* selection = M2_LEVEL.PrimarySelection(); selection->IsComplete()) {
 							const auto* fixtureSelectionWidget = self.Parent().FindWidget<TextSelection>("FixtureSelection");
 							if (const auto selectedIndexes = fixtureSelectionWidget->GetSelectedIndexes(); not selectedIndexes.empty()) {
 								const auto selectedIndex = selectedIndexes[0];
@@ -659,7 +659,6 @@ namespace {
 								if (const auto fixtureType = state.SelectedSpriteFixtureTypes()[selectedIndex];
 										fixtureType == pb::Fixture::FixtureTypeCase::kChain) {
 									std::get<level_editor::State>(M2_LEVEL.stateVariant).StorePoint(selectedIndex, selection->SelectionsM()->first);
-									selection->Reset();
 								}
 							}
 						}
@@ -672,7 +671,7 @@ namespace {
 				.variant = TextBlueprint{
 					.text = "Store Arc",
 					.onAction = [](const Text& self) -> UiAction {
-						if (auto* selection = M2_LEVEL.PrimarySelection(); selection->IsComplete()) {
+						if (const auto* selection = M2_LEVEL.PrimarySelection(); selection->IsComplete()) {
 							const auto point = selection->SelectionsM()->first;
 
 							const auto* fixtureSelectionWidget = self.Parent().FindWidget<TextSelection>("FixtureSelection");
@@ -686,7 +685,6 @@ namespace {
 										.IfReturn<level_editor::ArcDescription>([=](const auto& arcDesc) {
 											std::get<level_editor::State>(M2_LEVEL.stateVariant).StoreArc(selectedIndex, point, arcDesc);
 										});
-									selection->Reset();
 								}
 							}
 						}
@@ -883,7 +881,6 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
             .variant = TextBlueprint{
             	.text = "Save",
             	.onAction = [](MAYBE const Text& self) -> UiAction {
-            		// TODO confirm
             		if (auto success = std::get<State>(M2_LEVEL.stateVariant).Save(); not success) {
             			M2_LEVEL.ShowMessage(success.error(), 8.0f);
             		}
