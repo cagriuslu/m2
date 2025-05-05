@@ -10,7 +10,8 @@ m2::void_expected LoadPlatformExitSensor(m2::Object& obj) {
 
 	auto& phy = obj.AddPhysique();
 	m2::third_party::physics::RigidBodyDefinition rigidBodyDef{
-		.bodyType = m2::third_party::physics::RigidBodyType::STATIC
+		.bodyType = m2::third_party::physics::RigidBodyType::STATIC,
+		.isBullet = true
 	};
 	for (const auto& fixturePb : sprite.OriginalPb().regular().fixtures()) {
 		rigidBodyDef.fixtures.emplace_back(m2::third_party::physics::FixtureDefinition{
