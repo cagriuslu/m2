@@ -37,13 +37,19 @@ m2::void_expected LoadBall(m2::Object& obj) {
 
 	MAYBE auto& gfx = obj.AddGraphic(m2g::pb::SPRITE_BASIC_BALL);
 
-	phy.preStep = [](m2::Physique& phy_) {
+	phy.preStep = [initialPos = obj.position](m2::Physique& phy_) {
 		if (M2_GAME.events.PopKeyRelease(m2g::pb::BALL_LAUNCHER) /*&& M2G_PROXY.isOnBallLauncher*/) {
 			if (phy_.body[I(m2::ForegroundLayer::F0)]->IsEnabled()) {
 				phy_.body[I(m2::ForegroundLayer::F0)]->ApplyForceToCenter({0.0f, -6000.0f});
 			} else if (phy_.body[I(m2::ForegroundLayer::F1)]->IsEnabled()) {
 				phy_.body[I(m2::ForegroundLayer::F1)]->ApplyForceToCenter({0.0f, -6000.0f});
 			}
+		}
+		if (M2_GAME.events.PopKeyPress(m2g::pb::RETURN)) {
+			phy_.body[I(m2::ForegroundLayer::F0)]->SetPosition(initialPos);
+			phy_.body[I(m2::ForegroundLayer::F0)]->SetEnabled(true);
+			phy_.body[I(m2::ForegroundLayer::F1)]->SetPosition(initialPos);
+			phy_.body[I(m2::ForegroundLayer::F1)]->SetEnabled(false);
 		}
 	};
 

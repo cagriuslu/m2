@@ -46,19 +46,19 @@
     },
     {
       "position": {
-        "x": 6,
-        "y": 24.5
+        "x": 5.75,
+        "y": 24.375
       },
-      "orientation": 0.52359879,
+      "orientation": 0.39234014,
       "type": "FLIPPER_LEFT",
       "group": {}
     },
     {
       "position": {
-        "x": 10,
-        "y": 24.5
+        "x": 10.25,
+        "y": 24.375
       },
-      "orientation": 2.61799407,
+      "orientation": 2.74925251,
       "type": "FLIPPER_RIGHT",
       "group": {}
     }
