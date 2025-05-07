@@ -48,7 +48,7 @@ namespace m2 {
 		const int default_font_size = 240;
 
 		/// Should the world have gravity towards downwards direction
-		const bool gravity = false;
+		const VecF gravity{};
 
 		/// Is the world (background, the obstacles) static? If true, pathfinder uses caching.
 		const bool world_is_static = true;

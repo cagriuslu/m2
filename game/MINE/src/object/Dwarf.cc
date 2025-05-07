@@ -30,7 +30,7 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 		.isBullet = false,
 		.initiallyEnabled = true
 	};
-	phy.body = RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
+	phy.body[I(m2::ForegroundLayer::F0)] = RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
 
 	obj.AddGraphic(DWARF_FULL);
 
@@ -43,22 +43,22 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 		auto [direction_enum, direction_vector] = m2::calculate_character_movement(MOVE_LEFT, MOVE_RIGHT, NO_KEY, NO_KEY);
 		if (direction_enum == m2::CHARMOVEMENT_NONE) {
 			// Slow down character
-			auto linear_velocity = phy.body->GetLinearVelocity();
+			auto linear_velocity = phy.body[I(m2::ForegroundLayer::F0)]->GetLinearVelocity();
 			if (0.0f < abs(linear_velocity.x)) {
 				linear_velocity.x /= 1.25f;
-				phy.body->SetLinearVelocity(linear_velocity);
+				phy.body[I(m2::ForegroundLayer::F0)]->SetLinearVelocity(linear_velocity);
 			}
 		} else {
 			// Accelerate character
-			auto force_multiplier = m2::CalculateLimitedForce(phy.body->GetLinearVelocity().x, 5.0f);
-			phy.body->ApplyForceToCenter(direction_vector * force_multiplier * 4000.0f);
+			auto force_multiplier = m2::CalculateLimitedForce(phy.body[I(m2::ForegroundLayer::F0)]->GetLinearVelocity().x, 5.0f);
+			phy.body[I(m2::ForegroundLayer::F0)]->ApplyForceToCenter(direction_vector * force_multiplier * 4000.0f);
 		}
 		// Jump
 		auto is_grounded = chr.GetResource(RESOURCE_IS_GROUNDED_X) != 0.0f && chr.GetResource(RESOURCE_IS_GROUNDED_Y) != 0.0f;
 		if (is_grounded && M2_GAME.events.IsKeyDown(JUMP) && chr.UseItem(chr.FindItems(ITEM_REUSABLE_JUMP))) {
-			auto linear_velocity = phy.body->GetLinearVelocity();
+			auto linear_velocity = phy.body[I(m2::ForegroundLayer::F0)]->GetLinearVelocity();
 			linear_velocity.y -= 7.0f;
-			phy.body->SetLinearVelocity(linear_velocity);
+			phy.body[I(m2::ForegroundLayer::F0)]->SetLinearVelocity(linear_velocity);
 		}
 
 		// Mouse button
@@ -90,7 +90,7 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 	};
 	phy.onCollision = [&chr](MAYBE m2::Physique& phy, m2::Physique& other, const m2::box2d::Contact& contact) {
 		// Check if in contact with obstacle
-		if (other.body && other.body->GetAllLayersBelongingTo() & (COLLIDER_LAYER_BACKGROUND_OBSTACLE | COLLIDER_LAYER_FOREGROUND_OBSTACLE)) {
+		if (other.body[I(m2::ForegroundLayer::F0)] && other.body[I(m2::ForegroundLayer::F0)]->GetAllLayersBelongingTo() & (COLLIDER_LAYER_BACKGROUND_OBSTACLE | COLLIDER_LAYER_FOREGROUND_OBSTACLE)) {
 			// Check is contact normal points upwards
 			if (abs(contact.normal.x) <= -contact.normal.y) {
 				chr.SetResource(RESOURCE_IS_GROUNDED_X, other.Owner().position.x);
@@ -100,7 +100,7 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 	};
 	phy.offCollision = [&chr](MAYBE m2::Physique& phy, m2::Physique& other) {
 		// Check if in contact with obstacle
-		if (other.body && other.body->GetAllLayersBelongingTo() & (COLLIDER_LAYER_BACKGROUND_OBSTACLE | COLLIDER_LAYER_FOREGROUND_OBSTACLE)) {
+		if (other.body[I(m2::ForegroundLayer::F0)] && other.body[I(m2::ForegroundLayer::F0)]->GetAllLayersBelongingTo() & (COLLIDER_LAYER_BACKGROUND_OBSTACLE | COLLIDER_LAYER_FOREGROUND_OBSTACLE)) {
 			// Check if the other object is the grounding object
 			if (chr.GetResource(RESOURCE_IS_GROUNDED_X) == other.Owner().position.x && chr.GetResource(RESOURCE_IS_GROUNDED_Y) == other.Owner().position.y) {
 				chr.SetResource(RESOURCE_IS_GROUNDED_X, 0.0f);

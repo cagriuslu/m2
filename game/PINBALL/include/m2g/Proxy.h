@@ -15,7 +15,7 @@ namespace m2g {
 		/// This aspect ratio divides the screen into 3 equal columns, thus the HUDs are also 16x27.
 		const int gameAspectRatioMul = 16;
 		const int gameAspectRatioDiv = 27;
-		const bool gravity = true;
+		const m2::VecF gravity{0.0f, 24.0f};
 
 		const m2::UiPanelBlueprint* MainMenuBlueprint();
 		const m2::UiPanelBlueprint* PauseMenuBlueprint();

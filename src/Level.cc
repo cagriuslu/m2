@@ -274,8 +274,8 @@ m2::void_expected m2::Level::InitAnyPlayer(
 	}
 
 	if (physical_world) {
-		world[I(ForegroundLayer::F0)] = new b2World(M2G_PROXY.gravity ? b2Vec2{0.0f, 10.0f} : b2Vec2{0.0f, 0.0f});
-		world[I(ForegroundLayer::F1)] = new b2World(M2G_PROXY.gravity ? b2Vec2{0.0f, 10.0f} : b2Vec2{0.0f, 0.0f});
+		world[I(ForegroundLayer::F0)] = new b2World(static_cast<b2Vec2>(M2G_PROXY.gravity));
+		world[I(ForegroundLayer::F1)] = new b2World(static_cast<b2Vec2>(M2G_PROXY.gravity));
 		contactListener = new box2d::ContactListener(
 		    Physique::DefaultBeginContactCallback, Physique::DefaultEndContactCallback);
 		world[I(ForegroundLayer::F0)]->SetContactListener(contactListener);

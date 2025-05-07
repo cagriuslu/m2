@@ -5,7 +5,7 @@ namespace m2g {
 	class Proxy : public m2::Proxy {
 	   public:
 		const std::string game_identifier = "MINE";
-		const bool gravity = true;
+		const m2::VecF gravity{0.0f, 10.0f};
 		const bool world_is_static = false;
 
 		const m2::UiPanelBlueprint* MainMenuBlueprint();
