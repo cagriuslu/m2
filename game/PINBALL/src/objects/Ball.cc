@@ -14,7 +14,7 @@ m2::void_expected LoadBall(m2::Object& obj) {
 		.fixtures = {m2::third_party::physics::FixtureDefinition{
 			.shape = m2::third_party::physics::ToShape(sprite.OriginalPb().regular().fixtures(0), sprite.Ppm()),
 			.friction = 0.2f,
-			.restitution = 0.72f,
+			.restitution = 0.01f, // Control restitution via the surface
 			.restitutionThresholdVelocity = 0.2f,
 			.isSensor = false,
 			.colliderFilter = m2::third_party::physics::ColliderParams{
@@ -47,9 +47,8 @@ m2::void_expected LoadBall(m2::Object& obj) {
 		}
 		if (M2_GAME.events.PopKeyPress(m2g::pb::RETURN)) {
 			phy_.body[I(m2::ForegroundLayer::F0)]->SetPosition(initialPos);
-			phy_.body[I(m2::ForegroundLayer::F0)]->SetEnabled(true);
 			phy_.body[I(m2::ForegroundLayer::F1)]->SetPosition(initialPos);
-			phy_.body[I(m2::ForegroundLayer::F1)]->SetEnabled(false);
+			M2_DEFER(m2::CreateForegroundLayerMover(phy_.OwnerId(), m2::ForegroundLayer::F0));
 		}
 	};
 

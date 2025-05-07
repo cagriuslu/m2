@@ -510,7 +510,7 @@ pb::SimulationState pinball::InitialSimulationState(const AnimalAllocator& anima
 
 pb::SimulationState pinball::AdvanceSimulation(const pb::SimulationState& currentState, const pb::SimulationInputs& inputs,
 	const AnimalAllocator& animalAllocator, const AnimalReleaser& animalReleaser) {
-	LOG_DEBUG("Advancing simulation");
+	LOG_TRACE("Advancing simulation");
 	const auto stateAfterTickCount = AdvanceTickCount(currentState);
 	const auto stateAfterEnvironment = AdvanceEnvironment(stateAfterTickCount, inputs);
 	const auto stateAfterBacteriaDeaths = AdvanceBacteriaDeaths(stateAfterEnvironment);

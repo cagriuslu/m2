@@ -19,24 +19,28 @@
       "mainSprite": "SPRITE_BASIC_FLIPPER_RIGHT"
     },
     {
-      "type": "OBJECT_BASIC_WALLS",
+      "type": "WALLS",
       "mainSprite": "SPRITE_BASIC_WALLS"
     },
     {
-      "type": "OBJECT_BASIC_PLATFORM",
+      "type": "PLATFORM",
       "mainSprite": "SPRITE_BASIC_PLATFORM"
     },
     {
-      "type": "OBJECT_BALL_LAUNCHER_SENSOR",
+      "type": "BALL_LAUNCHER_SENSOR",
       "mainSprite": "SPRITE_BALL_LAUNCHER_SENSOR"
     },
     {
-      "type": "OBJECT_BALL_PLATFORM_ENTRY_SENSOR",
+      "type": "PLATFORM_ENTRY_SENSOR",
       "mainSprite": "SPRITE_BALL_PLATFORM_ENTRY_SENSOR"
     },
     {
-      "type": "OBJECT_BALL_PLATFORM_EXIT_SENSOR",
+      "type": "PLATFORM_EXIT_SENSOR",
       "mainSprite": "SPRITE_BALL_PLATFORM_EXIT_SENSOR"
+    },
+    {
+      "type": "BUMPER_SENSOR",
+      "mainSprite": "SPRITE_BUMPER_SENSOR"
     }
   ]
 }

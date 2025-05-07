@@ -214,7 +214,7 @@ namespace m2 {
 		void ResetMousePosition() { _mouse_position_world_m = std::nullopt; _screen_center_to_mouse_position_m = std::nullopt; }
 		void RecalculateDirectionalAudio();
 
-		void AddDeferredAction(const std::function<void(void)>& action);
+		void AddDeferredAction(const std::function<void()>& action);
 		void ExecuteDeferredActions();
 
 	   private:

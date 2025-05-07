@@ -6,6 +6,7 @@
 #include <pinball/objects/Animal.h>
 #include <pinball/objects/Wall.h>
 #include <pinball/objects/Sensor.h>
+#include <pinball/objects/Targets.h>
 #include <m2/Game.h>
 #include <m2/ui/widget/ProgressBar.h>
 #include <m2/ui/widget/Text.h>
@@ -307,16 +308,18 @@ m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object&
 			return LoadFlipper(obj, false);
 		case pb::ObjectType::FLIPPER_RIGHT:
 			return LoadFlipper(obj, true);
-		case pb::ObjectType::OBJECT_BASIC_WALLS:
+		case pb::ObjectType::WALLS:
 			return LoadWall(obj);
-		case pb::ObjectType::OBJECT_BASIC_PLATFORM:
+		case pb::ObjectType::PLATFORM:
 			return LoadPlatform(obj);
-		case pb::ObjectType::OBJECT_BALL_LAUNCHER_SENSOR:
+		case pb::ObjectType::BALL_LAUNCHER_SENSOR:
 			return LoadBallLauncherSensor(obj);
-		case pb::ObjectType::OBJECT_BALL_PLATFORM_ENTRY_SENSOR:
+		case pb::ObjectType::PLATFORM_ENTRY_SENSOR:
 			return LoadPlatformEntrySensor(obj);
-		case pb::ObjectType::OBJECT_BALL_PLATFORM_EXIT_SENSOR:
+		case pb::ObjectType::PLATFORM_EXIT_SENSOR:
 			return LoadPlatformExitSensor(obj);
+		case pb::ObjectType::BUMPER_SENSOR:
+			return LoadBumperSensor(obj);
 		default:
 			throw M2_ERROR("Missing loader for type: " + m2::ToString(obj.GetType()));
 	}
