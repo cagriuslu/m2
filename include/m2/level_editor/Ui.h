@@ -74,6 +74,12 @@ namespace m2::level_editor {
 		bool drawTowardsRight;
 	};
 
+	struct TangentDescription {
+		int first, second;
+		float radius;
+		int pieceCount;
+	};
+
 	extern const UiPanelBlueprint gLeftHudBlueprint;
 	extern const UiPanelBlueprint gRightHudBlueprint;
 }

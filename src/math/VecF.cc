@@ -51,6 +51,10 @@ m2::VecF m2::VecF::clamp(const std::optional<VecF>& min, const std::optional<Vec
 	}
 	return cp;
 }
+m2::VecF m2::VecF::MoveTowards(const VecF& direction, float distance) const {
+	const auto normalizedDirection = direction.normalize();
+	return *this + normalizedDirection * distance;
+}
 
 std::array<m2::VecF, 4> m2::VecF::aabb_corners(float aabb_radius) const {
 	return {VecF{x + aabb_radius, y + aabb_radius}, VecF{x - aabb_radius, y + aabb_radius}, VecF{x - aabb_radius, y - aabb_radius}, VecF{x + aabb_radius, y - aabb_radius}};

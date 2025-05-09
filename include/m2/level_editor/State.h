@@ -10,6 +10,7 @@
 namespace m2::level_editor {
 	// Forward declarations
 	struct ArcDescription;
+	struct TangentDescription;
 
 	class State {
 		using BackgroundSpritePlaceholderMap = std::map<VecI, std::tuple<Id, m2g::pb::SpriteType>, VecICompareTopLeftToBottomRight>;
@@ -49,6 +50,7 @@ namespace m2::level_editor {
 
 		void StorePoint(int selectedIndex, const VecF& pointM);
 		void StoreArc(int selectedIndex, const VecF& pointM, const ArcDescription& arc);
+		void StoreTangent(int selectedIndex, const TangentDescription& tangent);
 		void UndoPoint(int selectedIndex);
 
 		void Draw() const;
@@ -59,5 +61,6 @@ namespace m2::level_editor {
 		void PlaceForeground(const VecF& position, float orientation, m2g::pb::ObjectType objectType, m2g::pb::GroupType groupType, unsigned groupInstance);
 		[[nodiscard]] RectF ForegroundSelectionArea() const;
 		static VecF WorldCoordinateToSpriteCoordinate(ForegroundObjectPlaceholderMap::const_iterator fgObject, const VecF& worldCoordinate);
+		void StoreArc(int selectedIndex, const VecF& fromPointOffset, const VecF& toPointOffset, float angleInRads, int pieceCount, bool drawTowardsRight);
 	};
 }

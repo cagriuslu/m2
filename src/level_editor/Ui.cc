@@ -215,6 +215,75 @@ namespace {
 		}
 	};
 
+	UiPanelBlueprint CreateDistinctIntegerSelectionDialog(const int min, const int max) {
+		return UiPanelBlueprint{
+			.w = 23, .h = 17,
+			.background_color = {0, 0, 0, 255},
+			.widgets = {
+				UiWidgetBlueprint{
+					.name = "First",
+					.x = 1, .y = 1, .w = 10, .h = 3,
+					.variant = IntegerInputBlueprint{
+						.min_value = min, .max_value = max
+					}
+				},
+				UiWidgetBlueprint{
+					.name = "Second",
+					.x = 12, .y = 1, .w = 10, .h = 3,
+					.variant = IntegerInputBlueprint{
+						.min_value = min, .max_value = max
+					}
+				},
+				UiWidgetBlueprint{
+					.x = 1, .y = 5, .w = 10, .h = 3,
+					.variant = TextBlueprint{ .text = "Radius:" }
+				},
+				UiWidgetBlueprint{
+					.name = "Radius",
+					.x = 12, .y = 5, .w = 10, .h = 3,
+					.variant = TextInputBlueprint{}
+				},
+				UiWidgetBlueprint{
+					.x = 1, .y = 9, .w = 10, .h = 3,
+					.variant = TextBlueprint{ .text = "Piece Count:" }
+				},
+				UiWidgetBlueprint{
+					.name = "PieceCountInput",
+					.x = 12, .y = 9, .w = 10, .h = 3,
+					.variant = IntegerInputBlueprint{
+						.min_value = 1, .max_value = 1000,
+						.initial_value = 1
+					}
+				},
+				UiWidgetBlueprint{
+					.x = 1, .y = 13, .w = 10, .h = 3,
+					.variant = TextBlueprint{
+						.text = "Cancel",
+						.onAction = [](const auto&) {
+							return MakeReturnAction();
+						}
+					}
+				},
+				UiWidgetBlueprint{
+					.x = 12, .y = 13, .w = 10, .h = 3,
+					.variant = TextBlueprint{
+						.text = "OK",
+						.onAction = [](const Text& self) {
+							const auto first = self.Parent().FindWidget<IntegerInput>("First")->value();
+							const auto second = self.Parent().FindWidget<IntegerInput>("Second")->value();
+							if (first == second) {
+								return MakeContinueAction();
+							}
+							const auto radius = stof(self.Parent().FindWidget<TextInput>("Radius")->text_input());
+							const auto pieceCount = self.Parent().FindWidget<IntegerInput>("PieceCountInput")->value();
+							return MakeReturnAction<level_editor::TangentDescription>(level_editor::TangentDescription{first, second, radius, pieceCount});
+						}
+					}
+				}
+			}
+		};
+	}
+
 	const UiPanelBlueprint gDisplayOptionsDialog = {
 		.name = "DisplayOptionsDialog",
 		.w = 12, .h = 40,
@@ -587,9 +656,9 @@ namespace {
 		.widgets = {
 			UiWidgetBlueprint{
 				.name = "FixtureSelection",
-				.x = 1, .y = 1, .w = 17, .h = 45,
+				.x = 1, .y = 1, .w = 17, .h = 42,
 				.variant = TextSelectionBlueprint{
-					.line_count = 15,
+					.line_count = 14,
 					.show_scroll_bar = true,
 					.onHover = [](const TextSelection& self, const std::optional<int> indexUnderMouse) {
 						if (indexUnderMouse) {
@@ -616,7 +685,7 @@ namespace {
 				}
 			},
 			UiWidgetBlueprint{
-				.x = 1, .y = 47, .w = 17, .h = 3,
+				.x = 1, .y = 44, .w = 17, .h = 3,
 				.variant = TextBlueprint{
 					.text = "Add Chain",
 					.onAction = [](const Text& self) -> UiAction {
@@ -632,7 +701,7 @@ namespace {
 				}
 			},
 			UiWidgetBlueprint{
-				.x = 1, .y = 51, .w = 17, .h = 3,
+				.x = 1, .y = 48, .w = 17, .h = 3,
 				.variant = TextBlueprint{
 					.text = "Remove Fixture",
 					.onAction = [](const Text& self) -> UiAction {
@@ -647,7 +716,7 @@ namespace {
 				}
 			},
 			UiWidgetBlueprint{
-				.x = 1, .y = 55, .w = 17, .h = 3,
+				.x = 1, .y = 52, .w = 17, .h = 3,
 				.variant = TextBlueprint{
 					.text = "Store Point",
 					.onAction = [](const Text& self) -> UiAction {
@@ -667,7 +736,7 @@ namespace {
 				}
 			},
 			UiWidgetBlueprint{
-				.x = 1, .y = 59, .w = 17, .h = 3,
+				.x = 1, .y = 56, .w = 17, .h = 3,
 				.variant = TextBlueprint{
 					.text = "Store Arc",
 					.onAction = [](const Text& self) -> UiAction {
@@ -693,7 +762,34 @@ namespace {
 				}
 			},
 			UiWidgetBlueprint{
-				.x = 1, .y = 63, .w = 17, .h = 3,
+				.x = 1, .y = 60, .w = 17, .h = 3,
+				.variant = TextBlueprint{
+					.text = "Store Tangent",
+					.onAction = [](const Text& self) -> UiAction {
+						const auto* fixtureSelectionWidget = self.Parent().FindWidget<TextSelection>("FixtureSelection");
+						if (const auto selectedIndexes = fixtureSelectionWidget->GetSelectedIndexes(); not selectedIndexes.empty()) {
+							const auto selectedIndex = selectedIndexes[0];
+
+							const auto& state = dynamic_cast<level_editor::DrawFgRightHudState&>(*self.Parent().state);
+							if (const auto fixtureType = state.SelectedSpriteFixtureTypes()[selectedIndex];
+									fixtureType == pb::Fixture::FixtureTypeCase::kChain) {
+
+								// There are same number of line segments as number of points
+								if (const auto pointCount = state.SelectedObjectMainSpritePb().regular().fixtures(selectedIndex).chain().points_size(); 1 < pointCount) {
+									UiPanel::create_and_run_blocking(
+										std::make_unique<UiPanelBlueprint>(CreateDistinctIntegerSelectionDialog(0, pointCount - 1)), RectF{0.27f, 0.37f, 0.46f, 0.26f})
+											.IfReturn<level_editor::TangentDescription>([=](const auto& tangent) {
+												std::get<level_editor::State>(M2_LEVEL.stateVariant).StoreTangent(selectedIndex, tangent);
+											});
+								}
+							}
+						}
+						return MakeContinueAction();
+					}
+				}
+			},
+			UiWidgetBlueprint{
+				.x = 1, .y = 64, .w = 17, .h = 3,
 				.variant = TextBlueprint{
 					.text = "Undo Point",
 					.onAction = [](const Text& self) -> UiAction {

@@ -79,6 +79,7 @@ namespace m2 {
 		/// Rotates the vector around origin
 		[[nodiscard]] VecF rotate(const float rads) const { return CreateUnitVectorWithAngle(angle_rads() + rads).with_length(length()); }
 		[[nodiscard]] VecF clamp(const std::optional<VecF>& min, const std::optional<VecF>& max) const;
+		[[nodiscard]] VecF MoveTowards(const VecF& direction, float distance) const;
 
 		/// Order of corners: Bottom-right, Bottom-left, Top-left, Top-right
 		[[nodiscard]] std::array<VecF, 4> aabb_corners(float aabb_radius) const;

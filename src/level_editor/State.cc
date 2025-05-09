@@ -9,6 +9,7 @@
 #include <m2/ui/widget/Text.h>
 #include <m2/ui/widget/TextSelection.h>
 #include <m2/sheet_editor/Ui.h>
+#include <m2/math/Line.h>
 #include <m2/Log.h>
 
 namespace {
@@ -242,29 +243,65 @@ void m2::level_editor::State::StoreArc(int selectedIndex, const VecF& pointM, co
 		return;
 	}
 	const auto& prevPointOffset = VecF{chain.points(chain.points_size() - 1)};
-	const auto vectorBetweenPoints = pointOffset - prevPointOffset;
-	const auto distanceBetweenPoints = vectorBetweenPoints.length();
 
-	// Find the radius of the circle
-	const auto smallAngleInDegrees = 180 < arc.angleInDegrees ? 360 - arc.angleInDegrees : arc.angleInDegrees;
-	const auto smallAngleInRads = ToRadians(smallAngleInDegrees);
-	const auto radius = distanceBetweenPoints / 2.0f / sinf(smallAngleInRads / 2.0f);
-	// To find the center of the circle, rotate the vector between the points, and walk the line
-	const auto angleToRotate = PI_DIV2 - (smallAngleInRads / 2.0f);
-	const auto angleToRotateWithSelectedDirection = arc.drawTowardsRight ? -angleToRotate : angleToRotate;
-	const auto rotatedVectorBetweenPoints = vectorBetweenPoints.rotate(180 < arc.angleInDegrees ? -angleToRotateWithSelectedDirection : angleToRotateWithSelectedDirection);
-	const auto prevPointOffsetToCircleCenter = rotatedVectorBetweenPoints.with_length(radius);
-	const auto circleCenter = prevPointOffset + prevPointOffsetToCircleCenter;
-
-	// Generate points from center and radius
-	const auto circleCenterToPrevPoint = prevPointOffsetToCircleCenter * -1.0f;
 	const auto angleInRads = ToRadians(arc.angleInDegrees);
-	const auto angleStep = angleInRads / F(arc.pieceCount);
-	for (auto i = 0; i < arc.pieceCount; ++i) {
-		const auto rotationAmount = F(i + 1) * (arc.drawTowardsRight ? angleStep * -1.0f : angleStep);
-		const auto circleCenterToArcPoint = circleCenterToPrevPoint.rotate(rotationAmount);
-		const auto arcPoint = circleCenterToArcPoint + circleCenter;
-		state.StorePoint(selectedIndex, arcPoint);
+	StoreArc(selectedIndex, prevPointOffset, pointOffset, angleInRads, arc.pieceCount, arc.drawTowardsRight);
+}
+void m2::level_editor::State::StoreTangent(const int selectedIndex, const TangentDescription& tangent) {
+	auto& state = dynamic_cast<DrawFgRightHudState&>(*M2_LEVEL.RightHud()->state);
+	const auto& spritePb = state.SelectedObjectMainSpritePb();
+	const auto& chain = spritePb.regular().fixtures(selectedIndex).chain();
+
+	const auto chainPieceToLine = [&](const int point_index) -> Line {
+		const auto point1 = VecF{chain.points(point_index)};
+		const auto point2 = VecF{chain.points((point_index + 1) % chain.points_size())};
+		return Line::FromPoints(point1, point2);
+	};
+	const auto line1 = chainPieceToLine(tangent.first);
+	const auto line2 = chainPieceToLine(tangent.second);
+	const auto intersectionOfLines = line1.IntersectionWith(line2);
+	if (not intersectionOfLines) {
+		return;
+	}
+	const auto angleBetweenLines = line1.AngleBetween(line2);
+
+	const auto distanceFromIntersectionToTangentPoint = tangent.radius / tanf(angleBetweenLines / 2.0f);
+	const auto tangentOnLine1 = intersectionOfLines->MoveTowards(line1.Parallel() * -1.0f, distanceFromIntersectionToTangentPoint);
+	const auto tangentOnLine2 = intersectionOfLines->MoveTowards(line2.Parallel(), distanceFromIntersectionToTangentPoint);
+
+	const auto arcAngle = (PI_DIV2 - (angleBetweenLines / 2.0f)) * 2.0f;
+
+	// Cache points before the first piece
+	std::vector<pb::VecF> pointsBefore;
+	for (int i = 0; i <= tangent.first; ++i) {
+		pointsBefore.emplace_back(chain.points(i));
+	}
+	// Also add the first tangent
+	pointsBefore.emplace_back(tangentOnLine1);
+
+	// Cache points after the second piece
+	std::vector<pb::VecF> pointsAfter;
+	for (int i = tangent.second + 1; i < chain.points_size(); ++i) {
+		pointsAfter.emplace_back(chain.points(i));
+	}
+
+	// Remove every point
+	const auto pointCount = chain.points_size();
+	for (int i = 0; i < pointCount; ++i) {
+		UndoPoint(selectedIndex);
+	}
+
+	// Add points before and the first tangent
+	for (const auto& pointBefore : pointsBefore) {
+		state.StorePoint(selectedIndex, VecF{pointBefore});
+	}
+
+	// Draw the arc
+	StoreArc(selectedIndex, tangentOnLine1, tangentOnLine2, arcAngle, tangent.pieceCount, false);
+
+	// Add point after
+	for (const auto& pointAfter : pointsAfter) {
+		state.StorePoint(selectedIndex, VecF{pointAfter});
 	}
 }
 void m2::level_editor::State::UndoPoint(const int selectedIndex) {
@@ -399,4 +436,35 @@ m2::VecF m2::level_editor::State::WorldCoordinateToSpriteCoordinate(const Foregr
 	const auto& sprite = std::get<Sprite>(M2_GAME.GetSpriteOrTextLabel(spriteType));
 	const auto ppm = sprite.Ppm();
 	return pointOffsetM * ppm;
+}
+void m2::level_editor::State::StoreArc(const int selectedIndex, const VecF& fromPointOffset, const VecF& toPointOffset, const float angleInRads, const int pieceCount, const bool drawTowardsRight) {
+	auto& state = dynamic_cast<DrawFgRightHudState&>(*M2_LEVEL.RightHud()->state);
+	const auto& spritePb = state.SelectedObjectMainSpritePb();
+	const auto& chain = spritePb.regular().fixtures(selectedIndex).chain();
+	if (chain.points_size() == 0) {
+		LOG_WARN("Unable to draw arc with single point");
+		return;
+	}
+	const auto vectorBetweenPoints = toPointOffset - fromPointOffset;
+	const auto distanceBetweenPoints = vectorBetweenPoints.length();
+
+	// Find the radius of the circle
+	const auto smallAngle = PI < angleInRads ? PI_MUL2 - angleInRads : angleInRads;
+	const auto radius = distanceBetweenPoints / 2.0f / sinf(smallAngle / 2.0f);
+	// To find the center of the circle, rotate the vector between the points, and walk the line
+	const auto angleToRotate = PI_DIV2 - (smallAngle / 2.0f);
+	const auto angleToRotateWithSelectedDirection = drawTowardsRight ? -angleToRotate : angleToRotate;
+	const auto rotatedVectorBetweenPoints = vectorBetweenPoints.rotate(PI < angleInRads ? -angleToRotateWithSelectedDirection : angleToRotateWithSelectedDirection);
+	const auto prevPointOffsetToCircleCenter = rotatedVectorBetweenPoints.with_length(radius);
+	const auto circleCenter = fromPointOffset + prevPointOffsetToCircleCenter;
+
+	// Generate points from center and radius
+	const auto circleCenterToPrevPoint = prevPointOffsetToCircleCenter * -1.0f;
+	const auto angleStep = angleInRads / F(pieceCount);
+	for (auto i = 0; i < pieceCount; ++i) {
+		const auto rotationAmount = F(i + 1) * (drawTowardsRight ? angleStep * -1.0f : angleStep);
+		const auto circleCenterToArcPoint = circleCenterToPrevPoint.rotate(rotationAmount);
+		const auto arcPoint = circleCenterToArcPoint + circleCenter;
+		state.StorePoint(selectedIndex, arcPoint);
+	}
 }
