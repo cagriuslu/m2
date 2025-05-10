@@ -263,7 +263,7 @@ void m2::level_editor::State::StoreTangent(const int selectedIndex, const Tangen
 	if (not intersectionOfLines) {
 		return;
 	}
-	const auto angleBetweenLines = line1.AngleBetween(line2);
+	const auto angleBetweenLines = line1.SmallerAngleBetween(line2);
 
 	const auto distanceFromIntersectionToTangentPoint = tangent.radius / tanf(angleBetweenLines / 2.0f);
 	const auto tangentOnLine1 = intersectionOfLines->MoveTowards(line1.Parallel() * -1.0f, distanceFromIntersectionToTangentPoint);

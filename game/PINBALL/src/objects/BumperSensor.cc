@@ -27,7 +27,6 @@ m2::void_expected LoadBumperSensor(m2::Object& obj) {
 
 	// The sensor collides with only the ball
 	phy.onCollision = [](m2::Physique&, m2::Physique& ball, const m2::box2d::Contact& contact) {
-		LOG_INFO("Bumper", contact.normal, contact.separation);
 		const auto contactNormal = contact.normal;
 		auto* ballPhy = &ball;
 		M2_DEFER(([contactNormal, ballPhy]() {
