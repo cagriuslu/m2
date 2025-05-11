@@ -61,7 +61,7 @@ float m2::Line::AngleTo(const Line& other) const {
 float m2::Line::SmallerAngleBetween(const Line& other) const {
 	const auto angleToOther = AngleTo(other);
 	if (PI_DIV2 < angleToOther) {
-		return angleToOther - PI_DIV2;
+		return PI - angleToOther;
 	}
 	return angleToOther;
 }
