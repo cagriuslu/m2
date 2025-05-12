@@ -40,16 +40,16 @@
     },
     {
       "position": {
-        "x": 5.5125,
-        "y": 24.357
+        "x": 5.525,
+        "y": 24.385
       },
       "orientation": 0.39234014,
       "type": "FLIPPER_LEFT"
     },
     {
       "position": {
-        "x": 10.4875,
-        "y": 24.357
+        "x": 10.475,
+        "y": 24.385
       },
       "orientation": 2.74925251,
       "type": "FLIPPER_RIGHT"
