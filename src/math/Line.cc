@@ -40,28 +40,25 @@ std::optional<m2::VecF> m2::Line::IntersectionWith(const Line& other) const {
 	}
 	return VecF{intersectionX, intersectionY};
 }
-float m2::Line::Angle() const {
-	if (_parallel.x == 0.0f) {
-		if (_parallel.y == 0.0f) {
-			return NAN;
-		}
-		return PI_DIV2;
-	}
-	return atanf(_parallel.y / _parallel.x);
-}
 float m2::Line::AngleTo(const Line& other) const {
-	const auto thisAngle = Angle();
-	const auto otherAngle = other.Angle();
-	const auto forwardSweepAngle = otherAngle - thisAngle;
-	if (forwardSweepAngle < 0.0f) {
-		return PI + forwardSweepAngle;
+	const auto thisAngle = _parallel.angle_rads();
+	const auto otherAngle = other._parallel.angle_rads();
+	if (const auto difference = otherAngle - thisAngle; difference < -PI) {
+		// If this line needs to sweep backwards more than 180 degrees, sweep forward instead
+		return difference + PI_MUL2;
+	} else if (PI < difference) {
+		// If this line needs to sweep forward more than 180 degrees, sweep backward instead
+		return difference - PI_MUL2;
+	} else {
+		return difference;
 	}
-	return forwardSweepAngle;
 }
-float m2::Line::SmallerAngleBetween(const Line& other) const {
-	const auto angleToOther = AngleTo(other);
-	if (PI_DIV2 < angleToOther) {
-		return PI - angleToOther;
+float m2::Line::SmallerAngleTo(const Line& other) const {
+	if (const auto angleToOther = AngleTo(other); angleToOther < -PI_DIV2) {
+		return angleToOther + PI;
+	} else if (PI_DIV2 < angleToOther) {
+		return angleToOther - PI;
+	} else {
+		return angleToOther;
 	}
-	return angleToOther;
 }

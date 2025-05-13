@@ -58,6 +58,7 @@ namespace m2 {
 		[[nodiscard]] float distance_sq(const VecF& other) const { return (other - *this).length_sq(); }
 		[[nodiscard]] float distance_sq(const VecI& other) const;
 		[[nodiscard]] float distance(const VecF& other) const { return (other - *this).length(); }
+		/// Returns the angle in radians between this vector and the positive-x axis. [-PI, PI]
 		[[nodiscard]] float angle_rads() const { return atan2f(y, x); }
 		[[nodiscard]] VecF CenterBetween(const VecF& other) const { return {(x + other.x) / 2.0f, (y + other.y) / 2.0f}; }
 

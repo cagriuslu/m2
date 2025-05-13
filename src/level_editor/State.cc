@@ -263,13 +263,12 @@ void m2::level_editor::State::StoreTangent(const int selectedIndex, const Tangen
 	if (not intersectionOfLines) {
 		return;
 	}
-	const auto angleBetweenLines = line1.SmallerAngleBetween(line2);
-
-	const auto distanceFromIntersectionToTangentPoint = tangent.radius / tanf(angleBetweenLines / 2.0f);
+	const auto absoluteAngleBetweenLines = fabsf(line1.AngleTo(line2));
+	const auto cornerInnerAngle = PI - absoluteAngleBetweenLines;
+	const auto distanceFromIntersectionToTangentPoint = tangent.radius / tanf(cornerInnerAngle / 2.0f);
 	const auto tangentOnLine1 = intersectionOfLines->MoveTowards(line1.Parallel() * -1.0f, distanceFromIntersectionToTangentPoint);
 	const auto tangentOnLine2 = intersectionOfLines->MoveTowards(line2.Parallel(), distanceFromIntersectionToTangentPoint);
-
-	const auto arcAngle = (PI_DIV2 - (angleBetweenLines / 2.0f)) * 2.0f;
+	const auto arcAngle = (PI_DIV2 - (cornerInnerAngle / 2.0f)) * 2.0f;
 
 	// Cache points before the first piece
 	std::vector<pb::VecF> pointsBefore;
@@ -296,8 +295,9 @@ void m2::level_editor::State::StoreTangent(const int selectedIndex, const Tangen
 		state.StorePoint(selectedIndex, VecF{pointBefore});
 	}
 
-	// Draw the arc
-	StoreArc(selectedIndex, tangentOnLine1, tangentOnLine2, arcAngle, tangent.pieceCount, false);
+	// Draw the arc, sign of the angle determines the direction of the arc
+	const auto angleTo = line1.AngleTo(line2);
+	StoreArc(selectedIndex, tangentOnLine1, tangentOnLine2, arcAngle, tangent.pieceCount, angleTo < 0.0f);
 
 	// Add point after
 	for (const auto& pointAfter : pointsAfter) {
