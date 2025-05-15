@@ -2,60 +2,82 @@
   "identifier": "001",
   "objects": [
     {
-      "type": "PLAYER"
+      "position": {},
+      "type": "PLAYER",
+      "group": {}
+    },
+    {
+      "position": {},
+      "type": "PLATFORM_ENTRY_SENSOR",
+      "group": {}
+    },
+    {
+      "position": {},
+      "type": "PLATFORM_EXIT_SENSOR",
+      "group": {}
+    },
+    {
+      "position": {},
+      "type": "BUMPER_SENSOR",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 14.5,
+        "y": 1.75
+      },
+      "type": "TRIANGLE_TRAP",
+      "group": {}
     },
     {
       "position": {
         "x": 8,
         "y": 13.5
       },
-      "type": "WALLS"
+      "type": "WALLS",
+      "group": {}
     },
     {
       "position": {
         "x": 8,
         "y": 13.5
       },
-      "type": "PLATFORM"
+      "type": "PLATFORM",
+      "group": {}
     },
     {
       "position": {
         "x": 15.6875,
         "y": 23.188
       },
-      "type": "BALL"
+      "type": "BALL",
+      "group": {}
     },
     {
       "position": {
         "x": 15.5,
         "y": 23.375
       },
-      "type": "BALL_LAUNCHER_SENSOR"
-    },
-    {
-      "type": "PLATFORM_ENTRY_SENSOR"
-    },
-    {
-      "type": "PLATFORM_EXIT_SENSOR"
+      "type": "BALL_LAUNCHER_SENSOR",
+      "group": {}
     },
     {
       "position": {
         "x": 5.525,
         "y": 24.385
       },
-      "orientation": 0.39234014,
-      "type": "FLIPPER_LEFT"
+      "orientation": 0.392340153,
+      "type": "FLIPPER_LEFT",
+      "group": {}
     },
     {
       "position": {
         "x": 10.475,
         "y": 24.385
       },
-      "orientation": 2.74925251,
-      "type": "FLIPPER_RIGHT"
-    },
-    {
-      "type": "BUMPER_SENSOR"
+      "orientation": 2.74925256,
+      "type": "FLIPPER_RIGHT",
+      "group": {}
     }
   ]
 }
