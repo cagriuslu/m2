@@ -140,6 +140,7 @@ UiAction TextSelection::OnEvent(Events& events) {
 		throw M2_ERROR("Not yet implemented");
 	} else {
 		// Scrollable selection
+
 		auto scroll_bar_rect = Rect().trim_left(Rect().w - Rect().h / I(VariantBlueprint().line_count));
 		auto up_arrow_rect = scroll_bar_rect.GetRow(I(VariantBlueprint().line_count), 0);
 		auto down_button_rect = scroll_bar_rect.GetRow(I(VariantBlueprint().line_count), I(VariantBlueprint().line_count) - 1);
@@ -363,7 +364,7 @@ void TextSelection::RenewHoverIfNecessary() {
 		const auto mouseY = M2_GAME.events.MousePosition().y;
 		const auto mouseYOffset = mouseY - widgetY;
 		if (const auto indexBeingHovered = mouseYOffset / rowH; indexBeingHovered < I(_options.size())) {
-			return indexBeingHovered;
+			return std::clamp(_topIndex + indexBeingHovered, 0, I(_options.size()) - 1) ;
 		}
 		return std::nullopt;
 	}();
