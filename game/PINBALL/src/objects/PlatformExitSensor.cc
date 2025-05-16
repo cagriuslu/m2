@@ -2,6 +2,7 @@
 #include <m2/third_party/physics/ColliderCategory.h>
 #include <m2/Game.h>
 #include <m2/Log.h>
+#include <m2g_ObjectType.pb.h>
 
 m2::void_expected LoadPlatformExitSensor(m2::Object& obj) {
 	const auto type = obj.GetType();
@@ -27,9 +28,11 @@ m2::void_expected LoadPlatformExitSensor(m2::Object& obj) {
 
 	// The sensor collides with only the ball
 	phy.onCollision = [](m2::Physique&, const m2::Physique& ball, const m2::box2d::Contact&) {
-		// Move the ball up to the platform
-		LOG_INFO("Moving to ground level");
-		M2_DEFER(m2::CreateForegroundLayerMover(ball.OwnerId(), m2::ForegroundLayer::F0));
+		if (ball.Owner().GetType() == m2g::pb::ObjectType::BALL) {
+			// Move the ball up to the platform
+			LOG_INFO("Moving to ground level");
+			M2_DEFER(m2::CreateForegroundLayerMover(ball.OwnerId(), m2::ForegroundLayer::F0));
+		}
 	};
 
 	return {};

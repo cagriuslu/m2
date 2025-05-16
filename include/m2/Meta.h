@@ -16,6 +16,7 @@
 namespace m2 {
 	int I(const auto t) { return static_cast<int>(t); }
 	unsigned U(const auto t) { return static_cast<unsigned>(t); }
+	uint8_t U8(const auto t) { return static_cast<uint8_t>(t); }
 	size_t Z(const auto t) { return static_cast<size_t>(t); }
 	float F(const auto t) { return static_cast<float>(t); }
 	double D(const auto t) { return static_cast<double>(t); }

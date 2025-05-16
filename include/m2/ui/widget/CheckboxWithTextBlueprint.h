@@ -1,5 +1,6 @@
 #pragma once
 #include "../UiAction.h"
+#include <m2g_KeyType.pb.h>
 #include <string>
 #include <functional>
 #include <SDL.h>

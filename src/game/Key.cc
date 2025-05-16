@@ -1,5 +1,6 @@
 #include <m2/game/Key.h>
 #include <m2/protobuf/LUT.h>
+#include <Key.pb.h>
 
 std::multimap<m2g::pb::KeyType, SDL_Scancode> m2::GenerateKeyToScancodeMap(const std::filesystem::path& keysPath) {
 	const auto keys = pb::LUT<pb::Key>::LoadProtoItems(keysPath, &pb::Keys::keys);

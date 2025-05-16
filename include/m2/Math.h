@@ -1,4 +1,6 @@
 #pragma once
+#include <string>
+#include <optional>
 #include <cstdint>
 
 namespace m2 {
