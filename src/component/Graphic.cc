@@ -3,6 +3,7 @@
 #include <m2/Game.h>
 #include "m2/component/Graphic.h"
 #include <m2/Object.h>
+#include <cmath>
 
 namespace {
 	float camera_sin() {
@@ -346,7 +347,7 @@ void m2::Graphic::DrawGridLines(const float startFrom, const float frequency, co
 	// Remove the offset
 	const auto viewportNoOffset = viewport.shift({-startFrom, -startFrom});
 	// Divide by frequency
-	const auto multiple = VecF{std::ceilf(viewportNoOffset.x / frequency), std::floorf(viewportNoOffset.y / frequency)};
+	const auto multiple = VecF{std::ceil(viewportNoOffset.x / frequency), std::floor(viewportNoOffset.y / frequency)};
 	for (auto x = multiple.x * frequency + startFrom; x <= viewport.X2(); x += frequency) {
 		DrawVerticalLine(x, color);
 	}
