@@ -5,14 +5,18 @@
 m2::void_expected LoadTriangleTrap(m2::Object& obj) {
 	const auto type = obj.GetType();
 	const auto spriteType = *M2_GAME.GetMainSpriteOfObject(type);
-	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(spriteType));
+	// const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(spriteType));
+
+	const auto triangleSide = 1.25f;
 
 	auto& phy = obj.AddPhysique();
 	m2::third_party::physics::RigidBodyDefinition rigidBodyDef{
 		.bodyType = m2::third_party::physics::RigidBodyType::DYNAMIC,
 		.fixtures = {m2::third_party::physics::FixtureDefinition{
-			.shape = m2::third_party::physics::CircleShape{.radius = 0.55f}, // TODO try triangle using polygon
-			.friction = 0.2f,
+			.shape = m2::third_party::physics::PolygonShape{
+				.points = {m2::VecF{triangleSide / 2.0f, 0.0f}, m2::VecF{-triangleSide / 2.0f, 0.0f}, m2::VecF{0.0f, (triangleSide / 2.0f) * sqrtf(3.0f)}}
+			},
+			.friction = 0.0f,
 			.restitution = 0.65f,
 			.restitutionThresholdVelocity = 0.2f,
 			.isSensor = false,
@@ -23,7 +27,7 @@ m2::void_expected LoadTriangleTrap(m2::Object& obj) {
 		}},
 		.linearDamping = 0.0f,
 		.fixedRotation = false,
-		.mass = 0.1f,
+		.mass = 0.999f,
 		.inertia = 0.1f,
 		.allowSleeping = false,
 		.initiallyAwake = true,

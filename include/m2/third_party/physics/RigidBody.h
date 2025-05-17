@@ -26,6 +26,10 @@ namespace m2::third_party::physics {
 		uint16_t collidesWith{};
 	};
 
+	struct PolygonShape {
+		// Points must form a convex shape. Minimum of 3 points is necessary.
+		std::vector<VecF> points;
+	};
 	struct RectangleShape {
 		// Offset of the center of the rectangle from the origin of the body
 		VecF offset;
@@ -52,10 +56,11 @@ namespace m2::third_party::physics {
 	struct EdgeShape {
 		VecF pointA, pointB;
 	};
-	std::variant<RectangleShape,CircleShape,ChainShape,EdgeShape> ToShape(const pb::Fixture&, int ppm);
+	std::variant<PolygonShape,RectangleShape,CircleShape,ChainShape,EdgeShape> ToShape(const pb::Fixture&, int ppm);
 
 	struct FixtureDefinition {
-		std::variant<RectangleShape,CircleShape,ChainShape,EdgeShape> shape;
+		std::variant<PolygonShape,RectangleShape,CircleShape,ChainShape,EdgeShape> shape;
+
 		float friction{};
 		float restitution{};
 		float restitutionThresholdVelocity{};

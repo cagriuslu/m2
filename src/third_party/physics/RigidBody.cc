@@ -43,7 +43,7 @@ ChainShape ChainShape::FromSpriteChainFixture(const pb::Fixture_ChainFixture& cf
 	});
 	return cs;
 }
-std::variant<RectangleShape,CircleShape,ChainShape,EdgeShape> m2::third_party::physics::ToShape(const pb::Fixture& pbFixture, const int ppm) {
+std::variant<PolygonShape,RectangleShape,CircleShape,ChainShape,EdgeShape> m2::third_party::physics::ToShape(const pb::Fixture& pbFixture, const int ppm) {
 	if (pbFixture.has_rectangle()) {
 		return RectangleShape::FromSpriteRectangleFixture(pbFixture.rectangle(), ppm);
 	}
@@ -78,7 +78,16 @@ RigidBody RigidBody::CreateFromDefinition(const RigidBodyDefinition& definition,
 	for (const auto& fixture : definition.fixtures) {
 		b2FixtureDef box2dFixtureDef = {};
 		std::variant<std::monostate,b2PolygonShape,b2CircleShape,b2ChainShape,b2EdgeShape> shape;
-		if (std::holds_alternative<RectangleShape>(fixture.shape)) {
+		if (std::holds_alternative<PolygonShape>(fixture.shape)) {
+			const auto& poly = std::get<PolygonShape>(fixture.shape);
+			shape.emplace<b2PolygonShape>();
+			std::vector<b2Vec2> points;
+			for (const auto& point : poly.points) {
+				points.emplace_back(static_cast<b2Vec2>(point));
+			}
+			std::get<b2PolygonShape>(shape).Set(points.data(), I(poly.points.size()));
+			box2dFixtureDef.shape = &std::get<b2PolygonShape>(shape);
+		} else if (std::holds_alternative<RectangleShape>(fixture.shape)) {
 			const auto& rect = std::get<RectangleShape>(fixture.shape);
 			shape.emplace<b2PolygonShape>();
 			std::get<b2PolygonShape>(shape).SetAsBox(rect.dimensions.x / 2.0f, rect.dimensions.y / 2.0f,

@@ -23,14 +23,6 @@
     },
     {
       "position": {
-        "x": 14.5,
-        "y": 1.75
-      },
-      "type": "TRIANGLE_TRAP",
-      "group": {}
-    },
-    {
-      "position": {
         "x": 8,
         "y": 13.5
       },
