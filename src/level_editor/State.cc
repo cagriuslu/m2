@@ -376,6 +376,9 @@ void m2::level_editor::State::Draw() const {
 			Graphic::DrawGridLines(-0.5f, 1.0f / F(splitCount), {127, 127, 255, 60});
 		}
 	}
+	// Draw axes
+	Graphic::DrawHorizontalLine(0.0f, RGBA::Red);
+	Graphic::DrawVerticalLine(0.0f, RGBA::Red);
 }
 m2::void_expected m2::level_editor::State::Save() const {
 	pb::Level level;

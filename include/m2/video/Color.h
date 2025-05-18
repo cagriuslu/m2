@@ -3,6 +3,7 @@
 #include "../Meta.h"
 #include <Sprite.pb.h>
 #include <box2d/b2_draw.h>
+#include <SDL2/SDL_pixels.h>
 
 namespace m2 {
 	struct RGB {
@@ -28,5 +29,9 @@ namespace m2 {
 		RGBA operator*(const float rhs) const { return RGBA{RoundU8(F(r) * rhs), RoundU8(F(g) * rhs), RoundU8(F(b) * rhs), a}; }
 		/// Alpha value isn't scaled
 		RGBA operator/(const float rhs) const { return RGBA{RoundU8(F(r) / rhs), RoundU8(F(g) / rhs), RoundU8(F(b) / rhs), a}; }
+
+		static RGBA Red;
+		static RGBA Green;
+		static RGBA Blue;
 	};
 }
