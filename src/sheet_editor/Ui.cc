@@ -3,6 +3,7 @@
 #include <m2/ui/widget/TextSelection.h>
 #include <m2/ui/widget/Text.h>
 #include <m2/ui/widget/Image.h>
+#include <m2/ui/Layout.h>
 
 using namespace m2;
 
@@ -259,9 +260,9 @@ const UiPanelBlueprint m2::sheet_editor_left_hud = {
 	.name = "LeftHud",
 	.w = 19, .h = 72,
 	.background_color = {0, 0, 0, 255},
-	.widgets = {
+	.widgets = *MakeVerticalLayout(19, 72, 1, {
 		UiWidgetBlueprint{
-			.x = 1, .y = 2, .w = 17, .h = 8,
+			.h = 8,
 			.variant = widget::TextBlueprint{
 				.text = "Foreground Companion",
 				.wrapped_font_size_in_units = 2.4f,
@@ -272,7 +273,7 @@ const UiPanelBlueprint m2::sheet_editor_left_hud = {
 			}
 		},
 		UiWidgetBlueprint{
-			.x = 1, .y = 11, .w = 17, .h = 8,
+			.h = 8,
 			.variant = widget::TextBlueprint{
 				.text = "Rect",
 				.wrapped_font_size_in_units = 2.4f,
@@ -283,7 +284,7 @@ const UiPanelBlueprint m2::sheet_editor_left_hud = {
 			}
 		},
 		UiWidgetBlueprint{
-			.x = 1, .y = 20, .w = 17, .h = 8,
+			.h = 8,
 			.variant = widget::TextBlueprint{
 				.text = "Fixture",
 				.wrapped_font_size_in_units = 2.4f,
@@ -294,7 +295,7 @@ const UiPanelBlueprint m2::sheet_editor_left_hud = {
 			}
 		},
 		UiWidgetBlueprint{
-			.x = 1, .y = 29, .w = 17, .h = 4,
+			.h = 4,
 			.variant = widget::TextBlueprint{
 				.text = "Cancel",
 				.wrapped_font_size_in_units = 2.4f,
@@ -304,8 +305,20 @@ const UiPanelBlueprint m2::sheet_editor_left_hud = {
 				}
 			}
 		},
+		DynamicSpacer{},
 		UiWidgetBlueprint{
-			.x = 0, .y = 70, .w = 19, .h = 2,
+			.h = 4,
+			.variant = widget::TextBlueprint{
+				.text = "Save",
+				.wrapped_font_size_in_units = 2.4f,
+				.onAction = [](MAYBE const widget::Text& self) -> UiAction {
+					std::get<sheet_editor::State>(M2_LEVEL.stateVariant).Save();
+					return MakeContinueAction();
+				}
+			}
+		},
+		UiWidgetBlueprint{
+			.h = 2,
 			.border_width = 0,
 			.variant = widget::TextBlueprint{
 				.text = "0.0:0.0",
@@ -316,7 +329,7 @@ const UiPanelBlueprint m2::sheet_editor_left_hud = {
 				}
 			}
 		}
-	}
+	})
 };
 
 const UiPanelBlueprint m2::sheet_editor_main_menu = {
