@@ -13,7 +13,7 @@ expected<PersistentSpriteSheets> PersistentSpriteSheets::LoadFile(std::filesyste
 
 std::vector<m2g::pb::SpriteType> PersistentSpriteSheets::AllSpriteTypes() const {
 	std::vector<m2g::pb::SpriteType> sprite_types;
-	std::ranges::for_each(Cache().sheets(), [&sprite_types](const auto& sheet) {
+	std::ranges::for_each(GetCache().sheets(), [&sprite_types](const auto& sheet) {
 		std::for_each(sheet.sprites().cbegin(), sheet.sprites().cend(), [&sprite_types](const auto& sprite) {
 			sprite_types.emplace_back(sprite.type());
 		});
@@ -21,7 +21,7 @@ std::vector<m2g::pb::SpriteType> PersistentSpriteSheets::AllSpriteTypes() const 
 	return sprite_types;
 }
 const pb::SpriteSheet* PersistentSpriteSheets::SpriteSheetPbWithSprite(m2g::pb::SpriteType spriteType) const {
-	for (const auto& sheet : Cache().sheets()) {
+	for (const auto& sheet : GetCache().sheets()) {
 		for (const auto& sprite : sheet.sprites()) {
 			if (sprite.type() == spriteType) {
 				return &sheet;
@@ -31,7 +31,7 @@ const pb::SpriteSheet* PersistentSpriteSheets::SpriteSheetPbWithSprite(m2g::pb::
 	return nullptr;
 }
 const pb::Sprite& PersistentSpriteSheets::SpritePb(const m2g::pb::SpriteType spriteType) const {
-	for (auto& sheet : Cache().sheets()) {
+	for (auto& sheet : GetCache().sheets()) {
 		for (auto& sprite : sheet.sprites()) {
 			if (sprite.type() == spriteType) {
 				return sprite;
@@ -49,7 +49,7 @@ std::vector<pb::Fixture::FixtureTypeCase> PersistentSpriteSheets::SpriteFixtureT
 }
 
 void PersistentSpriteSheets::ModifySprite(const m2g::pb::SpriteType spriteType, const std::function<void(pb::Sprite&)>& modifier) {
-	auto expectSuccess = Mutate([&](pb::SpriteSheets& sheets) {
+	auto expectSuccess = MutateAndSave([&](pb::SpriteSheets& sheets) {
 		for (auto& sheet : *sheets.mutable_sheets()) {
 			for (auto& sprite : *sheet.mutable_sprites()) {
 				if (sprite.type() == spriteType) {

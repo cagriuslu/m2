@@ -13,6 +13,7 @@ namespace m2::pb {
 		static_assert(std::is_base_of_v<::google::protobuf::Message, PbObjectType>, "PbObjectType must be a Protobuf Message");
 		std::filesystem::path _path;
 		PbObjectType _cache;
+		bool _isDirty{};
 
 		PersistentObject(std::filesystem::path path, PbObjectType&& obj) : _path(std::move(path)), _cache(std::move(obj)) {}
 
@@ -34,14 +35,26 @@ namespace m2::pb {
 
 		// Accessors
 
-		[[nodiscard]] const std::filesystem::path& Path() const { return _path; }
-		[[nodiscard]] const PbObjectType& Cache() const { return _cache; }
+		[[nodiscard]] const std::filesystem::path& GetPath() const { return _path; }
+		[[nodiscard]] const PbObjectType& GetCache() const { return _cache; }
+		[[nodiscard]] bool IsDirty() const { return _isDirty; }
 
 		// Modifiers
 
-		void_expected Mutate(const std::function<void(PbObjectType&)>& mutator) {
+		void Mutate(const std::function<void(PbObjectType&)>& mutator) {
 			mutator(_cache);
-			return message_to_json_file(_cache, _path);
+			_isDirty = true;
+		}
+		void_expected MutateAndSave(const std::function<void(PbObjectType&)>& mutator) {
+			Mutate(mutator);
+			return Save();
+		}
+		void_expected Save() {
+			const auto result = message_to_json_file(_cache, _path);
+			if (result) {
+				_isDirty = false;
+			}
+			return result;
 		}
 	};
 
