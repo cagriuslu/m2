@@ -56,6 +56,17 @@ namespace m2::level_editor {
 				}
 			});
 		}
+		void MovePoint(const int fixtureIndex, const int pointIndex, const VecF& spriteOriginToPointVec) {
+			_persistentSpriteSheets.ModifySprite(SelectedObjectMainSpriteType(), [&](pb::Sprite& sprite) {
+				if (auto* fixture = sprite.mutable_regular()->mutable_fixtures(fixtureIndex); fixture->has_chain()) {
+					auto* chain = fixture->mutable_chain();
+					if (auto* point = chain->mutable_points(pointIndex); point) {
+						point->set_x(spriteOriginToPointVec.x);
+						point->set_y(spriteOriginToPointVec.y);
+					}
+				}
+			});
+		}
 		void UndoPoint(const int index) {
 			_persistentSpriteSheets.ModifySprite(SelectedObjectMainSpriteType(), [&](pb::Sprite& sprite) {
 				if (auto* fixture = sprite.mutable_regular()->mutable_fixtures(index); fixture->has_chain()) {

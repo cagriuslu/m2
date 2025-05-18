@@ -38,6 +38,7 @@ namespace m2::level_editor {
 		void LoadLevelBlueprint(const pb::Level& lb);
 
 		void HandleMousePrimaryButton(const VecF& position);
+		void HandleMousePrimarySelectionComplete(const VecF& firstPosition, const VecF& secondPosition);
 
 		void EraseBackground(const RectI& area);
 		void CopyBackground(const RectI& area);
@@ -60,7 +61,9 @@ namespace m2::level_editor {
 		void PaintBackground(const VecI& position, m2g::pb::SpriteType spriteType);
 		void PlaceForeground(const VecF& position, float orientation, m2g::pb::ObjectType objectType, m2g::pb::GroupType groupType, unsigned groupInstance);
 		[[nodiscard]] RectF ForegroundSelectionArea() const;
+		static int SpritePpm(ForegroundObjectPlaceholderMap::const_iterator fgObject);
 		static VecF WorldCoordinateToSpriteCoordinate(ForegroundObjectPlaceholderMap::const_iterator fgObject, const VecF& worldCoordinate);
 		void StoreArc(int selectedIndex, const VecF& fromPointOffset, const VecF& toPointOffset, float angleInRads, int pieceCount, bool drawTowardsRight);
+		static std::optional<int> FindClosestChainPointInRange(const pb::Fixture_ChainFixture& chain, int spritePpm, const VecF& positionPx);
 	};
 }

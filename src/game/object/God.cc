@@ -1,6 +1,7 @@
 #include "m2/game/object/God.h"
 #include <m2/ui/widget/CheckboxWithText.h>
 #include "m2/Game.h"
+#include <m2/Log.h>
 
 using namespace m2;
 
@@ -10,6 +11,14 @@ namespace {
 		        [=](level_editor::State& le) { le.HandleMousePrimaryButton(mousePosition); },
 		        DEFAULT_OVERLOAD},
 		    M2_LEVEL.stateVariant);
+	}
+
+	void HandlePrimaryButtonRelease(const VecF& firstPosition, const VecF& secondPosition) {
+		std::visit(overloaded{
+				[=](level_editor::State& le) { le.HandleMousePrimarySelectionComplete(firstPosition, secondPosition); },
+				DEFAULT_OVERLOAD},
+			M2_LEVEL.stateVariant);
+
 	}
 }  // namespace
 
@@ -47,6 +56,10 @@ Id obj::create_god() {
 		if (const auto& mousePosition = M2_GAME.MousePositionWorldM(); not mousePosition.is_negative()) {
 			if (M2_GAME.events.PopMouseButtonPress(MouseButton::PRIMARY)) {
 				handle_primary_button_press(mousePosition);
+			}
+			if (M2_GAME.events.PopMouseButtonRelease(MouseButton::PRIMARY) && M2_LEVEL.PrimarySelection() && M2_LEVEL.PrimarySelection()->IsComplete()) {
+				const auto [first, second] = *M2_LEVEL.PrimarySelection()->SelectionsM();
+				HandlePrimaryButtonRelease(first, second);
 			}
 		}
 	};

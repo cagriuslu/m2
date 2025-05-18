@@ -144,6 +144,33 @@ void m2::level_editor::State::HandleMousePrimaryButton(const VecF& position) {
 		}
 	}
 }
+void m2::level_editor::State::HandleMousePrimarySelectionComplete(const VecF& firstPosition, const VecF& secondPosition) {
+	if (M2_LEVEL.RightHud() && M2_LEVEL.RightHud()->state) {
+		if (auto* drawFgState = dynamic_cast<DrawFgRightHudState*>(M2_LEVEL.RightHud()->state.get())) {
+			const auto* fixtureSelectionWidget = M2_LEVEL.RightHud()->FindWidget<widget::TextSelection>("FixtureSelection");
+			if (const auto selectedIndexes = fixtureSelectionWidget->GetSelectedIndexes(); not selectedIndexes.empty()) {
+				const auto selectedIndex = selectedIndexes[0];
+				if (const auto fixtureType = drawFgState->SelectedSpriteFixtureTypes()[selectedIndex];
+						fixtureType == pb::Fixture::FixtureTypeCase::kChain) {
+					const auto fgObjectIt = GetForegroundObjectsOfType(drawFgState->SelectedObjectType())[0];
+					const auto firstPositionPx = WorldCoordinateToSpriteCoordinate(fgObjectIt, firstPosition);
+					const auto spritePpm = F(SpritePpm(fgObjectIt));
+					const auto& spritePb = drawFgState->SelectedObjectMainSpritePb();
+					const auto& chain = spritePb.regular().fixtures(selectedIndex).chain();
+					const auto closestPointIndex = FindClosestChainPointInRange(chain, spritePpm, firstPositionPx);
+					if (not closestPointIndex) {
+						return;
+					}
+
+					const auto splitCount = M2_LEVEL.LeftHud()->FindWidget<widget::IntegerInput>("CellSplitCount")->value();
+					const auto binnedSecondPositionPx = secondPosition.RoundToBin(splitCount);
+					const auto pointOffset = WorldCoordinateToSpriteCoordinate(fgObjectIt, binnedSecondPositionPx);
+					drawFgState->MovePoint(selectedIndex, *closestPointIndex, pointOffset);
+				}
+			}
+		}
+	}
+}
 
 void m2::level_editor::State::EraseBackground(const RectI& area) {
 	const auto selectedBgLayerIndex = I(GetSelectedBackgroundLayer());
@@ -321,18 +348,24 @@ void m2::level_editor::State::Draw() const {
 			}
 		}
 	};
-	const auto drawFixturesOfObject = [this](const m2g::pb::ObjectType ot, const pb::Sprite& spritePb, const int ppm, const bool background) {
+	struct OverridePointPositionParams {
+		int fixtureIndex;
+		int pointIndex;
+		VecF newPosition;
+	};
+	const auto drawFixturesOfObject = [this](const m2g::pb::ObjectType ot, const pb::Sprite& spritePb, const int ppm, const bool background, std::optional<OverridePointPositionParams> overridePointPosition) {
 		const auto color = background ? sheet_editor::CONFIRMED_CROSS_COLOR2 : sheet_editor::CONFIRMED_CROSS_COLOR;
-		for (const auto& fixture : spritePb.regular().fixtures()) {
-			if (fixture.has_chain()) {
+		for (int i = 0; i < spritePb.regular().fixtures_size(); ++i) {
+			if (const auto& fixture = spritePb.regular().fixtures(i); fixture.has_chain()) {
 				const auto fgObjectIt = GetForegroundObjectsOfType(ot)[0];
 				const auto objectOrigin = fgObjectIt->first;
 				if (const auto& points = fixture.chain().points(); points.size() == 1) {
 					Graphic::DrawCross(objectOrigin + VecF{points[0]} / ppm, color);
 				} else if (1 < points.size()) {
-					auto end = points.cend() - 1;
-					for (auto it = points.cbegin(); it != end; ++it) {
-						Graphic::DrawLine(objectOrigin + VecF{*it} / ppm, objectOrigin + VecF{*(it+1)} / ppm, color);
+					for (int j = 0; j < points.size() - 1; ++j) {
+						const auto& thisPoint = overridePointPosition && overridePointPosition->fixtureIndex == i && overridePointPosition->pointIndex == j ? overridePointPosition->newPosition : VecF{points[j]};
+						const auto& nextPoint = overridePointPosition && overridePointPosition->fixtureIndex == i && overridePointPosition->pointIndex == j + 1 ? overridePointPosition->newPosition : VecF{points[j + 1]};
+						Graphic::DrawLine(objectOrigin + thisPoint / ppm, objectOrigin + nextPoint / ppm, color);
 					}
 				}
 			}
@@ -353,19 +386,45 @@ void m2::level_editor::State::Draw() const {
 		}
 	} else if (M2_LEVEL.RightHud()->Name() == "DrawFgRightHud") {
 		// Draw selection (as cross)
-		if (const auto selections = M2_LEVEL.PrimarySelection()->SelectionsM()) {
+		if (const auto selections = M2_LEVEL.SecondarySelection()->SelectionsM()) {
 			const auto point = selections->first.RoundToBin(splitCount);
 			Graphic::DrawCross(point, sheet_editor::CROSS_COLOR);
 		}
 		// Draw already existing fixtures
 		const auto& state = dynamic_cast<DrawFgRightHudState&>(*M2_LEVEL.RightHud()->state);
 		const auto ppm = std::get<Sprite>(M2_GAME.GetSpriteOrTextLabel(state.SelectedObjectMainSpriteType())).Ppm();
-		drawFixturesOfObject(state.SelectedObjectType(), state.SelectedObjectMainSpritePb(), ppm, false);
+		const auto overridePointPositionParams = [&]() -> std::optional<OverridePointPositionParams> {
+			// Draw drag-and-drop
+			if (const auto selection = M2_LEVEL.PrimarySelection()->SelectionsM(); selection && not M2_LEVEL.PrimarySelection()->IsComplete()) {
+				const auto* fixtureSelectionWidget = M2_LEVEL.RightHud()->FindWidget<widget::TextSelection>("FixtureSelection");
+				if (const auto selectedIndexes = fixtureSelectionWidget->GetSelectedIndexes(); not selectedIndexes.empty()) {
+					const auto selectedIndex = selectedIndexes[0];
+					if (const auto fixtureType = state.SelectedSpriteFixtureTypes()[selectedIndex];
+							fixtureType == pb::Fixture::FixtureTypeCase::kChain) {
+						const auto fgObjectIt = GetForegroundObjectsOfType(state.SelectedObjectType())[0];
+						const auto firstPositionPx = WorldCoordinateToSpriteCoordinate(fgObjectIt, selection->first);
+						const auto spritePpm = F(SpritePpm(fgObjectIt));
+						const auto& spritePb = state.SelectedObjectMainSpritePb();
+						const auto& chain = spritePb.regular().fixtures(selectedIndex).chain();
+						const auto closestPointIndex = FindClosestChainPointInRange(chain, spritePpm, firstPositionPx);
+						if (not closestPointIndex) {
+							return std::nullopt;
+						}
+
+						const auto binnedSecondPositionPx = selection->second.RoundToBin(splitCount);
+						const auto pointOffset = WorldCoordinateToSpriteCoordinate(fgObjectIt, binnedSecondPositionPx);
+						return OverridePointPositionParams{.fixtureIndex = selectedIndex, .pointIndex = *closestPointIndex, .newPosition = pointOffset};
+					}
+				}
+			}
+			return std::nullopt;
+		}();
+		drawFixturesOfObject(state.SelectedObjectType(), state.SelectedObjectMainSpritePb(), ppm, false, overridePointPositionParams);
 
 		for (const auto objType : state.physicsObjectsToDraw) {
 			const auto mainSpriteType = *M2_GAME.GetMainSpriteOfObject(objType);
 			const auto mainSpritePpm = std::get<Sprite>(M2_GAME.GetSpriteOrTextLabel(mainSpriteType)).Ppm();
-			drawFixturesOfObject(objType, state.SpritePb(mainSpriteType), mainSpritePpm, true);
+			drawFixturesOfObject(objType, state.SpritePb(mainSpriteType), mainSpritePpm, true, std::nullopt);
 		}
 	}
 
@@ -442,13 +501,16 @@ m2::RectF m2::level_editor::State::ForegroundSelectionArea() const {
 		return *selection->SelectionRectM();
 	}
 }
-m2::VecF m2::level_editor::State::WorldCoordinateToSpriteCoordinate(const ForegroundObjectPlaceholderMap::const_iterator fgObject, const VecF& worldCoordinate) {
-	const auto objectOriginM = fgObject->first;
-	const auto pointOffsetM = worldCoordinate - objectOriginM;
+int m2::level_editor::State::SpritePpm(ForegroundObjectPlaceholderMap::const_iterator fgObject) {
 	const auto objectType = std::get<pb::LevelObject>(fgObject->second).type();
 	const auto spriteType = *M2_GAME.GetMainSpriteOfObject(objectType);
 	const auto& sprite = std::get<Sprite>(M2_GAME.GetSpriteOrTextLabel(spriteType));
-	const auto ppm = sprite.Ppm();
+	return sprite.Ppm();
+}
+m2::VecF m2::level_editor::State::WorldCoordinateToSpriteCoordinate(const ForegroundObjectPlaceholderMap::const_iterator fgObject, const VecF& worldCoordinate) {
+	const auto objectOriginM = fgObject->first;
+	const auto pointOffsetM = worldCoordinate - objectOriginM;
+	const auto ppm = SpritePpm(fgObject);
 	return pointOffsetM * ppm;
 }
 void m2::level_editor::State::StoreArc(const int selectedIndex, const VecF& fromPointOffset, const VecF& toPointOffset, const float angleInRads, const int pieceCount, const bool drawTowardsRight) {
@@ -481,4 +543,19 @@ void m2::level_editor::State::StoreArc(const int selectedIndex, const VecF& from
 		const auto arcPoint = circleCenterToArcPoint + circleCenter;
 		state.StorePoint(selectedIndex, arcPoint);
 	}
+}
+std::optional<int> m2::level_editor::State::FindClosestChainPointInRange(const pb::Fixture_ChainFixture& chain, const int spritePpm, const VecF& positionPx) {
+	std::optional<std::pair<int, float>> closestPointIndexAndDistanceSq;
+	for (int i = 0; i < chain.points_size(); ++i) {
+		if (const auto distanceSq = VecF{chain.points(i)}.distance_sq(positionPx); distanceSq < spritePpm) {
+			if (not closestPointIndexAndDistanceSq || distanceSq < closestPointIndexAndDistanceSq->second) {
+				closestPointIndexAndDistanceSq = std::make_pair(i, distanceSq);
+			}
+		}
+	}
+
+	if (not closestPointIndexAndDistanceSq) {
+		return std::nullopt;
+	}
+	return closestPointIndexAndDistanceSq->first;
 }

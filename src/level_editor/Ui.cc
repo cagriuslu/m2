@@ -649,9 +649,11 @@ namespace {
 		.background_color = {25, 25, 25, 255},
 		.onCreate = [](UiPanel&) {
 			M2_LEVEL.EnablePrimarySelection(M2_GAME.Dimensions().Game());
+			M2_LEVEL.EnableSecondarySelection(M2_GAME.Dimensions().Game());
 		},
 		.onDestroy = [] {
 			M2_LEVEL.DisablePrimarySelection();
+			M2_LEVEL.DisableSecondarySelection();
 		},
 		.widgets = {
 			UiWidgetBlueprint{
@@ -720,7 +722,7 @@ namespace {
 				.variant = TextBlueprint{
 					.text = "Store Point",
 					.onAction = [](const Text& self) -> UiAction {
-						if (const auto* selection = M2_LEVEL.PrimarySelection(); selection->IsComplete()) {
+						if (const auto* selection = M2_LEVEL.SecondarySelection(); selection->IsComplete()) {
 							const auto* fixtureSelectionWidget = self.Parent().FindWidget<TextSelection>("FixtureSelection");
 							if (const auto selectedIndexes = fixtureSelectionWidget->GetSelectedIndexes(); not selectedIndexes.empty()) {
 								const auto selectedIndex = selectedIndexes[0];
@@ -740,7 +742,7 @@ namespace {
 				.variant = TextBlueprint{
 					.text = "Store Arc",
 					.onAction = [](const Text& self) -> UiAction {
-						if (const auto* selection = M2_LEVEL.PrimarySelection(); selection->IsComplete()) {
+						if (const auto* selection = M2_LEVEL.SecondarySelection(); selection->IsComplete()) {
 							const auto point = selection->SelectionsM()->first;
 
 							const auto* fixtureSelectionWidget = self.Parent().FindWidget<TextSelection>("FixtureSelection");
