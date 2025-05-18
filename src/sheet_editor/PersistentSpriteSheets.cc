@@ -49,7 +49,7 @@ std::vector<pb::Fixture::FixtureTypeCase> PersistentSpriteSheets::SpriteFixtureT
 }
 
 void PersistentSpriteSheets::ModifySprite(const m2g::pb::SpriteType spriteType, const std::function<void(pb::Sprite&)>& modifier) {
-	auto expectSuccess = MutateAndSave([&](pb::SpriteSheets& sheets) {
+	Mutate([&](pb::SpriteSheets& sheets) {
 		for (auto& sheet : *sheets.mutable_sheets()) {
 			for (auto& sprite : *sheet.mutable_sprites()) {
 				if (sprite.type() == spriteType) {
@@ -59,9 +59,6 @@ void PersistentSpriteSheets::ModifySprite(const m2g::pb::SpriteType spriteType, 
 			}
 		}
 	});
-	if (not expectSuccess) {
-		throw M2_ERROR("Unable to mutate sprite sheets: " + expectSuccess.error());
-	}
 }
 int PersistentSpriteSheets::AddFixtureToSprite(const m2g::pb::SpriteType spriteType, const pb::Fixture::FixtureTypeCase type, const int insertIndex) {
 	int newIndex;
@@ -81,4 +78,8 @@ void PersistentSpriteSheets::RemoveFixtureFromSprite(const m2g::pb::SpriteType s
 	ModifySprite(spriteType, [&](pb::Sprite& sprite) {
 		sprite.mutable_regular()->mutable_fixtures()->erase(sprite.mutable_regular()->mutable_fixtures()->begin() + index);
 	});
+}
+
+void_expected PersistentSpriteSheets::Save() {
+	return PersistentObject::Save();
 }

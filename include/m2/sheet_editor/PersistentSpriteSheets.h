@@ -3,7 +3,7 @@
 #include <Sprite.pb.h>
 
 namespace m2::sheet_editor {
-	class PersistentSpriteSheets final : public pb::PersistentObject<pb::SpriteSheets> {
+	class PersistentSpriteSheets final : pb::PersistentObject<pb::SpriteSheets> {
 		explicit PersistentSpriteSheets(pb::PersistentObject<pb::SpriteSheets>&& po) : pb::PersistentObject<pb::SpriteSheets>(std::move(po)) {}
 
 	public:
@@ -22,5 +22,7 @@ namespace m2::sheet_editor {
 		/// Returns the index of the newly added fixture. If insertIndex is negative, the new fixture is added at the end.
 		int AddFixtureToSprite(m2g::pb::SpriteType spriteType, pb::Fixture::FixtureTypeCase type, int insertIndex = -1);
 		void RemoveFixtureFromSprite(m2g::pb::SpriteType spriteType, int index);
+
+		void_expected Save();
 	};
 }

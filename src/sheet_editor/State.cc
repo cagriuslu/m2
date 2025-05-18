@@ -143,6 +143,12 @@ void State::UndoChainFixturePoint(const int index) {
 	});
 }
 
+void State::Save() {
+	if (const auto success = _persistentSpriteSheets.Save(); not success) {
+		LOG_ERROR("Unable to save sprite sheet", success.error());
+	}
+}
+
 void State::Draw() const {
 	// Draw texture
 	const auto offset = VecF{-0.5f, -0.5f};

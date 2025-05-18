@@ -401,7 +401,18 @@ m2::void_expected m2::level_editor::State::Save() const {
 	for (const auto& [position, idAndlevelObject] : _foregroundObjectPlaceholders) {
 		level.add_objects()->CopyFrom(std::get<pb::LevelObject>(idAndlevelObject));
 	}
-	return pb::message_to_json_file(level, *M2_LEVEL.Path());
+
+	// Save level
+	const auto levelSaveSuccess = pb::message_to_json_file(level, *M2_LEVEL.Path());
+	m2ReflectUnexpected(levelSaveSuccess);
+
+	// Save sprite sheet
+	if (M2_LEVEL.RightHud() && M2_LEVEL.RightHud()->state) {
+		if (auto* drawFgState = dynamic_cast<DrawFgRightHudState*>(M2_LEVEL.RightHud()->state.get())) {
+			return drawFgState->Save();
+		}
+	}
+	return {};
 }
 
 void m2::level_editor::State::PaintBackground(const VecI& position, m2g::pb::SpriteType spriteType) {

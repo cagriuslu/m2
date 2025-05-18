@@ -39,6 +39,8 @@ namespace m2::sheet_editor {
 		void StoreFixture(int index, const RectF& rect, const VecF& point1, const VecF& point2);
 		void UndoChainFixturePoint(int index);
 
+		void Save();
+
 		void Draw() const;
 
 	   private:

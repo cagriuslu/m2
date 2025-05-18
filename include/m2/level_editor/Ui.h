@@ -66,6 +66,10 @@ namespace m2::level_editor {
 				}
 			});
 		}
+
+		void_expected Save() {
+			return _persistentSpriteSheets.Save();
+		}
 	};
 
 	struct ArcDescription {
