@@ -38,6 +38,7 @@ namespace m2::level_editor {
 		void LoadLevelBlueprint(const pb::Level& lb);
 
 		void HandleMousePrimaryButton(const VecF& position);
+		void HandleMouseSecondaryButton(const VecF& position);
 		void HandleMousePrimarySelectionComplete(const VecF& firstPosition, const VecF& secondPosition);
 
 		void EraseBackground(const RectI& area);
@@ -60,6 +61,8 @@ namespace m2::level_editor {
 	private:
 		void PaintBackground(const VecI& position, m2g::pb::SpriteType spriteType);
 		void PlaceForeground(const VecF& position, float orientation, m2g::pb::ObjectType objectType, m2g::pb::GroupType groupType, unsigned groupInstance);
+		/// Returns the iterator to the sampled placeholder if successful
+		ForegroundObjectPlaceholderMap::iterator ApplySampling(const VecF& position);
 		[[nodiscard]] RectF ForegroundSelectionArea() const;
 		static int SpritePpm(ForegroundObjectPlaceholderMap::const_iterator fgObject);
 		static VecF WorldCoordinateToSpriteCoordinate(ForegroundObjectPlaceholderMap::const_iterator fgObject, const VecF& worldCoordinate);

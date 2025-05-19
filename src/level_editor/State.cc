@@ -52,6 +52,19 @@ void m2::level_editor::State::LoadLevelBlueprint(const pb::Level& lb) {
 }
 
 void m2::level_editor::State::HandleMousePrimaryButton(const VecF& position) {
+	if (M2_LEVEL.RightHud() && M2_LEVEL.RightHud()->Name() == "PlaceFgRightHud") {
+		if (const auto sampledObject = ApplySampling(position); sampledObject != _foregroundObjectPlaceholders.end()) {
+			// Remove the original object
+			const auto id = std::get<Id>(sampledObject->second);
+			M2_DEFER(CreateObjectDeleter(id));
+			_foregroundObjectPlaceholders.erase(sampledObject);
+		}
+	} else if (M2_LEVEL.RightHud() && M2_LEVEL.RightHud()->Name() == "SampleFgRightHud") {
+		// Applying sampling without removing the original object
+		ApplySampling(position);
+	}
+}
+void m2::level_editor::State::HandleMouseSecondaryButton(const VecF& position) {
 	if (M2_LEVEL.RightHud()->Name() == "PaintBgRightHud") {
 		// Background operations are supported only for the positive quadrant
 		if (not position.iround().is_negative()) {
@@ -81,12 +94,9 @@ void m2::level_editor::State::HandleMousePrimaryButton(const VecF& position) {
 			}
 		}
 	} else if (M2_LEVEL.RightHud()->Name() == "PlaceFgRightHud") {
-		if (const auto selections = M2_LEVEL.RightHud()->FindWidget<widget::TextSelection>("ObjectTypeSelection")->GetSelectedOptions();
-					not selections.empty()) {
+		if (const auto selections = M2_LEVEL.RightHud()->FindWidget<widget::TextSelection>("ObjectTypeSelection")->GetSelectedOptions(); not selections.empty()) {
 			const auto selectedObjectType = static_cast<m2g::pb::ObjectType>(I(selections[0]));
-			const auto selectedGroupType = static_cast<m2g::pb::GroupType>(
-					I(
-						M2_LEVEL.RightHud()->FindWidget<widget::TextSelection>("GroupTypeSelection")->GetSelectedOptions()[0]));
+			const auto selectedGroupType = static_cast<m2g::pb::GroupType>(I(M2_LEVEL.RightHud()->FindWidget<widget::TextSelection>("GroupTypeSelection")->GetSelectedOptions()[0]));
 			const auto selectedGroupInstance = M2_LEVEL.RightHud()->FindWidget<widget::IntegerInput>("GroupInstanceSelection")->value();
 			const auto orientation = ToRadians(M2_LEVEL.RightHud()->FindWidget<widget::IntegerInput>("OrientationInput")->value());
 			const auto snapToGrid = M2_LEVEL.LeftHud()->FindWidget<widget::CheckboxWithText>("SnapToGridCheckbox")->GetState();
@@ -94,58 +104,10 @@ void m2::level_editor::State::HandleMousePrimaryButton(const VecF& position) {
 			const auto placePosition = snapToGrid ? M2_GAME.MousePositionWorldM().RoundToBin(splitCount) : position;
 			PlaceForeground(placePosition, orientation, selectedObjectType, selectedGroupType, selectedGroupInstance);
 		}
-	} else if (M2_LEVEL.RightHud()->Name() == "SampleFgRightHud") {
-		auto foundIt = _foregroundObjectPlaceholders.end();
-		float closestDistanceSquare = INFINITY;
-		for (auto it = _foregroundObjectPlaceholders.begin(); it != _foregroundObjectPlaceholders.end(); ++it) {
-			// Find the closest object in 1-meter radius
-			if (const auto distanceSquared = position.distance_sq(it->first);
-					distanceSquared <= 1.0f && distanceSquared < closestDistanceSquare) {
-				foundIt = it;
-				closestDistanceSquare = distanceSquared;
-			}
-		}
-		if (foundIt != _foregroundObjectPlaceholders.end()) {
-			// Find and press the Place button
-			M2_LEVEL.LeftHud()->FindWidget<widget::Text>("PlaceFgButton")->trigger_action();
-
-			// Find object properties and set it
-
-			const auto orientationDegreesUnbounded = RoundI(ToDegrees(std::get<pb::LevelObject>(foundIt->second).orientation()));
-			const auto orientationDegrees = ((orientationDegreesUnbounded % 360) + 360) % 360;
-			auto* orientationInput = M2_LEVEL.RightHud()->FindWidget<widget::IntegerInput>("OrientationInput");
-			orientationInput->SetValue(orientationDegrees);
-
-			const auto objectType = std::get<pb::LevelObject>(foundIt->second).type();
-			auto* objectTypeSelection = M2_LEVEL.RightHud()->FindWidget<widget::TextSelection>("ObjectTypeSelection");
-			// Find the index of the option that corresponds to the object type
-			const auto& objectTypeOptions = objectTypeSelection->GetOptions();
-			for (size_t i = 0; i < objectTypeOptions.size(); ++i) {
-				if (I(objectTypeOptions[i].blueprint_option.return_value) == I(objectType)) {
-					objectTypeSelection->SetUniqueSelectionIndex(i);
-					break;
-				}
-			}
-
-			const auto groupType = std::get<pb::LevelObject>(foundIt->second).group().type();
-			auto* groupTypeSelection = M2_LEVEL.RightHud()->FindWidget<widget::TextSelection>("GroupTypeSelection");
-			// Find the index of the option that corresponds to the group type
-			const auto& groupTypeOptions = groupTypeSelection->GetOptions();
-			for (size_t i = 0; i < groupTypeOptions.size(); ++i) {
-				if (I(groupTypeOptions[i].blueprint_option.return_value) == I(groupType)) {
-					groupTypeSelection->SetUniqueSelectionIndex(i);
-					break;
-				}
-			}
-
-			const auto groupInstance = std::get<pb::LevelObject>(foundIt->second).group().instance();
-			auto* groupInstanceSelection = M2_LEVEL.RightHud()->FindWidget<widget::IntegerInput>("GroupInstanceSelection");
-			groupInstanceSelection->SetValue(groupInstance);
-		}
 	}
 }
 void m2::level_editor::State::HandleMousePrimarySelectionComplete(const VecF& firstPosition, const VecF& secondPosition) {
-	if (M2_LEVEL.RightHud() && M2_LEVEL.RightHud()->state) {
+	if (M2_LEVEL.RightHud() && M2_LEVEL.RightHud()->Name() == "DrawFgRightHud" && M2_LEVEL.RightHud()->state) {
 		if (auto* drawFgState = dynamic_cast<DrawFgRightHudState*>(M2_LEVEL.RightHud()->state.get())) {
 			const auto* fixtureSelectionWidget = M2_LEVEL.RightHud()->FindWidget<widget::TextSelection>("FixtureSelection");
 			if (const auto selectedIndexes = fixtureSelectionWidget->GetSelectedIndexes(); not selectedIndexes.empty()) {
@@ -492,6 +454,55 @@ void m2::level_editor::State::PlaceForeground(const VecF& position, float orient
 	levelObject.mutable_group()->set_type(groupType);
 	levelObject.mutable_group()->set_instance(groupInstance);
 	_foregroundObjectPlaceholders.emplace(position, std::make_tuple(fgPlaceholderId, levelObject));
+}
+m2::level_editor::State::ForegroundObjectPlaceholderMap::iterator m2::level_editor::State::ApplySampling(const VecF& position) {
+	auto foundIt = _foregroundObjectPlaceholders.end();
+	float closestDistanceSquare = INFINITY;
+	for (auto it = _foregroundObjectPlaceholders.begin(); it != _foregroundObjectPlaceholders.end(); ++it) {
+		// Find the closest object in 1-meter radius
+		if (const auto distanceSquared = position.distance_sq(it->first); distanceSquared <= 1.0f && distanceSquared < closestDistanceSquare) {
+			foundIt = it;
+			closestDistanceSquare = distanceSquared;
+		}
+	}
+	if (foundIt != _foregroundObjectPlaceholders.end()) {
+		// Find and press the Place button
+		M2_LEVEL.LeftHud()->FindWidget<widget::Text>("PlaceFgButton")->trigger_action();
+
+		// Find object properties and set it
+
+		const auto orientationDegreesUnbounded = RoundI(ToDegrees(std::get<pb::LevelObject>(foundIt->second).orientation()));
+		const auto orientationDegrees = ((orientationDegreesUnbounded % 360) + 360) % 360;
+		auto* orientationInput = M2_LEVEL.RightHud()->FindWidget<widget::IntegerInput>("OrientationInput");
+		orientationInput->SetValue(orientationDegrees);
+
+		const auto objectType = std::get<pb::LevelObject>(foundIt->second).type();
+		auto* objectTypeSelection = M2_LEVEL.RightHud()->FindWidget<widget::TextSelection>("ObjectTypeSelection");
+		// Find the index of the option that corresponds to the object type
+		const auto& objectTypeOptions = objectTypeSelection->GetOptions();
+		for (size_t i = 0; i < objectTypeOptions.size(); ++i) {
+			if (I(objectTypeOptions[i].blueprint_option.return_value) == I(objectType)) {
+				objectTypeSelection->SetUniqueSelectionIndex(i);
+				break;
+			}
+		}
+
+		const auto groupType = std::get<pb::LevelObject>(foundIt->second).group().type();
+		auto* groupTypeSelection = M2_LEVEL.RightHud()->FindWidget<widget::TextSelection>("GroupTypeSelection");
+		// Find the index of the option that corresponds to the group type
+		const auto& groupTypeOptions = groupTypeSelection->GetOptions();
+		for (size_t i = 0; i < groupTypeOptions.size(); ++i) {
+			if (I(groupTypeOptions[i].blueprint_option.return_value) == I(groupType)) {
+				groupTypeSelection->SetUniqueSelectionIndex(i);
+				break;
+			}
+		}
+
+		const auto groupInstance = std::get<pb::LevelObject>(foundIt->second).group().instance();
+		auto* groupInstanceSelection = M2_LEVEL.RightHud()->FindWidget<widget::IntegerInput>("GroupInstanceSelection");
+		groupInstanceSelection->SetValue(groupInstance);
+	}
+	return foundIt;
 }
 m2::RectF m2::level_editor::State::ForegroundSelectionArea() const {
 	const auto* selection = M2_LEVEL.PrimarySelection();

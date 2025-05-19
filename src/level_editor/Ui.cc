@@ -562,7 +562,7 @@ namespace {
 					.onAction = [](const Text&) -> UiAction {
 						(void) UiPanel::create_and_run_blocking(&gCoordinateDialog, RectF{0.25f, 0.4f, 0.5f, 0.3f})
 								.IfReturn<VecF>([](const auto& vec) {
-									std::get<level_editor::State>(M2_LEVEL.stateVariant).HandleMousePrimaryButton(vec);
+									std::get<level_editor::State>(M2_LEVEL.stateVariant).HandleMouseSecondaryButton(vec);
 								});
 						return MakeContinueAction();
 					}

@@ -13,6 +13,7 @@ namespace m2 {
 		// Accessors
 
 		[[nodiscard]] const RectI& ScreenBoundaryPx() const { return _screenBoundaryPx; }
+		/// Signifies that the selection is completed by lifting of the mouse button
 		[[nodiscard]] bool IsComplete() const { return _positionM.first && _positionM.second; }
 
 		[[nodiscard]] std::optional<std::pair<VecI,VecI>> IntegerSelectionsM() const;
