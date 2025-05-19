@@ -52,17 +52,20 @@ void m2::level_editor::State::LoadLevelBlueprint(const pb::Level& lb) {
 }
 
 void m2::level_editor::State::HandleMousePrimaryButton(const VecF& position) {
-	// Background operations are supported only for the positive quadrant
-	if (not position.iround().is_negative()) {
-		if (M2_LEVEL.RightHud()->Name() == "PaintBgRightHud") {
+	if (M2_LEVEL.RightHud()->Name() == "PaintBgRightHud") {
+		// Background operations are supported only for the positive quadrant
+		if (not position.iround().is_negative()) {
 			if (const auto selections = M2_LEVEL.RightHud()->FindWidget<widget::TextSelection>("SpriteTypeSelection")->GetSelectedOptions();
-					not selections.empty()) {
+				not selections.empty()) {
 				const auto selectedSpriteType = static_cast<m2g::pb::SpriteType>(I(selections[0]));
 				PaintBackground(VecI{position.iround().x, position.iround().y}, selectedSpriteType);
 			}
-		} else if (M2_LEVEL.RightHud()->Name() == "SampleBgRightHud") {
+		}
+	} else if (M2_LEVEL.RightHud()->Name() == "SampleBgRightHud") {
+		// Background operations are supported only for the positive quadrant
+		if (not position.iround().is_negative()) {
 			if (const auto it = _backgroundSpritePlaceholders[I(GetSelectedBackgroundLayer())].find(position.iround());
-					it != _backgroundSpritePlaceholders[I(GetSelectedBackgroundLayer())].end()) {
+				it != _backgroundSpritePlaceholders[I(GetSelectedBackgroundLayer())].end()) {
 				// Find and press the Paint button
 				M2_LEVEL.LeftHud()->FindWidget<widget::Text>("PaintBgButton")->trigger_action();
 				// Find sprite type selection and set it
@@ -77,10 +80,7 @@ void m2::level_editor::State::HandleMousePrimaryButton(const VecF& position) {
 				}
 			}
 		}
-	}
-
-	// Foreground operations can be on any quadrant
-	if (M2_LEVEL.RightHud()->Name() == "PlaceFgRightHud") {
+	} else if (M2_LEVEL.RightHud()->Name() == "PlaceFgRightHud") {
 		if (const auto selections = M2_LEVEL.RightHud()->FindWidget<widget::TextSelection>("ObjectTypeSelection")->GetSelectedOptions();
 					not selections.empty()) {
 			const auto selectedObjectType = static_cast<m2g::pb::ObjectType>(I(selections[0]));

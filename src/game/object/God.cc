@@ -6,7 +6,7 @@
 using namespace m2;
 
 namespace {
-	void handle_primary_button_press(const VecF& mousePosition) {
+	void HandleSecondaryButtonPress(const VecF& mousePosition) {
 		std::visit(overloaded{
 		        [=](level_editor::State& le) { le.HandleMousePrimaryButton(mousePosition); },
 		        DEFAULT_OVERLOAD},
@@ -18,7 +18,6 @@ namespace {
 				[=](level_editor::State& le) { le.HandleMousePrimarySelectionComplete(firstPosition, secondPosition); },
 				DEFAULT_OVERLOAD},
 			M2_LEVEL.stateVariant);
-
 	}
 }  // namespace
 
@@ -54,8 +53,8 @@ Id obj::create_god() {
 		}
 
 		if (const auto& mousePosition = M2_GAME.MousePositionWorldM(); not mousePosition.is_negative()) {
-			if (M2_GAME.events.PopMouseButtonPress(MouseButton::PRIMARY)) {
-				handle_primary_button_press(mousePosition);
+			if (M2_GAME.events.PopMouseButtonPress(MouseButton::SECONDARY)) {
+				HandleSecondaryButtonPress(mousePosition);
 			}
 			if (M2_GAME.events.PopMouseButtonRelease(MouseButton::PRIMARY) && M2_LEVEL.PrimarySelection() && M2_LEVEL.PrimarySelection()->IsComplete()) {
 				const auto [first, second] = *M2_LEVEL.PrimarySelection()->SelectionsM();
