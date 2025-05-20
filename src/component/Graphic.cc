@@ -301,6 +301,12 @@ void m2::Graphic::DrawCross(const VecF& world_position, SDL_Color color) {
 	SDL_RenderDrawLine(M2_GAME.renderer, draw_position.x - 9, draw_position.y - 9, draw_position.x + 10, draw_position.y + 10);
 	SDL_RenderDrawLine(M2_GAME.renderer, draw_position.x - 9, draw_position.y + 9, draw_position.x + 10, draw_position.y - 10);
 }
+void m2::Graphic::DrawCross(const VecF& worldPosition, int radiusPx, const RGBA& color) {
+	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
+	const auto draw_position = VecI{ScreenOriginToPositionVecPx(worldPosition)};
+	SDL_RenderDrawLine(M2_GAME.renderer, draw_position.x - radiusPx, draw_position.y - radiusPx, draw_position.x + radiusPx, draw_position.y + radiusPx);
+	SDL_RenderDrawLine(M2_GAME.renderer, draw_position.x - radiusPx, draw_position.y + radiusPx, draw_position.x + radiusPx, draw_position.y - radiusPx);
+}
 void m2::Graphic::DrawCross(const VecF& worldPosition, const float radiusM, const RGBA& color) {
 	DrawLine(worldPosition + VecF{-radiusM, -radiusM}, worldPosition + VecF{radiusM, radiusM}, color);
 	DrawLine(worldPosition + VecF{-radiusM, radiusM}, worldPosition + VecF{radiusM, -radiusM}, color);

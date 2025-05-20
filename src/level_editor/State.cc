@@ -318,20 +318,20 @@ void m2::level_editor::State::Draw() const {
 				const auto fgObjectIt = GetForegroundObjectsOfType(ot)[0];
 				const auto objectOrigin = fgObjectIt->first;
 				if (const auto& points = fixture.chain().points(); points.size() == 1) {
-					Graphic::DrawCross(objectOrigin + VecF{points[0]} / ppm, 0.20f, lastPointColor);
+					Graphic::DrawCross(objectOrigin + VecF{points[0]} / ppm, 10, lastPointColor);
 				} else if (1 < points.size()) {
 					for (int j = 0; j < points.size() - 1; ++j) {
 						const auto thisPoint = overridePointPosition && *selectedFixtureIndex == i && overridePointPosition->first == j ? overridePointPosition->second : VecF{points[j]};
 						const auto nextPoint = overridePointPosition && *selectedFixtureIndex == i && overridePointPosition->first == j + 1 ? overridePointPosition->second : VecF{points[j + 1]};
 						Graphic::DrawLine(objectOrigin + thisPoint / ppm, objectOrigin + nextPoint / ppm, color);
 						if (selectedFixtureIndex && *selectedFixtureIndex == i) {
-							Graphic::DrawCross(objectOrigin + thisPoint / ppm, 0.20f, color);
+							Graphic::DrawCross(objectOrigin + thisPoint / ppm, 10, color);
 						}
 					}
 					// Draw the last point as well, which isn't visited in the for loop above
 					if (selectedFixtureIndex && *selectedFixtureIndex == i) {
 						const auto lastPoint = VecF{points[points.size() - 1]};
-						Graphic::DrawCross(objectOrigin + lastPoint / ppm, 0.20f, lastPointColor);
+						Graphic::DrawCross(objectOrigin + lastPoint / ppm, 10, lastPointColor);
 					}
 				}
 			}
