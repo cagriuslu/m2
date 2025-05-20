@@ -155,15 +155,12 @@ UiAction TextSelection::OnEvent(Events& events) {
 				_topIndex++;
 			}
 		} else {
-			// Check if scrolled via mouse
-			if (auto scroll_amount = events.PopMouseWheelVerticalScroll(Rect()); 0 < scroll_amount) {
-				if (auto min_scroll_amount = std::min(static_cast<size_t>(scroll_amount), _options.size() - _topIndex - VariantBlueprint().line_count)) {
-					_topIndex += I(min_scroll_amount);
-				}
-			} else if (scroll_amount < 0) {
-				if (auto min_scroll_amount = std::min(-scroll_amount, _topIndex)) {
-					_topIndex -= min_scroll_amount;
-				}
+			// Check if mouse wheel scrolled
+			if (auto mouseScrollAmount = events.PopMouseWheelVerticalScroll(Rect()); 0 < mouseScrollAmount) {
+				const auto linesBelowWindow = AtLeastZero(I(_options.size()) - VariantBlueprint().line_count - _topIndex);
+				_topIndex += std::min(mouseScrollAmount, linesBelowWindow);
+			} else if (mouseScrollAmount < 0) {
+				_topIndex -= std::min(-mouseScrollAmount, _topIndex);
 			}
 		}
 

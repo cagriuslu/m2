@@ -59,4 +59,7 @@ namespace m2 {
 	/// Attempts to normalize the given value to [0,1] if it's in-between [min,max]. Otherwise, a scaled value is
 	/// returned. For example, if the value is min+2*max, 2.0 is returned. If the value is min-max, -1.0 is returned.
 	float Normalize(float value, float min, float max);
+
+	template <typename T> T AtLeastZero(T value) { if (value < T{}) { return T{}; } return value; }
+	template <typename T> T AtMostZero(T value) { if (T{} < value) { return T{}; } return value; }
 }
