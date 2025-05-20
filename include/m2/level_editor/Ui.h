@@ -14,6 +14,7 @@ namespace m2::level_editor {
 				_persistentSpriteSheets(m2MoveOrThrowError(sheet_editor::PersistentSpriteSheets::LoadFile(M2_GAME.spriteSheetsPath))),
 				_selectedObjectType(selectedObjectType_) {}
 
+		/// Set of objects drawn independent of the currently selected object in DrawFg mode
 		std::set<m2g::pb::ObjectType> physicsObjectsToDraw;
 
 		// Accessors

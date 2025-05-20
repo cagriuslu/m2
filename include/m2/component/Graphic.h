@@ -106,7 +106,7 @@ namespace m2 {
 		static void ColorRect(const RectF& world_coordinates_m, const RGBA& color);
 		static void ColorDisk(const VecF& center_position_m, float radius_m, const SDL_Color& color);
 		static void DrawCross(const VecF& world_position, SDL_Color color);
-		static void DrawCross(const VecF& worldPosition, float radius, const RGBA& color);
+		static void DrawCross(const VecF& worldPosition, float radiusM, const RGBA& color);
 		static void DrawLine(const VecF& world_position_1, const VecF& world_position_2, SDL_Color color);
 		static void DrawLine(const VecF& worldPosition1M, const VecF& worldPosition2M, const RGBA& color);
 		static void DrawVerticalLine(float x, const RGBA& color);
