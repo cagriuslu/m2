@@ -30,8 +30,22 @@ namespace m2 {
 		/// Alpha value isn't scaled
 		RGBA operator/(const float rhs) const { return RGBA{RoundU8(F(r) / rhs), RoundU8(F(g) / rhs), RoundU8(F(b) / rhs), a}; }
 
+		static RGBA White;
 		static RGBA Red;
+		static RGBA Yellow;
 		static RGBA Green;
+		static RGBA Cyan;
 		static RGBA Blue;
+		static RGBA Magenta;
+		static RGBA Black;
+
+		static RGBA TransparentWhite;
+		static RGBA TransparentRed;
+		static RGBA TransparentYellow;
+		static RGBA TransparentGreen;
+		static RGBA TransparentCyan;
+		static RGBA TransparentBlue;
+		static RGBA TransparentMagenta;
+		static RGBA TransparentBlack;
 	};
 }
