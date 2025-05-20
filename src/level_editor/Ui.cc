@@ -508,7 +508,7 @@ namespace {
 				.name = "ObjectTypeSelection",
 				.x = 2, .y = 12, .w = 15, .h = 40,
 				.variant = TextSelectionBlueprint{
-					.line_count = 10,
+					.line_count = 20,
 					.onCreate = [](TextSelection& self) {
 						const auto objectTypes = ObjectTypesWithMainSprite();
 						self.SetOptions(ToTextSelectionOptions(objectTypes.begin(), objectTypes.end()));
@@ -660,7 +660,7 @@ namespace {
 				.name = "FixtureSelection",
 				.x = 1, .y = 1, .w = 17, .h = 42,
 				.variant = TextSelectionBlueprint{
-					.line_count = 14,
+					.line_count = 21,
 					.show_scroll_bar = true,
 					.onHover = [](const TextSelection& self, const std::optional<int> indexUnderMouse) {
 						if (indexUnderMouse) {
@@ -675,11 +675,12 @@ namespace {
 					.onUpdate = [](TextSelection& self) -> UiAction {
 						if (const auto& state = dynamic_cast<level_editor::DrawFgRightHudState&>(*self.Parent().state);
 								I(self.GetOptions().size()) != state.SelectedSpriteFixtureCount()) {
-							const auto currentFixtureTypes = state.SelectedSpriteFixtureTypes();
 							TextSelectionBlueprint::Options options;
-							std::ranges::transform(currentFixtureTypes, std::back_inserter(options), [](const auto type) -> TextSelectionBlueprint::Option {
-								return {.text = sheet_editor::gFixtureTypeNames.at(type)};
-							});
+							std::ranges::transform(state.SelectedSpriteFixtures(), std::back_inserter(options),
+								[](const auto& fixture) -> TextSelectionBlueprint::Option {
+									auto line = sheet_editor::gFixtureTypeNames.at(fixture.fixture_type_case()) + "(" + fixture.name() + ")";
+									return {.text = std::move(line)};
+								});
 							self.SetOptions(std::move(options));
 						}
 						return MakeContinueAction();

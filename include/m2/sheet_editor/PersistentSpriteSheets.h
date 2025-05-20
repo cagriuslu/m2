@@ -14,6 +14,7 @@ namespace m2::sheet_editor {
 		std::vector<m2g::pb::SpriteType> AllSpriteTypes() const;
 		const pb::SpriteSheet* SpriteSheetPbWithSprite(m2g::pb::SpriteType spriteType) const;
 		const pb::Sprite& SpritePb(m2g::pb::SpriteType spriteType) const;
+		const google::protobuf::RepeatedPtrField<pb::Fixture>& SpriteFixtures(m2g::pb::SpriteType spriteType) const;
 		std::vector<pb::Fixture::FixtureTypeCase> SpriteFixtureTypes(m2g::pb::SpriteType spriteType) const;
 
 		// Modifiers

@@ -38,7 +38,7 @@ namespace {
 	}
 }
 
-m2::expected<m2::sdl::TextTexture> m2::sdl::TextTexture::create_nowrap(SDL_Renderer* renderer, TTF_Font* font, int fontSize, const std::string& text, SDL_Color color) {
+m2::expected<m2::sdl::TextTexture> m2::sdl::TextTexture::create_nowrap(SDL_Renderer* renderer, TTF_Font* font, const int fontSize, const std::string& text, const SDL_Color color) {
 	if (text.empty()) {
 		return TextTexture{nullptr, text};
 	}
@@ -55,7 +55,7 @@ m2::expected<m2::sdl::TextTexture> m2::sdl::TextTexture::create_nowrap(SDL_Rende
 	return TextTexture{texture, text};
 }
 
-m2::expected<m2::sdl::TextTexture> m2::sdl::TextTexture::create_wrapped(SDL_Renderer* renderer, TTF_Font* font, int fontSize, int width_px, TextHorizontalAlignment horizontal_alignment, const std::string& text, SDL_Color color) {
+m2::expected<m2::sdl::TextTexture> m2::sdl::TextTexture::create_wrapped(SDL_Renderer* renderer, TTF_Font* font, const int fontSize, const int width_px, const TextHorizontalAlignment horizontal_alignment, const std::string& text, const SDL_Color color) {
 	if (text.empty()) {
 		return TextTexture{nullptr, text};
 	}

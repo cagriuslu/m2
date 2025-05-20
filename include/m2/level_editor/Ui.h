@@ -33,6 +33,9 @@ namespace m2::level_editor {
 		[[nodiscard]] int SelectedSpriteFixtureCount() const {
 			return _persistentSpriteSheets.SpritePb(SelectedObjectMainSpriteType()).regular().fixtures_size();
 		}
+		const google::protobuf::RepeatedPtrField<pb::Fixture>& SelectedSpriteFixtures() const {
+			return _persistentSpriteSheets.SpriteFixtures(SelectedObjectMainSpriteType());
+		}
 		[[nodiscard]] std::vector<pb::Fixture::FixtureTypeCase> SelectedSpriteFixtureTypes() const {
 			return _persistentSpriteSheets.SpriteFixtureTypes(SelectedObjectMainSpriteType());
 		}

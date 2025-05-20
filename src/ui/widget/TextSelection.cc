@@ -218,6 +218,7 @@ void TextSelection::OnDraw() {
 		if (auto current_selection = std::ranges::find_if(_options, [](const auto& o) { return o.is_selected == true; });
 			current_selection != _options.end()) {
 			if (not current_selection->text_texture_and_destination) {
+				// Render the text
 				auto drawable_area = Rect().trim_right(Rect().h / 2);
 				auto fontSize = calculate_filled_text_rect(drawable_area, TextHorizontalAlignment::LEFT, I(Utf8CodepointCount(current_selection->blueprint_option.text.c_str()))).h;
 				auto textTexture = m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, fontSize, current_selection->blueprint_option.text));
@@ -262,21 +263,30 @@ void TextSelection::OnDraw() {
 		for (auto i = 0; i < VariantBlueprint().line_count; ++i) {
 			if (const auto optionIndexAndTextRect = GetOptionIndexAndTextRectOfRow(i)) {
 				const auto [optionIndex, textRect] = *optionIndexAndTextRect;
-				// If selected
+				// If selected, color the rect blue
 				if (_options[optionIndex].is_selected) {
 					draw_rectangle(textRect, {0, 0, 255, 127});
 				}
+
 				// Draw text
 				auto& current_line = _options[optionIndex];
+				// Calculate how many characters can fit into the line
+				const auto textLength = I(Utf8CodepointCount(current_line.blueprint_option.text.c_str()));
+				const auto charWidthToHeightRatio = M2_GAME.FontLetterWidthToHeightRatio();
+				const auto charWidth = charWidthToHeightRatio.n() * textRect.h / charWidthToHeightRatio.d();
+				const auto maxCharCount = I(textRect.w / charWidth);
+				// Render texture if necessary
 				if (not current_line.text_texture_and_destination) {
-					auto fontSize = calculate_filled_text_rect(textRect, TextHorizontalAlignment::LEFT, I(Utf8CodepointCount(current_line.blueprint_option.text.c_str()))).h;
-					auto textTexture = m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, fontSize, current_line.blueprint_option.text));
+					const auto fontSize = textRect.h;
+					auto textTexture = m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, fontSize,
+						textLength <= maxCharCount ? current_line.blueprint_option.text : current_line.blueprint_option.text.substr(0, maxCharCount - 1) + "…"));
 					// Don't bother with destination_rect, because we're going to calculate that every time
 					current_line.text_texture_and_destination = sdl::TextTextureAndDestination{std::move(textTexture), {}};
 				}
-				// Upon scroll, the destination might still have changed, calculate it again.
-				auto destination_rect = calculate_filled_text_rect(textRect, TextHorizontalAlignment::LEFT, I(Utf8CodepointCount(current_line.blueprint_option.text.c_str())));
-				current_line.text_texture_and_destination->destinationRect = destination_rect;
+				// Calculate the text rect, actual text rect might be narrower than the available text rect
+				const auto actualTextRect = calculate_filled_text_rect(textRect, TextHorizontalAlignment::LEFT,
+					textLength <= maxCharCount ? textLength : maxCharCount);
+				current_line.text_texture_and_destination->destinationRect = actualTextRect;
 				sdl::render_texture_with_color_mod(current_line.text_texture_and_destination->textTexture.texture(),
 					current_line.text_texture_and_destination->destinationRect, current_line.blueprint_option.text_color);
 			}

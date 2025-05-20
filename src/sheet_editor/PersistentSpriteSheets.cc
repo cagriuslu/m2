@@ -40,6 +40,9 @@ const pb::Sprite& PersistentSpriteSheets::SpritePb(const m2g::pb::SpriteType spr
 	}
 	throw M2_ERROR("Unable to find sprite: " + ToString(spriteType));
 }
+const google::protobuf::RepeatedPtrField<pb::Fixture>& PersistentSpriteSheets::SpriteFixtures(m2g::pb::SpriteType spriteType) const {
+	return SpritePb(spriteType).regular().fixtures();
+}
 std::vector<pb::Fixture::FixtureTypeCase> PersistentSpriteSheets::SpriteFixtureTypes(const m2g::pb::SpriteType spriteType) const {
 	std::vector<pb::Fixture::FixtureTypeCase> fixtureTypes;
 	for (const auto& fixture : SpritePb(spriteType).regular().fixtures()) {
