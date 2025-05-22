@@ -1,5 +1,5 @@
 #pragma once
-#include "../Song.h"
+#include "Song.h"
 #include <m2/containers/Pool.h>
 #include <SDL.h>
 #include <mutex>

@@ -1,5 +1,5 @@
 #pragma once
-#include "../Synth.h"
+#include "Synth.h"
 #include <m2/Error.h>
 #include <type_traits>
 #include <m2/Math.h>

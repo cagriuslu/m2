@@ -1,4 +1,4 @@
-#include <m2/Song.h>
+#include <m2/audio/Song.h>
 #include <m2/protobuf/Detail.h>
 #include <m2/Log.h>
 

@@ -7,7 +7,7 @@
 #include "Meta.h"
 #include "Object.h"
 #include "Proxy.h"
-#include "Song.h"
+#include "audio/Song.h"
 #include <m2/video/Sprite.h>
 #include "game/Animation.h"
 #include "network/HostClientThread.h"

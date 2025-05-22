@@ -1,6 +1,6 @@
 #pragma once
-#include "math/Rational.h"
-#include "M2.h"
+#include "../math/Rational.h"
+#include "../M2.h"
 #include <Synth.pb.h>
 #include <vector>
 
@@ -31,6 +31,6 @@ namespace m2 {
 	}
 }
 
-#include "synth/MixNote.h"
-#include "synth/MixTrack.h"
-#include "synth/MixSong.h"
+#include "MixNote.h"
+#include "MixTrack.h"
+#include "MixSong.h"

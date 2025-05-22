@@ -1,4 +1,4 @@
-#include <m2/Synth.h>
+#include <m2/audio/Synth.h>
 #include <m2/math/Rational.h>
 #include <m2/Error.h>
 

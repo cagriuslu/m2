@@ -207,7 +207,7 @@ if(GTest_FOUND)
             "src/physics/Particle.cc"
             "src/physics/RigidBody.cc"
             "src/String.cc"
-            "src/Synth.cc"
+            "src/audio/Synth.cc"
             "src/VmAddScript.cc"
             "src/VmExecute.cc"
             "src/Vson.cc"
