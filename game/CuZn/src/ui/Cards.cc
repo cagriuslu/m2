@@ -38,7 +38,7 @@ namespace {
 					filter_card_2 = static_cast<Card>(0);
 				} else {
 					// Add option
-					options.emplace_back(TextSelectionBlueprint::Option{M2_GAME.GetNamedItem(card).in_game_name(), static_cast<int>(card),cards_window_card_color(card)});
+					options.emplace_back(TextSelectionBlueprint::Option{.text = M2_GAME.GetNamedItem(card).in_game_name(), .return_value = static_cast<int>(card), .text_color = cards_window_card_color(card)});
 				}});
 
 		// Sort first by type, then by alphabetically

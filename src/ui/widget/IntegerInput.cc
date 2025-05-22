@@ -6,73 +6,62 @@ using namespace m2;
 using namespace m2::widget;
 
 IntegerInput::IntegerInput(UiPanel* parent, const UiWidgetBlueprint* blueprint)
-    : UiWidget(parent, blueprint), _value(std::get<IntegerInputBlueprint>(blueprint->variant).initial_value),
-      _plusTexture(m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "+"))),
-      _minusTexture(m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "-"))) {
-	_textTexture = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, ToString(_value)));
-
-	// Execute onCreate
+    : UiWidget(parent, blueprint), _value(std::get<IntegerInputBlueprint>(blueprint->variant).initial_value) {
 	if (VariantBlueprint().onCreate) {
-		auto opt_value = VariantBlueprint().onCreate(*this);
-		if (opt_value) {
-			// Save new value
-			_value = *opt_value;
-			_textTexture = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, ToString(*opt_value)));
+		if (const auto value = VariantBlueprint().onCreate(*this)) {
+			_value = *value;
 		}
 	}
 }
 
-UiAction IntegerInput::OnEvent(Events& events) {
-	const auto buttonsRect = Rect().trim_left(Rect().w - Rect().h / 2);
-	const auto incButtonRect = buttonsRect.trim_bottom(buttonsRect.h / 2);
-	const auto decButtonRect = buttonsRect.trim_top(buttonsRect.h / 2);
+UiAction IntegerInput::SetValue(const int value) {
+	if (VariantBlueprint().min_value <= value && value < VariantBlueprint().max_value) {
+		_value = value;
+		_textTexture = sdl::TextTextureAndDestination{};
+		if (VariantBlueprint().onAction) {
+			return VariantBlueprint().onAction(*this);
+		}
+	}
+	return MakeContinueAction();
+}
 
-	if (!_inc_depressed && events.PopMouseButtonPress(MouseButton::PRIMARY, incButtonRect)) {
+void IntegerInput::OnResize(const RectI&, const RectI&) {
+	_textTexture = sdl::TextTextureAndDestination{};
+	_plusTexture = sdl::TextTextureAndDestination{};
+	_minusTexture = sdl::TextTextureAndDestination{};
+}
+UiAction IntegerInput::OnEvent(Events& events) {
+	const auto [plusArea, minusArea] = CalculatePlusAndMinusButtonDrawArea();
+	if (!_inc_depressed && events.PopMouseButtonPress(MouseButton::PRIMARY, plusArea)) {
 		_inc_depressed = true;
 		_dec_depressed = false;
-	} else if (!_dec_depressed && events.PopMouseButtonPress(MouseButton::PRIMARY, decButtonRect)) {
+	} else if (!_dec_depressed && events.PopMouseButtonPress(MouseButton::PRIMARY, minusArea)) {
 		_dec_depressed = true;
 		_inc_depressed = false;
-	} else if (_inc_depressed && events.PopMouseButtonRelease(MouseButton::PRIMARY, incButtonRect)) {
+	} else if (_inc_depressed && events.PopMouseButtonRelease(MouseButton::PRIMARY, plusArea)) {
 		_inc_depressed = false;
 		if (value() < VariantBlueprint().max_value) {
-			select(value() + 1);
+			return SetValue(value() + 1);
 		}
-	} else if (_dec_depressed && events.PopMouseButtonRelease(MouseButton::PRIMARY, decButtonRect)) {
+	} else if (_dec_depressed && events.PopMouseButtonRelease(MouseButton::PRIMARY, minusArea)) {
 		_dec_depressed = false;
 		if (VariantBlueprint().min_value < value()) {
-			select(value() - 1);
+			return SetValue(value() - 1);
 		}
 	} else {
 		// Check if scrolled
 		if (const auto scrollAmount = events.PopMouseWheelVerticalScroll(Rect()); 0 < scrollAmount) {
-			select(std::min(value() + scrollAmount, VariantBlueprint().max_value));
+			return SetValue(std::min(value() + scrollAmount, VariantBlueprint().max_value));
 		} else if (scrollAmount < 0) {
-			select(std::max(value() + scrollAmount, VariantBlueprint().min_value));
+			return SetValue(std::max(value() + scrollAmount, VariantBlueprint().min_value));
 		}
 	}
 	return MakeContinueAction();
 }
-
-UiAction IntegerInput::select(int v) {
-	_value = v;
-	_textTexture = std::move(*sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, ToString(v)));
-
-	const auto& integer_selection = std::get<IntegerInputBlueprint>(blueprint->variant);
-	const auto& action_callback = integer_selection.onAction;
-	if (action_callback) {
-		return action_callback(*this);
-	}
-	return MakeContinueAction();
-}
-
 UiAction IntegerInput::OnUpdate() {
-	auto& pb_blueprint = std::get<IntegerInputBlueprint>(blueprint->variant);
-	if (pb_blueprint.onUpdate) {
-		auto optional_value = pb_blueprint.onUpdate(*this);
-		if (optional_value) {
-			_value = *optional_value;
-			_textTexture = std::move(*sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, ToString(*optional_value)));
+	if (auto& pb_blueprint = std::get<IntegerInputBlueprint>(blueprint->variant); pb_blueprint.onUpdate) {
+		if (const auto value = pb_blueprint.onUpdate(*this)) {
+			return SetValue(*value);
 		}
 	}
 	return MakeContinueAction();
@@ -81,34 +70,43 @@ UiAction IntegerInput::OnUpdate() {
 void IntegerInput::OnDraw() {
 	draw_background_color();
 
-	if (const auto texture = _textTexture.Texture(); texture) {
-		sdl::render_texture_with_color_mod(texture,
-				calculate_filled_text_rect(Rect().trim_right(Rect().h / 2), TextHorizontalAlignment::LEFT,
-					I(Utf8CodepointCount(_textTexture.String().c_str()))));
+	{
+		// Draw the integer value
+		if (not _textTexture.first) {
+			const auto valueAsString = ToString(_value);
+			_textTexture.second = calculate_filled_text_rect(Rect().trim_right(Rect().h / 2), TextHorizontalAlignment::LEFT, valueAsString.size());
+			_textTexture.first = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, _textTexture.second.h, valueAsString));
+		}
+		sdl::render_texture_with_color_mod(_textTexture.first.Texture(), _textTexture.second);
 	}
 
-	auto buttons_rect = Rect().trim_left(Rect().w - Rect().h / 2);
-	auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2);
-	sdl::render_texture_with_color_mod(_plusTexture.Texture(),
-			calculate_filled_text_rect(inc_button_rect,
-				TextHorizontalAlignment::LEFT, I(Utf8CodepointCount(_plusTexture.String().c_str()))));
-	draw_border(inc_button_rect, vertical_border_width_px(), horizontal_border_width_px());
-
-	auto dec_button_rect = buttons_rect.trim_top(buttons_rect.h / 2);
-	sdl::render_texture_with_color_mod(_minusTexture.Texture(),
-			calculate_filled_text_rect(dec_button_rect,
-				TextHorizontalAlignment::LEFT, I(Utf8CodepointCount(_minusTexture.String().c_str()))));
-	draw_border(dec_button_rect, vertical_border_width_px(), horizontal_border_width_px());
+	const auto [plusArea, minusArea] = CalculatePlusAndMinusButtonDrawArea();
+	{
+		// Draw plus texture
+		if (not _plusTexture.first) {
+			_plusTexture.second = calculate_filled_text_rect(plusArea, TextHorizontalAlignment::CENTER, 1);
+			_plusTexture.first = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, _plusTexture.second.h, "+"));
+		}
+		sdl::render_texture_with_color_mod(_plusTexture.first.Texture(), _plusTexture.second);
+		draw_border(plusArea, vertical_border_width_px(), horizontal_border_width_px());
+	}
+	{
+		// Draw minus texture
+		if (not _minusTexture.first) {
+			_minusTexture.second = calculate_filled_text_rect(minusArea, TextHorizontalAlignment::CENTER, 1);
+			_minusTexture.first = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, _minusTexture.second.h, "-"));
+		}
+		sdl::render_texture_with_color_mod(_minusTexture.first.Texture(), _minusTexture.second);
+		draw_border(minusArea, vertical_border_width_px(), horizontal_border_width_px());
+	}
 
 	draw_border(Rect(), vertical_border_width_px(), horizontal_border_width_px());
 }
 
-void IntegerInput::SetValue(const int value) {
-	if (VariantBlueprint().min_value <= value && value < VariantBlueprint().max_value) {
-		_value = value;
-		_textTexture = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, ToString(_value)));
-		if (VariantBlueprint().onAction) {
-			VariantBlueprint().onAction(*this);
-		}
-	}
+RectI IntegerInput::CalculateValueDrawArea() const {
+	return Rect().trim_right(Rect().h / 2);
+}
+std::pair<RectI,RectI> IntegerInput::CalculatePlusAndMinusButtonDrawArea() const {
+	const auto buttonsRect = Rect().trim_left(Rect().w - Rect().h / 2);
+	return std::make_pair(buttonsRect.trim_bottom(buttonsRect.h / 2), buttonsRect.trim_top(buttonsRect.h / 2));
 }
