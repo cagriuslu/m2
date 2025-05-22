@@ -5,7 +5,7 @@
 #include <m2/game/Selection.h>
 #include <Level.pb.h>
 #include <m2/ui/widget/CheckboxWithText.h>
-#include <m2/ui/widget/IntegerInput.h>
+#include <m2/ui/widget/IntegerSelection.h>
 #include <m2/ui/widget/Text.h>
 #include <m2/ui/widget/TextSelection.h>
 #include <m2/sheet_editor/Ui.h>
@@ -97,10 +97,10 @@ void m2::level_editor::State::HandleMouseSecondaryButton(const VecF& position) {
 		if (const auto selections = M2_LEVEL.RightHud()->FindWidget<widget::TextSelection>("ObjectTypeSelection")->GetSelectedOptions(); not selections.empty()) {
 			const auto selectedObjectType = static_cast<m2g::pb::ObjectType>(I(selections[0]));
 			const auto selectedGroupType = static_cast<m2g::pb::GroupType>(I(M2_LEVEL.RightHud()->FindWidget<widget::TextSelection>("GroupTypeSelection")->GetSelectedOptions()[0]));
-			const auto selectedGroupInstance = M2_LEVEL.RightHud()->FindWidget<widget::IntegerInput>("GroupInstanceSelection")->value();
-			const auto orientation = ToRadians(M2_LEVEL.RightHud()->FindWidget<widget::IntegerInput>("OrientationInput")->value());
+			const auto selectedGroupInstance = M2_LEVEL.RightHud()->FindWidget<widget::IntegerSelection>("GroupInstanceSelection")->value();
+			const auto orientation = ToRadians(M2_LEVEL.RightHud()->FindWidget<widget::IntegerSelection>("OrientationInput")->value());
 			const auto snapToGrid = M2_LEVEL.LeftHud()->FindWidget<widget::CheckboxWithText>("SnapToGridCheckbox")->GetState();
-			const auto splitCount = M2_LEVEL.LeftHud()->FindWidget<widget::IntegerInput>("CellSplitCount")->value();
+			const auto splitCount = M2_LEVEL.LeftHud()->FindWidget<widget::IntegerSelection>("CellSplitCount")->value();
 			const auto placePosition = snapToGrid ? M2_GAME.MousePositionWorldM().RoundToBin(splitCount) : position;
 			PlaceForeground(placePosition, orientation, selectedObjectType, selectedGroupType, selectedGroupInstance);
 		}
@@ -124,7 +124,7 @@ void m2::level_editor::State::HandleMousePrimarySelectionComplete(const VecF& fi
 						return;
 					}
 
-					const auto splitCount = M2_LEVEL.LeftHud()->FindWidget<widget::IntegerInput>("CellSplitCount")->value();
+					const auto splitCount = M2_LEVEL.LeftHud()->FindWidget<widget::IntegerSelection>("CellSplitCount")->value();
 					const auto binnedSecondPositionPx = secondPosition.RoundToBin(splitCount);
 					const auto pointOffset = WorldCoordinateToSpriteCoordinate(fgObjectIt, binnedSecondPositionPx);
 					drawFgState->MovePoint(selectedIndex, *closestPointIndex, pointOffset);
@@ -209,7 +209,7 @@ void m2::level_editor::State::PasteForeground() {
 }
 
 void m2::level_editor::State::StorePoint(const int selectedIndex, const VecF& pointM) {
-	const auto splitCount = M2_LEVEL.LeftHud()->FindWidget<widget::IntegerInput>("CellSplitCount")->value();
+	const auto splitCount = M2_LEVEL.LeftHud()->FindWidget<widget::IntegerSelection>("CellSplitCount")->value();
 	const auto binnedPointM = pointM.RoundToBin(splitCount);
 
 	auto& state = dynamic_cast<DrawFgRightHudState&>(*M2_LEVEL.RightHud()->state);
@@ -218,7 +218,7 @@ void m2::level_editor::State::StorePoint(const int selectedIndex, const VecF& po
 	state.StorePoint(selectedIndex, pointOffset);
 }
 void m2::level_editor::State::StoreArc(int selectedIndex, const VecF& pointM, const ArcDescription& arc) {
-	const auto splitCount = M2_LEVEL.LeftHud()->FindWidget<widget::IntegerInput>("CellSplitCount")->value();
+	const auto splitCount = M2_LEVEL.LeftHud()->FindWidget<widget::IntegerSelection>("CellSplitCount")->value();
 	const auto binnedPointM = pointM.RoundToBin(splitCount);
 
 	auto& state = dynamic_cast<DrawFgRightHudState&>(*M2_LEVEL.RightHud()->state);
@@ -299,7 +299,7 @@ void m2::level_editor::State::UndoPoint(const int selectedIndex) {
 }
 
 void m2::level_editor::State::Draw() const {
-	const auto splitCount = M2_LEVEL.LeftHud()->FindWidget<widget::IntegerInput>("CellSplitCount")->value();
+	const auto splitCount = M2_LEVEL.LeftHud()->FindWidget<widget::IntegerSelection>("CellSplitCount")->value();
 
 	const auto drawGridSelectionIfActive = [] {
 		if (const auto* selection = M2_LEVEL.PrimarySelection()) {
@@ -479,7 +479,7 @@ m2::level_editor::State::ForegroundObjectPlaceholderMap::iterator m2::level_edit
 
 		const auto orientationDegreesUnbounded = RoundI(ToDegrees(std::get<pb::LevelObject>(foundIt->second).orientation()));
 		const auto orientationDegrees = ((orientationDegreesUnbounded % 360) + 360) % 360;
-		auto* orientationInput = M2_LEVEL.RightHud()->FindWidget<widget::IntegerInput>("OrientationInput");
+		auto* orientationInput = M2_LEVEL.RightHud()->FindWidget<widget::IntegerSelection>("OrientationInput");
 		orientationInput->SetValue(orientationDegrees);
 
 		const auto objectType = std::get<pb::LevelObject>(foundIt->second).type();
@@ -505,7 +505,7 @@ m2::level_editor::State::ForegroundObjectPlaceholderMap::iterator m2::level_edit
 		}
 
 		const auto groupInstance = std::get<pb::LevelObject>(foundIt->second).group().instance();
-		auto* groupInstanceSelection = M2_LEVEL.RightHud()->FindWidget<widget::IntegerInput>("GroupInstanceSelection");
+		auto* groupInstanceSelection = M2_LEVEL.RightHud()->FindWidget<widget::IntegerSelection>("GroupInstanceSelection");
 		groupInstanceSelection->SetValue(groupInstance);
 	}
 	return foundIt;

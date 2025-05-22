@@ -1,7 +1,7 @@
 #include <m2/level_editor/Ui.h>
 #include <m2/sheet_editor/Ui.h>
 #include <m2/ui/widget/ImageSelection.h>
-#include <m2/ui/widget/IntegerInput.h>
+#include <m2/ui/widget/IntegerSelection.h>
 #include <m2/ui/widget/Text.h>
 #include <m2/ui/widget/TextSelection.h>
 #include <m2/ui/widget/CheckboxWithTextBlueprint.h>
@@ -168,7 +168,7 @@ namespace {
 			UiWidgetBlueprint{
 				.name = "DegreeInput",
 				.x = 12, .y = 1, .w = 10, .h = 3,
-				.variant = IntegerInputBlueprint{
+				.variant = IntegerSelectionBlueprint{
 					.min_value = 0, .max_value = 360
 				}
 			},
@@ -179,7 +179,7 @@ namespace {
 			UiWidgetBlueprint{
 				.name = "PieceCountInput",
 				.x = 12, .y = 5, .w = 10, .h = 3,
-				.variant = IntegerInputBlueprint{
+				.variant = IntegerSelectionBlueprint{
 					.min_value = 1, .max_value = 1000,
 					.initial_value = 1
 				}
@@ -205,8 +205,8 @@ namespace {
 				.variant = TextBlueprint{
 					.text = "OK",
 					.onAction = [](const Text& self) {
-						const auto angle = self.Parent().FindWidget<IntegerInput>("DegreeInput")->value();
-						const auto pieceCount = self.Parent().FindWidget<IntegerInput>("PieceCountInput")->value();
+						const auto angle = self.Parent().FindWidget<IntegerSelection>("DegreeInput")->value();
+						const auto pieceCount = self.Parent().FindWidget<IntegerSelection>("PieceCountInput")->value();
 						const auto drawTowardsRight = self.Parent().FindWidget<CheckboxWithText>("DrawTowardsRightCheckbox")->GetState();
 						return MakeReturnAction<level_editor::ArcDescription>(level_editor::ArcDescription{angle, pieceCount, drawTowardsRight});
 					}
@@ -223,14 +223,14 @@ namespace {
 				UiWidgetBlueprint{
 					.name = "First",
 					.x = 1, .y = 1, .w = 10, .h = 3,
-					.variant = IntegerInputBlueprint{
+					.variant = IntegerSelectionBlueprint{
 						.min_value = min, .max_value = max
 					}
 				},
 				UiWidgetBlueprint{
 					.name = "Second",
 					.x = 12, .y = 1, .w = 10, .h = 3,
-					.variant = IntegerInputBlueprint{
+					.variant = IntegerSelectionBlueprint{
 						.min_value = min, .max_value = max
 					}
 				},
@@ -250,7 +250,7 @@ namespace {
 				UiWidgetBlueprint{
 					.name = "PieceCountInput",
 					.x = 12, .y = 9, .w = 10, .h = 3,
-					.variant = IntegerInputBlueprint{
+					.variant = IntegerSelectionBlueprint{
 						.min_value = 1, .max_value = 1000,
 						.initial_value = 1
 					}
@@ -269,13 +269,13 @@ namespace {
 					.variant = TextBlueprint{
 						.text = "OK",
 						.onAction = [](const Text& self) {
-							const auto first = self.Parent().FindWidget<IntegerInput>("First")->value();
-							const auto second = self.Parent().FindWidget<IntegerInput>("Second")->value();
+							const auto first = self.Parent().FindWidget<IntegerSelection>("First")->value();
+							const auto second = self.Parent().FindWidget<IntegerSelection>("Second")->value();
 							if (first == second) {
 								return MakeContinueAction();
 							}
 							const auto radius = stof(self.Parent().FindWidget<TextInput>("Radius")->text_input());
-							const auto pieceCount = self.Parent().FindWidget<IntegerInput>("PieceCountInput")->value();
+							const auto pieceCount = self.Parent().FindWidget<IntegerSelection>("PieceCountInput")->value();
 							return MakeReturnAction<level_editor::TangentDescription>(level_editor::TangentDescription{first, second, radius, pieceCount});
 						}
 					}
@@ -498,7 +498,7 @@ namespace {
 			UiWidgetBlueprint{
 				.name = "OrientationInput",
 				.x = 2, .y = 7, .w = 15, .h = 4,
-				.variant = IntegerInputBlueprint{
+				.variant = IntegerSelectionBlueprint{
 					.min_value = 0,
 					.max_value = 359,
 					.initial_value = 0
@@ -523,7 +523,7 @@ namespace {
 						// Create ghost
 						if (const auto selections = self.GetSelectedOptions(); not selections.empty()) {
 							const auto snapToGrid = M2_LEVEL.LeftHud()->FindWidget<CheckboxWithText>("SnapToGridCheckbox")->GetState();
-							const auto splitCount = M2_LEVEL.LeftHud()->FindWidget<IntegerInput>("CellSplitCount")->value();
+							const auto splitCount = M2_LEVEL.LeftHud()->FindWidget<IntegerSelection>("CellSplitCount")->value();
 							levelEditorState.ghostId = obj::create_ghost(*M2_GAME.GetMainSpriteOfObject(static_cast<m2g::pb::ObjectType>(I(selections[0]))), snapToGrid ? splitCount : 0);
 						}
 						return MakeContinueAction();
@@ -548,7 +548,7 @@ namespace {
 			UiWidgetBlueprint{
 				.name = "GroupInstanceSelection",
 				.x = 2, .y = 58, .w = 15, .h = 4,
-				.variant = IntegerInputBlueprint{
+				.variant = IntegerSelectionBlueprint{
 					.min_value = 0,
 					.max_value = 999,
 					.initial_value = 0
@@ -960,7 +960,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
 				.text = "Grid",
 				.initial_state = false,
 				.onAction = [](const CheckboxWithText& self) -> UiAction {
-					self.Parent().FindWidget<IntegerInput>("CellSplitCount")->enabled = self.GetState();
+					self.Parent().FindWidget<IntegerSelection>("CellSplitCount")->enabled = self.GetState();
 					return MakeContinueAction();
 				}
 			}
@@ -969,7 +969,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
 			.name = "CellSplitCount",
 			.initially_enabled = false,
 			.x = 1, .y = 59, .w = 17, .h = 3,
-			.variant = IntegerInputBlueprint{
+			.variant = IntegerSelectionBlueprint{
 				.min_value = 1,
 				.max_value = 100,
 				.initial_value = 1

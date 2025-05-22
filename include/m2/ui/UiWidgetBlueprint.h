@@ -3,7 +3,7 @@
 #include "widget/ImageBlueprint.h"
 #include "widget/HiddenBlueprint.h"
 #include "widget/ImageSelectionBlueprint.h"
-#include "widget/IntegerInputBlueprint.h"
+#include "widget/IntegerSelectionBlueprint.h"
 #include "widget/ProgressBarBlueprint.h"
 #include "widget/TextBlueprint.h"
 #include "widget/TextInputBlueprint.h"
@@ -34,7 +34,7 @@ namespace m2 {
 				widget::TextInputBlueprint,
 				widget::ImageSelectionBlueprint,
 				widget::TextSelectionBlueprint,
-				widget::IntegerInputBlueprint,
+				widget::IntegerSelectionBlueprint,
 				widget::CheckboxWithTextBlueprint>;
 		Variant variant;
 	};

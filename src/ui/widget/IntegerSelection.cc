@@ -1,12 +1,12 @@
 #include <m2/Game.h>
 #include <m2/sdl/TextTexture.h>
-#include <m2/ui/widget/IntegerInput.h>
+#include <m2/ui/widget/IntegerSelection.h>
 
 using namespace m2;
 using namespace m2::widget;
 
-IntegerInput::IntegerInput(UiPanel* parent, const UiWidgetBlueprint* blueprint)
-    : UiWidget(parent, blueprint), _value(std::get<IntegerInputBlueprint>(blueprint->variant).initial_value) {
+IntegerSelection::IntegerSelection(UiPanel* parent, const UiWidgetBlueprint* blueprint)
+    : UiWidget(parent, blueprint), _value(std::get<IntegerSelectionBlueprint>(blueprint->variant).initial_value) {
 	if (VariantBlueprint().onCreate) {
 		if (const auto value = VariantBlueprint().onCreate(*this)) {
 			_value = *value;
@@ -14,7 +14,7 @@ IntegerInput::IntegerInput(UiPanel* parent, const UiWidgetBlueprint* blueprint)
 	}
 }
 
-UiAction IntegerInput::SetValue(const int value) {
+UiAction IntegerSelection::SetValue(const int value) {
 	if (VariantBlueprint().min_value <= value && value < VariantBlueprint().max_value) {
 		_value = value;
 		_textTexture = sdl::TextTextureAndDestination{};
@@ -25,12 +25,12 @@ UiAction IntegerInput::SetValue(const int value) {
 	return MakeContinueAction();
 }
 
-void IntegerInput::OnResize(const RectI&, const RectI&) {
+void IntegerSelection::OnResize(const RectI&, const RectI&) {
 	_textTexture = sdl::TextTextureAndDestination{};
 	_plusTexture = sdl::TextTextureAndDestination{};
 	_minusTexture = sdl::TextTextureAndDestination{};
 }
-UiAction IntegerInput::OnEvent(Events& events) {
+UiAction IntegerSelection::OnEvent(Events& events) {
 	const auto [plusArea, minusArea] = CalculatePlusAndMinusButtonDrawArea();
 	if (!_inc_depressed && events.PopMouseButtonPress(MouseButton::PRIMARY, plusArea)) {
 		_inc_depressed = true;
@@ -58,8 +58,8 @@ UiAction IntegerInput::OnEvent(Events& events) {
 	}
 	return MakeContinueAction();
 }
-UiAction IntegerInput::OnUpdate() {
-	if (auto& pb_blueprint = std::get<IntegerInputBlueprint>(blueprint->variant); pb_blueprint.onUpdate) {
+UiAction IntegerSelection::OnUpdate() {
+	if (auto& pb_blueprint = std::get<IntegerSelectionBlueprint>(blueprint->variant); pb_blueprint.onUpdate) {
 		if (const auto value = pb_blueprint.onUpdate(*this)) {
 			return SetValue(*value);
 		}
@@ -67,7 +67,7 @@ UiAction IntegerInput::OnUpdate() {
 	return MakeContinueAction();
 }
 
-void IntegerInput::OnDraw() {
+void IntegerSelection::OnDraw() {
 	draw_background_color();
 
 	{
@@ -103,10 +103,10 @@ void IntegerInput::OnDraw() {
 	draw_border(Rect(), vertical_border_width_px(), horizontal_border_width_px());
 }
 
-RectI IntegerInput::CalculateValueDrawArea() const {
+RectI IntegerSelection::CalculateValueDrawArea() const {
 	return Rect().trim_right(Rect().h / 2);
 }
-std::pair<RectI,RectI> IntegerInput::CalculatePlusAndMinusButtonDrawArea() const {
+std::pair<RectI,RectI> IntegerSelection::CalculatePlusAndMinusButtonDrawArea() const {
 	const auto buttonsRect = Rect().trim_left(Rect().w - Rect().h / 2);
 	return std::make_pair(buttonsRect.trim_bottom(buttonsRect.h / 2), buttonsRect.trim_top(buttonsRect.h / 2));
 }
