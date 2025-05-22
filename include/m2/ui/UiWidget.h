@@ -68,7 +68,7 @@ namespace m2 {
 		[[nodiscard]] RectI drawable_area() const;
 
 		/// Calculate the rect of the wrapped text to fill the drawable_area. The width of the text texture is assumed
-		/// to be drawable_area.w because `create_wrapped` functions generates textures with a desired width.
+		/// to be drawable_area.w because `CreateWrapped` functions generates textures with a desired width.
 		static RectI calculate_wrapped_text_rect(SDL_Texture* text_texture, RectI drawable_area, TextHorizontalAlignment align_h, TextVerticalAlignment align_v);
 		/// Calculate the rect of the text to fill the drawable_area
 		static RectI calculate_filled_text_rect(RectI drawable_area, TextHorizontalAlignment align, int text_length);

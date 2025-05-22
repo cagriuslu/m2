@@ -218,12 +218,12 @@ void TextSelection::OnDraw() {
 				// Render the text
 				auto drawable_area = Rect().trim_right(Rect().h / 2);
 				auto fontSize = calculate_filled_text_rect(drawable_area, TextHorizontalAlignment::LEFT, I(Utf8CodepointCount(current_selection->blueprint_option.text.c_str()))).h;
-				auto textTexture = m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, fontSize, current_selection->blueprint_option.text));
+				auto textTexture = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, fontSize, current_selection->blueprint_option.text));
 				auto destination_rect = calculate_filled_text_rect(drawable_area, TextHorizontalAlignment::LEFT, I(Utf8CodepointCount(current_selection->blueprint_option.text.c_str())));
 				current_selection->text_texture_and_destination = sdl::TextTextureAndDestination{std::move(textTexture), destination_rect};
 			}
-			sdl::render_texture_with_color_mod(current_selection->text_texture_and_destination->textTexture.texture(),
-				current_selection->text_texture_and_destination->destinationRect, current_selection->blueprint_option.text_color);
+			sdl::render_texture_with_color_mod(current_selection->text_texture_and_destination->first.Texture(),
+				current_selection->text_texture_and_destination->second, current_selection->blueprint_option.text_color);
 		}
 		// + button
 		auto buttons_rect = Rect().trim_left(Rect().w - Rect().h / 2);
@@ -231,12 +231,12 @@ void TextSelection::OnDraw() {
 			auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2);
 			if (not _plusTexture) {
 				auto fontSize = inc_button_rect.h;
-				auto textTexture = m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, fontSize, "+"));
-				auto destination_rect = RectI::centered_around(inc_button_rect.center(), textTexture.texture_dimensions().x, textTexture.texture_dimensions().y);
+				auto textTexture = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, fontSize, "+"));
+				auto destination_rect = RectI::centered_around(inc_button_rect.center(), textTexture.Dimensions().x, textTexture.Dimensions().y);
 				// TODO we may need to move the texture slightly up, check the font properties
 				_plusTexture = {std::move(textTexture), destination_rect};
 			}
-			sdl::render_texture_with_color_mod(_plusTexture->textTexture.texture(), _plusTexture->destinationRect);
+			sdl::render_texture_with_color_mod(_plusTexture->first.Texture(), _plusTexture->second);
 			draw_border(inc_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 		}
 		// - button
@@ -244,12 +244,12 @@ void TextSelection::OnDraw() {
 			auto dec_button_rect = buttons_rect.trim_top(buttons_rect.h / 2);
 			if (not _minusTexture) {
 				auto fontSize = dec_button_rect.h;
-				auto textTexture = m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, fontSize, "-"));
-				auto destination_rect = RectI::centered_around(dec_button_rect.center(), textTexture.texture_dimensions().x, textTexture.texture_dimensions().y);
+				auto textTexture = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, fontSize, "-"));
+				auto destination_rect = RectI::centered_around(dec_button_rect.center(), textTexture.Dimensions().x, textTexture.Dimensions().y);
 				// TODO we may need to move the texture slightly up, check the font properties
 				_minusTexture = {std::move(textTexture), destination_rect};
 			}
-			sdl::render_texture_with_color_mod(_minusTexture->textTexture.texture(), _minusTexture->destinationRect);
+			sdl::render_texture_with_color_mod(_minusTexture->first.Texture(), _minusTexture->second);
 			draw_border(dec_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 		}
 	} else if (line_count == 1) {
@@ -275,17 +275,17 @@ void TextSelection::OnDraw() {
 				// Render texture if necessary
 				if (not current_line.text_texture_and_destination) {
 					const auto fontSize = textRect.h;
-					auto textTexture = m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, fontSize,
+					auto textTexture = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, fontSize,
 						textLength <= maxCharCount ? current_line.blueprint_option.text : current_line.blueprint_option.text.substr(0, maxCharCount - 1) + "…"));
 					// Don't bother with destination_rect, because we're going to calculate that every time
-					current_line.text_texture_and_destination = sdl::TextTextureAndDestination{std::move(textTexture), {}};
+					current_line.text_texture_and_destination = std::make_pair(std::move(textTexture), RectI{});
 				}
 				// Calculate the text rect, actual text rect might be narrower than the available text rect
 				const auto actualTextRect = calculate_filled_text_rect(textRect, TextHorizontalAlignment::LEFT,
 					textLength <= maxCharCount ? textLength : maxCharCount);
-				current_line.text_texture_and_destination->destinationRect = actualTextRect;
-				sdl::render_texture_with_color_mod(current_line.text_texture_and_destination->textTexture.texture(),
-					current_line.text_texture_and_destination->destinationRect, current_line.blueprint_option.text_color);
+				current_line.text_texture_and_destination->second = actualTextRect;
+				sdl::render_texture_with_color_mod(current_line.text_texture_and_destination->first.Texture(),
+					current_line.text_texture_and_destination->second, current_line.blueprint_option.text_color);
 			}
 		}
 		// Scroll bar
@@ -298,12 +298,12 @@ void TextSelection::OnDraw() {
 				auto up_arrow_rect = scroll_bar_rect.GetRow(VariantBlueprint().line_count, 0);
 				if (not _upArrowTexture) {
 					auto fontSize = up_arrow_rect.h;
-					auto textTexture = m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, fontSize, "-"));
-					auto destination_rect = RectI::centered_around(up_arrow_rect.center(), textTexture.texture_dimensions().x, textTexture.texture_dimensions().y);
+					auto textTexture = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, fontSize, "-"));
+					auto destination_rect = RectI::centered_around(up_arrow_rect.center(), textTexture.Dimensions().x, textTexture.Dimensions().y);
 					// TODO we may need to move the texture slightly up, check the font properties
 					_upArrowTexture = {std::move(textTexture), destination_rect};
 				}
-				sdl::render_texture_with_color_mod(_upArrowTexture->textTexture.texture(), _upArrowTexture->destinationRect);
+				sdl::render_texture_with_color_mod(_upArrowTexture->first.Texture(), _upArrowTexture->second);
 				draw_border(up_arrow_rect, vertical_border_width_px(), horizontal_border_width_px());
 			}
 			// Down arrow
@@ -312,12 +312,12 @@ void TextSelection::OnDraw() {
 					VariantBlueprint().line_count - 1);
 				if (not _downArrowTexture) {
 					auto fontSize = down_button_rect.h;
-					auto textTexture = m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, fontSize, "+"));
-					auto destination_rect = RectI::centered_around(down_button_rect.center(), textTexture.texture_dimensions().x, textTexture.texture_dimensions().y);
+					auto textTexture = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, fontSize, "+"));
+					auto destination_rect = RectI::centered_around(down_button_rect.center(), textTexture.Dimensions().x, textTexture.Dimensions().y);
 					// TODO we may need to move the texture slightly up, check the font properties
 					_downArrowTexture = {std::move(textTexture), destination_rect};
 				}
-				sdl::render_texture_with_color_mod(_downArrowTexture->textTexture.texture(), _downArrowTexture->destinationRect);
+				sdl::render_texture_with_color_mod(_downArrowTexture->first.Texture(), _downArrowTexture->second);
 				draw_border(down_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 			}
 		}

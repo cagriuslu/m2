@@ -7,9 +7,9 @@ using namespace m2::widget;
 
 IntegerInput::IntegerInput(UiPanel* parent, const UiWidgetBlueprint* blueprint)
     : UiWidget(parent, blueprint), _value(std::get<IntegerInputBlueprint>(blueprint->variant).initial_value),
-      _plusTexture(m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "+"))),
-      _minusTexture(m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "-"))) {
-	_textTexture = m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, ToString(_value)));
+      _plusTexture(m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "+"))),
+      _minusTexture(m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "-"))) {
+	_textTexture = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, ToString(_value)));
 
 	// Execute onCreate
 	if (VariantBlueprint().onCreate) {
@@ -17,7 +17,7 @@ IntegerInput::IntegerInput(UiPanel* parent, const UiWidgetBlueprint* blueprint)
 		if (opt_value) {
 			// Save new value
 			_value = *opt_value;
-			_textTexture = m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, ToString(*opt_value)));
+			_textTexture = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, ToString(*opt_value)));
 		}
 	}
 }
@@ -56,7 +56,7 @@ UiAction IntegerInput::OnEvent(Events& events) {
 
 UiAction IntegerInput::select(int v) {
 	_value = v;
-	_textTexture = std::move(*sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, ToString(v)));
+	_textTexture = std::move(*sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, ToString(v)));
 
 	const auto& integer_selection = std::get<IntegerInputBlueprint>(blueprint->variant);
 	const auto& action_callback = integer_selection.onAction;
@@ -72,7 +72,7 @@ UiAction IntegerInput::OnUpdate() {
 		auto optional_value = pb_blueprint.onUpdate(*this);
 		if (optional_value) {
 			_value = *optional_value;
-			_textTexture = std::move(*sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, ToString(*optional_value)));
+			_textTexture = std::move(*sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, ToString(*optional_value)));
 		}
 	}
 	return MakeContinueAction();
@@ -81,23 +81,23 @@ UiAction IntegerInput::OnUpdate() {
 void IntegerInput::OnDraw() {
 	draw_background_color();
 
-	if (const auto texture = _textTexture.texture(); texture) {
+	if (const auto texture = _textTexture.Texture(); texture) {
 		sdl::render_texture_with_color_mod(texture,
 				calculate_filled_text_rect(Rect().trim_right(Rect().h / 2), TextHorizontalAlignment::LEFT,
-					I(Utf8CodepointCount(_textTexture.string().c_str()))));
+					I(Utf8CodepointCount(_textTexture.String().c_str()))));
 	}
 
 	auto buttons_rect = Rect().trim_left(Rect().w - Rect().h / 2);
 	auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2);
-	sdl::render_texture_with_color_mod(_plusTexture.texture(),
+	sdl::render_texture_with_color_mod(_plusTexture.Texture(),
 			calculate_filled_text_rect(inc_button_rect,
-				TextHorizontalAlignment::LEFT, I(Utf8CodepointCount(_plusTexture.string().c_str()))));
+				TextHorizontalAlignment::LEFT, I(Utf8CodepointCount(_plusTexture.String().c_str()))));
 	draw_border(inc_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 
 	auto dec_button_rect = buttons_rect.trim_top(buttons_rect.h / 2);
-	sdl::render_texture_with_color_mod(_minusTexture.texture(),
+	sdl::render_texture_with_color_mod(_minusTexture.Texture(),
 			calculate_filled_text_rect(dec_button_rect,
-				TextHorizontalAlignment::LEFT, I(Utf8CodepointCount(_minusTexture.string().c_str()))));
+				TextHorizontalAlignment::LEFT, I(Utf8CodepointCount(_minusTexture.String().c_str()))));
 	draw_border(dec_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 
 	draw_border(Rect(), vertical_border_width_px(), horizontal_border_width_px());
@@ -106,6 +106,7 @@ void IntegerInput::OnDraw() {
 void IntegerInput::SetValue(const int value) {
 	if (VariantBlueprint().min_value <= value && value < VariantBlueprint().max_value) {
 		_value = value;
+		_textTexture = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, ToString(_value)));
 		if (VariantBlueprint().onAction) {
 			VariantBlueprint().onAction(*this);
 		}

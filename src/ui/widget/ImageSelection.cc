@@ -7,8 +7,8 @@ using namespace m2::widget;
 
 ImageSelection::ImageSelection(UiPanel* parent, const UiWidgetBlueprint* blueprint)
     : UiWidget(parent, blueprint),
-      _plusTexture(m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "+"))),
-      _minusTexture(m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "-"))) {
+      _plusTexture(m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "+"))),
+      _minusTexture(m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "-"))) {
 	select(0);
 	if (VariantBlueprint().onCreate) {
 		VariantBlueprint().onCreate(*this);
@@ -80,13 +80,13 @@ void ImageSelection::OnDraw() {
 
 	auto buttons_rect = Rect().trim_top(Rect().w);
 	auto inc_button_rect = buttons_rect.trim_left(buttons_rect.w / 2);
-	sdl::render_texture_with_color_mod(_plusTexture.texture(),
-			calculate_filled_text_rect(inc_button_rect, TextHorizontalAlignment::LEFT, I(Utf8CodepointCount(_plusTexture.string().c_str()))));
+	sdl::render_texture_with_color_mod(_plusTexture.Texture(),
+			calculate_filled_text_rect(inc_button_rect, TextHorizontalAlignment::LEFT, I(Utf8CodepointCount(_plusTexture.String().c_str()))));
 	draw_border(inc_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 
 	auto dec_button_rect = buttons_rect.trim_right(buttons_rect.w / 2);
-	sdl::render_texture_with_color_mod(_minusTexture.texture(),
-			calculate_filled_text_rect(dec_button_rect, TextHorizontalAlignment::LEFT, I(Utf8CodepointCount(_minusTexture.string().c_str()))));
+	sdl::render_texture_with_color_mod(_minusTexture.Texture(),
+			calculate_filled_text_rect(dec_button_rect, TextHorizontalAlignment::LEFT, I(Utf8CodepointCount(_minusTexture.String().c_str()))));
 	draw_border(dec_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 
 	draw_border(Rect(), vertical_border_width_px(), horizontal_border_width_px());

@@ -65,13 +65,13 @@ void TextInput::OnDraw() {
 	draw_background_color();
 
 	auto str = _text_input.str();
-	if (not _text_texture_and_destination_cache || _text_texture_and_destination_cache->textTexture.string() != str) {
+	if (not _text_texture_and_destination_cache || _text_texture_and_destination_cache->first.String() != str) {
 		// Add '_' if focused
 		if (IsFocused()) {
 			str += '_';
 		}
 		// Generate text texture
-		auto textTexture = m2MoveOrThrowError(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font,
+		auto textTexture = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font,
 				M2G_PROXY.default_font_size, str));
 		// Calculate destination rectangle
 		auto destination_rect = calculate_filled_text_rect(drawable_area(), TextHorizontalAlignment::LEFT,
@@ -80,8 +80,8 @@ void TextInput::OnDraw() {
 		_text_texture_and_destination_cache = sdl::TextTextureAndDestination{std::move(textTexture), destination_rect};
 	}
 
-	sdl::render_texture_with_color_mod(_text_texture_and_destination_cache->textTexture.texture(),
-		_text_texture_and_destination_cache->destinationRect);
+	sdl::render_texture_with_color_mod(_text_texture_and_destination_cache->first.Texture(),
+		_text_texture_and_destination_cache->second);
 
 	draw_border(Rect(), vertical_border_width_px(), horizontal_border_width_px());
 }
