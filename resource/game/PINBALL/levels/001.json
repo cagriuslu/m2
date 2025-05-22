@@ -2,7 +2,10 @@
   "identifier": "001",
   "objects": [
     {
-      "position": {},
+      "position": {
+        "x": 8,
+        "y": 13.5
+      },
       "type": "PLAYER",
       "group": {}
     },

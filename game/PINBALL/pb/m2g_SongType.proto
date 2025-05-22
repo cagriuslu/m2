@@ -3,4 +3,7 @@ package m2g.pb;
 
 enum SongType {
     NO_SONG = 0;
+
+    SONG_FLIPPER_FLIP_UP_SOUND = 1;
+    SONG_FLIPPER_FLIP_DOWN_SOUND = 2;
 }

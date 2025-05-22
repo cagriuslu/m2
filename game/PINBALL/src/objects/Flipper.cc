@@ -61,6 +61,7 @@ m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
 			if (flipper->state == FlipperState::RESTING && M2_GAME.events.IsKeyDown(m2g::pb::RIGHT_FLIPPER)) {
 				phy_.body[I(m2::ForegroundLayer::F0)]->SetAngularVelocity(FLIPPER_SWEEP_UP_SPEED);
 				flipper->state = FlipperState::GOING_UP;
+				M2_GAME.audio_manager->Play(&M2_GAME.songs[m2g::pb::SONG_FLIPPER_FLIP_UP_SOUND], m2::AudioManager::ONCE, 0.15f);
 			}
 			if (flipper->state == FlipperState::FULLY_UP && not M2_GAME.events.IsKeyDown(m2g::pb::RIGHT_FLIPPER)) {
 				phy_.body[I(m2::ForegroundLayer::F0)]->SetAngularVelocity(-FLIPPER_SWEEP_DOWN_SPEED);
@@ -84,6 +85,7 @@ m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
 			if (flipper->state == FlipperState::RESTING && M2_GAME.events.IsKeyDown(m2g::pb::LEFT_FLIPPER)) {
 				phy_.body[I(m2::ForegroundLayer::F0)]->SetAngularVelocity(-FLIPPER_SWEEP_UP_SPEED);
 				flipper->state = FlipperState::GOING_UP;
+				M2_GAME.audio_manager->Play(&M2_GAME.songs[m2g::pb::SONG_FLIPPER_FLIP_UP_SOUND], m2::AudioManager::ONCE, 0.15f);
 			}
 			if (flipper->state == FlipperState::FULLY_UP && not M2_GAME.events.IsKeyDown(m2g::pb::LEFT_FLIPPER)) {
 				phy_.body[I(m2::ForegroundLayer::F0)]->SetAngularVelocity(FLIPPER_SWEEP_DOWN_SPEED);
