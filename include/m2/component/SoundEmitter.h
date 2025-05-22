@@ -2,6 +2,7 @@
 #include "../Component.h"
 #include "../audio/AudioManager.h"
 #include "../math/VecF.h"
+#include <m2/Math.h>
 #include <functional>
 #include <list>
 

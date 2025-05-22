@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <m2/audio/MixNote.h>
+#include <../include/m2/audio/synthesizer/MixNote.h>
 
 //TEST(GenerateSound, sine_simple) {
 //	m2::pb::SynthSound sound;

@@ -11,7 +11,7 @@ m2::AudioManager::Playback::Playback(const Song* _song, float _volume, PlayPolic
 
 m2::AudioManager::AudioManager() {
 	SDL_AudioSpec want{};
-	want.freq = DEFAULT_AUDIO_SAMPLE_RATE;
+	want.freq = audio::synthesizer::gDefaultAudioSampleRate;
 	want.format = AUDIO_F32;
 	want.channels = 2;
 	want.samples = static_cast<uint16_t>(want.freq / AUDIO_CALLBACK_FREQUENCY);
@@ -30,7 +30,7 @@ m2::AudioManager::~AudioManager() {
 }
 
 m2::PlaybackId m2::AudioManager::Play(const Song* song, PlayPolicy policy, float volume) {
-	if (song->sample_count() < sdlAudioSpec.samples) {
+	if (song->SampleCount() < sdlAudioSpec.samples) {
 		throw M2_ERROR("Playing short audio is not supported");
 	}
 
@@ -73,14 +73,14 @@ void m2::AudioManager::SetPlaybackRightVolume(PlaybackId id, float volume) {
 
 void m2::AudioManager::AudioCallback(MAYBE void* user_data, uint8_t* stream, int length) {
 	auto& audio_manager = *M2_GAME.audio_manager;
-	auto* out_stream = reinterpret_cast<AudioSample*>(stream);
-	auto out_length = (size_t) length / sizeof(AudioSample); // in samples
+	auto* out_stream = reinterpret_cast<audio::synthesizer::AudioSample*>(stream);
+	auto out_length = (size_t) length / sizeof(audio::synthesizer::AudioSample); // in samples
 
 	// Clear buffer
-	std::fill(out_stream, out_stream + out_length, AudioSample{});
+	std::fill(out_stream, out_stream + out_length, audio::synthesizer::AudioSample{});
 
 	auto copy = [=](Playback* playback, size_t copy_count) {
-		const auto* begin = playback->song->data() + playback->nextSample;
+		const auto* begin = playback->song->Data() + playback->nextSample;
 		const auto* end = begin + copy_count;
 
 		for (auto it = begin; it != end; ++it) {
@@ -90,17 +90,17 @@ void m2::AudioManager::AudioCallback(MAYBE void* user_data, uint8_t* stream, int
 				const auto& playback_sample = *it;
 				auto l_playback_sample = playback_sample.l * playback->volume * playback->leftVolume;
 				auto r_playback_sample = playback_sample.r * playback->volume * playback->rightVolume;
-				out_stream[it - begin].mutable_mix(l_playback_sample, r_playback_sample);
+				out_stream[it - begin].MutableMix(l_playback_sample, r_playback_sample);
 			}
 		}
 
-		playback->nextSample = (playback->nextSample + copy_count) % playback->song->sample_count();
+		playback->nextSample = (playback->nextSample + copy_count) % playback->song->SampleCount();
 	};
 
 	std::unique_lock<std::mutex> lock{audio_manager.playbacksMutex};
 	for (auto it = audio_manager.playbacks.begin(); it != audio_manager.playbacks.end(); ++it) {
 		// Copy the samples left in the playback buffer
-		auto samples_left_playback_buffer = it->song->sample_count() - it->nextSample;
+		auto samples_left_playback_buffer = it->song->SampleCount() - it->nextSample;
 		auto min_len = std::min(samples_left_playback_buffer, out_length);
 		copy(&*it, min_len);
 
