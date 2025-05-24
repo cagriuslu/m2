@@ -16,6 +16,17 @@ namespace m2g {
 		const int gameAspectRatioMul = 16;
 		const int gameAspectRatioDiv = 27;
 		const m2::VecF gravity{0.0f, 24.0f};
+		const std::vector<m2::ObjectBlueprint> objectBlueprints = {
+			{.objectType = pb::BALL, .defaultSpriteType = pb::SPRITE_BASIC_BALL},
+			{.objectType = pb::FLIPPER_LEFT, .defaultSpriteType = pb::SPRITE_BASIC_FLIPPER_LEFT},
+			{.objectType = pb::FLIPPER_RIGHT, .defaultSpriteType = pb::SPRITE_BASIC_FLIPPER_RIGHT},
+			{.objectType = pb::WALLS, .defaultSpriteType = pb::SPRITE_BASIC_WALLS},
+			{.objectType = pb::PLATFORM, .defaultSpriteType = pb::SPRITE_BASIC_PLATFORM},
+			{.objectType = pb::BALL_LAUNCHER_SENSOR, .defaultSpriteType = pb::SPRITE_BALL_LAUNCHER_SENSOR},
+			{.objectType = pb::PLATFORM_ENTRY_SENSOR, .defaultSpriteType = pb::SPRITE_BALL_PLATFORM_ENTRY_SENSOR},
+			{.objectType = pb::PLATFORM_EXIT_SENSOR, .defaultSpriteType = pb::SPRITE_BALL_PLATFORM_EXIT_SENSOR},
+			{.objectType = pb::BUMPER_SENSOR, .defaultSpriteType = pb::SPRITE_BUMPER_SENSOR},
+		};
 
 		const m2::UiPanelBlueprint* MainMenuBlueprint();
 		const m2::UiPanelBlueprint* PauseMenuBlueprint();

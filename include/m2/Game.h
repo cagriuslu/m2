@@ -60,7 +60,7 @@ namespace m2 {
 		std::optional<TextLabelCache> _textLabelCache;
 		std::optional<ShapeCache> _shapeCache;
 		std::vector<std::variant<Sprite, pb::TextLabel>> _sprites;
-		std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> _mainSpriteOfObject;
+		std::vector<ObjectBlueprint> _objectBlueprints;
 
 	public:  // TODO private
 		std::optional<Level> _level;

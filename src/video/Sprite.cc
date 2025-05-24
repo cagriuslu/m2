@@ -2,7 +2,6 @@
 #include <m2/Math.h>
 #include <m2/Game.h>
 #include <m2/Log.h>
-#include <Object.pb.h>
 
 m2::Sprite::Sprite(const std::vector<SpriteSheet>& spriteSheets, const SpriteSheet& spriteSheet,
 		SpriteEffectsSheet& spriteEffectsSheet, const pb::Sprite& sprite, const bool lightning)
@@ -221,40 +220,6 @@ std::vector<std::variant<m2::Sprite, m2::pb::TextLabel>> m2::LoadSprites(const s
 	}
 
 	return sprites_vector;
-}
-
-std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> m2::ListLevelEditorObjectSprites(
-    const std::filesystem::path& objects_path) {
-	auto objects = pb::json_file_to_message<pb::Objects>(objects_path);
-	if (!objects) {
-		throw M2_ERROR(objects.error());
-	}
-
-	std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> object_sprite_map;
-	std::vector<bool> has_encountered(pb::enum_value_count<m2g::pb::ObjectType>());
-
-	// Visit every object
-	for (const auto& object : objects->objects()) {
-		const auto index = pb::enum_index(object.type());
-		// Check if object type already exists
-		if (has_encountered[index]) {
-			throw M2_ERROR("Object has duplicate definition: " + m2::ToString(object.type()));
-		}
-		has_encountered[index] = true;
-
-		if (object.main_sprite()) {
-			object_sprite_map[object.type()] = object.main_sprite();
-		}
-	}
-
-	// Check if every object type is encountered
-	for (int e = 0; e < pb::enum_value_count<m2g::pb::ObjectType>(); ++e) {
-		if (!has_encountered[e]) {
-			throw M2_ERROR("Object is not defined: " + pb::enum_name<m2g::pb::ObjectType>(e));
-		}
-	}
-
-	return object_sprite_map;
 }
 
 m2::void_expected m2::MoveBackground(const int from, const int to, const std::string& level) {

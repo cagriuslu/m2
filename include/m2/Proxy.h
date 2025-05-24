@@ -13,6 +13,7 @@
 #include <array>
 #include "network/SequenceNo.h"
 #include "ui/MessageBox.h"
+#include "ObjectBlueprint.h"
 
 namespace m2 {
 	class Proxy {
@@ -67,6 +68,9 @@ namespace m2 {
 
 		/// Dimming factor of the graphics when dimming is enabled
 		const float dimming_factor = 0.333f;
+
+		/// Describes the details of the objects
+		const std::vector<ObjectBlueprint> objectBlueprints;
 
 		void load_resources() {}
 

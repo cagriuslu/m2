@@ -1,7 +1,0 @@
-syntax = "proto3";
-package m2.pb;
-
-enum GlyphType {
-  NO_GLYPH = 0;
-  RED_CIRCLE = 1;
-}

@@ -7,6 +7,10 @@ namespace m2g {
 		const std::string game_identifier = "MINE";
 		const m2::VecF gravity{0.0f, 10.0f};
 		const bool world_is_static = false;
+		const std::vector<m2::ObjectBlueprint> objectBlueprints = {
+			{.objectType = pb::DWARF, .defaultSpriteType = pb::DWARF_FULL},
+			{.objectType = pb::BLACKSMITH, .defaultSpriteType = pb::BLACKSMITH_FULL},
+		};
 
 		const m2::UiPanelBlueprint* MainMenuBlueprint();
 		const m2::UiPanelBlueprint* PauseMenuBlueprint();

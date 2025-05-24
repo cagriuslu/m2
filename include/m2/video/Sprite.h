@@ -94,6 +94,5 @@ namespace m2 {
 	std::vector<std::variant<Sprite, pb::TextLabel>> LoadSprites(const std::vector<SpriteSheet>& spriteSheets,
 			const google::protobuf::RepeatedPtrField<pb::TextLabel>& textLabels,
 			SpriteEffectsSheet& spriteEffectsSheet, bool lightning);
-	std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> ListLevelEditorObjectSprites(const std::filesystem::path& objects_path);
 	void_expected MoveBackground(int from, int to, const std::string& level);
 }

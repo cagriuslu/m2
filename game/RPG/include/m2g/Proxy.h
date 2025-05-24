@@ -8,6 +8,28 @@ namespace m2g {
 	   public:
 		const std::string game_identifier = "RPG";
 		const bool camera_is_listener = true;
+		const std::vector<m2::ObjectBlueprint> objectBlueprints = {
+			{.objectType = pb::PLAYER, .defaultSpriteType = pb::PLAYER_LOOKDOWN_00, .defaultAnimationType = pb::ANIMATION_TYPE_PLAYER_MOVEMENT},
+			{.objectType = pb::SKELETON, .defaultSpriteType = pb::SKELETON_LOOKDOWN_00, .defaultAnimationType = pb::ANIMATION_TYPE_SKELETON_MOVEMENT},
+			{.objectType = pb::CASTLE_FINISH_POINT, .defaultSpriteType = pb::CASTLE_FINISH_POINT_SPRITE},
+			{.objectType = pb::CUTEOPUS, .defaultSpriteType = pb::CUTEOPUS_LOOKDOWN_00, .defaultAnimationType = pb::ANIMATION_TYPE_CUTEOPUS_MOVEMENT},
+			{.objectType = pb::MACHINE_GUN_ITEM_DROP, .defaultSpriteType = pb::MACHINE_GUN_ICON},
+			{.objectType = pb::EXPLOSIVE_ITEM_DROP, .defaultSpriteType = pb::EXPLOSIVE_ICON},
+			{.objectType = pb::LONG_SWORD_ITEM_DROP, .defaultSpriteType = pb::LONGSWORD_ICON},
+			{.objectType = pb::AXE_ITEM_DROP, .defaultSpriteType = pb::AXE_ICON},
+			{.objectType = pb::BUSH_01, .defaultSpriteType = pb::SPRITE_BUSH_01},
+			{.objectType = pb::FLOWER_ORANGE_02, .defaultSpriteType = pb::SPRITE_FLOWER_ORANGE_02},
+			{.objectType = pb::FLOWER_PINK_03, .defaultSpriteType = pb::SPRITE_FLOWER_PINK_03},
+			{.objectType = pb::FLOWER_WHITE_05, .defaultSpriteType = pb::SPRITE_FLOWER_WHITE_05},
+			{.objectType = pb::PINE_01, .defaultSpriteType = pb::SPRITE_PINE_01},
+			{.objectType = pb::PINE_DEAD_02, .defaultSpriteType = pb::SPRITE_PINE_DEAD_02},
+			{.objectType = pb::ROCK_03, .defaultSpriteType = pb::SPRITE_ROCK_03},
+			{.objectType = pb::TREE_03, .defaultSpriteType = pb::SPRITE_TREE_03},
+			{.objectType = pb::TREE_DEAD_03, .defaultSpriteType = pb::SPRITE_TREE_DEAD_03},
+			{.objectType = pb::FENCE_HORIZONTAL, .defaultSpriteType = pb::SPRITE_FENCE},
+			{.objectType = pb::FENCE_VERTICAL, .defaultSpriteType = pb::SPRITE_FENCE},
+			{.objectType = pb::SPIKES, .defaultSpriteType = pb::SPIKES_OUT},
+		};
 
 		void load_resources();
 
