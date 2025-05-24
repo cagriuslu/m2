@@ -2027,30 +2027,6 @@
               }
             ]
           }
-        },
-        {
-          "type": "SPRITE_TRIANGLE_TRAP",
-          "regular": {
-            "fixtures": [
-              {
-                "chain": {
-                  "points": [
-                    {
-                      "y": -16
-                    },
-                    {
-                      "x": 16,
-                      "y": 8
-                    },
-                    {
-                      "x": -16,
-                      "y": 8
-                    }
-                  ]
-                }
-              }
-            ]
-          }
         }
       ]
     }

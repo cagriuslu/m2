@@ -16,5 +16,4 @@ enum ObjectType {
   PLATFORM_EXIT_SENSOR = 22;
 
   BUMPER_SENSOR = 30;
-  TRIANGLE_TRAP = 31;
 }

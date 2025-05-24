@@ -41,10 +41,6 @@
     {
       "type": "BUMPER_SENSOR",
       "mainSprite": "SPRITE_BUMPER_SENSOR"
-    },
-    {
-      "type": "TRIANGLE_TRAP",
-      "mainSprite": "SPRITE_TRIANGLE_TRAP"
     }
   ]
 }

@@ -7,7 +7,6 @@
 #include <pinball/objects/Wall.h>
 #include <pinball/objects/Sensor.h>
 #include <pinball/objects/Targets.h>
-#include <pinball/objects/TriangleTrap.h>
 #include <m2/Game.h>
 #include <m2/ui/widget/ProgressBar.h>
 #include <m2/ui/widget/Text.h>
@@ -321,8 +320,6 @@ m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object&
 			return LoadPlatformExitSensor(obj);
 		case pb::ObjectType::BUMPER_SENSOR:
 			return LoadBumperSensor(obj);
-		case pb::ObjectType::TRIANGLE_TRAP:
-			return LoadTriangleTrap(obj);
 		default:
 			throw M2_ERROR("Missing loader for type: " + m2::ToString(obj.GetType()));
 	}
