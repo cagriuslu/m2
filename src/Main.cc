@@ -21,7 +21,6 @@ int main(const int argc, char **argv) {
 		return -1;
 	}
 
-	LOG_INFO("Creating Game instance...");
 	Game::CreateInstance();
 
 	std::optional<sdl::Stopwatch> sinceLastPhy, sinceLastGfx, sinceLastFps;

@@ -1,4 +1,4 @@
-#include <pinball/objects/Wall.h>
+#include <pinball/Objects.h>
 #include <m2/box2d/Shape.h>
 #include <m2/Game.h>
 

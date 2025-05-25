@@ -1984,6 +1984,42 @@
           }
         },
         {
+          "type": "SPRITE_LIGHT_SWITCH_SENSOR",
+          "regular": {
+            "fixtures": [
+              {
+                "circle": {
+                  "radiusPx": 4
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "SPRITE_HEATER_SWITCH_SENSOR",
+          "regular": {
+            "fixtures": [
+              {
+                "circle": {
+                  "radiusPx": 4
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "SPRITE_WATER_SPRINKLER_SENSOR",
+          "regular": {
+            "fixtures": [
+              {
+                "circle": {
+                  "radiusPx": 4
+                }
+              }
+            ]
+          }
+        },
+        {
           "type": "SPRITE_BUMPER_SENSOR",
           "regular": {
             "fixtures": [

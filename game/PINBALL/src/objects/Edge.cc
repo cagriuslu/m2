@@ -1,4 +1,4 @@
-#include <pinball/objects/Edge.h>
+#include <pinball/Objects.h>
 #include <m2/Game.h>
 #include <pinball/Pinball.h>
 

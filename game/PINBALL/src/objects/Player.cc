@@ -1,7 +1,6 @@
-#include <pinball/objects/Player.h>
+#include <pinball/Objects.h>
 #include <m2/Game.h>
 #include <pinball/Pinball.h>
-#include <pinball/objects/Edge.h>
 
 m2::void_expected LoadPlayer(m2::Object& obj) {
 	// Set player handle

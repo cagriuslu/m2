@@ -1,4 +1,4 @@
-#include <pinball/objects/Ball.h>
+#include <pinball/Objects.h>
 #include <m2/Game.h>
 #include <box2d/b2_circle_shape.h>
 #include <m2/third_party/physics/ColliderCategory.h>

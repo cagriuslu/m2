@@ -2,14 +2,6 @@
   "identifier": "001",
   "objects": [
     {
-      "position": {
-        "x": 8,
-        "y": 13.5
-      },
-      "type": "PLAYER",
-      "group": {}
-    },
-    {
       "position": {},
       "type": "PLATFORM_ENTRY_SENSOR",
       "group": {}
@@ -38,6 +30,14 @@
         "x": 8,
         "y": 13.5
       },
+      "type": "PLAYER",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 8,
+        "y": 13.5
+      },
       "type": "WALLS",
       "group": {}
     },
@@ -47,6 +47,22 @@
         "y": 13.5
       },
       "type": "PLATFORM",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 2.375,
+        "y": 21
+      },
+      "type": "LIGHT_SWITCH_SENSOR",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 13.625,
+        "y": 21
+      },
+      "type": "HEATER_SWITCH_SENSOR",
       "group": {}
     },
     {

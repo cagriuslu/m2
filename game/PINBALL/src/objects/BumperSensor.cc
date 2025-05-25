@@ -1,4 +1,4 @@
-#include <pinball/objects/Targets.h>
+#include <pinball/Objects.h>
 #include <m2/third_party/physics/ColliderCategory.h>
 #include <m2/Game.h>
 #include <m2/Log.h>

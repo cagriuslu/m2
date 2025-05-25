@@ -26,6 +26,9 @@ namespace m2g {
 			{.objectType = pb::BALL_LAUNCHER_SENSOR, .defaultSpriteType = pb::SPRITE_BALL_LAUNCHER_SENSOR},
 			{.objectType = pb::PLATFORM_ENTRY_SENSOR, .defaultSpriteType = pb::SPRITE_BALL_PLATFORM_ENTRY_SENSOR},
 			{.objectType = pb::PLATFORM_EXIT_SENSOR, .defaultSpriteType = pb::SPRITE_BALL_PLATFORM_EXIT_SENSOR},
+			{.objectType = pb::LIGHT_SWITCH_SENSOR, .defaultSpriteType = pb::SPRITE_LIGHT_SWITCH_SENSOR},
+			{.objectType = pb::HEATER_SWITCH_SENSOR, .defaultSpriteType = pb::SPRITE_HEATER_SWITCH_SENSOR},
+			{.objectType = pb::WATER_SPRINKLER_SENSOR, .defaultSpriteType = pb::SPRITE_WATER_SPRINKLER_SENSOR},
 			{.objectType = pb::BUMPER_SENSOR, .defaultSpriteType = pb::SPRITE_BUMPER_SENSOR},
 		};
 
