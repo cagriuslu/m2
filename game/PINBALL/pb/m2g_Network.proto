@@ -1,9 +1,0 @@
-syntax = "proto3";
-package m2g.pb;
-
-import "m2g_ItemType.proto";
-import "m2g_SpriteType.proto";
-
-message ServerCommand {}
-
-message ClientCommand {}

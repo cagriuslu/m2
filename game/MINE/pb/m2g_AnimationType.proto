@@ -1,6 +1,0 @@
-syntax = "proto3";
-package m2g.pb;
-
-enum AnimationType {
-  NO_ANIMATION_TYPE = 0;
-}

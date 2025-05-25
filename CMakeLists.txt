@@ -110,6 +110,20 @@ endif()
 add_subdirectory(game)
 
 # Generate protobuf files
+# Extract the filenames of game proto files
+foreach(GAME_PROTO_FILEPATH ${GAME_PROTO_FILES})
+    cmake_path(GET GAME_PROTO_FILEPATH FILENAME GAME_PROTO_FILENAME)
+    list(APPEND GAME_PROTO_FILENAMES "${GAME_PROTO_FILENAME}")
+endforeach()
+# Gather names of the default proto files
+file(GLOB PROTO_FILES_WITH_DEFAULT_FALLBACK RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/pb-default" "pb-default/*.proto")
+# Add default proto filesto game proto files if an alternative isn't provided by the game
+foreach(PROTO_DEFAULT_FILE ${PROTO_FILES_WITH_DEFAULT_FALLBACK})
+    if (NOT PROTO_DEFAULT_FILE IN_LIST GAME_PROTO_FILENAMES)
+        message("Using the default ${PROTO_DEFAULT_FILE} as it's not provided by the game")
+        list(APPEND GAME_PROTO_FILES "${CMAKE_CURRENT_SOURCE_DIR}/pb-default/${PROTO_DEFAULT_FILE}")
+    endif()
+endforeach()
 file(GLOB PROTO_FILES "pb/*.proto")
 protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS "${PROTO_FILES}" "${GAME_PROTO_FILES}")
 
