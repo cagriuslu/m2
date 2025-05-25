@@ -4,7 +4,7 @@
 namespace m2g {
 	class Proxy : public m2::Proxy {
 	   public:
-		const std::string game_identifier = "MINE";
+		const std::string gameIdentifier = "MINE";
 		const m2::VecF gravity{0.0f, 10.0f};
 		const bool world_is_static = false;
 		const std::vector<m2::ObjectBlueprint> objectBlueprints = {

@@ -15,12 +15,12 @@ namespace m2g {
 	public:
 		static Proxy& get_instance(); // TODO remove
 
-		const std::string game_identifier = "CuZn";
-		const std::string game_friendly_name = "OpenBrass";
+		const std::string gameIdentifier = "CuZn";
+		const std::string gameFriendlyName = "OpenBrass";
 		const int gameAspectRatioMul = 3;
 		const int gameAspectRatioDiv = 2;
 		const float defaultGameHeightM = 30.0f;
-		const std::string default_font_path = "fonts/Roboto_Mono/RobotoMono-VariableFont_wght.ttf";
+		const std::string defaultFontPath = "fonts/Roboto_Mono/RobotoMono-VariableFont_wght.ttf";
 
 		const m2::UiPanelBlueprint* MainMenuBlueprint();
 		const m2::UiPanelBlueprint* PauseMenuBlueprint();

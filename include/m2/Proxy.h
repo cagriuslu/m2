@@ -23,9 +23,9 @@ namespace m2 {
 		virtual ~Proxy() = default;
 
 		/// Short identifier of the game which is used to discover the resources.
-		const std::string game_identifier = "<game-identifier>";
+		const std::string gameIdentifier = "<game-identifier>";
 		/// Friendly name of the game that's use as the window title.
-		const std::string game_friendly_name = "<game-friendly-name>";
+		const std::string gameFriendlyName = "<game-friendly-name>";
 
 		/// PPM (pixels per meter) of the overall game. Ideally, this number should be the greatest common factor of all
 		/// sprites used in the game. In case there could be outliers, this values isn't calculated from Sprite Sheets,
@@ -38,14 +38,14 @@ namespace m2 {
 		/// Determines the initial and minimum window size.
 		const float defaultGameHeightM = 18.0f;
 
-		//const std::string default_font_path = "fonts/Courier_Prime/CourierPrime-Regular.ttf";
-		//const std::string default_font_path = "fonts/Kode_Mono/KodeMono-VariableFont_wght.ttf";
-		//const std::string default_font_path = "fonts/Martian_Mono/MartianMono-VariableFont_wdth,wght.ttf";
-		//const std::string default_font_path = "fonts/Roboto_Mono/RobotoMono-VariableFont_wght.ttf";
-		//const std::string default_font_path = "fonts/Share_Tech_Mono/ShareTechMono-Regular.ttf";
-		//const std::string default_font_path = "fonts/Syne_Mono/SyneMono-Regular.ttf";
-		const std::string default_font_path = "fonts/VT323/VT323-Regular.ttf";
-		//const std::string default_font_path = "fonts/Xanh_Mono/XanhMono-Regular.ttf";
+		// const std::string defaultFontPath = "fonts/Courier_Prime/CourierPrime-Regular.ttf";
+		// const std::string defaultFontPath = "fonts/Kode_Mono/KodeMono-VariableFont_wght.ttf";
+		// const std::string defaultFontPath = "fonts/Martian_Mono/MartianMono-VariableFont_wdth,wght.ttf";
+		// const std::string defaultFontPath = "fonts/Roboto_Mono/RobotoMono-VariableFont_wght.ttf";
+		// const std::string defaultFontPath = "fonts/Share_Tech_Mono/ShareTechMono-Regular.ttf";
+		// const std::string defaultFontPath = "fonts/Syne_Mono/SyneMono-Regular.ttf";
+		const std::string defaultFontPath = "fonts/VT323/VT323-Regular.ttf";
+		// const std::string defaultFontPath = "fonts/Xanh_Mono/XanhMono-Regular.ttf";
 		const int default_font_size = 240;
 
 		/// Should the world have gravity towards downwards direction

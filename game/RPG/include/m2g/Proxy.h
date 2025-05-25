@@ -6,7 +6,7 @@
 namespace m2g {
 	class Proxy : public m2::Proxy {
 	   public:
-		const std::string game_identifier = "RPG";
+		const std::string gameIdentifier = "RPG";
 		const bool camera_is_listener = true;
 		const std::vector<m2::ObjectBlueprint> objectBlueprints = {
 			{.objectType = pb::PLAYER, .defaultSpriteType = pb::PLAYER_LOOKDOWN_00, .defaultAnimationType = pb::ANIMATION_TYPE_PLAYER_MOVEMENT},

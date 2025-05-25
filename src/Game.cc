@@ -59,7 +59,7 @@ m2::Game::Game() {
 	}
 
 	const auto minimumWindowDims = GameDimensionsManager::EstimateMinimumWindowDimensions(_proxy.gamePpm, _proxy.defaultGameHeightM);
-	if ((window = SDL_CreateWindow(_proxy.game_friendly_name.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+	if ((window = SDL_CreateWindow(_proxy.gameFriendlyName.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 		minimumWindowDims.x, minimumWindowDims.y, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == nullptr) {
 		throw M2_ERROR("SDL error: " + std::string{SDL_GetError()});
 	}
@@ -100,7 +100,7 @@ m2::Game::Game() {
 	SDL_SetTextureAlphaMod(light_texture, 0);
 	SDL_SetTextureColorMod(light_texture, 127, 127, 127);
 	// Open font
-	if ((font = TTF_OpenFont((ResourcePath() / _proxy.default_font_path).string().c_str(), _proxy.default_font_size)) == nullptr) {
+	if ((font = TTF_OpenFont((ResourcePath() / _proxy.defaultFontPath).string().c_str(), _proxy.default_font_size)) == nullptr) {
 		throw M2_ERROR("SDL error: " + std::string{TTF_GetError()});
 	}
 	// Check font properties
@@ -126,8 +126,8 @@ m2::Game::Game() {
 	spriteEffectsSheet = SpriteEffectsSheet{renderer};
 
 	// Load game resources
-	resource_dir = ResourcePath() / "game" / _proxy.game_identifier;
-	levels_dir = ResourcePath() / "game" / _proxy.game_identifier / "levels";
+	resource_dir = ResourcePath() / "game" / _proxy.gameIdentifier;
+	levels_dir = ResourcePath() / "game" / _proxy.gameIdentifier / "levels";
 	spriteSheetsPath = resource_dir / "SpriteSheets.json";
 
 	auto sheets_pb = pb::json_file_to_message<pb::SpriteSheets>(spriteSheetsPath);

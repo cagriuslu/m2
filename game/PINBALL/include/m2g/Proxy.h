@@ -10,11 +10,12 @@ namespace m2g {
 		pinball::pb::SimulationInputs _simulationInputs;
 
 	public:
-		const std::string game_identifier = "PINBALL";
-		const std::string game_friendly_name = "Pin Ball Evolution";
+		const std::string gameIdentifier = "PINBALL";
+		const std::string gameFriendlyName = "Pin Ball Evolution";
 		/// This aspect ratio divides the screen into 3 equal columns, thus the HUDs are also 16x27.
 		const int gameAspectRatioMul = 16;
 		const int gameAspectRatioDiv = 27;
+		const std::string defaultFontPath = "fonts/Share_Tech_Mono/ShareTechMono-Regular.ttf";
 		const m2::VecF gravity{0.0f, 24.0f};
 		const std::vector<m2::ObjectBlueprint> objectBlueprints = {
 			{.objectType = pb::BALL, .defaultSpriteType = pb::SPRITE_BASIC_BALL},
