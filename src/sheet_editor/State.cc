@@ -241,9 +241,9 @@ void State::Draw() const {
 	}
 
 	// Draw pixel grid lines
-	Graphic::DrawGridLines(-0.5f, 1.0f, {127, 127, 255, 80});
+	Graphic::DrawGridLines(-0.5f, 1.0f, {255, 255, 255, 25});
 	// Draw PPM grid lines
-	Graphic::DrawGridLines(-0.5f, 1.0f);
+	Graphic::DrawGridLines(-0.5f, F(_ppm), {255, 255, 255, 100});
 	// Draw sheet boundaries
 	Graphic::DrawVerticalLine(-0.5f, {255, 0, 0, 255});
 	Graphic::DrawHorizontalLine(-0.5f, {255, 0, 0, 255});
