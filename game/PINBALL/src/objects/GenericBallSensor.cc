@@ -28,6 +28,8 @@ m2::void_expected LoadGenericBallSensor(m2::Object& obj, const m2::ForegroundLay
 	phy.body[I(foregroundLayer)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef,
 		obj.GetPhysiqueId(), obj.position, obj.orientation);
 
+	obj.AddGraphic(spriteType);
+
 	// The sensor collides with only the ball
 	phy.onCollision = [onCollisionWithBall](m2::Physique& self, m2::Physique& ball, const m2::box2d::Contact& contact) {
 		if (onCollisionWithBall) {

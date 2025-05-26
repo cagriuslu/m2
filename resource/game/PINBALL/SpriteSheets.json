@@ -1986,6 +1986,12 @@
         {
           "type": "SPRITE_LIGHT_SWITCH_SENSOR",
           "regular": {
+            "rect": {
+              "x": 12,
+              "y": 40,
+              "w": 8,
+              "h": 16
+            },
             "fixtures": [
               {
                 "circle": {
@@ -1998,6 +2004,12 @@
         {
           "type": "SPRITE_HEATER_SWITCH_SENSOR",
           "regular": {
+            "rect": {
+              "x": 12,
+              "y": 40,
+              "w": 8,
+              "h": 16
+            },
             "fixtures": [
               {
                 "circle": {
