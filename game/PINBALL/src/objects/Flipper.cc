@@ -39,7 +39,7 @@ m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
 					m2::third_party::physics::FixtureDefinition fixtureDef;
 					fixtureDef.shape = m2::third_party::physics::ToShape(fixture, sprite.Ppm());
 					fixtureDef.friction = 0.0f;
-					fixtureDef.restitution = 1.0f;
+					fixtureDef.restitution = 0.60f;
 					fixtureDef.restitutionThresholdVelocity = 0.0f;
 					fixtureDef.isSensor = false;
 					fixtureDef.colliderFilter.belongsTo =

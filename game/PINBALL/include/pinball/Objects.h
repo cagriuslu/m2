@@ -23,4 +23,5 @@ void PlatformEntrySensorOnCollision(m2::Physique& sensor, m2::Physique& ball, co
 void PlatformExitSensorOnCollision(m2::Physique& sensor, m2::Physique& ball, const m2::box2d::Contact&);
 void LightSwitchSensorOnCollision(m2::Physique& sensor, m2::Physique& ball, const m2::box2d::Contact&);
 void HeaterSwitchSensorOnCollision(m2::Physique& sensor, m2::Physique& ball, const m2::box2d::Contact&);
+void WaterSprinklerSensorOnCollision(m2::Physique& sensor, m2::Physique& ball, const m2::box2d::Contact&);
 m2::void_expected LoadBumperSensor(m2::Object& obj);

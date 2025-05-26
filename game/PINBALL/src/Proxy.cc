@@ -316,6 +316,8 @@ m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object&
 			return LoadGenericBallSensor(obj, m2::ForegroundLayer::F0, LightSwitchSensorOnCollision, {});
 		case pb::ObjectType::HEATER_SWITCH_SENSOR:
 			return LoadGenericBallSensor(obj, m2::ForegroundLayer::F0, HeaterSwitchSensorOnCollision, {});
+		case pb::ObjectType::WATER_SPRINKLER_SENSOR:
+			return LoadGenericBallSensor(obj, m2::ForegroundLayer::F0, WaterSprinklerSensorOnCollision, {});
 		case pb::ObjectType::BUMPER_SENSOR:
 			return LoadBumperSensor(obj);
 		default:

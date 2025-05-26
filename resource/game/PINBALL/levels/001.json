@@ -67,6 +67,22 @@
     },
     {
       "position": {
+        "x": 3.375,
+        "y": 21.5
+      },
+      "type": "WATER_SPRINKLER_SENSOR",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 12.625,
+        "y": 21.5
+      },
+      "type": "WATER_SPRINKLER_SENSOR",
+      "group": {}
+    },
+    {
+      "position": {
         "x": 15.6875,
         "y": 23.188
       },
