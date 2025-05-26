@@ -4,10 +4,10 @@
 #include <m2/third_party/physics/ColliderCategory.h>
 
 namespace {
-	constexpr auto MAX_FLIPPER_SWEEP_RADS = m2::ToRadians(60.0f);
-	constexpr auto FLIPPER_SWEEP_UP_SPEED = 16.0f;
+	constexpr auto MAX_FLIPPER_SWEEP_RADS = m2::ToRadians(62.5f);
+	constexpr auto FLIPPER_SWEEP_UP_SPEED = 20.0f;
 	// Down speed is intentionally slow. Spanning the flipper should have a negative impact.
-	constexpr auto FLIPPER_SWEEP_DOWN_SPEED = 4.0f;
+	constexpr auto FLIPPER_SWEEP_DOWN_SPEED = 5.0f;
 
 	enum class FlipperState {
 		RESTING,
