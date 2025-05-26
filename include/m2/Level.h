@@ -59,7 +59,7 @@ namespace m2 {
 		// pool, and iterate over that pool. Another reason to put a component inside a Pool: if the type of object that
 		// is using that component is created/destroyed very rapidly.
 		Pool<Object> objects;
-		std::map<GroupId, std::unique_ptr<Group>, GroupId::Less> groups;
+		std::map<GroupIdentifier, std::unique_ptr<Group>, GroupIdentifier::Less> groups;
 		std::array<DrawList, gForegroundLayerCount> drawList;
 		Pool<Physique> physics;
 		Pool<Graphic> fgGraphics;

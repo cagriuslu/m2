@@ -70,7 +70,7 @@ m2::ObjectId m2::Object::GetId() const {
 m2::ObjectId m2::Object::GetParentId() const {
     return _parent_id;
 }
-m2::GroupId m2::Object::GetGroupId() const {
+m2::GroupIdentifier m2::Object::GetGroupIdentifier() const {
 	return _group_id;
 }
 m2::PhysiqueId m2::Object::GetPhysiqueId() const {
@@ -126,7 +126,7 @@ m2::Character& m2::Object::GetCharacter() const {
     return ToCharacterBase(it);
 }
 
-void m2::Object::SetGroup(const GroupId& group_id, IndexInGroup group_index) {
+void m2::Object::SetGroup(const GroupIdentifier& group_id, IndexInGroup group_index) {
 	_group_id = group_id;
 	_index_in_group = group_index;
 }

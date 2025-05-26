@@ -19,4 +19,5 @@ enum ObjectType {
   WATER_SPRINKLER_SENSOR = 25;
 
   BUMPER_SENSOR = 30;
+  DROP_GATE = 31;
 }

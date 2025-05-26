@@ -30,6 +30,7 @@ namespace m2g {
 			{.objectType = pb::HEATER_SWITCH_SENSOR, .defaultSpriteType = pb::SPRITE_HEATER_SWITCH_SENSOR},
 			{.objectType = pb::WATER_SPRINKLER_SENSOR, .defaultSpriteType = pb::SPRITE_WATER_SPRINKLER_SENSOR},
 			{.objectType = pb::BUMPER_SENSOR, .defaultSpriteType = pb::SPRITE_BUMPER_SENSOR},
+			{.objectType = pb::DROP_GATE, .defaultSpriteType = pb::SPRITE_DROP_GATE_UP},
 		};
 
 		const m2::UiPanelBlueprint* MainMenuBlueprint();
@@ -38,6 +39,9 @@ namespace m2g {
 		const m2::UiPanelBlueprint* RightHudBlueprint();
 
 		m2::void_expected LoadForegroundObjectFromLevelBlueprint(m2::Object& obj);
+
+		/// The default group object is sufficient, because we only need to access the other members
+		m2::Group* create_group(pb::GroupType) { return new m2::Group(); }
 
 		void OnPostStep();
 

@@ -322,7 +322,7 @@ m2::void_expected m2::Level::InitAnyPlayer(
 
 		// Assign to group
 		if (fg_object.has_group() && fg_object.group().type() != m2g::pb::GroupType::NO_GROUP) {
-			GroupId group_id{fg_object.group()};
+			GroupIdentifier group_id{fg_object.group()};
 
 			Group* group;
 			if (auto group_it = groups.find(group_id); group_it != groups.end()) {

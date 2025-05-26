@@ -7,7 +7,7 @@ namespace m2 {
 	using IndexInGroup = uint8_t;
 	constexpr size_t IndexInGroup_MAX = UINT8_MAX;
 
-	struct GroupId {
+	struct GroupIdentifier {
 		using Type = m2g::pb::GroupType;
 		using Instance = decltype(std::declval<pb::Group>().instance());
 
@@ -15,31 +15,33 @@ namespace m2 {
 		Instance instance{};
 
 		// Constructors
-		GroupId() = default;
-		inline GroupId(Type _type, Instance _instance) : type(_type), instance(_instance) {}
-		inline explicit GroupId(const pb::Group& group) : GroupId(group.type(), group.instance()) {}
+		GroupIdentifier() = default;
+		GroupIdentifier(Type _type, Instance _instance) : type(_type), instance(_instance) {}
+		explicit GroupIdentifier(const pb::Group& group) : GroupIdentifier(group.type(), group.instance()) {}
 
 		// Operators
-		inline bool operator==(const GroupId& other) const { return (type == other.type) && (instance == other.instance); }
-		inline explicit operator bool() const { return type != m2g::pb::NO_GROUP; }
+		bool operator==(const GroupIdentifier& other) const { return (type == other.type) && (instance == other.instance); }
+		explicit operator bool() const { return type != m2g::pb::NO_GROUP; }
 
 		struct Less {
-			inline bool operator()(const GroupId& a, const GroupId& b) const {
+			bool operator()(const GroupIdentifier& a, const GroupIdentifier& b) const {
 				return a.type == b.type ? a.instance < b.instance : a.type < b.type;
 			}
 		};
 	};
 
 	/// Group of objects
-	class Group {
-		Pool<Id, IndexInGroup_MAX + 1> _members;
-
+	class Group : Pool<Id, IndexInGroup_MAX + 1> {
 	public:
 		Group() = default;
 		virtual ~Group() = default;
 
-		[[nodiscard]] uint64_t MemberCount() const { return _members.Size(); }
-		IndexInGroup AddMember(Id object_id) { return _members.Emplace(object_id).GetId() & 0xFF; }
-		void RemoveMember(IndexInGroup index) { _members.FreeIndex(index); }
+		[[nodiscard]] uint64_t MemberCount() const { return Size(); }
+		IndexInGroup AddMember(Id object_id) { return Emplace(object_id).GetId() & 0xFF; }
+		void RemoveMember(const IndexInGroup index) { FreeIndex(index); }
+
+		using Pool::Iterator;
+		using Pool::begin;
+		using Pool::end;
 	};
 }

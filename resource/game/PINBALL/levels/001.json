@@ -18,6 +18,36 @@
     },
     {
       "position": {
+        "x": 6.5,
+        "y": 8.5
+      },
+      "type": "DROP_GATE",
+      "group": {
+        "type": "GROUP_DROP_GATE"
+      }
+    },
+    {
+      "position": {
+        "x": 7.125,
+        "y": 8.5
+      },
+      "type": "DROP_GATE",
+      "group": {
+        "type": "GROUP_DROP_GATE"
+      }
+    },
+    {
+      "position": {
+        "x": 7.75,
+        "y": 8.5
+      },
+      "type": "DROP_GATE",
+      "group": {
+        "type": "GROUP_DROP_GATE"
+      }
+    },
+    {
+      "position": {
         "x": 8,
         "y": 13.5
       },

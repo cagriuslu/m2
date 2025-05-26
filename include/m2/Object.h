@@ -48,7 +48,7 @@ namespace m2 {
 		[[nodiscard]] ObjectId GetId() const;
 		[[nodiscard]] m2g::pb::ObjectType GetType() const { return _object_type; }
 		[[nodiscard]] ObjectId GetParentId() const;
-		[[nodiscard]] GroupId GetGroupId() const;
+		[[nodiscard]] GroupIdentifier GetGroupIdentifier() const;
 		[[nodiscard]] PhysiqueId GetPhysiqueId() const;
 		[[nodiscard]] GraphicId GetGraphicId() const;
 		[[nodiscard]] std::pair<GraphicId, BackgroundLayer> GetTerrainGraphicId() const;
@@ -67,7 +67,7 @@ namespace m2 {
 		[[nodiscard]] SoundEmitter& GetSoundEmitter() const;
 		[[nodiscard]] Character& GetCharacter() const;
 
-		void SetGroup(const GroupId& group_id, IndexInGroup group_index);
+		void SetGroup(const GroupIdentifier& group_id, IndexInGroup group_index);
 		Physique& AddPhysique();
 		Graphic& AddGraphic();
 		Graphic& AddGraphic(m2g::pb::SpriteType);
@@ -97,7 +97,7 @@ namespace m2 {
 		mutable std::optional<ObjectId> _id;
 		m2g::pb::ObjectType _object_type{};
 		ObjectId _parent_id{};
-		GroupId _group_id{}; // TODO group isn't a common feature. make it part of some other component
+		GroupIdentifier _group_id{}; // TODO group isn't a common feature. make it part of some other component
 		IndexInGroup _index_in_group{};
 		// Components
 		PhysiqueId _physique_id{};
@@ -121,6 +121,7 @@ namespace m2 {
 	// Filters
 
 	// Filter Generators
+
 	std::function<bool(Object&)> is_object_in_area(const RectF& rect);
 
 	// Transformers
@@ -128,4 +129,4 @@ namespace m2 {
 	Object& to_object_of_id(ObjectId id);
 	inline Character& to_character_of_object_unsafe(Object* o) { return o->GetCharacter(); }
 	inline Character& to_character_of_object(Object& o) { return o.GetCharacter(); }
-}  // namespace m2
+}

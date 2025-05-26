@@ -151,7 +151,7 @@ namespace m2 {
 		m2::void_expected init_server_update_fg_object(MAYBE m2::Object& obj, MAYBE const std::vector<m2g::pb::ItemType>& named_item_types, MAYBE const std::vector<m2::pb::Resource>& resources) { return {}; }
 
 		/// Create Group for the given type
-		m2::Group* create_group(MAYBE m2g::pb::GroupType group_type) { return nullptr; }
+		m2::Group* create_group(MAYBE m2g::pb::GroupType group_type) { throw M2_ERROR("Proxy is missing a group factory"); }
 
 		/// A callback that's called every pre-step. Since this callback is not tied to any object, object creating and
 		/// destruction can be done here safely.
