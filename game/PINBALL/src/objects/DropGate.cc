@@ -8,18 +8,20 @@ namespace {
 		return std::get<const m2::Sprite*>(M2_LEVEL.objects[id].GetGraphic().visual)->Type() == m2g::pb::SPRITE_DROP_GATE_DOWN;
 	}
 
-	void ToggleState(m2::Graphic& gfx) {
-		static const auto* upSprite = &std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(m2g::pb::SPRITE_DROP_GATE_UP));
+	void DropGate(m2::Graphic& gfx) {
 		static const auto* downSprite = &std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(m2g::pb::SPRITE_DROP_GATE_DOWN));
 
 		if (std::get<const m2::Sprite*>(gfx.visual)->Type() == m2g::pb::SPRITE_DROP_GATE_UP) {
 			gfx.visual = downSprite;
-		} else {
-			gfx.visual = upSprite;
 		}
 	}
-	void ToggleState(const m2::ObjectId objId) {
-		ToggleState(M2_LEVEL.objects[objId].GetGraphic());
+	void RaiseGate(const m2::ObjectId objId) {
+		static const auto* upSprite = &std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(m2g::pb::SPRITE_DROP_GATE_UP));
+
+		auto& gfx = M2_LEVEL.objects[objId].GetGraphic();
+		if (std::get<const m2::Sprite*>(gfx.visual)->Type() == m2g::pb::SPRITE_DROP_GATE_DOWN) {
+			gfx.visual = upSprite;
+		}
 	}
 }
 
@@ -47,17 +49,17 @@ m2::void_expected LoadDropGate(m2::Object& obj) {
 
 	auto& gfx = obj.AddGraphic(spriteType);
 
-	phy.onCollision = [&obj, &gfx](m2::Physique& self, m2::Physique& ball, const m2::box2d::Contact&) {
-		ToggleState(gfx);
+	phy.onCollision = [&obj, &gfx](m2::Physique&, m2::Physique&, const m2::box2d::Contact&) {
+		DropGate(gfx);
 
 		auto& group = *obj.TryGetGroup();
 		const auto allDown = std::ranges::all_of(group, [](auto memberObjectId) {
 			return IsDown(memberObjectId);
 		});
 		if (allDown) {
-			LOG_INFO("All down");
+			LOG_INFO("Raising the gate");
 			std::ranges::for_each(group, [](auto memberId) {
-				ToggleState(memberId);
+				RaiseGate(memberId);
 			});
 		}
 	};
