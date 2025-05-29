@@ -5,45 +5,10 @@
 
 m2::SpriteEffectsSheet::SpriteEffectsSheet(SDL_Renderer* renderer) : DynamicSheet(renderer) {}
 
-m2::RectI m2::SpriteEffectsSheet::create_mask_effect(
-    const SpriteSheet& sheet, const pb::RectI& rect, const pb::Color& mask_color, bool lightning) {
+m2::RectI m2::SpriteEffectsSheet::create_mask_effect(const SpriteSheet& sheet, const pb::RectI& rect, const pb::Color& mask_color, bool lightning) {
 	auto [dst_surface, dst_rect] = Alloc(rect.w(), rect.h());
 
-	// Check pixel stride
-	auto* src_surface = sheet.surface();
-	if (src_surface->format->BytesPerPixel != 4 || dst_surface->format->BytesPerPixel != 4) {
-		throw M2_ERROR("Surface has unsupported pixel format");
-	}
-
-	// Prepare mask color
-	uint32_t dst_color =
-	    ((mask_color.r() >> dst_surface->format->Rloss) << dst_surface->format->Rshift) & dst_surface->format->Rmask;
-	dst_color |=
-	    ((mask_color.g() >> dst_surface->format->Gloss) << dst_surface->format->Gshift) & dst_surface->format->Gmask;
-	dst_color |=
-	    ((mask_color.b() >> dst_surface->format->Bloss) << dst_surface->format->Bshift) & dst_surface->format->Bmask;
-	dst_color |=
-	    ((mask_color.a() >> dst_surface->format->Aloss) << dst_surface->format->Ashift) & dst_surface->format->Amask;
-
-	SDL_LockSurface(src_surface);
-	SDL_LockSurface(dst_surface);
-
-	for (int y = rect.y(); y < rect.y() + rect.h(); ++y) {
-		for (int x = rect.x(); x < rect.x() + rect.w(); ++x) {
-			// Read src pixel
-			auto* src_pixels = static_cast<uint32_t*>(src_surface->pixels);
-			auto src_pixel = *(src_pixels + (x + y * src_surface->w));
-
-			// Color dst pixel
-			auto* dst_pixels = static_cast<uint32_t*>(dst_surface->pixels);
-			auto* dst_pixel = dst_pixels + ((x - rect.x() + dst_rect.x) + (y - rect.y() + dst_rect.y) * dst_surface->w);
-			*dst_pixel = (src_pixel & src_surface->format->Amask) ? dst_color : 0;
-		}
-	}
-
-	SDL_UnlockSurface(dst_surface);
-	SDL_UnlockSurface(src_surface);
-
+	FillMaskEffect(sheet.surface(), RectI{rect}, dst_surface, dst_rect, RGBA{mask_color});
 	RecreateTexture(lightning);
 
 	return dst_rect;
@@ -217,4 +182,36 @@ m2::RectI m2::SpriteEffectsSheet::create_blurred_drop_shadow_effect(const Sprite
 	RecreateTexture(lightning);
 
 	return dst_rect;
+}
+
+void m2::FillMaskEffect(SDL_Surface* srcSurface, const RectI& srcRect, SDL_Surface* dstSurface, const RectI& dstRect, const RGBA& maskColor) {
+	// Check pixel strides
+	if (srcSurface->format->BytesPerPixel != 4 || dstSurface->format->BytesPerPixel != 4) {
+		throw M2_ERROR("Surface has unsupported pixel format");
+	}
+
+	// Prepare mask color
+	uint32_t dst_color = ((maskColor.r >> dstSurface->format->Rloss) << dstSurface->format->Rshift) & dstSurface->format->Rmask;
+	dst_color |= ((maskColor.g >> dstSurface->format->Gloss) << dstSurface->format->Gshift) & dstSurface->format->Gmask;
+	dst_color |= ((maskColor.b >> dstSurface->format->Bloss) << dstSurface->format->Bshift) & dstSurface->format->Bmask;
+	dst_color |= ((maskColor.a >> dstSurface->format->Aloss) << dstSurface->format->Ashift) & dstSurface->format->Amask;
+
+	SDL_LockSurface(srcSurface);
+	SDL_LockSurface(dstSurface);
+
+	for (int y = srcRect.y; y < srcRect.y + srcRect.h; ++y) {
+		for (int x = srcRect.x; x < srcRect.x + srcRect.w; ++x) {
+			// Read src pixel
+			const auto* srcPixels = static_cast<uint32_t*>(srcSurface->pixels);
+			const auto srcPixel = *(srcPixels + (x + y * srcSurface->w));
+
+			// Color dst pixel
+			auto* dst_pixels = static_cast<uint32_t*>(dstSurface->pixels);
+			auto* dst_pixel = dst_pixels + ((x - srcRect.x + dstRect.x) + (y - srcRect.y + dstRect.y) * dstSurface->w);
+			*dst_pixel = (srcPixel & srcSurface->format->Amask) ? dst_color : 0;
+		}
+	}
+
+	SDL_UnlockSurface(dstSurface);
+	SDL_UnlockSurface(srcSurface);
 }

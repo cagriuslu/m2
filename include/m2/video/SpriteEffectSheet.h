@@ -16,4 +16,6 @@ namespace m2 {
 		[[nodiscard]] int texture_width() const { return Width(); }
 		[[nodiscard]] int texture_height() const { return Height(); }
 	};
+
+	void FillMaskEffect(SDL_Surface* srcSurface, const RectI& srcRect, SDL_Surface* dstSurface, const RectI& dstRect, const RGBA& maskColor);
 }
