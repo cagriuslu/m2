@@ -18,8 +18,8 @@ namespace {
 	void RaiseGate(const m2::ObjectId objId) {
 		static const auto* upSprite = &std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(m2g::pb::SPRITE_DROP_GATE_UP));
 
-		auto& gfx = M2_LEVEL.objects[objId].GetGraphic();
-		if (std::get<const m2::Sprite*>(gfx.visual)->Type() == m2g::pb::SPRITE_DROP_GATE_DOWN) {
+		if (auto& gfx = M2_LEVEL.objects[objId].GetGraphic();
+				std::get<const m2::Sprite*>(gfx.visual)->Type() == m2g::pb::SPRITE_DROP_GATE_DOWN) {
 			gfx.visual = upSprite;
 		}
 	}
@@ -52,11 +52,7 @@ m2::void_expected LoadDropGate(m2::Object& obj) {
 	phy.onCollision = [&obj, &gfx](m2::Physique&, m2::Physique&, const m2::box2d::Contact&) {
 		DropGate(gfx);
 
-		auto& group = *obj.TryGetGroup();
-		const auto allDown = std::ranges::all_of(group, [](auto memberObjectId) {
-			return IsDown(memberObjectId);
-		});
-		if (allDown) {
+		if (auto& group = *obj.TryGetGroup(); std::ranges::all_of(group, IsDown)) {
 			LOG_INFO("Raising the gate");
 			std::ranges::for_each(group, [](auto memberId) {
 				RaiseGate(memberId);

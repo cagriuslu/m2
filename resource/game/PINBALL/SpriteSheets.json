@@ -2090,23 +2090,14 @@
             },
             "fixtures": [
               {
-                "chain": {
-                  "points": [
-                    {
-                      "x": -6
-                    },
-                    {
-                      "x": 6
-                    },
-                    {
-                      "x": 6,
-                      "y": 2
-                    },
-                    {
-                      "x": -6,
-                      "y": 2
-                    }
-                  ]
+                "rectangle": {
+                  "spriteOriginToFixtureCenterVecPx": {
+                    "y": 1
+                  },
+                  "dimsPx": {
+                    "w": 12,
+                    "h": 2
+                  }
                 }
               }
             ]
