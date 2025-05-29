@@ -159,7 +159,7 @@ m2::RectI m2::SpriteEffectsSheet::create_blurred_drop_shadow_effect(const Sprite
 	}
 
 	// Create the image kernel
-	auto kernel = create_gaussian_kernel(blurred_drop_shadow.blur_radius(), blurred_drop_shadow.standard_deviation());
+	auto kernel = CreateGaussianKernel(blurred_drop_shadow.blur_radius(), blurred_drop_shadow.standard_deviation());
 	// Size of the one side of the matrix
 	auto side_size = blurred_drop_shadow.blur_radius() * 2 + 1;
 
