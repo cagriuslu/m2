@@ -5,6 +5,7 @@
 #include "m2/math/VecF.h"
 #include "m2/math/VecI.h"
 #include <m2g_SpriteType.pb.h>
+#include <m2/sheet_editor/PersistentSpriteSheets.h>
 #include <Level.pb.h>
 
 namespace m2::level_editor {
@@ -23,15 +24,26 @@ namespace m2::level_editor {
 		BackgroundSpriteClipboardMap _backgroundSpriteClipboard;
 		ForegroundObjectClipboardMap _foregroundObjectClipboard;
 
+		/// Keep the sprite sheet open as well, either for drawing or displaying the fixtures
+		std::optional<sheet_editor::PersistentSpriteSheets> _persistentSpriteSheets;
+
 	public:
 		/// ID of the ghost object, the object that follows the mouse around.
 		Id ghostId{};
+
+		/// Set of objects drawn independent of the current mode
+		std::set<m2g::pb::ObjectType> physicsObjectsToDraw;
+
+		State();
 
 		// Accessors
 
 		[[nodiscard]] BackgroundLayer GetSelectedBackgroundLayer() const;
 		[[nodiscard]] bool GetSnapToGridStatus() const;
 		[[nodiscard]] std::vector<ForegroundObjectPlaceholderMap::const_iterator> GetForegroundObjectsOfType(m2g::pb::ObjectType) const;
+
+		[[nodiscard]] const pb::Sprite& GetSpritePb(const m2g::pb::SpriteType st) const { return _persistentSpriteSheets->SpritePb(st); }
+		[[nodiscard]] std::vector<pb::Fixture::FixtureTypeCase> GetSpriteFixtureTypes(m2g::pb::SpriteType st) const;
 
 		// Modifiers
 
@@ -50,13 +62,15 @@ namespace m2::level_editor {
 		void CopyForeground();
 		void PasteForeground();
 
-		void StorePoint(int selectedIndex, const VecF& pointM);
+		int AddChain(m2g::pb::SpriteType st, int insertIndex);
+		void RemoveFixture(m2g::pb::SpriteType st, int selectedIndex);
+		void StoreWorldPoint(int selectedIndex, const VecF& pointM);
 		void StoreArc(int selectedIndex, const VecF& pointM, const ArcDescription& arc);
 		void StoreTangent(int selectedIndex, const TangentDescription& tangent);
 		void UndoPoint(int selectedIndex);
 
 		void Draw() const;
-		[[nodiscard]] void_expected Save() const;
+		[[nodiscard]] void_expected Save();
 
 	private:
 		void PaintBackground(const VecI& position, m2g::pb::SpriteType spriteType);
@@ -66,6 +80,7 @@ namespace m2::level_editor {
 		[[nodiscard]] RectF ForegroundSelectionArea() const;
 		static int SpritePpm(ForegroundObjectPlaceholderMap::const_iterator fgObject);
 		static VecF WorldCoordinateToSpriteCoordinate(ForegroundObjectPlaceholderMap::const_iterator fgObject, const VecF& worldCoordinate);
+		void StoreFixturePoint(m2g::pb::SpriteType st, int selectedIndex, const VecF& spriteOriginToPointVec);
 		void StoreArc(int selectedIndex, const VecF& fromPointOffset, const VecF& toPointOffset, float angleInRads, int pieceCount, bool drawTowardsRight);
 		static std::optional<int> FindClosestChainPointInRange(const pb::Fixture_ChainFixture& chain, int spritePpm, const VecF& positionPx);
 	};

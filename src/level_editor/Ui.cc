@@ -7,6 +7,7 @@
 #include <m2/ui/widget/CheckboxWithTextBlueprint.h>
 #include <m2/protobuf/Detail.h>
 #include <m2/game/object/Ghost.h>
+#include <m2/ui/Layout.h>
 #include <m2/Game.h>
 #include <m2/game/Selection.h>
 #include <m2/ui/widget/CheckboxWithText.h>
@@ -305,7 +306,7 @@ namespace {
 					.onCreate = [](TextSelection& self) {
 						const auto objectTypes = ObjectTypesWithMainSprite();
 						auto selectionOptions = ToTextSelectionOptions(objectTypes.begin(), objectTypes.end());
-						const auto& objectSet = dynamic_cast<level_editor::DrawFgRightHudState&>(*M2_LEVEL.RightHud()->state).physicsObjectsToDraw;
+						const auto& objectSet = std::get<level_editor::State>(M2_LEVEL.stateVariant).physicsObjectsToDraw;
 						for (auto& option : selectionOptions) {
 							if (objectSet.contains(static_cast<m2g::pb::ObjectType>(I(option.return_value)))) {
 								option.initiallySelected = true;
@@ -314,7 +315,7 @@ namespace {
 						self.SetOptions(selectionOptions);
 					},
 					.onAction = [](const TextSelection& self) -> UiAction {
-						auto& objectSet = dynamic_cast<level_editor::DrawFgRightHudState&>(*M2_LEVEL.RightHud()->state).physicsObjectsToDraw;
+						auto& objectSet = std::get<level_editor::State>(M2_LEVEL.stateVariant).physicsObjectsToDraw;
 						objectSet.clear();
 						std::ranges::transform(self.GetSelectedOptions(), std::inserter(objectSet, objectSet.begin()),
 							[](const auto& retval) { return static_cast<m2g::pb::ObjectType>(I(retval)); });
@@ -664,8 +665,9 @@ namespace {
 					.show_scroll_bar = true,
 					.onHover = [](const TextSelection& self, const std::optional<int> indexUnderMouse) {
 						if (indexUnderMouse) {
-							const auto& state = dynamic_cast<level_editor::DrawFgRightHudState&>(*self.Parent().state);
-							const auto fixtureName = state.SelectedObjectMainSpritePb().regular().fixtures(*indexUnderMouse).name();
+							const auto& leditState = std::get<level_editor::State>(M2_LEVEL.stateVariant);
+							const auto& drawFgState = dynamic_cast<level_editor::DrawFgRightHudState&>(*self.Parent().state);
+							const auto fixtureName = leditState.GetSpritePb(drawFgState.SelectedObjectMainSpriteType()).regular().fixtures(*indexUnderMouse).name();
 							M2_LEVEL.SetMouseHoverUiPanel(std::make_unique<UiPanelBlueprint>(CreateTextTooltipBlueprint(fixtureName)), gTextTooltipRatio);
 						}
 					},
@@ -673,10 +675,11 @@ namespace {
 						M2_LEVEL.RemoveMouseHoverUiPanel();
 					},
 					.onUpdate = [](TextSelection& self) -> UiAction {
+						const auto& leditState = std::get<level_editor::State>(M2_LEVEL.stateVariant);
 						if (const auto& state = dynamic_cast<level_editor::DrawFgRightHudState&>(*self.Parent().state);
-								I(self.GetOptions().size()) != state.SelectedSpriteFixtureCount()) {
+								I(self.GetOptions().size()) != leditState.GetSpritePb(state.SelectedObjectMainSpriteType()).regular().fixtures_size()) {
 							TextSelectionBlueprint::Options options;
-							std::ranges::transform(state.SelectedSpriteFixtures(), std::back_inserter(options),
+							std::ranges::transform(leditState.GetSpritePb(state.SelectedObjectMainSpriteType()).regular().fixtures(), std::back_inserter(options),
 								[](const auto& fixture) -> TextSelectionBlueprint::Option {
 									auto line = sheet_editor::gFixtureTypeNames.at(fixture.fixture_type_case()) + "(" + fixture.name() + ")";
 									return {.text = std::move(line)};
@@ -695,8 +698,9 @@ namespace {
 						auto* fixtureSelectionWidget = self.Parent().FindWidget<TextSelection>("FixtureSelection");
 						const auto selectedIndexes = fixtureSelectionWidget->GetSelectedIndexes();
 						const auto selectedIndex = selectedIndexes.empty() ? -1 : selectedIndexes[0];
-						auto& state = dynamic_cast<level_editor::DrawFgRightHudState&>(*self.Parent().state);
-						const auto newIndex = state.AddChain(selectedIndex);
+						auto& leditState = std::get<level_editor::State>(M2_LEVEL.stateVariant);
+						const auto& state = dynamic_cast<level_editor::DrawFgRightHudState&>(*self.Parent().state);
+						const auto newIndex = leditState.AddChain(state.SelectedObjectMainSpriteType(), selectedIndex);
 						fixtureSelectionWidget->UpdateContents();
 						fixtureSelectionWidget->SetUniqueSelectionIndex(newIndex);
 						return MakeContinueAction();
@@ -711,8 +715,9 @@ namespace {
 						const auto* fixtureSelectionWidget = self.Parent().FindWidget<TextSelection>("FixtureSelection");
 						if (const auto selectedIndexes = fixtureSelectionWidget->GetSelectedIndexes(); not selectedIndexes.empty()) {
 							const auto selectedIndex = selectedIndexes[0];
-							auto& state = dynamic_cast<level_editor::DrawFgRightHudState&>(*self.Parent().state);
-							state.RemoveFixture(selectedIndex);
+							auto& leditState = std::get<level_editor::State>(M2_LEVEL.stateVariant);
+							const auto& state = dynamic_cast<level_editor::DrawFgRightHudState&>(*self.Parent().state);
+							leditState.RemoveFixture(state.SelectedObjectMainSpriteType(), selectedIndex);
 						}
 						return MakeContinueAction();
 					}
@@ -728,9 +733,9 @@ namespace {
 							if (const auto selectedIndexes = fixtureSelectionWidget->GetSelectedIndexes(); not selectedIndexes.empty()) {
 								const auto selectedIndex = selectedIndexes[0];
 								const auto& state = dynamic_cast<level_editor::DrawFgRightHudState&>(*self.Parent().state);
-								if (const auto fixtureType = state.SelectedSpriteFixtureTypes()[selectedIndex];
+								if (const auto fixtureType = std::get<level_editor::State>(M2_LEVEL.stateVariant).GetSpriteFixtureTypes(state.SelectedObjectMainSpriteType())[selectedIndex];
 										fixtureType == pb::Fixture::FixtureTypeCase::kChain) {
-									std::get<level_editor::State>(M2_LEVEL.stateVariant).StorePoint(selectedIndex, selection->SelectionsM()->first);
+									std::get<level_editor::State>(M2_LEVEL.stateVariant).StoreWorldPoint(selectedIndex, selection->SelectionsM()->first);
 								}
 							}
 						}
@@ -751,7 +756,7 @@ namespace {
 								const auto selectedIndex = selectedIndexes[0];
 
 								const auto& state = dynamic_cast<level_editor::DrawFgRightHudState&>(*self.Parent().state);
-								if (const auto fixtureType = state.SelectedSpriteFixtureTypes()[selectedIndex];
+								if (const auto fixtureType = std::get<level_editor::State>(M2_LEVEL.stateVariant).GetSpriteFixtureTypes(state.SelectedObjectMainSpriteType())[selectedIndex];
 										fixtureType == pb::Fixture::FixtureTypeCase::kChain) {
 									UiPanel::create_and_run_blocking(&gAngleDialog, RectF{0.27f, 0.37f, 0.46f, 0.26f})
 										.IfReturn<level_editor::ArcDescription>([=](const auto& arcDesc) {
@@ -773,12 +778,13 @@ namespace {
 						if (const auto selectedIndexes = fixtureSelectionWidget->GetSelectedIndexes(); not selectedIndexes.empty()) {
 							const auto selectedIndex = selectedIndexes[0];
 
-							const auto& state = dynamic_cast<level_editor::DrawFgRightHudState&>(*self.Parent().state);
-							if (const auto fixtureType = state.SelectedSpriteFixtureTypes()[selectedIndex];
+							const auto& leditState = std::get<level_editor::State>(M2_LEVEL.stateVariant);
+							const auto& drawFgState = dynamic_cast<level_editor::DrawFgRightHudState&>(*self.Parent().state);
+							if (const auto fixtureType = leditState.GetSpriteFixtureTypes(drawFgState.SelectedObjectMainSpriteType())[selectedIndex];
 									fixtureType == pb::Fixture::FixtureTypeCase::kChain) {
 
 								// There are same number of line segments as number of points
-								if (const auto pointCount = state.SelectedObjectMainSpritePb().regular().fixtures(selectedIndex).chain().points_size(); 1 < pointCount) {
+								if (const auto pointCount = leditState.GetSpritePb(drawFgState.SelectedObjectMainSpriteType()).regular().fixtures(selectedIndex).chain().points_size(); 1 < pointCount) {
 									UiPanel::create_and_run_blocking(
 										std::make_unique<UiPanelBlueprint>(CreateDistinctIntegerSelectionDialog(0, pointCount - 1)), RectF{0.27f, 0.37f, 0.46f, 0.26f})
 											.IfReturn<level_editor::TangentDescription>([=](const auto& tangent) {
@@ -800,21 +806,11 @@ namespace {
 						if (const auto selectedIndexes = fixtureSelectionWidget->GetSelectedIndexes(); not selectedIndexes.empty()) {
 							const auto selectedIndex = selectedIndexes[0];
 							const auto& state = dynamic_cast<level_editor::DrawFgRightHudState&>(*self.Parent().state);
-							if (const auto fixtureType = state.SelectedSpriteFixtureTypes()[selectedIndex];
+							if (const auto fixtureType = std::get<level_editor::State>(M2_LEVEL.stateVariant).GetSpriteFixtureTypes(state.SelectedObjectMainSpriteType())[selectedIndex];
 									fixtureType == pb::Fixture::FixtureTypeCase::kChain) {
 								std::get<level_editor::State>(M2_LEVEL.stateVariant).UndoPoint(selectedIndex);
 							}
 						}
-						return MakeContinueAction();
-					}
-				}
-			},
-			UiWidgetBlueprint{
-				.x = 1, .y = 68, .w = 17, .h = 3,
-				.variant = TextBlueprint{
-					.text = "Display Options",
-					.onAction = [](MAYBE const Text& self) -> UiAction {
-						UiPanel::create_and_run_blocking(&gDisplayOptionsDialog, RectF{0.3f, 0.1f, 0.4f, 0.8f});
 						return MakeContinueAction();
 					}
 				}
@@ -827,10 +823,10 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
 	.name = "LeftHud",
     .w = 19, .h = 72,
     .background_color = {25, 25, 25, 255},
-    .widgets = {
+    .widgets = *MakeVerticalLayout(19, 72, 1, {
         UiWidgetBlueprint{
         	.name = "PaintBgButton",
-            .x = 1, .y = 1, .w = 17, .h = 3,
+            .h = 3,
         	.variant = TextBlueprint{
         		.text = "Paint Bg",
 				.onAction = [](MAYBE const Text& self) -> UiAction {
@@ -840,7 +836,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
         	}
         },
         UiWidgetBlueprint{
-            .x = 1, .y = 5, .w = 17, .h = 3,
+            .h = 3,
         	.variant = TextBlueprint{
         		.text = "Sample Bg",
 				.onAction = [](MAYBE const Text& self) -> UiAction {
@@ -850,7 +846,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
         	}
         },
         UiWidgetBlueprint{
-            .x = 1, .y = 9, .w = 17, .h = 3,
+            .h = 3,
         	.variant = TextBlueprint{
         		.text = "Select Bg",
 				.onAction = [](MAYBE const Text& self) -> UiAction {
@@ -861,7 +857,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
         },
         UiWidgetBlueprint{
         	.name = "PlaceFgButton",
-            .x = 1, .y = 13, .w = 17, .h = 3,
+            .h = 3,
         	.variant = TextBlueprint{
         		.text = "Place Fg",
 				.onAction = [](MAYBE const Text& self) -> UiAction {
@@ -871,7 +867,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
         	}
         },
         UiWidgetBlueprint{
-            .x = 1, .y = 17, .w = 17, .h = 3,
+            .h = 3,
             .variant = TextBlueprint{
 				.text = "Sample Fg",
 				.onAction = [](MAYBE const Text& self) -> UiAction {
@@ -881,7 +877,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
 			}
 		},
         UiWidgetBlueprint{
-            .x = 1, .y = 21, .w = 17, .h = 3,
+            .h = 3,
         	.variant = TextBlueprint{
         		.text = "Select Fg",
 				.onAction = [](MAYBE const Text& self) -> UiAction {
@@ -891,7 +887,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
         	}
         },
 		UiWidgetBlueprint{
-			.x = 1, .y = 25, .w = 17, .h = 3,
+			.h = 3,
 			.variant = TextBlueprint{
 				.text = "Draw Fg",
 				.onAction = [](MAYBE const Text& self) -> UiAction {
@@ -914,7 +910,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
 		},
 		UiWidgetBlueprint{
 			.name = "CancelButton",
-			.x = 1, .y = 29, .w = 17, .h = 3,
+			.h = 3,
 			.variant = TextBlueprint{
 				.text = "Cancel",
 				.onAction = [](MAYBE const Text& self) -> UiAction {
@@ -923,9 +919,10 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
 				}
 			}
 		},
+    	DynamicSpacer{},
 		UiWidgetBlueprint{
 			.name = "BackgroundLayerSelection",
-			.x = 1, .y = 47, .w = 17, .h = 3,
+			.h = 3,
 			.variant = TextSelectionBlueprint{
 				.options = {
 					TextSelectionBlueprint::Option{.text = "B0-Front", .return_value = I(BackgroundLayer::B0)},
@@ -939,8 +936,18 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
 			}
 		},
 		UiWidgetBlueprint{
+			.h = 3,
+			.variant = TextBlueprint{
+				.text = "Display Options",
+				.onAction = [](MAYBE const Text& self) -> UiAction {
+					UiPanel::create_and_run_blocking(&gDisplayOptionsDialog, RectF{0.3f, 0.1f, 0.4f, 0.8f});
+					return MakeContinueAction();
+				}
+			}
+		},
+		UiWidgetBlueprint{
 			.name = "SnapToGridCheckbox",
-            .x = 1, .y = 51, .w = 17, .h = 3,
+            .h = 3,
 			.variant = CheckboxWithTextBlueprint{
 				.text = "Snap",
 				.initial_state = false,
@@ -955,7 +962,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
 		},
 		UiWidgetBlueprint{
 			.name = "ShowGridCheckbox",
-			.x = 1, .y = 55, .w = 17, .h = 3,
+			.h = 3,
 			.variant = CheckboxWithTextBlueprint{
 				.text = "Grid",
 				.initial_state = false,
@@ -968,15 +975,16 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
 		UiWidgetBlueprint{
 			.name = "CellSplitCount",
 			.initially_enabled = false,
-			.x = 1, .y = 59, .w = 17, .h = 3,
+			.h = 3,
 			.variant = IntegerSelectionBlueprint{
 				.min_value = 1,
 				.max_value = 100,
 				.initial_value = 1
 			}
 		},
+    	DynamicSpacer{},
         UiWidgetBlueprint{
-            .x = 1, .y = 67, .w = 17, .h = 3,
+            .h = 3,
             .variant = TextBlueprint{
             	.text = "Save",
             	.onAction = [](MAYBE const Text& self) -> UiAction {
@@ -988,7 +996,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
             }
         },
         UiWidgetBlueprint{
-        	.x = 0, .y = 70, .w = 19, .h = 2,
+        	.h = 2,
         	.border_width = 0,
         	.variant = TextBlueprint{
         		.text = "0:0",
@@ -999,7 +1007,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
         		}
         	}
         }
-    }
+    })
 };
 
 const UiPanelBlueprint level_editor::gRightHudBlueprint = {

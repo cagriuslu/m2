@@ -18,36 +18,6 @@
     },
     {
       "position": {
-        "x": 6.5,
-        "y": 8.5
-      },
-      "type": "DROP_GATE",
-      "group": {
-        "type": "GROUP_DROP_GATE"
-      }
-    },
-    {
-      "position": {
-        "x": 7.125,
-        "y": 8.5
-      },
-      "type": "DROP_GATE",
-      "group": {
-        "type": "GROUP_DROP_GATE"
-      }
-    },
-    {
-      "position": {
-        "x": 7.75,
-        "y": 8.5
-      },
-      "type": "DROP_GATE",
-      "group": {
-        "type": "GROUP_DROP_GATE"
-      }
-    },
-    {
-      "position": {
         "x": 8,
         "y": 13.5
       },
@@ -69,6 +39,39 @@
       },
       "type": "PLATFORM",
       "group": {}
+    },
+    {
+      "position": {
+        "x": 1.125,
+        "y": 14.6875
+      },
+      "orientation": 4.71238899,
+      "type": "DROP_GATE",
+      "group": {
+        "type": "GROUP_DROP_GATE"
+      }
+    },
+    {
+      "position": {
+        "x": 1.125,
+        "y": 15.5
+      },
+      "orientation": 4.71238899,
+      "type": "DROP_GATE",
+      "group": {
+        "type": "GROUP_DROP_GATE"
+      }
+    },
+    {
+      "position": {
+        "x": 1.125,
+        "y": 16.3125
+      },
+      "orientation": 4.71238899,
+      "type": "DROP_GATE",
+      "group": {
+        "type": "GROUP_DROP_GATE"
+      }
     },
     {
       "position": {
