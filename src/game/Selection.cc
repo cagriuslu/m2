@@ -77,7 +77,7 @@ void Selection::SetSecondPositionIfFirstSetM(VecF positionM) {
 		LOG_DEBUG("Storing second point of selection");
 		_positionM.second = std::move(positionM);
 	} else {
-		throw M2_ERROR("Second point of selection is set before the first");
+		// Not an error, selection could be reset before the mouse button is lifted.
 	}
 }
 
