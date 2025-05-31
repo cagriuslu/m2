@@ -3,12 +3,22 @@
 #include "../math/VecF.h"
 
 namespace m2 {
+	// Base class of all Selection states
+	class SelectionStateBase {
+	public:
+		virtual ~SelectionStateBase() = default;
+	};
+
 	class Selection {
 		RectI _screenBoundaryPx;
 		std::pair<std::optional<VecF>, std::optional<VecF>> _positionM;
 
 	public:
-		explicit Selection(const RectI& screenBoundaryPx) : _screenBoundaryPx(screenBoundaryPx) {}
+		/// Pointer to the state. State can be used to store information about the selection, ex. an object held afloat.
+		std::unique_ptr<SelectionStateBase> state{};
+
+		explicit Selection(const RectI& screenBoundaryPx);
+		~Selection();
 
 		// Accessors
 
@@ -34,9 +44,9 @@ namespace m2 {
 
 		// Modifiers
 
-		void Reset() { _positionM = {}; }
-		void SetFirstAndClearSecondPositionM(VecF positionM) { _positionM.first = std::move(positionM); _positionM.second.reset(); }
-		void SetSecondPositionIfFirstSetM(VecF positionM) { if (_positionM.first) { _positionM.second = std::move(positionM); } }
+		void Reset();
+		void SetFirstAndClearSecondPositionM(VecF positionM);
+		void SetSecondPositionIfFirstSetM(VecF positionM);
 
 	private:
 		[[nodiscard]] VecF SecondPosition() const;

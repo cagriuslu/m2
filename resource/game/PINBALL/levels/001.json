@@ -46,7 +46,8 @@
         "y": 13.5
       },
       "type": "PLAYER",
-      "group": {}
+      "group": {},
+      "isLocked": true
     },
     {
       "position": {
@@ -54,7 +55,8 @@
         "y": 13.5
       },
       "type": "WALLS",
-      "group": {}
+      "group": {},
+      "isLocked": true
     },
     {
       "position": {
@@ -62,6 +64,15 @@
         "y": 13.5
       },
       "type": "PLATFORM",
+      "group": {},
+      "isLocked": true
+    },
+    {
+      "position": {
+        "x": 8,
+        "y": 14
+      },
+      "type": "CIRCULAR_BUMPER",
       "group": {}
     },
     {

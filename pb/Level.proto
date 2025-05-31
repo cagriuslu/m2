@@ -16,6 +16,7 @@ message LevelObject {
   float orientation = 2; // In radians
   m2g.pb.ObjectType type = 3;
   Group group = 4;
+  bool is_locked = 5; // If locked, level editor isn't allowed to move or remove the object
 }
 
 message BackgroundLayer {

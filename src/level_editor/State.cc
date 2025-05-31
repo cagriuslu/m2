@@ -14,6 +14,10 @@
 
 namespace {
 	constexpr SDL_Color SELECTION_COLOR = {0, 127, 255, 80};
+
+	/// If the selection state contains this object, the mouse is carrying an object, thus when the selection is ended,
+	/// the object should be placed.
+	class MovingAnObjectIndicator final : public m2::SelectionStateBase {};
 }
 
 m2::level_editor::State::State() : _persistentSpriteSheets(m2MoveOrThrowError(sheet_editor::PersistentSpriteSheets::LoadFile(M2_GAME.spriteSheetsPath))) {}
@@ -60,10 +64,15 @@ void m2::level_editor::State::LoadLevelBlueprint(const pb::Level& lb) {
 void m2::level_editor::State::HandleMousePrimaryButton(const VecF& position) {
 	if (M2_LEVEL.RightHud() && M2_LEVEL.RightHud()->Name() == "PlaceFgRightHud") {
 		if (const auto sampledObject = ApplySampling(position); sampledObject != _foregroundObjectPlaceholders.end()) {
-			// Remove the original object
-			const auto id = std::get<Id>(sampledObject->second);
-			M2_DEFER(CreateObjectDeleter(id));
-			_foregroundObjectPlaceholders.erase(sampledObject);
+			if (not std::get<pb::LevelObject>(sampledObject->second).is_locked()) {
+				// Remove the original object
+				const auto id = std::get<Id>(sampledObject->second);
+				M2_DEFER(CreateObjectDeleter(id));
+				_foregroundObjectPlaceholders.erase(sampledObject);
+				// Store the indicator that an object is being moved
+				auto* primarySelection = M2_LEVEL.PrimarySelection();
+				primarySelection->state = std::make_unique<MovingAnObjectIndicator>();
+			}
 		}
 	} else if (M2_LEVEL.RightHud() && M2_LEVEL.RightHud()->Name() == "SampleFgRightHud") {
 		// Applying sampling without removing the original object
@@ -113,6 +122,14 @@ void m2::level_editor::State::HandleMouseSecondaryButton(const VecF& position) {
 	}
 }
 void m2::level_editor::State::HandleMousePrimarySelectionComplete(const VecF& firstPosition, const VecF& secondPosition) {
+	if (M2_LEVEL.RightHud() && M2_LEVEL.RightHud()->Name() == "PlaceFgRightHud" && M2_LEVEL.PrimarySelection()->state) {
+		if (dynamic_cast<MovingAnObjectIndicator*>(M2_LEVEL.PrimarySelection()->state.get())) {
+			// An object was picked up from the ground. Place it.
+			HandleMouseSecondaryButton(secondPosition);
+			// No longer moving an object
+			M2_LEVEL.PrimarySelection()->state.reset();
+		}
+	}
 	if (M2_LEVEL.RightHud() && M2_LEVEL.RightHud()->Name() == "DrawFgRightHud" && M2_LEVEL.RightHud()->state) {
 		if (const auto* drawFgState = dynamic_cast<DrawFgRightHudState*>(M2_LEVEL.RightHud()->state.get())) {
 			const auto* fixtureSelectionWidget = M2_LEVEL.RightHud()->FindWidget<widget::TextSelection>("FixtureSelection");
@@ -191,7 +208,7 @@ void m2::level_editor::State::RandomFillBackground(const RectI& area, const std:
 void m2::level_editor::State::RemoveForegroundObject() {
 	const auto selection = ForegroundSelectionArea();
 	for (auto it = _foregroundObjectPlaceholders.begin(); it != _foregroundObjectPlaceholders.end();) {
-		if (selection.contains(it->first)) {
+		if (selection.contains(it->first) && not std::get<pb::LevelObject>(it->second).is_locked()) {
 			const auto id = std::get<Id>(it->second);
 			M2_DEFER(CreateObjectDeleter(id));
 			it = _foregroundObjectPlaceholders.erase(it);
@@ -495,7 +512,10 @@ m2::level_editor::State::ForegroundObjectPlaceholderMap::iterator m2::level_edit
 	}
 	if (foundIt != _foregroundObjectPlaceholders.end()) {
 		// Find and press the Place button
-		M2_LEVEL.LeftHud()->FindWidget<widget::Text>("PlaceFgButton")->trigger_action();
+		if (not M2_LEVEL.RightHud() || M2_LEVEL.RightHud()->Name() != "PlaceFgRightHud") {
+			// Press the button only if not already pressed, otherwise the selection is recreated.
+			M2_LEVEL.LeftHud()->FindWidget<widget::Text>("PlaceFgButton")->trigger_action();
+		}
 
 		// Find object properties and set it
 

@@ -1,7 +1,15 @@
 #include <m2/game/Selection.h>
 #include <m2/Game.h>
+#include <m2/Log.h>
 
 using namespace m2;
+
+Selection::Selection(const RectI& screenBoundaryPx) : _screenBoundaryPx(screenBoundaryPx) {
+	LOG_DEBUG("Enabling selection");
+}
+Selection::~Selection() {
+	LOG_DEBUG("Disabling selection");
+}
 
 std::optional<std::pair<VecI,VecI>> Selection::IntegerSelectionsM() const {
 	if (_positionM.first) {
@@ -53,6 +61,24 @@ std::optional<RectF> Selection::SelectionRectM() const {
 		return RectF::from_corners(*_positionM.first, SecondPosition());
 	}
 	return std::nullopt;
+}
+
+void Selection::Reset() {
+	LOG_DEBUG("Resetting selection");
+	_positionM = {};
+}
+void Selection::SetFirstAndClearSecondPositionM(VecF positionM) {
+	LOG_DEBUG("Storing first point of selection");
+	_positionM.first = std::move(positionM);
+	_positionM.second.reset();
+}
+void Selection::SetSecondPositionIfFirstSetM(VecF positionM) {
+	if (_positionM.first) {
+		LOG_DEBUG("Storing second point of selection");
+		_positionM.second = std::move(positionM);
+	} else {
+		throw M2_ERROR("Second point of selection is set before the first");
+	}
 }
 
 VecF Selection::SecondPosition() const {

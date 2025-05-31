@@ -479,7 +479,11 @@ namespace {
 		.name = "PlaceFgRightHud",
 		.w = 19, .h = 72,
 		.background_color = {25, 25, 25, 255},
+		.onCreate = [](MAYBE UiPanel& self) {
+			M2_LEVEL.EnablePrimarySelection(M2_GAME.Dimensions().Game());
+		},
 		.onDestroy = [] {
+			M2_LEVEL.DisablePrimarySelection();
 			// If level isn't destroyed yet
 			if (std::holds_alternative<level_editor::State>(M2_LEVEL.stateVariant)) {
 				// Delete ghost
