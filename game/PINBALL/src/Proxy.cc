@@ -322,6 +322,8 @@ m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object&
 			return LoadBumperSensor(obj);
 		case pb::ObjectType::DROP_GATE:
 			return LoadDropGate(obj);
+		case pb::ObjectType::CIRCULAR_BUMPER:
+			return LoadCircularBumperSensor(obj);
 		default:
 			throw M2_ERROR("Missing loader for type: " + m2::ToString(obj.GetType()));
 	}

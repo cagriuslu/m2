@@ -31,6 +31,7 @@ namespace m2g {
 			{.objectType = pb::WATER_SPRINKLER_SENSOR, .defaultSpriteType = pb::SPRITE_WATER_SPRINKLER_SENSOR},
 			{.objectType = pb::BUMPER_SENSOR, .defaultSpriteType = pb::SPRITE_BUMPER_SENSOR},
 			{.objectType = pb::DROP_GATE, .defaultSpriteType = pb::SPRITE_DROP_GATE_UP},
+			{.objectType = pb::CIRCULAR_BUMPER, .defaultSpriteType = pb::SPRITE_CIRCULAR_BUMPER},
 		};
 
 		const m2::UiPanelBlueprint* MainMenuBlueprint();

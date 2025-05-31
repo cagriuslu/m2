@@ -30,9 +30,8 @@ namespace m2 {
 	/// Else => impl
 	struct Object final {
 		VecF position;
-		float orientation; /// In radians
-		// Custom Data
-		std::unique_ptr<ObjectImpl> impl;
+		float orientation{}; /// In radians
+		std::unique_ptr<ObjectImpl> impl; /// Custom Data
 
 		Object() = default;
 		explicit Object(const VecF& position, m2g::pb::ObjectType type = {}, ObjectId parent_id = 0);
@@ -44,6 +43,8 @@ namespace m2 {
 		Object& operator=(Object&& other) noexcept;
 		// Destructor
 		~Object();
+
+		// Accessors
 
 		[[nodiscard]] ObjectId GetId() const;
 		[[nodiscard]] m2g::pb::ObjectType GetType() const { return _object_type; }
@@ -66,6 +67,8 @@ namespace m2 {
 		[[nodiscard]] Light& GetLight() const;
 		[[nodiscard]] SoundEmitter& GetSoundEmitter() const;
 		[[nodiscard]] Character& GetCharacter() const;
+
+		// Modifiers
 
 		void SetGroup(const GroupIdentifier& group_id, IndexInGroup group_index);
 		Physique& AddPhysique();
@@ -99,7 +102,9 @@ namespace m2 {
 		ObjectId _parent_id{};
 		GroupIdentifier _group_id{}; // TODO group isn't a common feature. make it part of some other component
 		IndexInGroup _index_in_group{};
+
 		// Components
+
 		PhysiqueId _physique_id{};
 		GraphicId _graphic_id{}; // TODO an object shouldn't have both foreground and background texture. should we infer the graphic id based on Pool Id?
 		std::pair<GraphicId, BackgroundLayer> _terrain_graphic_id{}; // TODO background layer shouldn't be necessary, we can learn it from the GraphicId

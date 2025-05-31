@@ -4,7 +4,7 @@
 #include <m2/third_party/physics/ColliderCategory.h>
 
 namespace {
-	constexpr auto MAX_FLIPPER_SWEEP_RADS = m2::ToRadians(45.0f);
+	constexpr auto MAX_FLIPPER_SWEEP_RADS = m2::ToRadians(50.0f);
 	constexpr auto FLIPPER_SWEEP_UP_SPEED = 25.0f;
 	// Down speed is intentionally slow. Spamming the flipper should have a negative impact.
 	constexpr auto FLIPPER_SWEEP_DOWN_SPEED = 4.0f;
@@ -38,7 +38,7 @@ m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
 				sprite.OriginalPb().regular().fixtures() | std::views::transform([&sprite](const auto& fixture) {
 					m2::third_party::physics::FixtureDefinition fixtureDef;
 					fixtureDef.shape = m2::third_party::physics::ToShape(fixture, sprite.Ppm());
-					fixtureDef.friction = 0.3f;
+					fixtureDef.friction = 0.1f;
 					fixtureDef.restitution = 0.60f;
 					fixtureDef.restitutionThresholdVelocity = 0.0f;
 					fixtureDef.isSensor = false;

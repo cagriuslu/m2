@@ -26,3 +26,4 @@ void HeaterSwitchSensorOnCollision(m2::Physique& sensor, m2::Physique& ball, con
 void WaterSprinklerSensorOnCollision(m2::Physique& sensor, m2::Physique& ball, const m2::box2d::Contact&);
 m2::void_expected LoadBumperSensor(m2::Object& obj);
 m2::void_expected LoadDropGate(m2::Object& obj);
+m2::void_expected LoadCircularBumperSensor(m2::Object& obj);

@@ -10,6 +10,7 @@ m2::Object::Object(const m2::VecF &position, m2g::pb::ObjectType type, ObjectId 
 
 m2::Object::Object(Object&& other) noexcept :
 		position(other.position),
+		orientation(other.orientation),
 		impl(std::move(other.impl)),
 		_object_type(other._object_type),
 		_parent_id(other._parent_id),
@@ -34,6 +35,7 @@ m2::Object::Object(Object&& other) noexcept :
 }
 m2::Object& m2::Object::operator=(Object&& other) noexcept {
 	std::swap(position, other.position);
+	std::swap(orientation, other.orientation);
 	std::swap(impl, other.impl);
 	std::swap(_object_type, other._object_type);
 	std::swap(_parent_id, other._parent_id);

@@ -20,4 +20,5 @@ enum ObjectType {
 
   BUMPER_SENSOR = 30;
   DROP_GATE = 31;
+  CIRCULAR_BUMPER = 32;
 }

@@ -2116,6 +2116,25 @@
               "y": 3
             }
           }
+        },
+        {
+          "type": "SPRITE_CIRCULAR_BUMPER",
+          "regular": {
+            "rect": {
+              "x": 96,
+              "y": 32,
+              "w": 32,
+              "h": 32
+            },
+            "fixtures": [
+              {
+                "circle": {
+                  "spriteOriginToFixtureCenterVecPx": {},
+                  "radiusPx": 13
+                }
+              }
+            ]
+          }
         }
       ]
     }
