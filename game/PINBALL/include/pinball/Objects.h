@@ -27,3 +27,4 @@ void WaterSprinklerSensorOnCollision(m2::Physique& sensor, m2::Physique& ball, c
 m2::void_expected LoadBumperSensor(m2::Object& obj);
 m2::void_expected LoadDropGate(m2::Object& obj);
 m2::void_expected LoadCircularBumperSensor(m2::Object& obj);
+m2::void_expected LoadDoor(m2::Object& obj);

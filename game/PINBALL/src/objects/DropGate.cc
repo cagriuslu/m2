@@ -57,6 +57,17 @@ m2::void_expected LoadDropGate(m2::Object& obj) {
 			std::ranges::for_each(group, [](auto memberId) {
 				RaiseGate(memberId);
 			});
+
+			if (const auto groupId = obj.GetGroupIdentifier(); groupId && groupId.instance == 0) {
+				// First group controls the door blocking the left launcher column
+				if (M2G_PROXY.leftLauncherColumnDoorId) {
+					const auto& door = M2_LEVEL.objects[M2G_PROXY.leftLauncherColumnDoorId];
+					M2_DEFER([&door]() {
+						door.GetPhysique().body[I(m2::ForegroundLayer::F0)]->SetEnabled(false);
+						door.GetGraphic().enabled = false;
+					});
+				}
+			}
 		}
 	};
 

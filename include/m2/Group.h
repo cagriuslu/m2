@@ -7,6 +7,7 @@ namespace m2 {
 	using IndexInGroup = uint8_t;
 	constexpr size_t IndexInGroup_MAX = UINT8_MAX;
 
+	/// Identifies a group uniquely.
 	struct GroupIdentifier {
 		using Type = m2g::pb::GroupType;
 		using Instance = decltype(std::declval<pb::Group>().instance());
@@ -30,7 +31,10 @@ namespace m2 {
 		};
 	};
 
-	/// Group of objects
+	/// Group is a collection of objects. When an object belonging to a new group is encountered during the loading of
+	/// a level, the proxy will be called to return a Group pointer. This pointer could belong to this class, or a
+	/// subclass of it. The engine will add the members to the group. If the group has a shared property or state, this
+	/// class can be extended.
 	class Group : Pool<Id, IndexInGroup_MAX + 1> {
 	public:
 		Group() = default;

@@ -46,8 +46,7 @@
         "y": 13.5
       },
       "type": "PLAYER",
-      "group": {},
-      "isLocked": true
+      "group": {}
     },
     {
       "position": {
@@ -55,8 +54,7 @@
         "y": 13.5
       },
       "type": "WALLS",
-      "group": {},
-      "isLocked": true
+      "group": {}
     },
     {
       "position": {
@@ -64,8 +62,16 @@
         "y": 13.5
       },
       "type": "PLATFORM",
-      "group": {},
-      "isLocked": true
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 0.375,
+        "y": 13.875
+      },
+      "orientation": 0.785398185,
+      "type": "DOOR",
+      "group": {}
     },
     {
       "position": {

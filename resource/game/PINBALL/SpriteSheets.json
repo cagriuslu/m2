@@ -2135,6 +2135,28 @@
               }
             ]
           }
+        },
+        {
+          "type": "SPRITE_DOOR",
+          "regular": {
+            "rect": {
+              "x": 132,
+              "y": 45,
+              "w": 24,
+              "h": 6
+            },
+            "fixtures": [
+              {
+                "rectangle": {
+                  "spriteOriginToFixtureCenterVecPx": {},
+                  "dimsPx": {
+                    "w": 24,
+                    "h": 6
+                  }
+                }
+              }
+            ]
+          }
         }
       ]
     }
