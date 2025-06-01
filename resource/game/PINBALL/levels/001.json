@@ -43,6 +43,14 @@
     {
       "position": {
         "x": 8,
+        "y": 12
+      },
+      "type": "CIRCULAR_BUMPER",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 8,
         "y": 13.5
       },
       "type": "PLAYER",
@@ -71,14 +79,6 @@
       },
       "orientation": 0.785398185,
       "type": "DOOR",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 8,
-        "y": 14
-      },
-      "type": "CIRCULAR_BUMPER",
       "group": {}
     },
     {
@@ -117,7 +117,7 @@
     {
       "position": {
         "x": 2.375,
-        "y": 21
+        "y": 19.5
       },
       "type": "LIGHT_SWITCH_SENSOR",
       "group": {}
@@ -125,7 +125,7 @@
     {
       "position": {
         "x": 13.625,
-        "y": 21
+        "y": 19.5
       },
       "type": "HEATER_SWITCH_SENSOR",
       "group": {}
@@ -133,7 +133,7 @@
     {
       "position": {
         "x": 3.375,
-        "y": 21.5
+        "y": 20.125
       },
       "type": "WATER_SPRINKLER_SENSOR",
       "group": {}
@@ -141,15 +141,15 @@
     {
       "position": {
         "x": 12.625,
-        "y": 21.5
+        "y": 20.125
       },
       "type": "WATER_SPRINKLER_SENSOR",
       "group": {}
     },
     {
       "position": {
-        "x": 15.6875,
-        "y": 23.188
+        "x": 15.625,
+        "y": 21.875
       },
       "type": "BALL",
       "group": {}
@@ -164,19 +164,19 @@
     },
     {
       "position": {
-        "x": 5.525,
-        "y": 24.385
+        "x": 5.6,
+        "y": 24.255
       },
-      "orientation": 0.392340153,
+      "orientation": 0.52359879,
       "type": "FLIPPER_LEFT",
       "group": {}
     },
     {
       "position": {
-        "x": 10.475,
-        "y": 24.385
+        "x": 10.4,
+        "y": 24.255
       },
-      "orientation": 2.74925256,
+      "orientation": 2.61799383,
       "type": "FLIPPER_RIGHT",
       "group": {}
     }
