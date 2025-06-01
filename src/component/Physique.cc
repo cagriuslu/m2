@@ -11,8 +11,9 @@ m2::Physique::Physique(Physique&& other) noexcept
 		: Component(other._owner_id), preStep(std::move(other.preStep)), postStep(std::move(other.postStep)),
 		body(std::move(other.body)), rigidBodyIndex(std::move(other.rigidBodyIndex)),
 		onCollision(std::move(other.onCollision)), offCollision(std::move(other.offCollision)) {
-    other.body[I(ForegroundLayer::F0)].reset();
-    other.body[I(ForegroundLayer::F1)].reset();
+	for (auto& b : body) {
+		b.reset();
+	}
 	other.rigidBodyIndex.reset();
 }
 
@@ -25,6 +26,15 @@ m2::Physique& m2::Physique::operator=(Physique&& other) noexcept {
 	std::swap(onCollision, other.onCollision);
 	std::swap(offCollision, other.offCollision);
     return *this;
+}
+
+std::optional<m2::PhysicsLayer> m2::Physique::GetCurrentPhysicsLayer() const {
+	for (int i = 0; i < gPhysicsLayerCount; ++i) {
+		if (body[i] && body[i]->IsEnabled()) {
+			return static_cast<PhysicsLayer>(i);
+		}
+	}
+	return std::nullopt;
 }
 
 void m2::Physique::DefaultBeginContactCallback(b2Contact& b2_contact) {

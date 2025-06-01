@@ -22,8 +22,8 @@ namespace {
 
 m2::level_editor::State::State() : _persistentSpriteSheets(m2MoveOrThrowError(sheet_editor::PersistentSpriteSheets::LoadFile(M2_GAME.spriteSheetsPath))) {}
 
-m2::BackgroundLayer m2::level_editor::State::GetSelectedBackgroundLayer() const {
-	return static_cast<BackgroundLayer>(
+m2::BackgroundDrawLayer m2::level_editor::State::GetSelectedBackgroundLayer() const {
+	return static_cast<BackgroundDrawLayer>(
 			I(M2_LEVEL.LeftHud()->FindWidget<widget::TextSelection>("BackgroundLayerSelection")->GetSelectedOptions()[0]));
 }
 bool m2::level_editor::State::GetSnapToGridStatus() const {
@@ -462,7 +462,7 @@ m2::void_expected m2::level_editor::State::Save() {
 	level.clear_background_layers();
 	level.clear_objects();
 
-	for (int i = 0; i < gBackgroundLayerCount; ++i) {
+	for (int i = 0; i < gBackgroundDrawLayerCount; ++i) {
 		for (const auto& [position, idAndspriteType] : _backgroundSpritePlaceholders[i]) {
 			pb::mutable_get_or_create(level.mutable_background_layers(), i);
 			auto* row = pb::mutable_get_or_create(level.mutable_background_layers(i)->mutable_background_rows(), position.y); // Get or create row

@@ -52,7 +52,6 @@ namespace m2 {
 		[[nodiscard]] GroupIdentifier GetGroupIdentifier() const;
 		[[nodiscard]] PhysiqueId GetPhysiqueId() const;
 		[[nodiscard]] GraphicId GetGraphicId() const;
-		[[nodiscard]] std::pair<GraphicId, BackgroundLayer> GetTerrainGraphicId() const;
 		[[nodiscard]] LightId GetLightId() const;
 		[[nodiscard]] SoundEmitterId GetSoundId() const;
 		[[nodiscard]] CharacterId GetCharacterId() const;
@@ -60,10 +59,11 @@ namespace m2 {
 		[[nodiscard]] Character* TryGetCharacter() const;
 		[[nodiscard]] Object* TryGetParent() const;
 		[[nodiscard]] Group* TryGetGroup() const;
+		[[nodiscard]] Physique* TryGetPhysique() const;
+		[[nodiscard]] Graphic* TryGetGraphic() const;
 
 		[[nodiscard]] Physique& GetPhysique() const;
 		[[nodiscard]] Graphic& GetGraphic() const;
-		[[nodiscard]] Graphic& GetTerrainGraphic() const;
 		[[nodiscard]] Light& GetLight() const;
 		[[nodiscard]] SoundEmitter& GetSoundEmitter() const;
 		[[nodiscard]] Character& GetCharacter() const;
@@ -72,26 +72,19 @@ namespace m2 {
 
 		void SetGroup(const GroupIdentifier& group_id, IndexInGroup group_index);
 		Physique& AddPhysique();
-		Graphic& AddGraphic();
-		Graphic& AddGraphic(m2g::pb::SpriteType);
-		Graphic& AddTerrainGraphic(BackgroundLayer layer);
-		Graphic& AddTerrainGraphic(BackgroundLayer layer, m2g::pb::SpriteType);
+		Graphic& AddGraphic(DrawLayer layer);
+		Graphic& AddGraphic(DrawLayer layer, m2g::pb::SpriteType);
 		Light& AddLight();
 		SoundEmitter& AddSoundEmitter();
 		Character& AddTinyCharacter();
 		// TODO mini(2),small(4),medium(8),large(16),huge(32)
 		Character& AddFullCharacter();
 
-		/// If the object has background elements, they are moved between different layers of the background. This may
-		/// cause some of the components IDs to change. Must be called from a deferred action.
-		void MoveToBackgroundLayer(BackgroundLayer);
-		/// If the object has foreground elements, they are moved between different layers of the foreground. This may
-		/// cause some of the components IDs to change. Must be called from a deferred action.
-		void MoveToForegroundLayer(ForegroundLayer);
+		/// This method may cause some of the components IDs to change. Must be called from a deferred action.
+		void MoveLayer(std::optional<PhysicsLayer>, std::optional<DrawLayer>);
 
 		void RemovePhysique();
 		void RemoveGraphic();
-		void RemoveTerrainGraphic();
 		void RemoveLight();
 		void RemoveSoundEmitter();
 		void RemoveCharacter();
@@ -100,30 +93,26 @@ namespace m2 {
 		mutable std::optional<ObjectId> _id;
 		m2g::pb::ObjectType _object_type{};
 		ObjectId _parent_id{};
-		GroupIdentifier _group_id{}; // TODO group isn't a common feature. make it part of some other component
+		GroupIdentifier _group_id{};
 		IndexInGroup _index_in_group{};
 
 		// Components
 
 		PhysiqueId _physique_id{};
-		GraphicId _graphic_id{}; // TODO an object shouldn't have both foreground and background texture. should we infer the graphic id based on Pool Id?
-		std::pair<GraphicId, BackgroundLayer> _terrain_graphic_id{}; // TODO background layer shouldn't be necessary, we can learn it from the GraphicId
+		GraphicId _graphicId{};
 		LightId _light_id{}; // TODO make part of another component?
 		SoundEmitterId _sound_emitter_id{};
 		CharacterId _character_id{};
 	};
 
-	Pool<Object>::Iterator CreateObject(const m2::VecF& position, m2g::pb::ObjectType type = {}, ObjectId parent_id = 0);
+	Pool<Object>::Iterator CreateObject(const VecF& position, m2g::pb::ObjectType type = {}, ObjectId parent_id = 0); // TODO add orientation to the params
 	std::function<void()> CreateObjectDeleter(ObjectId id);
 	std::function<void()> CreatePhysiqueDeleter(ObjectId id);
 	std::function<void()> CreateGraphicDeleter(ObjectId id);
-	std::function<void()> CreateTerrainGraphicDeleter(ObjectId id);
 	std::function<void()> CreateLightDeleter(ObjectId id);
 	std::function<void()> CreateSoundEmitterDeleter(ObjectId id);
 	std::function<void()> CreateCharacterDeleter(ObjectId id);
-	std::function<void()> CreateForegroundLayerMover(ObjectId id, ForegroundLayer toLayer);
-
-	// Filters
+	std::function<void()> CreateLayerMover(ObjectId id, std::optional<PhysicsLayer>, std::optional<DrawLayer>);
 
 	// Filter Generators
 

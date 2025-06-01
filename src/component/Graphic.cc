@@ -253,7 +253,7 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 	}
 }
 
-void m2::Graphic::ColorCell(const VecI& cell, SDL_Color color) {
+void m2::Graphic::ColorCell(const VecI& cell, const SDL_Color color) {
 	const auto screen_origin_to_cell_center_px = ScreenOriginToPositionVecPx(VecF{cell});
 	const auto rect = SDL_Rect{
 		RoundI(screen_origin_to_cell_center_px.x - (M2_GAME.Dimensions().OutputPixelsPerMeter() / 2.0f)),

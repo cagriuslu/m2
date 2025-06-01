@@ -1,5 +1,7 @@
 #include <m2/M2.h>
 
+using namespace m2;
+
 const std::string m2::gEmptyString;
 
 namespace {
@@ -12,12 +14,18 @@ namespace {
 	}
 }
 
-std::string m2::ToString(const BackgroundLayer layer) {
-	return "B" + ToString(I(layer));
-}
-std::string m2::ToString(const ForegroundLayer layer) {
-	return "F" + ToString(I(layer));
-}
+std::array<DrawLayer, 10> m2::gDrawOrder = {
+	BackgroundDrawLayer::B3,
+	BackgroundDrawLayer::B2,
+	ForegroundDrawLayer::FM1_BOTTOM,
+	ForegroundDrawLayer::FM1_TOP,
+	BackgroundDrawLayer::B1,
+	BackgroundDrawLayer::B0,
+	ForegroundDrawLayer::F0_BOTTOM,
+	ForegroundDrawLayer::F0_TOP,
+	ForegroundDrawLayer::F1_BOTTOM,
+	ForegroundDrawLayer::F1_TOP,
+};
 
 size_t m2::Utf8CodepointCount(const char* s) {
 	size_t len = 0;

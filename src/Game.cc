@@ -588,60 +588,37 @@ void m2::Game::UpdateCharacters() {
 }
 
 void m2::Game::ExecuteStep() {
-	if (_level->world[I(ForegroundLayer::F0)]) {
-		LOGF_TRACE("Stepping world F0 %f seconds...", phy_period);
-		_level->world[I(ForegroundLayer::F0)]->Step(phy_period, velocity_iterations, position_iterations);
-		_level->World2().Integrate();
-		LOG_TRACE("World stepped");
-		// Update positions
-		for (auto& phy : _level->physics) {
-			if (phy.body[I(ForegroundLayer::F0)] && phy.body[I(ForegroundLayer::F0)]->IsEnabled()) {
-				auto& object = phy.Owner();
-				auto old_pos = object.position;
-				object.position = VecF{phy.body[I(ForegroundLayer::F0)]->GetPosition()};
-				object.orientation = phy.body[I(ForegroundLayer::F0)]->GetAngle();
-				// Update draw list
-				if (old_pos != object.position) {
-					_level->drawList[I(ForegroundLayer::F0)].QueueUpdate(phy.OwnerId(), object.position);
+	// Integrate physics
+	for (auto* world : _level->world) {
+		if (world) {
+			world->Step(phy_period, velocity_iterations, position_iterations);
+		}
+	}
+	// Update positions
+	for (auto& phy : _level->physics) {
+		for (const auto& body : phy.body) {
+			if (body && body->IsEnabled()) {
+				auto& obj = phy.Owner();
+				auto oldPosition = obj.position;
+				// Update object
+				obj.position = body->GetPosition();
+				obj.orientation = body->GetAngle();
+				// Update draw list if necessary
+				if (oldPosition != obj.position) {
+					const auto gfxId = obj.GetGraphicId();
+					const auto poolAndDrawList = _level->GetGraphicPoolAndDrawList(gfxId);
+					poolAndDrawList.second->QueueUpdate(phy.OwnerId(), obj.position);
 				}
-			} else if (phy.rigidBodyIndex) {
-				const auto& rigidBody = _level->World2().GetRigidBody(*phy.rigidBodyIndex);
-				auto& object = phy.Owner();
-				auto oldPosition = object.position;
-				auto newPosition = rigidBody.PositionOfCenterOfMass();
-				object.position.x = newPosition.X().ToFloat();
-				object.position.y = newPosition.Y().ToFloat();
-				object.orientation = rigidBody.OrientationAboutCenterOfMass().ToFloat();
-				// Update draw list
-				if (oldPosition != object.position) {
-					_level->drawList[I(ForegroundLayer::F0)].QueueUpdate(phy.OwnerId(), object.position);
-				}
+				break;
 			}
 		}
 	}
-	if (_level->world[I(ForegroundLayer::F1)]) {
-		LOGF_TRACE("Stepping world F1 %f seconds...", phy_period);
-		_level->world[I(ForegroundLayer::F1)]->Step(phy_period, velocity_iterations, position_iterations);
-		LOG_TRACE("World stepped");
-		// Update positions
-		for (auto& phy : _level->physics) {
-			if (phy.body[I(ForegroundLayer::F1)] && phy.body[I(ForegroundLayer::F1)]->IsEnabled()) {
-				auto& object = phy.Owner();
-				auto old_pos = object.position;
-				object.position = VecF{phy.body[I(ForegroundLayer::F1)]->GetPosition()};
-				object.orientation = phy.body[I(ForegroundLayer::F1)]->GetAngle();
-				// Update draw list
-				if (old_pos != object.position) {
-					_level->drawList[I(ForegroundLayer::F1)].QueueUpdate(phy.OwnerId(), object.position);
-				}
-			}
-		}
+	// Re-sort draw lists
+	for (auto& drawList : _level->fgDrawLists) {
+		drawList.Update();
 	}
-	// Re-sort draw list
-	_level->drawList[I(ForegroundLayer::F0)].Update();
+	// If the world is NOT static, the pathfinder's cache should be cleared.
 	if (not _proxy.world_is_static) {
-		// If the world is NOT static, the pathfinder's cache should be cleared, because the objects might have been
-		// moved
 		_level->pathfinder->clear_cache();
 	}
 }
@@ -738,46 +715,39 @@ void m2::Game::ClearBackBuffer() const {
 	SDL_RenderClear(renderer);
 }
 
-namespace {
-	void draw_one_background_layer(m2::Pool<m2::Graphic>& terrainGraphics) {
-		for (auto& gfx : terrainGraphics) {
-			if (gfx.enabled && gfx.draw) {
-				IF(gfx.onDraw)(gfx);
+void m2::Game::Draw() {
+	// Check if only one background layer needs to be drawn
+	const auto onlyBackgroundLayerToDraw = [&]() -> std::optional<BackgroundDrawLayer> {
+		if (std::holds_alternative<level_editor::State>(_level->stateVariant)) {
+			if (const auto& rightHudName = _level->RightHud()->Name();
+					rightHudName == "PaintBgRightHud" || rightHudName == "SampleBgRightHud" || rightHudName == "SelectBgRightHud") {
+				const auto& levelEditorState = std::get<level_editor::State>(_level->stateVariant);
+				return levelEditorState.GetSelectedBackgroundLayer();
 			}
 		}
-	}
+		return std::nullopt;
+	}();
 
-	void draw_all_background_layers(m2::Level& level) {
-		// Draw all background layers
-		for (auto& terrainGraphics : std::ranges::reverse_view(level.bgGraphics)) {
-			draw_one_background_layer(terrainGraphics);
+	for (const auto& layer : gDrawOrder) {
+		// Skip if another background layer needs drawing
+		if (onlyBackgroundLayerToDraw && std::holds_alternative<BackgroundDrawLayer>(layer)
+				&& *onlyBackgroundLayerToDraw != std::get<BackgroundDrawLayer>(layer)) {
+			continue;
 		}
-	}
-}  // namespace
-
-void m2::Game::DrawBackground() {
-	if (std::holds_alternative<level_editor::State>(_level->stateVariant)) {
-		if (const auto& rightHudName = _level->RightHud()->Name();
-				rightHudName == "PaintBgRightHud" || rightHudName == "SampleBgRightHud" || rightHudName == "SelectBgRightHud") {
-			const auto& levelEditorState = std::get<level_editor::State>(_level->stateVariant);
-			draw_one_background_layer(_level->bgGraphics[I(levelEditorState.GetSelectedBackgroundLayer())]);
+		if (const auto poolAndDrawList = _level->GetGraphicPoolAndDrawList(layer); not poolAndDrawList.second) {
+			// Draw background
+			for (auto& gfx : poolAndDrawList.first) {
+				if (gfx.enabled && gfx.draw) {
+					IF(gfx.onDraw)(gfx);
+				}
+			}
 		} else {
-			draw_all_background_layers(*_level);
-		}
-	} else {
-		draw_all_background_layers(*_level);
-	}
-}
-
-void m2::Game::DrawForeground() {
-	for (const auto& gfx_id : _level->drawList[I(ForegroundLayer::F0)]) {
-		if (auto& gfx = _level->fgGraphics[gfx_id]; gfx.enabled && gfx.draw) {
-			IF(gfx.onDraw)(gfx);
-		}
-	}
-	for (const auto& gfx_id : _level->drawList[I(ForegroundLayer::F1)]) {
-		if (auto& gfx = _level->fgGraphics[gfx_id]; gfx.enabled && gfx.draw) {
-			IF(gfx.onDraw)(gfx);
+			// Draw foreground
+			for (const auto gfxId : *poolAndDrawList.second) {
+				if (auto& gfx = _level->fgGraphics[gfxId]; gfx.enabled && gfx.draw) {
+					IF(gfx.onDraw)(gfx);
+				}
+			}
 		}
 	}
 }
@@ -798,11 +768,10 @@ void m2::Game::ExecutePostDraw() {
 
 void m2::Game::DebugDraw() {
 #ifdef DEBUG
-	if (_level->world[I(ForegroundLayer::F0)]) {
-		_level->world[I(ForegroundLayer::F0)]->DebugDraw();
-	}
-	if (_level->world[I(ForegroundLayer::F1)]) {
-		_level->world[I(ForegroundLayer::F1)]->DebugDraw();
+	for (int i = 0; i < I(gPhysicsLayerCount); ++i) {
+		if (_level->world[i]) {
+			_level->world[i]->DebugDraw();
+		}
 	}
 
 	if (IsProjectionTypePerspective(_level->ProjectionType())) {
@@ -960,8 +929,7 @@ m2::sdl::TextureUniquePtr m2::Game::DrawGameToTexture(const VecF& camera_positio
 
 	// Draw
 	ClearBackBuffer();
-	DrawBackground();
-	DrawForeground();
+	Draw();
 	DrawLights();
 	DrawEnvelopes();
 

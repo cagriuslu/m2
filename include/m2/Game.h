@@ -195,8 +195,7 @@ namespace m2 {
 		void ExecutePreDraw();
 		void UpdateHudContents();
 		void ClearBackBuffer() const;
-		void DrawBackground();
-		void DrawForeground();
+		void Draw();
 		void DrawLights();
 		void ExecutePostDraw();
 		void DebugDraw();

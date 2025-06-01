@@ -19,10 +19,10 @@ namespace {
 	}
 }
 
-m2::Pool<m2::Object>::Iterator m2::obj::create_tile(const BackgroundLayer layer, const VecF& position,
+m2::Pool<m2::Object>::Iterator m2::obj::create_tile(const BackgroundDrawLayer layer, const VecF& position,
 		const m2g::pb::SpriteType spriteType) {
     const auto it = CreateObject(position);
-	it->AddTerrainGraphic(layer, spriteType);
+	it->AddGraphic(layer, spriteType);
 
 	if (const auto& spriteOrTextLabel = M2_GAME.GetSpriteOrTextLabel(spriteType);
 			std::holds_alternative<Sprite>(spriteOrTextLabel)) {
@@ -39,14 +39,14 @@ m2::Pool<m2::Object>::Iterator m2::obj::create_tile(const BackgroundLayer layer,
 				.initiallyEnabled = true
 			};
 			auto& phy = it->AddPhysique();
-			phy.body[I(ForegroundLayer::F0)] = third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, it->GetPhysiqueId(), it->position, 0.0f);
+			phy.body[I(PhysicsLayer::P0)] = third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, it->GetPhysiqueId(), it->position, 0.0f, PhysicsLayer::P0);
 		}
 
 		// Add foreground companion if necessary
 		if (sprite.HasForegroundCompanion()) {
 			const auto fg_it = CreateObject(position - sprite.CenterToOriginVecM()
 					+ sprite.ForegroundCompanionCenterToOriginVecM());
-			auto& gfx = fg_it->AddGraphic(spriteType);
+			auto& gfx = fg_it->AddGraphic(ForegroundDrawLayer::F0_BOTTOM, spriteType);
 			gfx.variantDrawOrder[0] = ForegroundCompanion{};
 		}
 	}

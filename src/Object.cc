@@ -5,10 +5,12 @@
 #include "m2/component/Graphic.h"
 #include "m2/component/Light.h"
 
-m2::Object::Object(const m2::VecF &position, m2g::pb::ObjectType type, ObjectId parent_id) : position(position),
+using namespace m2;
+
+Object::Object(const VecF &position, const m2g::pb::ObjectType type, const ObjectId parent_id) : position(position),
 		_object_type(type), _parent_id(parent_id) {}
 
-m2::Object::Object(Object&& other) noexcept :
+Object::Object(Object&& other) noexcept :
 		position(other.position),
 		orientation(other.orientation),
 		impl(std::move(other.impl)),
@@ -17,8 +19,7 @@ m2::Object::Object(Object&& other) noexcept :
 		_group_id(other._group_id),
 		_index_in_group(other._index_in_group),
 		_physique_id(other._physique_id),
-		_graphic_id(other._graphic_id),
-		_terrain_graphic_id(other._terrain_graphic_id),
+		_graphicId(other._graphicId),
 		_light_id(other._light_id),
 		_sound_emitter_id(other._sound_emitter_id),
 		_character_id(other._character_id) {
@@ -27,13 +28,12 @@ m2::Object::Object(Object&& other) noexcept :
 	other._parent_id = 0;
 	other._index_in_group = 0;
 	other._physique_id = 0;
-	other._graphic_id = 0;
-	other._terrain_graphic_id = {};
+	other._graphicId = 0;
 	other._light_id = 0;
 	other._sound_emitter_id = 0;
     other._character_id = 0;
 }
-m2::Object& m2::Object::operator=(Object&& other) noexcept {
+Object& Object::operator=(Object&& other) noexcept {
 	std::swap(position, other.position);
 	std::swap(orientation, other.orientation);
 	std::swap(impl, other.impl);
@@ -42,300 +42,287 @@ m2::Object& m2::Object::operator=(Object&& other) noexcept {
 	std::swap(_group_id, other._group_id);
 	std::swap(_index_in_group, other._index_in_group);
 	std::swap(_physique_id, other._physique_id);
-	std::swap(_graphic_id, other._graphic_id);
-	std::swap(_terrain_graphic_id, other._terrain_graphic_id);
+	std::swap(_graphicId, other._graphicId);
 	std::swap(_light_id, other._light_id);
 	std::swap(_sound_emitter_id, other._sound_emitter_id);
 	std::swap(_character_id, other._character_id);
 	return *this;
 }
 
-m2::Object::~Object() {
+Object::~Object() {
 	if (_group_id) {
 		M2_LEVEL.groups[_group_id]->RemoveMember(_index_in_group);
 	}
 	RemovePhysique();
 	RemoveGraphic();
-	RemoveTerrainGraphic();
 	RemoveLight();
 	RemoveSoundEmitter();
 	RemoveCharacter();
 }
 
-m2::ObjectId m2::Object::GetId() const {
+ObjectId Object::GetId() const {
 	if (!_id) {
 		// Looking up the id of the object itself is not very common
 		_id = M2_LEVEL.objects.GetId(this);
 	}
 	return *_id;
 }
-m2::ObjectId m2::Object::GetParentId() const {
+ObjectId Object::GetParentId() const {
     return _parent_id;
 }
-m2::GroupIdentifier m2::Object::GetGroupIdentifier() const {
+GroupIdentifier Object::GetGroupIdentifier() const {
 	return _group_id;
 }
-m2::PhysiqueId m2::Object::GetPhysiqueId() const {
+PhysiqueId Object::GetPhysiqueId() const {
 	return _physique_id;
 }
-m2::GraphicId m2::Object::GetGraphicId() const {
-	return _graphic_id;
+GraphicId Object::GetGraphicId() const {
+	return _graphicId;
 }
-std::pair<m2::GraphicId, m2::BackgroundLayer> m2::Object::GetTerrainGraphicId() const {
-	return _terrain_graphic_id;
-}
-m2::LightId m2::Object::GetLightId() const {
+LightId Object::GetLightId() const {
 	return _light_id;
 }
-m2::SoundEmitterId m2::Object::GetSoundId() const {
+SoundEmitterId Object::GetSoundId() const {
 	return _sound_emitter_id;
 }
-m2::CharacterId m2::Object::GetCharacterId() const {
+CharacterId Object::GetCharacterId() const {
     return _character_id;
 }
 
-m2::Character* m2::Object::TryGetCharacter() const {
+Character* Object::TryGetCharacter() const {
 	auto* character_variant = M2_LEVEL.characters.Get(_character_id);
 	if (not character_variant) {
 		return nullptr;
 	}
 	return &ToCharacterBase(*character_variant);
 }
-m2::Object* m2::Object::TryGetParent() const {
+Object* Object::TryGetParent() const {
     return _parent_id ? M2_LEVEL.objects.Get(_parent_id) : nullptr;
 }
-m2::Group* m2::Object::TryGetGroup() const {
+Group* Object::TryGetGroup() const {
 	return _group_id ? M2_LEVEL.groups[_group_id].get() : nullptr;
 }
+Physique* Object::TryGetPhysique() const {
+	return _physique_id ? M2_LEVEL.physics.Get(_physique_id) : nullptr;
+}
+Graphic* Object::TryGetGraphic() const {
+	if (not _graphicId) {
+		return nullptr;
+	}
+	const auto poolAndDrawList = M2_LEVEL.GetGraphicPoolAndDrawList(_graphicId);
+	return poolAndDrawList.first.Get(_graphicId);
+}
 
-m2::Physique& m2::Object::GetPhysique() const {
+Physique& Object::GetPhysique() const {
 	return M2_LEVEL.physics[_physique_id];
 }
-m2::Graphic& m2::Object::GetGraphic() const {
-	return M2_LEVEL.fgGraphics[_graphic_id];
+Graphic& Object::GetGraphic() const {
+	auto* ptr = TryGetGraphic();
+	if (not ptr) {
+		throw M2_ERROR("Graphic component isn't initialized");
+	}
+	return *ptr;
 }
-m2::Graphic& m2::Object::GetTerrainGraphic() const {
-	return M2_LEVEL.bgGraphics[I(_terrain_graphic_id.second)][_terrain_graphic_id.first];
-}
-m2::Light& m2::Object::GetLight() const {
+Light& Object::GetLight() const {
 	return M2_LEVEL.lights[_light_id];
 }
-m2::SoundEmitter& m2::Object::GetSoundEmitter() const {
+SoundEmitter& Object::GetSoundEmitter() const {
 	return M2_LEVEL.soundEmitters[_sound_emitter_id];
 }
-m2::Character& m2::Object::GetCharacter() const {
+Character& Object::GetCharacter() const {
     auto& it = M2_LEVEL.characters[_character_id];
     return ToCharacterBase(it);
 }
 
-void m2::Object::SetGroup(const GroupIdentifier& group_id, IndexInGroup group_index) {
+void Object::SetGroup(const GroupIdentifier& group_id, const IndexInGroup group_index) {
 	_group_id = group_id;
 	_index_in_group = group_index;
 }
 
-m2::Physique& m2::Object::AddPhysique() {
-	auto phy = M2_LEVEL.physics.Emplace(GetId());
+Physique& Object::AddPhysique() {
+	const auto phy = M2_LEVEL.physics.Emplace(GetId());
 	_physique_id = phy.GetId();
-    LOG_TRACE("Added physique component", _physique_id);
 	return *phy;
 }
-m2::Graphic& m2::Object::AddGraphic() {
-	auto gfx = M2_LEVEL.fgGraphics.Emplace(GetId());
-	_graphic_id = gfx.GetId();
-	M2_LEVEL.drawList[I(ForegroundLayer::F0)].Insert(GetId());
-    LOG_TRACE("Added graphic component", _graphic_id);
-	return *gfx;
+Graphic& Object::AddGraphic(const DrawLayer layer) {
+	const auto poolAndDrawList = M2_LEVEL.GetGraphicPoolAndDrawList(layer);
+	const auto it = poolAndDrawList.first.Emplace(GetId());
+	_graphicId = it.GetId();
+	if (poolAndDrawList.second) {
+		poolAndDrawList.second->Insert(GetId());
+	}
+	return *it.Data();
 }
-m2::Graphic& m2::Object::AddGraphic(const m2g::pb::SpriteType spriteType) {
-	auto gfx = M2_LEVEL.fgGraphics.Emplace(GetId(), M2_GAME.GetSpriteOrTextLabel(spriteType));
-	_graphic_id = gfx.GetId();
-	M2_LEVEL.drawList[I(ForegroundLayer::F0)].Insert(GetId());
-	LOG_TRACE("Added graphic component", _graphic_id);
-	return *gfx;
+Graphic& Object::AddGraphic(const DrawLayer layer, const m2g::pb::SpriteType spriteType) {
+	const auto poolAndDrawList = M2_LEVEL.GetGraphicPoolAndDrawList(layer);
+	const auto it = poolAndDrawList.first.Emplace(GetId(), M2_GAME.GetSpriteOrTextLabel(spriteType));
+	_graphicId = it.GetId();
+	if (poolAndDrawList.second) {
+		poolAndDrawList.second->Insert(GetId());
+	}
+	return *it.Data();
 }
-m2::Graphic& m2::Object::AddTerrainGraphic(BackgroundLayer layer) {
-	auto terrain_gfx = M2_LEVEL.bgGraphics[I(layer)].Emplace(GetId());
-	_terrain_graphic_id = std::make_pair(terrain_gfx.GetId(), layer);
-	LOG_TRACE("Added terrain graphic component", _terrain_graphic_id);
-	return *terrain_gfx;
-}
-m2::Graphic& m2::Object::AddTerrainGraphic(BackgroundLayer layer, const m2g::pb::SpriteType spriteType) {
-	auto terrain_gfx = M2_LEVEL.bgGraphics[I(layer)].Emplace(GetId(), M2_GAME.GetSpriteOrTextLabel(spriteType));
-	_terrain_graphic_id = std::make_pair(terrain_gfx.GetId(), layer);
-	LOG_TRACE("Added terrain graphic component", _terrain_graphic_id);
-	return *terrain_gfx;
-}
-m2::Light& m2::Object::AddLight() {
-	auto light = M2_LEVEL.lights.Emplace(GetId());
+Light& Object::AddLight() {
+	const auto light = M2_LEVEL.lights.Emplace(GetId());
 	_light_id = light.GetId();
-    LOG_TRACE("Added light component", _light_id);
 	return *light;
 }
-m2::SoundEmitter& m2::Object::AddSoundEmitter() {
+SoundEmitter& Object::AddSoundEmitter() {
 	auto sound = M2_LEVEL.soundEmitters.Emplace(GetId());
 	_sound_emitter_id = sound.GetId();
-	LOG_TRACE("Added sound component", _sound_emitter_id);
 	return *sound;
 }
-m2::Character& m2::Object::AddTinyCharacter() {
+Character& Object::AddTinyCharacter() {
     auto character = M2_LEVEL.characters.Emplace(std::in_place_type<TinyCharacter>, GetId());
     _character_id = character.GetId();
-    LOG_TRACE("Added tiny character", _character_id);
     return std::get<TinyCharacter>(*character);
 }
-m2::Character& m2::Object::AddFullCharacter() {
+Character& Object::AddFullCharacter() {
     auto character = M2_LEVEL.characters.Emplace(std::in_place_type<FullCharacter>, GetId());
     _character_id = character.GetId();
-    LOG_TRACE("Added full character", _character_id);
     return std::get<FullCharacter>(*character);
 }
 
-void m2::Object::MoveToBackgroundLayer(MAYBE const BackgroundLayer bl) {
-	throw M2_ERROR("Not yet implemented");
-}
-void m2::Object::MoveToForegroundLayer(const ForegroundLayer fl) {
-	if (not _graphic_id) {
-		throw M2_ERROR("Object is not on the foreground");
-	}
-	// Find current layer
-	const auto objId = GetId();
-	std::optional<ForegroundLayer> currentLayer;
-	for (auto i = I(ForegroundLayer::F0); i < I(ForegroundLayer::_n); ++i) {
-		if (M2_LEVEL.drawList[i].ContainsObject(objId)) {
-			currentLayer = static_cast<ForegroundLayer>(i);
-			break;
+void Object::MoveLayer(const std::optional<PhysicsLayer> newPhysicsLayer, const std::optional<DrawLayer> newDrawLayer) {
+	if (newPhysicsLayer) {
+		auto* phy = TryGetPhysique();
+		if (not phy) {
+			throw M2_ERROR("Physique component not found");
 		}
-	}
-	if (not currentLayer) {
-		throw M2_ERROR("Object is not in any draw list");
-	}
-	// Move if necessary
-	if (*currentLayer != fl) {
-		// Remove from the current draw list
-		M2_LEVEL.drawList[I(*currentLayer)].Remove(objId);
-		// Add to the new draw list
-		M2_LEVEL.drawList[I(fl)].Insert(objId);
 
-		if (GetPhysiqueId()) {
+		// Check if necessary
+		if (const auto currentLayer = phy->GetCurrentPhysicsLayer(); not currentLayer || *currentLayer != *newPhysicsLayer) {
 			// TODO Mover is not capable of moving all the fixtures from one world to the other, thus the object loader
 			//  must have loaded the same object to both worlds. Bodies with joints cannot be moved as well, for the
 			//  same reason.
-			auto& phy = GetPhysique();
-			if (not phy.body[I(*currentLayer)] || phy.body[I(*currentLayer)]->HasJoint()) {
-				throw M2_ERROR("Moving an object with a joint is not yet implemented");
+			auto& newRigidBody = phy->body[I(*newPhysicsLayer)];
+			if (not newRigidBody) {
+				throw M2_ERROR("New physics layer do not have a rigid body");
 			}
-			if (not phy.body[I(fl)]) {
-				throw M2_ERROR("Rigid body is not created in the destination foreground layer");
+			newRigidBody->SetEnabled(true);
+
+			if (currentLayer) {
+				auto& currRigidBody = *phy->body[I(*currentLayer)];
+				newRigidBody->TeleportToAnother(currRigidBody);
+				currRigidBody.SetEnabled(false);
 			}
-			phy.body[I(fl)]->TeleportToAnother(*phy.body[I(*currentLayer)]);
-			phy.body[I(fl)]->SetEnabled(true);
-			phy.body[I(*currentLayer)]->SetEnabled(false);
+		}
+	}
+
+	if (newDrawLayer) {
+		auto* gfx = TryGetGraphic();
+		if (not gfx) {
+			throw M2_ERROR("Graphic component not found");
+		}
+
+		if (const auto currentLayer = M2_LEVEL.GetDrawLayer(_graphicId); currentLayer != *newDrawLayer) {
+			// Create new component
+			const auto newPoolAndDrawList = M2_LEVEL.GetGraphicPoolAndDrawList(*newDrawLayer);
+			const auto it = newPoolAndDrawList.first.Emplace(GetId());
+			std::swap(*it, *gfx); // Swap contents
+			// Release old component
+			RemoveGraphic();
+			// Store new component
+			_graphicId = it.GetId();
+			if (newPoolAndDrawList.second) {
+				newPoolAndDrawList.second->Insert(GetId());
+			}
 		}
 	}
 }
 
-void m2::Object::RemovePhysique() {
+void Object::RemovePhysique() {
 	if (_physique_id) {
 		M2_LEVEL.physics.Free(_physique_id);
 		_physique_id = 0;
 	}
 }
-void m2::Object::RemoveGraphic() {
-	if (_graphic_id) {
-		M2_LEVEL.drawList[I(ForegroundLayer::F0)].Remove(GetId());
-		M2_LEVEL.fgGraphics.Free(_graphic_id);
-		_graphic_id = 0;
+void Object::RemoveGraphic() {
+	if (_graphicId) {
+		const auto poolAndDrawList = M2_LEVEL.GetGraphicPoolAndDrawList(_graphicId);
+		if (poolAndDrawList.second) {
+			poolAndDrawList.second->Remove(GetId());
+		}
+		poolAndDrawList.first.Free(_graphicId);
+		_graphicId = 0;
 	}
 }
-void m2::Object::RemoveTerrainGraphic() {
-	if (_terrain_graphic_id.first) {
-		M2_LEVEL.bgGraphics[I(_terrain_graphic_id.second)].Free(_terrain_graphic_id.first);
-		_terrain_graphic_id = {};
-	}
-}
-void m2::Object::RemoveLight() {
+void Object::RemoveLight() {
 	if (_light_id) {
 		M2_LEVEL.lights.Free(_light_id);
 		_light_id = 0;
 	}
 }
-void m2::Object::RemoveSoundEmitter() {
+void Object::RemoveSoundEmitter() {
 	if (_sound_emitter_id) {
 		M2_LEVEL.soundEmitters.Free(_sound_emitter_id);
 		_sound_emitter_id = 0;
 	}
 }
-void m2::Object::RemoveCharacter() {
+void Object::RemoveCharacter() {
 	if (_character_id) {
 		M2_LEVEL.characters.Free(_character_id);
 		_character_id = 0;
 	}
 }
 
-m2::Pool<m2::Object>::Iterator m2::CreateObject(const m2::VecF &position, m2g::pb::ObjectType type, ObjectId parent_id) {
+Pool<Object>::Iterator m2::CreateObject(const VecF &position, m2g::pb::ObjectType type, ObjectId parent_id) {
     return M2_LEVEL.objects.Emplace(position, type, parent_id);
 }
-std::function<void(void)> m2::CreateObjectDeleter(ObjectId id) {
+std::function<void()> m2::CreateObjectDeleter(ObjectId id) {
 	return [id]() {
 		M2_LEVEL.objects.Free(id);
 	};
 }
-std::function<void(void)> m2::CreatePhysiqueDeleter(ObjectId id) {
+std::function<void()> m2::CreatePhysiqueDeleter(ObjectId id) {
 	return [id]() {
 		if (auto* object = M2_LEVEL.objects.Get(id); object) {
 			object->RemovePhysique();
 		}
 	};
 }
-std::function<void(void)> m2::CreateGraphicDeleter(ObjectId id) {
+std::function<void()> m2::CreateGraphicDeleter(ObjectId id) {
 	return [id]() {
 		if (auto* object = M2_LEVEL.objects.Get(id); object) {
 			object->RemoveGraphic();
 		}
 	};
 }
-std::function<void(void)> m2::CreateTerrainGraphicDeleter(ObjectId id) {
-	return [id]() {
-		if (auto* object = M2_LEVEL.objects.Get(id); object) {
-			object->RemoveTerrainGraphic();
-		}
-	};
-}
-std::function<void(void)> m2::CreateLightDeleter(ObjectId id) {
+std::function<void()> m2::CreateLightDeleter(ObjectId id) {
 	return [id]() {
 		if (auto* object = M2_LEVEL.objects.Get(id); object) {
 			object->RemoveLight();
 		}
 	};
 }
-std::function<void(void)> m2::CreateSoundEmitterDeleter(ObjectId id) {
+std::function<void()> m2::CreateSoundEmitterDeleter(ObjectId id) {
 	return [id]() {
 		if (auto* object = M2_LEVEL.objects.Get(id); object) {
 			object->RemoveSoundEmitter();
 		}
 	};
 }
-std::function<void(void)> m2::CreateCharacterDeleter(ObjectId id) {
+std::function<void()> m2::CreateCharacterDeleter(ObjectId id) {
 	return [id]() {
 		if (auto* object = M2_LEVEL.objects.Get(id); object) {
 			object->RemoveCharacter();
 		}
 	};
 }
-std::function<void()> m2::CreateForegroundLayerMover(ObjectId id, ForegroundLayer toLayer) {
-	return [id, toLayer]() {
+std::function<void()> m2::CreateLayerMover(ObjectId id, std::optional<PhysicsLayer> phyLayer, std::optional<DrawLayer> drawLayer) {
+	return [id, phyLayer, drawLayer]() {
 		if (auto* object = M2_LEVEL.objects.Get(id)) {
-			object->MoveToForegroundLayer(toLayer);
+			object->MoveLayer(phyLayer, drawLayer);
 		}
 	};
 }
 
-std::function<bool(m2::Object&)> m2::is_object_in_area(const RectF& rect) {
+std::function<bool(Object&)> m2::is_object_in_area(const RectF& rect) {
 	return [rect](const Object& o) -> bool {
 		return rect.contains(o.position);
 	};
 }
 
-m2::Object& m2::to_object_of_id(ObjectId id) {
+Object& m2::to_object_of_id(ObjectId id) {
 	return M2_LEVEL.objects[id];
 }

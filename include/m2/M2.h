@@ -8,29 +8,40 @@
 namespace m2 {
 	extern const std::string gEmptyString;
 
-	/// Background layers are drawn from back to front. B0 is drawn the last, thus it's on the front. The only
-	/// difference between the background layers is the drawing order. The rigid bodies of background objects are still
-	/// placed on the same physics world as F0.
-	enum class BackgroundLayer {
-		B0 = 0,
-		B1 = 1,
-		B2 = 2,
-		B3 = 3,
+	/// Each physics layer designates a separate physical world. Objects in different layers cannot collide.
+	enum class PhysicsLayer {
+		PM1, // Underground in a top-down game
+		P0, // Ground level in a top-down game
+		P1, // Above ground in a top-down game
 		_n // End sentinel
 	};
-	constexpr int gBackgroundLayerCount = static_cast<int>(BackgroundLayer::_n);
-	std::string ToString(BackgroundLayer layer);
+	constexpr int gPhysicsLayerCount = static_cast<int>(PhysicsLayer::_n);
 
-	/// Foreground layers are drawn from back to front. L0 is drawn the first, thus it's on the back. Each foreground
-	/// layer designates a distinct physics world, thus the objects in different layers cannot collide with each other.
-	/// Since all background objects place their bodies into F0, objects in other layers cannot collide with them.
-	enum class ForegroundLayer {
-		F0 = 0,
-		F1 = 1,
+	/// Background layers are graphics-only layers. An object can have a Graphic component in any of the background
+	/// layers. Background layers are drawn from back to front and B0 is drawn the last, thus it's on the front.
+	/// Background Graphic components are not ordered, thus they should not overlap.
+	enum class BackgroundDrawLayer {
+		B0,
+		B1,
+		B2,
+		B3,
 		_n // End sentinel
 	};
-	constexpr int gForegroundLayerCount = static_cast<int>(ForegroundLayer::_n);
-	std::string ToString(ForegroundLayer layer);
+	constexpr int gBackgroundDrawLayerCount = static_cast<int>(BackgroundDrawLayer::_n);
+
+	enum class ForegroundDrawLayer {
+		FM1_BOTTOM,
+		FM1_TOP,
+		F0_BOTTOM,
+		F0_TOP,
+		F1_BOTTOM,
+		F1_TOP,
+		_n, // End sentinel
+	};
+	constexpr int gForegroundDrawLayerCount = static_cast<int>(ForegroundDrawLayer::_n);
+
+	using DrawLayer = std::variant<BackgroundDrawLayer, ForegroundDrawLayer>;
+	extern std::array<DrawLayer, 10> gDrawOrder;
 
 	/// Returns the number of codepoints in a UTF-8 string.
 	/// One codepoint does not always equate to one glyph, but it's a good estimation for most characters.

@@ -92,7 +92,7 @@ namespace m2 {
 		float z{};
 
 		Graphic() = default;
-		explicit Graphic(uint64_t object_id); // TODO can this be deleted
+		explicit Graphic(uint64_t object_id);
 		explicit Graphic(uint64_t object_id, const std::variant<Sprite, pb::TextLabel>&);
 
 		/// Default draw callback that's capable of drawing sprites, foreground components, sprite effects, and text

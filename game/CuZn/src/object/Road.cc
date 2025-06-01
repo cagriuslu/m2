@@ -79,7 +79,7 @@ m2::void_expected InitRoad(m2::Object& obj, const Connection connection) {
 	const auto parent_id = obj.GetParentId();
 	const auto parent_index = M2G_PROXY.player_index(parent_id);
 	const auto color = M2G_PROXY.player_colors[parent_index];
-	auto& _gfx = obj.AddGraphic(M2G_PROXY.is_canal_era() ? m2g::pb::SPRITE_CANAL : m2g::pb::SPRITE_RAILROAD);
+	auto& _gfx = obj.AddGraphic(m2::ForegroundDrawLayer::F0_BOTTOM, M2G_PROXY.is_canal_era() ? m2g::pb::SPRITE_CANAL : m2g::pb::SPRITE_RAILROAD);
 	_gfx.onDraw = [color](m2::Graphic& gfx) {
 		const auto connection_position = gfx.Owner().position;
 		const auto cell_rect = m2::RectF{connection_position - 0.75f, 1.5f, 1.5f};

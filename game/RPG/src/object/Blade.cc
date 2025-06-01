@@ -42,11 +42,11 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF &direction, 
 			? m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_FRIENDLY_DAMAGE
 			: m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_HOSTILE_DAMAGE)]
 	}};
-	phy.body[I(m2::ForegroundLayer::F0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, start_angle);
-	phy.body[I(m2::ForegroundLayer::F0)]->SetAngularVelocity(-swing_speed);
+	phy.body[I(m2::PhysicsLayer::P0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, start_angle, m2::PhysicsLayer::P0);
+	phy.body[I(m2::PhysicsLayer::P0)]->SetAngularVelocity(-swing_speed);
 
 	// Add graphics
-	auto& gfx = obj.AddGraphic(melee_weapon.GameSprite());
+	auto& gfx = obj.AddGraphic(m2::ForegroundDrawLayer::F0_BOTTOM, melee_weapon.GameSprite());
 	gfx.z = 0.5f;
 
 	// Add character
@@ -69,7 +69,7 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF &direction, 
 	};
 	phy.postStep = [&](m2::Physique& phy) {
 		if (auto* originator = obj.TryGetParent()) {
-			phy.body[I(m2::ForegroundLayer::F0)]->SetPosition(originator->position);
+			phy.body[I(m2::PhysicsLayer::P0)]->SetPosition(originator->position);
 		} else {
 			// Originator died
 			M2_DEFER(m2::CreateObjectDeleter(phy.OwnerId()));

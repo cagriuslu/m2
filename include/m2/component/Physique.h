@@ -11,7 +11,7 @@ namespace m2 {
 		Callback postStep{};
 
 		// An object has either body or rigidBodyIndex.
-		std::array<std::optional<third_party::physics::RigidBody>, gForegroundLayerCount> body{};
+		std::array<std::optional<third_party::physics::RigidBody>, gPhysicsLayerCount> body{};
 		std::optional<int> rigidBodyIndex;
 
 		std::function<void(Physique&, Physique&, const box2d::Contact&)> onCollision;
@@ -25,6 +25,10 @@ namespace m2 {
 		// Move constructors
 		Physique(Physique&& other) noexcept;
 		Physique& operator=(Physique&& other) noexcept;
+
+		// Accessors
+
+		[[nodiscard]] std::optional<PhysicsLayer> GetCurrentPhysicsLayer() const;
 
 		static void DefaultBeginContactCallback(b2Contact& b2_contact);
 		static void DefaultEndContactCallback(b2Contact& b2_contact);

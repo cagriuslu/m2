@@ -44,10 +44,10 @@ m2::void_expected LoadDropGate(m2::Object& obj) {
 			.collidesWith = m2::third_party::physics::ColliderLayer::COLLIDER_LAYER_FOREGROUND_FRIENDLY_OBJECT
 		}
 	});
-	phy.body[I(m2::ForegroundLayer::F0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef,
-		obj.GetPhysiqueId(), obj.position, obj.orientation);
+	phy.body[I(m2::PhysicsLayer::P0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef,
+		obj.GetPhysiqueId(), obj.position, obj.orientation, m2::PhysicsLayer::P0);
 
-	auto& gfx = obj.AddGraphic(spriteType);
+	auto& gfx = obj.AddGraphic(m2::ForegroundDrawLayer::F0_BOTTOM, spriteType);
 
 	phy.onCollision = [&obj, &gfx](m2::Physique&, m2::Physique&, const m2::box2d::Contact&) {
 		DropGate(gfx);
@@ -63,7 +63,7 @@ m2::void_expected LoadDropGate(m2::Object& obj) {
 				if (M2G_PROXY.leftLauncherColumnDoorId) {
 					const auto& door = M2_LEVEL.objects[M2G_PROXY.leftLauncherColumnDoorId];
 					M2_DEFER([&door]() {
-						door.GetPhysique().body[I(m2::ForegroundLayer::F0)]->SetEnabled(false);
+						door.GetPhysique().body[I(m2::PhysicsLayer::P0)]->SetEnabled(false);
 						door.GetGraphic().enabled = false;
 					});
 				}

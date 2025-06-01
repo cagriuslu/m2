@@ -50,11 +50,11 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& intend
 				? m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_FRIENDLY_DAMAGE
 				: m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_HOSTILE_DAMAGE)]
 	}};
-	phy.body[I(m2::ForegroundLayer::F0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
-	phy.body[I(m2::ForegroundLayer::F0)]->SetLinearVelocity(direction * linear_speed);
+	phy.body[I(m2::PhysicsLayer::P0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::PhysicsLayer::P0);
+	phy.body[I(m2::PhysicsLayer::P0)]->SetLinearVelocity(direction * linear_speed);
 
 	// Add graphics
-	auto& gfx = obj.AddGraphic(ranged_weapon.GameSprite());
+	auto& gfx = obj.AddGraphic(m2::ForegroundDrawLayer::F0_BOTTOM, ranged_weapon.GameSprite());
 	gfx.z = 0.5f;
 
 	// Add character
@@ -72,7 +72,7 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& intend
 					.isSensor = true,
 					.colliderFilter = m2::third_party::physics::gColliderCategoryToParams[m2::I(m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_FRIENDLY_DAMAGE)]
 				}};
-				phy.body[I(m2::ForegroundLayer::F0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(explosionBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
+				phy.body[I(m2::PhysicsLayer::P0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(explosionBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::PhysicsLayer::P0);
 				chr.AddNamedItem(M2_GAME.GetNamedItem(ITEM_AUTOMATIC_EXPLOSIVE_TTL));
 				// RESOURCE_EXPLOSION_TTL only means the object is currently exploding
 				chr.SetResource(RESOURCE_EXPLOSION_TTL, 1.0f); // 1.0f is just symbolic

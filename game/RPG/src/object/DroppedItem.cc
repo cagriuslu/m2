@@ -18,9 +18,9 @@ m2::void_expected rpg::create_dropped_item(m2::Object &obj, m2g::pb::ItemType it
 		.initiallyAwake = false,
 		.isBullet = false
 	};
-	phy.body[I(m2::ForegroundLayer::F0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
+	phy.body[I(m2::PhysicsLayer::P0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::PhysicsLayer::P0);
 
-	obj.AddGraphic(M2_GAME.GetNamedItem(item_type).UiSprite());
+	obj.AddGraphic(m2::ForegroundDrawLayer::F0_BOTTOM, M2_GAME.GetNamedItem(item_type).UiSprite());
 
 	phy.onCollision = [item_type](m2::Physique& phy, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
 		if (auto* other_char = other.Owner().TryGetCharacter(); other_char) {

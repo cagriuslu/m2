@@ -23,7 +23,7 @@ void init_merchant(m2::Object& obj) {
 	// Active merchants will be given a merchant license during setup. (ITEM_CATEGORY_MERCHANT_LICENSE)
 	// Passive merchants will simply exist without a license.
 
-	auto& gfx = obj.AddGraphic();
+	auto& gfx = obj.AddGraphic(m2::ForegroundDrawLayer::F0_BOTTOM);
 	gfx.preDraw = [&chr](m2::Graphic& g) {
 		// Set the sprite if license is added. Licenses are assigned after population, thus do it pre_draw.
 		auto it = chr.FindItems(m2g::pb::ITEM_CATEGORY_MERCHANT_LICENSE);

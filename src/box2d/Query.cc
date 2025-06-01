@@ -32,6 +32,6 @@ void m2::box2d::Query(b2World& world, const Aabb& aabb, FixtureQueryCallback&& q
 
 void m2::box2d::FindObjectsNearPositionUnderMouse(VecF position, float max_distance, PhysiqueQueryCallback&& query_callback) {
 	if (M2_GAME.MousePositionWorldM().is_near(position, max_distance)) {
-		m2::box2d::Query(*M2_LEVEL.world[I(ForegroundLayer::F0)], m2::Aabb{M2_GAME.MousePositionWorldM(), 0.0001f}, std::move(query_callback));
+		m2::box2d::Query(*M2_LEVEL.world[I(PhysicsLayer::P0)], m2::Aabb{M2_GAME.MousePositionWorldM(), 0.0001f}, std::move(query_callback));
 	}
 }

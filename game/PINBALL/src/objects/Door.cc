@@ -22,9 +22,9 @@ m2::void_expected LoadDoor(m2::Object& obj) {
 			}
 		});
 	}
-	phy.body[I(m2::ForegroundLayer::F0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
+	phy.body[m2::I(m2::PhysicsLayer::P0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::PhysicsLayer::P0);
 
-	obj.AddGraphic(spriteType);
+	obj.AddGraphic(m2::ForegroundDrawLayer::F0_BOTTOM, spriteType);
 
 	M2G_PROXY.leftLauncherColumnDoorId = obj.GetId();
 

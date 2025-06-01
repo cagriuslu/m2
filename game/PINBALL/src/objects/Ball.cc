@@ -31,24 +31,24 @@ m2::void_expected LoadBall(m2::Object& obj) {
 		.isBullet = true,
 		.initiallyEnabled = true
 	};
-	phy.body[I(m2::ForegroundLayer::F0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
-	phy.body[I(m2::ForegroundLayer::F1)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::ForegroundLayer::F1);
-	phy.body[I(m2::ForegroundLayer::F1)]->SetEnabled(false);
+	phy.body[m2::I(m2::PhysicsLayer::P0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::PhysicsLayer::P0);
+	phy.body[m2::I(m2::PhysicsLayer::P1)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::PhysicsLayer::P1);
+	phy.body[m2::I(m2::PhysicsLayer::P1)]->SetEnabled(false);
 
-	MAYBE auto& gfx = obj.AddGraphic(m2g::pb::SPRITE_BASIC_BALL);
+	MAYBE auto& gfx = obj.AddGraphic(m2::ForegroundDrawLayer::F0_BOTTOM, m2g::pb::SPRITE_BASIC_BALL);
 
 	phy.preStep = [initialPos = obj.position](m2::Physique& phy_) {
 		if (M2_GAME.events.PopKeyRelease(m2g::pb::BALL_LAUNCHER) /*&& M2G_PROXY.isOnBallLauncher*/) {
-			if (phy_.body[I(m2::ForegroundLayer::F0)]->IsEnabled()) {
-				phy_.body[I(m2::ForegroundLayer::F0)]->ApplyForceToCenter({0.0f, -7500.0f});
-			} else if (phy_.body[I(m2::ForegroundLayer::F1)]->IsEnabled()) {
-				phy_.body[I(m2::ForegroundLayer::F1)]->ApplyForceToCenter({0.0f, -7500.0f});
+			if (phy_.body[m2::I(m2::PhysicsLayer::P0)]->IsEnabled()) {
+				phy_.body[m2::I(m2::PhysicsLayer::P0)]->ApplyForceToCenter({0.0f, -7500.0f});
+			} else if (phy_.body[m2::I(m2::PhysicsLayer::P1)]->IsEnabled()) {
+				phy_.body[m2::I(m2::PhysicsLayer::P1)]->ApplyForceToCenter({0.0f, -7500.0f});
 			}
 		}
 		if (M2_GAME.events.PopKeyPress(m2g::pb::RETURN)) {
-			phy_.body[I(m2::ForegroundLayer::F0)]->SetPosition(initialPos);
-			phy_.body[I(m2::ForegroundLayer::F1)]->SetPosition(initialPos);
-			M2_DEFER(m2::CreateForegroundLayerMover(phy_.OwnerId(), m2::ForegroundLayer::F0));
+			phy_.body[m2::I(m2::PhysicsLayer::P0)]->SetPosition(initialPos);
+			phy_.body[m2::I(m2::PhysicsLayer::P1)]->SetPosition(initialPos);
+			M2_DEFER(m2::CreateLayerMover(phy_.OwnerId(), m2::PhysicsLayer::P0, m2::ForegroundDrawLayer::F0_BOTTOM));
 		}
 	};
 

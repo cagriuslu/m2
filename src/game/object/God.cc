@@ -71,7 +71,7 @@ Id obj::create_god() {
 		}
 	};
 
-	it->AddGraphic().postDraw = [](MAYBE Graphic& gfx) {
+	it->AddGraphic(ForegroundDrawLayer::F0_BOTTOM).postDraw = [](MAYBE Graphic& gfx) {
 		std::visit(overloaded{
 		        [](const level_editor::State& le) { le.Draw(); },
 		        [](const sheet_editor::State& se) { se.Draw(); },

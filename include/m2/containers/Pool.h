@@ -1,25 +1,26 @@
 #pragma once
 #include <m2/Error.h>
 #include <array>
-#include <optional>
-#include <functional>
 #include <cstdint>
-#include <cmath>
 
 namespace m2 {
-	using PoolId = uint16_t; // Each Pool has a unique ID, which later becomes part of each object's ID.
-	using ShiftedPoolId = uint64_t; // PoolId is shifted to left 48 times to form ShiftedPoolId
+	using PoolId = uint16_t; // Each Pool has a unique Id, which later becomes part of each object's Id.
+	constexpr int gPoolIdShiftCount = 48;
+	using ShiftedPoolId = uint64_t; // PoolId is shifted to left gPoolIdShiftCount times to form ShiftedPoolId
+	constexpr ShiftedPoolId gShiftedPoolIdMask = (0xFFFFFFFFFFFFFFFFull >> gPoolIdShiftCount) << gPoolIdShiftCount;
 	ShiftedPoolId NextShiftedPoolId();
 
-	// Each object held in a Pool has a unique ID. [16 bit PoolId, 24 bit key, 24 bit index]. Key is a monotonically
-	// increasing number. If an object is reallocated in-place, it'll have a different key, thus a different ID. Index
+	// Each object held in a Pool has a unique Id. [16 bit PoolId, 24 bit key, 24 bit index]. Key is a monotonically
+	// increasing number. If an object is reallocated in-place, it'll have a different key, thus a different Id. Index
 	// is the location of the object in the Pool's array.
 	using Id = uint64_t;
-	using PoolItemId = Id; // Another name for ID
+	using PoolItemId = Id; // Another name for Id
 
 	// Transformers
-	inline uint64_t IdToKey(Id id) { return id & 0xFFFFFF000000ull; }
-	inline uint64_t IdToIndex(Id id) { return id & 0xFFFFFFull; }
+
+	inline ShiftedPoolId ToShiftedPoolId(const Id id) { return id & gShiftedPoolIdMask; }
+	inline uint64_t IdToKey(const Id id) { return id & 0xFFFFFF000000ull; }
+	inline uint64_t IdToIndex(const Id id) { return id & 0xFFFFFFull; }
 	constexpr auto pool_iterator_to_data = [](const auto &it) { return it.Data(); };
 	constexpr auto to_id = [](const auto &it) { return it.GetId(); };
 
@@ -30,7 +31,7 @@ namespace m2 {
 	public:
 		//<editor-fold desc="Iterator">
 		class Iterator {
-			Pool<T,Capacity>* _pool{};
+			Pool* _pool{};
 			T* _data{};
 			Id _id{};
 
@@ -40,7 +41,7 @@ namespace m2 {
 			using difference_type = std::ptrdiff_t;
 
 			Iterator() = default;
-			Iterator(Pool<T,Capacity>* pool, T* data, Id id) : _pool(pool), _data(data), _id(id) {}
+			Iterator(Pool* pool, T* data, const Id id) : _pool(pool), _data(data), _id(id) {}
 			explicit operator bool() const { return _data && _id; }
 			bool operator==(const Iterator& other) const { return _data == other._data && _id == other._id; }
 			// Accessors
@@ -91,6 +92,7 @@ namespace m2 {
 
 	public:
 		// Constructors
+
 		Pool() {
 			if (_shiftedPoolId == 0) {
 				throw M2_ERROR("PoolId overflow");
@@ -102,29 +104,31 @@ namespace m2 {
 		}
 
 		// Accessors
+
+		[[nodiscard]] ShiftedPoolId GetShiftedPoolId() const { return _shiftedPoolId; }
 		[[nodiscard]] uint64_t Size() const { return _size; }
 		[[nodiscard]] bool Empty() const { return !_size; }
-		[[nodiscard]] bool Contains(Id id) const { return Get(id); }
+		[[nodiscard]] bool Contains(const Id id) const { return Get(id); }
 		[[nodiscard]] bool Contains(const T* data) const { return GetId(data); }
-		T* Get(Id id) {
+		T* Get(const Id id) {
 			if (auto* item = GetArrayItem(id)) {
 				return &item->data;
 			}
 			return nullptr;
 		}
-		const T* Get(Id id) const {
+		const T* Get(const Id id) const {
 			if (const auto* item = GetArrayItem(id)) {
 				return &item->data;
 			}
 			return nullptr;
 		}
-		T& operator[](Id id) {
+		T& operator[](const Id id) {
 			if (auto* t = Get(id)) {
 				return *t;
 			}
 			throw M2_ERROR("Out of bounds");
 		}
-		const T& operator[](Id id) const {
+		const T& operator[](const Id id) const {
 			if (const auto* t = Get(id)) {
 				return *t;
 			}
@@ -136,7 +140,7 @@ namespace m2 {
 			const auto* lowest_byte_ptr = reinterpret_cast<const uint8_t*>(&_array[_lowestAllocatedIndex].data);
 			const auto* highest_byte_ptr = reinterpret_cast<const uint8_t*>(&_array[_highestAllocatedIndex].data);
 			if (lowest_byte_ptr <= byte_ptr && byte_ptr <= highest_byte_ptr) {
-				auto offset_of_data = reinterpret_cast<uint8_t*>(&(reinterpret_cast<Item*>(0)->data));
+				const auto offset_of_data = reinterpret_cast<uint8_t*>(&(reinterpret_cast<Item*>(0)->data));
 				const auto* item_ptr = reinterpret_cast<const Item*>(byte_ptr - offset_of_data);
 				// Check if item is allocated
 				if (IdToKey(item_ptr->id)) {
@@ -147,6 +151,7 @@ namespace m2 {
 		}
 
 		// Iterators
+
 		Iterator begin() {
 			if (_size) {
 				Item& item = _array[_lowestAllocatedIndex];
@@ -158,6 +163,7 @@ namespace m2 {
 		Iterator end() { return {this, nullptr, 0}; }
 
 		// Modifiers
+
 		template <typename... Args>
 		Iterator Emplace(Args&&... args) {
 			if (Capacity <= _size) {
@@ -188,11 +194,10 @@ namespace m2 {
 			}
 			return {this, &item.data, item.id};
 		}
-
 		// TODO add erase(it)
 		// TODO rename free to erase
 		// TODO provide index to iterator function to replace free_index
-		void Free(Id id) {
+		void Free(const Id id) {
 			auto* item_ptr = GetArrayItem(id);
 			if (item_ptr) {
 				// Get index of item
@@ -216,7 +221,7 @@ namespace m2 {
 				}
 				if (_lowestAllocatedIndex == index) {
 					// Search forward until lowest allocated index is found
-					for (uint64_t i = index + 1; i < Capacity; i++) {
+					for (uint64_t i = index + 1; i < Capacity; ++i) {
 						_lowestAllocatedIndex = i;
 						if (IdToKey(_array[i].id)) {
 							break;
@@ -228,7 +233,7 @@ namespace m2 {
 		void Free(const T* data) {
 			Free(GetId(data));
 		}
-		void FreeIndex(uint64_t idx) {
+		void FreeIndex(const uint64_t idx) {
 			auto& item = _array[idx];
 			if (IdToKey(item.id)) {
 				Free(GetId(&item.data));

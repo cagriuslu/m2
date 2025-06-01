@@ -22,16 +22,16 @@ m2::void_expected LoadCircularBumperSensor(m2::Object& obj) {
 			}
 		});
 	}
-	phy.body[I(m2::ForegroundLayer::F0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
+	phy.body[I(m2::PhysicsLayer::P0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::PhysicsLayer::P0);
 
-	obj.AddGraphic(spriteType);
+	obj.AddGraphic(m2::ForegroundDrawLayer::F0_BOTTOM, spriteType);
 
 	// The sensor collides with only the ball
 	phy.onCollision = [](m2::Physique&, m2::Physique& ball, const m2::box2d::Contact& contact) {
 		const auto contactNormal = contact.normal;
 		auto* ballPhy = &ball;
 		M2_DEFER(([contactNormal, ballPhy]() {
-			ballPhy->body[I(m2::ForegroundLayer::F0)]->ApplyForceToCenter(contactNormal * 6000.0f);
+			ballPhy->body[I(m2::PhysicsLayer::P0)]->ApplyForceToCenter(contactNormal * 6000.0f);
 		}));
 	};
 

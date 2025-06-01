@@ -18,17 +18,20 @@
 #include <m2/ui/widget/Text.h>
 #include <m2/third_party/physics/box2d/DebugDraw.h>
 
-m2::Level::~Level() {
+using namespace m2;
+
+Level::~Level() {
 	// Custom destructor is provided because the order is important
-	characters.Clear();
-	lights.Clear();
-	for (auto& terrain : bgGraphics) {
-		terrain.Clear();
-	}
-	fgGraphics.Clear();
-	physics.Clear();
+
 	objects.Clear();
 	groups.clear();
+	physics.Clear();
+	for (auto& bg : bgGraphics) {
+		bg.Clear();
+	}
+	fgGraphics.Clear();
+	lights.Clear();
+	characters.Clear();
 
 	if (_debugDraw) {
 		delete static_cast<third_party::physics::box2d::DebugDraw*>(_debugDraw);
@@ -36,18 +39,19 @@ m2::Level::~Level() {
 	}
 	delete contactListener;
 	contactListener = nullptr;
-	delete world[I(ForegroundLayer::F1)];
-	delete world[I(ForegroundLayer::F0)];
+	delete world[I(PhysicsLayer::P1)];
+	delete world[I(PhysicsLayer::P0)];
+	delete world[I(PhysicsLayer::PM1)];
 }
 
-m2::void_expected m2::Level::InitSinglePlayer(
+void_expected Level::InitSinglePlayer(
     const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name) {
 	stateVariant.emplace<splayer::State>();
 	return InitAnyPlayer(
 	    level_path_or_blueprint, name, true, &m2g::Proxy::pre_single_player_level_init, &m2g::Proxy::post_single_player_level_init);
 }
 
-m2::void_expected m2::Level::InitMultiPlayerAsHost(
+void_expected Level::InitMultiPlayerAsHost(
     const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name) {
 	INFO_FN();
 	stateVariant.emplace<mplayer::State>();
@@ -55,7 +59,7 @@ m2::void_expected m2::Level::InitMultiPlayerAsHost(
 	    level_path_or_blueprint, name, false, &m2g::Proxy::pre_multi_player_level_client_init, &m2g::Proxy::post_multi_player_level_client_init);
 }
 
-m2::void_expected m2::Level::InitMultiPlayerAsGuest(
+void_expected Level::InitMultiPlayerAsGuest(
     const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name) {
 	DEBUG_FN();
 	stateVariant.emplace<mplayer::State>();
@@ -63,7 +67,7 @@ m2::void_expected m2::Level::InitMultiPlayerAsGuest(
 	    level_path_or_blueprint, name, false, &m2g::Proxy::pre_multi_player_level_client_init, &m2g::Proxy::post_multi_player_level_client_init);
 }
 
-m2::void_expected m2::Level::InitLevelEditor(const std::filesystem::path& lb_path) {
+void_expected Level::InitLevelEditor(const std::filesystem::path& lb_path) {
 	_lbPath = lb_path;
 	stateVariant.emplace<level_editor::State>();
 
@@ -94,7 +98,7 @@ m2::void_expected m2::Level::InitLevelEditor(const std::filesystem::path& lb_pat
 	return {};
 }
 
-m2::void_expected m2::Level::InitSheetEditor(const std::filesystem::path& path) {
+void_expected Level::InitSheetEditor(const std::filesystem::path& path) {
 	// Create state
 	auto state = sheet_editor::State::create(path);
 	m2ReflectUnexpected(state);
@@ -119,7 +123,7 @@ m2::void_expected m2::Level::InitSheetEditor(const std::filesystem::path& path) 
 	return {};
 }
 
-m2::void_expected m2::Level::InitBulkSheetEditor(const std::filesystem::path& path) {
+void_expected Level::InitBulkSheetEditor(const std::filesystem::path& path) {
 	// Create state
 	auto state = bulk_sheet_editor::State::Create(path);
 	m2ReflectUnexpected(state);
@@ -140,7 +144,7 @@ m2::void_expected m2::Level::InitBulkSheetEditor(const std::filesystem::path& pa
 	return {};
 }
 
-m2::void_expected m2::Level::ResetSheetEditor() {
+void_expected Level::ResetSheetEditor() {
 	objects.Clear();
 
 	// Create default objects
@@ -150,7 +154,7 @@ m2::void_expected m2::Level::ResetSheetEditor() {
 
 	return {};
 }
-m2::void_expected m2::Level::ResetBulkSheetEditor() {
+void_expected Level::ResetBulkSheetEditor() {
 	objects.Clear();
 
 	// Create default objects
@@ -161,18 +165,63 @@ m2::void_expected m2::Level::ResetBulkSheetEditor() {
 	return {};
 }
 
-bool m2::Level::IsEditor() const {
+bool Level::IsEditor() const {
 	return std::holds_alternative<level_editor::State>(stateVariant)
 			|| std::holds_alternative<sheet_editor::State>(stateVariant)
 			|| std::holds_alternative<bulk_sheet_editor::State>(stateVariant);
 }
-float m2::Level::HorizontalFov() const { return _lb ? _lb->horizontal_fov() : M2_GAME.Dimensions().GameM().x; }
+DrawLayer Level::GetDrawLayer(const GraphicId gfxId) {
+	const auto shiftedGfxPoolId = ToShiftedPoolId(gfxId);
 
-m2::sdl::ticks_t m2::Level::GetLevelDuration() const {
+	for (int i = 0; i < I(BackgroundDrawLayer::_n); ++i) {
+		if (bgGraphics[i].GetShiftedPoolId() == shiftedGfxPoolId) {
+			return static_cast<BackgroundDrawLayer>(i);
+		}
+	}
+	if (M2_LEVEL.fgGraphics.GetShiftedPoolId() == shiftedGfxPoolId) {
+		const auto& gfx = fgGraphics[gfxId];
+		for (auto i = 0; i < I(ForegroundDrawLayer::_n); ++i) {
+			if (M2_LEVEL.fgDrawLists[i].ContainsObject(gfx.OwnerId())) {
+				return static_cast<ForegroundDrawLayer>(i);
+			}
+		}
+	}
+	throw M2_ERROR("Graphic component does not belong to any of the pools");
+}
+std::pair<Pool<Graphic>&, DrawList*> Level::GetGraphicPoolAndDrawList(const GraphicId gfxId) {
+	const auto shiftedGfxPoolId = ToShiftedPoolId(gfxId);
+
+	for (auto& bgPool : bgGraphics) {
+		if (bgPool.GetShiftedPoolId() == shiftedGfxPoolId) {
+			return std::pair<Pool<Graphic>&,DrawList*>{bgPool, nullptr};
+		}
+	}
+	if (fgGraphics.GetShiftedPoolId() == shiftedGfxPoolId) {
+		const auto& gfx = fgGraphics[gfxId];
+		for (auto i = 0; i < I(ForegroundDrawLayer::_n); ++i) {
+			if (fgDrawLists[i].ContainsObject(gfx.OwnerId())) {
+				return std::pair<Pool<Graphic>&,DrawList*>{fgGraphics, &fgDrawLists[i]};
+			}
+		}
+	}
+	throw M2_ERROR("Graphic component does not belong to any of the pools");
+
+}
+std::pair<Pool<Graphic>&, DrawList*> Level::GetGraphicPoolAndDrawList(const DrawLayer drawLayer) {
+	if (std::holds_alternative<BackgroundDrawLayer>(drawLayer)) {
+		const auto bgLayer = std::get<BackgroundDrawLayer>(drawLayer);
+		return std::pair<Pool<Graphic>&,DrawList*>{bgGraphics[I(bgLayer)], nullptr};
+	}
+	const auto fgLayer = std::get<ForegroundDrawLayer>(drawLayer);
+	return std::pair<Pool<Graphic>&,DrawList*>{fgGraphics, &fgDrawLists[I(fgLayer)]};
+}
+float Level::HorizontalFov() const { return _lb ? _lb->horizontal_fov() : M2_GAME.Dimensions().GameM().x; }
+
+sdl::ticks_t Level::GetLevelDuration() const {
 	return sdl::get_ticks_since(*_beginTicks, *_pauseTicks);
 }
 
-void m2::Level::BeginGameLoop() {
+void Level::BeginGameLoop() {
 	if (_beginTicks) {
 		throw M2_ERROR("BeginGameLoop called for a second time");
 	}
@@ -183,29 +232,29 @@ void m2::Level::BeginGameLoop() {
 	_pauseTicks = 0;
 }
 
-void m2::Level::EnableDimmingWithExceptions(std::set<ObjectId>&& exceptions) {
+void Level::EnableDimmingWithExceptions(std::set<ObjectId>&& exceptions) {
 	LOG_DEBUG("Enabling dimming with a number of exceptions", exceptions.size());
 	_dimmingExceptions = std::move(exceptions);
 }
 
-void m2::Level::DisableDimmingWithExceptions() {
+void Level::DisableDimmingWithExceptions() {
 	LOG_DEBUG("Disabling dimming");
 	_dimmingExceptions.reset();
 }
 
-void m2::Level::EnableHud() {
+void Level::EnableHud() {
 	LOG_DEBUG("Enabling HUD");
 	_leftHudUiPanel->enabled = true;
 	_rightHudUiPanel->enabled = true;
 }
 
-void m2::Level::DisableHud() {
+void Level::DisableHud() {
 	LOG_DEBUG("Disabling HUD");
 	_leftHudUiPanel->enabled = false;
 	_rightHudUiPanel->enabled = false;
 }
 
-void m2::Level::ShowMessage(const std::string& msg, const float timeoutS) {
+void Level::ShowMessage(const std::string& msg, const float timeoutS) {
 	if (_messageBoxUiPanel) {
 		auto* messageTextWidget = _messageBoxUiPanel->FindWidget<widget::Text>("MessageText");
 		if (not messageTextWidget) {
@@ -222,7 +271,7 @@ void m2::Level::ShowMessage(const std::string& msg, const float timeoutS) {
 		throw M2_ERROR("Attempt to display a message but MessageBox is not defined");
 	}
 }
-void m2::Level::HideMessage() {
+void Level::HideMessage() {
 	if (_messageBoxUiPanel) {
 		_messageBoxUiPanel->enabled = false;
 		_messageBoxUiPanel->ClearTimeout();
@@ -231,25 +280,25 @@ void m2::Level::HideMessage() {
 	}
 }
 
-void m2::Level::RemoveCustomNonblockingUiPanel(const std::list<UiPanel>::iterator it) {
+void Level::RemoveCustomNonblockingUiPanel(const std::list<UiPanel>::iterator it) {
 	TRACE_FN();
 	_customNonblockingUiPanels.erase(it);
 }
-void m2::Level::RemoveCustomNonblockingUiPanelDeferred(std::list<UiPanel>::iterator it) {
+void Level::RemoveCustomNonblockingUiPanelDeferred(std::list<UiPanel>::iterator it) {
 	TRACE_FN();
 	M2_DEFER(([this,it] { _customNonblockingUiPanels.erase(it); }));
 }
-void m2::Level::ShowSemiBlockingUiPanel(RectF position_ratio, std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> blueprint) {
+void Level::ShowSemiBlockingUiPanel(RectF position_ratio, std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> blueprint) {
 	_semiBlockingUiPanel.emplace(std::move(blueprint), position_ratio);
 }
-void m2::Level::DismissSemiBlockingUiPanel() {
+void Level::DismissSemiBlockingUiPanel() {
 	_semiBlockingUiPanel.reset();
 }
-void m2::Level::DismissSemiBlockingUiPanelDeferred() {
+void Level::DismissSemiBlockingUiPanelDeferred() {
 	M2_DEFER([this] { this->DismissSemiBlockingUiPanel(); });
 }
 
-m2::void_expected m2::Level::InitAnyPlayer(
+void_expected Level::InitAnyPlayer(
     const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name,
     bool physical_world, void (m2g::Proxy::*pre_level_init)(const std::string&, const pb::Level&),
     void (m2g::Proxy::*post_level_init)(const std::string&, const pb::Level&)) {
@@ -274,17 +323,20 @@ m2::void_expected m2::Level::InitAnyPlayer(
 	}
 
 	if (physical_world) {
-		world[I(ForegroundLayer::F0)] = new b2World(static_cast<b2Vec2>(M2G_PROXY.gravity));
-		world[I(ForegroundLayer::F1)] = new b2World(static_cast<b2Vec2>(M2G_PROXY.gravity));
+		world[I(PhysicsLayer::PM1)] = new b2World(static_cast<b2Vec2>(M2G_PROXY.gravity));
+		world[I(PhysicsLayer::P0)] = new b2World(static_cast<b2Vec2>(M2G_PROXY.gravity));
+		world[I(PhysicsLayer::P1)] = new b2World(static_cast<b2Vec2>(M2G_PROXY.gravity));
 		contactListener = new box2d::ContactListener(
 		    Physique::DefaultBeginContactCallback, Physique::DefaultEndContactCallback);
-		world[I(ForegroundLayer::F0)]->SetContactListener(contactListener);
-		world[I(ForegroundLayer::F1)]->SetContactListener(contactListener);
+		world[I(PhysicsLayer::PM1)]->SetContactListener(contactListener);
+		world[I(PhysicsLayer::P0)]->SetContactListener(contactListener);
+		world[I(PhysicsLayer::P1)]->SetContactListener(contactListener);
 #ifdef DEBUG
 		auto* debugDraw = new third_party::physics::box2d::DebugDraw{};
 		_debugDraw = debugDraw;
-		world[I(ForegroundLayer::F0)]->SetDebugDraw(debugDraw);
-		world[I(ForegroundLayer::F1)]->SetDebugDraw(debugDraw);
+		world[I(PhysicsLayer::PM1)]->SetDebugDraw(debugDraw);
+		world[I(PhysicsLayer::P0)]->SetDebugDraw(debugDraw);
+		world[I(PhysicsLayer::P1)]->SetDebugDraw(debugDraw);
 #endif
 	}
 
@@ -305,7 +357,7 @@ m2::void_expected m2::Level::InitAnyPlayer(
 					}
 
 					LOGF_TRACE("Creating tile from %d sprite at (%d,%d)...", sprite_type, x, y);
-					auto it = obj::create_tile(static_cast<BackgroundLayer>(l), VecF{x, y}, sprite_type);
+					auto it = obj::create_tile(static_cast<BackgroundDrawLayer>(l), VecF{x, y}, sprite_type);
 					M2G_PROXY.post_tile_create(*it, sprite_type);
 					LOG_TRACE("Created tile", it.GetId());
 				}
@@ -358,7 +410,7 @@ m2::void_expected m2::Level::InitAnyPlayer(
 	return {};
 }
 
-m2::VecI m2::Level::CalculateMouseHoverUiPanelTopLeftPosition() const {
+VecI Level::CalculateMouseHoverUiPanelTopLeftPosition() const {
 	// Check the height of the panel
 	const auto panelHeight = _mouseHoverUiPanel->Rect().h;
 	// Check if there's enough space below the mouse

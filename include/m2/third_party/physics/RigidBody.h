@@ -6,8 +6,6 @@
 #include <Sprite.pb.h>
 #include <variant>
 #include <vector>
-#include <cstdint>
-
 
 namespace m2::third_party::physics {
 	enum class RigidBodyType {
@@ -64,7 +62,7 @@ namespace m2::third_party::physics {
 		float friction{};
 		float restitution{};
 		float restitutionThresholdVelocity{};
-		float isSensor{};
+		bool isSensor{};
 		ColliderParams colliderFilter;
 	};
 
@@ -93,12 +91,12 @@ namespace m2::third_party::physics {
 
 	class RigidBody {
 		void* _ptr{};
-		ForegroundLayer _foregroundLayer;
+		PhysicsLayer _phyLayer;
 
-		RigidBody(void* ptr, const ForegroundLayer fl) : _ptr(ptr), _foregroundLayer(fl) {}
+		RigidBody(void* ptr, const PhysicsLayer pl) : _ptr(ptr), _phyLayer(pl) {}
 
 	public:
-		static RigidBody CreateFromDefinition(const RigidBodyDefinition&, Id physiqueId, const VecF& position, float angleInRads, ForegroundLayer fl = ForegroundLayer::F0);
+		static RigidBody CreateFromDefinition(const RigidBodyDefinition&, Id physiqueId, const VecF& position, float angleInRads, PhysicsLayer pl);
 		// Copy not allowed
 		RigidBody(const RigidBody& other) = delete;
 		RigidBody& operator=(const RigidBody& other) = delete;

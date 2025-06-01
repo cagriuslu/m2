@@ -107,8 +107,7 @@ int main(const int argc, char **argv) {
 		M2_GAME.ExecutePreDraw();
 		M2_GAME.UpdateHudContents();
 		M2_GAME.ClearBackBuffer();
-		M2_GAME.DrawBackground();
-		M2_GAME.DrawForeground();
+		M2_GAME.Draw();
 		M2_GAME.DrawLights();
 		M2_GAME.ExecutePostDraw();
 		M2_GAME.DebugDraw();

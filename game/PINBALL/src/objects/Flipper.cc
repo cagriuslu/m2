@@ -52,55 +52,55 @@ m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
 		.isBullet = true,
 		.initiallyEnabled = true
 	};
-	phy.body[I(m2::ForegroundLayer::F0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation);
+	phy.body[I(m2::PhysicsLayer::P0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::PhysicsLayer::P0);
 
-	MAYBE auto& gfx = obj.AddGraphic(rightFlipper ? m2g::pb::SPRITE_BASIC_FLIPPER_RIGHT : m2g::pb::SPRITE_BASIC_FLIPPER_LEFT);
+	MAYBE auto& gfx = obj.AddGraphic(m2::ForegroundDrawLayer::F0_BOTTOM, rightFlipper ? m2g::pb::SPRITE_BASIC_FLIPPER_RIGHT : m2g::pb::SPRITE_BASIC_FLIPPER_LEFT);
 
 	if (rightFlipper) {
 		phy.preStep = [flipper](m2::Physique& phy_) {
 			if (flipper->state == FlipperState::RESTING && M2_GAME.events.IsKeyDown(m2g::pb::RIGHT_FLIPPER)) {
-				phy_.body[I(m2::ForegroundLayer::F0)]->SetAngularVelocity(FLIPPER_SWEEP_UP_SPEED);
+				phy_.body[I(m2::PhysicsLayer::P0)]->SetAngularVelocity(FLIPPER_SWEEP_UP_SPEED);
 				flipper->state = FlipperState::GOING_UP;
 				M2_GAME.audio_manager->Play(&M2_GAME.songs[m2g::pb::SONG_FLIPPER_FLIP_UP_SOUND], m2::AudioManager::ONCE, 0.15f);
 			}
 			if (flipper->state == FlipperState::FULLY_UP && not M2_GAME.events.IsKeyDown(m2g::pb::RIGHT_FLIPPER)) {
-				phy_.body[I(m2::ForegroundLayer::F0)]->SetAngularVelocity(-FLIPPER_SWEEP_DOWN_SPEED);
+				phy_.body[I(m2::PhysicsLayer::P0)]->SetAngularVelocity(-FLIPPER_SWEEP_DOWN_SPEED);
 				flipper->state = FlipperState::GOING_DOWN;
 			}
 		};
 		phy.postStep = [flipper](m2::Physique& phy_) {
-			if (flipper->state == FlipperState::GOING_UP && m2::IsLess(MAX_FLIPPER_SWEEP_RADS, m2::AngleAbsoluteDifference(phy_.body[I(m2::ForegroundLayer::F0)]->GetAngle(), flipper->initialRotation), 0.001f)) {
-				phy_.body[I(m2::ForegroundLayer::F0)]->SetAngle(flipper->initialRotation + MAX_FLIPPER_SWEEP_RADS);
-				phy_.body[I(m2::ForegroundLayer::F0)]->SetAngularVelocity(0.0f);
+			if (flipper->state == FlipperState::GOING_UP && m2::IsLess(MAX_FLIPPER_SWEEP_RADS, m2::AngleAbsoluteDifference(phy_.body[I(m2::PhysicsLayer::P0)]->GetAngle(), flipper->initialRotation), 0.001f)) {
+				phy_.body[I(m2::PhysicsLayer::P0)]->SetAngle(flipper->initialRotation + MAX_FLIPPER_SWEEP_RADS);
+				phy_.body[I(m2::PhysicsLayer::P0)]->SetAngularVelocity(0.0f);
 				flipper->state = FlipperState::FULLY_UP;
 			}
-			if (flipper->state == FlipperState::GOING_DOWN && m2::IsNegative(m2::AngleDifference(phy_.body[I(m2::ForegroundLayer::F0)]->GetAngle(), flipper->initialRotation), 0.001f)) {
-				phy_.body[I(m2::ForegroundLayer::F0)]->SetAngle(flipper->initialRotation);
-				phy_.body[I(m2::ForegroundLayer::F0)]->SetAngularVelocity(0.0f);
+			if (flipper->state == FlipperState::GOING_DOWN && m2::IsNegative(m2::AngleDifference(phy_.body[I(m2::PhysicsLayer::P0)]->GetAngle(), flipper->initialRotation), 0.001f)) {
+				phy_.body[I(m2::PhysicsLayer::P0)]->SetAngle(flipper->initialRotation);
+				phy_.body[I(m2::PhysicsLayer::P0)]->SetAngularVelocity(0.0f);
 				flipper->state = FlipperState::RESTING;
 			}
 		};
 	} else {
 		phy.preStep = [flipper](m2::Physique& phy_) {
 			if (flipper->state == FlipperState::RESTING && M2_GAME.events.IsKeyDown(m2g::pb::LEFT_FLIPPER)) {
-				phy_.body[I(m2::ForegroundLayer::F0)]->SetAngularVelocity(-FLIPPER_SWEEP_UP_SPEED);
+				phy_.body[I(m2::PhysicsLayer::P0)]->SetAngularVelocity(-FLIPPER_SWEEP_UP_SPEED);
 				flipper->state = FlipperState::GOING_UP;
 				M2_GAME.audio_manager->Play(&M2_GAME.songs[m2g::pb::SONG_FLIPPER_FLIP_UP_SOUND], m2::AudioManager::ONCE, 0.15f);
 			}
 			if (flipper->state == FlipperState::FULLY_UP && not M2_GAME.events.IsKeyDown(m2g::pb::LEFT_FLIPPER)) {
-				phy_.body[I(m2::ForegroundLayer::F0)]->SetAngularVelocity(FLIPPER_SWEEP_DOWN_SPEED);
+				phy_.body[I(m2::PhysicsLayer::P0)]->SetAngularVelocity(FLIPPER_SWEEP_DOWN_SPEED);
 				flipper->state = FlipperState::GOING_DOWN;
 			}
 		};
 		phy.postStep = [flipper](m2::Physique& phy_) {
-			if (flipper->state == FlipperState::GOING_UP && m2::IsLess(MAX_FLIPPER_SWEEP_RADS, m2::AngleAbsoluteDifference(phy_.body[I(m2::ForegroundLayer::F0)]->GetAngle(), flipper->initialRotation), 0.001f)) {
-				phy_.body[I(m2::ForegroundLayer::F0)]->SetAngle(flipper->initialRotation - MAX_FLIPPER_SWEEP_RADS);
-				phy_.body[I(m2::ForegroundLayer::F0)]->SetAngularVelocity(0.0f);
+			if (flipper->state == FlipperState::GOING_UP && m2::IsLess(MAX_FLIPPER_SWEEP_RADS, m2::AngleAbsoluteDifference(phy_.body[I(m2::PhysicsLayer::P0)]->GetAngle(), flipper->initialRotation), 0.001f)) {
+				phy_.body[I(m2::PhysicsLayer::P0)]->SetAngle(flipper->initialRotation - MAX_FLIPPER_SWEEP_RADS);
+				phy_.body[I(m2::PhysicsLayer::P0)]->SetAngularVelocity(0.0f);
 				flipper->state = FlipperState::FULLY_UP;
 			}
-			if (flipper->state == FlipperState::GOING_DOWN && m2::IsNegative(m2::AngleDifference(flipper->initialRotation, phy_.body[I(m2::ForegroundLayer::F0)]->GetAngle()), 0.001f)) {
-				phy_.body[I(m2::ForegroundLayer::F0)]->SetAngle(flipper->initialRotation);
-				phy_.body[I(m2::ForegroundLayer::F0)]->SetAngularVelocity(0.0f);
+			if (flipper->state == FlipperState::GOING_DOWN && m2::IsNegative(m2::AngleDifference(flipper->initialRotation, phy_.body[I(m2::PhysicsLayer::P0)]->GetAngle()), 0.001f)) {
+				phy_.body[I(m2::PhysicsLayer::P0)]->SetAngle(flipper->initialRotation);
+				phy_.body[I(m2::PhysicsLayer::P0)]->SetAngularVelocity(0.0f);
 				flipper->state = FlipperState::RESTING;
 			}
 		};

@@ -60,14 +60,14 @@ namespace m2 {
 		// is using that component is created/destroyed very rapidly.
 		Pool<Object> objects;
 		std::map<GroupIdentifier, std::unique_ptr<Group>, GroupIdentifier::Less> groups;
-		std::array<DrawList, gForegroundLayerCount> drawList;
-		Pool<Physique> physics;
+		std::array<Pool<Graphic>, gBackgroundDrawLayerCount> bgGraphics;
 		Pool<Graphic> fgGraphics;
-		std::array<Pool<Graphic>, gBackgroundLayerCount> bgGraphics;
+		std::array<DrawList, gForegroundDrawLayerCount> fgDrawLists;
+		Pool<Physique> physics;
 		Pool<Light> lights;
 		Pool<SoundEmitter> soundEmitters;
 		Pool<CharacterVariant> characters;
-		std::array<b2World*, gForegroundLayerCount> world{};
+		std::array<b2World*, gPhysicsLayerCount> world{};
 		World world2;
 		box2d::ContactListener* contactListener{};
 		Id cameraId{}, playerId{}, pointer_id{};
@@ -98,6 +98,12 @@ namespace m2 {
 		std::optional<std::filesystem::path> Path() const { return _lbPath; }
 		std::optional<pb::Level> LevelBlueprint() const { return _lb; }
 		const std::string& Name() const { return _name; }
+		/// Returns the drawable layer that a graphics component belongs to.
+		DrawLayer GetDrawLayer(GraphicId);
+		/// Returns the pool (and optionally, the draw list) that a graphics component belongs to.
+		std::pair<Pool<Graphic>&, DrawList*> GetGraphicPoolAndDrawList(GraphicId);
+		/// Returns the pool (and optionally, the draw list) corresponding to a drawable layer.
+		std::pair<Pool<Graphic>&, DrawList*> GetGraphicPoolAndDrawList(DrawLayer);
 		World& World2() { return world2; }
 		/// Inclusive rectangle that contains all terrain graphics inside. The unit is meters.
 		[[nodiscard]] const RectI& BackgroundBoundary() const { return _backgroundBoundary; }
