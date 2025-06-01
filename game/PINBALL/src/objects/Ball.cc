@@ -52,5 +52,7 @@ m2::void_expected LoadBall(m2::Object& obj) {
 		}
 	};
 
+	M2G_PROXY.ballId = obj.GetId();
+
 	return {};
 }

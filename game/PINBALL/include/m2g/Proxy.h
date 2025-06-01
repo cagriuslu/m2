@@ -50,7 +50,7 @@ namespace m2g {
 		// Custom properties
 
 		bool isOnBallLauncher{};
-		m2::ObjectId leftLauncherColumnDoorId{};
+		m2::ObjectId ballId{}, leftLauncherColumnDoorId{};
 
 		// Accessors
 

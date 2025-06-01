@@ -61,6 +61,8 @@ m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
 			if (flipper->state == FlipperState::RESTING && M2_GAME.events.IsKeyDown(m2g::pb::RIGHT_FLIPPER)) {
 				phy_.body[I(m2::PhysicsLayer::P0)]->SetAngularVelocity(FLIPPER_SWEEP_UP_SPEED);
 				flipper->state = FlipperState::GOING_UP;
+				// Nudge the ball ever so sligthly to the opposite direction
+				M2_LEVEL.objects[M2G_PROXY.ballId].GetPhysique().body[I(m2::PhysicsLayer::P0)]->ApplyForceToCenter({-40.0f, 0.0f});
 				M2_GAME.audio_manager->Play(&M2_GAME.songs[m2g::pb::SONG_FLIPPER_FLIP_UP_SOUND], m2::AudioManager::ONCE, 0.15f);
 			}
 			if (flipper->state == FlipperState::FULLY_UP && not M2_GAME.events.IsKeyDown(m2g::pb::RIGHT_FLIPPER)) {
@@ -68,6 +70,7 @@ m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
 				flipper->state = FlipperState::GOING_DOWN;
 			}
 		};
+		// Lock to up or down position
 		phy.postStep = [flipper](m2::Physique& phy_) {
 			if (flipper->state == FlipperState::GOING_UP && m2::IsLess(MAX_FLIPPER_SWEEP_RADS, m2::AngleAbsoluteDifference(phy_.body[I(m2::PhysicsLayer::P0)]->GetAngle(), flipper->initialRotation), 0.001f)) {
 				phy_.body[I(m2::PhysicsLayer::P0)]->SetAngle(flipper->initialRotation + MAX_FLIPPER_SWEEP_RADS);
@@ -85,6 +88,8 @@ m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
 			if (flipper->state == FlipperState::RESTING && M2_GAME.events.IsKeyDown(m2g::pb::LEFT_FLIPPER)) {
 				phy_.body[I(m2::PhysicsLayer::P0)]->SetAngularVelocity(-FLIPPER_SWEEP_UP_SPEED);
 				flipper->state = FlipperState::GOING_UP;
+				// Nudge the ball ever so sligthly to the opposite direction
+				M2_LEVEL.objects[M2G_PROXY.ballId].GetPhysique().body[I(m2::PhysicsLayer::P0)]->ApplyForceToCenter({40.0f, 0.0f});
 				M2_GAME.audio_manager->Play(&M2_GAME.songs[m2g::pb::SONG_FLIPPER_FLIP_UP_SOUND], m2::AudioManager::ONCE, 0.15f);
 			}
 			if (flipper->state == FlipperState::FULLY_UP && not M2_GAME.events.IsKeyDown(m2g::pb::LEFT_FLIPPER)) {
@@ -92,6 +97,7 @@ m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
 				flipper->state = FlipperState::GOING_DOWN;
 			}
 		};
+		// Lock to up or down position
 		phy.postStep = [flipper](m2::Physique& phy_) {
 			if (flipper->state == FlipperState::GOING_UP && m2::IsLess(MAX_FLIPPER_SWEEP_RADS, m2::AngleAbsoluteDifference(phy_.body[I(m2::PhysicsLayer::P0)]->GetAngle(), flipper->initialRotation), 0.001f)) {
 				phy_.body[I(m2::PhysicsLayer::P0)]->SetAngle(flipper->initialRotation - MAX_FLIPPER_SWEEP_RADS);
