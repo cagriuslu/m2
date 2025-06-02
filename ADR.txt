@@ -1,4 +1,0 @@
-# Error management
-- If the error is commonly occurring, use Value
-- If the error is developer facing, rarely happens, (it is an exceptional case) use exception
-- Don't use error codes
