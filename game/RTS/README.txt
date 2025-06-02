@@ -1,1 +1,0 @@
-This game is meant to demonstrate a multiplayer action RTS game that plays like Age of Empires.

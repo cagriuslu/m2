@@ -1,1 +1,0 @@
-This game is meant to demonstrate a single player JRPG game that plays like Pokemon.

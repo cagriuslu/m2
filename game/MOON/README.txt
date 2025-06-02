@@ -1,1 +1,0 @@
-This game is meant to demonstrate a single player space exploration game that plays like Kerbal Space Program.
