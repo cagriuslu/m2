@@ -47,7 +47,7 @@ std::string m2::Fixed::ToString() const {
 		buffer[seek++] = '+';
 	}
 
-	// First, print the integer part. The sign is also printed here.
+	// First, print the integer part
 	auto integer_part =
 		(_value == static_cast<int>(0x80000000))
 		? (1 << (SIGNIFICANT - 1)) // Special case where the negative number doesn't fit into SIGNIFICANT number of bits

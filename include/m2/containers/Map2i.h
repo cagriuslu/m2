@@ -26,8 +26,8 @@ namespace m2 {
 		std::pair<T&,Map2iID> Allocate(const VecI& pos) {
 			auto it = Pool<Map2iItem<T>,Capacity>::Emplace();
 			it->pos = pos;
-			_map.insert({pos.x, {pos.y, it.Id()}});
-			return {it->obj, it.Id()};
+			_map.insert({pos.x, {pos.y, it.GetId()}});
+			return {it->obj, it.GetId()};
 		}
 		using Pool<Map2iItem<T>,Capacity>::Free;
 		using Pool<Map2iItem<T>,Capacity>::Clear;

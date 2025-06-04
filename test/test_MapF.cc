@@ -149,7 +149,7 @@ TEST(MapF, for_each_containing) {
 
 	// In-object search
 	bool test_failed4 = false;
-	auto count4 = m.ForEachContaining({-0.25f, -0.25f, 0.2f, 0.2f}, [=, &test_failed4]([[maybe_unused]] const m2::RectF& r, m2::Id id, int& value) -> bool {
+	auto count4 = m.ForEachContaining({-0.25f, -0.25f, 0.2f, 0.2f}, [=, &test_failed4]([[maybe_unused]] const m2::RectF& r, m2::Id, int&) -> bool {
 		test_failed4 = true;
 		return true;
 	});

@@ -1,5 +1,6 @@
 #pragma once
 #include <m2/math/Rational.h>
+#include <Synth.pb.h>
 #include <cstdint>
 
 namespace m2::audio::synthesizer {

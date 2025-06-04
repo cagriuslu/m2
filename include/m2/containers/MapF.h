@@ -91,7 +91,7 @@ namespace m2 {
 			// Modifiers
 			std::deque<MapContainerItemF>* Insert(MapContainerItemF&& item) {
 				// Check if the item can be wholly contained in a children, and the children is created
-				for (size_t i = 0; i < _children.Size(); ++i) {
+				for (size_t i = 0; i < _children.size(); ++i) {
 					if (auto& [child_area, child] = _children[i]; child_area.contains(item.area, _tolerance)) {
 						// Item can be wholly contained in the child
 						if (child) {
@@ -132,7 +132,7 @@ namespace m2 {
 				}
 				for (auto item_it = _items.begin(); item_it != _items.end(); ) {
 					bool child_can_contain = false;
-					for (size_t i = 0; i < _children.Size(); ++i) {
+					for (size_t i = 0; i < _children.size(); ++i) {
 						if (auto& [child_area, child] = _children[i]; child_area.contains(item_it->area, _tolerance)) {
 							// Item can be wholly contained in the child
 							child_can_contain = true;
@@ -227,7 +227,7 @@ namespace m2 {
 		uint64_t ForEach(const std::function<bool(const RectF&,Id,T&)>& op) {
 			uint64_t count = 0;
 			for (auto it = Pool<detail::MapPoolItemF<T>,Capacity>::begin(); it != Pool<detail::MapPoolItemF<T>,Capacity>::end(); ++it) {
-				if (op(it->area, it.Id(), it->t)) {
+				if (op(it->area, it.GetId(), it->t)) {
 					++count;
 				} else {
 					return count;
@@ -275,20 +275,20 @@ namespace m2 {
 			// Point back-pointer to the correct container
 			if (_rootQuadrant.Area().contains(area, _tolerance)) {
 				// Object fits inside the managed area, insert to one of the quadrants
-				pool_it->container = _rootQuadrant.Insert({area, pool_it.Id()});
+				pool_it->container = _rootQuadrant.Insert({area, pool_it.GetId()});
 			} else {
 				// Object doesn't fit inside the managed area, insert to _foreign_items
-				_foreignItems.emplace_back(area, pool_it.Id());
+				_foreignItems.emplace_back(area, pool_it.GetId());
 				pool_it->container = &_foreignItems;
 			}
-			return {pool_it->t, pool_it.Id()};
+			return {pool_it->t, pool_it.GetId()};
 		}
 		void Erase(Id id) {
 			// Erase from container
 			auto* container = Pool<detail::MapPoolItemF<T>,Capacity>::Get(id)->container;
 			for (auto it = container->begin(); it != container->end(); ++it) {
 				if (it->id == id) {
-					container->Erase(it);
+					container->erase(it);
 					Pool<detail::MapPoolItemF<T>,Capacity>::Free(id);
 					return;
 				}
@@ -302,7 +302,7 @@ namespace m2 {
 			auto* container = pool_item->container;
 			for (auto it = container->begin(); it != container->end(); ++it) {
 				if (it->id == id) {
-					container->Erase(it); // TODO erase_if
+					container->erase(it); // TODO erase_if
 					break;
 				}
 			}

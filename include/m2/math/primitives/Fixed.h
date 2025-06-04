@@ -52,9 +52,9 @@ namespace m2 {
 		[[nodiscard]] bool IsZero() const { return _value == 0; }
 		[[nodiscard]] bool IsPositive() const { return not IsZero() && not IsNegative(); }
 		[[nodiscard]] bool IsNegative() const { return _value & 0x80000000; }
-		// Check if the given number is equal enough to this number. Tolerance is assumed to be positive.
-		// Fixed point numbers should not have an equality conversion problem, but this functions is provided to be API
-		// compatible with Float.
+		/// Check if the given number is equal enough to this number. Tolerance is assumed to be positive.
+		/// Fixed point numbers should not have an equality conversion problem, but this functions is provided to be API
+		/// compatible with Float.
 		[[nodiscard]] bool IsEqual(const Fixed& other, const Fixed& tolerance) const { return (*this - other).AbsoluteValue() <= tolerance; }
 		/// The result is an approximation because the fractional part of the number will be thrown away
 		[[nodiscard]] int32_t ToInteger() const { return _value >> PRECISION; }

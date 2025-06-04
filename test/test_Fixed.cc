@@ -4,7 +4,7 @@
 
 using namespace m2;
 
-TEST(Fixed, constructor) {
+TEST(Fixed, constructors) {
 	EXPECT_EQ(Fixed{}.ToRawValue(), 0b0);
 	EXPECT_EQ(Fixed{1}.ToRawValue(), 0b00000000'00000000'01000000'00000000);
 	EXPECT_EQ(Fixed{-1}.ToRawValue(), 0b11111111'11111111'11000000'00000000);
@@ -33,6 +33,26 @@ TEST(Fixed, constructor) {
 	// Number bigger than this cannot be represented by double accurately
 	EXPECT_NO_THROW(Fixed{131071.99993896}); // This is the highest number that can be represented
 	EXPECT_NO_THROW(Fixed{-131072.0}); // This is the lowest number that can be represented
+}
+
+TEST(Fixed, operators) {
+	EXPECT_EQ((Fixed{1.5} + Fixed{3.75}).ToString(), "+000005.25000000");
+	EXPECT_EQ((Fixed{1.5} + Fixed{3.75}), Fixed{5.25});
+
+	EXPECT_EQ((Fixed{3.75} - Fixed{1.5}).ToString(), "+000002.25000000");
+	EXPECT_EQ((Fixed{3.75} - Fixed{1.5}), Fixed{2.25});
+
+	std::cout << Fixed{1.2515}.ToString() << std::endl; // Closest number is 1.25152588
+	std::cout << Fixed{2.6362}.ToString() << std::endl; // Closest number is 2.63623046
+	std::cout << Fixed{3.2993106463}.ToString() << std::endl; // Multiplication of the closest numbers
+	std::cout << (Fixed{1.2515} * Fixed{2.6362}).ToString() << std::endl; // Expectation: 3.2992043
+	EXPECT_EQ((Fixed{1.2515} * Fixed{2.6362}).ToString(), "+000003.29925537"); // Close enough
+
+	std::cout << Fixed{10.1946}.ToString() << std::endl; // Closest number is 10.19458007
+	std::cout << Fixed{70.8069}.ToString() << std::endl; // Closest number is 70.80688476
+	std::cout << Fixed{721.8464561931}.ToString() << std::endl; // Multiplication of the closest numbers
+	std::cout << (Fixed{10.1946} * Fixed{70.8069}).ToString() << std::endl; // Expectation: 721.84802274
+	EXPECT_EQ((Fixed{10.1946} * Fixed{70.8069}).ToString(), "+000721.84643554"); // Close enough
 }
 
 TEST(Fixed, attributes) {
@@ -106,27 +126,7 @@ TEST(Fixed, accessors) {
 	// Fastest string is less accurate
 	EXPECT_EQ((Fixed{std::in_place, 0x00000001}.ToFastestString()), "+000000.00006104");
 	EXPECT_EQ((Fixed{-0.00006104}.ToFastestString()), "-000000.00006104");
-	// EXPECT_EQ((Fixed{std::in_place, 0x7FFFFFFF}.ToFastestString()), "+131071.99993896");
+	EXPECT_EQ((Fixed{std::in_place, 0x7FFFFFFF}.ToFastestString()), "+131072.00000000");
 	EXPECT_EQ((Fixed{std::in_place, static_cast<int>(0x80000000)}.ToFastestString()), "-131072.00000000");
-	// EXPECT_EQ((Fixed{std::in_place, static_cast<int>(0x80000001)}.ToFastestString()), "-131071.99993896");
-}
-
-TEST(Fixed, modifiers) {
-	EXPECT_EQ((Fixed{1.5} + Fixed{3.75}).ToString(), "+000005.25000000");
-	EXPECT_EQ((Fixed{1.5} + Fixed{3.75}), Fixed{5.25});
-
-	EXPECT_EQ((Fixed{3.75} - Fixed{1.5}).ToString(), "+000002.25000000");
-	EXPECT_EQ((Fixed{3.75} - Fixed{1.5}), Fixed{2.25});
-
-	std::cout << Fixed{1.2515}.ToString() << std::endl; // Closest number is 1.25152588
-	std::cout << Fixed{2.6362}.ToString() << std::endl; // Closest number is 2.63623046
-	std::cout << Fixed{3.2993106463}.ToString() << std::endl; // Multiplication of the closest numbers
-	std::cout << (Fixed{1.2515} * Fixed{2.6362}).ToString() << std::endl; // Expectation: 3.2992043
-	EXPECT_EQ((Fixed{1.2515} * Fixed{2.6362}).ToString(), "+000003.29925537"); // Close enough
-
-	std::cout << Fixed{10.1946}.ToString() << std::endl; // Closest number is 10.19458007
-	std::cout << Fixed{70.8069}.ToString() << std::endl; // Closest number is 70.80688476
-	std::cout << Fixed{721.8464561931}.ToString() << std::endl; // Multiplication of the closest numbers
-	std::cout << (Fixed{10.1946} * Fixed{70.8069}).ToString() << std::endl; // Expectation: 721.84802274
-	EXPECT_EQ((Fixed{10.1946} * Fixed{70.8069}).ToString(), "+000721.84643554"); // Close enough
+	EXPECT_EQ((Fixed{std::in_place, static_cast<int>(0x80000001)}.ToFastestString()), "-131072.00000000");
 }
