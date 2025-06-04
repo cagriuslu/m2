@@ -18,24 +18,24 @@
     },
     {
       "position": {
-        "x": 10.75,
-        "y": 3.5
+        "x": 6.5,
+        "y": 6
       },
       "type": "CIRCULAR_BUMPER",
       "group": {}
     },
     {
       "position": {
-        "x": 13.21875,
-        "y": 4.125
+        "x": 9.5,
+        "y": 6
       },
       "type": "CIRCULAR_BUMPER",
       "group": {}
     },
     {
       "position": {
-        "x": 11.1875,
-        "y": 6.21875
+        "x": 8,
+        "y": 8
       },
       "type": "CIRCULAR_BUMPER",
       "group": {}
@@ -54,14 +54,6 @@
         "y": 13.5
       },
       "type": "WALLS",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 8,
-        "y": 13.5
-      },
-      "type": "PLATFORM",
       "group": {}
     },
     {
