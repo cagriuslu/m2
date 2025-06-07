@@ -9,26 +9,8 @@
         "bpm": 480,
         "tracks": [
           {
-            "shape": "SAWTOOTH",
-            "volume": 1.0,
-            "notes": [
-              {
-                "startBeat": {
-                  "n": 0,
-                  "d": 1
-                },
-                "duration": {
-                  "n": 1,
-                  "d": 2
-                },
-                "frequency": 60,
-                "volume": 1.0
-              }
-            ]
-          },
-          {
             "shape": "SINE",
-            "volume": 1.0,
+            "volume": 0.7,
             "notes": [
               {
                 "startBeat": {
@@ -37,9 +19,9 @@
                 },
                 "duration": {
                   "n": 1,
-                  "d": 2
+                  "d": 4
                 },
-                "frequency": 60,
+                "frequency": 112,
                 "volume": 1.0
               }
             ]
@@ -57,7 +39,6 @@
                   "n": 1,
                   "d": 16
                 },
-                "frequency": 60,
                 "volume": 1.0
               }
             ]

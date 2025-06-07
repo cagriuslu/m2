@@ -1689,6 +1689,7 @@
               "w": 32,
               "h": 32
             },
+            "overridePpm": 28,
             "fixtures": [
               {
                 "circle": {
