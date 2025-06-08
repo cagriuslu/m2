@@ -44,6 +44,7 @@ m2::void_expected LoadBall(m2::Object& obj) {
 			} else if (phy_.body[m2::I(m2::PhysicsLayer::P1)]->IsEnabled()) {
 				phy_.body[m2::I(m2::PhysicsLayer::P1)]->ApplyForceToCenter({0.0f, -7500.0f});
 			}
+			// M2_GAME.audio_manager->Play(&M2_GAME.songs[m2g::pb::SONG_CIRCULAR_BUMPER_SOUND], m2::AudioManager::ONCE, 0.25f);
 		}
 		if (M2_GAME.events.PopKeyPress(m2g::pb::RETURN)) {
 			phy_.body[m2::I(m2::PhysicsLayer::P0)]->SetPosition(initialPos);

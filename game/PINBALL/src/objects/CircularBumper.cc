@@ -32,6 +32,7 @@ m2::void_expected LoadCircularBumperSensor(m2::Object& obj) {
 		auto* ballPhy = &ball;
 		M2_DEFER(([contactNormal, ballPhy]() {
 			ballPhy->body[I(m2::PhysicsLayer::P0)]->ApplyForceToCenter(contactNormal * 6000.0f);
+			M2_GAME.audio_manager->Play(&M2_GAME.songs[m2g::pb::SONG_CIRCULAR_BUMPER_SOUND], m2::AudioManager::ONCE, 0.25f);
 		}));
 	};
 

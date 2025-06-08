@@ -9,6 +9,7 @@
         "bpm": 480,
         "tracks": [
           {
+            "comment": "Bass",
             "shape": "SINE",
             "volume": 0.7,
             "notes": [
@@ -27,6 +28,7 @@
             ]
           },
           {
+            "comment": "Impact",
             "shape": "NOISE",
             "volume": 1.0,
             "notes": [
@@ -48,6 +50,126 @@
     },
     {
       "type": "SONG_FLIPPER_FLIP_DOWN_SOUND"
+    },
+    {
+      "type": "SONG_CIRCULAR_BUMPER_SOUND",
+      "synthSong": {
+        "bpm": 60,
+        "tracks": [
+          {
+            "comment": "Bell",
+            "shape": "SINE",
+            "volume": 0.8,
+            "amplitudeEnvelope": {
+              "attackDuration": {"n": 1, "d": 128},
+              "decayDuration": {"n": 1, "d": 128},
+              "sustainVolume": 0.7,
+              "releaseDuration": {"n": 5, "d": 16}
+            },
+            "notes": [
+              {
+                "startBeat": {"n": 0, "d": 1},
+                "duration": {"n": 1, "d": 8},
+                "frequency": 415,
+                "volume": 1.0
+              }
+            ]
+          },
+          {
+            "comment": "BellHarmonic1",
+            "shape": "SINE",
+            "volume": 0.1,
+            "amplitudeEnvelope": {
+              "attackDuration": {"n": 1, "d": 128},
+              "decayDuration": {"n": 1, "d": 128},
+              "sustainVolume": 0.8,
+              "releaseDuration": {"n": 5, "d": 16}
+            },
+            "notes": [
+              {
+                "startBeat": {"n": 0, "d": 1},
+                "duration": {"n": 1, "d": 8},
+                "frequency": 830,
+                "volume": 1.0
+              }
+            ]
+          },
+          {
+            "comment": "BellHarmonic2",
+            "shape": "SINE",
+            "volume": 0.02,
+            "amplitudeEnvelope": {
+              "attackDuration": {"n": 1, "d": 128},
+              "decayDuration": {"n": 1, "d": 128},
+              "sustainVolume": 0.8,
+              "releaseDuration": {"n": 2, "d": 16}
+            },
+            "notes": [
+              {
+                "startBeat": {"n": 0, "d": 1},
+                "duration": {"n": 1, "d": 8},
+                "frequency": 1660,
+                "volume": 1.0
+              }
+            ]
+          },
+          {
+            "comment": "BellImpact",
+            "shape": "SAWTOOTH",
+            "volume": 0.5,
+            "notes": [
+              {
+                "startBeat": {"n": 0, "d": 1},
+                "duration": {"n": 2, "d": 128},
+                "frequency": 200,
+                "volume": 1.0
+              },
+              {
+                "startBeat": {"n": 1, "d": 8},
+                "duration": {"n": 2, "d": 128},
+                "frequency": 200,
+                "volume": 0.0
+              }
+            ]
+          },
+          {
+            "comment": "Bass",
+            "shape": "SINE",
+            "volume": 0.4,
+            "notes": [
+              {
+                "startBeat": {"n": 0, "d": 1},
+                "duration": {"n": 1, "d": 16},
+                "frequency": 124,
+                "volume": 1.0
+              },
+              {
+                "startBeat": {"n": 1, "d": 8},
+                "duration": {"n": 1, "d": 16},
+                "frequency": 124,
+                "volume": 0.4
+              }
+            ]
+          },
+          {
+            "comment": "Impact",
+            "shape": "NOISE",
+            "volume": 0.4,
+            "notes": [
+              {
+                "startBeat": {"n": 0, "d": 1},
+                "duration": {"n": 1, "d": 128},
+                "volume": 1.0
+              },
+              {
+                "startBeat": {"n": 1, "d": 8},
+                "duration": {"n": 1, "d": 128},
+                "volume": 0.6
+              }
+            ]
+          }
+        ]
+      }
     }
   ]
 }
