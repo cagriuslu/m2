@@ -9,19 +9,30 @@
         "bpm": 480,
         "tracks": [
           {
-            "comment": "Bass",
-            "shape": "SINE",
-            "volume": 0.7,
+            "comment": "Selonoid",
+            "shape": "SAWTOOTH",
+            "volume": 0.2,
+            "amplitudeEnvelope": {
+              "sustainVolume": 1.0,
+              "releaseDuration": {"n": 1, "d": 1}
+            },
             "notes": [
               {
-                "startBeat": {
-                  "n": 0,
-                  "d": 1
-                },
-                "duration": {
-                  "n": 1,
-                  "d": 4
-                },
+                "startBeat": {"n": 0, "d": 1},
+                "duration": {"n": 1, "d": 16},
+                "frequency": 70,
+                "volume": 1.0
+              }
+            ]
+          },
+          {
+            "comment": "Bass",
+            "shape": "SINE",
+            "volume": 1.0,
+            "notes": [
+              {
+                "startBeat": {"n": 0, "d": 1},
+                "duration": {"n": 1, "d": 4},
                 "frequency": 112,
                 "volume": 1.0
               }
@@ -33,14 +44,8 @@
             "volume": 1.0,
             "notes": [
               {
-                "startBeat": {
-                  "n": 0,
-                  "d": 1
-                },
-                "duration": {
-                  "n": 1,
-                  "d": 16
-                },
+                "startBeat": {"n": 0, "d": 1},
+                "duration": {"n": 1, "d": 16},
                 "volume": 1.0
               }
             ]
