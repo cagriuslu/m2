@@ -9,15 +9,19 @@ namespace m2::audio::synthesizer {
 	using BeatsPerMinute = uint32_t;
 	using SampleType = float;
 
+	/// This struct is used by AudioManager for reinterpret cast the sample array. Do not modify the ordering and the
+	/// packing of the struct.
 	struct AudioSample {
 		SampleType l{}, r{};
 
-		void MutableMix(const SampleType l_, const SampleType r_) { l += l_; r += r_; }
+		AudioSample operator+(const AudioSample& rhs) const;
+		AudioSample& operator+=(const AudioSample& rhs);
 	};
 
-	/// Returns the number of samples for the given number of beats for a given BPM
-	/// Integer division is used internally, thus rounding occurs towards down
+	/// Returns the number of samples for the given number of beats for a given BPM.
+	/// Internally, integer division is used, thus rounding occurs towards down.
 	size_t NoteSampleCount(const pb::Rational& beats, BeatsPerMinute bpm, unsigned sample_rate);
+	size_t NoteSampleCount(const Rational& beats, BeatsPerMinute bpm, unsigned sample_rate);
 
 	/// Returns the number of beats in the track
 	Rational TrackBeatCount(const pb::SynthTrack& track);

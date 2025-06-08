@@ -18,12 +18,20 @@ message SynthNote {
     float volume = 4;        // [0, 1]
 }
 
+message Envelope {
+    Rational attack_duration = 1;  // in beats
+    Rational decay_duration = 2;   // in beats
+    float sustain_volume = 3; // [0,1] multiplied with the volume of the note
+    Rational release_duration = 4; // in beats
+}
+
 message SynthTrack {
     string comment = 1;
     SoundWaveShape shape = 2;
     float volume = 3;  // [0,1]
     float balance = 4; // [-1,1] left to right
-    repeated SynthNote notes = 5;
+    Envelope amplitude_envelope = 5; // applied to every note
+    repeated SynthNote notes = 6;
 }
 
 message SynthSong {

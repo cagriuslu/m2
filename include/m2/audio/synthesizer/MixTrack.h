@@ -7,11 +7,13 @@
 #include <type_traits>
 
 namespace m2::audio::synthesizer {
-	template <typename ForwardIterator, unsigned SampleRate = 48000>
-	void MixTrack(ForwardIterator first, ForwardIterator last, const pb::SynthTrack& track, const BeatsPerMinute bpm) {
+	template <typename SampleIterator, unsigned SampleRate = 48000>
+	void MixTrack(const SampleIterator first, const SampleIterator last, const pb::SynthTrack& track, const BeatsPerMinute bpm) {
 		if (bpm == 0 || 10000 < bpm) {
 			throw M2_ERROR("BPM out-of-bounds");
 		}
+
+		std::optional<pb::Envelope> amplitudeEnv = track.has_amplitude_envelope() ? track.amplitude_envelope() : std::optional<pb::Envelope>{};
 
 		for (const auto& note : track.notes()) {
 			if (to_float(note.start_beat()) < 0.0f) {
@@ -21,13 +23,15 @@ namespace m2::audio::synthesizer {
 				throw M2_ERROR("Duration out-of-bounds");
 			}
 
-			const auto noteFirst = first + NoteSampleCount(note.start_beat(), bpm, SampleRate);
-			const auto noteLength = NoteSampleCount(note.duration(), bpm, SampleRate); // in samples
-			const auto bufferLength = static_cast<size_t>(last - noteFirst); // samples left in buffer
-			const auto noteLast = noteFirst + std::min(noteLength, bufferLength);
+			// Calculate how much space is left in the buffer
+			const auto noteFirstIt = first + NoteSampleCount(note.start_beat(), bpm, SampleRate);
+			const auto noteLength = NoteSampleCount(note.duration(), bpm, SampleRate)
+				+ NoteSampleCount(track.amplitude_envelope().release_duration(), bpm, SampleRate); // in samples
+			const auto bufferLength = static_cast<size_t>(last - noteFirstIt); // samples left in buffer
+			const auto noteLastIt = noteFirstIt + std::min(noteLength, bufferLength);
 
-			MixNote<ForwardIterator,SampleRate>(noteFirst, noteLast, track.shape(), note.frequency(), note.volume(), track.volume(), track.balance());
-			if (noteLast == last) {
+			MixNote<SampleIterator,SampleRate>(noteFirstIt, noteLastIt, bpm, track.shape(), track.volume(), track.balance(), amplitudeEnv, note);
+			if (noteLastIt == last) {
 				break;
 			}
 		}

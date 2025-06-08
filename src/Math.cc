@@ -141,3 +141,7 @@ float m2::Normalize(const float value, const float min, const float max) {
 	const auto unit = max - min;
 	return distanceToOrigin / unit;
 }
+
+float m2::Lerp(const float from, const float to, const float ratio) {
+	return from + (to - from) * ratio;
+}

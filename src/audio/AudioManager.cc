@@ -90,7 +90,7 @@ void m2::AudioManager::AudioCallback(MAYBE void* user_data, uint8_t* stream, int
 				const auto& playback_sample = *it;
 				auto l_playback_sample = playback_sample.l * playback->volume * playback->leftVolume;
 				auto r_playback_sample = playback_sample.r * playback->volume * playback->rightVolume;
-				out_stream[it - begin].MutableMix(l_playback_sample, r_playback_sample);
+				out_stream[it - begin] += audio::synthesizer::AudioSample(l_playback_sample, r_playback_sample);
 			}
 		}
 

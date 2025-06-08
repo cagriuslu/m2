@@ -7,7 +7,7 @@ namespace m2 {
 
 	public:
 		constexpr Rational() = default;
-		constexpr Rational(int64_t n, int64_t d) : _n(n), _d(d) {}
+		constexpr Rational(const int64_t n, const int64_t d) : _n(n), _d(d) {}
 		explicit Rational(const pb::Rational& r);
 		explicit Rational(double d);
 
@@ -17,6 +17,7 @@ namespace m2 {
 		Rational operator*(int64_t rhs) const;
 		Rational operator/(const Rational& rhs) const;
 		Rational operator/(int64_t rhs) const;
+		explicit operator bool() const { return _n; }
 
 		[[nodiscard]] Rational simplify() const;
 		[[nodiscard]] Rational mod(const Rational& other) const;

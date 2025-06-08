@@ -60,6 +60,8 @@ namespace m2 {
 	/// returned. For example, if the value is min+2*max, 2.0 is returned. If the value is min-max, -1.0 is returned.
 	float Normalize(float value, float min, float max);
 
+	float Lerp(float from, float to, float ratio);
+
 	template <typename T> T AtLeastZero(T value) { if (value < T{}) { return T{}; } return value; }
 	template <typename T> T AtMostZero(T value) { if (T{} < value) { return T{}; } return value; }
 }
