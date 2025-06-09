@@ -1,0 +1,2 @@
+This directory contains the default alternatives for proto files expected from the game implementation.
+If a file isn't provided by the game implementation, a corresponding file from this directory is used.
