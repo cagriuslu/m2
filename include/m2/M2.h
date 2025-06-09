@@ -1,5 +1,6 @@
 #pragma once
 #include "Meta.h"
+#include <array>
 
 #define MAYBE [[maybe_unused]] // TODO get rid of this
 #define IF(cond) if (cond) cond // TODO make this a function
