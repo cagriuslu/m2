@@ -17,19 +17,19 @@ namespace m2 {
 
 		// Accessors
 
-		[[nodiscard]] const VecF& Parallel() const { return _parallel; }
-		[[nodiscard]] VecF PerpendicularParallel() const { return {-_parallel.y, _parallel.x}; }
-		[[nodiscard]] float Slope() const { return _parallel.y / _parallel.x; }
-		[[nodiscard]] float XIntersect() const;
-		[[nodiscard]] float YIntersect() const;
-		[[nodiscard]] std::optional<VecF> IntersectionWith(const Line& other) const;
+		[[nodiscard]] const VecF& GetParallel() const { return _parallel; }
+		[[nodiscard]] VecF GetPerpendicular() const { return {-_parallel.y, _parallel.x}; }
+		[[nodiscard]] float GetSlope() const { return _parallel.y / _parallel.x; }
+		[[nodiscard]] float GetXIntersect() const;
+		[[nodiscard]] float GetYIntersect() const;
+		[[nodiscard]] std::optional<VecF> GetIntersectionPointWith(const Line& other) const;
 		/// Rotation needed for the parallel of this line to align with the other line. [-PI,+PI]
-		[[nodiscard]] float AngleTo(const Line& other) const;
+		[[nodiscard]] float GetAngleTo(const Line& other) const;
 		/// Rotation needed for this line to align with the other line. [-PI_DIV2, PI_DIV2]
-		[[nodiscard]] float SmallerAngleTo(const Line& other) const;
+		[[nodiscard]] float GetSmallerAngleTo(const Line& other) const;
 
 		// Immutable Modifiers
 
-		[[nodiscard]] Line PerpendicularAtPoint(const VecF& point) const { return FromParallelAndPoint(PerpendicularParallel(), point); }
+		[[nodiscard]] Line GetPerpendicularAtPoint(const VecF& point) const { return FromParallelAndPoint(GetPerpendicular(), point); }
 	};
 }

@@ -111,8 +111,8 @@ m2::RectI m2::UiWidget::calculate_wrapped_text_rect(SDL_Texture* text_texture, R
 m2::RectI m2::UiWidget::calculate_filled_text_rect(RectI drawable_area, TextHorizontalAlignment align, int text_length) {
 	// Fit the font into the drawable_area with correct aspect ratio
 	auto unaligned_destination = drawable_area.trim_to_aspect_ratio(
-		I(text_length * M2_GAME.FontLetterWidthToHeightRatio().n()),
-			I(M2_GAME.FontLetterWidthToHeightRatio().d()));
+		I(text_length * M2_GAME.FontLetterWidthToHeightRatio().GetN()),
+			I(M2_GAME.FontLetterWidthToHeightRatio().GetD()));
 
 	// If drawable area is wider than the font, horizontal alignment is necessary.
 	switch (align) {

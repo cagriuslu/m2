@@ -285,15 +285,15 @@ void m2::level_editor::State::StoreTangent(const int selectedIndex, const Tangen
 	};
 	const auto line1 = chainPieceToLine(tangent.first);
 	const auto line2 = chainPieceToLine(tangent.second);
-	const auto intersectionOfLines = line1.IntersectionWith(line2);
+	const auto intersectionOfLines = line1.GetIntersectionPointWith(line2);
 	if (not intersectionOfLines) {
 		return;
 	}
-	const auto absoluteAngleBetweenLines = fabsf(line1.AngleTo(line2));
+	const auto absoluteAngleBetweenLines = fabsf(line1.GetAngleTo(line2));
 	const auto cornerInnerAngle = PI - absoluteAngleBetweenLines;
 	const auto distanceFromIntersectionToTangentPoint = tangent.radius / tanf(cornerInnerAngle / 2.0f);
-	const auto tangentOnLine1 = intersectionOfLines->MoveTowards(line1.Parallel() * -1.0f, distanceFromIntersectionToTangentPoint);
-	const auto tangentOnLine2 = intersectionOfLines->MoveTowards(line2.Parallel(), distanceFromIntersectionToTangentPoint);
+	const auto tangentOnLine1 = intersectionOfLines->MoveTowards(line1.GetParallel() * -1.0f, distanceFromIntersectionToTangentPoint);
+	const auto tangentOnLine2 = intersectionOfLines->MoveTowards(line2.GetParallel(), distanceFromIntersectionToTangentPoint);
 	const auto arcAngle = (PI_DIV2 - (cornerInnerAngle / 2.0f)) * 2.0f;
 
 	// Cache points before the first piece
@@ -322,7 +322,7 @@ void m2::level_editor::State::StoreTangent(const int selectedIndex, const Tangen
 	}
 
 	// Draw the arc, sign of the angle determines the direction of the arc
-	const auto angleTo = line1.AngleTo(line2);
+	const auto angleTo = line1.GetAngleTo(line2);
 	StoreArc(selectedIndex, tangentOnLine1, tangentOnLine2, arcAngle, tangent.pieceCount, angleTo < 0.0f);
 
 	// Add point after

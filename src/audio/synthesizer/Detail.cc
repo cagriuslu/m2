@@ -18,7 +18,7 @@ size_t m2::audio::synthesizer::NoteSampleCount(const pb::Rational& beats, const 
 }
 size_t m2::audio::synthesizer::NoteSampleCount(const Rational& beats, BeatsPerMinute bpm, unsigned sample_rate) {
 	// SampleRate * beats * SecondsPerBeat
-	return sample_rate * beats.n() * 60 / beats.d() / bpm;
+	return sample_rate * beats.GetN() * 60 / beats.GetD() / bpm;
 }
 
 m2::Rational m2::audio::synthesizer::TrackBeatCount(const pb::SynthTrack& track) {
@@ -30,7 +30,7 @@ m2::Rational m2::audio::synthesizer::TrackBeatCount(const pb::SynthTrack& track)
 	return total_duration;
 }
 size_t m2::audio::synthesizer::TrackSampleCount(const BeatsPerMinute bpm, const pb::SynthTrack& track, const unsigned sample_rate) {
-	return NoteSampleCount(TrackBeatCount(track).to_pb(), bpm, sample_rate);
+	return NoteSampleCount(TrackBeatCount(track).ToPb(), bpm, sample_rate);
 }
 
 size_t m2::audio::synthesizer::SongSampleCount(const pb::SynthSong& song, const unsigned sample_rate) {

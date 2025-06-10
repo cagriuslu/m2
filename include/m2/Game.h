@@ -127,7 +127,7 @@ namespace m2 {
 		Game();
 		~Game();
 
-		int32_t Hash() const { return ihash(_proxy.gameIdentifier); }
+		int32_t Hash() const { return IHash(_proxy.gameIdentifier); }
 		bool IsMultiPlayer() const { return not std::holds_alternative<std::monostate>(_multi_player_threads); }
 		/// For server
 		void_expected HostGame(mplayer::Type type, unsigned max_connection_count);

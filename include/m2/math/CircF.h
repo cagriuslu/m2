@@ -7,6 +7,6 @@ namespace m2 {
 		float r{};
 
 		CircF() = default;
-		inline CircF(const VecF& center, float r) : center(center), r(r) {}
+		CircF(const VecF& center, float r) : center(center), r(r) {}
 	};
 }

@@ -16,10 +16,10 @@ namespace m2::audio::synthesizer {
 		std::optional<pb::Envelope> amplitudeEnv = track.has_amplitude_envelope() ? track.amplitude_envelope() : std::optional<pb::Envelope>{};
 
 		for (const auto& note : track.notes()) {
-			if (to_float(note.start_beat()) < 0.0f) {
+			if (ToFloat(note.start_beat()) < 0.0f) {
 				throw M2_ERROR("Start out-of-bounds");
 			}
-			if (to_float(note.duration()) < 0.0f) {
+			if (ToFloat(note.duration()) < 0.0f) {
 				throw M2_ERROR("Duration out-of-bounds");
 			}
 

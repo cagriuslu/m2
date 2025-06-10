@@ -270,7 +270,7 @@ void TextSelection::OnDraw() {
 				// Calculate how many characters can fit into the line
 				const auto textLength = I(Utf8CodepointCount(current_line.blueprint_option.text.c_str()));
 				const auto charWidthToHeightRatio = M2_GAME.FontLetterWidthToHeightRatio();
-				const auto charWidth = charWidthToHeightRatio.n() * textRect.h / charWidthToHeightRatio.d();
+				const auto charWidth = charWidthToHeightRatio.GetN() * textRect.h / charWidthToHeightRatio.GetD();
 				const auto maxCharCount = I(textRect.w / charWidth);
 				// Render texture if necessary
 				if (not current_line.text_texture_and_destination) {

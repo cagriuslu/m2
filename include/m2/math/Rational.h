@@ -19,25 +19,25 @@ namespace m2 {
 		Rational operator/(int64_t rhs) const;
 		explicit operator bool() const { return _n; }
 
-		[[nodiscard]] Rational simplify() const;
-		[[nodiscard]] Rational mod(const Rational& other) const;
+		[[nodiscard]] Rational Simplify() const;
+		[[nodiscard]] Rational Mod(const Rational& other) const;
 
-		[[nodiscard]] int64_t n() const { return _n; }
-		[[nodiscard]] int64_t d() const { return _d; }
-		[[nodiscard]] float to_float() const { return static_cast<float>(_n) / static_cast<float>(_d); }
-		[[nodiscard]] double to_double() const { return static_cast<double>(_n) / static_cast<double>(_d); }
-		[[nodiscard]] pb::Rational to_pb() const { pb::Rational r; r.set_n(_n); r.set_d(_d); return r; }
+		[[nodiscard]] int64_t GetN() const { return _n; }
+		[[nodiscard]] int64_t GetD() const { return _d; }
+		[[nodiscard]] float ToFloat() const { return static_cast<float>(_n) / static_cast<float>(_d); }
+		[[nodiscard]] double ToDouble() const { return static_cast<double>(_n) / static_cast<double>(_d); }
+		[[nodiscard]] pb::Rational ToPb() const { pb::Rational r; r.set_n(_n); r.set_d(_d); return r; }
 
-		static Rational zero() { return Rational{}; }
-		static Rational one() { return Rational{1,1}; }
-		static Rational pi_mul2();
+		static Rational Zero() { return Rational{}; }
+		static Rational One() { return Rational{1,1}; }
+		static Rational PiMul2();
 	};
 	std::string ToString(const Rational& r);
 
-	inline float to_float(const pb::Rational& r) {
+	inline float ToFloat(const pb::Rational& r) {
 		return static_cast<float>(r.n()) / static_cast<float>(r.d());
 	}
-	inline double to_double(const pb::Rational& r) {
+	inline double ToDouble(const pb::Rational& r) {
 		return static_cast<double>(r.n()) / static_cast<double>(r.d());
 	}
 }

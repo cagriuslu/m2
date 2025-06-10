@@ -1,29 +1,29 @@
 #include <m2/math/Line.h>
 #include <m2/Math.h>
 
-float m2::Line::XIntersect() const {
-	const auto slope = Slope();
+float m2::Line::GetXIntersect() const {
+	const auto slope = GetSlope();
 	if (isinf(slope)) {
 		return _point.x;
 	}
 	// 0 = (slope)x + yintersect
-	return -YIntersect() / slope;
+	return -GetYIntersect() / slope;
 }
-float m2::Line::YIntersect() const {
+float m2::Line::GetYIntersect() const {
 	// y = (slope)x + yintersect
 	// y - (slope)x = yintersect
-	return _point.y - Slope() * _point.x;
+	return _point.y - GetSlope() * _point.x;
 }
-std::optional<m2::VecF> m2::Line::IntersectionWith(const Line& other) const {
+std::optional<m2::VecF> m2::Line::GetIntersectionPointWith(const Line& other) const {
 	// Check if the slopes are very close
 	if (_parallel.normalize().is_near(other._parallel.normalize(), 0.001f)) {
 		return std::nullopt;
 	}
 
-	const auto thisSlope = Slope();
-	const auto thisYIntersect = YIntersect();
-	const auto otherSlope = other.Slope();
-	const auto otherYIntersect = other.YIntersect();
+	const auto thisSlope = GetSlope();
+	const auto thisYIntersect = GetYIntersect();
+	const auto otherSlope = other.GetSlope();
+	const auto otherYIntersect = other.GetYIntersect();
 
 	float intersectionX, intersectionY;
 	if (isinf(thisSlope)) {
@@ -40,7 +40,7 @@ std::optional<m2::VecF> m2::Line::IntersectionWith(const Line& other) const {
 	}
 	return VecF{intersectionX, intersectionY};
 }
-float m2::Line::AngleTo(const Line& other) const {
+float m2::Line::GetAngleTo(const Line& other) const {
 	const auto thisAngle = _parallel.angle_rads();
 	const auto otherAngle = other._parallel.angle_rads();
 	if (const auto difference = otherAngle - thisAngle; difference < -PI) {
@@ -53,8 +53,8 @@ float m2::Line::AngleTo(const Line& other) const {
 		return difference;
 	}
 }
-float m2::Line::SmallerAngleTo(const Line& other) const {
-	if (const auto angleToOther = AngleTo(other); angleToOther < -PI_DIV2) {
+float m2::Line::GetSmallerAngleTo(const Line& other) const {
+	if (const auto angleToOther = GetAngleTo(other); angleToOther < -PI_DIV2) {
 		return angleToOther + PI;
 	} else if (PI_DIV2 < angleToOther) {
 		return angleToOther - PI;

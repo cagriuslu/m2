@@ -76,10 +76,10 @@ m2::Rational::Rational(double d) {
 	*this = internal::simplify(raised, precision);
 }
 
-m2::Rational m2::Rational::simplify() const {
+m2::Rational m2::Rational::Simplify() const {
 	return internal::simplify(_n, _d);
 }
-m2::Rational m2::Rational::mod(const Rational& other) const {
+m2::Rational m2::Rational::Mod(const Rational& other) const {
 	auto lhs = _n * other._d;
 	auto rhs = _d * other._n;
 	auto mod_result = ((lhs % rhs) + rhs) % rhs;
@@ -114,22 +114,22 @@ m2::Rational m2::Rational::operator/(int64_t rhs) const {
 	return internal::simplify(_n, _d * rhs);
 }
 
-m2::Rational m2::Rational::pi_mul2() {
+m2::Rational m2::Rational::PiMul2() {
 	return Rational{PI_MUL2};
 }
 
 std::string m2::ToString(const Rational& r) {
 	char buffer[20 + 1 + 20 + 1];
-	snprintf(buffer, sizeof(buffer), "%lld/%lld", r.n(), r.d());
+	snprintf(buffer, sizeof(buffer), "%lld/%lld", r.GetN(), r.GetD());
 	return buffer;
 }
 
 bool operator==(const m2::Rational& lhs, const m2::Rational& rhs) {
-	if (lhs.d() == rhs.d()) {
-		return lhs.n() == rhs.n();
+	if (lhs.GetD() == rhs.GetD()) {
+		return lhs.GetN() == rhs.GetN();
 	} else {
-		auto lhs_n = lhs.n() * rhs.d();
-		auto rhs_n = rhs.n() * lhs.d();
+		auto lhs_n = lhs.GetN() * rhs.GetD();
+		auto rhs_n = rhs.GetN() * lhs.GetD();
 		return lhs_n == rhs_n;
 	}
 }
@@ -137,38 +137,38 @@ bool operator!=(const m2::Rational& lhs, const m2::Rational& rhs) {
 	return !(lhs == rhs);
 }
 bool operator<(const m2::Rational& lhs, const m2::Rational& rhs) {
-	if (lhs.d() == rhs.d()) {
-		return lhs.n() < rhs.n();
+	if (lhs.GetD() == rhs.GetD()) {
+		return lhs.GetN() < rhs.GetN();
 	} else {
-		auto lhs_n = lhs.n() * rhs.d();
-		auto rhs_n = rhs.n() * lhs.d();
+		auto lhs_n = lhs.GetN() * rhs.GetD();
+		auto rhs_n = rhs.GetN() * lhs.GetD();
 		return lhs_n < rhs_n;
 	}
 }
 bool operator>(const m2::Rational& lhs, const m2::Rational& rhs) {
-	if (lhs.d() == rhs.d()) {
-		return lhs.n() > rhs.n();
+	if (lhs.GetD() == rhs.GetD()) {
+		return lhs.GetN() > rhs.GetN();
 	} else {
-		auto lhs_n = lhs.n() * rhs.d();
-		auto rhs_n = rhs.n() * lhs.d();
+		auto lhs_n = lhs.GetN() * rhs.GetD();
+		auto rhs_n = rhs.GetN() * lhs.GetD();
 		return lhs_n > rhs_n;
 	}
 }
 bool operator<=(const m2::Rational& lhs, const m2::Rational& rhs) {
-	if (lhs.d() == rhs.d()) {
-		return lhs.n() <= rhs.n();
+	if (lhs.GetD() == rhs.GetD()) {
+		return lhs.GetN() <= rhs.GetN();
 	} else {
-		auto lhs_n = lhs.n() * rhs.d();
-		auto rhs_n = rhs.n() * lhs.d();
+		auto lhs_n = lhs.GetN() * rhs.GetD();
+		auto rhs_n = rhs.GetN() * lhs.GetD();
 		return lhs_n <= rhs_n;
 	}
 }
 bool operator>=(const m2::Rational& lhs, const m2::Rational& rhs) {
-	if (lhs.d() == rhs.d()) {
-		return lhs.n() >= rhs.n();
+	if (lhs.GetD() == rhs.GetD()) {
+		return lhs.GetN() >= rhs.GetN();
 	} else {
-		auto lhs_n = lhs.n() * rhs.d();
-		auto rhs_n = rhs.n() * lhs.d();
+		auto lhs_n = lhs.GetN() * rhs.GetD();
+		auto rhs_n = rhs.GetN() * lhs.GetD();
 		return lhs_n >= rhs_n;
 	}
 }

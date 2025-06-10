@@ -18,10 +18,10 @@ namespace m2::audio::synthesizer {
 			}
 		}
 
-		const auto attackDuration = amplitudeEnv ? Rational{amplitudeEnv->attack_duration()} : Rational::zero(); // in beats
-		const auto decayDuration = amplitudeEnv ? Rational{amplitudeEnv->decay_duration()} : Rational::zero(); // in beats
+		const auto attackDuration = amplitudeEnv ? Rational{amplitudeEnv->attack_duration()} : Rational::Zero(); // in beats
+		const auto decayDuration = amplitudeEnv ? Rational{amplitudeEnv->decay_duration()} : Rational::Zero(); // in beats
 		const auto activeDuration = Rational{note.duration()}; // in beats, includes attack + decay + sustain
-		const auto releaseDuration = amplitudeEnv ? Rational{amplitudeEnv->release_duration()} : Rational::zero(); // in beats
+		const auto releaseDuration = amplitudeEnv ? Rational{amplitudeEnv->release_duration()} : Rational::Zero(); // in beats
 
 		const auto attackNoteLength = NoteSampleCount(attackDuration, bpm, SampleRate); // in samples
 		const auto decayNoteLength = NoteSampleCount(decayDuration, bpm, SampleRate); // in samples
@@ -54,7 +54,7 @@ namespace m2::audio::synthesizer {
 
 		const Rational frequency{note.frequency()};
 		auto CreateUnitSample = [=](const Rational t) -> SampleType {
-			const auto foc = (frequency * t).mod(Rational::one()).to_float(); // fraction of (the sound wave) cycle
+			const auto foc = (frequency * t).Mod(Rational::One()).ToFloat(); // fraction of (the sound wave) cycle
 			switch (noteShape) {
 				case pb::SINE:
 					return sinf(PI_MUL2 * foc);
@@ -72,7 +72,7 @@ namespace m2::audio::synthesizer {
 		};
 
 		auto it = first;
-		const auto t_step = Rational::one() / SampleRate; // Step size in time axis
+		const auto t_step = Rational::One() / SampleRate; // Step size in time axis
 		for (Rational t; it != last; ++it, t += t_step) {
 			const auto unitSample = CreateUnitSample(t);
 			auto sampleScaled = SampleScaler(it - first, unitSample);
