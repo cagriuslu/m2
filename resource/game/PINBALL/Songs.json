@@ -11,7 +11,7 @@
           {
             "comment": "Selonoid",
             "shape": "SAWTOOTH",
-            "volume": 0.2,
+            "volume": 0.4,
             "amplitudeEnvelope": {
               "sustainVolume": 1.0,
               "releaseDuration": {"n": 1, "d": 1}
@@ -170,6 +170,46 @@
                 "startBeat": {"n": 1, "d": 8},
                 "duration": {"n": 1, "d": 128},
                 "volume": 0.6
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "type": "SONG_BUMPER_SOUND",
+      "synthSong": {
+        "bpm": 60,
+        "tracks": []
+      }
+    },
+    {
+      "type": "SONG_WALL_IMPACT",
+      "synthSong": {
+        "bpm": 60,
+        "tracks": [
+          {
+            "comment": "Bass",
+            "shape": "SINE",
+            "volume": 0.05,
+            "notes": [
+              {
+                "startBeat": {"n": 0, "d": 1},
+                "duration": {"n": 1, "d": 4},
+                "frequency": 100,
+                "volume": 1.0
+              }
+            ]
+          },
+          {
+            "comment": "Impact",
+            "shape": "NOISE",
+            "volume": 0.5,
+            "notes": [
+              {
+                "startBeat": {"n": 0, "d": 1},
+                "duration": {"n": 1, "d": 64},
+                "volume": 1.0
               }
             ]
           }

@@ -61,6 +61,7 @@ namespace m2 {
 		/// Returns the angle in radians between this vector and the positive-x axis. [-PI, PI]
 		[[nodiscard]] float angle_rads() const { return atan2f(y, x); }
 		[[nodiscard]] VecF CenterBetween(const VecF& other) const { return {(x + other.x) / 2.0f, (y + other.y) / 2.0f}; }
+		[[nodiscard]] float Dot(const VecF& other) const { return x * other.x + y * other.y; }
 
 		// Modifiers
 

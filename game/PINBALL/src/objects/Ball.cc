@@ -2,11 +2,28 @@
 #include <m2/Game.h>
 #include <box2d/b2_circle_shape.h>
 #include <m2/third_party/physics/ColliderCategory.h>
+#include <m2/Log.h>
 
 // The ball is 0.5m in diameter.
 
+namespace {
+	struct BallImpl final : m2::ObjectImpl {
+		std::optional<m2::VecF> lastCollidedWallPosition;
+	};
+
+	m2::third_party::physics::RigidBody& GetActiveRigidBody(m2::Physique& phy) {
+		if (phy.body[m2::I(m2::PhysicsLayer::P0)]->IsEnabled()) {
+			return *phy.body[m2::I(m2::PhysicsLayer::P0)];
+		}
+		return *phy.body[m2::I(m2::PhysicsLayer::P1)];
+	}
+}
+
 m2::void_expected LoadBall(m2::Object& obj) {
 	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(m2g::pb::SPRITE_BASIC_BALL));
+
+	obj.impl = std::make_unique<BallImpl>();
+	auto* ballImpl = dynamic_cast<BallImpl*>(obj.impl.get());
 
 	auto& phy = obj.AddPhysique();
 	m2::third_party::physics::RigidBodyDefinition rigidBodyDef{
@@ -50,6 +67,18 @@ m2::void_expected LoadBall(m2::Object& obj) {
 			phy_.body[m2::I(m2::PhysicsLayer::P0)]->SetPosition(initialPos);
 			phy_.body[m2::I(m2::PhysicsLayer::P1)]->SetPosition(initialPos);
 			M2_DEFER(m2::CreateLayerMover(phy_.OwnerId(), m2::PhysicsLayer::P0, m2::ForegroundDrawLayer::F0_BOTTOM));
+		}
+	};
+	phy.onCollision = [&obj, ballImpl](m2::Physique& ball, const m2::Physique& other, const m2::box2d::Contact& contact) {
+		if (other.Owner().GetType() == m2g::pb::WALLS && (not ballImpl->lastCollidedWallPosition
+				|| not ballImpl->lastCollidedWallPosition->is_near(obj.position, 0.2f))) {
+			const auto velocity = GetActiveRigidBody(ball).GetLinearVelocity();
+			// Find the speed along the collision axis. Dot product with the unit vector is the projection.
+			if (const auto collisionSpeed = abs(velocity.Dot(contact.normal)); 5.0f < collisionSpeed) {
+				const auto volume = std::clamp(collisionSpeed / 100.0f, 0.0f, 1.0f);
+				M2_GAME.audio_manager->Play(&M2_GAME.songs[m2g::pb::SONG_WALL_IMPACT], m2::AudioManager::ONCE, volume);
+			}
+			ballImpl->lastCollidedWallPosition = obj.position;
 		}
 	};
 
