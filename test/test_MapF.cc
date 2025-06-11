@@ -47,7 +47,7 @@ TEST(MapF, access) {
 TEST(MapF, area) {
 	auto area = m2::RectF{-5.0f, -5.0f, 10.0f, 10.0f};
 	m2::MapF<int> m(area);
-	EXPECT_TRUE(m.Area().equals(area));
+	EXPECT_TRUE(m.Area().IsEqual(area));
 }
 
 TEST(MapF, for_each) {
@@ -63,7 +63,7 @@ TEST(MapF, for_each) {
 			auto rect = m2::RectF{x, y, 0.05f, 0.05f};
 			auto [_, id] = m.Emplace(rect, value);
 
-			if (rect.equals(expect_rect)) {
+			if (rect.IsEqual(expect_rect)) {
 				expect_value = value;
 				expect_id = id;
 			}
@@ -74,7 +74,7 @@ TEST(MapF, for_each) {
 
 	bool item_found = false;
 	m.ForEach([&item_found, expect_rect, expect_value, expect_id](const m2::RectF& area, m2::Id id, int i) {
-		if (area.equals(expect_rect)) {
+		if (area.IsEqual(expect_rect)) {
 			EXPECT_FALSE(item_found);
 			item_found = true;
 			EXPECT_EQ(id, expect_id);

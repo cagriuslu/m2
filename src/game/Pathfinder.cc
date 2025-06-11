@@ -41,7 +41,7 @@ m2::Path m2::Pathfinder::find_smooth_path(const VecF& from_f, const VecF& to_f, 
 		return {};
 	}
 
-	auto distance_sq = from_f.distance_sq(to_f);
+	auto distance_sq = from_f.GetDistanceToSquared(to_f);
 	auto max_distance_sq = max_distance_m * max_distance_m;
 	if (max_distance_sq < distance_sq) {
 		return {};
@@ -66,7 +66,7 @@ m2::Path m2::Pathfinder::find_grid_path(const VecI& from, const VecI& to, float 
 	}
 
 	// Check if the target is too far even from bird's eye
-	auto distance_sq = from.distance_sq(to);
+	auto distance_sq = from.GetDistanceToSquared(to);
 	auto max_distance_sq = max_distance_m * max_distance_m;
 	if (max_distance_sq < distance_sq) {
 		return {};
@@ -127,7 +127,7 @@ m2::Path m2::Pathfinder::find_grid_path(const VecI& from, const VecI& to, float 
 					// Save new cost
 					provisional_cost[neighbor] = new_cost;
 					// Calculate priority of neighbor with heuristic parameter (which is Manhattan distance to `to`)
-					auto neighbor_priority = new_cost + (float)neighbor.manhattan_distance(to);
+					auto neighbor_priority = new_cost + (float)neighbor.GetManhattanDistanceTo(to);
 					// Insert into frontiers
 					frontiers.insert({neighbor_priority, neighbor});
 					// Set the previous position of neighbor as the current position
@@ -168,7 +168,7 @@ m2::Path m2::Pathfinder::smoothen_path(const Path& reverse_path, float max_dista
 	float cost = 0.0f;
 	auto insert_point = [&](const VecI* point) {
 		if (point) {
-			auto cost_to_point = smooth_path.back().distance(*point);
+			auto cost_to_point = smooth_path.back().GetDistanceTo(*point);
 			if (max_distance_m < cost + cost_to_point) {
 				return false;
 			}

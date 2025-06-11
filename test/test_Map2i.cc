@@ -66,7 +66,7 @@ TEST(Map2i, basic2) {
 	auto ids = map->FindIds(needle, radius);
 	EXPECT_EQ(ids.size(), 49);
 	for (auto id : ids) {
-		EXPECT_TRUE(map->Get(id)->pos.is_near(needle, radius));
+		EXPECT_TRUE(map->Get(id)->pos.IsNear(needle, radius));
 	}
 
 	delete map;

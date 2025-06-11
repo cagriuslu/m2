@@ -8,7 +8,7 @@
 
 m2::VecI::VecI(const m2::VecF& v) : VecI(v.x, v.y) {}
 
-m2::VecI m2::VecI::aspect_ratio_dimensions(int w, int h) const {
+m2::VecI m2::VecI::GetDimensionsInAspectRatio(int w, int h) const {
 	// Simplify the w_ to h_ ratio
 	auto aspect_ratio = Rational{w, h}.Simplify();
 	auto simplified_w = aspect_ratio.GetN();

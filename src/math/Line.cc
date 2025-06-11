@@ -16,7 +16,7 @@ float m2::Line::GetYIntersect() const {
 }
 std::optional<m2::VecF> m2::Line::GetIntersectionPointWith(const Line& other) const {
 	// Check if the slopes are very close
-	if (_parallel.normalize().is_near(other._parallel.normalize(), 0.001f)) {
+	if (_parallel.Normalize().IsNear(other._parallel.Normalize(), 0.001f)) {
 		return std::nullopt;
 	}
 
@@ -41,8 +41,8 @@ std::optional<m2::VecF> m2::Line::GetIntersectionPointWith(const Line& other) co
 	return VecF{intersectionX, intersectionY};
 }
 float m2::Line::GetAngleTo(const Line& other) const {
-	const auto thisAngle = _parallel.angle_rads();
-	const auto otherAngle = other._parallel.angle_rads();
+	const auto thisAngle = _parallel.GetAngle();
+	const auto otherAngle = other._parallel.GetAngle();
 	if (const auto difference = otherAngle - thisAngle; difference < -PI) {
 		// If this line needs to sweep backwards more than 180 degrees, sweep forward instead
 		return difference + PI_MUL2;

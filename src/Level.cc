@@ -349,10 +349,10 @@ void_expected Level::InitAnyPlayer(
 					// Adjust the background boundary
 					_backgroundBoundary.x = std::min(_backgroundBoundary.x, x);
 					_backgroundBoundary.y = std::min(_backgroundBoundary.y, y);
-					if (_backgroundBoundary.x2() < x) {
+					if (_backgroundBoundary.GetX2() < x) {
 						_backgroundBoundary.w = x - _backgroundBoundary.x;
 					}
-					if (_backgroundBoundary.y2() < y) {
+					if (_backgroundBoundary.GetY2() < y) {
 						_backgroundBoundary.h = y - _backgroundBoundary.y;
 					}
 
@@ -414,7 +414,7 @@ VecI Level::CalculateMouseHoverUiPanelTopLeftPosition() const {
 	// Check the height of the panel
 	const auto panelHeight = _mouseHoverUiPanel->Rect().h;
 	// Check if there's enough space below the mouse
-	const auto heightUnderMouse = M2_GAME.Dimensions().GameAndHud().y2() - M2_GAME.MousePositionPx().y;
+	const auto heightUnderMouse = M2_GAME.Dimensions().GameAndHud().GetY2() - M2_GAME.MousePositionPx().y;
 	int finalY;
 	if (panelHeight <= heightUnderMouse) {
 		// We CAN fit the panel under the mouse
@@ -427,7 +427,7 @@ VecI Level::CalculateMouseHoverUiPanelTopLeftPosition() const {
 	// Check the width of the panel
 	const auto panelWidth = _mouseHoverUiPanel->Rect().w;
 	// Check if there's enough space to the right of the mouse
-	const auto widthLeftOfTheMouse = M2_GAME.Dimensions().GameAndHud().x2() - M2_GAME.MousePositionPx().x;
+	const auto widthLeftOfTheMouse = M2_GAME.Dimensions().GameAndHud().GetX2() - M2_GAME.MousePositionPx().x;
 	int finalX;
 	if (panelWidth <= widthLeftOfTheMouse) {
 		// We CAN fit the panel to the right of the mouse

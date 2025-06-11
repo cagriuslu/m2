@@ -63,7 +63,7 @@ void State::SetSpriteRect(const RectI& rect) {
 }
 void State::SetSpriteOrigin(const VecF& origin) {
 	const auto rect = RectI{SelectedSprite().regular().rect()};
-	const auto rectCenter = RectF{rect}.shift({-0.5f, -0.5f}).center();
+	const auto rectCenter = RectF{rect}.Shift({-0.5f, -0.5f}).GetCenterPoint();
 	const auto centerToOrigin = origin - rectCenter;
 	ModifySelectedSprite([&](pb::Sprite& sprite) {
 		sprite.mutable_regular()->mutable_center_to_origin_vec_px()->set_x(centerToOrigin.x);
@@ -87,7 +87,7 @@ void State::AddForegroundCompanionRect(const RectI& rect) {
 }
 void State::SetForegroundCompanionOrigin(const VecF& origin) {
 	const auto rect = RectI{SelectedSprite().regular().rect()};
-	const auto rectCenter = RectF{rect}.shift({-0.5f, -0.5f}).center();
+	const auto rectCenter = RectF{rect}.Shift({-0.5f, -0.5f}).GetCenterPoint();
 	const auto centerToOrigin = origin - rectCenter;
 	ModifySelectedSprite([&](pb::Sprite& sprite) {
 		sprite.mutable_regular()->mutable_foreground_companion()->mutable_center_to_origin_vec_px()->set_x(centerToOrigin.x);
@@ -108,7 +108,7 @@ void State::RemoveFixture(const int index) {
 void State::StoreFixture(const int index, const RectF& rect, const VecF& point1, const VecF& point2) {
 	ModifySelectedSprite([&](pb::Sprite& sprite) {
 		if (auto* fixture = sprite.mutable_regular()->mutable_fixtures(index); fixture->has_rectangle()) {
-			const auto spriteOriginToRectCenter = rect.center() - SelectedSpriteOrigin();
+			const auto spriteOriginToRectCenter = rect.GetCenterPoint() - SelectedSpriteOrigin();
 			const auto dimensions = VecF{rect.w, rect.h};
 			auto* rectangle = fixture->mutable_rectangle();
 			rectangle->mutable_sprite_origin_to_fixture_center_vec_px()->set_x(spriteOriginToRectCenter.x);
@@ -117,7 +117,7 @@ void State::StoreFixture(const int index, const RectF& rect, const VecF& point1,
 			rectangle->mutable_dims_px()->set_h(dimensions.y);
 		} else if (fixture->has_circle()) {
 			const auto& center = point1;
-			const auto radius = (point2 - point1).length();
+			const auto radius = (point2 - point1).GetLength();
 			const auto spriteOriginToRectCenter = center - SelectedSpriteOrigin();
 			auto* circle = fixture->mutable_circle();
 			circle->mutable_sprite_origin_to_fixture_center_vec_px()->set_x(spriteOriginToRectCenter.x);
@@ -173,9 +173,9 @@ void State::Draw() const {
 		// Draw already existing
 		const auto rect = RectI{sprite.regular().rect()};
 		if (rect) {
-			Graphic::ColorRect(RectF{rect}.shift({-0.5f, -0.5f}), CONFIRMED_SELECTION_COLOR);
+			Graphic::ColorRect(RectF{rect}.Shift({-0.5f, -0.5f}), CONFIRMED_SELECTION_COLOR);
 		}
-		const auto rectCenter = RectF{rect}.shift({-0.5f, -0.5f}).center();
+		const auto rectCenter = RectF{rect}.Shift({-0.5f, -0.5f}).GetCenterPoint();
 		const auto centerToOriginVecPx = VecF{sprite.regular().center_to_origin_vec_px()};
 		Graphic::DrawCross(rectCenter + centerToOriginVecPx, CONFIRMED_CROSS_COLOR);
 	} else if (M2_LEVEL.RightHud()->Name() == "ForegroundCompanionModeRightHud") {
@@ -188,10 +188,10 @@ void State::Draw() const {
 		}
 		// Draw already existing
 		for (const auto& rect : sprite.regular().foreground_companion().foreground_companion_rects()) {
-			Graphic::ColorRect(RectF{rect}.shift({-0.5f, -0.5f}), CONFIRMED_SELECTION_COLOR);
+			Graphic::ColorRect(RectF{rect}.Shift({-0.5f, -0.5f}), CONFIRMED_SELECTION_COLOR);
 		}
 		const auto rect = RectI{sprite.regular().rect()};
-		const auto rectCenter = RectF{rect}.shift({-0.5f, -0.5f}).center();
+		const auto rectCenter = RectF{rect}.Shift({-0.5f, -0.5f}).GetCenterPoint();
 		const auto fCompCenterToOriginVecPx = VecF{sprite.regular().foreground_companion().center_to_origin_vec_px()};
 		Graphic::DrawCross(rectCenter + fCompCenterToOriginVecPx, CONFIRMED_CROSS_COLOR);
 	} else if (M2_LEVEL.RightHud()->Name() == "FixtureModeRightHud") {
@@ -205,7 +205,7 @@ void State::Draw() const {
 			} else if (fixture.has_circle()) {
 				if (const auto halfCellSelection = M2_LEVEL.PrimarySelection()->HalfCellSelectionsM()) {
 					const auto center = halfCellSelection->first;
-					const auto radius = center.distance(halfCellSelection->second);
+					const auto radius = center.GetDistanceTo(halfCellSelection->second);
 					Graphic::ColorDisk(center, radius, SELECTION_COLOR);
 				}
 			} else if (fixture.has_chain()) {
@@ -220,7 +220,7 @@ void State::Draw() const {
 		for (const auto& fixture : sprite.regular().fixtures()) {
 			if (fixture.has_rectangle()) {
 				const auto& rect = fixture.rectangle();
-				const auto rectF = RectF::centered_around(spriteOrigin + VecF{rect.sprite_origin_to_fixture_center_vec_px()},
+				const auto rectF = RectF::CreateCenteredAround(spriteOrigin + VecF{rect.sprite_origin_to_fixture_center_vec_px()},
 					rect.dims_px().w(), rect.dims_px().h());
 				Graphic::ColorRect(rectF, CONFIRMED_SELECTION_COLOR);
 			} else if (fixture.has_circle()) {
@@ -258,8 +258,8 @@ void State::ModifySelectedSprite(const std::function<void(pb::Sprite&)>& modifie
 VecF State::SelectedSpriteCenter() const {
 	// Rect needs to be shifted to fit into cells
 	const auto rect = RectI{SelectedSprite().regular().rect()};
-	const auto rectF = RectF{rect}.shift({-0.5f, -0.5f});
-	return rectF.center();
+	const auto rectF = RectF{rect}.Shift({-0.5f, -0.5f});
+	return rectF.GetCenterPoint();
 }
 
 VecF State::SelectedSpriteOrigin() const {

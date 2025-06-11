@@ -3,10 +3,10 @@
 
 void m2::SpatialObjectLoader::move(const m2::RectF &viewport) {
 	// Expand the viewport by 1
-	auto expanded_viewport = viewport.expand(1.0f);
-	auto expanded_viewport_cells = RectI::from_intersecting_cells(expanded_viewport);
+	auto expanded_viewport = viewport.ExpandAllSides(1.0f);
+	auto expanded_viewport_cells = RectI::CreateFromIntersectingCells(expanded_viewport);
 
-	_prev_viewport.for_difference(
+	_prev_viewport.ForDifference(
 			expanded_viewport_cells,
 			[this](const VecI& pos) {
 				_loaded_objects[pos] = load(pos);

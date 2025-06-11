@@ -107,7 +107,7 @@ int m2::sdl::draw_disk(SDL_Renderer* renderer, const VecF& center_position_px, c
 		// Second point of the triangle
 		vertices.push_back(SDL_Vertex{.position = static_cast<SDL_FPoint>(center_position_px + full_span_px), .color = edge_color});
 		// Rotate full_span_px for next iteration
-		full_span_px = full_span_px.rotate(PI_MUL2 / static_cast<float>(steps));
+		full_span_px = full_span_px.Rotate(PI_MUL2 / static_cast<float>(steps));
 		// Third point of the triangle
 		vertices.push_back(SDL_Vertex{.position = static_cast<SDL_FPoint>(center_position_px + full_span_px), .color = edge_color});
 	}

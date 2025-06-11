@@ -43,5 +43,5 @@ std::pair<m2::CharacterMovementDirection, m2::VecF> m2::calculate_character_move
 		direction_vector.y += 1.0f;
 	}
 	auto char_movement_dir = to_character_movement_direction(direction_vector);
-	return {char_movement_dir, direction_vector.normalize()};
+	return {char_movement_dir, direction_vector.Normalize()};
 }

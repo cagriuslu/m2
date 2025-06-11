@@ -45,16 +45,16 @@ void m2::Light::DefaultDrawCallback(Light& lig) {
 				// Calculate brightness based on collision distance
 				auto brightness = (uint8_t)roundf((float)max_brightness * (1.0f - distance / lig.radiusM));
 				// Cut-off vector
-				auto span_m = full_span_m.with_length(distance);
+				auto span_m = full_span_m.WithLength(distance);
 				// Cut-off vector in pixels
 				auto span_px = span_m * M2_GAME.Dimensions().OutputPixelsPerMeter();
 				// Second point of the triangle
 				vertices.push_back(SDL_Vertex{.position = static_cast<SDL_FPoint>(position_px + span_px), .color = {brightness, brightness, brightness, 0}});
 
 				// Rotate full_span_m for next iteration
-				full_span_m = full_span_m.rotate(PI_MUL2 / static_cast<float>(steps));
+				full_span_m = full_span_m.Rotate(PI_MUL2 / static_cast<float>(steps));
 				// Rotate cut-off vector
-				auto span2_px = span_px.rotate(PI_MUL2 / static_cast<float>(steps));
+				auto span2_px = span_px.Rotate(PI_MUL2 / static_cast<float>(steps));
 				// Third point of the triangle
 				vertices.push_back(SDL_Vertex{.position = static_cast<SDL_FPoint>(position_px + span2_px), .color = {brightness, brightness, brightness, 0}});
 			}

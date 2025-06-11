@@ -155,7 +155,7 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 	};
 	phy.postStep = [&](MAYBE m2::Physique& phy) {
 		m2::VecF velocity = m2::VecF{phy.body[I(m2::PhysicsLayer::P0)]->GetLinearVelocity()};
-		if (velocity.is_near(m2::VecF{}, 0.1f)) {
+		if (velocity.IsNear(m2::VecF{}, 0.1f)) {
 			impl.animation_fsm.signal(m2::AnimationFsmSignal{m2g::pb::ANIMATION_STATE_IDLE});
 		}
 	};
@@ -187,7 +187,7 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 void rpg::Enemy::move_towards(m2::Object& obj, m2::VecF direction, float force) {
 	// If not stunned
 	if (not obj.GetCharacter().HasResource(m2g::pb::RESOURCE_STUN_TTL)) {
-		direction = direction.normalize();
+		direction = direction.Normalize();
 		// Walk animation
 		auto char_move_dir = m2::to_character_movement_direction(direction);
 		auto anim_state_type = rpg::detail::to_animation_state_type(char_move_dir);
@@ -202,7 +202,7 @@ void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
 	// If not stunned
 	if (not obj.GetCharacter().HasResource(m2g::pb::RESOURCE_STUN_TTL)) {
 		// Attack if player is close
-		if (obj.position.is_near(M2_PLAYER.position, ai.attack_distance())) {
+		if (obj.position.IsNear(M2_PLAYER.position, ai.attack_distance())) {
 			// Based on what the capability is
 			auto capability = ai.capabilities(0);
 			switch (capability) {
@@ -213,7 +213,7 @@ void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
 						rpg::create_projectile(*m2::CreateObject(obj.position, {}, obj.GetId()),
 							shoot_direction, *it, false);
 						// Knock-back
-						obj.GetPhysique().body[I(m2::PhysicsLayer::P0)]->ApplyForceToCenter(m2::VecF::CreateUnitVectorWithAngle(shoot_direction.angle_rads() + m2::PI) * 5000.0f);
+						obj.GetPhysique().body[I(m2::PhysicsLayer::P0)]->ApplyForceToCenter(m2::VecF::CreateUnitVectorWithAngle(shoot_direction.GetAngle() + m2::PI) * 5000.0f);
 					}
 					break;
 				}

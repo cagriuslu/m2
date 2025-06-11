@@ -16,9 +16,9 @@ ImageSelection::ImageSelection(UiPanel* parent, const UiWidgetBlueprint* bluepri
 }
 
 UiAction ImageSelection::OnEvent(Events& events) {
-	auto buttons_rect = Rect().trim_top(Rect().w);
-	auto inc_button_rect = buttons_rect.trim_left(buttons_rect.w / 2);
-	auto dec_button_rect = buttons_rect.trim_right(buttons_rect.w / 2);
+	auto buttons_rect = Rect().TrimTop(Rect().w);
+	auto inc_button_rect = buttons_rect.TrimLeft(buttons_rect.w / 2);
+	auto dec_button_rect = buttons_rect.TrimRight(buttons_rect.w / 2);
 
 	const auto& image_selection = std::get<ImageSelectionBlueprint>(blueprint->variant);
 
@@ -74,17 +74,17 @@ void ImageSelection::OnDraw() {
 
 	const auto& image_selection = std::get<ImageSelectionBlueprint>(blueprint->variant);
 	if (!image_selection.list.empty()) {
-		const auto image_rect = Rect().trim_bottom(Rect().h - Rect().w);
+		const auto image_rect = Rect().TrimBottom(Rect().h - Rect().w);
 		DrawSpriteOrTextLabel(M2_GAME.GetSpriteOrTextLabel(image_selection.list[_selection]), image_rect);
 	}
 
-	auto buttons_rect = Rect().trim_top(Rect().w);
-	auto inc_button_rect = buttons_rect.trim_left(buttons_rect.w / 2);
+	auto buttons_rect = Rect().TrimTop(Rect().w);
+	auto inc_button_rect = buttons_rect.TrimLeft(buttons_rect.w / 2);
 	sdl::render_texture_with_color_mod(_plusTexture.Texture(),
 			calculate_filled_text_rect(inc_button_rect, TextHorizontalAlignment::LEFT, I(Utf8CodepointCount(_plusTexture.String().c_str()))));
 	draw_border(inc_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 
-	auto dec_button_rect = buttons_rect.trim_right(buttons_rect.w / 2);
+	auto dec_button_rect = buttons_rect.TrimRight(buttons_rect.w / 2);
 	sdl::render_texture_with_color_mod(_minusTexture.Texture(),
 			calculate_filled_text_rect(dec_button_rect, TextHorizontalAlignment::LEFT, I(Utf8CodepointCount(_minusTexture.String().c_str()))));
 	draw_border(dec_button_rect, vertical_border_width_px(), horizontal_border_width_px());

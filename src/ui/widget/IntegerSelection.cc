@@ -74,7 +74,7 @@ void IntegerSelection::OnDraw() {
 		// Draw the integer value
 		if (not _textTexture.first) {
 			const auto valueAsString = ToString(_value);
-			_textTexture.second = calculate_filled_text_rect(Rect().trim_right(Rect().h / 2), TextHorizontalAlignment::LEFT, valueAsString.size());
+			_textTexture.second = calculate_filled_text_rect(Rect().TrimRight(Rect().h / 2), TextHorizontalAlignment::LEFT, valueAsString.size());
 			_textTexture.first = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, _textTexture.second.h, valueAsString));
 		}
 		sdl::render_texture_with_color_mod(_textTexture.first.Texture(), _textTexture.second);
@@ -104,9 +104,9 @@ void IntegerSelection::OnDraw() {
 }
 
 RectI IntegerSelection::CalculateValueDrawArea() const {
-	return Rect().trim_right(Rect().h / 2);
+	return Rect().TrimRight(Rect().h / 2);
 }
 std::pair<RectI,RectI> IntegerSelection::CalculatePlusAndMinusButtonDrawArea() const {
-	const auto buttonsRect = Rect().trim_left(Rect().w - Rect().h / 2);
-	return std::make_pair(buttonsRect.trim_bottom(buttonsRect.h / 2), buttonsRect.trim_top(buttonsRect.h / 2));
+	const auto buttonsRect = Rect().TrimLeft(Rect().w - Rect().h / 2);
+	return std::make_pair(buttonsRect.TrimBottom(buttonsRect.h / 2), buttonsRect.TrimTop(buttonsRect.h / 2));
 }

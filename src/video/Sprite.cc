@@ -131,7 +131,7 @@ m2::VecF m2::Sprite::CenterToOriginVecSrcpx(const SpriteVariant spriteVariant) c
 		return ForegroundCompanionCenterToOriginVecPx();
 	}
 	return OriginalRotationRadians() != 0.0f
-			? CenterToOriginVecPx().rotate(OriginalRotationRadians())
+			? CenterToOriginVecPx().Rotate(OriginalRotationRadians())
 			: CenterToOriginVecPx();
 }
 

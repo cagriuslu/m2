@@ -31,5 +31,5 @@ float m2::box2d::CheckDistance(b2World& world, VecF from, VecF to, uint16_t cate
 		return fraction;
 	}, category_bits);
 	world.RayCast(&rccb, static_cast<b2Vec2>(from), static_cast<b2Vec2>(to));
-	return (poi - from).length();
+	return (poi - from).GetLength();
 }

@@ -82,17 +82,17 @@ void m2::level_editor::State::HandleMousePrimaryButton(const VecF& position) {
 void m2::level_editor::State::HandleMouseSecondaryButton(const VecF& position) {
 	if (M2_LEVEL.RightHud()->Name() == "PaintBgRightHud") {
 		// Background operations are supported only for the positive quadrant
-		if (not position.iround().is_negative()) {
+		if (not position.RoundI().IsNegative()) {
 			if (const auto selections = M2_LEVEL.RightHud()->FindWidget<widget::TextSelection>("SpriteTypeSelection")->GetSelectedOptions();
 				not selections.empty()) {
 				const auto selectedSpriteType = static_cast<m2g::pb::SpriteType>(I(selections[0]));
-				PaintBackground(VecI{position.iround().x, position.iround().y}, selectedSpriteType);
+				PaintBackground(VecI{position.RoundI().x, position.RoundI().y}, selectedSpriteType);
 			}
 		}
 	} else if (M2_LEVEL.RightHud()->Name() == "SampleBgRightHud") {
 		// Background operations are supported only for the positive quadrant
-		if (not position.iround().is_negative()) {
-			if (const auto it = _backgroundSpritePlaceholders[I(GetSelectedBackgroundLayer())].find(position.iround());
+		if (not position.RoundI().IsNegative()) {
+			if (const auto it = _backgroundSpritePlaceholders[I(GetSelectedBackgroundLayer())].find(position.RoundI());
 				it != _backgroundSpritePlaceholders[I(GetSelectedBackgroundLayer())].end()) {
 				// Find and press the Paint button
 				M2_LEVEL.LeftHud()->FindWidget<widget::Text>("PaintBgButton")->trigger_action();
@@ -167,7 +167,7 @@ void m2::level_editor::State::HandleMousePrimarySelectionComplete(const VecF& fi
 
 void m2::level_editor::State::EraseBackground(const RectI& area) {
 	const auto selectedBgLayerIndex = I(GetSelectedBackgroundLayer());
-	area.for_each_cell([&](const VecI& pos) {
+	area.ForEachCell([&](const VecI& pos) {
 		if (const auto it = _backgroundSpritePlaceholders[selectedBgLayerIndex].find(pos);
 				it != _backgroundSpritePlaceholders[selectedBgLayerIndex].end()) {
 			const auto id = std::get<Id>(it->second);
@@ -180,8 +180,8 @@ void m2::level_editor::State::CopyBackground(const RectI& area) {
 	_backgroundSpriteClipboard.clear();
 
 	const auto selectedBgLayerIndex = I(GetSelectedBackgroundLayer());
-	area.for_each_cell([&](const VecI& pos) {
-		const auto positionInClipboard = pos - area.top_left();
+	area.ForEachCell([&](const VecI& pos) {
+		const auto positionInClipboard = pos - area.GetTopLeftPoint();
 		if (const auto it = _backgroundSpritePlaceholders[selectedBgLayerIndex].find(pos);
 				it != _backgroundSpritePlaceholders[selectedBgLayerIndex].end()) {
 			const auto spriteType = std::get<m2g::pb::SpriteType>(it->second);
@@ -199,7 +199,7 @@ void m2::level_editor::State::PasteBackground(const VecI& position) {
 	}
 }
 void m2::level_editor::State::RandomFillBackground(const RectI& area, const std::vector<m2g::pb::SpriteType>& spriteSet) {
-	area.for_each_cell([&](const VecI& pos) {
+	area.ForEachCell([&](const VecI& pos) {
 		const auto index = Random(spriteSet.size());
 		PaintBackground(pos, spriteSet[index]);
 	});
@@ -208,7 +208,7 @@ void m2::level_editor::State::RandomFillBackground(const RectI& area, const std:
 void m2::level_editor::State::RemoveForegroundObject() {
 	const auto selection = ForegroundSelectionArea();
 	for (auto it = _foregroundObjectPlaceholders.begin(); it != _foregroundObjectPlaceholders.end();) {
-		if (selection.contains(it->first) && not std::get<pb::LevelObject>(it->second).is_locked()) {
+		if (selection.DoesContain(it->first) && not std::get<pb::LevelObject>(it->second).is_locked()) {
 			const auto id = std::get<Id>(it->second);
 			M2_DEFER(CreateObjectDeleter(id));
 			it = _foregroundObjectPlaceholders.erase(it);
@@ -222,8 +222,8 @@ void m2::level_editor::State::CopyForeground() {
 
 	const auto selection = ForegroundSelectionArea();
 	for (auto it = _foregroundObjectPlaceholders.begin(); it != _foregroundObjectPlaceholders.end(); ++it) {
-		if (selection.contains(it->first)) {
-			const auto positionInClipboard = it->first - selection.top_left();
+		if (selection.DoesContain(it->first)) {
+			const auto positionInClipboard = it->first - selection.GetTopLeftPoint();
 			auto levelObject = std::get<pb::LevelObject>(it->second);
 			levelObject.mutable_position()->set_x(positionInClipboard.x);
 			levelObject.mutable_position()->set_y(positionInClipboard.y);
@@ -234,7 +234,7 @@ void m2::level_editor::State::CopyForeground() {
 void m2::level_editor::State::PasteForeground() {
 	const auto selection = ForegroundSelectionArea();
 	for (const auto& [clipboardPosition, levelObject] : _foregroundObjectClipboard) {
-		const auto position = selection.top_left() + VecF{levelObject.position().x(), levelObject.position().y()};
+		const auto position = selection.GetTopLeftPoint() + VecF{levelObject.position().x(), levelObject.position().y()};
 		PlaceForeground(position, levelObject.orientation(), levelObject.type(), levelObject.group().type(), levelObject.group().instance());
 	}
 }
@@ -348,7 +348,7 @@ void m2::level_editor::State::Draw() const {
 	const auto drawGridSelectionIfActive = [] {
 		if (const auto* selection = M2_LEVEL.PrimarySelection()) {
 			if (const auto integerSelection = selection->IntegerSelectionRectM()) {
-				integerSelection->for_each_cell([=](const VecI& cell) {
+				integerSelection->ForEachCell([=](const VecI& cell) {
 					Graphic::ColorCell(cell, SELECTION_COLOR);
 				});
 			}
@@ -505,7 +505,7 @@ m2::level_editor::State::ForegroundObjectPlaceholderMap::iterator m2::level_edit
 	float closestDistanceSquare = INFINITY;
 	for (auto it = _foregroundObjectPlaceholders.begin(); it != _foregroundObjectPlaceholders.end(); ++it) {
 		// Find the closest object in 1-meter radius
-		if (const auto distanceSquared = position.distance_sq(it->first); distanceSquared <= 1.0f && distanceSquared < closestDistanceSquare) {
+		if (const auto distanceSquared = position.GetDistanceToSquared(it->first); distanceSquared <= 1.0f && distanceSquared < closestDistanceSquare) {
 			foundIt = it;
 			closestDistanceSquare = distanceSquared;
 		}
@@ -591,7 +591,7 @@ void m2::level_editor::State::StoreArc(const int selectedIndex, const VecF& from
 		return;
 	}
 	const auto vectorBetweenPoints = toPointOffset - fromPointOffset;
-	const auto distanceBetweenPoints = vectorBetweenPoints.length();
+	const auto distanceBetweenPoints = vectorBetweenPoints.GetLength();
 
 	// Find the radius of the circle
 	const auto smallAngle = PI < angleInRads ? PI_MUL2 - angleInRads : angleInRads;
@@ -599,8 +599,8 @@ void m2::level_editor::State::StoreArc(const int selectedIndex, const VecF& from
 	// To find the center of the circle, rotate the vector between the points, and walk the line
 	const auto angleToRotate = PI_DIV2 - (smallAngle / 2.0f);
 	const auto angleToRotateWithSelectedDirection = drawTowardsRight ? -angleToRotate : angleToRotate;
-	const auto rotatedVectorBetweenPoints = vectorBetweenPoints.rotate(PI < angleInRads ? -angleToRotateWithSelectedDirection : angleToRotateWithSelectedDirection);
-	const auto prevPointOffsetToCircleCenter = rotatedVectorBetweenPoints.with_length(radius);
+	const auto rotatedVectorBetweenPoints = vectorBetweenPoints.Rotate(PI < angleInRads ? -angleToRotateWithSelectedDirection : angleToRotateWithSelectedDirection);
+	const auto prevPointOffsetToCircleCenter = rotatedVectorBetweenPoints.WithLength(radius);
 	const auto circleCenter = fromPointOffset + prevPointOffsetToCircleCenter;
 
 	// Generate points from center and radius
@@ -608,7 +608,7 @@ void m2::level_editor::State::StoreArc(const int selectedIndex, const VecF& from
 	const auto angleStep = angleInRads / F(pieceCount);
 	for (auto i = 0; i < pieceCount; ++i) {
 		const auto rotationAmount = F(i + 1) * (drawTowardsRight ? angleStep * -1.0f : angleStep);
-		const auto circleCenterToArcPoint = circleCenterToPrevPoint.rotate(rotationAmount);
+		const auto circleCenterToArcPoint = circleCenterToPrevPoint.Rotate(rotationAmount);
 		const auto arcPoint = circleCenterToArcPoint + circleCenter;
 		StoreFixturePoint(state.SelectedObjectMainSpriteType(), selectedIndex, arcPoint);
 	}
@@ -616,7 +616,7 @@ void m2::level_editor::State::StoreArc(const int selectedIndex, const VecF& from
 std::optional<int> m2::level_editor::State::FindClosestChainPointInRange(const pb::Fixture_ChainFixture& chain, const int spritePpm, const VecF& positionPx) {
 	std::optional<std::pair<int, float>> closestPointIndexAndDistanceSq;
 	for (int i = 0; i < chain.points_size(); ++i) {
-		if (const auto distanceSq = VecF{chain.points(i)}.distance_sq(positionPx); distanceSq < spritePpm) {
+		if (const auto distanceSq = VecF{chain.points(i)}.GetDistanceToSquared(positionPx); distanceSq < spritePpm) {
 			if (not closestPointIndexAndDistanceSq || distanceSq < closestPointIndexAndDistanceSq->second) {
 				closestPointIndexAndDistanceSq = std::make_pair(i, distanceSq);
 			}

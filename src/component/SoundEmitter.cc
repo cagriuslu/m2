@@ -4,7 +4,7 @@
 m2::SoundEmitter::SoundEmitter(Id object_id) : Component(object_id) {}
 
 float m2::SoundListener::VolumeOf(const VecF& emitter_position) const {
-	auto distance = emitter_position.distance(position);
+	auto distance = emitter_position.GetDistanceTo(position);
 	if (M2_GAME.max_hearing_distance_m < distance) {
 		return 0.0f;
 	}
@@ -14,7 +14,7 @@ float m2::SoundListener::VolumeOf(const VecF& emitter_position) const {
 
 	// Check if angle difference to hearing edge is less than zero
 	auto listener_to_sound_vector = emitter_position - position;
-	auto angle_to_sound = listener_to_sound_vector.angle_rads();
+	auto angle_to_sound = listener_to_sound_vector.GetAngle();
 	auto angle_diff_to_sound_backwards = fabs(angle_to_sound - direction);
 	auto angle_diff_to_sound_forwards = fabs(angle_to_sound + PI_MUL2 - direction);
 	auto angle_diff_to_sound = std::min(angle_diff_to_sound_backwards, angle_diff_to_sound_forwards);

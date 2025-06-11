@@ -68,8 +68,8 @@ m2::RectF m2::ViewportM() {
 		throw M2_ERROR("Unable to calculate viewport for non-parallel projection");
 	}
 	const auto top_left = PixelToPositionVecM(VecI{M2_GAME.Dimensions().Game().x, M2_GAME.Dimensions().Game().y});
-	const auto bottom_right = PixelToPositionVecM(VecI{M2_GAME.Dimensions().Game().x2(), M2_GAME.Dimensions().Game().y2()});
-	return RectF::from_corners(top_left, bottom_right);
+	const auto bottom_right = PixelToPositionVecM(VecI{M2_GAME.Dimensions().Game().GetX2(), M2_GAME.Dimensions().Game().GetY2()});
+	return RectF::CreateFromCorners(top_left, bottom_right);
 }
 
 m3::VecF m3::CameraPositionM() {
@@ -267,8 +267,8 @@ void m2::Graphic::ColorCell(const VecI& cell, const SDL_Color color) {
 	SDL_RenderFillRect(M2_GAME.renderer, &rect);
 }
 void m2::Graphic::ColorRect(const RectF& world_coordinates_m, const SDL_Color color) {
-	const auto screen_origin_to_top_left_px = ScreenOriginToPositionVecPx(world_coordinates_m.top_left());
-	const auto screen_origin_to_bottom_right_px = ScreenOriginToPositionVecPx(world_coordinates_m.bottom_right());
+	const auto screen_origin_to_top_left_px = ScreenOriginToPositionVecPx(world_coordinates_m.GetTopLeftPoint());
+	const auto screen_origin_to_bottom_right_px = ScreenOriginToPositionVecPx(world_coordinates_m.GetBottomRightPoint());
 	const auto rect = SDL_Rect{
 			I(screen_origin_to_top_left_px.x),
 			I(screen_origin_to_top_left_px.y),
@@ -339,10 +339,10 @@ void m2::Graphic::DrawHorizontalLine(float y, const RGBA& color) {
 	SDL_RenderDrawLine(M2_GAME.renderer, M2_GAME.Dimensions().Game().x, y_px, M2_GAME.Dimensions().Game().x + M2_GAME.Dimensions().Game().w, y_px);
 }
 void m2::Graphic::DrawRectangle(const VecF& center, float width, float height, float orientationRads, const RGBA& color) {
-	const auto topLeft = center + VecF{-width / 2.0f, -height / 2.0f}.rotate(orientationRads);
-	const auto topRight = center + VecF{width / 2.0f, -height / 2.0f}.rotate(orientationRads);
-	const auto bottomLeft = center + VecF{-width / 2.0f, height / 2.0f}.rotate(orientationRads);
-	const auto bottomRight = center + VecF{width / 2.0f, height / 2.0f}.rotate(orientationRads);
+	const auto topLeft = center + VecF{-width / 2.0f, -height / 2.0f}.Rotate(orientationRads);
+	const auto topRight = center + VecF{width / 2.0f, -height / 2.0f}.Rotate(orientationRads);
+	const auto bottomLeft = center + VecF{-width / 2.0f, height / 2.0f}.Rotate(orientationRads);
+	const auto bottomRight = center + VecF{width / 2.0f, height / 2.0f}.Rotate(orientationRads);
 	DrawLine(topLeft, topRight, color);
 	DrawLine(topRight, bottomRight, color);
 	DrawLine(bottomRight, bottomLeft, color);
@@ -351,13 +351,13 @@ void m2::Graphic::DrawRectangle(const VecF& center, float width, float height, f
 void m2::Graphic::DrawGridLines(const float startFrom, const float frequency, const RGBA& color) {
 	const auto viewport = ViewportM();
 	// Remove the offset
-	const auto viewportNoOffset = viewport.shift({-startFrom, -startFrom});
+	const auto viewportNoOffset = viewport.Shift({-startFrom, -startFrom});
 	// Divide by frequency
 	const auto multiple = VecF{std::ceil(viewportNoOffset.x / frequency), std::floor(viewportNoOffset.y / frequency)};
-	for (auto x = multiple.x * frequency + startFrom; x <= viewport.X2(); x += frequency) {
+	for (auto x = multiple.x * frequency + startFrom; x <= viewport.GetX2(); x += frequency) {
 		DrawVerticalLine(x, color);
 	}
-	for (auto y = multiple.y * frequency + startFrom; y <= viewport.Y2(); y += frequency) {
+	for (auto y = multiple.y * frequency + startFrom; y <= viewport.GetY2(); y += frequency) {
 		DrawHorizontalLine(y, color);
 	}
 }

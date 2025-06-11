@@ -68,7 +68,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 
 	phy.preStep = [&, id=id](m2::Physique& phy) {
 		auto& chr = obj.GetCharacter();
-		auto vector_to_mouse = (M2_GAME.MousePositionWorldM() - obj.position).normalize();
+		auto vector_to_mouse = (M2_GAME.MousePositionWorldM() - obj.position).Normalize();
 
 		auto [direction_enum, direction_vector] = m2::calculate_character_movement(m2g::pb::MOVE_LEFT, m2g::pb::MOVE_RIGHT, m2g::pb::MOVE_UP, m2g::pb::MOVE_DOWN);
 		float move_force;
@@ -92,7 +92,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 				rpg::create_projectile(*m2::CreateObject(obj.position, {}, id),
 					vector_to_mouse, weapon, true);
 				// Knock-back
-				phy.body[I(m2::PhysicsLayer::P0)]->ApplyForceToCenter(m2::VecF::CreateUnitVectorWithAngle(vector_to_mouse.angle_rads() + m2::PI) * 50000.0f);
+				phy.body[I(m2::PhysicsLayer::P0)]->ApplyForceToCenter(m2::VecF::CreateUnitVectorWithAngle(vector_to_mouse.GetAngle() + m2::PI) * 50000.0f);
 			};
 
 			// Check if there is a special ranged weapon and try to use the item
@@ -151,7 +151,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 		M2G_PROXY.set_ammo_display_state((bool) chr.FindItems(m2g::pb::ITEM_CATEGORY_SPECIAL_RANGED_WEAPON));
 	};
 	phy.onCollision = [](MAYBE m2::Physique& me, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
-		if (auto* other_char = other.Owner().TryGetCharacter(); other_char && 10.0f < m2::VecF{me.body[I(m2::PhysicsLayer::P0)]->GetLinearVelocity()}.length()) {
+		if (auto* other_char = other.Owner().TryGetCharacter(); other_char && 10.0f < m2::VecF{me.body[I(m2::PhysicsLayer::P0)]->GetLinearVelocity()}.GetLength()) {
 			InteractionData data;
 			data.set_stun_duration(2.0f);
 			other_char->ExecuteInteraction(data);

@@ -948,17 +948,17 @@ bool m2::Game::IsMouseOnAnyUiPanel() const {
 	}
 	// Otherwise, check if the mouse is on top of the other UI panels known to Level
 	const auto mouse_position = events.MousePosition();
-	if (_level->_leftHudUiPanel && _level->_leftHudUiPanel->Rect().contains(mouse_position)) {
+	if (_level->_leftHudUiPanel && _level->_leftHudUiPanel->Rect().DoesContain(mouse_position)) {
 		return true;
 	}
-	if (_level->_rightHudUiPanel && _level->_rightHudUiPanel->Rect().contains(mouse_position)) {
+	if (_level->_rightHudUiPanel && _level->_rightHudUiPanel->Rect().DoesContain(mouse_position)) {
 		return true;
 	}
-	if (_level->_messageBoxUiPanel && _level->_messageBoxUiPanel->Rect().contains(mouse_position)) {
+	if (_level->_messageBoxUiPanel && _level->_messageBoxUiPanel->Rect().DoesContain(mouse_position)) {
 		return true;
 	}
 	for (auto &panel : _level->_customNonblockingUiPanels) {
-		if (panel.Rect().contains(mouse_position)) {
+		if (panel.Rect().DoesContain(mouse_position)) {
 			return true;
 		}
 	}

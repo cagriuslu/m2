@@ -117,7 +117,7 @@ void bulk_sheet_editor::State::Draw() const {
 			F(_savedSpriteRect->y),
 			F(_savedSpriteRect->w),
 			F(_savedSpriteRect->h)};
-		Graphic::ColorRect(world_coordinates_m.shift({-0.5f, -0.5f}), CONFIRMED_SELECTION_COLOR);
+		Graphic::ColorRect(world_coordinates_m.Shift({-0.5f, -0.5f}), CONFIRMED_SELECTION_COLOR);
 	}
 	// Draw selection
 	if (const auto* selection = M2_LEVEL.PrimarySelection(); selection) {

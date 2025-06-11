@@ -47,49 +47,49 @@ namespace m2 {
 
 		// Accessors
 
-		[[nodiscard]] bool is_nan() const { return isnan(x) || isnan(y); }
-		[[nodiscard]] bool is_near(const VecF& other, float tolerance) const {
+		[[nodiscard]] bool IsNan() const { return isnan(x) || isnan(y); }
+		[[nodiscard]] bool IsNear(const VecF& other, float tolerance) const {
 			return fabsf(other.x - x) <= tolerance && fabsf(other.y - y) <= tolerance;
 		}
-		[[nodiscard]] bool is_negative() const { return x < 0.0f || y < 0.0f; }
-		[[nodiscard]] bool is_small(float tolerance) const { return is_near({}, tolerance); }
-		[[nodiscard]] float length_sq() const { return x * x + y * y; }
-		[[nodiscard]] float length() const { return sqrtf(length_sq()); }
-		[[nodiscard]] float distance_sq(const VecF& other) const { return (other - *this).length_sq(); }
-		[[nodiscard]] float distance_sq(const VecI& other) const;
-		[[nodiscard]] float distance(const VecF& other) const { return (other - *this).length(); }
+		[[nodiscard]] bool IsNegative() const { return x < 0.0f || y < 0.0f; }
+		[[nodiscard]] bool IsSmall(float tolerance) const { return IsNear({}, tolerance); }
+		[[nodiscard]] float GetLengthSquared() const { return x * x + y * y; }
+		[[nodiscard]] float GetLength() const { return sqrtf(GetLengthSquared()); }
+		[[nodiscard]] float GetDistanceToSquared(const VecF& other) const { return (other - *this).GetLengthSquared(); }
+		[[nodiscard]] float GetDistanceToSquared(const VecI& other) const;
+		[[nodiscard]] float GetDistanceTo(const VecF& other) const { return (other - *this).GetLength(); }
 		/// Returns the angle in radians between this vector and the positive-x axis. [-PI, PI]
-		[[nodiscard]] float angle_rads() const { return atan2f(y, x); }
-		[[nodiscard]] VecF CenterBetween(const VecF& other) const { return {(x + other.x) / 2.0f, (y + other.y) / 2.0f}; }
-		[[nodiscard]] float Dot(const VecF& other) const { return x * other.x + y * other.y; }
+		[[nodiscard]] float GetAngle() const { return atan2f(y, x); }
+		[[nodiscard]] VecF GetCenterBetween(const VecF& other) const { return {(x + other.x) / 2.0f, (y + other.y) / 2.0f}; }
 
 		// Modifiers
 
-		[[nodiscard]] VecF normalize() const {
-			float len = length();
+		[[nodiscard]] VecF Normalize() const {
+			float len = GetLength();
 			return len != 0.0f ? VecF{x / len, y / len} : VecF{};
 		}
-		[[nodiscard]] VecF ln() const { return {logf(x), logf(y)}; }
-		[[nodiscard]] VecF round() const { return {roundf(x), roundf(y)}; }
+		[[nodiscard]] VecF Ln() const { return {logf(x), logf(y)}; }
+		[[nodiscard]] VecF Round() const { return {roundf(x), roundf(y)}; }
 		[[nodiscard]] VecF RoundToBin(int binCount) const;
-		[[nodiscard]] VecF floor() const { return {floorf(x), floorf(y)}; }
-		[[nodiscard]] VecF ceil() const { return {ceilf(x), ceilf(y)}; }
-		[[nodiscard]] VecF with_length(const float len) const { return normalize() * len; }
-		[[nodiscard]] VecF floor_length(const float len) const { return length() < len ? with_length(len) : *this; }
-		[[nodiscard]] VecF ceil_length(const float len) const { return len < length() ? with_length(len) : *this; }
-		[[nodiscard]] VecF lerp(const VecF& to, const float ratio) const { return *this + (to - *this) * ratio; }
+		[[nodiscard]] VecF Floor() const { return {floorf(x), floorf(y)}; }
+		[[nodiscard]] VecF Ceil() const { return {ceilf(x), ceilf(y)}; }
+		[[nodiscard]] VecF WithLength(const float len) const { return Normalize() * len; }
+		[[nodiscard]] VecF FloorLength(const float len) const { return GetLength() < len ? WithLength(len) : *this; }
+		[[nodiscard]] VecF CeilLength(const float len) const { return len < GetLength() ? WithLength(len) : *this; }
+		[[nodiscard]] VecF Lerp(const VecF& to, const float ratio) const { return *this + (to - *this) * ratio; }
 		/// Rotates the vector around origin
-		[[nodiscard]] VecF rotate(const float rads) const { return CreateUnitVectorWithAngle(angle_rads() + rads).with_length(length()); }
-		[[nodiscard]] VecF clamp(const std::optional<VecF>& min, const std::optional<VecF>& max) const;
+		[[nodiscard]] VecF Rotate(const float rads) const { return CreateUnitVectorWithAngle(GetAngle() + rads).WithLength(GetLength()); }
+		[[nodiscard]] VecF Clamp(const std::optional<VecF>& min, const std::optional<VecF>& max) const;
 		[[nodiscard]] VecF MoveTowards(const VecF& direction, float distance) const;
+		[[nodiscard]] float DotProduct(const VecF& other) const { return x * other.x + y * other.y; }
 
 		/// Order of corners: Bottom-right, Bottom-left, Top-left, Top-right
-		[[nodiscard]] std::array<VecF, 4> aabb_corners(float aabb_radius) const;
+		[[nodiscard]] std::array<VecF, 4> GetAabbCorners(float aabb_radius) const;
 
-		[[nodiscard]] VecI iround() const;
-		[[nodiscard]] VecF hround() const;  // Round to halves (ex. 0.0, 0.5, 1.0, 1.5, ...)
+		[[nodiscard]] VecI RoundI() const;
+		[[nodiscard]] VecF RoundHalfI() const;  // Round to halves (ex. 0.0, 0.5, 1.0, 1.5, ...)
 
-		static VecF nan() { return {NAN, NAN}; }
+		static VecF Nan() { return {NAN, NAN}; }
 		static VecF CreateUnitVectorWithAngle(const float rads) { return {cosf(rads), sinf(rads)}; }
 	};
 

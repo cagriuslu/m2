@@ -13,7 +13,7 @@ void UiWidget::SetRect(const RectI& rect_px) {
 	OnResize(oldRect, _rect_px);
 }
 UiAction UiWidget::HandleEvents(Events& e) {
-	if (const auto mouseIsAbove = Rect().contains(e.MousePosition()); mouseIsAbove && not _hoverActive) {
+	if (const auto mouseIsAbove = Rect().DoesContain(e.MousePosition()); mouseIsAbove && not _hoverActive) {
 		OnHover();
 		_hoverActive = true;
 	} else if (not mouseIsAbove && _hoverActive) {
@@ -75,7 +75,7 @@ int m2::UiWidget::horizontal_padding_width_px() const {
 m2::RectI m2::UiWidget::drawable_area() const {
 	auto vertical_excess = vertical_border_width_px() + vertical_padding_width_px();
 	auto horizontal_excess = horizontal_border_width_px() + horizontal_padding_width_px();
-	return Rect().trim_left(vertical_excess).trim_right(vertical_excess).trim_top(horizontal_excess).trim_bottom(horizontal_excess);
+	return Rect().TrimLeft(vertical_excess).TrimRight(vertical_excess).TrimTop(horizontal_excess).TrimBottom(horizontal_excess);
 }
 
 m2::RectI m2::UiWidget::calculate_wrapped_text_rect(SDL_Texture* text_texture, RectI drawable_area, TextHorizontalAlignment align_h, TextVerticalAlignment align_v) {
@@ -88,38 +88,38 @@ m2::RectI m2::UiWidget::calculate_wrapped_text_rect(SDL_Texture* text_texture, R
 	RectI horizontally_aligned;
 	switch (align_h) {
 		case TextHorizontalAlignment::LEFT:
-			horizontally_aligned = unaligned.align_left_to(drawable_area.x);
+			horizontally_aligned = unaligned.AlignLeftTo(drawable_area.x);
 			break;
 		case TextHorizontalAlignment::RIGHT:
-			horizontally_aligned = unaligned.align_right_to(drawable_area.x2());
+			horizontally_aligned = unaligned.AlignRightTo(drawable_area.GetX2());
 			break;
 		default:
-			horizontally_aligned = unaligned.align_left_to(drawable_area.x_center() - text_texture_dimensions.x / 2);
+			horizontally_aligned = unaligned.AlignLeftTo(drawable_area.GetXCenter() - text_texture_dimensions.x / 2);
 			break;
 	}
 
 	switch (align_v) {
 		case TextVerticalAlignment::TOP:
-			return horizontally_aligned.align_top_to(drawable_area.y);
+			return horizontally_aligned.AlignTopTo(drawable_area.y);
 		case TextVerticalAlignment::BOTTOM:
-			return horizontally_aligned.align_bottom_to(drawable_area.y2());
+			return horizontally_aligned.AlignBottomTo(drawable_area.GetY2());
 		default:
-			return horizontally_aligned.align_top_to(drawable_area.y_center() - text_texture_dimensions.y / 2);
+			return horizontally_aligned.AlignTopTo(drawable_area.GetYCenter() - text_texture_dimensions.y / 2);
 	}
 }
 
 m2::RectI m2::UiWidget::calculate_filled_text_rect(RectI drawable_area, TextHorizontalAlignment align, int text_length) {
 	// Fit the font into the drawable_area with correct aspect ratio
-	auto unaligned_destination = drawable_area.trim_to_aspect_ratio(
+	auto unaligned_destination = drawable_area.TrimToAspectRatio(
 		I(text_length * M2_GAME.FontLetterWidthToHeightRatio().GetN()),
 			I(M2_GAME.FontLetterWidthToHeightRatio().GetD()));
 
 	// If drawable area is wider than the font, horizontal alignment is necessary.
 	switch (align) {
 		case TextHorizontalAlignment::LEFT:
-			return unaligned_destination.align_left_to(drawable_area.x);
+			return unaligned_destination.AlignLeftTo(drawable_area.x);
 		case TextHorizontalAlignment::RIGHT:
-			return unaligned_destination.align_right_to(drawable_area.x2());
+			return unaligned_destination.AlignRightTo(drawable_area.GetX2());
 		default:
 			return unaligned_destination;
 	}
@@ -166,9 +166,9 @@ void UiWidget::draw_border(const RectI& rect, int vertical_border_width_px, int 
 
 	SDL_Rect left_right_top_bottom[4] = {
 		{.x = rect.x, .y = rect.y, .w = vertical_border_width_px, .h = rect.h},
-		{.x = rect.x2() - vertical_border_width_px, .y = rect.y, .w = vertical_border_width_px, .h = rect.h},
+		{.x = rect.GetX2() - vertical_border_width_px, .y = rect.y, .w = vertical_border_width_px, .h = rect.h},
 		{.x = rect.x, .y = rect.y, .w = rect.w, .h = horizontal_border_width_px},
-		{.x = rect.x, .y = rect.y2() - horizontal_border_width_px, .w = rect.w, .h = horizontal_border_width_px}
+		{.x = rect.x, .y = rect.GetY2() - horizontal_border_width_px, .w = rect.w, .h = horizontal_border_width_px}
 	};
 	SDL_RenderFillRects(M2_GAME.renderer, left_right_top_bottom, 4);
 }

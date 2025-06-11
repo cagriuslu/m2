@@ -21,7 +21,7 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF &direction, 
 	float damage_accuracy = melee_weapon.TryGetAttribute(ATTRIBUTE_DAMAGE_ACCURACY, 1.0f);
 	float average_ttl = melee_weapon.GetAttribute(ATTRIBUTE_AVERAGE_TTL);
 
-	const float direction_angle = direction.angle_rads();
+	const float direction_angle = direction.GetAngle();
 	constexpr float swing_angle = m2::ToRadians(120.0f); // Swing angle is 120 degrees
 	const float start_angle = direction_angle + swing_angle / 2.0f;
 	const float swing_speed = swing_angle / average_ttl;

@@ -438,7 +438,7 @@ namespace {
 					.text = "Paste",
 					.onAction = [](MAYBE const Text& self) -> UiAction {
 						if (const auto integerSelection = M2_LEVEL.PrimarySelection()->IntegerSelectionRectM()) {
-							std::get<level_editor::State>(M2_LEVEL.stateVariant).PasteBackground(integerSelection->top_left());
+							std::get<level_editor::State>(M2_LEVEL.stateVariant).PasteBackground(integerSelection->GetTopLeftPoint());
 						}
 						return MakeContinueAction();
 					}
@@ -1005,7 +1005,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
         	.variant = TextBlueprint{
         		.text = "0:0",
         		.onUpdate = [](MAYBE Text& self) {
-        			const auto mouse_position = M2_GAME.MousePositionWorldM().iround();
+        			const auto mouse_position = M2_GAME.MousePositionWorldM().RoundI();
         			self.set_text(ToString(mouse_position.x) + ':' + m2::ToString(mouse_position.y));
         			return MakeContinueAction();
         		}

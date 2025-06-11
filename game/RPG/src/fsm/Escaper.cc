@@ -43,7 +43,7 @@ std::optional<rpg::EscaperMode> rpg::EscaperFsm::HandleSignal(const EscaperFsmSi
 
 std::optional<rpg::EscaperMode> rpg::EscaperFsm::handle_alarm_while_idle() {
 	// Check if player is close
-	if (obj->position.is_near(M2_PLAYER.position, ai->trigger_distance())) {
+	if (obj->position.IsNear(M2_PLAYER.position, ai->trigger_distance())) {
 		escape_towards = find_direction_to_escape();
 		if (escape_towards) {
 			LOG_TRACE("Escaping towards", *escape_towards);
@@ -55,7 +55,7 @@ std::optional<rpg::EscaperMode> rpg::EscaperFsm::handle_alarm_while_idle() {
 }
 std::optional<rpg::EscaperMode> rpg::EscaperFsm::handle_alarm_while_triggered() {
 	// Check if player is still close
-	if (obj->position.is_near(M2_PLAYER.position, ai->trigger_distance())) {
+	if (obj->position.IsNear(M2_PLAYER.position, ai->trigger_distance())) {
 		escape_towards = find_direction_to_escape();
 		arm(random_alarm_duration(ai->recalculation_period()));
 		return {};
@@ -74,11 +74,11 @@ std::optional<rpg::EscaperMode> rpg::EscaperFsm::handle_physics_step_while_trigg
 
 std::optional<m2::VecF> rpg::EscaperFsm::find_direction_to_escape() {
 	float raycast_length = ai->trigger_distance() / 2.0f;
-	auto angle_from_player_to_obj = (obj->position - M2_PLAYER.position).angle_rads();
+	auto angle_from_player_to_obj = (obj->position - M2_PLAYER.position).GetAngle();
 
 	auto can_escape = [=, this](float offset) -> bool {
 		auto radians_offset = angle_from_player_to_obj + offset;
-		auto raycast_target = obj->position + m2::VecF::CreateUnitVectorWithAngle(radians_offset).with_length(raycast_length);
+		auto raycast_target = obj->position + m2::VecF::CreateUnitVectorWithAngle(radians_offset).WithLength(raycast_length);
 		auto raycast_distance = m2::box2d::CheckDistance(*M2_LEVEL.world[I(m2::PhysicsLayer::P0)], obj->position, raycast_target, m2::third_party::physics::gColliderCategoryToParams[m2::I(m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_OBSTACLE)].belongsTo);
 		return (raycast_length - raycast_distance) < 0.1f; // 0.1 comparison error
 	};

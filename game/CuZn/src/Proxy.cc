@@ -437,7 +437,7 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 		const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(sprite_type));
 		auto original_type = sprite.OriginalType(); // Connection sprites are duplicate of another
 		auto offset = connection_sprite_world_offset(original_type);
-		connection_cell_rect = connection_cell_rect.shift(offset);
+		connection_cell_rect = connection_cell_rect.Shift(offset);
 		connection_positions[sprite_type] = std::make_tuple(obj.position + offset, connection_cell_rect, obj.GetId());
 		LOG_DEBUG("Connection position", m2g::pb::SpriteType_Name(sprite_type), connection_cell_rect);
 		// Fill graph

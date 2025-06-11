@@ -52,7 +52,7 @@ namespace m2 {
 				uint64_t count = 0;
 				// Search in items
 				for (auto& item : _items) {
-					if (area.contains(item.area, tolerance)) {
+					if (area.DoesContain(item.area, tolerance)) {
 						if (op(item.area, item.id, *_map.Get(item.id))) {
 							++count;
 						} else {
@@ -62,7 +62,7 @@ namespace m2 {
 				}
 				// Search in quadrants
 				for (auto& [child_area, child] : _children) {
-					if (child && area.intersect(child_area, tolerance)) {
+					if (child && area.GetIntersection(child_area, tolerance)) {
 						count += child->ForEachContaining(area, op, tolerance);
 					}
 				}
@@ -72,7 +72,7 @@ namespace m2 {
 				uint64_t count = 0;
 				// Search in items
 				for (auto& item : _items) {
-					if (area.intersect(item.area, tolerance)) {
+					if (area.GetIntersection(item.area, tolerance)) {
 						if (op(item.area, item.id, *_map.Get(item.id))) {
 							++count;
 						} else {
@@ -82,7 +82,7 @@ namespace m2 {
 				}
 				// Search in quadrants
 				for (auto& [child_area, child] : _children) {
-					if (child && area.intersect(child_area, tolerance)) {
+					if (child && area.GetIntersection(child_area, tolerance)) {
 						count += child->ForEachContaining(area, op, tolerance);
 					}
 				}
@@ -92,7 +92,7 @@ namespace m2 {
 			std::deque<MapContainerItemF>* Insert(MapContainerItemF&& item) {
 				// Check if the item can be wholly contained in a children, and the children is created
 				for (size_t i = 0; i < _children.size(); ++i) {
-					if (auto& [child_area, child] = _children[i]; child_area.contains(item.area, _tolerance)) {
+					if (auto& [child_area, child] = _children[i]; child_area.DoesContain(item.area, _tolerance)) {
 						// Item can be wholly contained in the child
 						if (child) {
 							// Child is already created
@@ -133,7 +133,7 @@ namespace m2 {
 				for (auto item_it = _items.begin(); item_it != _items.end(); ) {
 					bool child_can_contain = false;
 					for (size_t i = 0; i < _children.size(); ++i) {
-						if (auto& [child_area, child] = _children[i]; child_area.contains(item_it->area, _tolerance)) {
+						if (auto& [child_area, child] = _children[i]; child_area.DoesContain(item_it->area, _tolerance)) {
 							// Item can be wholly contained in the child
 							child_can_contain = true;
 							auto id = item_it->id;
@@ -239,7 +239,7 @@ namespace m2 {
 			uint64_t count = 0;
 			// Iterate over foreign items
 			for (auto& item : _foreignItems) {
-				if (area.contains(item.area, tolerance)) {
+				if (area.DoesContain(item.area, tolerance)) {
 					if (op(item.area, item.id, *Get(item.id))) {
 						++count;
 					} else {
@@ -253,7 +253,7 @@ namespace m2 {
 			uint64_t count = 0;
 			// Iterate over foreign items
 			for (auto& item : _foreignItems) {
-				if (area.intersect(item.area, tolerance)) {
+				if (area.GetIntersection(item.area, tolerance)) {
 					if (op(item.area, item.id, *Get(item.id))) {
 						++count;
 					} else {
@@ -273,7 +273,7 @@ namespace m2 {
 			// Store area
 			pool_it->area = area;
 			// Point back-pointer to the correct container
-			if (_rootQuadrant.Area().contains(area, _tolerance)) {
+			if (_rootQuadrant.Area().DoesContain(area, _tolerance)) {
 				// Object fits inside the managed area, insert to one of the quadrants
 				pool_it->container = _rootQuadrant.Insert({area, pool_it.GetId()});
 			} else {
@@ -307,7 +307,7 @@ namespace m2 {
 				}
 			}
 			// Reinsert
-			if (_rootQuadrant.Area().contains(new_area, _tolerance)) {
+			if (_rootQuadrant.Area().DoesContain(new_area, _tolerance)) {
 				pool_item->container = _rootQuadrant.Insert({new_area, id});
 			} else {
 				_foreignItems.emplace_back(new_area, id);

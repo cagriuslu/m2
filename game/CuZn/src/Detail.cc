@@ -422,7 +422,7 @@ m2::VecF connection_sprite_world_offset(m2g::pb::SpriteType original_type) {
 
 std::optional<IndustryLocation> industry_location_on_position(const m2::VecF& world_position) {
 	auto it = std::find_if(M2G_PROXY.industry_positions.begin(), M2G_PROXY.industry_positions.end(),
-			[&](const auto& pos_and_type) { return std::get<m2::RectF>(pos_and_type.second).contains(world_position); });
+			[&](const auto& pos_and_type) { return std::get<m2::RectF>(pos_and_type.second).DoesContain(world_position); });
 	if (it != M2G_PROXY.industry_positions.end()) {
 		return it->first;
 	} else {
@@ -432,7 +432,7 @@ std::optional<IndustryLocation> industry_location_on_position(const m2::VecF& wo
 
 std::optional<MerchantLocation> merchant_location_on_position(const m2::VecF& world_position) {
 	auto it = std::find_if(M2G_PROXY.merchant_positions.begin(), M2G_PROXY.merchant_positions.end(),
-		[&](const auto& pos_and_type) { return std::get<m2::RectF>(pos_and_type.second).contains(world_position); });
+		[&](const auto& pos_and_type) { return std::get<m2::RectF>(pos_and_type.second).DoesContain(world_position); });
 	if (it != M2G_PROXY.merchant_positions.end()) {
 		return it->first;
 	}
@@ -452,7 +452,7 @@ m2::VecF position_of_industry_location(IndustryLocation industry_location) {
 
 std::optional<Connection> connection_on_position(const m2::VecF& world_position) {
 	auto it = std::find_if(M2G_PROXY.connection_positions.begin(), M2G_PROXY.connection_positions.end(),
-		[&](const auto& pos_and_type) { return std::get<m2::RectF>(pos_and_type.second).contains(world_position); });
+		[&](const auto& pos_and_type) { return std::get<m2::RectF>(pos_and_type.second).DoesContain(world_position); });
 	if (it != M2G_PROXY.connection_positions.end()) {
 		return it->first;
 	} else {

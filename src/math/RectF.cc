@@ -13,7 +13,7 @@ m2::RectF::RectF(const RectI& r) : x(static_cast<float>(r.x)), y(static_cast<flo
 m2::RectF::RectF(const SDL_FRect& r) : x(r.x), y(r.y), w(r.w), h(r.h) {}
 m2::RectF::RectF(const SDL_Rect& r) : x(static_cast<float>(r.x)), y(static_cast<float>(r.y)), w(static_cast<float>(r.w)), h(static_cast<float>(r.h)) {}
 m2::RectF::RectF(const pb::RectI& r) : x(static_cast<float>(r.x())), y(static_cast<float>(r.y())), w(static_cast<float>(r.w())), h(static_cast<float>(r.h())) {}
-m2::RectF m2::RectF::from_corners(const m2::VecF &corner1, const m2::VecF &corner2) {
+m2::RectF m2::RectF::CreateFromCorners(const m2::VecF &corner1, const m2::VecF &corner2) {
 	auto top_left_x = std::min(corner1.x, corner2.x);
 	auto top_left_y = std::min(corner1.y, corner2.y);
 	auto bottom_right_x = std::max(corner1.x, corner2.x);
@@ -31,41 +31,41 @@ m2::RectF::operator SDL_Rect() const {
 	return SDL_Rect{static_cast<int>(x), static_cast<int>(y), static_cast<int>(w), static_cast<int>(h)};
 }
 
-float m2::RectF::area() const {
+float m2::RectF::GetArea() const {
 	return w * h;
 }
 
-bool m2::RectF::equals(const RectF& other, float tolerance) const {
-	return IsEqual(x, other.x, tolerance)
-		&& IsEqual(y, other.y, tolerance)
-		&& IsEqual(x + w, other.x + other.w, tolerance)
-		&& IsEqual(y + h, other.y + other.h, tolerance);
+bool m2::RectF::IsEqual(const RectF& other, float tolerance) const {
+	return m2::IsEqual(x, other.x, tolerance)
+		&& m2::IsEqual(y, other.y, tolerance)
+		&& m2::IsEqual(x + w, other.x + other.w, tolerance)
+		&& m2::IsEqual(y + h, other.y + other.h, tolerance);
 }
 
-bool m2::RectF::contains(const VecF& point, float tolerance) const {
+bool m2::RectF::DoesContain(const VecF& point, float tolerance) const {
 	return IsLessOrEqual(x, point.x, tolerance)
 		&& IsLessOrEqual(point.x, x + w, tolerance)
 		&& IsLessOrEqual(y, point.y, tolerance)
 		&& IsLessOrEqual(point.y, y + h, tolerance);
 }
 
-bool m2::RectF::contains(const RectF& other, float tolerance) const {
+bool m2::RectF::DoesContain(const RectF& other, float tolerance) const {
 	return IsLessOrEqual(x, other.x, tolerance)
 		&& IsLessOrEqual(other.x + other.w, x + w, tolerance)
 		&& IsLessOrEqual(y, other.y, tolerance)
 		&& IsLessOrEqual(other.y + other.h, y + h, tolerance);
 }
 
-m2::RectF m2::RectF::shift(const VecF& direction) const {
+m2::RectF m2::RectF::Shift(const VecF& direction) const {
 	return {x + direction.x, y + direction.y, w, h};
 }
-m2::RectF m2::RectF::shift_origin(const VecF& direction) const {
+m2::RectF m2::RectF::ShiftCoordinateSystemOrigin(const VecF& direction) const {
 	return {x - direction.x, y - direction.y, w, h};
 }
-m2::RectF m2::RectF::expand(float amount) const {
+m2::RectF m2::RectF::ExpandAllSides(float amount) const {
 	return {x - amount, y - amount, w + amount + amount, h + amount + amount};
 }
-std::optional<m2::RectF> m2::RectF::intersect(const RectF& other, float tolerance) const {
+std::optional<m2::RectF> m2::RectF::GetIntersection(const RectF& other, float tolerance) const {
 	if (not (*this) || not other) {
 		return {};
 	}
@@ -100,7 +100,7 @@ std::optional<m2::RectF> m2::RectF::intersect(const RectF& other, float toleranc
 
 	return result ? result : std::optional<m2::RectF>{};
 }
-std::vector<m2::VecI> m2::RectF::intersecting_cells() const {
+std::vector<m2::VecI> m2::RectF::GetIntersectingCells() const {
 	std::vector<m2::VecI> cells;
 
 	int lower_x = I(floorf(x)), higher_x = I(ceilf(x + w));
@@ -112,7 +112,7 @@ std::vector<m2::VecI> m2::RectF::intersecting_cells() const {
 	}
 	return cells;
 }
-m2::VecF m2::RectF::center() const {
+m2::VecF m2::RectF::GetCenterPoint() const {
 	return VecF{x + w / 2.0f, y + h / 2.0f};
 }
 

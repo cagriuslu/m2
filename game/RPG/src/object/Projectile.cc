@@ -32,7 +32,7 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& intend
 	float average_ttl = ranged_weapon.GetAttribute(ATTRIBUTE_AVERAGE_TTL);
 	float ttl_accuracy = ranged_weapon.TryGetAttribute(ATTRIBUTE_TTL_ACCURACY, 1.0f);
 
-	float angle = m2::ApplyAccuracy(intended_direction.angle_rads(), m2::PI, angular_accuracy);
+	float angle = m2::ApplyAccuracy(intended_direction.GetAngle(), m2::PI, angular_accuracy);
 	auto direction = m2::VecF::CreateUnitVectorWithAngle(angle);
 	float ttl = m2::ApplyAccuracy(average_ttl, average_ttl, ttl_accuracy);
 
@@ -91,7 +91,7 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& intend
 				InteractionData data;
 				if (is_explosive && chr.HasResource(RESOURCE_EXPLOSION_TTL)) {
 					LOG_DEBUG("Explosive damage");
-					auto distance = chr.Owner().position.distance(other.Owner().position);
+					auto distance = chr.Owner().position.GetDistanceTo(other.Owner().position);
 					auto damage_ratio = distance / damage_radius;
 					if (damage_ratio < 1.1f) {
 						// Calculate damage

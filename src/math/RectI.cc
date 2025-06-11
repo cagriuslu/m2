@@ -8,14 +8,14 @@ m2::RectI::RectI(int x, int y, int w, int h) : x(x), y(y), w(w), h(h) {}
 m2::RectI::RectI(const RectF& r) : x(static_cast<int>(r.x)), y(static_cast<int>(r.y)), w(static_cast<int>(r.w)), h(static_cast<int>(r.h)) {}
 m2::RectI::RectI(const SDL_Rect& r) : x(r.x), y(r.y), w(r.w), h(r.h) {}
 m2::RectI::RectI(const pb::RectI& r) : x(r.x()), y(r.y()), w(r.w()), h(r.h()) {}
-m2::RectI m2::RectI::from_corners(const m2::VecI &corner1, const m2::VecI &corner2) {
+m2::RectI m2::RectI::CreateFromCorners(const m2::VecI &corner1, const m2::VecI &corner2) {
 	auto top_left_x = std::min(corner1.x, corner2.x);
 	auto top_left_y = std::min(corner1.y, corner2.y);
 	auto bottom_right_x = std::max(corner1.x, corner2.x);
 	auto bottom_right_y = std::max(corner1.y, corner2.y);
 	return {top_left_x, top_left_y, bottom_right_x - top_left_x + 1, bottom_right_y - top_left_y + 1};
 }
-m2::RectI m2::RectI::from_intersecting_cells(const RectF& rect) {
+m2::RectI m2::RectI::CreateFromIntersectingCells(const RectF& rect) {
 	auto x = I(floorf(rect.x));
 	auto y = I(floorf(rect.y));
 	return {x, y, I(ceilf(rect.x + rect.w)) - x, I(ceilf(rect.y + rect.h)) - y};
@@ -33,11 +33,11 @@ m2::RectI::operator SDL_Rect() const {
 m2::RectI::operator SDL_FRect() const {
 	return SDL_FRect{static_cast<float>(x), static_cast<float>(y), static_cast<float>(w), static_cast<float>(h)};
 }
-bool m2::RectI::contains(const VecI& p) const {
+bool m2::RectI::DoesContain(const VecI& p) const {
 	return (p.x >= x) && (p.x < (x + w)) && (p.y >= y) && (p.y < (y + h));
 }
 
-void m2::RectI::for_each_cell(const std::function<void(const VecI&)>& op) const {
+void m2::RectI::ForEachCell(const std::function<void(const VecI&)>& op) const {
 	for (auto j = y; j < y + h; ++j) {
 		for (auto i = x; i < x + w; ++i) {
 			op({i, j});
@@ -45,13 +45,13 @@ void m2::RectI::for_each_cell(const std::function<void(const VecI&)>& op) const 
 	}
 }
 
-void m2::RectI::for_difference(const RectI& new_rect, const std::function<void(const VecI&)>& on_addition, const std::function<void(const VecI&)>& on_removal) const {
-	auto intersection = intersect(new_rect);
+void m2::RectI::ForDifference(const RectI& new_rect, const std::function<void(const VecI&)>& on_addition, const std::function<void(const VecI&)>& on_removal) const {
+	auto intersection = GetIntersection(new_rect);
 	if (not intersection) {
 		// Unload all
-		for_each_cell(on_removal);
+		ForEachCell(on_removal);
 		// Load all new
-		new_rect.for_each_cell(on_addition);
+		new_rect.ForEachCell(on_addition);
 		return;
 	}
 
@@ -72,8 +72,8 @@ void m2::RectI::for_difference(const RectI& new_rect, const std::function<void(c
 		}
 	}
 	// Unload 2nd rectangle
-	if (new_rect.y2() < y2()) {
-		for (auto j = new_rect.y2(); j < y2(); ++j) {
+	if (new_rect.GetY2() < GetY2()) {
+		for (auto j = new_rect.GetY2(); j < GetY2(); ++j) {
 			for (auto i = x; i < x + w; ++i) {
 				on_removal({i, j});
 			}
@@ -82,7 +82,7 @@ void m2::RectI::for_difference(const RectI& new_rect, const std::function<void(c
 	// Unload 3rd rectangle
 	if (x < new_rect.x) {
 		auto y_start = std::max(y, new_rect.y);
-		auto y_limit = std::min(y2(), new_rect.y2());
+		auto y_limit = std::min(GetY2(), new_rect.GetY2());
 		for (auto j = y_start; j < y_limit; ++j) {
 			for (auto i = x; i < new_rect.x; ++i) {
 				on_removal({i, j});
@@ -90,11 +90,11 @@ void m2::RectI::for_difference(const RectI& new_rect, const std::function<void(c
 		}
 	}
 	// Unload 4th rectangle
-	if (new_rect.x2() < x2()) {
+	if (new_rect.GetX2() < GetX2()) {
 		auto y_start = std::max(y, new_rect.y);
-		auto y_limit = std::min(y2(), new_rect.y2());
+		auto y_limit = std::min(GetY2(), new_rect.GetY2());
 		for (auto j = y_start; j < y_limit; ++j) {
-			for (auto i = new_rect.x2(); i < x2(); ++i) {
+			for (auto i = new_rect.GetX2(); i < GetX2(); ++i) {
 				on_removal({i, j});
 			}
 		}
@@ -111,15 +111,15 @@ void m2::RectI::for_difference(const RectI& new_rect, const std::function<void(c
 	// Load 1st rectangle
 	if (new_rect.y < y) {
 		for (auto j = new_rect.y; j < y; ++j) {
-			for (auto i = new_rect.x; i < new_rect.x2(); ++i) {
+			for (auto i = new_rect.x; i < new_rect.GetX2(); ++i) {
 				on_addition({i, j});
 			}
 		}
 	}
 	// Load 2nd rectangle
-	if (y2() < new_rect.y2()) {
-		for (auto j = y2(); j < new_rect.y2(); ++j) {
-			for (auto i = new_rect.x; i < new_rect.x2(); ++i) {
+	if (GetY2() < new_rect.GetY2()) {
+		for (auto j = GetY2(); j < new_rect.GetY2(); ++j) {
+			for (auto i = new_rect.x; i < new_rect.GetX2(); ++i) {
 				on_addition({i, j});
 			}
 		}
@@ -127,7 +127,7 @@ void m2::RectI::for_difference(const RectI& new_rect, const std::function<void(c
 	// Load 3rd rectangle
 	if (new_rect.x < x) {
 		auto y_start = std::max(y, new_rect.y);
-		auto y_limit = std::min(y2(), new_rect.y2());
+		auto y_limit = std::min(GetY2(), new_rect.GetY2());
 		for (auto j = y_start; j < y_limit; ++j) {
 			for (auto i = new_rect.x; i < x; ++i) {
 				on_addition({i, j});
@@ -135,43 +135,43 @@ void m2::RectI::for_difference(const RectI& new_rect, const std::function<void(c
 		}
 	}
 	// Load 4th rectangle
-	if (x2() < new_rect.x2()) {
+	if (GetX2() < new_rect.GetX2()) {
 		auto y_start = std::max(y, new_rect.y);
-		auto y_limit = std::min(y2(), new_rect.y2());
+		auto y_limit = std::min(GetY2(), new_rect.GetY2());
 		for (auto j = y_start; j < y_limit; ++j) {
-			for (auto i = x2(); i < new_rect.x2(); ++i) {
+			for (auto i = GetX2(); i < new_rect.GetX2(); ++i) {
 				on_addition({i, j});
 			}
 		}
 	}
 }
 
-m2::RectI m2::RectI::trim(int amount) const {
+m2::RectI m2::RectI::TrimAllSides(int amount) const {
 	return RectI{x + amount, y + amount, w - amount - amount, h - amount - amount};
 }
-m2::RectI m2::RectI::trim_left(int amount) const {
+m2::RectI m2::RectI::TrimLeft(int amount) const {
 	return (amount < w) ? RectI{x + amount, y, w - amount, h} : RectI{x + w, y, 0, h};
 }
-m2::RectI m2::RectI::trim_right(int amount) const {
+m2::RectI m2::RectI::TrimRight(int amount) const {
 	return (amount < w) ? RectI{x, y, w - amount, h} : RectI{x, y, 0, h};
 }
-m2::RectI m2::RectI::trim_top(int amount) const {
+m2::RectI m2::RectI::TrimTop(int amount) const {
 	return (amount < h) ? RectI{x, y + amount, w, h - amount} : RectI{x, y + h, w, 0};
 }
-m2::RectI m2::RectI::trim_bottom(int amount) const {
+m2::RectI m2::RectI::TrimBottom(int amount) const {
 	return (amount < h) ? RectI{x, y, w, h - amount} : RectI{x, y, w, 0};
 }
-m2::RectI m2::RectI::trim_to_square() const {
+m2::RectI m2::RectI::TrimToSquare() const {
 	if (h < w) {
 		auto diff = w - h;
-		return trim_left(diff / 2).trim_right(diff / 2);
+		return TrimLeft(diff / 2).TrimRight(diff / 2);
 	} else if (w < h) {
 		auto diff = h - w;
-		return trim_top(diff / 2).trim_bottom(diff / 2);
+		return TrimTop(diff / 2).TrimBottom(diff / 2);
 	}
 	return *this;
 }
-m2::RectI m2::RectI::trim_to_aspect_ratio(int desired_w, int desired_h) const {
+m2::RectI m2::RectI::TrimToAspectRatio(int desired_w, int desired_h) const {
 	auto desired_aspect_ratio = F(desired_w) / F(desired_h);
 	auto current_aspect_ratio = F(w) / F(h);
 	if (desired_aspect_ratio == current_aspect_ratio) {
@@ -183,36 +183,36 @@ m2::RectI m2::RectI::trim_to_aspect_ratio(int desired_w, int desired_h) const {
 		// Trim top and bottom
 		auto desired_height = RoundI(F(w) / desired_aspect_ratio);
 		auto height_diff = h - desired_height;
-		return this->trim_top(height_diff / 2).trim_bottom(height_diff / 2);
+		return this->TrimTop(height_diff / 2).TrimBottom(height_diff / 2);
 	} else {
 		// If desired aspect ratio is longer than current aspect ratio, trim left and right
 		auto desired_width = RoundI(F(h) * desired_aspect_ratio);
 		auto width_diff = w - desired_width;
-		return this->trim_left(width_diff / 2).trim_right(width_diff / 2);
+		return this->TrimLeft(width_diff / 2).TrimRight(width_diff / 2);
 	}
 }
-m2::RectI m2::RectI::align_left_to(int _x) const {
+m2::RectI m2::RectI::AlignLeftTo(int _x) const {
 	return {_x, y, w, h};
 }
-m2::RectI m2::RectI::align_right_to(int _x) const {
+m2::RectI m2::RectI::AlignRightTo(int _x) const {
 	return {_x - w, y, w, h};
 }
-m2::RectI m2::RectI::align_top_to(int _y) const {
+m2::RectI m2::RectI::AlignTopTo(int _y) const {
 	return {x, _y, w, h};
 }
-m2::RectI m2::RectI::align_bottom_to(int _y) const {
+m2::RectI m2::RectI::AlignBottomTo(int _y) const {
 	return {x, _y - h, w, h};
 }
-m2::RectI m2::RectI::align_center_to(int _x, int _y) const {
+m2::RectI m2::RectI::AlignCenterTo(int _x, int _y) const {
 	return {_x - w/2, _y - h/2, w, h};
 }
-m2::RectI m2::RectI::expand(int amount) const {
-	return trim(-amount);
+m2::RectI m2::RectI::ExpandAllSides(int amount) const {
+	return TrimAllSides(-amount);
 }
 m2::RectI m2::RectI::GetRow(const int totalRowCount, const int rowIndex) const {
     return RectI{x, y + h * rowIndex / totalRowCount, w, h / totalRowCount};
 }
-std::optional<m2::RectI> m2::RectI::intersect(const m2::RectI& other) const {
+std::optional<m2::RectI> m2::RectI::GetIntersection(const m2::RectI& other) const {
 	auto a = static_cast<SDL_Rect>(*this);
 	auto b = static_cast<SDL_Rect>(other);
 	SDL_Rect result;
@@ -222,7 +222,7 @@ std::optional<m2::RectI> m2::RectI::intersect(const m2::RectI& other) const {
 		return std::nullopt;
 	}
 }
-m2::RectI m2::RectI::ratio(const RectF& ratio_rect) const {
+m2::RectI m2::RectI::ApplyRatio(const RectF& ratio_rect) const {
 	return RectI{
 		I(roundf(F(x) + F(w) * ratio_rect.x)),
 		I(roundf(F(y) + F(h) * ratio_rect.y)),

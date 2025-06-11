@@ -19,7 +19,7 @@ void DrawAddons(const m2::Graphic& gfx, float health) {
 			// Place add-on below the sprite
 			const auto addon_position = m3::VecF{obj_position.x, obj_position.y, -0.2f};
 			if (const auto projected_addon_position = ScreenOriginToProjectionAlongCameraPlaneDstpx(addon_position)) {
-				const auto rect = m2::RectI::centered_around(m2::VecI{*projected_addon_position}, m2::RoundI(M2_GAME.Dimensions().OutputPixelsPerMeter()), m2::RoundI(M2_GAME.Dimensions().OutputPixelsPerMeter() * 12.0f / 100.0f));
+				const auto rect = m2::RectI::CreateCenteredAround(m2::VecI{*projected_addon_position}, m2::RoundI(M2_GAME.Dimensions().OutputPixelsPerMeter()), m2::RoundI(M2_GAME.Dimensions().OutputPixelsPerMeter() * 12.0f / 100.0f));
 				dst_rect = static_cast<SDL_Rect>(rect);
 			}
 		}

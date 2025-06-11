@@ -45,9 +45,9 @@ Id obj::create_god() {
 		if (M2_GAME.events.IsKeyDown(m2g::pb::KeyType::MOVE_RIGHT)) {
 			move_direction.x += 1.0f;
 		}
-		obj.position += move_direction.normalize() * (M2_GAME.DeltaTimeS() * M2_GAME.Dimensions().GameM().y);
+		obj.position += move_direction.Normalize() * (M2_GAME.DeltaTimeS() * M2_GAME.Dimensions().GameM().y);
 		// Prevent God from going into negative quadrants
-		obj.position = obj.position.clamp(VecF{0.0f, 0.0f}, std::nullopt);
+		obj.position = obj.position.Clamp(VecF{0.0f, 0.0f}, std::nullopt);
 
 		// Adjust zoom
 		if (M2_GAME.events.PopKeyPress(m2g::pb::KeyType::ZOOM_OUT)) {
@@ -57,7 +57,7 @@ Id obj::create_god() {
 			M2_GAME.SetScale(M2_GAME.Dimensions().Scale() * 1.5f);
 		}
 
-		if (const auto& mousePosition = M2_GAME.MousePositionWorldM(); not mousePosition.is_negative()) {
+		if (const auto& mousePosition = M2_GAME.MousePositionWorldM(); not mousePosition.IsNegative()) {
 			if (M2_GAME.events.PopMouseButtonPress(MouseButton::PRIMARY)) {
 				HandlePrimaryButtonPress(mousePosition);
 			}

@@ -56,30 +56,30 @@ TEST(VecI, utils) {
 	using namespace m2;
 
 	VecI v1{10, 10};
-	EXPECT_TRUE(v1.is_near(VecI{10, 10}, 1));
-	EXPECT_TRUE(v1.is_near(VecI{11, 11}, 1));
-	EXPECT_FALSE(v1.is_near(VecI{15, 15}, 2));
-	EXPECT_TRUE(v1.is_near(VecI{15, 15}, 5));
-	EXPECT_FALSE(v1.is_near(VecI{11, 11}, 0));
+	EXPECT_TRUE(v1.IsNear(VecI{10, 10}, 1));
+	EXPECT_TRUE(v1.IsNear(VecI{11, 11}, 1));
+	EXPECT_FALSE(v1.IsNear(VecI{15, 15}, 2));
+	EXPECT_TRUE(v1.IsNear(VecI{15, 15}, 5));
+	EXPECT_FALSE(v1.IsNear(VecI{11, 11}, 0));
 
 	VecI v2{0, 0};
-	EXPECT_FALSE(v2.is_negative());
+	EXPECT_FALSE(v2.IsNegative());
 	VecI v3{-1, 0};
-	EXPECT_TRUE(v3.is_negative());
+	EXPECT_TRUE(v3.IsNegative());
 	VecI v4{-1, -1};
-	EXPECT_TRUE(v4.is_negative());
+	EXPECT_TRUE(v4.IsNegative());
 
 	VecI v5{1, 2};
-	EXPECT_EQ(v5.length_sq(), 5.0f);
+	EXPECT_EQ(v5.GetLengthSquared(), 5.0f);
 
 	VecI v6{3, 4};
-	EXPECT_EQ(v6.length(), 5.0f);
+	EXPECT_EQ(v6.GetLength(), 5.0f);
 
 	VecI v7, v8{3, 4};
-	EXPECT_EQ(v7.distance(v8), 5.0f);
+	EXPECT_EQ(v7.GetDistanceTo(v8), 5.0f);
 
 	VecI v9{12, 13}, v10{3, 4};
-	EXPECT_EQ(v9.manhattan_distance(v10), 18);
+	EXPECT_EQ(v9.GetManhattanDistanceTo(v10), 18);
 }
 
 TEST(VecI, ToString) {

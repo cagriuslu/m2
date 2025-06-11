@@ -319,7 +319,7 @@ std::function<void()> m2::CreateLayerMover(ObjectId id, std::optional<PhysicsLay
 
 std::function<bool(Object&)> m2::is_object_in_area(const RectF& rect) {
 	return [rect](const Object& o) -> bool {
-		return rect.contains(o.position);
+		return rect.DoesContain(o.position);
 	};
 }
 

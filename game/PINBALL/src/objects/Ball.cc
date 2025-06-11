@@ -71,10 +71,10 @@ m2::void_expected LoadBall(m2::Object& obj) {
 	};
 	phy.onCollision = [&obj, ballImpl](m2::Physique& ball, const m2::Physique& other, const m2::box2d::Contact& contact) {
 		if (other.Owner().GetType() == m2g::pb::WALLS && (not ballImpl->lastCollidedWallPosition
-				|| not ballImpl->lastCollidedWallPosition->is_near(obj.position, 0.2f))) {
+				|| not ballImpl->lastCollidedWallPosition->IsNear(obj.position, 0.2f))) {
 			const auto velocity = GetActiveRigidBody(ball).GetLinearVelocity();
 			// Find the speed along the collision axis. Dot product with the unit vector is the projection.
-			if (const auto collisionSpeed = abs(velocity.Dot(contact.normal)); 5.0f < collisionSpeed) {
+			if (const auto collisionSpeed = abs(velocity.DotProduct(contact.normal)); 5.0f < collisionSpeed) {
 				const auto volume = std::clamp(collisionSpeed / 100.0f, 0.0f, 1.0f);
 				M2_GAME.audio_manager->Play(&M2_GAME.songs[m2g::pb::SONG_WALL_IMPACT], m2::AudioManager::ONCE, volume);
 			}

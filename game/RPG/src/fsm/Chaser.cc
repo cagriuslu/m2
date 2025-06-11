@@ -9,9 +9,9 @@ namespace {
 
 	m2::Path::const_reverse_iterator reverse_find_first_local_min(const m2::Path& list, const m2::VecF& pos) {
 		auto closest_it = list.crbegin();
-		auto closest_distance_sq = pos.distance_sq(*closest_it);
+		auto closest_distance_sq = pos.GetDistanceToSquared(*closest_it);
 		for (auto it = std::next(closest_it); it != list.rend(); ++it) {
-			auto new_closest_distance_sq = pos.distance_sq(*it);
+			auto new_closest_distance_sq = pos.GetDistanceToSquared(*it);
 			if (closest_distance_sq < new_closest_distance_sq) {
 				break;
 			} else {
@@ -70,7 +70,7 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::HandleSignal(const ChaserFsmSigna
 
 std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_alarm_while_idle() {
 	// Check if player is close
-	if (obj->position.is_near(M2_PLAYER.position, ai->trigger_distance())) {
+	if (obj->position.IsNear(M2_PLAYER.position, ai->trigger_distance())) {
 		// Check if path exists
 		if (find_path(M2_PLAYER.position, ai->chaser().give_up_distance())) {
 			return ChaserMode::Triggered;
@@ -90,7 +90,7 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_hit_while_idle_or_given_up
 
 std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_alarm_while_triggered() {
 	// Check if player is still close
-	if (obj->position.is_near(M2_PLAYER.position, ai->chaser().give_up_distance())) {
+	if (obj->position.IsNear(M2_PLAYER.position, ai->chaser().give_up_distance())) {
 		// Recalculate path to player
 		find_path(M2_PLAYER.position, ai->chaser().give_up_distance());
 	} else {
@@ -111,14 +111,14 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_physics_step_while_trigger
 
 std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_alarm_while_gave_up() {
 	// Check if player is close
-	if (obj->position.is_near(M2_PLAYER.position, ai->trigger_distance())) {
+	if (obj->position.IsNear(M2_PLAYER.position, ai->trigger_distance())) {
 		// Check if path to player exists
 		if (find_path(M2_PLAYER.position, ai->chaser().give_up_distance())) {
 			return ChaserMode::Triggered;
 		}
 	} else {
 		// Check if obj arrived to homePosition
-		if (obj->position.is_near(home_position, 1.0f)) {
+		if (obj->position.IsNear(home_position, 1.0f)) {
 			return ChaserMode::Idle;
 		} else {
 			// Recalculate path to homePosition

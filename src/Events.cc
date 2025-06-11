@@ -189,10 +189,10 @@ bool Events::PopMouseButtonPress(const MouseButton mb) {
 	return false;
 }
 bool Events::PeekMouseButtonPress(const MouseButton mb, const RectI& rect) const {
-	return mouse_buttons_pressed[u(mb)] && rect.contains(MousePosition());
+	return mouse_buttons_pressed[u(mb)] && rect.DoesContain(MousePosition());
 }
 bool Events::PopMouseButtonPress(const MouseButton mb, const RectI& rect) {
-	if (mouse_buttons_pressed[u(mb)] && rect.contains(MousePosition())) {
+	if (mouse_buttons_pressed[u(mb)] && rect.DoesContain(MousePosition())) {
 		--mouse_buttons_pressed[u(mb)];
 		--mouse_button_press_count;
 		return true;
@@ -200,7 +200,7 @@ bool Events::PopMouseButtonPress(const MouseButton mb, const RectI& rect) {
 	return false;
 }
 void Events::ClearMouseButtonPresses(const RectI& rect) {
-	if (rect.contains(MousePosition())) {
+	if (rect.DoesContain(MousePosition())) {
 		mouse_buttons_pressed = {};
 		mouse_button_press_count = 0;
 	}
@@ -215,10 +215,10 @@ bool Events::PopMouseButtonRelease(const MouseButton mb) {
 	return false;
 }
 bool Events::PeekMouseButtonRelease(const MouseButton mb, const RectI& rect) const {
-	return mouse_buttons_released[u(mb)] && rect.contains(MousePosition());
+	return mouse_buttons_released[u(mb)] && rect.DoesContain(MousePosition());
 }
 bool Events::PopMouseButtonRelease(const MouseButton mb, const RectI& rect) {
-	if (mouse_buttons_released[u(mb)] && rect.contains(MousePosition())) {
+	if (mouse_buttons_released[u(mb)] && rect.DoesContain(MousePosition())) {
 		--mouse_buttons_released[u(mb)];
 		--mouse_button_release_count;
 		return true;
@@ -226,7 +226,7 @@ bool Events::PopMouseButtonRelease(const MouseButton mb, const RectI& rect) {
 	return false;
 }
 void Events::ClearMouseButtonReleases(const RectI& rect) {
-	if (rect.contains(MousePosition())) {
+	if (rect.DoesContain(MousePosition())) {
 		mouse_buttons_released = {};
 		mouse_button_release_count = 0;
 	}
@@ -238,7 +238,7 @@ int32_t Events::PopMouseWheelVerticalScroll() {
 	return value;
 }
 int32_t Events::PopMouseWheelVerticalScroll(const RectI& rect) {
-	if (rect.contains(MousePosition())) {
+	if (rect.DoesContain(MousePosition())) {
 		const auto value = mouse_wheel_vertical_scroll_count;
 		mouse_wheel_vertical_scroll_count = 0;
 		return value;
@@ -251,7 +251,7 @@ int32_t Events::PopMouseWheelHorizontalScroll() {
 	return value;
 }
 int32_t Events::PopMouseWheelHorizontalScroll(const RectI& rect) {
-	if (rect.contains(MousePosition())) {
+	if (rect.DoesContain(MousePosition())) {
 		const auto value = mouse_wheel_horizontal_scroll_count;
 		mouse_wheel_horizontal_scroll_count = 0;
 		return value;
@@ -259,7 +259,7 @@ int32_t Events::PopMouseWheelHorizontalScroll(const RectI& rect) {
 	return 0;
 }
 void Events::ClearMouseWheelScrolls(const RectI& rect) {
-	if (rect.contains(MousePosition())) {
+	if (rect.DoesContain(MousePosition())) {
 		mouse_wheel_vertical_scroll_count = 0;
 		mouse_wheel_horizontal_scroll_count = 0;
 	}
@@ -276,7 +276,7 @@ std::optional<std::string> Events::PopTextInput() {
 bool Events::IsKeyDown(const m2g::pb::KeyType key) const { return keys_down[pb::enum_index(key)]; }
 bool Events::IsMouseButtonDown(const MouseButton mb) const { return mouse_buttons_down[u(mb)]; }
 void Events::ClearMouseButtonDown(const RectI& rect) {
-	if (rect.contains(MousePosition())) {
+	if (rect.DoesContain(MousePosition())) {
 		mouse_buttons_down = {};
 	}
 }
