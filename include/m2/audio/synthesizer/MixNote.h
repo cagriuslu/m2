@@ -1,5 +1,6 @@
 #pragma once
 #include "Detail.h"
+#include <m2/Meta.h>
 #include <m2/Math.h>
 #include <m2/Error.h>
 #include <Synth.pb.h>

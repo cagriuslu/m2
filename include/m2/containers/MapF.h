@@ -133,7 +133,7 @@ uint64_t m2::detail::Quadrant<T,Capacity,ComparisonTolerance>::ForEachContaining
 	// Search in quadrants
 	for (auto& [child_area, child] : _children) {
 		if (child && area.GetIntersection(child_area, ComparisonTolerance)) {
-			count += child->ForEachContaining(area, op, ComparisonTolerance);
+			count += child->ForEachContaining(area, op);
 		}
 	}
 	return count;
@@ -155,7 +155,7 @@ uint64_t m2::detail::Quadrant<T,Capacity,ComparisonTolerance>::ForEachIntersecti
 	// Search in quadrants
 	for (auto& [child_area, child] : _children) {
 		if (child && area.GetIntersection(child_area, ComparisonTolerance)) {
-			count += child->ForEachContaining(area, op, ComparisonTolerance);
+			count += child->ForEachContaining(area, op);
 		}
 	}
 	return count;
@@ -289,7 +289,7 @@ uint64_t m2::MapF<T,Capacity,ComparisonTolerance>::ForEachContaining(const RectF
 			}
 		}
 	}
-	return count + _rootQuadrant.ForEachContaining(area, op, ComparisonTolerance); // Search in quadrants
+	return count + _rootQuadrant.ForEachContaining(area, op); // Search in quadrants
 }
 
 template <typename T, uint64_t Capacity, float ComparisonTolerance>
@@ -305,7 +305,7 @@ uint64_t m2::MapF<T,Capacity,ComparisonTolerance>::ForEachIntersecting(const Rec
 			}
 		}
 	}
-	return count + _rootQuadrant.ForEachIntersecting(area, op, ComparisonTolerance); // Search in quadrants
+	return count + _rootQuadrant.ForEachIntersecting(area, op); // Search in quadrants
 }
 
 template <typename T, uint64_t Capacity, float ComparisonTolerance>
@@ -332,7 +332,7 @@ void m2::MapF<T,Capacity,ComparisonTolerance>::Erase(Id id) {
 	// Erase from container
 	auto* container = Pool<detail::MapPoolItem<T>,Capacity>::Get(id)->container;
 	for (auto it = container->begin(); it != container->end(); ++it) {
-		if (it->id == id) {
+		if (std::get<Id>(*it) == id) {
 			container->erase(it);
 			Pool<detail::MapPoolItem<T>,Capacity>::Free(id);
 			return;
@@ -348,7 +348,7 @@ void m2::MapF<T,Capacity,ComparisonTolerance>::Move(Id id, const RectF& new_area
 	// Erase from container
 	auto* container = pool_item->container;
 	for (auto it = container->begin(); it != container->end(); ++it) {
-		if (it->id == id) {
+		if (std::get<Id>(*it) == id) {
 			container->erase(it); // TODO erase_if
 			break;
 		}
