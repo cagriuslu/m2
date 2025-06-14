@@ -3,6 +3,11 @@
   "objects": [
     {
       "position": {},
+      "type": "PLATFORM",
+      "group": {}
+    },
+    {
+      "position": {},
       "type": "PLATFORM_ENTRY_SENSOR",
       "group": {}
     },

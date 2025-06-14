@@ -68,6 +68,14 @@ m2::void_expected LoadBall(m2::Object& obj) {
 			phy_.body[m2::I(m2::PhysicsLayer::P1)]->SetPosition(initialPos);
 			M2_DEFER(m2::CreateLayerMover(phy_.OwnerId(), m2::PhysicsLayer::P0, m2::ForegroundDrawLayer::F0_BOTTOM));
 		}
+		if (M2_GAME.events.PopMouseButtonRelease(m2::MouseButton::PRIMARY)) {
+			const auto mousePosition = M2_GAME.MousePositionWorldM();
+			phy_.body[m2::I(m2::PhysicsLayer::P0)]->SetPosition(mousePosition);
+			phy_.body[m2::I(m2::PhysicsLayer::P0)]->SetLinearVelocity({});
+			phy_.body[m2::I(m2::PhysicsLayer::P1)]->SetPosition(mousePosition);
+			phy_.body[m2::I(m2::PhysicsLayer::P1)]->SetLinearVelocity({});
+			M2_DEFER(m2::CreateLayerMover(phy_.OwnerId(), m2::PhysicsLayer::P0, m2::ForegroundDrawLayer::F0_BOTTOM));
+		}
 	};
 	phy.onCollision = [&obj, ballImpl](m2::Physique& ball, const m2::Physique& other, const m2::box2d::Contact& contact) {
 		if (other.Owner().GetType() == m2g::pb::WALLS && (not ballImpl->lastCollidedWallPosition

@@ -12,7 +12,10 @@ m2::void_expected LoadGenericBallSensor(m2::Object& obj, const m2::PhysicsLayer 
 
 	auto& phy = obj.AddPhysique();
 	m2::third_party::physics::RigidBodyDefinition rigidBodyDef{
-		.bodyType = m2::third_party::physics::RigidBodyType::STATIC,
+		.bodyType = m2::third_party::physics::RigidBodyType::DYNAMIC,
+		.fixedRotation = true,
+		.gravityScale = 0.0f,
+		.allowSleeping = false,
 		.isBullet = true
 	};
 	for (const auto& fixturePb : sprite.OriginalPb().regular().fixtures()) {

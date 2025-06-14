@@ -15,8 +15,8 @@ m2::void_expected LoadPlatform(m2::Object& obj) {
 		rigidBodyDef.fixtures.emplace_back(m2::third_party::physics::FixtureDefinition{
 			.shape = m2::third_party::physics::ToShape(fixturePb, sprite.Ppm()),
 			.friction = 0.2f,
-			.restitution = 0.75f,
-			.restitutionThresholdVelocity = 0.2f,
+			.restitution = 0.45f,
+			.restitutionThresholdVelocity = 1.0f,
 			.colliderFilter = m2::third_party::physics::ColliderParams{
 				.belongsTo = 1,
 				.collidesWith = 0xFFFF
