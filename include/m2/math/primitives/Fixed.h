@@ -6,11 +6,21 @@
 namespace m2 {
 	class Fixed final {
 		// PRECISION=14 divides [0, 1) into 2^14 (16384) pieces. This guarantees 4 digits of decimal fractions.
-		static constexpr int PRECISION = 14;
+		static constexpr auto PRECISION = 14;
 		// SIGNIFICANT=18 extends to [-131072, 131071).
-		static constexpr int SIGNIFICANT = 32 - PRECISION;
+		static constexpr auto SIGNIFICANT = 32 - PRECISION;
+
+		static constexpr int32_t INTEGER_PART_MASK = I(0xFFFFFFFF << PRECISION);
+		static constexpr int32_t FRACTION_PART_MASK = I(0xFFFFFFFFu >> SIGNIFICANT);
+		static constexpr int32_t SIGN_BIT_MASK = I(0x80000000);
+		static constexpr int32_t LEAST_SIGNIFICANT_INTEGER_BIT_MASK = I(1 << PRECISION);
+		static constexpr int32_t MOST_SIGNIFICANT_FRACTION_BIT_MASK = I(1 << (PRECISION - 1));
 
 		int32_t _value{};
+
+		static Fixed UnsafeFromInt(const int i)       noexcept { return Fixed{std::in_place, i << PRECISION}; }
+		static Fixed UnsafeFromFloat(const float f)   noexcept { return Fixed{std::in_place, RoundI(F(LEAST_SIGNIFICANT_INTEGER_BIT_MASK) * f)}; }
+		static Fixed UnsafeFromDouble(const double d) noexcept { return Fixed{std::in_place, RoundI(D(LEAST_SIGNIFICANT_INTEGER_BIT_MASK) * d)}; }
 
 	public:
 		// Constructors
@@ -20,32 +30,31 @@ namespace m2 {
 		explicit Fixed(const    int i) { ThrowIfOutOfBounds(i); *this = UnsafeFromInt(i);    }
 		explicit Fixed(const  float f) { ThrowIfOutOfBounds(f); *this = UnsafeFromFloat(f);  }
 		explicit Fixed(const double d) { ThrowIfOutOfBounds(d); *this = UnsafeFromDouble(d); }
-		static Fixed UnsafeFromInt(int i)       noexcept { return Fixed{std::in_place, i << PRECISION}; }
-		static Fixed UnsafeFromFloat(float f)   noexcept { return Fixed{std::in_place, RoundI(F(0x1 << PRECISION) * f)}; }
-		static Fixed UnsafeFromDouble(double d) noexcept { return Fixed{std::in_place, RoundI(D(0x1 << PRECISION) * d)}; }
+
+		// Attributes
+
+		static Fixed Zero() { return Fixed{}; }
+		static Fixed One() { return Fixed{1}; }
+		static Fixed Max() { return Fixed{std::in_place, 0x7FFFFFFF}; }
+		static Fixed Min() { return Fixed{std::in_place, static_cast<int32_t>(0x80000000)}; }
+		static Fixed MaxInteger() { return Fixed{std::in_place, (0xFFFFFFFFu << PRECISION) & 0x7FFFFFFF}; }
+		static Fixed MinInteger() { return Min(); }
 
 		// Operators
 
 		explicit operator bool() const { return not IsZero(); }
-		bool operator==(const Fixed& b) const { return _value == b._value; }
-		bool operator<=(const Fixed& b) const { return _value <= b._value; }
+		friend bool operator==(const Fixed& a, const Fixed& b) { return a._value == b._value; }
+		friend bool operator!=(const Fixed& a, const Fixed& b) { return a._value != b._value; }
+		friend bool operator<(const Fixed& a, const Fixed& b) { return a._value < b._value; }
+		friend bool operator<=(const Fixed& a, const Fixed& b) { return a._value <= b._value; }
+		friend bool operator>(const Fixed& a, const Fixed& b) { return a._value > b._value; }
+		friend bool operator>=(const Fixed& a, const Fixed& b) { return a._value >= b._value; }
 		Fixed operator+() const { return *this; }
 		Fixed operator-() const { return Fixed{std::in_place, -_value}; }
 		Fixed operator+(const Fixed& b) const { return Fixed{std::in_place, _value + b._value}; }
 		Fixed operator-(const Fixed& b) const { return Fixed{std::in_place, _value - b._value}; }
 		Fixed operator*(const Fixed& b) const { return Fixed{std::in_place, static_cast<int32_t>((static_cast<int64_t>(_value) * static_cast<int64_t>(b._value)) >> PRECISION)}; }
 		Fixed operator/(const Fixed& b) const { return Fixed{std::in_place, static_cast<int32_t>((static_cast<int64_t>(_value) << PRECISION) / static_cast<int64_t>(b._value))}; }
-		friend bool operator<(const Fixed& a, const Fixed& b) { return a._value < b._value; }
-
-		// Attributes
-
-		static Fixed Zero() { return Fixed{}; }
-		static Fixed Max() { return Fixed{std::in_place, 0x7FFFFFFF}; }
-		static Fixed Min() { return Fixed{std::in_place, static_cast<int32_t>(0x80000000)}; }
-		static Fixed MaxInteger() { return Fixed{std::in_place, (0xFFFFFFFFu << PRECISION) & 0x7FFFFFFF}; }
-		static Fixed MinInteger() { return Min(); }
-		static uint32_t IntegerPartMask()    { return 0xFFFFFFFFu << PRECISION; }
-		static uint32_t FractionalPartMask() { return 0xFFFFFFFFu >> SIGNIFICANT; }
 
 		// Accessors
 
@@ -74,7 +83,7 @@ namespace m2 {
 		// Modifiers
 
 		[[nodiscard]] Fixed AbsoluteValue() const { return IsNegative() ? -*this : *this; }
-		[[nodiscard]] Fixed Inverse() const { return Fixed{1} / *this; }
+		[[nodiscard]] Fixed Inverse() const { return One() / *this; }
 
 	private:
 		static void ThrowIfOutOfBounds(int i);

@@ -59,7 +59,7 @@ std::string m2::Fixed::ToString() const {
 
 	// Then, print the fractional part
 	// Find the absolute value of the fractional part
-	auto fractional_part = (IsNegative() ? -_value : _value) & FractionalPartMask();
+	auto fractional_part = (IsNegative() ? -_value : _value) & FRACTION_PART_MASK;
 	// Iterate from the most significant fractional bit to the least significant
 	auto fraction = 0;
 	for (int i = 0; i < PRECISION; ++i) {

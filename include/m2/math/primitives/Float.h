@@ -15,32 +15,35 @@ namespace m2 {
 		explicit Float(const  float f) : _value(f) {}
 		explicit Float(const double d) : _value(static_cast<float>(d)) {}
 
-		// Operators
-
-		explicit operator bool() const { return not IsZero(); }
-		bool operator==(const Float& f) const { return _value == f._value; }
-		bool operator<=(const Float& f) const { return _value <= f._value; }
-		Float operator+() const { return *this; }
-		Float& operator+=(const Float& other) { _value += other._value; return *this; }
-		Float operator-() const { return Float{-_value}; }
-		Float operator+(const Float& b) const { return Float{_value + b._value}; }
-		Float operator-(const Float& b) const { return Float{_value - b._value}; }
-		Float operator*(const Float& b) const { return Float{_value * b._value}; }
-		Float operator/(const Float& b) const { return Float{_value / b._value}; }
-		friend bool operator<(const Float& a, const Float& b) { return a._value < b._value; }
-
 		// Attributes
 
 		static Float Zero() { return Float{}; }
 		static Float Max() { return Float{FLT_MAX}; }
 		static Float Min() { return Float{-FLT_MAX}; }
 
+		// Operators
+
+		explicit operator bool() const { return not IsZero(); }
+		friend bool operator==(const Float& a, const Float& b) { return a._value == b._value; }
+		friend bool operator!=(const Float& a, const Float& b) { return a._value != b._value; }
+		friend bool operator<(const Float& a, const Float& b) { return a._value < b._value; }
+		friend bool operator<=(const Float& a, const Float& b) { return a._value <= b._value; }
+		friend bool operator>(const Float& a, const Float& b) { return a._value > b._value; }
+		friend bool operator>=(const Float& a, const Float& b) { return a._value >= b._value; }
+		Float operator+() const { return *this; }
+		Float operator-() const { return Float{-_value}; }
+		Float operator+(const Float& b) const { return Float{_value + b._value}; }
+		Float operator-(const Float& b) const { return Float{_value - b._value}; }
+		Float operator*(const Float& b) const { return Float{_value * b._value}; }
+		Float operator/(const Float& b) const { return Float{_value / b._value}; }
+		Float& operator+=(const Float& other) { _value += other._value; return *this; }
+
 		// Accessors
 
 		[[nodiscard]] bool IsZero() const { return _value == 0.0f; }
 		[[nodiscard]] bool IsPositive() const { return 0.0f < _value; }
 		[[nodiscard]] bool IsNegative() const { return _value < 0.0f; }
-		// Check if the given number is equal enough to this number. Tolerance is assumed to be positive.
+		/// Check if the given number is equal enough to this number. Tolerance is assumed to be positive.
 		[[nodiscard]] bool IsEqual(const Float& other, const Float& tolerance) const { return (*this - other).AbsoluteValue() <= tolerance; }
 		[[nodiscard]] int32_t ToInteger() const { return static_cast<int>(_value); }
 		[[nodiscard]] float ToFloat() const { return _value; }
