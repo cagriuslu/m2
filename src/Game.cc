@@ -130,12 +130,15 @@ m2::Game::Game() {
 	levels_dir = ResourcePath() / "game" / _proxy.gameIdentifier / "levels";
 	spriteSheetsPath = resource_dir / "SpriteSheets.json";
 
-	auto sheets_pb = pb::json_file_to_message<pb::SpriteSheets>(spriteSheetsPath);
-	if (!sheets_pb) {
-		throw M2_ERROR(sheets_pb.error());
+	{
+		auto sheets_pb = pb::json_file_to_message<pb::SpriteSheets>(spriteSheetsPath);
+		if (!sheets_pb) {
+			throw M2_ERROR(sheets_pb.error());
+		}
+		spriteSheetsPb = *sheets_pb;
 	}
-	spriteSheets = SpriteSheet::LoadSpriteSheets(*sheets_pb, renderer, _proxy.lightning);
-	_sprites = LoadSprites(spriteSheets, sheets_pb->text_labels(), *spriteEffectsSheet, _proxy.lightning);
+	spriteSheets = SpriteSheet::LoadSpriteSheets(*spriteSheetsPb, renderer, _proxy.lightning);
+	_sprites = LoadSprites(spriteSheets, spriteSheetsPb->text_labels(), *spriteEffectsSheet, _proxy.lightning);
 	LOG_INFO("Loaded sprites", _sprites.size());
 
 	auto backgroundSprites = _sprites | std::views::filter(IsSpriteBackgroundTile) | std::views::transform(ToSpriteType);
