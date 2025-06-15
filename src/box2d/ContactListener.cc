@@ -1,7 +1,7 @@
 #include <m2/box2d/ContactListener.h>
 
 m2::box2d::Contact::Contact(const b2Contact& contact) {
-	b2WorldManifold world_manifold;
+	b2WorldManifold world_manifold{};
 	contact.GetWorldManifold(&world_manifold);
 
 	normal = VecF{world_manifold.normal};
