@@ -81,20 +81,15 @@ m2::RectI m2::TextLabelCache::TextLabelGenerator::operator()(const std::tuple<st
 	m2ExpectZeroOrThrowMessage(sizeResult, TTF_GetError());
 
 	// Render to new surface
-	sdl::SurfaceUniquePtr surface{TTF_RenderUTF8_Blended(_font, std::get<std::string>(item).c_str(), SDL_Color{255, 255, 255, 255})};
-	m2SucceedOrThrowMessage(surface, TTF_GetError());
-
-	// Allocate space
-	auto [dstSurface, dstRect] = _dynamicSheet.Alloc(w, h);
+	sdl::SurfaceUniquePtr renderSurface{TTF_RenderUTF8_Blended(_font, std::get<std::string>(item).c_str(), SDL_Color{255, 255, 255, 255})};
+	m2SucceedOrThrowMessage(renderSurface, TTF_GetError());
 
 	// Blit new surface to allocated surface
-	auto dstRectSdl = static_cast<SDL_Rect>(dstRect);
-	const auto blitResult = SDL_BlitSurface(surface.get(), nullptr, dstSurface, &dstRectSdl);
-	m2ExpectZeroOrThrowMessage(blitResult, SDL_GetError());
-
-	_dynamicSheet.RecreateTexture(false);
-
-	return dstRect;
+	return *_dynamicSheet.AllocateAndMutate(w, h, [&](SDL_Surface* surface,const RectI& area) {
+		auto dstRectSdl = static_cast<SDL_Rect>(area);
+		const auto blitResult = SDL_BlitSurface(renderSurface.get(), nullptr, surface, &dstRectSdl);
+		m2ExpectZeroOrThrowMessage(blitResult, SDL_GetError());
+	});
 }
 
 size_t m2::TextLabelCache::TextLabelHash::operator()(const std::tuple<std::string,int>& item) const {

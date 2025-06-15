@@ -139,15 +139,14 @@ namespace m2 {
 
 	namespace detail {
 		template <typename T>
-		T&& _move_or_throw_error(const char* file, int line, expected<T>&& e) {
+		T&& _move_or_throw_error(const char* file, const int line, expected<T>&& e) {
 			if (!e) {
 				throw Error{file, line, e.error()};
 			}
 			return std::move(*e);
 		}
-
 		template <typename T>
-		T&& _move_or_throw_message(const char* file, int line, std::optional<T>&& o, const char* message) {
+		T&& _move_or_throw_message(const char* file, const int line, std::optional<T>&& o, const char* message) {
 			if (!o) {
 				throw Error{file, line, message};
 			}
@@ -155,24 +154,24 @@ namespace m2 {
 		}
 
 		template <typename T>
-		void _succeed_or_throw_error(const char* file, int line, const expected<T>& e) {
+		void _succeed_or_throw_error(const char* file, const int line, const expected<T>& e) {
 			if (!e) {
 				throw Error{file, line, e.error()};
 			}
 		}
-		template <typename T>
-		void _succeed_or_throw_message(const char* file, int line, const std::optional<T>& o, const char* message) {
+
+		void _succeed_or_throw_message(const char* file, const int line, const auto& o, const char* message) {
 			if (!o) {
 				throw Error{file, line, message};
 			}
 		}
-		template <typename T, typename U>
-		void _succeed_or_throw_message(const char* file, int line, const std::unique_ptr<T,U>& u, const char* message) {
-			if (!u) {
+		void _succeed_or_throw_message(const char* file, const int line, const auto& o, const std::string& message) {
+			if (!o) {
 				throw Error{file, line, message};
 			}
 		}
-		void _expect_zero_or_throw_message(const char* file, int line, auto integralType, const char* message) {
+
+		void _expect_zero_or_throw_message(const char* file, const int line, const auto integralType, const char* message) {
 			if (integralType) {
 				throw Error{file, line, message};
 			}
@@ -180,7 +179,7 @@ namespace m2 {
 	}
 }
 
-#define m2ReflectUnexpected(expected_type)           \
+#define m2ReflectUnexpected(expected_type)             \
 	do {                                               \
 		if (not (expected_type)) {                     \
 			return ::m2::make_unexpected(              \
@@ -189,7 +188,7 @@ namespace m2 {
 		}                                              \
 	} while (false)
 
-#define m2ReturnUnexpectedUnless(condition, msg) \
+#define m2ReturnUnexpectedUnless(condition, msg)            \
 	do {                                                    \
 		if (not (condition)) {                              \
 				return ::m2::make_unexpected(msg);          \
@@ -199,14 +198,14 @@ namespace m2 {
 /// Return the r-value reference to v if it contains a value, otherwise throw the contained error
 #define m2MoveOrThrowError(expected_type) (::m2::detail::_move_or_throw_error(__FILE__, __LINE__, (expected_type)))
 /// Return the r-value reference to v if it contains a value, otherwise throw the message
-#define m2MoveOrThrowMessage(optional_type, msg) (::m2::detail::_move_or_throw_message(__FILE__, __LINE__, (optional_type), msg))
+#define m2MoveOrThrowMessage(optional_type, msg) (::m2::detail::_move_or_throw_message(__FILE__, __LINE__, (optional_type), (msg)))
 
 /// Do nothing if v contains a value, otherwise throw the contained error
 #define m2SucceedOrThrowError(expected_type) (::m2::detail::_succeed_or_throw_error(__FILE__, __LINE__, (expected_type)))
 /// Do nothing if optional_type contains a value, otherwise throw the message
-#define m2SucceedOrThrowMessage(optional_type, msg) (::m2::detail::_succeed_or_throw_message(__FILE__, __LINE__, (optional_type), msg))
+#define m2SucceedOrThrowMessage(optional_type, msg) (::m2::detail::_succeed_or_throw_message(__FILE__, __LINE__, (optional_type), (msg)))
 /// Do nothing if integral_type is zero, otherwise throw the message
-#define m2ExpectZeroOrThrowMessage(integral_type, msg) (::m2::detail::_expect_zero_or_throw_message(__FILE__, __LINE__, (integral_type), msg))
+#define m2ExpectZeroOrThrowMessage(integral_type, msg) (::m2::detail::_expect_zero_or_throw_message(__FILE__, __LINE__, (integral_type), (msg)))
 
 #define _m2TokenConcat(x, y) x ## y
 #define m2TokenConcat(x, y) _m2TokenConcat(x, y)

@@ -37,7 +37,7 @@ namespace m2 {
 			DynamicSheet _dynamicSheet;
 			TTF_Font* _font;
 		public:
-			explicit TextLabelGenerator(SDL_Renderer* renderer, TTF_Font* font) : _dynamicSheet(renderer), _font(font) {}
+			explicit TextLabelGenerator(SDL_Renderer* renderer, TTF_Font* font) : _dynamicSheet(renderer, false), _font(font) {}
 			[[nodiscard]] SDL_Texture* Texture() const { return _dynamicSheet.Texture(); }
 			RectI operator()(const std::tuple<std::string,int>& item);
 		};

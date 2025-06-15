@@ -126,20 +126,13 @@ void m2::Disk::Draw(MAYBE const SDL_Surface* dstSurface, MAYBE const RectI& dstR
 m2::RectI m2::ShapeCache::ShapeGenerator::operator()(const std::shared_ptr<Shape>& shape) {
 	// Allocate space
 	const auto dims = shape->Dimensions();
-	const auto [dstSurface, dstRect] = _dynamicSheet.Alloc(dims.x, dims.y);
-
-	// Check pixel stride
-	if (dstSurface->format->BytesPerPixel != 4) {
-		throw M2_ERROR("Surface has unsupported pixel format");
-	}
-
-	// Lock, then draw
-	SDL_LockSurface(dstSurface);
-	shape->Draw(dstSurface, dstRect);
-	SDL_UnlockSurface(dstSurface);
-
-	_dynamicSheet.RecreateTexture(false);
-	return dstRect;
+	return *_dynamicSheet.AllocateAndMutate(dims.x, dims.y, [&](SDL_Surface* surface, const RectI& area) {
+		// Check pixel stride
+		if (surface->format->BytesPerPixel != 4) {
+			throw M2_ERROR("Surface has unsupported pixel format");
+		}
+		shape->Draw(surface, area);
+	});
 }
 
 bool m2::ShapeCache::ShapeComparator::operator()(const std::shared_ptr<Shape>& lhs, const std::shared_ptr<Shape>& rhs) const {

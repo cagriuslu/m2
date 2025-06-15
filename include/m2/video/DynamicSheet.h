@@ -9,22 +9,25 @@
 namespace m2 {
 	/// Sprite sheet that dynamically increases in size on demand
 	class DynamicSheet {
-		SDL_Renderer* _renderer; // TODO Use weak-ptr instead
-		std::unique_ptr<SDL_Surface, sdl::SurfaceDeleter> _surface;
+		SDL_Renderer* _renderer;
+		bool _darkenForLightning;
+		sdl::SurfaceUniquePtr _surface;
+		sdl::TextureUniquePtr _texture;
 		int _lastW{}, _lastH{}, _heightOfCurrentRow{};
-		std::unique_ptr<SDL_Texture, sdl::TextureDeleter> _texture;
 
 	public:
-		explicit DynamicSheet(SDL_Renderer* renderer);
+		DynamicSheet(SDL_Renderer* renderer, bool darkenForLightning);
 
 		// Accessors
 
-		[[nodiscard]] SDL_Texture* Texture() const;
+		[[nodiscard]] SDL_Texture* Texture() const { return _texture.get(); }
 
 		// Modifiers
 
-		std::pair<SDL_Surface*, RectI> Alloc(int requestedW, int requestedH);
-		SDL_Texture* RecreateTexture(bool lightning);
+		/// Tries to allocate the requested area on the dynamic surface, optionally locks the surface, and calls the
+		/// mutator with the surface and the area. The same area is returned at the end. Surface must be locked only if
+		/// the raw pixels will be mutated. For blitting and similar operations, the surface shouldn't be locked.
+		expected<RectI> AllocateAndMutate(int requestedW, int requestedH, const std::function<void(SDL_Surface*,const RectI&)>& mutator, bool lockSurface = true);
 
 	protected:
 		[[nodiscard]] int Width() const { return _surface->w; }

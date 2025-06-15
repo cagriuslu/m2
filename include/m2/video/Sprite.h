@@ -29,7 +29,7 @@ namespace m2 {
 	   public:
 		Sprite() = default;
 		Sprite(const std::vector<SpriteSheet>& spriteSheets, const SpriteSheet& spriteSheet,
-				SpriteEffectsSheet& spriteEffectsSheet, const pb::Sprite& sprite, bool lightning);
+				SpriteEffectsSheet& spriteEffectsSheet, const pb::Sprite& sprite);
 
 		// Accessors
 
@@ -93,6 +93,6 @@ namespace m2 {
 
 	std::vector<std::variant<Sprite, pb::TextLabel>> LoadSprites(const std::vector<SpriteSheet>& spriteSheets,
 			const google::protobuf::RepeatedPtrField<pb::TextLabel>& textLabels,
-			SpriteEffectsSheet& spriteEffectsSheet, bool lightning);
+			SpriteEffectsSheet& spriteEffectsSheet);
 	void_expected MoveBackground(int from, int to, const std::string& level);
 }

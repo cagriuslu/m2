@@ -4,7 +4,7 @@
 #include <m2/Log.h>
 
 m2::Sprite::Sprite(const std::vector<SpriteSheet>& spriteSheets, const SpriteSheet& spriteSheet,
-		SpriteEffectsSheet& spriteEffectsSheet, const pb::Sprite& sprite, const bool lightning)
+		SpriteEffectsSheet& spriteEffectsSheet, const pb::Sprite& sprite)
 		: _spriteSheet(&spriteSheet), _effectsSheet(&spriteEffectsSheet), _pb(&sprite) {
 	// Lookup the original sprite
 	if (sprite.has_duplicate()) {
@@ -51,7 +51,7 @@ m2::Sprite::Sprite(const std::vector<SpriteSheet>& spriteSheets, const SpriteShe
 	if (_originalPb->has_regular() && _originalPb->regular().has_foreground_companion()) {
 		_foregroundCompanionSpriteEffectsSheetRect = spriteEffectsSheet.create_foreground_companion_effect(
 		    spriteSheet, _originalPb->regular().rect(),
-		    _originalPb->regular().foreground_companion().foreground_companion_rects(), lightning);
+		    _originalPb->regular().foreground_companion().foreground_companion_rects());
 		_foregroundCompanionCenterToOriginVecPx =
 		    VecF{_originalPb->regular().foreground_companion().center_to_origin_vec_px()};
 		_foregroundCompanionCenterToOriginVecM =
@@ -71,22 +71,20 @@ m2::Sprite::Sprite(const std::vector<SpriteSheet>& spriteSheets, const SpriteShe
 			// Create effect
 			switch (effect.type()) {
 				case pb::SPRITE_EFFECT_MASK:
-					_effects[index] = spriteEffectsSheet.create_mask_effect(
-					    spriteSheet, _originalPb->regular().rect(), effect.mask_color(), lightning);
+					_effects[index] = spriteEffectsSheet.create_mask_effect(spriteSheet, _originalPb->regular().rect(), effect.mask_color());
 					LOG_DEBUG("Sprite mask effect rect", _originalPb->type(), _effects[index]);
 					break;
 				case pb::SPRITE_EFFECT_GRAYSCALE:
-					_effects[index] = spriteEffectsSheet.create_grayscale_effect(
-					    spriteSheet, _originalPb->regular().rect(), lightning);
+					_effects[index] = spriteEffectsSheet.create_grayscale_effect(spriteSheet, _originalPb->regular().rect());
 					LOG_DEBUG("Grayscale effect rect", _originalPb->type(), _effects[index]);
 					break;
 				case pb::SPRITE_EFFECT_IMAGE_ADJUSTMENT:
 					_effects[index] = spriteEffectsSheet.create_image_adjustment_effect(
-					    spriteSheet, _originalPb->regular().rect(), effect.image_adjustment(), lightning);
+					    spriteSheet, _originalPb->regular().rect(), effect.image_adjustment());
 					LOG_DEBUG("Image adjustment effect rect", _originalPb->type(), _effects[index]);
 					break;
 				case pb::SPRITE_EFFECT_BLURRED_DROP_SHADOW:
-					_effects[index] = spriteEffectsSheet.create_blurred_drop_shadow_effect(spriteSheet, _originalPb->regular().rect(), effect.blurred_drop_shadow(), lightning);
+					_effects[index] = spriteEffectsSheet.create_blurred_drop_shadow_effect(spriteSheet, _originalPb->regular().rect(), effect.blurred_drop_shadow());
 					LOG_DEBUG("Blurred drop shadow effect rect", _originalPb->type(), _effects[index]);
 					break;
 				default:
@@ -183,8 +181,7 @@ m2g::pb::SpriteType m2::ToSpriteType(const std::variant<Sprite,pb::TextLabel>& s
 }
 
 std::vector<std::variant<m2::Sprite, m2::pb::TextLabel>> m2::LoadSprites(const std::vector<SpriteSheet>& spriteSheets,
-		const google::protobuf::RepeatedPtrField<pb::TextLabel>& textLabels, SpriteEffectsSheet& spriteEffectsSheet,
-		const bool lightning) {
+		const google::protobuf::RepeatedPtrField<pb::TextLabel>& textLabels, SpriteEffectsSheet& spriteEffectsSheet) {
 	std::vector<std::variant<Sprite, pb::TextLabel>> sprites_vector(pb::enum_value_count<m2g::pb::SpriteType>());
 	std::vector<bool> is_loaded(pb::enum_value_count<m2g::pb::SpriteType>());
 
@@ -197,7 +194,7 @@ std::vector<std::variant<m2::Sprite, m2::pb::TextLabel>> m2::LoadSprites(const s
 				throw M2_ERROR("Sprite has duplicate definition: " + m2::ToString(sprite.type()));
 			}
 			// Load sprite
-			sprites_vector[index] = Sprite{spriteSheets, spriteSheet, spriteEffectsSheet, sprite, lightning};
+			sprites_vector[index] = Sprite{spriteSheets, spriteSheet, spriteEffectsSheet, sprite};
 			is_loaded[index] = true;
 		}
 	}

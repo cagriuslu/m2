@@ -17,7 +17,7 @@
 #include <m2/ui/UiAction.h>
 #include <m2/game/Key.h>
 
-m2::Game* m2::Game::_instance;
+m2::Game* m2::Game::_instance{};
 
 void m2::Game::CreateInstance() {
 	LOG_DEBUG("Creating Game instance...");
@@ -123,7 +123,7 @@ m2::Game::Game() {
 	_shapeCache.emplace(renderer);
 
 	audio_manager.emplace();
-	spriteEffectsSheet = SpriteEffectsSheet{renderer};
+	spriteEffectsSheet = SpriteEffectsSheet{renderer, _proxy.lightning};
 
 	// Load game resources
 	resource_dir = ResourcePath() / "game" / _proxy.gameIdentifier;
@@ -138,7 +138,7 @@ m2::Game::Game() {
 		spriteSheetsPb = *sheets_pb;
 	}
 	spriteSheets = SpriteSheet::LoadSpriteSheets(*spriteSheetsPb, renderer, _proxy.lightning);
-	_sprites = LoadSprites(spriteSheets, spriteSheetsPb->text_labels(), *spriteEffectsSheet, _proxy.lightning);
+	_sprites = LoadSprites(spriteSheets, spriteSheetsPb->text_labels(), *spriteEffectsSheet);
 	LOG_INFO("Loaded sprites", _sprites.size());
 
 	auto backgroundSprites = _sprites | std::views::filter(IsSpriteBackgroundTile) | std::views::transform(ToSpriteType);
