@@ -16,9 +16,7 @@ m2::Sprite::Sprite(const std::vector<SpriteSheet>& spriteSheets, const SpriteShe
 					break;  // Early out
 				}
 			}
-			if (originalPb) {
-				break;  // Early out
-			}
+			if (originalPb) { break; }
 		}
 		if (not originalPb) {
 			throw M2_ERROR("Unable to find the original sprite");
@@ -51,7 +49,7 @@ m2::Sprite::Sprite(const std::vector<SpriteSheet>& spriteSheets, const SpriteShe
 	if (_originalPb->has_regular() && _originalPb->regular().has_foreground_companion()) {
 		_foregroundCompanionSpriteEffectsSheetRect = spriteEffectsSheet.create_foreground_companion_effect(
 		    spriteSheet, _originalPb->regular().rect(),
-		    _originalPb->regular().foreground_companion().foreground_companion_rects());
+		    _originalPb->regular().foreground_companion().rects());
 		_foregroundCompanionCenterToOriginVecPx =
 		    VecF{_originalPb->regular().foreground_companion().center_to_origin_vec_px()};
 		_foregroundCompanionCenterToOriginVecM =

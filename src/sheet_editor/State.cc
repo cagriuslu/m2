@@ -78,7 +78,7 @@ void State::ResetSpriteRectAndOrigin() {
 }
 void State::AddForegroundCompanionRect(const RectI& rect) {
 	ModifySelectedSprite([&](pb::Sprite& sprite) {
-		auto* newRect = sprite.mutable_regular()->mutable_foreground_companion()->add_foreground_companion_rects();
+		auto* newRect = sprite.mutable_regular()->mutable_foreground_companion()->add_rects();
 		newRect->set_x(rect.x);
 		newRect->set_y(rect.y);
 		newRect->set_w(rect.w);
@@ -187,7 +187,7 @@ void State::Draw() const {
 			Graphic::DrawCross(centerSelection->first, CROSS_COLOR);
 		}
 		// Draw already existing
-		for (const auto& rect : sprite.regular().foreground_companion().foreground_companion_rects()) {
+		for (const auto& rect : sprite.regular().foreground_companion().rects()) {
 			Graphic::ColorRect(RectF{rect}.Shift({-0.5f, -0.5f}), CONFIRMED_SELECTION_COLOR);
 		}
 		const auto rect = RectI{sprite.regular().rect()};

@@ -72,7 +72,7 @@ message ForegroundCompanion {
   // Vector from the center of the sprite to the point that should be the origin of the Foreground Companion
   VecF center_to_origin_vec_px = 1;
   // w.r.t SpriteSheet coordinates
-  repeated RectI foreground_companion_rects = 2;
+  repeated RectI rects = 2;
   Fixture fixture = 3;
 }
 

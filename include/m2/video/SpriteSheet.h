@@ -6,11 +6,12 @@
 namespace m2 {
 	class SpriteSheet final {
 		pb::SpriteSheet _pb;
-		std::unique_ptr<SDL_Surface, sdl::SurfaceDeleter> _surface;
-		std::unique_ptr<SDL_Texture, sdl::TextureDeleter> _texture;
+		sdl::SurfaceUniquePtr _surface;
+		sdl::TextureUniquePtr _texture;
+
+		SpriteSheet(const pb::SpriteSheet& spriteSheet, SDL_Renderer* renderer, bool lightning);
 
 	public:
-		SpriteSheet(const pb::SpriteSheet& spriteSheet, SDL_Renderer* renderer, bool lightning);
 		static std::vector<SpriteSheet> LoadSpriteSheets(const pb::SpriteSheets& spriteSheets, SDL_Renderer* renderer, bool lightning);
 
 		// Accessors
