@@ -135,8 +135,11 @@ enum SpriteType {
 
   // Resources
   COAL_CUBE = 401;
-  IRON_CUBE = 402;
-  BEER_BARREL = 403;
+  COAL_CUBE_DROP_SHADOW = 402;
+  IRON_CUBE = 403;
+  IRON_CUBE_DROP_SHADOW = 404;
+  BEER_BARREL = 405;
+  BEER_BARREL_DROP_SHADOW = 406;
 
   // Connections
   SPRITE_CANAL = 501;

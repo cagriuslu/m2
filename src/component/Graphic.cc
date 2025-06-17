@@ -187,39 +187,18 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 		const auto projector = IsProjectionTypePerspective(M2_LEVEL.ProjectionType())
 				? &Sprite::DrawIn3dWorld
 				: &Sprite::DrawIn2dWorld;
-		const auto spriteDrawer = [&](const SpriteVariant sv) -> void {
-			(sprite.*projector)(gfx.Owner().position, sv, gfx.Owner().orientation, is_foreground, gfx.z);
+		const auto spriteDrawer = [&](const bool foregroundCompanion) -> void {
+			(sprite.*projector)(gfx.Owner().position, foregroundCompanion, gfx.Owner().orientation, is_foreground, gfx.z);
 		};
 
 		// Dim the sprite if dimming mode is enabled. TODO Dimming is implemented only for default variant.
-		const bool dimmed = DimRenderingIfNecessary(gfx.OwnerId(), sprite.Texture(SpriteVariant{}));
+		const bool dimmed = DimRenderingIfNecessary(gfx.OwnerId(), sprite.GetTexture());
 
-		// First, try to draw something using the variant_draw_order, which overrides default_variant_draw_order.
-		bool isAnythingDrawn = false;
-		for (auto optionalSpriteVariant : gfx.variantDrawOrder) {
-			if (optionalSpriteVariant) {
-				spriteDrawer(*optionalSpriteVariant);
-				isAnythingDrawn = true;
-			}
-		}
-		// If nothing is drawn, fallback to default variant draw order of the sprite.
-		if (not isAnythingDrawn) {
-			// If the default variant draw order list is empty, draw only the default variant.
-			if (sprite.DefaultVariantDrawOrder().empty()) {
-				spriteDrawer(DefaultVariant{});
-			} else {
-				for (const auto& sprite_variant : sprite.DefaultVariantDrawOrder()) {
-					spriteDrawer(
-							sprite_variant == pb::SpriteEffectType::__NO_SPRITE_EFFECT
-							? SpriteVariant{DefaultVariant{}}
-							: sprite_variant);
-				}
-			}
-		}
+		spriteDrawer(gfx.drawForegroundCompanion);
 
 		// If dimming was active, we need to un-dim.
 		if (dimmed) {
-			UndimRendering(sprite.Texture(SpriteVariant{}));
+			UndimRendering(sprite.GetTexture());
 		}
 	} else if (std::holds_alternative<const pb::TextLabel*>(gfx.visual)) {
 		const auto& textLabel = *std::get<const pb::TextLabel*>(gfx.visual);

@@ -81,14 +81,8 @@ namespace m2 {
 		Callback postDraw{};
 
 		std::variant<std::monostate, const Sprite*, const pb::TextLabel*> visual;
-
-		/// Only applicable to sprites. If any of the entries exist, Sprite's default_variant_draw_order is overridden.
-		/// First variant is drawn first.
-		std::array<std::optional<SpriteVariant>, 2> variantDrawOrder{};
-
-		/// Only applicable to text labels.
-		RectI textLabelRect{};
-
+		bool drawForegroundCompanion{};
+		RectI textLabelRect{}; /// Only applicable to text labels. TODO load into TextLabel object during startup just like Sprite
 		float z{};
 
 		Graphic() = default;

@@ -22,7 +22,7 @@ m2::void_expected rpg::init_finish_point(m2::Object& obj) {
 	phy.body[I(m2::PhysicsLayer::P0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::PhysicsLayer::P0);
 
 	auto& gfx = obj.AddGraphic(m2::ForegroundDrawLayer::F0_BOTTOM, sprite_type);
-	gfx.variantDrawOrder[0] = m2::pb::SpriteEffectType::SPRITE_EFFECT_GRAYSCALE;
+	gfx.visual = &std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(m2g::pb::CASTLE_FINISH_POINT_SPRITE_GRAYSCALE));
 
 	phy.onCollision = [](MAYBE m2::Physique& self, MAYBE m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
 		// Check enemy counter
@@ -42,9 +42,9 @@ m2::void_expected rpg::init_finish_point(m2::Object& obj) {
 	gfx.preDraw = [](MAYBE m2::Graphic& gfx) {
 		// Check enemy counter, adjust sprite effect
 		if (M2G_PROXY.alive_enemy_count) {
-			gfx.variantDrawOrder[0] = m2::pb::SpriteEffectType::SPRITE_EFFECT_GRAYSCALE;
+			gfx.visual = &std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(m2g::pb::CASTLE_FINISH_POINT_SPRITE_GRAYSCALE));
 		} else {
-			gfx.variantDrawOrder[0] = std::nullopt;
+			gfx.visual = &std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(m2g::pb::CASTLE_FINISH_POINT_SPRITE));
 		}
 	};
 

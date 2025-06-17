@@ -6,8 +6,8 @@ void DrawAddons(const m2::Graphic& gfx, float health) {
 
 		SDL_Rect dst_rect{};
 		if (m2::IsProjectionTypeParallel(M2_LEVEL.ProjectionType())) {
-			const auto src_rect = static_cast<SDL_Rect>(sprite.Rect());
-			const auto screen_origin_to_sprite_center_px_vec = sprite.ScreenOriginToCenterVecOutpx(gfx.Owner().position, m2::SpriteVariant{});
+			const auto src_rect = static_cast<SDL_Rect>(sprite.GetRect());
+			const auto screen_origin_to_sprite_center_px_vec = sprite.ScreenOriginToCenterVecOutpx(gfx.Owner().position);
 			dst_rect = SDL_Rect{
 				m2::RoundI(screen_origin_to_sprite_center_px_vec.x - (m2::F(src_rect.w) * M2_GAME.Dimensions().OutputPixelsPerMeter() / m2::F(sprite.Ppm()) / 2.0f)),
 				m2::RoundI(screen_origin_to_sprite_center_px_vec.y + (m2::F(src_rect.h) * M2_GAME.Dimensions().OutputPixelsPerMeter() * 11.0f / m2::F(sprite.Ppm()) / 2.0f / 10.0f)), // Give an offset of 1.1

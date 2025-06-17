@@ -26,10 +26,26 @@ m2::Sprite::Sprite(const std::vector<SpriteSheet>& spriteSheets, const SpriteShe
 		_originalPb = &sprite;
 	}
 
-	std::ranges::transform(_originalPb->regular().default_variant_draw_order(),
-			std::back_inserter(_defaultVariantDrawOrder),
-			[](int t) { return static_cast<pb::SpriteEffectType>(t); });
-	_rect = RectI{_originalPb->regular().rect()};
+	if (sprite.has_duplicate() && sprite.duplicate().additional_effects_size()) {
+		// TODO implement multiple effects
+		if (const auto& effect = sprite.duplicate().additional_effects(0); effect.has_color_mask()) {
+			_rect = spriteEffectsSheet.create_mask_effect(spriteSheet, _originalPb->regular().rect(), effect.color_mask());
+			LOG_DEBUG("Created color mask effect for sprite", sprite.type(), _rect);
+		} else if (effect.grayscale()) {
+			_rect = spriteEffectsSheet.create_grayscale_effect(spriteSheet, _originalPb->regular().rect());
+			LOG_DEBUG("Created grayscale effect for sprite", sprite.type(), _rect);
+		} else if (effect.has_image_adjustment()) {
+			_rect = spriteEffectsSheet.create_image_adjustment_effect(spriteSheet, _originalPb->regular().rect(), effect.image_adjustment());
+			LOG_DEBUG("Created image adjustment effect for sprite", sprite.type(), _rect);
+		} else if (effect.has_blurred_drop_shadow()) {
+			_rect = spriteEffectsSheet.create_blurred_drop_shadow_effect(spriteSheet, _originalPb->regular().rect(), effect.blurred_drop_shadow());
+			LOG_DEBUG("Created blurred drop shadow effect for sprite", sprite.type(), _rect);
+		} else {
+			throw M2_ERROR("Missing or unimplemented sprite effect");
+		}
+	} else {
+		_rect = RectI{_originalPb->regular().rect()};
+	}
 	_originalRotationRad = _originalPb->regular().original_rotation() * PI;
 	_ppm = _originalPb->regular().override_ppm() ? _originalPb->regular().override_ppm() : spriteSheet.Pb().ppm();
 	_centerToOriginVecPx = VecF{_originalPb->regular().center_to_origin_vec_px()};
@@ -55,75 +71,41 @@ m2::Sprite::Sprite(const std::vector<SpriteSheet>& spriteSheets, const SpriteShe
 		_foregroundCompanionCenterToOriginVecM =
 		    VecF{_originalPb->regular().foreground_companion().center_to_origin_vec_px()} / static_cast<float>(_ppm);
 	}
-
-	// Create effects
-	if (_originalPb->has_regular() && _originalPb->regular().effects_size()) {
-		_effects.resize(pb::enum_value_count<pb::SpriteEffectType>());
-		std::vector<bool> is_created(pb::enum_value_count<pb::SpriteEffectType>());
-		for (const auto& effect : _originalPb->regular().effects()) {
-			const auto index = enum_index(effect.type());
-			// Check if the effect is already created
-			if (is_created[index]) {
-				throw M2_ERROR("Sprite has duplicate effect definition: " + m2::ToString(effect.type()));
-			}
-			// Create effect
-			switch (effect.type()) {
-				case pb::SPRITE_EFFECT_MASK:
-					_effects[index] = spriteEffectsSheet.create_mask_effect(spriteSheet, _originalPb->regular().rect(), effect.mask_color());
-					LOG_DEBUG("Sprite mask effect rect", _originalPb->type(), _effects[index]);
-					break;
-				case pb::SPRITE_EFFECT_GRAYSCALE:
-					_effects[index] = spriteEffectsSheet.create_grayscale_effect(spriteSheet, _originalPb->regular().rect());
-					LOG_DEBUG("Grayscale effect rect", _originalPb->type(), _effects[index]);
-					break;
-				case pb::SPRITE_EFFECT_IMAGE_ADJUSTMENT:
-					_effects[index] = spriteEffectsSheet.create_image_adjustment_effect(
-					    spriteSheet, _originalPb->regular().rect(), effect.image_adjustment());
-					LOG_DEBUG("Image adjustment effect rect", _originalPb->type(), _effects[index]);
-					break;
-				case pb::SPRITE_EFFECT_BLURRED_DROP_SHADOW:
-					_effects[index] = spriteEffectsSheet.create_blurred_drop_shadow_effect(spriteSheet, _originalPb->regular().rect(), effect.blurred_drop_shadow());
-					LOG_DEBUG("Blurred drop shadow effect rect", _originalPb->type(), _effects[index]);
-					break;
-				default:
-					throw M2_ERROR(
-					    "Encountered a sprite with unknown sprite effect: " + m2::ToString(_originalPb->type()));
-			}
-			is_created[index] = true;
-		}
-	}
 }
 
-SDL_Texture* m2::Sprite::Texture(const SpriteVariant spriteVariant) const {
-	if (std::holds_alternative<DefaultVariant>(spriteVariant)) {
-		return Sheet().texture();
+SDL_Texture* m2::Sprite::GetTexture(const bool foregroundCompanion) const {
+	if (foregroundCompanion) {
+		return _effectsSheet->Texture();
 	}
-	return EffectsTexture();
+	if (_pb->has_duplicate() && _pb->duplicate().additional_effects_size()) {
+		return _effectsSheet->Texture();
+	}
+	return Sheet().texture();
 }
 
-m2::VecF m2::Sprite::TextureTotalDims(const SpriteVariant spriteVariant) const {
-	if (std::holds_alternative<DefaultVariant>(spriteVariant)) {
-		return {Sheet().surface()->w, Sheet().surface()->h};
+m2::VecF m2::Sprite::TextureTotalDims(const bool foregroundCompanion) const {
+	if (foregroundCompanion) {
+		return {_effectsSheet->texture_width(), _effectsSheet->texture_height()};
 	}
-	return {EffectsSheet()->texture_width(), EffectsSheet()->texture_height()};
+	if (_pb->has_duplicate() && _pb->duplicate().additional_effects_size()) {
+		return {_effectsSheet->texture_width(), _effectsSheet->texture_height()};
+	}
+	return {Sheet().surface()->w, Sheet().surface()->h};
 }
 
-const m2::RectI& m2::Sprite::Rect(const SpriteVariant spriteVariant) const {
-	if (std::holds_alternative<DefaultVariant>(spriteVariant)) {
-		return Rect();
-	}
-	if (std::holds_alternative<ForegroundCompanion>(spriteVariant)) {
+const m2::RectI& m2::Sprite::GetRect(const bool foregroundCompanion) const {
+	if (foregroundCompanion) {
 		return *_foregroundCompanionSpriteEffectsSheetRect;
 	}
-	return EffectRect(std::get<pb::SpriteEffectType>(spriteVariant));
+	return _rect;
 }
 
 float m2::Sprite::SourceToOutputPixelMultiplier() const {
 	return M2_GAME.Dimensions().OutputPixelsPerMeter() / static_cast<float>(_ppm);
 }
 
-m2::VecF m2::Sprite::CenterToOriginVecSrcpx(const SpriteVariant spriteVariant) const {
-	if (std::holds_alternative<ForegroundCompanion>(spriteVariant)) {
+m2::VecF m2::Sprite::CenterToOriginVecSrcpx(const bool foregroundCompanion) const {
+	if (foregroundCompanion) {
 		return ForegroundCompanionCenterToOriginVecPx();
 	}
 	return OriginalRotationRadians() != 0.0f
@@ -131,33 +113,33 @@ m2::VecF m2::Sprite::CenterToOriginVecSrcpx(const SpriteVariant spriteVariant) c
 			: CenterToOriginVecPx();
 }
 
-m2::VecF m2::Sprite::ScreenOriginToCenterVecOutpx(const VecF& position, const SpriteVariant sprite_variant) const {
-	return ScreenOriginToPositionVecPx(position) - CenterToOriginVecOutpx(sprite_variant);
+m2::VecF m2::Sprite::ScreenOriginToCenterVecOutpx(const VecF& position, const bool foregroundCompanion) const {
+	return ScreenOriginToPositionVecPx(position) - CenterToOriginVecOutpx(foregroundCompanion);
 }
 
-void m2::Sprite::DrawIn2dWorld(const VecF& position, const SpriteVariant sprite_variant, const float angle, MAYBE bool is_foreground, MAYBE float z) const {
-	const auto sourceRect = static_cast<SDL_Rect>(Rect(sprite_variant));
+void m2::Sprite::DrawIn2dWorld(const VecF& position, const bool foregroundCompanion, const float angle, MAYBE bool is_foreground, MAYBE float z) const {
+	const auto sourceRect = static_cast<SDL_Rect>(GetRect(foregroundCompanion));
 	DrawTextureIn2dWorld(
 			M2_GAME.renderer,
-			Texture(sprite_variant),
+			GetTexture(foregroundCompanion),
 			&sourceRect,
 			OriginalRotationRadians(),
 			M2_GAME.Dimensions().OutputPixelsPerMeter() / F(Ppm()),
-			CenterToOriginVecOutpx(sprite_variant),
-			ScreenOriginToCenterVecOutpx(position, sprite_variant),
+			CenterToOriginVecOutpx(foregroundCompanion),
+			ScreenOriginToCenterVecOutpx(position, foregroundCompanion),
 			angle
 	);
 }
-void m2::Sprite::DrawIn3dWorld(const VecF& position, const SpriteVariant sprite_variant, const float angle, const bool is_foreground, const float z) const {
-	const auto sourceRect = static_cast<SDL_Rect>(Rect(sprite_variant));
+void m2::Sprite::DrawIn3dWorld(const VecF& position, const bool foregroundCompanion, const float angle, const bool is_foreground, const float z) const {
+	const auto sourceRect = static_cast<SDL_Rect>(GetRect(foregroundCompanion));
 	DrawTextureIn3dWorld(
 			M2_GAME.renderer,
-			Texture(sprite_variant),
+			GetTexture(foregroundCompanion),
 			&sourceRect,
 			F(Ppm()),
-			CenterToOriginVecOutpx(sprite_variant),
+			CenterToOriginVecOutpx(foregroundCompanion),
 			OriginalRotationRadians(),
-			TextureTotalDims(sprite_variant),
+			TextureTotalDims(foregroundCompanion),
 			position,
 			z,
 			angle,

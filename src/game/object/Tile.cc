@@ -46,7 +46,7 @@ m2::Pool<m2::Object>::Iterator m2::obj::create_tile(const BackgroundDrawLayer la
 			const auto fg_it = CreateObject(position - sprite.CenterToOriginVecM()
 					+ sprite.ForegroundCompanionCenterToOriginVecM());
 			auto& gfx = fg_it->AddGraphic(ForegroundDrawLayer::F0_BOTTOM, spriteType);
-			gfx.variantDrawOrder[0] = ForegroundCompanion{};
+			gfx.drawForegroundCompanion = true;
 		}
 	}
 

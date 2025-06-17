@@ -159,13 +159,13 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 			impl.animation_fsm.signal(m2::AnimationFsmSignal{m2g::pb::ANIMATION_STATE_IDLE});
 		}
 	};
-	gfx.preDraw = [&](m2::Graphic& gfx) {
+	gfx.preDraw = [&](m2::Graphic&) {
 		using namespace m2::pb;
 		impl.animation_fsm.time(M2_GAME.DeltaTimeS());
 		if (chr.HasResource(RESOURCE_DAMAGE_EFFECT_TTL)) {
-			gfx.variantDrawOrder[0] = SPRITE_EFFECT_MASK;
+			impl.animation_fsm.signal(m2::AnimationFsmSignal{ANIMATION_STATE_HURT});
 		} else {
-			gfx.variantDrawOrder[0] = std::nullopt;
+			impl.animation_fsm.signal(m2::AnimationFsmSignal{ANIMATION_STATE_IDLE});
 		}
 	};
 	gfx.onDraw = [&](m2::Graphic& gfx) {

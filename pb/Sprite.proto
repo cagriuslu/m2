@@ -7,43 +7,6 @@ import "VecF.proto";
 import "Dim2f.proto";
 import "m2g_ItemType.proto";
 
-message Color {
-  uint32 r = 1;
-  uint32 g = 2;
-  uint32 b = 3;
-  uint32 a = 4;
-}
-
-message ImageAdjustment {
-  float brightness_multiplier = 1;
-}
-message BlurredDropShadow {
-  int32 blur_radius = 1; // The width (or height) of the convolution matrix will be (blur_radius * 2 + 1).
-  float standard_deviation = 2; // of Gaussian blur
-  float final_transparency = 3; // [0, inf] Multiplies the alpha value after blurring.
-}
-
-enum SpriteEffectType {
-  __NO_SPRITE_EFFECT = 0; // Shouldn't be used in the code, instead use IsForegroundCompanion{false}
-  // Creates a mask of the sprite where the non-transparent pixels of the sprite has a fixed color (mask_color).
-  SPRITE_EFFECT_MASK = 1;
-  // Creates a grayscale version of the sprite.
-  SPRITE_EFFECT_GRAYSCALE = 2;
-  // Creates an adjusted version of the sprite.
-  SPRITE_EFFECT_IMAGE_ADJUSTMENT = 3;
-  // Creates a black blurred shadow of the sprite. The variant doesn't contain the sprite itself.
-  SPRITE_EFFECT_BLURRED_DROP_SHADOW = 4;
-}
-
-message SpriteEffect {
-  SpriteEffectType type = 1;
-  oneof effect_arg {
-    Color mask_color = 2;
-    ImageAdjustment image_adjustment = 3;
-    BlurredDropShadow blurred_drop_shadow = 4;
-  }
-}
-
 message Fixture {
   message RectangleFixture {
     VecF sprite_origin_to_fixture_center_vec_px = 1;
@@ -76,19 +39,11 @@ message ForegroundCompanion {
   Fixture fixture = 3;
 }
 
-// TODO add comment
 message RegularSprite {
-  // List of effects that might be used during the game
-  repeated SpriteEffect effects = 1;
-
-  // An array of SpriteEffectTypes describing how the Sprite should be drawn by the **default** Sprite drawing function.
-  // The variants are drawn in order, ie. the first variant in the array will be drawn first. Use __NO_SPRITE_EFFECT to
-  // describe the original sprite. If the array is empty, only the original sprite will be drawn. This field is usually
-  // used for sprited that are drawn together with an effect by default, ex. text with drop shadows.
-  repeated SpriteEffectType default_variant_draw_order = 2;
+  string comment = 1;
 
   // Coordinates of the sprite in sheet
-  RectI rect = 3;
+  RectI rect = 2;
 
   // Original rotation should be set according to the rotation of the sprite in the sprite sheet
   // Expects values in-between (-1, 1], which corresponds to -180, 180 degrees.
@@ -98,25 +53,50 @@ message RegularSprite {
   // Collider parameters and other offsets should assume the sprite is already rotated while filling in the values.
   // For example, center_to_origin_vec_px should contain the vector to origin as-if the sprite is ALREADY rotated.
   // TODO this is quite difficult
-  float original_rotation = 4;
+  float original_rotation = 3;
 
   // Override the PPM value of the sheet with this value if given.
-  int32 override_ppm = 5;
+  int32 override_ppm = 4;
 
   // Vector from the center of the (rect) to the position that should be the origin
-  VecF center_to_origin_vec_px = 6;
+  VecF center_to_origin_vec_px = 5;
 
   // Fixtures are not automatically loaded. Sprite editor can be used to draw fixtures on the sprite itself.
-  repeated Fixture fixtures = 7;
+  repeated Fixture fixtures = 6;
 
   // If the sprite is a background tile, it'll show up in the level editor as a background sprite, instead of a
   // foreground sprite. Additionally, fixtures will be auto-created as static bodies during loading.
-  bool is_background_tile = 8;
+  bool is_background_tile = 7;
 
-  ForegroundCompanion foreground_companion = 9;
+  ForegroundCompanion foreground_companion = 8;
 
   // Sprites can hold immutable items just to simplify attribute lookup
-  repeated m2g.pb.ItemType named_items = 10;
+  repeated m2g.pb.ItemType named_items = 9;
+}
+
+message Color {
+  uint32 r = 1;
+  uint32 g = 2;
+  uint32 b = 3;
+  uint32 a = 4;
+}
+message ImageAdjustment {
+  float brightness_multiplier = 1;
+}
+message BlurredDropShadow {
+  int32 blur_radius = 1; // The width (or height) of the convolution matrix will be (blur_radius * 2 + 1).
+  float standard_deviation = 2; // of Gaussian blur
+  float final_transparency = 3; // [0, inf] Multiplies the alpha value after blurring.
+}
+
+// TODO rename
+message SpriteEffect {
+  oneof effect {
+    Color color_mask = 1;
+    bool grayscale = 2;
+    ImageAdjustment image_adjustment = 3;
+    BlurredDropShadow blurred_drop_shadow = 4;
+  }
 }
 
 message Duplicate {
@@ -124,6 +104,9 @@ message Duplicate {
 
   // Sprites can hold immutable items just to simplify attribute lookup
   repeated m2g.pb.ItemType additional_named_items = 2;
+
+  // Optionally, sprite effects might be applied to the original sprite
+  repeated SpriteEffect additional_effects = 3;
 }
 
 message Sprite {

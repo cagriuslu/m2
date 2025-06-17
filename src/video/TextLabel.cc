@@ -89,7 +89,7 @@ m2::RectI m2::TextLabelCache::TextLabelGenerator::operator()(const std::tuple<st
 		auto dstRectSdl = static_cast<SDL_Rect>(area);
 		const auto blitResult = SDL_BlitSurface(renderSurface.get(), nullptr, surface, &dstRectSdl);
 		m2ExpectZeroOrThrowMessage(blitResult, SDL_GetError());
-	});
+	}, false);
 }
 
 size_t m2::TextLabelCache::TextLabelHash::operator()(const std::tuple<std::string,int>& item) const {

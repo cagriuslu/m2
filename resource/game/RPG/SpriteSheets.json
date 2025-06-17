@@ -785,11 +785,6 @@
         {
           "type": "CASTLE_FINISH_POINT_SPRITE",
           "regular": {
-            "effects": [
-              {
-                "type": "SPRITE_EFFECT_GRAYSCALE"
-              }
-            ],
             "rect": {
               "x": 272,
               "y": 224,
@@ -802,6 +797,17 @@
                   "spriteOriginToFixtureCenterVecPx": {},
                   "radiusPx": 6
                 }
+              }
+            ]
+          }
+        },
+        {
+          "type": "CASTLE_FINISH_POINT_SPRITE_GRAYSCALE",
+          "duplicate": {
+            "originalType": "CASTLE_FINISH_POINT_SPRITE",
+            "additionalEffects": [
+              {
+                "grayscale": true
               }
             ]
           }
@@ -1292,15 +1298,6 @@
         {
           "type": "CUTEOPUS_LOOKDOWN_00",
           "regular": {
-            "effects": [
-              {
-                "type": "SPRITE_EFFECT_MASK",
-                "maskColor": {
-                  "b": 180,
-                  "a": 255
-                }
-              }
-            ],
             "rect": {
               "x": 425,
               "y": 32,
@@ -1329,15 +1326,6 @@
         {
           "type": "CUTEOPUS_LOOKDOWN_01",
           "regular": {
-            "effects": [
-              {
-                "type": "SPRITE_EFFECT_MASK",
-                "maskColor": {
-                  "b": 180,
-                  "a": 255
-                }
-              }
-            ],
             "rect": {
               "x": 365,
               "y": 32,
@@ -1352,15 +1340,6 @@
         {
           "type": "CUTEOPUS_LOOKDOWN_02",
           "regular": {
-            "effects": [
-              {
-                "type": "SPRITE_EFFECT_MASK",
-                "maskColor": {
-                  "b": 180,
-                  "a": 255
-                }
-              }
-            ],
             "rect": {
               "x": 485,
               "y": 32,
@@ -1375,15 +1354,6 @@
         {
           "type": "CUTEOPUS_LOOKLEFT_00",
           "regular": {
-            "effects": [
-              {
-                "type": "SPRITE_EFFECT_MASK",
-                "maskColor": {
-                  "b": 180,
-                  "a": 255
-                }
-              }
-            ],
             "rect": {
               "x": 425,
               "y": 96,
@@ -1398,15 +1368,6 @@
         {
           "type": "CUTEOPUS_LOOKLEFT_01",
           "regular": {
-            "effects": [
-              {
-                "type": "SPRITE_EFFECT_MASK",
-                "maskColor": {
-                  "b": 180,
-                  "a": 255
-                }
-              }
-            ],
             "rect": {
               "x": 365,
               "y": 96,
@@ -1421,15 +1382,6 @@
         {
           "type": "CUTEOPUS_LOOKLEFT_02",
           "regular": {
-            "effects": [
-              {
-                "type": "SPRITE_EFFECT_MASK",
-                "maskColor": {
-                  "b": 180,
-                  "a": 255
-                }
-              }
-            ],
             "rect": {
               "x": 485,
               "y": 96,
@@ -1444,15 +1396,6 @@
         {
           "type": "CUTEOPUS_LOOKRIGHT_00",
           "regular": {
-            "effects": [
-              {
-                "type": "SPRITE_EFFECT_MASK",
-                "maskColor": {
-                  "b": 180,
-                  "a": 255
-                }
-              }
-            ],
             "rect": {
               "x": 425,
               "y": 160,
@@ -1467,15 +1410,6 @@
         {
           "type": "CUTEOPUS_LOOKRIGHT_01",
           "regular": {
-            "effects": [
-              {
-                "type": "SPRITE_EFFECT_MASK",
-                "maskColor": {
-                  "b": 180,
-                  "a": 255
-                }
-              }
-            ],
             "rect": {
               "x": 365,
               "y": 160,
@@ -1490,15 +1424,6 @@
         {
           "type": "CUTEOPUS_LOOKRIGHT_02",
           "regular": {
-            "effects": [
-              {
-                "type": "SPRITE_EFFECT_MASK",
-                "maskColor": {
-                  "b": 180,
-                  "a": 255
-                }
-              }
-            ],
             "rect": {
               "x": 485,
               "y": 160,
@@ -1513,15 +1438,6 @@
         {
           "type": "CUTEOPUS_LOOKUP_00",
           "regular": {
-            "effects": [
-              {
-                "type": "SPRITE_EFFECT_MASK",
-                "maskColor": {
-                  "b": 180,
-                  "a": 255
-                }
-              }
-            ],
             "rect": {
               "x": 425,
               "y": 224,
@@ -1536,15 +1452,6 @@
         {
           "type": "CUTEOPUS_LOOKUP_01",
           "regular": {
-            "effects": [
-              {
-                "type": "SPRITE_EFFECT_MASK",
-                "maskColor": {
-                  "b": 180,
-                  "a": 255
-                }
-              }
-            ],
             "rect": {
               "x": 365,
               "y": 224,
@@ -1559,15 +1466,6 @@
         {
           "type": "CUTEOPUS_LOOKUP_02",
           "regular": {
-            "effects": [
-              {
-                "type": "SPRITE_EFFECT_MASK",
-                "maskColor": {
-                  "b": 180,
-                  "a": 255
-                }
-              }
-            ],
             "rect": {
               "x": 485,
               "y": 224,
@@ -1577,6 +1475,20 @@
             "centerToOriginVecPx": {
               "y": 8.5
             }
+          }
+        },
+        {
+          "type": "CUTEOPUS_HURT",
+          "duplicate": {
+            "originalType": "CUTEOPUS_LOOKDOWN_00",
+            "additionalEffects": [
+              {
+                "colorMask": {
+                  "b": 180,
+                  "a": 255
+                }
+              }
+            ]
           }
         }
       ]
@@ -1588,15 +1500,6 @@
         {
           "type": "SKELETON_LOOKDOWN_00",
           "regular": {
-            "effects": [
-              {
-                "type": "SPRITE_EFFECT_MASK",
-                "maskColor": {
-                  "r": 255,
-                  "a": 255
-                }
-              }
-            ],
             "rect": {
               "x": 614,
               "y": 28,
@@ -1626,15 +1529,6 @@
         {
           "type": "SKELETON_LOOKDOWN_01",
           "regular": {
-            "effects": [
-              {
-                "type": "SPRITE_EFFECT_MASK",
-                "maskColor": {
-                  "r": 255,
-                  "a": 255
-                }
-              }
-            ],
             "rect": {
               "x": 554,
               "y": 28,
@@ -1650,15 +1544,6 @@
         {
           "type": "SKELETON_LOOKDOWN_02",
           "regular": {
-            "effects": [
-              {
-                "type": "SPRITE_EFFECT_MASK",
-                "maskColor": {
-                  "r": 255,
-                  "a": 255
-                }
-              }
-            ],
             "rect": {
               "x": 674,
               "y": 28,
@@ -1674,15 +1559,6 @@
         {
           "type": "SKELETON_LOOKLEFT_00",
           "regular": {
-            "effects": [
-              {
-                "type": "SPRITE_EFFECT_MASK",
-                "maskColor": {
-                  "r": 255,
-                  "a": 255
-                }
-              }
-            ],
             "rect": {
               "x": 614,
               "y": 92,
@@ -1698,15 +1574,6 @@
         {
           "type": "SKELETON_LOOKLEFT_01",
           "regular": {
-            "effects": [
-              {
-                "type": "SPRITE_EFFECT_MASK",
-                "maskColor": {
-                  "r": 255,
-                  "a": 255
-                }
-              }
-            ],
             "rect": {
               "x": 554,
               "y": 92,
@@ -1722,15 +1589,6 @@
         {
           "type": "SKELETON_LOOKLEFT_02",
           "regular": {
-            "effects": [
-              {
-                "type": "SPRITE_EFFECT_MASK",
-                "maskColor": {
-                  "r": 255,
-                  "a": 255
-                }
-              }
-            ],
             "rect": {
               "x": 674,
               "y": 92,
@@ -1746,15 +1604,6 @@
         {
           "type": "SKELETON_LOOKRIGHT_00",
           "regular": {
-            "effects": [
-              {
-                "type": "SPRITE_EFFECT_MASK",
-                "maskColor": {
-                  "r": 255,
-                  "a": 255
-                }
-              }
-            ],
             "rect": {
               "x": 614,
               "y": 156,
@@ -1770,15 +1619,6 @@
         {
           "type": "SKELETON_LOOKRIGHT_01",
           "regular": {
-            "effects": [
-              {
-                "type": "SPRITE_EFFECT_MASK",
-                "maskColor": {
-                  "r": 255,
-                  "a": 255
-                }
-              }
-            ],
             "rect": {
               "x": 554,
               "y": 156,
@@ -1794,15 +1634,6 @@
         {
           "type": "SKELETON_LOOKRIGHT_02",
           "regular": {
-            "effects": [
-              {
-                "type": "SPRITE_EFFECT_MASK",
-                "maskColor": {
-                  "r": 255,
-                  "a": 255
-                }
-              }
-            ],
             "rect": {
               "x": 674,
               "y": 156,
@@ -1818,15 +1649,6 @@
         {
           "type": "SKELETON_LOOKUP_00",
           "regular": {
-            "effects": [
-              {
-                "type": "SPRITE_EFFECT_MASK",
-                "maskColor": {
-                  "r": 255,
-                  "a": 255
-                }
-              }
-            ],
             "rect": {
               "x": 614,
               "y": 220,
@@ -1842,15 +1664,6 @@
         {
           "type": "SKELETON_LOOKUP_01",
           "regular": {
-            "effects": [
-              {
-                "type": "SPRITE_EFFECT_MASK",
-                "maskColor": {
-                  "r": 255,
-                  "a": 255
-                }
-              }
-            ],
             "rect": {
               "x": 554,
               "y": 220,
@@ -1866,15 +1679,6 @@
         {
           "type": "SKELETON_LOOKUP_02",
           "regular": {
-            "effects": [
-              {
-                "type": "SPRITE_EFFECT_MASK",
-                "maskColor": {
-                  "r": 255,
-                  "a": 255
-                }
-              }
-            ],
             "rect": {
               "x": 674,
               "y": 220,
@@ -1886,6 +1690,20 @@
               "y": 8.5
             }
           }
+        },
+        {
+          "type": "SKELETON_HURT",
+          "duplicate": {
+            "originalType": "SKELETON_LOOKDOWN_00",
+            "additionalEffects": [
+              {
+                "colorMask": {
+                  "r": 255,
+                  "a": 255
+                }
+              }
+            ]
+          }
         }
       ]
     },
@@ -1894,20 +1712,25 @@
       "ppm": 26,
       "sprites": [
         {
-          "type": "SKELETON_CORPSE",
+          "type": "SKELETON_CORPSE_RAW",
           "regular": {
-            "effects": [
-              {
-                "type": "SPRITE_EFFECT_IMAGE_ADJUSTMENT",
-                "imageAdjustment": {
-                  "brightnessMultiplier": 0.5
-                }
-              }
-            ],
             "rect": {
               "w": 26,
               "h": 26
             }
+          }
+        },
+        {
+          "type": "SKELETON_CORPSE",
+          "duplicate": {
+            "originalType": "SKELETON_CORPSE_RAW",
+            "additionalEffects": [
+              {
+                "imageAdjustment": {
+                  "brightnessMultiplier": 0.5
+                }
+              }
+            ]
           }
         }
       ]
@@ -1917,20 +1740,25 @@
       "ppm": 32,
       "sprites": [
         {
-          "type": "CUTEOPUS_CORPSE",
+          "type": "CUTEOPUS_CORPSE_RAW",
           "regular": {
-            "effects": [
-              {
-                "type": "SPRITE_EFFECT_IMAGE_ADJUSTMENT",
-                "imageAdjustment": {
-                  "brightnessMultiplier": 0.5
-                }
-              }
-            ],
             "rect": {
               "w": 32,
               "h": 32
             }
+          }
+        },
+        {
+          "type": "CUTEOPUS_CORPSE",
+          "duplicate": {
+            "originalType": "CUTEOPUS_CORPSE_RAW",
+            "additionalEffects": [
+              {
+                "imageAdjustment": {
+                  "brightnessMultiplier": 0.5
+                }
+              }
+            ]
           }
         }
       ]
