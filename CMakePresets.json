@@ -55,6 +55,13 @@
         "GAME": "PINBALL"
       }
     },
+    {
+      "name": "WAR",
+      "hidden": true,
+      "cacheVariables": {
+        "GAME": "WAR"
+      }
+    },
 
     {
       "name": "RPG-POSIX-DEBUG",
@@ -138,6 +145,27 @@
       "name": "PINBALL-WIN-RELEASE",
       "inherits": ["RELEASE", "PINBALL"],
       "binaryDir": "build/PINBALL-RELEASE"
+    },
+
+    {
+      "name": "WAR-POSIX-DEBUG",
+      "inherits": ["POSIX", "DEBUG", "WAR"],
+      "binaryDir": "build/WAR-DEBUG"
+    },
+    {
+      "name": "WAR-POSIX-RELEASE",
+      "inherits": ["POSIX", "RELEASE", "WAR"],
+      "binaryDir": "build/WAR-RELEASE"
+    },
+    {
+      "name": "WAR-WIN-DEBUG",
+      "inherits": ["DEBUG", "WAR"],
+      "binaryDir": "build/WAR-DEBUG"
+    },
+    {
+      "name": "WAR-WIN-RELEASE",
+      "inherits": ["RELEASE", "WAR"],
+      "binaryDir": "build/WAR-RELEASE"
     }
   ]
 }
