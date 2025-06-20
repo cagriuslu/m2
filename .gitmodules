@@ -1,0 +1,6 @@
+[submodule "game/WAR"]
+	path = game/WAR
+	url = https://github.com/cagriuslu/WAR.git
+[submodule "resource/game/WAR"]
+	path = resource/game/WAR
+	url = https://github.com/cagriuslu/WAR-resource.git
