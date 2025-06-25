@@ -204,7 +204,7 @@ m2::void_expected m2::MoveBackground(const int from, const int to, const std::st
 		return make_unexpected("Invalid layer");
 	}
 
-	auto lb = pb::json_file_to_message<pb::Level>(M2_GAME.levels_dir / level);
+	auto lb = pb::json_file_to_message<pb::Level>(M2_GAME.GetResources().GetLevelsDir() / level);
 	m2ReflectUnexpected(lb);
 
 	// Ensure there are enough layers
@@ -218,5 +218,5 @@ m2::void_expected m2::MoveBackground(const int from, const int to, const std::st
 	lb->mutable_background_layers(from)->Clear();
 
 	// Save
-	return message_to_json_file(*lb, M2_GAME.levels_dir / level);
+	return message_to_json_file(*lb, M2_GAME.GetResources().GetLevelsDir() / level);
 }

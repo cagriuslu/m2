@@ -27,6 +27,7 @@
 #include "GameDimensions.h"
 #include <m2g_KeyType.pb.h>
 #include <m2/video/Shape.h>
+#include <m2/GameResources.h>
 
 #define M2_GAME (m2::Game::Instance())
 #define M2_DEFER(f) (M2_GAME.AddDeferredAction(f))
@@ -43,6 +44,7 @@ namespace m2 {
 	class Game {
 		static Game* _instance;
 		::m2g::Proxy _proxy{};
+		GameResources _resources{_proxy.gameIdentifier, _proxy.defaultFontPath};
 		std::optional<GameDimensionsManager> _dimensionsManager;
 
 		mutable std::optional<VecF> _mouse_position_world_m;
@@ -83,13 +85,6 @@ namespace m2 {
 		uint32_t pixel_format{};
 		TTF_Font* font{};
 		bool quit{};
-
-		////////////////////////////////////////////////////////////////////////
-		//////////////////////////////// PATHS /////////////////////////////////
-		////////////////////////////////////////////////////////////////////////
-		std::filesystem::path resource_dir;
-		std::filesystem::path levels_dir;
-		std::filesystem::path spriteSheetsPath;
 
 		////////////////////////////////////////////////////////////////////////
 		////////////////////////////// RESOURCES ///////////////////////////////
@@ -164,6 +159,7 @@ namespace m2 {
 
 		// Accessors
 
+		const GameResources& GetResources() const { return _resources; }
 		const GameDimensionsManager& Dimensions() const { return *_dimensionsManager; }
 		const std::variant<Sprite,pb::TextLabel>& GetSpriteOrTextLabel(const m2g::pb::SpriteType sprite_type) const { return _sprites[pb::enum_index(sprite_type)]; }
 		void ForEachSprite(const std::function<bool(m2g::pb::SpriteType, const Sprite&)>& op) const;

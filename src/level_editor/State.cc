@@ -20,7 +20,7 @@ namespace {
 	class MovingAnObjectIndicator final : public m2::SelectionStateBase {};
 }
 
-m2::level_editor::State::State() : _persistentSpriteSheets(m2MoveOrThrowError(sheet_editor::PersistentSpriteSheets::LoadFile(M2_GAME.spriteSheetsPath))) {}
+m2::level_editor::State::State() : _persistentSpriteSheets(m2MoveOrThrowError(sheet_editor::PersistentSpriteSheets::LoadFile(M2_GAME.GetResources().GetSpriteSheetsPath()))) {}
 
 m2::BackgroundDrawLayer m2::level_editor::State::GetSelectedBackgroundLayer() const {
 	return static_cast<BackgroundDrawLayer>(

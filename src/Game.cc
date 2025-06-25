@@ -88,7 +88,7 @@ m2::Game::Game() {
 
 	_dimensionsManager.emplace(renderer, _proxy.gamePpm, _proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
 
-	SDL_Surface* lightSurface = IMG_Load((ResourcePath() / "RadialGradient-WhiteBlack.png").string().c_str());
+	SDL_Surface* lightSurface = IMG_Load(_resources.GetRadialWhiteToBlackGradientPath().string().c_str());
 	if (lightSurface == nullptr) {
 		throw M2_ERROR("SDL error: " + std::string{IMG_GetError()});
 	}
@@ -100,7 +100,7 @@ m2::Game::Game() {
 	SDL_SetTextureAlphaMod(light_texture, 0);
 	SDL_SetTextureColorMod(light_texture, 127, 127, 127);
 	// Open font
-	if ((font = TTF_OpenFont((ResourcePath() / _proxy.defaultFontPath).string().c_str(), _proxy.default_font_size)) == nullptr) {
+	if ((font = TTF_OpenFont(_resources.GetDefaultFontPath().string().c_str(), _proxy.default_font_size)) == nullptr) {
 		throw M2_ERROR("SDL error: " + std::string{TTF_GetError()});
 	}
 	// Check font properties
@@ -125,13 +125,8 @@ m2::Game::Game() {
 	audio_manager.emplace();
 	spriteEffectsSheet = SpriteEffectsSheet{renderer, _proxy.lightning};
 
-	// Load game resources
-	resource_dir = ResourcePath() / "game" / _proxy.gameIdentifier;
-	levels_dir = ResourcePath() / "game" / _proxy.gameIdentifier / "levels";
-	spriteSheetsPath = resource_dir / "SpriteSheets.json";
-
 	{
-		auto sheets_pb = pb::json_file_to_message<pb::SpriteSheets>(spriteSheetsPath);
+		auto sheets_pb = pb::json_file_to_message<pb::SpriteSheets>(_resources.GetSpriteSheetsPath());
 		if (!sheets_pb) {
 			throw M2_ERROR(sheets_pb.error());
 		}
@@ -147,17 +142,17 @@ m2::Game::Game() {
 
 	_objectBlueprints = LoadObjectBlueprints(_proxy.objectBlueprints);
 
-	named_items = pb::LUT<pb::Item, NamedItem>::load(resource_dir / "Items.json", &pb::Items::items);
+	named_items = pb::LUT<pb::Item, NamedItem>::load(_resources.GetItemsPath(), &pb::Items::items);
 	LOG_INFO("Loaded named items", named_items.size());
 
-	animations = pb::LUT<pb::Animation, Animation>::load(resource_dir / "Animations.json", &pb::Animations::animations);
+	animations = pb::LUT<pb::Animation, Animation>::load(_resources.GetAnimationsPath(), &pb::Animations::animations);
 	LOG_INFO("Loaded animations", animations.size());
 
-	songs = pb::LUT<pb::Song, Song>::load(resource_dir / "Songs.json", &pb::Songs::songs);
+	songs = pb::LUT<pb::Song, Song>::load(_resources.GetSongsPath(), &pb::Songs::songs);
 	LOG_INFO("Loaded songs", songs.size());
 
-	keyToScancodeMap = GenerateKeyToScancodeMap(resource_dir / "Keys.json");
-	scancodeToKeyMap = GenerateScancodeToKeyMap(resource_dir / "Keys.json");
+	keyToScancodeMap = GenerateKeyToScancodeMap(_resources.GetKeysPath());
+	scancodeToKeyMap = GenerateScancodeToKeyMap(_resources.GetKeysPath());
 	LOG_INFO("Loaded keys and scancodes", keyToScancodeMap.size());
 }
 
@@ -393,7 +388,7 @@ m2::void_expected m2::Game::LoadSheetEditor() {
 	// Reinit dimensions with default parameters
 	_dimensionsManager->SetGameAspectRatio(m2::Proxy{}.gameAspectRatioMul, m2::Proxy{}.gameAspectRatioDiv);
 	_level.emplace();
-	return _level->InitSheetEditor(spriteSheetsPath);
+	return _level->InitSheetEditor(_resources.GetSpriteSheetsPath());
 }
 
 m2::void_expected m2::Game::LoadBulkSheetEditor() {
@@ -402,7 +397,7 @@ m2::void_expected m2::Game::LoadBulkSheetEditor() {
 	// Reinit dimensions with default parameters
 	_dimensionsManager->SetGameAspectRatio(m2::Proxy{}.gameAspectRatioMul, m2::Proxy{}.gameAspectRatioDiv);
 	_level.emplace();
-	return _level->InitBulkSheetEditor(spriteSheetsPath);
+	return _level->InitBulkSheetEditor(_resources.GetSpriteSheetsPath());
 }
 
 void m2::Game::ResetState() { events.Clear(); }

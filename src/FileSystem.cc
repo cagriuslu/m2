@@ -1,34 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <m2/FileSystem.h>
 #include <sstream>
-#include <m2/Options.h>
-
-#if defined(__APPLE__)
-#include <CoreFoundation/CFBundle.h>
-#endif
-
-std::filesystem::path m2::ResourcePath() {
-	if (not gOverrideResourceDir.empty()) {
-		return gOverrideResourceDir;
-	}
-#if defined(__APPLE__)
-	auto main_bundle_handle = CFBundleGetMainBundle();
-	auto resources_directory_url_ref = CFBundleCopyResourcesDirectoryURL(main_bundle_handle);
-	auto resources_directory_absolute_url_ref = CFURLCopyAbsoluteURL(resources_directory_url_ref);
-	auto resources_directory_string_ref = CFURLCopyPath(resources_directory_absolute_url_ref);
-
-	std::string resources_directory{CFStringGetCStringPtr(resources_directory_string_ref, kCFStringEncodingUTF8)};
-
-	CFRelease(resources_directory_string_ref);
-	CFRelease(resources_directory_absolute_url_ref);
-	CFRelease(resources_directory_url_ref);
-
-	return resources_directory;
-#else
-    // Assume that the resources are in the current directory
-	return "resource";
-#endif
-}
 
 m2::expected<std::string> m2::ReadFile(const std::filesystem::path& path) {
 	FILE* file = fopen(path.string().c_str(), "r");

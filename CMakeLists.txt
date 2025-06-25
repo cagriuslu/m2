@@ -149,7 +149,7 @@ endif()
 
 if(APPLE)
 	# Put resources into the .app
-	file(GLOB_RECURSE BUNDLE_RESOURCES "${CMAKE_SOURCE_DIR}/resource/fonts/*" "${CMAKE_SOURCE_DIR}/resource/RadialGradient-WhiteBlack.png" "${CMAKE_SOURCE_DIR}/resource/game/${GAME}/*")
+	file(GLOB_RECURSE BUNDLE_RESOURCES "${CMAKE_SOURCE_DIR}/resource/default/*" "${CMAKE_SOURCE_DIR}/resource/fonts/*" "${CMAKE_SOURCE_DIR}/resource/RadialGradient-WhiteBlack.png" "${CMAKE_SOURCE_DIR}/resource/game/${GAME}/*")
 	foreach (ABSOLUTE_PATH_TO_RESOURCE ${BUNDLE_RESOURCES})
 		file(RELATIVE_PATH RELATIVE_PATH_TO_RESOURCE "${CMAKE_SOURCE_DIR}/resource" ${ABSOLUTE_PATH_TO_RESOURCE})
 		get_filename_component(RELATIVE_PATH_TO_RESOURCES_DIRECTORY ${RELATIVE_PATH_TO_RESOURCE} DIRECTORY)
@@ -196,11 +196,20 @@ elseif(APPLE)
 			MACOSX_BUNDLE_GUI_IDENTIFIER "dev.uslu.${GAME}")
 
 	# Put the icon into the .app/Contents/Resources
-	add_custom_command(
-			TARGET ${PROJECT_NAME} POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_SOURCE_DIR}/resource/game/${GAME}/${GAME}.icns $<TARGET_FILE_DIR:m2>/../Resources
-			COMMAND_EXPAND_LISTS
-	)
+    # Check if the game provides an icon, otherwise, copy the default icon
+    if(NOT EXISTS "${CMAKE_SOURCE_DIR}/resource/game/${GAME}/${GAME}.icns")
+        add_custom_command(
+                TARGET ${PROJECT_NAME} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_SOURCE_DIR}/resource/default.icns $<TARGET_FILE_DIR:m2>/../Resources
+                COMMAND_EXPAND_LISTS
+        )
+    else()
+        add_custom_command(
+                TARGET ${PROJECT_NAME} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_SOURCE_DIR}/resource/game/${GAME}/${GAME}.icns $<TARGET_FILE_DIR:m2>/../Resources
+                COMMAND_EXPAND_LISTS
+        )
+    endif()
 else()
     # The following packages must be install before BUILDING SDL2 in Ubuntu: libxext-dev libgl-dev libasound2-dev libpulse-dev
     target_link_libraries(m2 GL)

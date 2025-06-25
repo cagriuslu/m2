@@ -19,7 +19,7 @@ namespace {
 				.variant = m2::widget::TextBlueprint{
 					.text = "Start",
 					.onAction = [](MAYBE const m2::widget::Text& text) -> m2::UiAction {
-						M2_GAME.LoadSinglePlayer(M2_GAME.levels_dir / "001.json", "001");
+						M2_GAME.LoadSinglePlayer(M2_GAME.GetResources().GetLevelsDir() / "001.json", "001");
 						return m2::MakeReturnAction();
 					}
 				}

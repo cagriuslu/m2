@@ -12,9 +12,9 @@
 
 void m2g::Proxy::load_resources() {
 	// Load enemies
-	enemies = m2MoveOrThrowError(m2::pb::json_file_to_message<rpg::pb::Enemies>(M2_GAME.resource_dir / "Enemies.json"));
+	enemies = m2MoveOrThrowError(m2::pb::json_file_to_message<rpg::pb::Enemies>(M2_GAME.GetResources().GetGameResourceDir() / "Enemies.json"));
 	// Load progress
-	progress_file_path = M2_GAME.resource_dir / "Progress.json";
+	progress_file_path = M2_GAME.GetResources().GetGameResourceDir() / "Progress.json";
 	auto expect_progress = m2::pb::json_file_to_message<rpg::pb::Progress>(progress_file_path);
 	if (expect_progress) {
 		progress.CopyFrom(*expect_progress);
@@ -120,7 +120,7 @@ const m2::UiPanelBlueprint* m2g::Proxy::generate_main_menu() {
 	    .background_color = SDL_Color{20, 20, 20, 255}
 	};
 
-	auto level_jsons = m2::ListFiles(M2_GAME.resource_dir / "levels", ".json");
+	auto level_jsons = m2::ListFiles(M2_GAME.GetResources().GetGameResourceDir() / "levels", ".json");
 	for (int i = 0; i < (int) level_jsons.size(); ++i) {
 		const auto &level_json = level_jsons[i];
 		auto level_name = level_json.stem().string();

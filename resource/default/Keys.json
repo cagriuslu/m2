@@ -1,0 +1,48 @@
+{
+  "keys": [
+    {
+      "type": "NO_KEY",
+      "sdlScancodes": [0]
+    },
+    {
+      "type": "PAUSE",
+      "sdlScancodes": [41]
+    },
+    {
+      "type": "CONSOLE",
+      "sdlScancodes": [53]
+    },
+    {
+      "type": "BACKSPACE",
+      "sdlScancodes": [42]
+    },
+    {
+      "type": "RETURN",
+      "sdlScancodes": [40]
+    },
+    {
+      "type": "ZOOM_OUT",
+      "sdlScancodes": [45]
+    },
+    {
+      "type": "ZOOM_IN",
+      "sdlScancodes": [46]
+    },
+    {
+      "type": "MOVE_UP",
+      "sdlScancodes": [26]
+    },
+    {
+      "type": "MOVE_DOWN",
+      "sdlScancodes": [22]
+    },
+    {
+      "type": "MOVE_LEFT",
+      "sdlScancodes": [4]
+    },
+    {
+      "type": "MOVE_RIGHT",
+      "sdlScancodes": [7]
+    }
+  ]
+}
