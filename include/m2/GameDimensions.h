@@ -4,7 +4,7 @@
 #include <m2/math/VecI.h>
 
 namespace m2 {
-    class GameDimensionsManager final {
+    class GameDimensions final {
         void* const _renderer;
         int _gamePpm, _gameAspectRatioMul, _gameAspectRatioDiv;
 
@@ -16,7 +16,7 @@ namespace m2 {
 
     public:
         /// This constructor assumes the initial aspect ratio of the window is exact, thus requires no envelope.
-        GameDimensionsManager(void* renderer, int gamePpm, int gameAspectRatioMul, int gameAspectRatioDiv);
+        GameDimensions(void* renderer, int gamePpm, int gameAspectRatioMul, int gameAspectRatioDiv);
 
         // Accessors
 

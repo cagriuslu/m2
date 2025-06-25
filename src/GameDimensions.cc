@@ -15,7 +15,7 @@ namespace {
 	}
 }
 
-m2::GameDimensionsManager::GameDimensionsManager(void* renderer, const int gamePpm, const int gameAspectRatioMul, const int gameAspectRatioDiv)
+m2::GameDimensions::GameDimensions(void* renderer, const int gamePpm, const int gameAspectRatioMul, const int gameAspectRatioDiv)
 		: _renderer(renderer), _gamePpm(gamePpm), _gameAspectRatioMul(gameAspectRatioMul), _gameAspectRatioDiv(gameAspectRatioDiv) {
 	if (renderer == nullptr) {
 		throw M2_ERROR("Given renderer is NULL");
@@ -52,27 +52,27 @@ m2::GameDimensionsManager::GameDimensionsManager(void* renderer, const int gameP
 	_gameM = {F(_game.w) / F(_gamePpm), F(_game.h) / F(_gamePpm)};
 }
 
-m2::VecI m2::GameDimensionsManager::WindowDimensions() const {
+m2::VecI m2::GameDimensions::WindowDimensions() const {
 	int w, h;
 	SDL_GetRendererOutputSize(static_cast<SDL_Renderer*>(_renderer), &w, &h);
 	return {w, h};
 }
-float m2::GameDimensionsManager::OutputPixelsPerMeter() const {
+float m2::GameDimensions::OutputPixelsPerMeter() const {
 	return F(_gamePpm) * _scale;
 }
-float m2::GameDimensionsManager::GameWidthToGameAndHudWidthRatio() const {
+float m2::GameDimensions::GameWidthToGameAndHudWidthRatio() const {
 	return F(_game.w) / F(_gameAndHud.w);
 }
-float m2::GameDimensionsManager::HudWidthToGameAndHudWidthRatio() const {
+float m2::GameDimensions::HudWidthToGameAndHudWidthRatio() const {
 	return F(_leftHud.w) / F(_gameAndHud.w);
 }
 
-void m2::GameDimensionsManager::SetGameAspectRatio(const int gameAspectRatioMul, const int gameAspectRatioDiv) {
+void m2::GameDimensions::SetGameAspectRatio(const int gameAspectRatioMul, const int gameAspectRatioDiv) {
 	_gameAspectRatioMul = gameAspectRatioMul;
 	_gameAspectRatioDiv = gameAspectRatioDiv;
 	OnWindowResize();
 }
-void m2::GameDimensionsManager::OnWindowResize() {
+void m2::GameDimensions::OnWindowResize() {
 	// We must keep the _gameAndHudM (and thus _gameM) exactly the same. The scale and the envelopes may be adjusted.
 
 	const auto windowDimensions = WindowDimensions();
@@ -120,7 +120,7 @@ void m2::GameDimensionsManager::OnWindowResize() {
 	_rightHud = RectI{windowDimensions.x - rightEnvelopeSize - hudWidth, topEnvelopeSize, hudWidth, hudHeight};
 	_game = RectI{leftEnvelopeSize + hudWidth, topEnvelopeSize, gameWidth, gameHeight};
 }
-void m2::GameDimensionsManager::SetScale(const float scale) {
+void m2::GameDimensions::SetScale(const float scale) {
 	if (scale <= 0.0f) {
 		throw M2_ERROR("Given scale is invalid: " + m2::ToString(scale));
 	}
@@ -129,7 +129,7 @@ void m2::GameDimensionsManager::SetScale(const float scale) {
 	_scale = scale;
 	ReadjustAfterScaleChange();
 }
-void m2::GameDimensionsManager::SetGameHeightM(const float heightM) {
+void m2::GameDimensions::SetGameHeightM(const float heightM) {
 	// GameHeightM determines how much of the word is shown in the game window.
 	// It's notmally calculated with the formula: GameHeightM = GameHeightPx / PPM
 	// We can't change GameHeightPx, because the window isn't resized, thus we must calculate a new PPM instead.
@@ -139,7 +139,7 @@ void m2::GameDimensionsManager::SetGameHeightM(const float heightM) {
 	SetScale(F(_game.h) / (F(_gamePpm) * heightM));
 }
 
-m2::VecI m2::GameDimensionsManager::EstimateMinimumWindowDimensions(const int gamePpm, const float gameHeightM) {
+m2::VecI m2::GameDimensions::EstimateMinimumWindowDimensions(const int gamePpm, const float gameHeightM) {
 	// We expect minimum window height to be integer multiple of GAME_AND_HUD_ASPECT_RATIO_DIV
 	const int requestedWindowHeight = RoundI(gameHeightM * F(gamePpm));
 	const int requestedWindowHeightRemainder = requestedWindowHeight % GAME_AND_HUD_ASPECT_RATIO_DIV;
@@ -150,7 +150,7 @@ m2::VecI m2::GameDimensionsManager::EstimateMinimumWindowDimensions(const int ga
 
 	return {calculatedWindowWidth, calculatedWindowHeight};
 }
-int m2::GameDimensionsManager::NextPixelatedScale(int currentScale) {
+int m2::GameDimensions::NextPixelatedScale(int currentScale) {
 	if (currentScale == 0) {
 		throw M2_ERROR("Unexpected scale: " + m2::ToString(currentScale));
 	}
@@ -159,7 +159,7 @@ int m2::GameDimensionsManager::NextPixelatedScale(int currentScale) {
 	}
 	return currentScale + 1;
 }
-int m2::GameDimensionsManager::PrevPixelatedScale(int currentScale) {
+int m2::GameDimensions::PrevPixelatedScale(int currentScale) {
 	if (currentScale == 0) {
 		throw M2_ERROR("Unexpected scale: " + m2::ToString(currentScale));
 	}
@@ -169,7 +169,7 @@ int m2::GameDimensionsManager::PrevPixelatedScale(int currentScale) {
 	return currentScale - 1;
 }
 
-void m2::GameDimensionsManager::ReadjustAfterScaleChange() {
+void m2::GameDimensions::ReadjustAfterScaleChange() {
 	// Scale adjustment is used to adjust the zoom of the game. This means, we must keep envelopes, gameAndHud, game,
 	// leftHud, rightHud, messageBox exactly the same. The portion of the game shown inside the game area, thus
 	// gameAndHudM and gameM, can be adjusted instead.

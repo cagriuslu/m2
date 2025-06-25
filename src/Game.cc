@@ -58,7 +58,7 @@ m2::Game::Game() {
 		LOG_WARN("Failed to set line render method");
 	}
 
-	const auto minimumWindowDims = GameDimensionsManager::EstimateMinimumWindowDimensions(_proxy.gamePpm, _proxy.defaultGameHeightM);
+	const auto minimumWindowDims = GameDimensions::EstimateMinimumWindowDimensions(_proxy.gamePpm, _proxy.defaultGameHeightM);
 	if ((window = SDL_CreateWindow(_proxy.gameFriendlyName.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 		minimumWindowDims.x, minimumWindowDims.y, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == nullptr) {
 		throw M2_ERROR("SDL error: " + std::string{SDL_GetError()});
@@ -86,7 +86,7 @@ m2::Game::Game() {
 	SDL_GetRendererInfo(renderer, &info);
 	LOG_INFO("Renderer", info.name);
 
-	_dimensionsManager.emplace(renderer, _proxy.gamePpm, _proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
+	_dimensions.emplace(renderer, _proxy.gamePpm, _proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
 
 	SDL_Surface* lightSurface = IMG_Load(_resources.GetRadialWhiteToBlackGradientPath().string().c_str());
 	if (lightSurface == nullptr) {
@@ -299,7 +299,7 @@ m2::void_expected m2::Game::LoadSinglePlayer(
 	_level.reset();
 	ResetState();
 	// Reinit dimensions with proxy in case an editor was initialized before
-	_dimensionsManager->SetGameAspectRatio(_proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
+	_dimensions->SetGameAspectRatio(_proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
 	_level.emplace();
 	return _level->InitSinglePlayer(level_path_or_blueprint, level_name);
 }
@@ -309,7 +309,7 @@ m2::void_expected m2::Game::LoadMultiPlayerAsHost(
 	_level.reset();
 	ResetState();
 	// Reinit dimensions with proxy in case an editor was initialized before
-	_dimensionsManager->SetGameAspectRatio(_proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
+	_dimensions->SetGameAspectRatio(_proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
 	_level.emplace();
 
 	auto success = _level->InitMultiPlayerAsHost(level_path_or_blueprint, level_name);
@@ -358,7 +358,7 @@ m2::void_expected m2::Game::LoadMultiPlayerAsGuest(
 	_level.reset();
 	ResetState();
 	// Reinit dimensions with proxy in case an editor was initialized before
-	_dimensionsManager->SetGameAspectRatio(_proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
+	_dimensions->SetGameAspectRatio(_proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
 	_level.emplace();
 
 	auto success = _level->InitMultiPlayerAsGuest(level_path_or_blueprint, level_name);
@@ -377,7 +377,7 @@ m2::void_expected m2::Game::LoadLevelEditor(const std::string& level_resource_pa
 	_level.reset();
 	ResetState();
 	// Reinit dimensions with default parameters
-	_dimensionsManager->SetGameAspectRatio(m2::Proxy{}.gameAspectRatioMul, m2::Proxy{}.gameAspectRatioDiv);
+	_dimensions->SetGameAspectRatio(m2::Proxy{}.gameAspectRatioMul, m2::Proxy{}.gameAspectRatioDiv);
 	_level.emplace();
 	return _level->InitLevelEditor(level_resource_path);
 }
@@ -386,7 +386,7 @@ m2::void_expected m2::Game::LoadSheetEditor() {
 	_level.reset();
 	ResetState();
 	// Reinit dimensions with default parameters
-	_dimensionsManager->SetGameAspectRatio(m2::Proxy{}.gameAspectRatioMul, m2::Proxy{}.gameAspectRatioDiv);
+	_dimensions->SetGameAspectRatio(m2::Proxy{}.gameAspectRatioMul, m2::Proxy{}.gameAspectRatioDiv);
 	_level.emplace();
 	return _level->InitSheetEditor(_resources.GetSpriteSheetsPath());
 }
@@ -395,7 +395,7 @@ m2::void_expected m2::Game::LoadBulkSheetEditor() {
 	_level.reset();
 	ResetState();
 	// Reinit dimensions with default parameters
-	_dimensionsManager->SetGameAspectRatio(m2::Proxy{}.gameAspectRatioMul, m2::Proxy{}.gameAspectRatioDiv);
+	_dimensions->SetGameAspectRatio(m2::Proxy{}.gameAspectRatioMul, m2::Proxy{}.gameAspectRatioDiv);
 	_level.emplace();
 	return _level->InitBulkSheetEditor(_resources.GetSpriteSheetsPath());
 }
@@ -801,20 +801,20 @@ void m2::Game::DrawEnvelopes() const {
 	SDL_Rect sdl_rect{};
 
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-	sdl_rect = static_cast<SDL_Rect>(_dimensionsManager->TopEnvelope());
+	sdl_rect = static_cast<SDL_Rect>(_dimensions->TopEnvelope());
 	SDL_RenderFillRect(renderer, &sdl_rect);
-	sdl_rect = static_cast<SDL_Rect>(_dimensionsManager->BottomEnvelope());
+	sdl_rect = static_cast<SDL_Rect>(_dimensions->BottomEnvelope());
 	SDL_RenderFillRect(renderer, &sdl_rect);
-	sdl_rect = static_cast<SDL_Rect>(_dimensionsManager->LeftEnvelope());
+	sdl_rect = static_cast<SDL_Rect>(_dimensions->LeftEnvelope());
 	SDL_RenderFillRect(renderer, &sdl_rect);
-	sdl_rect = static_cast<SDL_Rect>(_dimensionsManager->RightEnvelope());
+	sdl_rect = static_cast<SDL_Rect>(_dimensions->RightEnvelope());
 	SDL_RenderFillRect(renderer, &sdl_rect);
 }
 
 void m2::Game::FlipBuffers() const { SDL_RenderPresent(renderer); }
 
 void m2::Game::OnWindowResize() {
-	_dimensionsManager->OnWindowResize();
+	_dimensions->OnWindowResize();
 	if (_level) {
 		IF(_level->_leftHudUiPanel)->RecalculateRects();
 		IF(_level->_rightHudUiPanel)->RecalculateRects();
@@ -837,7 +837,7 @@ void m2::Game::OnWindowResize() {
 	}
 }
 void m2::Game::SetScale(const float scale) {
-	_dimensionsManager->SetScale(scale);
+	_dimensions->SetScale(scale);
 	if (_level) {
 		// Clear text label rectangles so that they are regenerated with new size
 		for (auto& gfx : _level->fgGraphics) {
@@ -851,7 +851,7 @@ void m2::Game::SetScale(const float scale) {
 	}
 }
 void m2::Game::SetGameHeightM(const float heightM) {
-	_dimensionsManager->SetGameHeightM(heightM);
+	_dimensions->SetGameHeightM(heightM);
 	if (_level) {
 		// Clear text label rectangles so that they are regenerated with new size
 		for (auto& gfx : _level->fgGraphics) {

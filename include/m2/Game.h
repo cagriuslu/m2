@@ -45,7 +45,7 @@ namespace m2 {
 		static Game* _instance;
 		::m2g::Proxy _proxy{};
 		GameResources _resources{_proxy.gameIdentifier, _proxy.defaultFontPath};
-		std::optional<GameDimensionsManager> _dimensionsManager;
+		std::optional<GameDimensions> _dimensions;
 
 		mutable std::optional<VecF> _mouse_position_world_m;
 		mutable std::optional<VecF> _screen_center_to_mouse_position_m;  // Doesn't mean much in 2.5D mode
@@ -160,7 +160,7 @@ namespace m2 {
 		// Accessors
 
 		const GameResources& GetResources() const { return _resources; }
-		const GameDimensionsManager& Dimensions() const { return *_dimensionsManager; }
+		const GameDimensions& Dimensions() const { return *_dimensions; }
 		const std::variant<Sprite,pb::TextLabel>& GetSpriteOrTextLabel(const m2g::pb::SpriteType sprite_type) const { return _sprites[pb::enum_index(sprite_type)]; }
 		void ForEachSprite(const std::function<bool(m2g::pb::SpriteType, const Sprite&)>& op) const;
 		const NamedItem& GetNamedItem(const m2g::pb::ItemType item_type) const { return named_items[item_type]; }
