@@ -19,7 +19,7 @@ namespace {
 	}
 }
 
-m2::Pool<m2::Object>::Iterator m2::obj::create_tile(const BackgroundDrawLayer layer, const VecF& position, const m2g::pb::SpriteType spriteType) {
+m2::Pool<m2::Object>::Iterator m2::obj::CreateTile(const BackgroundDrawLayer layer, const VecF& position, const m2g::pb::SpriteType spriteType) {
     const auto it = CreateObject(position);
 	it->AddGraphic(layer, spriteType);
 

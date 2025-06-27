@@ -2,13 +2,12 @@
 
 #include "m2/Game.h"
 #include "m2/Object.h"
-#include "m2/game/object/Line.h"
 
 // TODO this depends on the physics loop freq rather than time
 #define CAMERA_JUMP_RATIO (4.0f / 50.0f)
 #define OFFSET_LIMIT (1.0f)
 
-m2::Id m2::obj::create_camera() {
+m2::Id m2::obj::CreateCamera() {
 	// Start at player's location
 	auto* player = M2_LEVEL.objects.Get(M2_LEVEL.playerId);
 	auto it = CreateObject(player ? player->position : VecF{});

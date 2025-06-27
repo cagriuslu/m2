@@ -13,9 +13,9 @@ using namespace m2g::pb;
 std::set<IndustryLocation> find_closest_connected_coal_mines_with_coal(City city, City city_2) {
 	auto active_connections = CreateActiveConnectionsGraph();
 	// Find all reachable cities and their costs
-	auto reachable_cities = active_connections.reachable_nodes_from(city, 100.0f);
+	auto reachable_cities = active_connections.FindNodesReachableFrom(city, 100.0f);
 	if (city_2) {
-		auto reachable_cities_2 = active_connections.reachable_nodes_from(city_2, 100.0f);
+		auto reachable_cities_2 = active_connections.FindNodesReachableFrom(city_2, 100.0f);
 		reachable_cities = m2::Graph::merge_reachable_nodes(reachable_cities, reachable_cities_2);
 	}
 
@@ -46,7 +46,7 @@ std::set<IndustryLocation> find_closest_connected_coal_mines_with_coal(City city
 std::optional<MerchantCity> find_connected_coal_market(City city, City city_2) {
 	auto active_connections = CreateActiveConnectionsGraph();
 	// Find all reachable cities and their costs
-	auto reachable_cities = active_connections.reachable_nodes_from(city, 100.0f);
+	auto reachable_cities = active_connections.FindNodesReachableFrom(city, 100.0f);
 	// Check if any of the reachable cities is a merchant city
 	for (const auto& [node, cost] : reachable_cities) {
 		if (is_merchant_city(static_cast<City>(node))) {
@@ -56,7 +56,7 @@ std::optional<MerchantCity> find_connected_coal_market(City city, City city_2) {
 
 	if (city_2) {
 		// Find all reachable cities and their costs
-		auto reachable_cities_2 = active_connections.reachable_nodes_from(city_2, 100.0f);
+		auto reachable_cities_2 = active_connections.FindNodesReachableFrom(city_2, 100.0f);
 		// Check if any of the reachable cities is a merchant city
 		for (const auto& [node, cost] : reachable_cities_2) {
 			if (is_merchant_city(static_cast<City>(node))) {

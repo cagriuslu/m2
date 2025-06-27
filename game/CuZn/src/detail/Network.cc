@@ -59,15 +59,15 @@ m2::Graph CreateActiveConnectionsGraph() {
 		std::transform(road_chr.FindItems(ITEM_CATEGORY_CITY_CARD), road_chr.EndItems(), std::back_inserter(cities), [](const auto& item) { return item.Type(); });
 		// Fill the graph
 		if (cities.size() == 2) {
-			active_connections.add_edge(cities[0], {cities[1], 1.0f});
-			active_connections.add_edge(cities[1], {cities[0], 1.0f});
+			active_connections.AddEdge(cities[0], {cities[1], 1.0f});
+			active_connections.AddEdge(cities[1], {cities[0], 1.0f});
 		} else if (cities.size() == 3) {
-			active_connections.add_edge(cities[0], {cities[1], 1.0f});
-			active_connections.add_edge(cities[1], {cities[0], 1.0f});
-			active_connections.add_edge(cities[0], {cities[2], 1.0f});
-			active_connections.add_edge(cities[2], {cities[0], 1.0f});
-			active_connections.add_edge(cities[1], {cities[2], 1.0f});
-			active_connections.add_edge(cities[2], {cities[1], 1.0f});
+			active_connections.AddEdge(cities[0], {cities[1], 1.0f});
+			active_connections.AddEdge(cities[1], {cities[0], 1.0f});
+			active_connections.AddEdge(cities[0], {cities[2], 1.0f});
+			active_connections.AddEdge(cities[2], {cities[0], 1.0f});
+			active_connections.AddEdge(cities[1], {cities[2], 1.0f});
+			active_connections.AddEdge(cities[2], {cities[1], 1.0f});
 		} else {
 			throw M2_ERROR("Invalid connection");
 		}

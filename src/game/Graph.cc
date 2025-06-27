@@ -4,17 +4,17 @@
 #include <deque>
 #include <m2/Math.h>
 
-m2::Graph::Graph(const std::function<std::optional<std::pair<Node, Edge>>()>& generator, float tolerance) : _tolerance(tolerance) {
+m2::Graph::Graph(const std::function<std::optional<std::pair<Node, Edge>>()>& generator, const float tolerance) : _tolerance(tolerance) {
 	while (true) {
-		auto optional_node_edge = generator();
+		const auto optional_node_edge = generator();
 		if (not optional_node_edge) {
 			break;
 		}
-		add_edge(optional_node_edge->first, optional_node_edge->second);
+		AddEdge(optional_node_edge->first, optional_node_edge->second);
 	}
 }
 
-void m2::Graph::add_edge(Node from, Edge edge) {
+void m2::Graph::AddEdge(const Node from, const Edge edge) {
 	if (from == edge.node) {
 		throw M2_ERROR("Source and destination nodes are the same");
 	}
@@ -22,10 +22,9 @@ void m2::Graph::add_edge(Node from, Edge edge) {
 		throw M2_ERROR("Negative edge cost");
 	}
 	// Check if the node already exists
-	auto src_node_it = _edges.find(from);
-	if (src_node_it != _edges.end()) {
+	if (const auto src_node_it = _edges.find(from); src_node_it != _edges.end()) {
 		// Check if the edge already exists
-		auto dst_node_it = std::find_if(src_node_it->second.begin(), src_node_it->second.end(), [dst_node = edge.node](const auto& e) {
+		const auto dst_node_it = std::ranges::find_if(src_node_it->second, [dst_node = edge.node](const auto& e) {
 			return e.node == dst_node;
 		});
 		if (dst_node_it != src_node_it->second.end()) {
@@ -33,13 +32,13 @@ void m2::Graph::add_edge(Node from, Edge edge) {
 		}
 		src_node_it->second.emplace_back(edge); // Add to edges
 	} else {
-		_edges[from] = std::vector<Edge>{edge}; // Insert to map
+		_edges[from] = std::vector{edge}; // Insert to map
 	}
 }
 
-std::unordered_map<m2::Graph::Node, float> m2::Graph::reachable_nodes_from(Node source, float inclusive_cost) const {
+m2::Graph::ReachableNodesAndCosts m2::Graph::FindNodesReachableFrom(Node source, const float inclusive_cost) const {
 	// Check if there are any edges from the source
-	auto source_it = _edges.find(source);
+	const auto source_it = _edges.find(source);
 	if (source_it == _edges.end()) {
 		// Only return the source city
 		return {{source, 0.0f}};
@@ -54,7 +53,7 @@ std::unordered_map<m2::Graph::Node, float> m2::Graph::reachable_nodes_from(Node 
 	}
 
 	// Visit each node in nodes_to_visit, accumulate all reachable nodes into reachable_nodes map
-	std::unordered_map<Node, float> reachable_nodes;
+	ReachableNodesAndCosts reachable_nodes;
 	reachable_nodes[source] = 0.0f; // Add the source node as reachable with no cost
 	while (not nodes_to_visit.empty()) {
 		// Visit node
@@ -79,11 +78,10 @@ std::unordered_map<m2::Graph::Node, float> m2::Graph::reachable_nodes_from(Node 
 		}
 
 		// Add the next edges to nodes_to_visit
-		auto next_step_it = _edges.find(visit.first);
-		if (next_step_it != _edges.end()) {
+		if (auto next_step_it = _edges.find(visit.first); next_step_it != _edges.end()) {
 			for (const auto& edge : next_step_it->second) {
 				if (edge.node != source) {
-					if (auto already_was_gonna_visit = std::find_if(nodes_to_visit.begin(), nodes_to_visit.end(), IsFirstEquals<Node, float>(edge.node));
+					if (auto already_was_gonna_visit = std::ranges::find_if(nodes_to_visit, IsFirstEquals<Node, float>(edge.node));
 						already_was_gonna_visit != nodes_to_visit.end()) {
 						// If the node was already going to be visited, update its cost
 						already_was_gonna_visit->second = std::min(already_was_gonna_visit->second, lowest_cost + edge.cost);
@@ -105,16 +103,16 @@ std::unordered_map<m2::Graph::Node, float> m2::Graph::reachable_nodes_from(Node 
 	return reachable_nodes;
 }
 
-std::multimap<float, m2::Graph::Node> m2::Graph::order_by_cost(const std::unordered_map<Node, float>& nodes) {
-	std::multimap<float, m2::Graph::Node> ordered_map;
+std::multimap<float, m2::Graph::Node> m2::Graph::order_by_cost(const ReachableNodesAndCosts& nodes) {
+	std::multimap<float, Node> ordered_map;
 	for (const auto& [node, cost] : nodes) {
 		ordered_map.emplace(cost, node);
 	}
 	return ordered_map;
 }
 
-std::unordered_map<m2::Graph::Node, float> m2::Graph::merge_reachable_nodes(const std::unordered_map<Node, float>& nodes_1,
-	const std::unordered_map<Node, float>& nodes_2) {
+m2::Graph::ReachableNodesAndCosts m2::Graph::merge_reachable_nodes(const ReachableNodesAndCosts& nodes_1,
+		const ReachableNodesAndCosts& nodes_2) {
 	auto copy_of_nodes_1 = nodes_1;
 	for (const auto& [node, cost] : nodes_2) {
 		if (auto it = copy_of_nodes_1.find(node); it == copy_of_nodes_1.end() || cost < it->second) {

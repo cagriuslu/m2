@@ -18,24 +18,24 @@ TEST(Graph, basic) {
 	};
 	m2::Graph graph{generator};
 
-	auto reachable = graph.reachable_nodes_from(50, 75.0f);
+	auto reachable = graph.FindNodesReachableFrom(50, 75.0f);
 	EXPECT_EQ(reachable.size(), 6);
 }
 
-TEST(Graph, reachable_nodes_from) {
+TEST(Graph, FindNodesReachableFrom) {
 	m2::Graph graph;
-	graph.add_edge(0, {1, 1.0f});
-	graph.add_edge(1, {2, 1.0f});
-	graph.add_edge(2, {-1, 1.0f});
-	graph.add_edge(0, {-1, 1.0f});
-	graph.add_edge(-1, {2, 1.0f});
-	graph.add_edge(-1, {1, 1.0f});
-	graph.add_edge(-1, {0, 1.0f});
-	graph.add_edge(-1, {-2, 1.0f});
-	graph.add_edge(2, {3, 1.0f});
-	graph.add_edge(-2, {-3, 1.0f});
+	graph.AddEdge(0, {1, 1.0f});
+	graph.AddEdge(1, {2, 1.0f});
+	graph.AddEdge(2, {-1, 1.0f});
+	graph.AddEdge(0, {-1, 1.0f});
+	graph.AddEdge(-1, {2, 1.0f});
+	graph.AddEdge(-1, {1, 1.0f});
+	graph.AddEdge(-1, {0, 1.0f});
+	graph.AddEdge(-1, {-2, 1.0f});
+	graph.AddEdge(2, {3, 1.0f});
+	graph.AddEdge(-2, {-3, 1.0f});
 
-	auto reachable = graph.reachable_nodes_from(0, 2.0f);
+	auto reachable = graph.FindNodesReachableFrom(0, 2.0f);
 	EXPECT_EQ(reachable.size(), 5);
 	EXPECT_TRUE(reachable.contains(1));
 	EXPECT_TRUE(reachable.contains(2));

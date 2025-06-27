@@ -2,7 +2,7 @@
 
 #include "m2/Game.h"
 
-m2::Id m2::obj::create_origin() {
+m2::Id m2::obj::CreateOrigin() {
 	const auto it = CreateObject({});
 
 	auto& gfx = it->AddGraphic(ForegroundDrawLayer::F0_BOTTOM);

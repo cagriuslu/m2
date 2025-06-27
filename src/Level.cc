@@ -84,9 +84,9 @@ void_expected Level::InitLevelEditor(const std::filesystem::path& lb_path) {
 	}
 
 	// Create default objects
-	playerId = obj::create_god();
-	obj::create_camera();
-	obj::create_origin();
+	playerId = obj::CreateGod();
+	obj::CreateCamera();
+	obj::CreateOrigin();
 
 	// UI Hud
 	_leftHudUiPanel.emplace(&level_editor::gLeftHudBlueprint, M2_GAME.Dimensions().LeftHud());
@@ -109,9 +109,9 @@ void_expected Level::InitSheetEditor(const std::filesystem::path& path) {
 	_messageBoxUiPanel->enabled = false;
 
 	// Create default objects
-	playerId = obj::create_god();
-	obj::create_camera();
-	obj::create_origin();
+	playerId = obj::CreateGod();
+	obj::CreateCamera();
+	obj::CreateOrigin();
 
 	// UI Hud
 	_leftHudUiPanel.emplace(&sheet_editor_left_hud, M2_GAME.Dimensions().LeftHud());
@@ -134,9 +134,9 @@ void_expected Level::InitBulkSheetEditor(const std::filesystem::path& path) {
 	_messageBoxUiPanel->enabled = false;
 
 	// Create default objects
-	playerId = obj::create_god();
-	obj::create_camera();
-	obj::create_origin();
+	playerId = obj::CreateGod();
+	obj::CreateCamera();
+	obj::CreateOrigin();
 
 	// UI Hud
 	_messageBoxUiPanel->UpdateContents(0.0f);
@@ -148,9 +148,9 @@ void_expected Level::ResetSheetEditor() {
 	objects.Clear();
 
 	// Create default objects
-	playerId = obj::create_god();
-	obj::create_camera();
-	obj::create_origin();
+	playerId = obj::CreateGod();
+	obj::CreateCamera();
+	obj::CreateOrigin();
 
 	return {};
 }
@@ -158,9 +158,9 @@ void_expected Level::ResetBulkSheetEditor() {
 	objects.Clear();
 
 	// Create default objects
-	playerId = obj::create_god();
-	obj::create_camera();
-	obj::create_origin();
+	playerId = obj::CreateGod();
+	obj::CreateCamera();
+	obj::CreateOrigin();
 
 	return {};
 }
@@ -357,7 +357,7 @@ void_expected Level::InitAnyPlayer(
 					}
 
 					LOGF_TRACE("Creating tile from %d sprite at (%d,%d)...", sprite_type, x, y);
-					auto it = obj::create_tile(static_cast<BackgroundDrawLayer>(l), VecF{x, y}, sprite_type);
+					auto it = obj::CreateTile(static_cast<BackgroundDrawLayer>(l), VecF{x, y}, sprite_type);
 					M2G_PROXY.post_tile_create(*it, sprite_type);
 					LOG_TRACE("Created tile", it.GetId());
 				}
@@ -397,8 +397,8 @@ void_expected Level::InitAnyPlayer(
 	}
 
 	// Create default objects
-	obj::create_camera();
-	obj::create_pointer();
+	obj::CreateCamera();
+	obj::CreatePointer();
 
 	// Init HUD
 	//_leftHudUiPanel->update_contents(); // Update should happen after the level is full initialized

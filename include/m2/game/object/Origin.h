@@ -2,5 +2,5 @@
 #include "m2/Object.h"
 
 namespace m2::obj {
-	Id create_origin();
+	Id CreateOrigin();
 }

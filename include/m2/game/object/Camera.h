@@ -6,5 +6,5 @@ namespace m2::obj {
         VecF offset;
     };
 
-    Id create_camera();
+    Id CreateCamera();
 }

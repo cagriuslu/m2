@@ -3,7 +3,7 @@
 #include "m2/Game.h"
 #include "m2/Object.h"
 
-m2::Id m2::obj::create_pointer() {
+m2::Id m2::obj::CreatePointer() {
     const auto it = CreateObject({});
 
 	it->AddGraphic(ForegroundDrawLayer::F0_BOTTOM).preDraw = [](const Graphic& gfx_) {

@@ -26,7 +26,7 @@ namespace {
 	}
 }  // namespace
 
-Id obj::create_god() {
+Id obj::CreateGod() {
 	const auto it = CreateObject({});
 
 	it->AddPhysique().preStep = [](MAYBE Physique& phy) {

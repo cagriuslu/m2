@@ -4,7 +4,7 @@
 
 #include "m2/Game.h"
 
-m2::Id m2::obj::create_ghost(const m2g::pb::SpriteType spriteType, const int roundToBin) {
+m2::Id m2::obj::CreateGhost(const m2g::pb::SpriteType spriteType, const int roundToBin) {
 	const auto it = CreateObject({});
 	auto& gfx = it->AddGraphic(ForegroundDrawLayer::F0_BOTTOM, spriteType);
 	if (roundToBin != 0) {

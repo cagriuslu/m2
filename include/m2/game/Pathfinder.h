@@ -23,14 +23,14 @@ namespace m2 {
 		/// Returns reverse path [to, to - 1, to - 2, ..., from + 1, from]
 		/// Returns empty vector if path not found
 		Path find_grid_path(const VecI& from, const VecI& to, float max_distance_m);
-		inline Path find_grid_path(const VecF& from, const VecF& to, float max_distance_m) { return find_grid_path(VecI{from}, VecI{to}, max_distance_m); }
+		Path find_grid_path(const VecF& from, const VecF& to, float max_distance_m) { return find_grid_path(VecI{from}, VecI{to}, max_distance_m); }
 
 		/// Returns reverse path [to, to - 1, to - 2, ..., from + 1, from]
 		/// Returns empty vector if path not found
 		Path find_smooth_path(const VecF& from, const VecF& to, float max_distance_m);
 
 		/// If the world is not static, the cache should be cleared after the physics step
-		inline void clear_cache() { _approach_from_cache.clear(); }
+		void clear_cache() { _approach_from_cache.clear(); }
 
 		static void draw_path(const Path& path, SDL_Color color);
 

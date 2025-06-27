@@ -377,7 +377,7 @@ namespace {
 							M2_LEVEL.deferredActions.push(CreateObjectDeleter(levelEditorState.ghostId));
 						}
 						if (const auto selections = self.GetSelectedOptions(); not selections.empty()) {
-							levelEditorState.ghostId = obj::create_ghost(
+							levelEditorState.ghostId = obj::CreateGhost(
 									static_cast<m2g::pb::SpriteType>(I(selections[0])), 1);
 						}
 						return MakeContinueAction();
@@ -529,7 +529,7 @@ namespace {
 						if (const auto selections = self.GetSelectedOptions(); not selections.empty()) {
 							const auto snapToGrid = M2_LEVEL.LeftHud()->FindWidget<CheckboxWithText>("SnapToGridCheckbox")->GetState();
 							const auto splitCount = M2_LEVEL.LeftHud()->FindWidget<IntegerSelection>("CellSplitCount")->value();
-							levelEditorState.ghostId = obj::create_ghost(*M2_GAME.GetMainSpriteOfObject(static_cast<m2g::pb::ObjectType>(I(selections[0]))), snapToGrid ? splitCount : 0);
+							levelEditorState.ghostId = obj::CreateGhost(*M2_GAME.GetMainSpriteOfObject(static_cast<m2g::pb::ObjectType>(I(selections[0]))), snapToGrid ? splitCount : 0);
 						}
 						return MakeContinueAction();
 					}
