@@ -3,24 +3,10 @@
 #include <m2/Meta.h>
 
 uint64_t m2::RotateLeft64(uint64_t n, const uint8_t shiftCount) {
-	 m2Repeat(shiftCount) {
-		const auto bit = n & 0x8000000000000000ull;
-		n <<= 1;
-		if (bit) {
-			n |= 0x01ull;
-		}
-	}
-	return n;
+	return (n << shiftCount) | (n >> (64 - shiftCount));
 }
 uint64_t m2::RotateRight64(uint64_t n, const uint8_t shiftCount) {
-	m2Repeat(shiftCount) {
-		const auto bit = n & 0x01ull;
-		n >>= 1;
-		if (bit) {
-			n |= 0x8000000000000000ull;
-		}
-	}
-	return n;
+	return (n >> shiftCount) | (n << (64 - shiftCount));
 }
 
 uint64_t m2::PickSequentialBits(uint64_t n, const uint8_t leastSignificantBit, const uint8_t numberOfBits) {
