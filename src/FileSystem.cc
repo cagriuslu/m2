@@ -1,6 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <m2/FileSystem.h>
 #include <sstream>
+#include <algorithm>
 
 m2::expected<std::string> m2::ReadFile(const std::filesystem::path& path) {
 	FILE* file = fopen(path.string().c_str(), "r");
