@@ -1,0 +1,45 @@
+#pragma once
+#include "ServerActor.h"
+#include "Type.h"
+#include <m2/network/SequenceNo.h>
+#include <m2/mt/Actor.h>
+#include <m2/Meta.h>
+
+namespace m2 {
+	class ServerActorInterface final : public BaseActorInterface<ServerActor, ServerActorInput, ServerActorOutput> {
+		const mplayer::Type _type;
+		SequenceNo _nextServerUpdateSequenceNo{};
+		int _turnHolderIndex{};
+		ServerActorOutput::StateUpdate _serverActorState{};
+		std::optional<ServerActorOutput::ClientEvent> _clientEvent;
+
+	public:
+		ServerActorInterface(const mplayer::Type type, const int maxConnectionCount): BaseActorInterface(type, maxConnectionCount), _type(type) {}
+
+		// Accessors
+		
+		[[nodiscard]] mplayer::Type GetType() const { return _type; }
+		/// Returns true if the server is still listening for external connections.
+		bool IsListening() { ProcessOutbox(); return _serverActorState.threadState == pb::SERVER_LISTENING; }
+		bool IsLobbyClosed() { ProcessOutbox(); return _serverActorState.threadState == pb::SERVER_READY; }
+		int GetClientCount() { ProcessOutbox(); return _serverActorState.clientCount; }
+		int GetReadyClientCount() { ProcessOutbox(); return _serverActorState.readyClientCount; }
+		int GetTurnHolderIndex() const { return _turnHolderIndex; }
+		bool IsOurTurn() const { return GetTurnHolderIndex() == 0; }
+		bool HasBeenShutdown() { ProcessOutbox(); return _serverActorState.threadState == pb::SERVER_SHUTDOWN; }
+
+		// Modifiers
+
+		std::optional<ServerActorOutput::ClientEvent> PopClientEvent();
+		/// Tries to close the lobby. May fail if not all clients have indicated that they are ready. The status can be
+		/// polled using the IsLobbyClosed method.
+		void_expected TryCloseLobby();
+		void_expected SetTurnHolder(int clientIndex);
+		/// Returns the sequence number of the sent ServerUpdate
+		expected<SequenceNo> SendServerUpdate(bool shutdownAfter = false);
+		void_expected SendServerCommand(const m2g::pb::ServerCommand& command, int receiverIndex = -1);
+
+	private:
+		void ProcessOutbox();
+	};
+}
