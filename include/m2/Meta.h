@@ -133,6 +133,7 @@ namespace m2 {
 
 	template <typename T>
 	using expected = tl::expected<T, std::string>;
+	using unexpect_t = tl::unexpect_t;
 
 	template <typename E>
 	auto make_unexpected(E&& e) { return tl::make_unexpected(std::forward<E>(e)); }
@@ -179,13 +180,20 @@ namespace m2 {
 	}
 }
 
-#define m2ReflectUnexpected(expected_type)             \
-	do {                                               \
-		if (not (expected_type)) {                     \
-			return ::m2::make_unexpected(              \
-					std::move((expected_type).error()) \
-			);                                         \
-		}                                              \
+#define m2ReflectUnexpected(expected_type)                  \
+	do {                                                    \
+		if (not (expected_type)) {                          \
+			return ::m2::make_unexpected(                   \
+					std::move((expected_type).error())      \
+			);                                              \
+		}                                                   \
+	} while (false)
+
+#define m2ReturnUnexpectedIf(condition, msg)                \
+	do {                                                    \
+		if ((condition)) {                                  \
+			return ::m2::make_unexpected(msg);              \
+		}                                                   \
 	} while (false)
 
 #define m2ReturnUnexpectedUnless(condition, msg)            \
