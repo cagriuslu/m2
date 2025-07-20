@@ -15,7 +15,7 @@ bool m2::ServerActor::Initialize(MessageBox<ServerActorInput>&, MessageBox<Serve
 }
 
 bool m2::ServerActor::operator()(MessageBox<ServerActorInput>& inbox, MessageBox<ServerActorOutput>& outbox) {
-	if (_state == pb::SERVER_SHUTDOWN) {
+	if (_state == pb::SERVER_GAME_FINISHED) {
 		return false;
 	}
 
@@ -63,7 +63,7 @@ void m2::ServerActor::StartListening(MessageBox<ServerActorOutput>& outbox) {
 		throw M2_ERROR("Listen failed: " + listenResult.error());
 	}
 	LOG_INFO("TcpSocket listening on port", TCP_PORT_NO);
-	SetStateAndPublish(outbox, pb::SERVER_LISTENING);
+	SetStateAndPublish(outbox, pb::SERVER_LOBBY_OPEN);
 }
 void m2::ServerActor::StartPingBroadcast() {
 	// Only implemented for macOS
@@ -77,20 +77,20 @@ void m2::ServerActor::ProcessInbox(MessageBox<ServerActorInput>& inbox, MessageB
 	// Process only one message
 	if (std::optional<ServerActorInput> msg; inbox.PopMessage(msg) && msg) {
 		if (std::holds_alternative<ServerActorInput::CloseLobby>(msg->variant)) {
-			if (_state != pb::SERVER_LISTENING) {
+			if (_state != pb::SERVER_LOBBY_OPEN) {
 				throw M2_ERROR("Received unexpected lobby closure command");
 			}
 			if (not std::ranges::all_of(_clients, network::is_client_ready)) {
 				LOG_WARN("Unable to close lobby, not every client is ready");
 			} else {
 				_pingBroadcastThread.reset();
-				SetStateAndPublish(outbox, pb::SERVER_READY);
+				SetStateAndPublish(outbox, pb::SERVER_LOBBY_CLOSED);
 			}
 		} else if (std::holds_alternative<ServerActorInput::UpdateTurnHolder>(msg->variant)) {
 			_turnHolderIndex = std::get<ServerActorInput::UpdateTurnHolder>(msg->variant).clientIndex;
 		} else if (std::holds_alternative<ServerActorInput::SendServerUpdate>(msg->variant)) {
 			// Start the game if not already done so
-			if (_state == pb::SERVER_READY) {
+			if (_state == pb::SERVER_LOBBY_CLOSED) {
 				SetStateAndPublish(outbox, pb::SERVER_STARTED);
 			} else if (_state == pb::SERVER_STARTED) {
 				// Do nothing
@@ -111,12 +111,12 @@ void m2::ServerActor::ProcessInbox(MessageBox<ServerActorInput>& inbox, MessageB
 				for (auto& client : _clients) {
 					client.flush_and_shutdown();
 				}
-				SetStateAndPublish(outbox, pb::SERVER_SHUTDOWN);
+				SetStateAndPublish(outbox, pb::SERVER_GAME_FINISHED);
 			} else {
 				_lastServerUpdate = std::move(serverUpdateCopy); // Save for later
 			}
 		} else if (std::holds_alternative<ServerActorInput::SendServerCommand>(msg->variant)) {
-			if (_state != pb::SERVER_READY && _state != pb::SERVER_STARTED) {
+			if (_state != pb::SERVER_LOBBY_CLOSED && _state != pb::SERVER_STARTED) {
 				throw M2_ERROR("Received unexpected ServerCommand command");
 			}
 			const auto& serverCommand = std::get<ServerActorInput::SendServerCommand>(msg->variant).serverCommand;
@@ -152,7 +152,7 @@ void m2::ServerActor::ProcessReceivedMessages(MessageBox<ServerActorOutput>& out
 			continue;
 		}
 		// Peek cannot be null if has_incoming_data is true
-		if (const auto* peek = client.peak_incoming_message(); peek && peek->has_client_update()) {
+		if (const auto* peek = client.peek_incoming_message(); peek && peek->has_client_update()) {
 			// Check sequence no
 			if (peek->sequence_no() < client.expectedClientUpdateSequenceNo) {
 				LOG_WARN("Ignoring ClientUpdate with an outdated sequence number", peek->sequence_no());
@@ -163,7 +163,7 @@ void m2::ServerActor::ProcessReceivedMessages(MessageBox<ServerActorOutput>& out
 				HandleMisbehavedClient(outbox, i);
 			} else {
 				++client.expectedClientUpdateSequenceNo;
-				if (_state == pb::SERVER_LISTENING) {
+				if (_state == pb::SERVER_LOBBY_OPEN) {
 					LOG_INFO("Received client ready token", i, peek->client_update().ready_token());
 					client.set_ready_token(peek->client_update().ready_token());
 					client.pop_incoming_message(); // Message handled
@@ -249,11 +249,11 @@ void m2::ServerActor::CheckConnectionListeningSocket(MessageBox<ServerActorOutpu
 	} else {
 		if (_maxConnCount <= _clients.size()) {
 			LOG_INFO("Refusing connection because of connection limit", (*clientSocket)->ip_address_and_port());
-		} else if (_state == pb::SERVER_LISTENING) {
+		} else if (_state == pb::SERVER_LOBBY_OPEN) {
 			LOG_INFO("New client connected with index", _clients.size(), (*clientSocket)->ip_address_and_port());
 			_clients.emplace_back(std::move(**clientSocket), I(_clients.size()));
 			PublishStateUpdate(outbox);
-		} else if (_state == pb::SERVER_READY) {
+		} else if (_state == pb::SERVER_LOBBY_CLOSED) {
 			LOG_INFO("Refusing connection to closed lobby", (*clientSocket)->ip_address_and_port());
 		} else if (_state == pb::SERVER_STARTED) {
 			// Check if there's a disconnected client
@@ -285,7 +285,7 @@ void m2::ServerActor::CheckReadableClientSockets(const network::TcpSocketHandles
 		client.has_incoming_data(isReadable);
 	}
 	// If the lobby is not yet closed, remove disconnected clients
-	if (_state == pb::ServerThreadState::SERVER_LISTENING) {
+	if (_state == pb::ServerThreadState::SERVER_LOBBY_OPEN) {
 		if (const auto eraseIt = std::ranges::remove_if(_clients, &network::ClientManager::is_disconnected_or_untrusted).begin();
 				eraseIt != _clients.end()) {
 			_clients.erase(eraseIt, _clients.end());

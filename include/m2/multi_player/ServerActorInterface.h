@@ -20,13 +20,13 @@ namespace m2 {
 		
 		[[nodiscard]] mplayer::Type GetType() const { return _type; }
 		/// Returns true if the server is still listening for external connections.
-		bool IsListening() { ProcessOutbox(); return _serverActorState.threadState == pb::SERVER_LISTENING; }
-		bool IsLobbyClosed() { ProcessOutbox(); return _serverActorState.threadState == pb::SERVER_READY; }
+		bool IsListening() { ProcessOutbox(); return _serverActorState.threadState == pb::SERVER_LOBBY_OPEN; }
+		bool IsLobbyClosed() { ProcessOutbox(); return _serverActorState.threadState == pb::SERVER_LOBBY_CLOSED; }
 		int GetClientCount() { ProcessOutbox(); return _serverActorState.clientCount; }
 		int GetReadyClientCount() { ProcessOutbox(); return _serverActorState.readyClientCount; }
 		int GetTurnHolderIndex() const { return _turnHolderIndex; }
 		bool IsOurTurn() const { return GetTurnHolderIndex() == 0; }
-		bool HasBeenShutdown() { ProcessOutbox(); return _serverActorState.threadState == pb::SERVER_SHUTDOWN; }
+		bool HasBeenShutdown() { ProcessOutbox(); return _serverActorState.threadState == pb::SERVER_GAME_FINISHED; }
 
 		// Modifiers
 

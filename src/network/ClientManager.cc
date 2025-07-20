@@ -116,7 +116,7 @@ bool m2::network::ClientManager::has_incoming_data(bool is_socket_readable) {
 		return not incoming_queue().empty();
 	}
 }
-const m2::pb::NetworkMessage* m2::network::ClientManager::peak_incoming_message() {
+const m2::pb::NetworkMessage* m2::network::ClientManager::peek_incoming_message() {
 	if (auto* incoming_queue = get_incoming_queue(); not incoming_queue || incoming_queue->empty()) {
 		return nullptr;
 	} else {

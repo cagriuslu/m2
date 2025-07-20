@@ -26,7 +26,7 @@ m2::network::ServerThread::~ServerThread() {
 
 bool m2::network::ServerThread::is_listening() {
 	const std::lock_guard lock(_mutex);
-	return _state == pb::ServerThreadState::SERVER_LISTENING;
+	return _state == pb::ServerThreadState::SERVER_LOBBY_OPEN;
 }
 
 int m2::network::ServerThread::client_count() {
@@ -86,7 +86,7 @@ std::optional<int> m2::network::ServerThread::misbehaved_client() {
 
 bool m2::network::ServerThread::is_shutdown() {
 	const std::lock_guard lock(_mutex);
-	return _state == pb::ServerThreadState::SERVER_SHUTDOWN;
+	return _state == pb::ServerThreadState::SERVER_GAME_FINISHED;
 }
 
 m2::void_expected m2::network::ServerThread::close_lobby() {
@@ -99,7 +99,7 @@ m2::void_expected m2::network::ServerThread::close_lobby() {
 		}
 		// Stop ping broadcast
 		_ping_broadcast_thread.reset();
-		set_state_unlocked(pb::ServerThreadState::SERVER_READY);
+		set_state_unlocked(pb::ServerThreadState::SERVER_LOBBY_CLOSED);
 	}
 	LOG_INFO("Lobby closed");
 	return {};
@@ -118,8 +118,8 @@ m2::SequenceNo m2::network::ServerThread::send_server_update(bool shutdown_as_we
 	INFO_FN();
 
 	// Make sure the state is set as READY
-	if (_state != pb::SERVER_READY) {
-		set_state_unlocked(pb::SERVER_READY);
+	if (_state != pb::SERVER_LOBBY_CLOSED) {
+		set_state_unlocked(pb::SERVER_LOBBY_CLOSED);
 	}
 
 	// Prepare ServerUpdate
@@ -139,7 +139,7 @@ m2::SequenceNo m2::network::ServerThread::send_server_update(bool shutdown_as_we
 
 	if (shutdown_as_well) {
 		LOG_INFO("Shutting down the server");
-		set_state_locked(pb::SERVER_SHUTDOWN);
+		set_state_locked(pb::SERVER_GAME_FINISHED);
 	}
 
 	return message.sequence_no();
@@ -230,7 +230,7 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 		throw M2_ERROR("Listen failed: " + listen_success.error());
 	}
 	LOG_INFO("TcpSocket listening on port", TCP_PORT_NO);
-	server_thread->set_state_locked(pb::ServerThreadState::SERVER_LISTENING);
+	server_thread->set_state_locked(pb::ServerThreadState::SERVER_LOBBY_OPEN);
 
     // Ping broadcast for Windows is not implemented
 #ifndef _WIN32
@@ -252,7 +252,7 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 			for (auto i = 0; i < I(server_thread->_clients.size()); ++i) {
 				if (auto& client = server_thread->_clients[i]; client.has_incoming_data(false)) {
 					// Peek cannot be null if has_incoming_data() is true
-					if (const auto* peek = client.peak_incoming_message(); peek->has_client_update()) {
+					if (const auto* peek = client.peek_incoming_message(); peek->has_client_update()) {
 						// Check sequence number
 						if (peek->sequence_no() < client.expectedClientUpdateSequenceNo) {
 							LOG_WARN("Ignoring ClientUpdate with an outdated sequence number", peek->sequence_no());
@@ -262,7 +262,7 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 							client.set_misbehaved();
 						} else {
 							client.expectedClientUpdateSequenceNo++;
-							if (server_thread->_state == pb::SERVER_LISTENING) {
+							if (server_thread->_state == pb::SERVER_LOBBY_OPEN) {
 								LOG_INFO("Received client ready token", i, peek->client_update().ready_token());
 								client.set_ready_token(peek->client_update().ready_token()); // TODO handle response
 								client.pop_incoming_message(); // Message handled
@@ -350,10 +350,10 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 				} else {
 					if (server_thread->_max_connection_count <= server_thread->_clients.size()) {
 						LOG_INFO("Refusing connection because of connection limit", (*client_socket)->ip_address_and_port());
-					} else if (server_thread->_state == pb::SERVER_LISTENING) {
+					} else if (server_thread->_state == pb::SERVER_LOBBY_OPEN) {
 						LOG_INFO("New client connected with index", server_thread->_clients.size(), (*client_socket)->ip_address_and_port());
 						server_thread->_clients.emplace_back(std::move(**client_socket), I(server_thread->_clients.size()));
-					} else if (server_thread->_state == pb::SERVER_READY) {
+					} else if (server_thread->_state == pb::SERVER_LOBBY_CLOSED) {
 						LOG_INFO("Refusing connection to closed lobby", (*client_socket)->ip_address_and_port());
 					} else if (server_thread->_state == pb::SERVER_STARTED) {
 						// Check if there's a disconnected client
@@ -385,7 +385,7 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 				client.has_incoming_data(is_readable);
 			}
 			// If the lobby is not yet closed, remove disconnected clients
-			if (server_thread->_state == pb::ServerThreadState::SERVER_LISTENING) {
+			if (server_thread->_state == pb::ServerThreadState::SERVER_LOBBY_OPEN) {
 				auto erase_it = std::remove_if(server_thread->_clients.begin(), server_thread->_clients.end(),
 						[](auto& client) { return client.is_disconnected_or_untrusted(); });
 				server_thread->_clients.erase(erase_it, server_thread->_clients.end());

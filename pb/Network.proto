@@ -11,13 +11,13 @@ enum ServerThreadState {
   // Default state of the ServerThread. In this state, the ServerThread is not yet listening.
   SERVER_INITIAL_STATE = 0;
   // Signifies that the ServerThread is listening for new client connections.
-  SERVER_LISTENING = 1;
+  SERVER_LOBBY_OPEN = 1;
   // Signifies that the lobby has been closed, but the game hasn't started yet.
-  SERVER_READY = 2;
+  SERVER_LOBBY_CLOSED = 2;
   // Signifies that the game has started.
   SERVER_STARTED = 3;
   // Signifies that the server has been shut down.
-  SERVER_SHUTDOWN = 4;
+  SERVER_GAME_FINISHED = 4;
   // Signifies to ServerThread that the thread should quit.
   SERVER_QUIT = 5;
 }
@@ -85,7 +85,7 @@ message ClientUpdate {
 message NetworkMessage {
   int32 game_hash = 1;
   // Each message type and client maintains an independent sequence number. Since server commands are point to point,
-  // different clients might expect a sequence number that's differen from other clients. Server updates are global, so
+  // different clients might expect a sequence number that's different from other clients. Server updates are global, so
   // every client should follow the same sequence number, but even then, this sequence number is different from the
   // sequence number of the server command. Similar logic applies to client commands and updates. They are distinct.
   int32 sequence_no = 2;

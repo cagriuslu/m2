@@ -75,7 +75,7 @@ namespace m2::network {
 		/// Otherwise, only the local buffers will be checked.
 		bool has_incoming_data(bool is_socket_readable);
 		/// Take a peek at the next fully received message waiting to be processed. Returns nullptr if there are none.
-		const pb::NetworkMessage* peak_incoming_message();
+		const pb::NetworkMessage* peek_incoming_message();
 		/// Take out the next fully received message waiting to be processed. Returns std::nullopt if there are none.
 		std::optional<pb::NetworkMessage> pop_incoming_message();
 
