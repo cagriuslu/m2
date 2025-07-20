@@ -40,6 +40,8 @@ namespace m2 {
 	}
 
 	inline std::string ToString(const bool b) { return b ? "true" : "false"; }
+	inline std::string ToString(const short s) { return std::to_string(s); }
+	inline std::string ToString(const unsigned short s) { return std::to_string(s); }
 	inline std::string ToString(const int i) { return std::to_string(i); }
 	inline std::string ToString(const unsigned int u) { return std::to_string(u); }
 	inline std::string ToString(const long l) { return std::to_string(l); }

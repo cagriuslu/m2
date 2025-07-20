@@ -247,7 +247,7 @@ void m2::ServerActor::CheckConnectionListeningSocket(MessageBox<ServerActorOutpu
 	} else if (not clientSocket->has_value()) {
 		LOG_WARN("Client aborted connection by the time it was accepted");
 	} else {
-		if (_maxConnCount <= _clients.size()) {
+		if (_maxConnCount <= I(_clients.size())) {
 			LOG_INFO("Refusing connection because of connection limit", (*clientSocket)->ip_address_and_port());
 		} else if (_state == pb::SERVER_LOBBY_OPEN) {
 			LOG_INFO("New client connected with index", _clients.size(), (*clientSocket)->ip_address_and_port());

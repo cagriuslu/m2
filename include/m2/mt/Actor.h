@@ -37,7 +37,7 @@ namespace m2 {
 	public:
 		void PushMessage(T&& msg) {
 			_protectedQueue.Write([&msg](std::deque<T>& queue) {
-				queue.emplace(std::move(msg));
+				queue.emplace_back(std::move(msg));
 			});
 		}
 		const T* PeekMessage() const {
@@ -51,7 +51,7 @@ namespace m2 {
 		}
 		/// Waits until the given condition is true for **any** message in the queue
 		void WaitMessage(const std::function<bool(const T&)>& condition) const {
-			_protectedQueue.Read([](const std::deque<T>& queue) {}, [&](const std::deque<T>& queue) -> bool {
+			_protectedQueue.Read([](const std::deque<T>&) {}, [&](const std::deque<T>& queue) -> bool {
 				return std::any_of(queue.begin(), queue.end(), condition);
 			});
 		}
@@ -59,7 +59,7 @@ namespace m2 {
 			_protectedQueue.Write([&out](std::deque<T>& queue) {
 				if (not queue.empty()) {
 					out.emplace(std::move(queue.front()));
-					queue.pop();
+					queue.pop_front();
 				} else {
 					out.reset();
 				}
