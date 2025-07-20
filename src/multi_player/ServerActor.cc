@@ -15,11 +15,10 @@ bool m2::ServerActor::Initialize(MessageBox<ServerActorInput>&, MessageBox<Serve
 }
 
 bool m2::ServerActor::operator()(MessageBox<ServerActorInput>& inbox, MessageBox<ServerActorOutput>& outbox) {
+	ProcessInbox(inbox, outbox);
 	if (_state == pb::SERVER_GAME_FINISHED) {
 		return false;
 	}
-
-	ProcessInbox(inbox, outbox);
 	ProcessReceivedMessages(outbox);
 	CheckDisconnectedClients(outbox);
 	const auto preSelectHandles = GetSocketHandlesToReadAndWrite();
@@ -112,6 +111,7 @@ void m2::ServerActor::ProcessInbox(MessageBox<ServerActorInput>& inbox, MessageB
 					client.flush_and_shutdown();
 				}
 				SetStateAndPublish(outbox, pb::SERVER_GAME_FINISHED);
+				return;
 			} else {
 				_lastServerUpdate = std::move(serverUpdateCopy); // Save for later
 			}

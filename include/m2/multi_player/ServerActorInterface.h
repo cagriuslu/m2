@@ -30,14 +30,15 @@ namespace m2 {
 
 		// Modifiers
 
-		std::optional<ServerActorOutput::ClientEvent> PopClientEvent();
+		std::optional<pb::NetworkMessage> PopCommandFromTurnHolderEvent();
+		std::optional<int> PopDisconnectedClientEvent();
 		/// Tries to close the lobby. May fail if not all clients have indicated that they are ready. The status can be
 		/// polled using the IsLobbyClosed method.
-		void_expected TryCloseLobby();
-		void_expected SetTurnHolder(int clientIndex);
+		void TryCloseLobby();
+		void SetTurnHolder(int clientIndex);
 		/// Returns the sequence number of the sent ServerUpdate
-		expected<SequenceNo> SendServerUpdate(bool shutdownAfter = false);
-		void_expected SendServerCommand(const m2g::pb::ServerCommand& command, int receiverIndex = -1);
+		SequenceNo SendServerUpdate(bool shutdownAfter = false);
+		void SendServerCommand(const m2g::pb::ServerCommand& command, int receiverIndex = -1);
 
 	private:
 		void ProcessOutbox();

@@ -174,23 +174,17 @@ m2::void_expected m2::Game::HostGame(const mplayer::Type type, const unsigned ma
 
 	LOG_INFO("Creating server instance...");
 	_multi_player_threads.emplace<ServerThreads>();
-	LOG_DEBUG("Destroying temporary ServerThread...");
-	ServerThread().~ServerThread(); // Destruct the default object
-	LOG_DEBUG("Temporary ServerThread destroyed, creating real ServerThread...");
-	new (&ServerThread()) network::ServerThread(type, max_connection_count);
+	std::get<ServerThreads>(_multi_player_threads).first.emplace(type, max_connection_count);
 	LOG_DEBUG("Real ServerThread created");
 
 	// Wait until the server is up
-	while (not ServerThread().is_listening()) {
+	while (not ServerThread().IsListening()) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(25));
 	}
 	// TODO prevent other clients from joining until the host client joins
 
 	LOG_INFO("Server is listening, joining the game as host client...");
-	LOG_DEBUG("Destroying temporary HostClientThread...");
-	HostClientThread().~HostClientThread(); // Destruct the default object
-	LOG_DEBUG("Temporary HostClientThread destroyed, creating real HostClientThread");
-	new (&HostClientThread()) network::HostClientThread(type);
+	std::get<ServerThreads>(_multi_player_threads).second.emplace(type);
 	LOG_DEBUG("Real HostClientThread created");
 
 	return {};
@@ -221,7 +215,7 @@ bool m2::Game::AddBot() {
 	it->first.~BotClientThread(); // Destruct the default object
 	LOG_DEBUG("Temporary BotClientThread destroyed, creating real BotClientThread");
 
-	new (&it->first) network::BotClientThread(ServerThread().type());
+	new (&it->first) network::BotClientThread(ServerThread().GetType());
 	LOG_DEBUG("Real BotClientThread created");
 
 	if (it->first.is_active()) {
@@ -243,7 +237,7 @@ m2::network::BotClientThread& m2::Game::FindBot(const int receiver_index) {
 
 int m2::Game::TotalPlayerCount() {
 	if (IsServer()) {
-		return ServerThread().client_count();
+		return ServerThread().GetClientCount();
 	}
 	if (IsRealClient()) {
 		return RealClientThread().total_player_count();
@@ -263,7 +257,7 @@ int m2::Game::SelfIndex() {
 
 int m2::Game::TurnHolderIndex() {
 	if (IsServer()) {
-		return ServerThread().turn_holder_index();
+		return ServerThread().GetTurnHolderIndex();
 	}
 	if (IsRealClient()) {
 		return RealClientThread().turn_holder_index();
@@ -273,7 +267,7 @@ int m2::Game::TurnHolderIndex() {
 
 bool m2::Game::IsOurTurn() {
 	if (IsServer()) {
-		return ServerThread().is_our_turn();
+		return ServerThread().IsOurTurn();
 	}
 	if (IsRealClient()) {
 		if (RealClientThread().is_started()) {
@@ -316,7 +310,7 @@ m2::void_expected m2::Game::LoadMultiPlayerAsHost(
 	m2ReflectUnexpected(success);
 
 	// Execute the first server update, which will trigger clients to initialize their levels, but not fully.
-	M2_GAME.ServerThread().send_server_update();
+	M2_GAME.ServerThread().SendServerUpdate();
 	// Manually set the HostClientThread state to STARTED, because it doesn't receive ServerUpdates
 	M2_GAME.HostClientThread().start_if_ready();
 	// If there are bots, we need to handle the first server update
@@ -334,7 +328,7 @@ m2::void_expected m2::Game::LoadMultiPlayerAsHost(
 	M2G_PROXY.multi_player_level_server_populate(level_name, *_level->_lb);
 
 	// Execute second server update, which will fully initialize client levels.
-	_lastSentOrReceivedServerUpdateSequenceNo = M2_GAME.ServerThread().send_server_update();
+	_lastSentOrReceivedServerUpdateSequenceNo = M2_GAME.ServerThread().SendServerUpdate();
 	// Act as if ServerUpdate is received on the server-side as well
 	LOG_DEBUG("Calling server-side post_server_update...");
 	_proxy.post_server_update(*_lastSentOrReceivedServerUpdateSequenceNo, false);
@@ -478,7 +472,7 @@ void m2::Game::HandleHudEvents() {
 
 void m2::Game::HandleNetworkEvents() {
 	// Check if the game ended
-	if ((IsServer() && ServerThread().is_shutdown()) || (IsRealClient() && RealClientThread().is_shutdown())) {
+	if ((IsServer() && ServerThread().HasBeenShutdown()) || (IsRealClient() && RealClientThread().is_shutdown())) {
 		_level.reset();
 		ResetState();
 		_multi_player_threads = std::monostate{};
@@ -488,15 +482,7 @@ void m2::Game::HandleNetworkEvents() {
 			quit = true;
 		}
 	} else if (IsServer()) {
-		// Check if a client has disconnected
-		if (const auto disconnected_client_index = ServerThread().disconnected_client()) {
-			MAYBE auto action = _proxy.handle_disconnected_client(*disconnected_client_index);
-			// TODO handle
-		}
-
-		// Check if a client has misbehaved
-		if (const auto misbehaved_client_index = ServerThread().misbehaved_client()) {
-			MAYBE auto action = _proxy.handle_misbehaving_client(*misbehaved_client_index);
+		if (const auto disconnectedClientIndex = ServerThread().PopDisconnectedClientEvent()) {
 			// TODO handle
 		}
 	} else if (IsRealClient()) {
@@ -538,20 +524,16 @@ void m2::Game::ExecutePreStep() {
 		}
 
 		// Handle client command
-		if (const auto client_command = ServerThread().pop_turn_holder_command()) {
-			if (const auto new_turn_holder = _proxy.handle_client_command(ServerThread().turn_holder_index(), client_command->second.client_command())) {
+		if (const auto client_command = ServerThread().PopCommandFromTurnHolderEvent()) {
+			if (const auto new_turn_holder = _proxy.handle_client_command(ServerThread().GetTurnHolderIndex(), client_command->client_command())) {
 				if (*new_turn_holder < 0) {
 					_server_update_necessary = true;
 					_server_update_with_shutdown = true;
 				} else {
-					ServerThread().set_turn_holder(*new_turn_holder);
+					ServerThread().SetTurnHolder(*new_turn_holder);
 					_server_update_necessary = true;
 				}
 			}
-		}
-		// Handle reconnected client
-		if (ServerThread().has_reconnected_client()) {
-			_server_update_necessary = true;
 		}
 
 		// Handle server command
@@ -625,7 +607,7 @@ void m2::Game::ExecutePostStep() {
 	if (IsServer()) {
 		if (_server_update_necessary) {
 			LOG_DEBUG("Server update is necessary, sending ServerUpdate...");
-			_lastSentOrReceivedServerUpdateSequenceNo = ServerThread().send_server_update(_server_update_with_shutdown);
+			_lastSentOrReceivedServerUpdateSequenceNo = ServerThread().SendServerUpdate(_server_update_with_shutdown);
 			_server_update_necessary = false; // Unset flag
 
 			// Act as if ServerUpdate is received on the server-side as well
@@ -634,9 +616,6 @@ void m2::Game::ExecutePostStep() {
 
 			// Shutdown the game if necessary
 			if (_server_update_with_shutdown) {
-				if (not ServerThread().is_shutdown()) {
-					throw M2_ERROR("Server should have shutdown itself");
-				}
 				_server_update_with_shutdown = false;
 				// Game will be restarted in handle_network_events
 			}

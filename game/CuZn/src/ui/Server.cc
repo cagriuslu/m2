@@ -16,8 +16,8 @@ static TextBlueprint client_count = {
 	.text = "0",
 	.wrapped_font_size_in_units = 5.0f,
 	.onUpdate = [](MAYBE Text& self) {
-		auto ccount = M2_GAME.ServerThread().client_count();
-		auto ready_client_count = M2_GAME.ServerThread().ready_client_count();
+		auto ccount = M2_GAME.ServerThread().GetClientCount();
+		auto ready_client_count = M2_GAME.ServerThread().GetReadyClientCount();
 		auto text = m2::ToString(ready_client_count) + "/" + m2::ToString(ccount);
 		// Check if ready to start
 		if (ccount != 1 && ccount == ready_client_count) {
@@ -25,17 +25,19 @@ static TextBlueprint client_count = {
 		}
 		self.set_text(text);
 
+		// Check if the lobby closure is successful
+		if (M2_GAME.ServerThread().IsLobbyClosed()) {
+			const auto expect_success = M2_GAME.LoadMultiPlayerAsHost(M2_GAME.GetResources().GetLevelsDir() / "Map.json", m2::ToString(ccount));
+			m2SucceedOrThrowError(expect_success);
+			return MakeClearStackAction();
+		}
+
 		return MakeContinueAction();
 	},
 	.onAction = [](MAYBE const Text& self) -> UiAction {
-		if (2 <= M2_GAME.ServerThread().client_count()) {
+		if (2 <= M2_GAME.ServerThread().GetClientCount()) {
 			LOG_INFO("Enough clients have connected");
-			if (M2_GAME.ServerThread().close_lobby()) {
-				auto ccount = M2_GAME.ServerThread().client_count();
-				const auto expect_success = M2_GAME.LoadMultiPlayerAsHost(M2_GAME.GetResources().GetLevelsDir() / "Map.json", m2::ToString(ccount));
-				m2SucceedOrThrowError(expect_success);
-				return MakeClearStackAction();
-			}
+			M2_GAME.ServerThread().TryCloseLobby();
 		}
 		return MakeContinueAction();
 	}

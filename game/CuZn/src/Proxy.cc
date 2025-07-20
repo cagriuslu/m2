@@ -80,7 +80,7 @@ void m2g::Proxy::post_multi_player_level_client_init(MAYBE const std::string& na
 }
 
 void m2g::Proxy::multi_player_level_server_populate(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {
-	auto client_count = M2_GAME.ServerThread().client_count();
+	auto client_count = M2_GAME.ServerThread().GetClientCount();
 
 	// Assign licenses to active merchants
 	{
@@ -113,7 +113,7 @@ void m2g::Proxy::multi_player_level_server_populate(MAYBE const std::string& nam
 	game_state_tracker().SetResource(pb::DRAW_DECK_SIZE, m2::F(_draw_deck.size()));
 
 	// Don't put the first player on the list
-	for (int i = 1; i < M2_GAME.ServerThread().client_count(); ++i) {
+	for (int i = 1; i < M2_GAME.ServerThread().GetClientCount(); ++i) {
 		_waiting_players.emplace_back(i);
 	}
 	// Now that the player order is determined, fill the game state tracker with the order
@@ -143,7 +143,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 			LOG_INFO("Failed to handle action while liquidating", liquidationSuccessful.error());
 			pb::ServerCommand sc;
 			sc.set_action_failure(liquidationSuccessful.error());
-			M2_GAME.ServerThread().send_server_command(sc, turn_holder_index);
+			M2_GAME.ServerThread().SendServerCommand(sc, turn_holder_index);
 			return std::nullopt;
 		}
 		_is_liquidating = false; // No longer liquidating
@@ -157,7 +157,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 			LOG_INFO("Failed to handle action", moneySpentIfSuccessful.error());
 			pb::ServerCommand sc;
 			sc.set_action_failure(moneySpentIfSuccessful.error());
-			M2_GAME.ServerThread().send_server_command(sc, turn_holder_index);
+			M2_GAME.ServerThread().SendServerCommand(sc, turn_holder_index);
 			return std::nullopt;
 		}
 
@@ -166,9 +166,9 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 			// For server, do not send the command, execute it right away
 			display_action_notification(actionNotificationCommand.action_notification());
 		}
-		for (int i = 1; i < M2_GAME.ServerThread().client_count(); ++i) {
+		for (int i = 1; i < M2_GAME.ServerThread().GetClientCount(); ++i) {
 			if (i != turn_holder_index) {
-				M2_GAME.ServerThread().send_server_command(actionNotificationCommand, i);
+				M2_GAME.ServerThread().SendServerCommand(actionNotificationCommand, i);
 			}
 		}
 
@@ -277,7 +277,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 	if (liquidation_necessary) {
 		_is_liquidating = true; // Set the liquidation state so that client commands are handled properly
 		LOG_INFO("Sending liquidation command to player", liquidation_necessary->first);
-		M2_GAME.ServerThread().send_server_command(liquidation_necessary->second, liquidation_necessary->first);
+		M2_GAME.ServerThread().SendServerCommand(liquidation_necessary->second, liquidation_necessary->first);
 		// Give turn holder index to that player so that they can respond
 		next_turn_holder = liquidation_necessary->first;
 	} else {
@@ -680,7 +680,7 @@ m2g::Proxy::LiquidationDetails m2g::Proxy::prepare_railroad_era() {
 				m2::RoundI(human_player.GetResource(pb::VICTORY_POINTS)));
 		});
 	LOG_INFO("Sending CanalEraResult to clients");
-	M2_GAME.ServerThread().send_server_command(canal_era_result_command, -1);
+	M2_GAME.ServerThread().SendServerCommand(canal_era_result_command, -1);
 
 	// Reset merchant beer
 	for (const auto& merchantObjId: merchant_object_ids | std::views::values) {
@@ -691,7 +691,7 @@ m2g::Proxy::LiquidationDetails m2g::Proxy::prepare_railroad_era() {
 	}
 
 	// Shuffle the draw deck
-	auto draw_deck = PrepareDrawDeck(M2_GAME.ServerThread().client_count());
+	auto draw_deck = PrepareDrawDeck(M2_GAME.ServerThread().GetClientCount());
 	Give8CardsToEachPlayer(draw_deck);
 	_draw_deck = std::move(draw_deck);
 	game_state_tracker().SetResource(pb::DRAW_DECK_SIZE, m2::F(_draw_deck.size()));

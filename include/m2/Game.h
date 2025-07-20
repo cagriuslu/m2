@@ -15,6 +15,7 @@
 #include "network/RealClientThread.h"
 #include "network/BotClientThread.h"
 #include "network/ServerThread.h"
+#include "multi_player/ServerActorInterface.h"
 #include "protobuf/LUT.h"
 #include <m2g_ObjectType.pb.h>
 #include <m2g/Proxy.h>
@@ -38,7 +39,7 @@
 namespace m2 {
 	// Client server comes after server thread, thus during shutdown, it'll be killed before the ServerThread.
 	// This is important for the server thread to not linger too much.
-	using ServerThreads = std::pair<network::ServerThread, network::HostClientThread>;
+	using ServerThreads = std::pair<std::optional<ServerActorInterface>, std::optional<network::HostClientThread>>;
 	using BotAndIndexThread = std::pair<network::BotClientThread,int>;
 
 	class Game {
@@ -137,8 +138,8 @@ namespace m2 {
 		network::BotClientThread& FindBot(int receiver_index);
 		bool IsServer() const { return std::holds_alternative<ServerThreads>(_multi_player_threads); }
 		bool IsRealClient() const { return std::holds_alternative<network::RealClientThread>(_multi_player_threads); }
-		network::ServerThread& ServerThread() { return std::get<ServerThreads>(_multi_player_threads).first; }
-		network::HostClientThread& HostClientThread() { return std::get<ServerThreads>(_multi_player_threads).second; }
+		ServerActorInterface& ServerThread() { return *std::get<ServerThreads>(_multi_player_threads).first; }
+		network::HostClientThread& HostClientThread() { return *std::get<ServerThreads>(_multi_player_threads).second; }
 		network::RealClientThread& RealClientThread() { return std::get<network::RealClientThread>(_multi_player_threads); }
 		std::optional<SequenceNo> LastServerUpdateSequenceNo() const { return _lastSentOrReceivedServerUpdateSequenceNo; }
 		int TotalPlayerCount();

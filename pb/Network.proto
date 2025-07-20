@@ -19,7 +19,7 @@ enum ServerThreadState {
   // Signifies that the server has been shut down.
   SERVER_GAME_FINISHED = 4;
   // Signifies to ServerThread that the thread should quit.
-  SERVER_QUIT = 5;
+  SERVER_QUIT = 5; // TODO shouldn't be necessary after the refactor
 }
 
 enum ClientThreadState {
