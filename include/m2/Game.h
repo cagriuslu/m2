@@ -42,6 +42,9 @@ namespace m2 {
 	using ServerThreads = std::pair<std::optional<ServerActorInterface>, std::optional<network::HostClientThread>>;
 	using BotAndIndexThread = std::pair<network::BotClientThread,int>;
 
+	/// \brief Container of all objects managed by the game engine.
+	/// \details This class is designed to be a singleton, and an instance is created by the main function. `M2_GAME`
+	/// macro can be used to easily access the instance.
 	class Game {
 		static Game* _instance;
 		::m2g::Proxy _proxy{};
