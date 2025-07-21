@@ -4,7 +4,7 @@
 #include <m2/network/PingBroadcastThread.h>
 #include <m2/network/Select.h>
 #include <m2/network/TcpSocket.h>
-#include <m2/mt/Actor.h>
+#include <m2/mt/actor/ActorBase.h>
 #include <variant>
 
 namespace m2 {
@@ -40,7 +40,7 @@ namespace m2 {
 		std::variant<StateUpdate,ClientEvent> variant;
 	};
 
-	class ServerActor final : BaseActor<ServerActorInput, ServerActorOutput> {
+	class ServerActor final : ActorBase<ServerActorInput, ServerActorOutput> {
 		using ReadAndWriteTcpSocketHandles = std::pair<network::TcpSocketHandles, network::TcpSocketHandles>;
 
 		const mplayer::Type _type;

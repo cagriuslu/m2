@@ -2,11 +2,11 @@
 #include "ServerActor.h"
 #include "Type.h"
 #include <m2/network/SequenceNo.h>
-#include <m2/mt/Actor.h>
+#include <m2/mt/actor/ActorInterfaceBase.h>
 #include <m2/Meta.h>
 
 namespace m2 {
-	class ServerActorInterface final : public BaseActorInterface<ServerActor, ServerActorInput, ServerActorOutput> {
+	class ServerActorInterface final : public ActorInterfaceBase<ServerActor, ServerActorInput, ServerActorOutput> {
 		const mplayer::Type _type;
 		SequenceNo _nextServerUpdateSequenceNo{};
 		int _turnHolderIndex{};
@@ -14,7 +14,7 @@ namespace m2 {
 		std::optional<ServerActorOutput::ClientEvent> _clientEvent;
 
 	public:
-		ServerActorInterface(const mplayer::Type type, const int maxConnectionCount): BaseActorInterface(type, maxConnectionCount), _type(type) {}
+		ServerActorInterface(const mplayer::Type type, const int maxConnectionCount): ActorInterfaceBase(type, maxConnectionCount), _type(type) {}
 
 		// Accessors
 		
