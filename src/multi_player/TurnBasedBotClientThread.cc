@@ -36,7 +36,9 @@ std::optional<m2g::pb::TurnBasedServerCommand> m2::network::TurnBasedBotClientTh
 
 std::optional<m2::pb::TurnBasedServerUpdate> m2::network::TurnBasedBotClientThread::pop_server_update() {
 	if (auto serverUpdate = locked_pop_server_update()) {
-		return serverUpdate->second;
+		// Store the receiver index as well
+		_receiverIndex = serverUpdate->second.receiver_index();
+		return std::move(serverUpdate->second);
 	}
 	return std::nullopt;
 }
