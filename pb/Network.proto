@@ -18,8 +18,6 @@ enum ServerThreadState {
   SERVER_STARTED = 3;
   // Signifies that the server has been shut down.
   SERVER_GAME_FINISHED = 4;
-  // Signifies to ServerThread that the thread should quit.
-  SERVER_QUIT = 5; // TODO shouldn't be necessary after the refactor
 }
 
 enum ClientThreadState {
@@ -100,25 +98,4 @@ message NetworkMessage {
     // Sent by the game engine automatically
     m2.pb.ClientUpdate client_update = 6;
   }
-}
-
-message ServerEvent {}
-message ServerState {}
-message ClientEvent {}
-message ClientState {}
-
-message NetworkDatagram {
-  int32 game_hash = 1;
-  // Each datagram has an ever-increasing ID
-  int32 datagram_id = 2;
-  // Signifies that a message with the given ID is acknowledged
-  int32 ack_id = 3;
-
-  // The following fields are optional. If none exists, the datagram is only a ping message. The datagram cannot contain
-  // both server and client fields, but it might contain both an event and a state.
-
-  ServerEvent server_event = 4;
-  ServerState server_state = 5;
-  ClientEvent client_event = 6;
-  ClientState client_state = 7;
 }
