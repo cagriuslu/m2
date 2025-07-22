@@ -10,10 +10,10 @@
 #include "audio/Song.h"
 #include <m2/video/Sprite.h>
 #include "game/Animation.h"
-#include "network/TurnBasedHostClientThread.h"
+#include "multi_player/TurnBasedHostClientThread.h"
 #include <m2/video/TextLabel.h>
-#include "network/TurnBasedRealClientThread.h"
-#include "network/TurnBasedBotClientThread.h"
+#include "multi_player/TurnBasedRealClientThread.h"
+#include "multi_player/TurnBasedBotClientThread.h"
 #include "multi_player/TurnBasedServerActorInterface.h"
 #include "protobuf/LUT.h"
 #include <m2g_ObjectType.pb.h>

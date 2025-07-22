@@ -1,4 +1,4 @@
-#include <m2/network/TurnBasedBotClientThread.h>
+#include <../../include/m2/multi_player/TurnBasedBotClientThread.h>
 #include <m2/Log.h>
 
 m2::network::TurnBasedBotClientThread::TurnBasedBotClientThread(mplayer::Type type)

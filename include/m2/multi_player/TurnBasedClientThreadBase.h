@@ -1,11 +1,11 @@
 #pragma once
-#include "../multi_player/Type.h"
+#include "Type.h"
 #include <thread>
 #include <deque>
 #include <mutex>
 #include "../Object.h"
-#include "PingBroadcastThread.h"
-#include "TcpSocketManager.h"
+#include "../network/PingBroadcastThread.h"
+#include "../network/TcpSocketManager.h"
 #include <m2/network/SequenceNo.h>
 #include <latch>
 

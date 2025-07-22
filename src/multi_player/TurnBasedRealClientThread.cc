@@ -1,4 +1,4 @@
-#include <m2/network/TurnBasedRealClientThread.h>
+#include <../../include/m2/multi_player/TurnBasedRealClientThread.h>
 #include <m2/Game.h>
 #include <m2/Log.h>
 

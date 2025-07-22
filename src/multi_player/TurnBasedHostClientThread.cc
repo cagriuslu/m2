@@ -1,4 +1,4 @@
-#include <m2/network/TurnBasedHostClientThread.h>
+#include <../../include/m2/multi_player/TurnBasedHostClientThread.h>
 #include <m2/Log.h>
 
 m2::network::TurnBasedHostClientThread::TurnBasedHostClientThread(mplayer::Type type)

@@ -1,4 +1,4 @@
-#include <m2/network/TurnBasedClientManager.h>
+#include <../../include/m2/multi_player/TurnBasedClientManager.h>
 #include <m2/Log.h>
 
 m2::network::TurnBasedClientManager::TurnBasedClientManager(TcpSocket&& socket, int index)

@@ -1,4 +1,4 @@
-#include <m2/network/TurnBasedClientThreadBase.h>
+#include <../../include/m2/multi_player/TurnBasedClientThreadBase.h>
 #include <m2/network/TcpSocket.h>
 #include <m2/network/Select.h>
 #include <m2/Game.h>

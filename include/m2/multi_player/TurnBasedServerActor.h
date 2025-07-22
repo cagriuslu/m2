@@ -1,6 +1,6 @@
 #pragma once
 #include "Type.h"
-#include <m2/network/TurnBasedClientManager.h>
+#include "TurnBasedClientManager.h"
 #include <m2/network/PingBroadcastThread.h>
 #include <m2/network/Select.h>
 #include <m2/network/TcpSocket.h>

@@ -1,6 +1,6 @@
 #pragma once
-#include "TcpSocketManager.h"
-#include "IpAddressAndPort.h"
+#include "../network/TcpSocketManager.h"
+#include "../network/IpAddressAndPort.h"
 #include <m2/network/SequenceNo.h>
 #include "../sdl/Detail.h"
 #include <variant>
