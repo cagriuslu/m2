@@ -14,7 +14,6 @@
 #include <m2/video/TextLabel.h>
 #include "network/TurnBasedRealClientThread.h"
 #include "network/TurnBasedBotClientThread.h"
-#include "network/ServerThread.h"
 #include "multi_player/TurnBasedServerActorInterface.h"
 #include "protobuf/LUT.h"
 #include <m2g_ObjectType.pb.h>
