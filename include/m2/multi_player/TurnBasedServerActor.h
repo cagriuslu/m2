@@ -1,6 +1,6 @@
 #pragma once
 #include "Type.h"
-#include <m2/network/ClientManager.h>
+#include <m2/network/TurnBasedClientManager.h>
 #include <m2/network/PingBroadcastThread.h>
 #include <m2/network/Select.h>
 #include <m2/network/TcpSocket.h>
@@ -8,7 +8,7 @@
 #include <variant>
 
 namespace m2 {
-	struct ServerActorInput {
+	struct TurnBasedServerActorInput {
 		struct CloseLobby {};
 		struct UpdateTurnHolder {
 			int clientIndex;
@@ -23,7 +23,7 @@ namespace m2 {
 		std::variant<CloseLobby,UpdateTurnHolder,SendServerUpdate,SendServerCommand> variant;
 	};
 
-	struct ServerActorOutput {
+	struct TurnBasedServerActorOutput {
 		struct StateUpdate {
 			pb::ServerThreadState threadState{pb::SERVER_INITIAL_STATE};
 			int clientCount{}, readyClientCount{};
@@ -40,7 +40,7 @@ namespace m2 {
 		std::variant<StateUpdate,ClientEvent> variant;
 	};
 
-	class ServerActor final : ActorBase<ServerActorInput, ServerActorOutput> {
+	class TurnBasedServerActor final : ActorBase<TurnBasedServerActorInput, TurnBasedServerActorOutput> {
 		using ReadAndWriteTcpSocketHandles = std::pair<network::TcpSocketHandles, network::TcpSocketHandles>;
 
 		const mplayer::Type _type;
@@ -49,44 +49,44 @@ namespace m2 {
 		expected<network::TcpSocket> _connectionListeningSocket{unexpect_t{}, "Uninitialized"};
 		std::optional<network::PingBroadcastThread> _pingBroadcastThread;
 		pb::ServerThreadState _state{pb::SERVER_INITIAL_STATE};
-		std::vector<network::ClientManager> _clients;
+		std::vector<network::TurnBasedClientManager> _clients;
 		int _turnHolderIndex{};
 		std::optional<pb::NetworkMessage> _lastServerUpdate;
 
 	public:
-		ServerActor(const mplayer::Type type, const int maxConnectionCount) : _type(type), _maxConnCount(maxConnectionCount) {}
-		~ServerActor() override = default;
+		TurnBasedServerActor(const mplayer::Type type, const int maxConnectionCount) : _type(type), _maxConnCount(maxConnectionCount) {}
+		~TurnBasedServerActor() override = default;
 
 		const char* ThreadNameForLogging() const override { return "SR"; }
 
-		bool Initialize(MessageBox<ServerActorInput>&, MessageBox<ServerActorOutput>&) override;
+		bool Initialize(MessageBox<TurnBasedServerActorInput>&, MessageBox<TurnBasedServerActorOutput>&) override;
 
-		bool operator()(MessageBox<ServerActorInput>&, MessageBox<ServerActorOutput>&) override;
+		bool operator()(MessageBox<TurnBasedServerActorInput>&, MessageBox<TurnBasedServerActorOutput>&) override;
 
-		void Deinitialize(MessageBox<ServerActorInput>&, MessageBox<ServerActorOutput>&) override {}
+		void Deinitialize(MessageBox<TurnBasedServerActorInput>&, MessageBox<TurnBasedServerActorOutput>&) override {}
 
 	private:
 		// Initialisation steps
 
 		void CreateSocket();
 		void BindSocket();
-		void StartListening(MessageBox<ServerActorOutput>&);
+		void StartListening(MessageBox<TurnBasedServerActorOutput>&);
 		void StartPingBroadcast();
 
 		// Polling steps
 
-		void ProcessInbox(MessageBox<ServerActorInput>&, MessageBox<ServerActorOutput>&);
-		void ProcessReceivedMessages(MessageBox<ServerActorOutput>&);
-		void CheckDisconnectedClients(MessageBox<ServerActorOutput>&);
+		void ProcessInbox(MessageBox<TurnBasedServerActorInput>&, MessageBox<TurnBasedServerActorOutput>&);
+		void ProcessReceivedMessages(MessageBox<TurnBasedServerActorOutput>&);
+		void CheckDisconnectedClients(MessageBox<TurnBasedServerActorOutput>&);
 		static std::optional<ReadAndWriteTcpSocketHandles> SelectSockets(const ReadAndWriteTcpSocketHandles&);
-		void CheckConnectionListeningSocket(MessageBox<ServerActorOutput>&, const network::TcpSocketHandles&);
-		void CheckReadableClientSockets(const network::TcpSocketHandles&, MessageBox<ServerActorOutput>&);
+		void CheckConnectionListeningSocket(MessageBox<TurnBasedServerActorOutput>&, const network::TcpSocketHandles&);
+		void CheckReadableClientSockets(const network::TcpSocketHandles&, MessageBox<TurnBasedServerActorOutput>&);
 		void CheckWritableClientSockets(const network::TcpSocketHandles&);
 
 		ReadAndWriteTcpSocketHandles GetSocketHandlesToReadAndWrite();
-		void SetStateAndPublish(MessageBox<ServerActorOutput>&, pb::ServerThreadState);
-		void PublishStateUpdate(MessageBox<ServerActorOutput>&) const;
-		void HandleDisconnectedClient(MessageBox<ServerActorOutput>&, int clientIndex);
-		void HandleMisbehavedClient(MessageBox<ServerActorOutput>&, int clientIndex);
+		void SetStateAndPublish(MessageBox<TurnBasedServerActorOutput>&, pb::ServerThreadState);
+		void PublishStateUpdate(MessageBox<TurnBasedServerActorOutput>&) const;
+		void HandleDisconnectedClient(MessageBox<TurnBasedServerActorOutput>&, int clientIndex);
+		void HandleMisbehavedClient(MessageBox<TurnBasedServerActorOutput>&, int clientIndex);
 	};
 }

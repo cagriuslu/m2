@@ -9,7 +9,7 @@
 #include "m2/Object.h"
 #include <queue>
 #include "PingBroadcastThread.h"
-#include "ClientManager.h"
+#include "TurnBasedClientManager.h"
 #include <latch>
 
 namespace m2::network {
@@ -23,7 +23,7 @@ namespace m2::network {
 		std::latch _latch{1};
 		std::mutex _mutex{};
 		pb::ServerThreadState _state{pb::ServerThreadState::SERVER_INITIAL_STATE};
-		std::vector<ClientManager> _clients;
+		std::vector<TurnBasedClientManager> _clients;
 		bool _has_reconnected_client{};
 		int _turn_holder{};
 		std::optional<std::pair<SequenceNo,pb::NetworkMessage>> _received_client_command;

@@ -1,5 +1,5 @@
 #pragma once
-#include "BaseClientThread.h"
+#include "TurnBasedClientThreadBase.h"
 
 namespace m2::network {
 	enum class ServerUpdateStatus {
@@ -11,11 +11,11 @@ namespace m2::network {
 		PROCESSED_SHUTDOWN = 2
 	};
 
-	class RealClientThread final : private detail::BaseClientThread {
-		/// When a ServerUpdate is received from the server, it's placed in BaseClientThread::_received_server_update.
+	class TurnBasedRealClientThread final : private detail::TurnBasedClientThreadBase {
+		/// When a ServerUpdate is received from the server, it's placed in TurnBasedClientThreadBase::_received_server_update.
 		/// peek_unprocessed_server_update() can be used to take a peek at it.
 		/// When process_server_update() is called, ServerUpdate is shifted as follows:
-		/// _prev_processed_server_update << _last_processed_server_update << BaseClientThread::_received_server_update
+		/// _prev_processed_server_update << _last_processed_server_update << TurnBasedClientThreadBase::_received_server_update
 		std::optional<std::pair<SequenceNo,pb::ServerUpdate>> _prev_processed_server_update, _last_processed_server_update;
 
 		/// Mapping of server object IDs to local object IDs. The boolean represents if the object has been visited during
@@ -23,11 +23,11 @@ namespace m2::network {
 		std::unordered_map<ObjectId,std::pair<ObjectId,bool>> _server_to_local_map;
 
 	public:
-		RealClientThread(mplayer::Type type, std::string addr);
-		RealClientThread(const RealClientThread& other) = delete;
-		RealClientThread& operator=(const RealClientThread& other) = delete;
-		RealClientThread(RealClientThread&& other) = delete;
-		RealClientThread& operator=(RealClientThread&& other) = delete;
+		TurnBasedRealClientThread(mplayer::Type type, std::string addr);
+		TurnBasedRealClientThread(const TurnBasedRealClientThread& other) = delete;
+		TurnBasedRealClientThread& operator=(const TurnBasedRealClientThread& other) = delete;
+		TurnBasedRealClientThread(TurnBasedRealClientThread&& other) = delete;
+		TurnBasedRealClientThread& operator=(TurnBasedRealClientThread&& other) = delete;
 
 		const char* thread_name() const override;
 

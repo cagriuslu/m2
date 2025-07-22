@@ -1,20 +1,20 @@
 #pragma once
-#include "ServerActor.h"
+#include "TurnBasedServerActor.h"
 #include "Type.h"
 #include <m2/network/SequenceNo.h>
 #include <m2/mt/actor/ActorInterfaceBase.h>
 #include <m2/Meta.h>
 
 namespace m2 {
-	class ServerActorInterface final : public ActorInterfaceBase<ServerActor, ServerActorInput, ServerActorOutput> {
+	class TurnBasedServerActorInterface final : public ActorInterfaceBase<TurnBasedServerActor, TurnBasedServerActorInput, TurnBasedServerActorOutput> {
 		const mplayer::Type _type;
 		SequenceNo _nextServerUpdateSequenceNo{};
 		int _turnHolderIndex{};
-		ServerActorOutput::StateUpdate _serverActorState{};
-		std::optional<ServerActorOutput::ClientEvent> _clientEvent;
+		TurnBasedServerActorOutput::StateUpdate _serverActorState{};
+		std::optional<TurnBasedServerActorOutput::ClientEvent> _clientEvent;
 
 	public:
-		ServerActorInterface(const mplayer::Type type, const int maxConnectionCount): ActorInterfaceBase(type, maxConnectionCount), _type(type) {}
+		TurnBasedServerActorInterface(const mplayer::Type type, const int maxConnectionCount): ActorInterfaceBase(type, maxConnectionCount), _type(type) {}
 
 		// Accessors
 		

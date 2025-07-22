@@ -6,7 +6,7 @@
 #include <variant>
 
 namespace m2::network {
-	class ClientManager {
+	class TurnBasedClientManager {
 		// Client is connected but not yet ready
 		struct Connected {
 			TcpSocketManager socket_manager;
@@ -33,7 +33,7 @@ namespace m2::network {
 		};
 		// Client has misbehaved
 		struct Misbehaved {};
-		// ClientManager has been shutdown
+		// TurnBasedClientManager has been shutdown
 		struct Shutdown {};
 
 		int _index;
@@ -42,7 +42,7 @@ namespace m2::network {
 		std::variant<Connected, Ready, HonorablyDisconnected, ReconnectedUntrusted, Misbehaved, Shutdown> _state;
 
 	public:
-		ClientManager(TcpSocket&& socket, int index);
+		TurnBasedClientManager(TcpSocket&& socket, int index);
 
 		// Properties
 		SequenceNo expectedClientCommandSequenceNo{}, expectedClientUpdateSequenceNo{};
@@ -97,5 +97,5 @@ namespace m2::network {
 	};
 
 	// Filters
-	inline bool is_client_ready(const ClientManager& c) { return c.is_ready(); }
+	inline bool is_client_ready(const TurnBasedClientManager& c) { return c.is_ready(); }
 }

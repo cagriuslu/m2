@@ -1,17 +1,17 @@
-#include <m2/network/BaseClientThread.h>
+#include <m2/network/TurnBasedClientThreadBase.h>
 #include <m2/network/TcpSocket.h>
 #include <m2/network/Select.h>
 #include <m2/Game.h>
 #include <m2/Log.h>
 #include <m2/network/TcpSocketManager.h>
 
-m2::network::detail::BaseClientThread::BaseClientThread(mplayer::Type type, std::string addr, bool ping_broadcast)
+m2::network::detail::TurnBasedClientThreadBase::TurnBasedClientThreadBase(mplayer::Type type, std::string addr, bool ping_broadcast)
 		: _type(type), _addr(std::move(addr)), _ping_broadcast(ping_broadcast), _ready_token(RandomNonZero64()),
 		_thread(base_client_thread_func, this) {
 	LOG_INFO("Constructing ClientThread with ready-token", _ready_token);
 }
 
-m2::network::detail::BaseClientThread::~BaseClientThread() {
+m2::network::detail::TurnBasedClientThreadBase::~TurnBasedClientThreadBase() {
 	DEBUG_FN();
 	locked_set_state(pb::CLIENT_QUIT);
 	if (_thread.joinable()) {
@@ -21,22 +21,22 @@ m2::network::detail::BaseClientThread::~BaseClientThread() {
 	std::this_thread::sleep_for(std::chrono::milliseconds(250)); // Give some time for the client thread to initiate TCP shutdown
 }
 
-m2::pb::ClientThreadState m2::network::detail::BaseClientThread::locked_get_client_state() {
+m2::pb::ClientThreadState m2::network::detail::TurnBasedClientThreadBase::locked_get_client_state() {
 	const std::lock_guard lock(_mutex);
 	return _state;
 }
-bool m2::network::detail::BaseClientThread::locked_has_server_update() {
+bool m2::network::detail::TurnBasedClientThreadBase::locked_has_server_update() {
 	const std::lock_guard lock(_mutex);
 	return static_cast<bool>(_received_server_update);
 }
-const m2::pb::ServerUpdate* m2::network::detail::BaseClientThread::locked_peek_server_update() {
+const m2::pb::ServerUpdate* m2::network::detail::TurnBasedClientThreadBase::locked_peek_server_update() {
 	const std::lock_guard lock(_mutex);
 	if (_received_server_update) {
 		return &_received_server_update->second;
 	}
 	return nullptr;
 }
-std::optional<std::pair<m2::SequenceNo,m2::pb::ServerUpdate>> m2::network::detail::BaseClientThread::locked_pop_server_update() {
+std::optional<std::pair<m2::SequenceNo,m2::pb::ServerUpdate>> m2::network::detail::TurnBasedClientThreadBase::locked_pop_server_update() {
 	const std::lock_guard lock(_mutex);
 	if (_received_server_update) {
 		auto tmp = std::move(_received_server_update);
@@ -46,11 +46,11 @@ std::optional<std::pair<m2::SequenceNo,m2::pb::ServerUpdate>> m2::network::detai
 		return std::nullopt;
 	}
 }
-bool m2::network::detail::BaseClientThread::locked_has_server_command() {
+bool m2::network::detail::TurnBasedClientThreadBase::locked_has_server_command() {
 	const std::lock_guard lock(_mutex);
 	return static_cast<bool>(_received_server_command);
 }
-std::optional<std::pair<m2::SequenceNo,m2g::pb::ServerCommand>> m2::network::detail::BaseClientThread::locked_pop_server_command() {
+std::optional<std::pair<m2::SequenceNo,m2g::pb::ServerCommand>> m2::network::detail::TurnBasedClientThreadBase::locked_pop_server_command() {
 	const std::lock_guard lock(_mutex);
 	if (_received_server_command) {
 		auto tmp = std::move(_received_server_command);
@@ -61,7 +61,7 @@ std::optional<std::pair<m2::SequenceNo,m2g::pb::ServerCommand>> m2::network::det
 	}
 }
 
-void m2::network::detail::BaseClientThread::locked_set_ready(bool ready) {
+void m2::network::detail::TurnBasedClientThreadBase::locked_set_ready(bool ready) {
 	auto state = locked_get_client_state();
 	if (ready) {
 		if (state != pb::CLIENT_CONNECTED && state != pb::CLIENT_RECONNECTED) {
@@ -96,12 +96,12 @@ void m2::network::detail::BaseClientThread::locked_set_ready(bool ready) {
 	} while (locked_has_outgoing_message());
 	locked_set_state(state ? pb::CLIENT_READY : pb::CLIENT_CONNECTED);
 }
-void m2::network::detail::BaseClientThread::locked_start_if_ready() {
+void m2::network::detail::TurnBasedClientThreadBase::locked_start_if_ready() {
 	if (locked_get_client_state() == pb::CLIENT_READY) {
 		locked_set_state(pb::CLIENT_STARTED);
 	}
 }
-void m2::network::detail::BaseClientThread::locked_queue_client_command(const m2g::pb::ClientCommand& cmd) {
+void m2::network::detail::TurnBasedClientThreadBase::locked_queue_client_command(const m2g::pb::ClientCommand& cmd) {
 	INFO_FN();
 
 	pb::NetworkMessage msg;
@@ -114,40 +114,40 @@ void m2::network::detail::BaseClientThread::locked_queue_client_command(const m2
 		_outgoing_queue.push(std::move(msg));
 	}
 }
-void m2::network::detail::BaseClientThread::locked_shutdown() {
+void m2::network::detail::TurnBasedClientThreadBase::locked_shutdown() {
 	locked_set_state(pb::CLIENT_SHUTDOWN);
 }
 
-void m2::network::detail::BaseClientThread::unlocked_set_state(pb::ClientThreadState state) {
+void m2::network::detail::TurnBasedClientThreadBase::unlocked_set_state(pb::ClientThreadState state) {
 	LOG_DEBUG("Setting ClientThread state", pb::enum_name(state));
 	_state = state;
 }
 
-void m2::network::detail::BaseClientThread::locked_set_state(pb::ClientThreadState state) {
+void m2::network::detail::TurnBasedClientThreadBase::locked_set_state(pb::ClientThreadState state) {
 	const std::lock_guard lock(_mutex);
 	unlocked_set_state(state);
 }
 
-void m2::network::detail::BaseClientThread::base_client_thread_func(BaseClientThread* thread_manager) {
+void m2::network::detail::TurnBasedClientThreadBase::base_client_thread_func(TurnBasedClientThreadBase* thread_manager) {
 	thread_manager->_latch.wait();
 	SetThreadNameForLogging(thread_manager->thread_name());
-	LOG_INFO("BaseClientThread function");
+	LOG_INFO("TurnBasedClientThreadBase function");
 
-	auto locked_should_continue_running = [](BaseClientThread* thread_manager) {
+	auto locked_should_continue_running = [](TurnBasedClientThreadBase* thread_manager) {
 		auto current_state = thread_manager->locked_get_client_state();
 		return current_state != pb::CLIENT_SHUTDOWN
 			&& current_state != pb::CLIENT_QUIT
 			&& current_state != pb::CLIENT_RECONNECTION_TIMEOUT_QUIT;
 	};
-	auto locked_has_outgoing_message = [](BaseClientThread* thread_manager) {
+	auto locked_has_outgoing_message = [](TurnBasedClientThreadBase* thread_manager) {
 		const std::lock_guard lock(thread_manager->_mutex);
 		return not thread_manager->_outgoing_queue.empty();
 	};
-	auto locked_has_incoming_message = [](BaseClientThread* thread_manager) {
+	auto locked_has_incoming_message = [](TurnBasedClientThreadBase* thread_manager) {
 		const std::lock_guard lock(thread_manager->_mutex);
 		return not thread_manager->_incoming_queue.empty();
 	};
-	auto locked_has_unprocessed_server_update_or_command = [](BaseClientThread* thread_manager) {
+	auto locked_has_unprocessed_server_update_or_command = [](TurnBasedClientThreadBase* thread_manager) {
 		const std::lock_guard lock(thread_manager->_mutex);
 		return thread_manager->_received_server_update || thread_manager->_received_server_command;
 	};

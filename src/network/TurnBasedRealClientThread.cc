@@ -1,4 +1,4 @@
-#include <m2/network/RealClientThread.h>
+#include <m2/network/TurnBasedRealClientThread.h>
 #include <m2/Game.h>
 #include <m2/Log.h>
 
@@ -23,16 +23,16 @@ namespace {
 	}
 }
 
-m2::network::RealClientThread::RealClientThread(mplayer::Type type, std::string addr)
-	: detail::BaseClientThread{type, std::move(addr), true} {
+m2::network::TurnBasedRealClientThread::TurnBasedRealClientThread(mplayer::Type type, std::string addr)
+	: detail::TurnBasedClientThreadBase{type, std::move(addr), true} {
 	latch();
 }
 
-const char* m2::network::RealClientThread::thread_name() const {
+const char* m2::network::TurnBasedRealClientThread::thread_name() const {
 	return "RC";
 }
 
-int m2::network::RealClientThread::total_player_count() {
+int m2::network::TurnBasedRealClientThread::total_player_count() {
 	if (_last_processed_server_update) {
 		// Game is already running
 		return _last_processed_server_update->second.player_object_ids_size();
@@ -43,13 +43,13 @@ int m2::network::RealClientThread::total_player_count() {
 		throw M2_ERROR("Game not yet started");
 	}
 }
-std::optional<m2g::pb::ServerCommand> m2::network::RealClientThread::pop_server_command() {
+std::optional<m2g::pb::ServerCommand> m2::network::TurnBasedRealClientThread::pop_server_command() {
 	if (auto serverCommand = locked_pop_server_command()) {
 		return serverCommand->second;
 	}
 	return std::nullopt;
 }
-int m2::network::RealClientThread::self_index() {
+int m2::network::TurnBasedRealClientThread::self_index() {
 	if (_last_processed_server_update) {
 		// Game is already running
 		return _last_processed_server_update->second.receiver_index();
@@ -61,7 +61,7 @@ int m2::network::RealClientThread::self_index() {
 	}
 }
 
-int m2::network::RealClientThread::turn_holder_index() {
+int m2::network::TurnBasedRealClientThread::turn_holder_index() {
 	if (_last_processed_server_update) {
 		// Game is already running
 		return _last_processed_server_update->second.turn_holder_index();
@@ -73,7 +73,7 @@ int m2::network::RealClientThread::turn_holder_index() {
 	}
 }
 
-m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::SequenceNo>> m2::network::RealClientThread::process_server_update() {
+m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::SequenceNo>> m2::network::TurnBasedRealClientThread::process_server_update() {
 	TRACE_FN();
 
 	auto unprocessed_server_update = locked_pop_server_update();
@@ -261,6 +261,6 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::SequenceNo>> m2::netw
 			_last_processed_server_update->first);
 }
 
-void m2::network::RealClientThread::shutdown() {
+void m2::network::TurnBasedRealClientThread::shutdown() {
 	locked_shutdown();
 }

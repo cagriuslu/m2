@@ -11,7 +11,7 @@
 
 namespace m2::network::detail {
 	/// Base class of ClientThreads
-	class BaseClientThread {
+	class TurnBasedClientThreadBase {
 		// Main thread variables
 		MAYBE const mplayer::Type _type{};
 		const std::string _addr;
@@ -38,13 +38,13 @@ namespace m2::network::detail {
 		void latch() { _latch.count_down(); } // This function must be called from the inherited class' constructor
 
 	public:
-		BaseClientThread() = default; // Does nothing
-		BaseClientThread(mplayer::Type type, std::string addr, bool ping_broadcast);
-		BaseClientThread(const BaseClientThread& other) = delete;
-		BaseClientThread& operator=(const BaseClientThread& other) = delete;
-		BaseClientThread(BaseClientThread&& other) = delete;
-		BaseClientThread& operator=(BaseClientThread&& other) = delete;
-		virtual ~BaseClientThread();
+		TurnBasedClientThreadBase() = default; // Does nothing
+		TurnBasedClientThreadBase(mplayer::Type type, std::string addr, bool ping_broadcast);
+		TurnBasedClientThreadBase(const TurnBasedClientThreadBase& other) = delete;
+		TurnBasedClientThreadBase& operator=(const TurnBasedClientThreadBase& other) = delete;
+		TurnBasedClientThreadBase(TurnBasedClientThreadBase&& other) = delete;
+		TurnBasedClientThreadBase& operator=(TurnBasedClientThreadBase&& other) = delete;
+		virtual ~TurnBasedClientThreadBase();
 
 		virtual const char* thread_name() const = 0;
 
@@ -60,7 +60,7 @@ namespace m2::network::detail {
 		// Modifiers
 
 		void locked_set_ready(bool state);
-		/// Only for HostClientThread and BotClientThread
+		/// Only for TurnBasedHostClientThread and TurnBasedBotClientThread
 		void locked_start_if_ready();
 		void locked_queue_client_command(const m2g::pb::ClientCommand& cmd);
 		void locked_shutdown();
@@ -70,6 +70,6 @@ namespace m2::network::detail {
 		void unlocked_set_state(pb::ClientThreadState state);
 		void locked_set_state(pb::ClientThreadState state);
 
-		static void base_client_thread_func(BaseClientThread* thread_manager);
+		static void base_client_thread_func(TurnBasedClientThreadBase* thread_manager);
 	};
 }

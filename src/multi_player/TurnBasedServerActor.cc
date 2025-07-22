@@ -1,4 +1,4 @@
-#include <m2/multi_player/ServerActor.h>
+#include <m2/multi_player/TurnBasedServerActor.h>
 #include <m2/Game.h>
 
 namespace {
@@ -6,7 +6,7 @@ namespace {
 	constexpr auto CLIENT_RECONNECT_TIMEOUT_MS = 30000;
 }
 
-bool m2::ServerActor::Initialize(MessageBox<ServerActorInput>&, MessageBox<ServerActorOutput>& outbox) {
+bool m2::TurnBasedServerActor::Initialize(MessageBox<TurnBasedServerActorInput>&, MessageBox<TurnBasedServerActorOutput>& outbox) {
 	CreateSocket();
 	BindSocket();
 	StartListening(outbox);
@@ -14,7 +14,7 @@ bool m2::ServerActor::Initialize(MessageBox<ServerActorInput>&, MessageBox<Serve
 	return true;
 }
 
-bool m2::ServerActor::operator()(MessageBox<ServerActorInput>& inbox, MessageBox<ServerActorOutput>& outbox) {
+bool m2::TurnBasedServerActor::operator()(MessageBox<TurnBasedServerActorInput>& inbox, MessageBox<TurnBasedServerActorOutput>& outbox) {
 	ProcessInbox(inbox, outbox);
 	if (_state == pb::SERVER_GAME_FINISHED) {
 		return false;
@@ -34,14 +34,14 @@ bool m2::ServerActor::operator()(MessageBox<ServerActorInput>& inbox, MessageBox
 	return true;
 }
 
-void m2::ServerActor::CreateSocket() {
+void m2::TurnBasedServerActor::CreateSocket() {
 	_connectionListeningSocket = network::TcpSocket::create_server(TCP_PORT_NO);
 	if (not _connectionListeningSocket) {
 		throw M2_ERROR("TcpSocket creation failed: " + _connectionListeningSocket.error());
 	}
 	LOG_DEBUG("TcpSocket created");
 }
-void m2::ServerActor::BindSocket() {
+void m2::TurnBasedServerActor::BindSocket() {
 	// The previous socket may linger up to 30 seconds
 	m2Repeat(32) {
 		if (auto bindResult = _connectionListeningSocket->bind(); not bindResult) {
@@ -57,14 +57,14 @@ void m2::ServerActor::BindSocket() {
 	}
 	throw M2_ERROR("Bind failed: Address already in use");
 }
-void m2::ServerActor::StartListening(MessageBox<ServerActorOutput>& outbox) {
+void m2::TurnBasedServerActor::StartListening(MessageBox<TurnBasedServerActorOutput>& outbox) {
 	if (auto listenResult = _connectionListeningSocket->listen(I(_maxConnCount)); not listenResult) {
 		throw M2_ERROR("Listen failed: " + listenResult.error());
 	}
 	LOG_INFO("TcpSocket listening on port", TCP_PORT_NO);
 	SetStateAndPublish(outbox, pb::SERVER_LOBBY_OPEN);
 }
-void m2::ServerActor::StartPingBroadcast() {
+void m2::TurnBasedServerActor::StartPingBroadcast() {
 	// Only implemented for macOS
 #ifndef _WIN32
 	// Start ping broadcast
@@ -72,10 +72,10 @@ void m2::ServerActor::StartPingBroadcast() {
 #endif
 }
 
-void m2::ServerActor::ProcessInbox(MessageBox<ServerActorInput>& inbox, MessageBox<ServerActorOutput>& outbox) {
+void m2::TurnBasedServerActor::ProcessInbox(MessageBox<TurnBasedServerActorInput>& inbox, MessageBox<TurnBasedServerActorOutput>& outbox) {
 	// Process only one message
-	if (std::optional<ServerActorInput> msg; inbox.PopMessage(msg) && msg) {
-		if (std::holds_alternative<ServerActorInput::CloseLobby>(msg->variant)) {
+	if (std::optional<TurnBasedServerActorInput> msg; inbox.PopMessage(msg) && msg) {
+		if (std::holds_alternative<TurnBasedServerActorInput::CloseLobby>(msg->variant)) {
 			if (_state != pb::SERVER_LOBBY_OPEN) {
 				throw M2_ERROR("Received unexpected lobby closure command");
 			}
@@ -85,9 +85,9 @@ void m2::ServerActor::ProcessInbox(MessageBox<ServerActorInput>& inbox, MessageB
 				_pingBroadcastThread.reset();
 				SetStateAndPublish(outbox, pb::SERVER_LOBBY_CLOSED);
 			}
-		} else if (std::holds_alternative<ServerActorInput::UpdateTurnHolder>(msg->variant)) {
-			_turnHolderIndex = std::get<ServerActorInput::UpdateTurnHolder>(msg->variant).clientIndex;
-		} else if (std::holds_alternative<ServerActorInput::SendServerUpdate>(msg->variant)) {
+		} else if (std::holds_alternative<TurnBasedServerActorInput::UpdateTurnHolder>(msg->variant)) {
+			_turnHolderIndex = std::get<TurnBasedServerActorInput::UpdateTurnHolder>(msg->variant).clientIndex;
+		} else if (std::holds_alternative<TurnBasedServerActorInput::SendServerUpdate>(msg->variant)) {
 			// Start the game if not already done so
 			if (_state == pb::SERVER_LOBBY_CLOSED) {
 				SetStateAndPublish(outbox, pb::SERVER_STARTED);
@@ -97,7 +97,7 @@ void m2::ServerActor::ProcessInbox(MessageBox<ServerActorInput>& inbox, MessageB
 				throw M2_ERROR("Received unexpected server update command");
 			}
 			// Send updates
-			auto serverUpdateCopy = std::get<ServerActorInput::SendServerUpdate>(msg->variant).serverUpdate;
+			auto serverUpdateCopy = std::get<TurnBasedServerActorInput::SendServerUpdate>(msg->variant).serverUpdate;
 			for (auto i = 1; i < I(_clients.size()); ++i) { // ServerUpdate is not sent to self
 				if (_clients[i].is_ready()) {
 					LOG_DEBUG("Queueing ServerUpdate to client", i);
@@ -115,11 +115,11 @@ void m2::ServerActor::ProcessInbox(MessageBox<ServerActorInput>& inbox, MessageB
 			} else {
 				_lastServerUpdate = std::move(serverUpdateCopy); // Save for later
 			}
-		} else if (std::holds_alternative<ServerActorInput::SendServerCommand>(msg->variant)) {
+		} else if (std::holds_alternative<TurnBasedServerActorInput::SendServerCommand>(msg->variant)) {
 			if (_state != pb::SERVER_LOBBY_CLOSED && _state != pb::SERVER_STARTED) {
 				throw M2_ERROR("Received unexpected ServerCommand command");
 			}
-			const auto& serverCommand = std::get<ServerActorInput::SendServerCommand>(msg->variant).serverCommand;
+			const auto& serverCommand = std::get<TurnBasedServerActorInput::SendServerCommand>(msg->variant).serverCommand;
 			const auto queueMsg = [this, &serverCommand](const int receiverIndex) {
 				pb::NetworkMessage message;
 				message.set_game_hash(M2_GAME.Hash());
@@ -132,7 +132,7 @@ void m2::ServerActor::ProcessInbox(MessageBox<ServerActorInput>& inbox, MessageB
 					LOG_WARN("Attempted to queue ServerCommand but client is disconnected");
 				}
 			};
-			if (const auto receiverIndex = std::get<ServerActorInput::SendServerCommand>(msg->variant).receiverIndex; receiverIndex < 0) {
+			if (const auto receiverIndex = std::get<TurnBasedServerActorInput::SendServerCommand>(msg->variant).receiverIndex; receiverIndex < 0) {
 				for (int i = 0; i < I(_clients.size()); ++i) {
 					queueMsg(i);
 				}
@@ -144,7 +144,7 @@ void m2::ServerActor::ProcessInbox(MessageBox<ServerActorInput>& inbox, MessageB
 		}
 	}
 }
-void m2::ServerActor::ProcessReceivedMessages(MessageBox<ServerActorOutput>& outbox) {
+void m2::TurnBasedServerActor::ProcessReceivedMessages(MessageBox<TurnBasedServerActorOutput>& outbox) {
 	// Process up to one message from each client
 	for (auto i = 0; i < I(_clients.size()); ++i) {
 		auto& client = _clients[i];
@@ -204,9 +204,9 @@ void m2::ServerActor::ProcessReceivedMessages(MessageBox<ServerActorOutput>& out
 					HandleMisbehavedClient(outbox, i);
 				} else {
 					LOG_INFO("ClientCommand from player index with sequence number received, will be processed by game loop", i, peek->sequence_no());
-					outbox.PushMessage(ServerActorOutput{
-						.variant = ServerActorOutput::ClientEvent{
-							.eventVariant = ServerActorOutput::ClientEvent::CommandFromTurnHolder{
+					outbox.PushMessage(TurnBasedServerActorOutput{
+						.variant = TurnBasedServerActorOutput::ClientEvent{
+							.eventVariant = TurnBasedServerActorOutput::ClientEvent::CommandFromTurnHolder{
 								.turnHolderCommand = std::move(*client.pop_incoming_message()) // Message handled
 							}
 						}
@@ -220,7 +220,7 @@ void m2::ServerActor::ProcessReceivedMessages(MessageBox<ServerActorOutput>& out
 		}
 	}
 }
-void m2::ServerActor::CheckDisconnectedClients(MessageBox<ServerActorOutput>& outbox) {
+void m2::TurnBasedServerActor::CheckDisconnectedClients(MessageBox<TurnBasedServerActorOutput>& outbox) {
 	for (auto i = 0; i < I(_clients.size()); ++i) {
 		if (auto disconnected_since = _clients[i].disconnected_or_untrusted_since();
 			disconnected_since && *disconnected_since + CLIENT_RECONNECT_TIMEOUT_MS < sdl::get_ticks()) {
@@ -228,14 +228,14 @@ void m2::ServerActor::CheckDisconnectedClients(MessageBox<ServerActorOutput>& ou
 		}
 	}
 }
-std::optional<m2::ServerActor::ReadAndWriteTcpSocketHandles> m2::ServerActor::SelectSockets(const ReadAndWriteTcpSocketHandles& preSelectHandles) {
+std::optional<m2::TurnBasedServerActor::ReadAndWriteTcpSocketHandles> m2::TurnBasedServerActor::SelectSockets(const ReadAndWriteTcpSocketHandles& preSelectHandles) {
 	auto selectResult = network::Select{}(preSelectHandles.first, preSelectHandles.second, 250);
 	if (not selectResult) {
 		throw M2_ERROR("Select failed: " + selectResult.error());
 	}
 	return *selectResult;
 }
-void m2::ServerActor::CheckConnectionListeningSocket(MessageBox<ServerActorOutput>& outbox, const network::TcpSocketHandles& readableSockets) {
+void m2::TurnBasedServerActor::CheckConnectionListeningSocket(MessageBox<TurnBasedServerActorOutput>& outbox, const network::TcpSocketHandles& readableSockets) {
 	// Check if main socket is readable
 	if (not std::ranges::contains(readableSockets, &*_connectionListeningSocket)) {
 		return;
@@ -274,7 +274,7 @@ void m2::ServerActor::CheckConnectionListeningSocket(MessageBox<ServerActorOutpu
 		}
 	}
 }
-void m2::ServerActor::CheckReadableClientSockets(const network::TcpSocketHandles& readableSockets, MessageBox<ServerActorOutput>& outbox) {
+void m2::TurnBasedServerActor::CheckReadableClientSockets(const network::TcpSocketHandles& readableSockets, MessageBox<TurnBasedServerActorOutput>& outbox) {
 	for (auto& client : _clients) {
 		if (not client.is_connected()) {
 			// Skip client if it's connection has dropped
@@ -286,14 +286,14 @@ void m2::ServerActor::CheckReadableClientSockets(const network::TcpSocketHandles
 	}
 	// If the lobby is not yet closed, remove disconnected clients
 	if (_state == pb::ServerThreadState::SERVER_LOBBY_OPEN) {
-		if (const auto eraseIt = std::ranges::remove_if(_clients, &network::ClientManager::is_disconnected_or_untrusted).begin();
+		if (const auto eraseIt = std::ranges::remove_if(_clients, &network::TurnBasedClientManager::is_disconnected_or_untrusted).begin();
 				eraseIt != _clients.end()) {
 			_clients.erase(eraseIt, _clients.end());
 			PublishStateUpdate(outbox);
 		}
 	}
 }
-void m2::ServerActor::CheckWritableClientSockets(const network::TcpSocketHandles& writeableSockets) {
+void m2::TurnBasedServerActor::CheckWritableClientSockets(const network::TcpSocketHandles& writeableSockets) {
 	for (auto& client : _clients) {
 		if (not client.is_ready() || std::ranges::find(writeableSockets, &client.tcp_socket()) == writeableSockets.end()) {
 			// Skip if the connection has dropped or the socket is not writeable
@@ -304,7 +304,7 @@ void m2::ServerActor::CheckWritableClientSockets(const network::TcpSocketHandles
 	}
 }
 
-m2::ServerActor::ReadAndWriteTcpSocketHandles m2::ServerActor::GetSocketHandlesToReadAndWrite() {
+m2::TurnBasedServerActor::ReadAndWriteTcpSocketHandles m2::TurnBasedServerActor::GetSocketHandlesToReadAndWrite() {
 	network::TcpSocketHandles socketsToRead;
 	socketsToRead.emplace_back(&*_connectionListeningSocket); // Add the main socket
 	for (auto& client : _clients) {
@@ -324,22 +324,22 @@ m2::ServerActor::ReadAndWriteTcpSocketHandles m2::ServerActor::GetSocketHandlesT
 
 	return {socketsToRead, socketsToWrite};
 }
-void m2::ServerActor::SetStateAndPublish(MessageBox<ServerActorOutput>& outbox, const pb::ServerThreadState newState) {
+void m2::TurnBasedServerActor::SetStateAndPublish(MessageBox<TurnBasedServerActorOutput>& outbox, const pb::ServerThreadState newState) {
 	_state = newState;
 	PublishStateUpdate(outbox);
 }
-void m2::ServerActor::PublishStateUpdate(MessageBox<ServerActorOutput>& outbox) const {
-	outbox.PushMessage(ServerActorOutput{.variant = ServerActorOutput::StateUpdate{
+void m2::TurnBasedServerActor::PublishStateUpdate(MessageBox<TurnBasedServerActorOutput>& outbox) const {
+	outbox.PushMessage(TurnBasedServerActorOutput{.variant = TurnBasedServerActorOutput::StateUpdate{
 		.threadState = _state,
 		.clientCount = I(_clients.size()),
 		.readyClientCount = I(std::ranges::count_if(_clients, network::is_client_ready))
 	}});
 }
-void m2::ServerActor::HandleDisconnectedClient(MessageBox<ServerActorOutput>& outbox, const int clientIndex) {
+void m2::TurnBasedServerActor::HandleDisconnectedClient(MessageBox<TurnBasedServerActorOutput>& outbox, const int clientIndex) {
 	// TODO handle with a pre-determined strategy
-	outbox.PushMessage(ServerActorOutput{.variant = ServerActorOutput::ClientEvent{.eventVariant = ServerActorOutput::ClientEvent::DisconnectedClient{.clientIndex = clientIndex}}});
+	outbox.PushMessage(TurnBasedServerActorOutput{.variant = TurnBasedServerActorOutput::ClientEvent{.eventVariant = TurnBasedServerActorOutput::ClientEvent::DisconnectedClient{.clientIndex = clientIndex}}});
 }
-void m2::ServerActor::HandleMisbehavedClient(MessageBox<ServerActorOutput>& outbox, const int clientIndex) {
+void m2::TurnBasedServerActor::HandleMisbehavedClient(MessageBox<TurnBasedServerActorOutput>& outbox, const int clientIndex) {
 	// TODO handle with a pre-determined strategy
-	outbox.PushMessage(ServerActorOutput{.variant = ServerActorOutput::ClientEvent{.eventVariant = ServerActorOutput::ClientEvent::DisconnectedClient{.clientIndex = clientIndex}}});
+	outbox.PushMessage(TurnBasedServerActorOutput{.variant = TurnBasedServerActorOutput::ClientEvent{.eventVariant = TurnBasedServerActorOutput::ClientEvent::DisconnectedClient{.clientIndex = clientIndex}}});
 }

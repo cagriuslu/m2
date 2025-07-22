@@ -185,7 +185,7 @@ m2::void_expected m2::Game::HostGame(const mplayer::Type type, const unsigned ma
 
 	LOG_INFO("Server is listening, joining the game as host client...");
 	std::get<ServerThreads>(_multi_player_threads).second.emplace(type);
-	LOG_DEBUG("Real HostClientThread created");
+	LOG_DEBUG("Real TurnBasedHostClientThread created");
 
 	return {};
 }
@@ -195,7 +195,7 @@ m2::void_expected m2::Game::JoinGame(mplayer::Type type, const std::string& addr
 		throw M2_ERROR("Joining game requires no other multiplayer threads to exist");
 	}
 
-	_multi_player_threads.emplace<network::RealClientThread>(type, addr);
+	_multi_player_threads.emplace<network::TurnBasedRealClientThread>(type, addr);
 	return {};
 }
 void m2::Game::LeaveGame() {
@@ -211,24 +211,24 @@ bool m2::Game::AddBot() {
 	const auto it = _bot_threads.emplace(_bot_threads.end());
 	LOG_INFO("Joining the game as bot client...");
 
-	LOG_DEBUG("Destroying temporary BotClientThread...");
-	it->first.~BotClientThread(); // Destruct the default object
-	LOG_DEBUG("Temporary BotClientThread destroyed, creating real BotClientThread");
+	LOG_DEBUG("Destroying temporary TurnBasedBotClientThread...");
+	it->first.~TurnBasedBotClientThread(); // Destruct the default object
+	LOG_DEBUG("Temporary TurnBasedBotClientThread destroyed, creating real TurnBasedBotClientThread");
 
-	new (&it->first) network::BotClientThread(ServerThread().GetType());
-	LOG_DEBUG("Real BotClientThread created");
+	new (&it->first) network::TurnBasedBotClientThread(ServerThread().GetType());
+	LOG_DEBUG("Real TurnBasedBotClientThread created");
 
 	if (it->first.is_active()) {
 		it->second = -1; // Index is initially unknown
 		return true;
 	}
-	LOG_WARN("BotClientThread failed to connect, destroying client");
+	LOG_WARN("TurnBasedBotClientThread failed to connect, destroying client");
 	_bot_threads.erase(it);
 	return false;
 }
 
-m2::network::BotClientThread& m2::Game::FindBot(const int receiver_index) {
-	const auto it = std::ranges::find_if(_bot_threads, IsSecondEquals<network::BotClientThread, int>(receiver_index));
+m2::network::TurnBasedBotClientThread& m2::Game::FindBot(const int receiver_index) {
+	const auto it = std::ranges::find_if(_bot_threads, IsSecondEquals<network::TurnBasedBotClientThread, int>(receiver_index));
 	if (it == _bot_threads.end()) {
 		throw M2_ERROR("Bot not found");
 	}
@@ -240,7 +240,7 @@ int m2::Game::TotalPlayerCount() {
 		return ServerThread().GetClientCount();
 	}
 	if (IsRealClient()) {
-		return RealClientThread().total_player_count();
+		return TurnBasedRealClientThread().total_player_count();
 	}
 	throw M2_ERROR("Not a multiplayer game");
 }
@@ -250,7 +250,7 @@ int m2::Game::SelfIndex() {
 		return 0;
 	}
 	if (IsRealClient()) {
-		return RealClientThread().self_index();
+		return TurnBasedRealClientThread().self_index();
 	}
 	throw M2_ERROR("Not a multiplayer game");
 }
@@ -260,7 +260,7 @@ int m2::Game::TurnHolderIndex() {
 		return ServerThread().GetTurnHolderIndex();
 	}
 	if (IsRealClient()) {
-		return RealClientThread().turn_holder_index();
+		return TurnBasedRealClientThread().turn_holder_index();
 	}
 	throw M2_ERROR("Not a multiplayer game");
 }
@@ -270,8 +270,8 @@ bool m2::Game::IsOurTurn() {
 		return ServerThread().IsOurTurn();
 	}
 	if (IsRealClient()) {
-		if (RealClientThread().is_started()) {
-			return RealClientThread().is_our_turn();
+		if (TurnBasedRealClientThread().is_started()) {
+			return TurnBasedRealClientThread().is_our_turn();
 		}
 		return false;
 	}
@@ -280,9 +280,9 @@ bool m2::Game::IsOurTurn() {
 
 void m2::Game::QueueClientCommand(const m2g::pb::ClientCommand& cmd) {
 	if (IsServer()) {
-		HostClientThread().queue_client_command(cmd);
+		TurnBasedHostClientThread().queue_client_command(cmd);
 	} else if (IsRealClient()) {
-		RealClientThread().queue_client_command(cmd);
+		TurnBasedRealClientThread().queue_client_command(cmd);
 	} else {
 		throw M2_ERROR("Not a multiplayer game");
 	}
@@ -311,8 +311,8 @@ m2::void_expected m2::Game::LoadMultiPlayerAsHost(
 
 	// Execute the first server update, which will trigger clients to initialize their levels, but not fully.
 	M2_GAME.ServerThread().SendServerUpdate();
-	// Manually set the HostClientThread state to STARTED, because it doesn't receive ServerUpdates
-	M2_GAME.HostClientThread().start_if_ready();
+	// Manually set the TurnBasedHostClientThread state to STARTED, because it doesn't receive ServerUpdates
+	M2_GAME.TurnBasedHostClientThread().start_if_ready();
 	// If there are bots, we need to handle the first server update
 	LOG_DEBUG("Waiting 1s until the first server update is delivered to bots");
 	std::this_thread::sleep_for(std::chrono::seconds(1)); // TODO why? system takes some time to deliver the data to bots, even though they are on the same machine
@@ -359,7 +359,7 @@ m2::void_expected m2::Game::LoadMultiPlayerAsGuest(
 	m2ReflectUnexpected(success);
 
 	// Consume the initial ServerUpdate that triggered the level to be initialized
-	auto expect_server_update = M2_GAME.RealClientThread().process_server_update();
+	auto expect_server_update = M2_GAME.TurnBasedRealClientThread().process_server_update();
 	m2ReflectUnexpected(expect_server_update);
 	_lastSentOrReceivedServerUpdateSequenceNo = expect_server_update->second;
 	m2ReturnUnexpectedUnless(expect_server_update->first == network::ServerUpdateStatus::PROCESSED,
@@ -472,7 +472,7 @@ void m2::Game::HandleHudEvents() {
 
 void m2::Game::HandleNetworkEvents() {
 	// Check if the game ended
-	if ((IsServer() && ServerThread().HasBeenShutdown()) || (IsRealClient() && RealClientThread().is_shutdown())) {
+	if ((IsServer() && ServerThread().HasBeenShutdown()) || (IsRealClient() && TurnBasedRealClientThread().is_shutdown())) {
 		_level.reset();
 		ResetState();
 		_multi_player_threads = std::monostate{};
@@ -487,20 +487,20 @@ void m2::Game::HandleNetworkEvents() {
 		}
 	} else if (IsRealClient()) {
 		// Check if the client has reconnected and needs to be set as ready
-		if (RealClientThread().is_reconnected()) {
+		if (TurnBasedRealClientThread().is_reconnected()) {
 			// Set as ready using the same ready_token
-			M2_GAME.RealClientThread().set_ready(true);
+			M2_GAME.TurnBasedRealClientThread().set_ready(true);
 			// Expect ServerUpdate, handle it normally
 		}
 
 		// Check if the client has disconnected
-		if (RealClientThread().has_reconnection_timed_out()) {
+		if (TurnBasedRealClientThread().has_reconnection_timed_out()) {
 			_proxy.handle_disconnection_from_server();
 			// TODO handle
 		}
 
 		// Check if the server has behaved unexpectedly
-		if (RealClientThread().is_server_unrecognized()) {
+		if (TurnBasedRealClientThread().is_server_unrecognized()) {
 			_proxy.handle_unrecognized_server();
 			// TODO handle
 		}
@@ -537,7 +537,7 @@ void m2::Game::ExecutePreStep() {
 		}
 
 		// Handle server command
-		if (const auto server_command = HostClientThread().pop_server_command()) {
+		if (const auto server_command = TurnBasedHostClientThread().pop_server_command()) {
 			_proxy.handle_server_command(*server_command);
 		}
 		if (not _bot_threads.empty()) {
@@ -550,7 +550,7 @@ void m2::Game::ExecutePreStep() {
 		}
 	} else if (IsRealClient()) {
 		// Handle server command
-		if (const auto server_command = RealClientThread().pop_server_command()) {
+		if (const auto server_command = TurnBasedRealClientThread().pop_server_command()) {
 			_proxy.handle_server_command(*server_command);
 		}
 	}
@@ -622,7 +622,7 @@ void m2::Game::ExecutePostStep() {
 		}
 	} else if (IsRealClient()) {
 		// Handle ServerUpdate
-		auto status = RealClientThread().process_server_update();
+		auto status = TurnBasedRealClientThread().process_server_update();
 		m2SucceedOrThrowError(status);
 
 		if (status->first == network::ServerUpdateStatus::PROCESSED || status->first == network::ServerUpdateStatus::PROCESSED_SHUTDOWN) {
@@ -631,7 +631,7 @@ void m2::Game::ExecutePostStep() {
 			_proxy.post_server_update(*_lastSentOrReceivedServerUpdateSequenceNo, status->first == network::ServerUpdateStatus::PROCESSED_SHUTDOWN);
 		}
 		if (status->first == network::ServerUpdateStatus::PROCESSED_SHUTDOWN) {
-			RealClientThread().shutdown();
+			TurnBasedRealClientThread().shutdown();
 			// Game will be restarted in handle_network_events
 		}
 	}
