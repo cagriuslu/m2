@@ -15,6 +15,7 @@
 #include "multi_player/TurnBasedRealClientThread.h"
 #include "multi_player/TurnBasedBotClientThread.h"
 #include "multi_player/TurnBasedServerActorInterface.h"
+#include "multi_player/TurnBasedServerComponents.h"
 #include "protobuf/LUT.h"
 #include <m2g_ObjectType.pb.h>
 #include <m2g/Proxy.h>
@@ -36,11 +37,6 @@
 #define M2_PLAYER (*M2_LEVEL.Player())
 
 namespace m2 {
-	// Client server comes after server thread, thus during shutdown, it'll be killed before the ServerThread.
-	// This is important for the server thread to not linger too much.
-	using ServerThreads = std::pair<std::optional<TurnBasedServerActorInterface>, std::optional<network::TurnBasedHostClientThread>>;
-	using BotAndIndexThread = std::pair<network::TurnBasedBotClientThread,int>;
-
 	/// \brief Container of all objects managed by the game engine.
 	/// \details This class is designed to be a singleton, and an instance is created by the main function. `M2_GAME`
 	/// macro can be used to easily access the instance.
@@ -53,8 +49,7 @@ namespace m2 {
 		mutable std::optional<VecF> _mouse_position_world_m;
 		mutable std::optional<VecF> _screen_center_to_mouse_position_m;  // Doesn't mean much in 2.5D mode
 
-		std::variant<std::monostate, ServerThreads, network::TurnBasedRealClientThread> _multi_player_threads;
-		std::list<BotAndIndexThread> _bot_threads; // thread,receiver_index pairs (receiver_index is initially -1)
+		std::variant<std::monostate, TurnBasedServerComponents, network::TurnBasedRealClientThread> _multiPlayerComponents;
 		bool _server_update_necessary{}, _server_update_with_shutdown{};
 		std::optional<SequenceNo> _lastSentOrReceivedServerUpdateSequenceNo;
 
@@ -128,7 +123,7 @@ namespace m2 {
 
 		// Pre-game management
 
-		bool IsMultiPlayer() const { return not std::holds_alternative<std::monostate>(_multi_player_threads); }
+		bool IsMultiPlayer() const { return not std::holds_alternative<std::monostate>(_multiPlayerComponents); }
 		/// For server
 		void_expected HostGame(mplayer::Type type, unsigned max_connection_count);
 		/// For client
@@ -139,11 +134,11 @@ namespace m2 {
 		bool AddBot();
 		/// For server
 		network::TurnBasedBotClientThread& FindBot(int receiver_index);
-		bool IsServer() const { return std::holds_alternative<ServerThreads>(_multi_player_threads); }
-		bool IsRealClient() const { return std::holds_alternative<network::TurnBasedRealClientThread>(_multi_player_threads); }
-		TurnBasedServerActorInterface& ServerThread() { return *std::get<ServerThreads>(_multi_player_threads).first; }
-		network::TurnBasedHostClientThread& TurnBasedHostClientThread() { return *std::get<ServerThreads>(_multi_player_threads).second; }
-		network::TurnBasedRealClientThread& TurnBasedRealClientThread() { return std::get<network::TurnBasedRealClientThread>(_multi_player_threads); }
+		bool IsServer() const { return std::holds_alternative<TurnBasedServerComponents>(_multiPlayerComponents); }
+		bool IsRealClient() const { return std::holds_alternative<network::TurnBasedRealClientThread>(_multiPlayerComponents); }
+		TurnBasedServerActorInterface& ServerThread() { return *std::get<TurnBasedServerComponents>(_multiPlayerComponents).serverActorInterface; }
+		network::TurnBasedHostClientThread& TurnBasedHostClientThread() { return *std::get<TurnBasedServerComponents>(_multiPlayerComponents).hostClientThread; }
+		network::TurnBasedRealClientThread& TurnBasedRealClientThread() { return std::get<network::TurnBasedRealClientThread>(_multiPlayerComponents); }
 		std::optional<SequenceNo> LastServerUpdateSequenceNo() const { return _lastSentOrReceivedServerUpdateSequenceNo; }
 		int TotalPlayerCount();
 		int SelfIndex();

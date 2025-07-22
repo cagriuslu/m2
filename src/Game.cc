@@ -168,13 +168,13 @@ m2::Game::~Game() {
 }
 
 m2::void_expected m2::Game::HostGame(const mplayer::Type type, const unsigned max_connection_count) {
-	if (not std::holds_alternative<std::monostate>(_multi_player_threads)) {
+	if (not std::holds_alternative<std::monostate>(_multiPlayerComponents)) {
 		throw M2_ERROR("Hosting game requires no other multiplayer threads to exist");
 	}
 
 	LOG_INFO("Creating server instance...");
-	_multi_player_threads.emplace<ServerThreads>();
-	std::get<ServerThreads>(_multi_player_threads).first.emplace(type, max_connection_count);
+	_multiPlayerComponents.emplace<TurnBasedServerComponents>();
+	std::get<TurnBasedServerComponents>(_multiPlayerComponents).serverActorInterface.emplace(type, max_connection_count);
 	LOG_DEBUG("Real ServerThread created");
 
 	// Wait until the server is up
@@ -184,22 +184,22 @@ m2::void_expected m2::Game::HostGame(const mplayer::Type type, const unsigned ma
 	// TODO prevent other clients from joining until the host client joins
 
 	LOG_INFO("Server is listening, joining the game as host client...");
-	std::get<ServerThreads>(_multi_player_threads).second.emplace(type);
+	std::get<TurnBasedServerComponents>(_multiPlayerComponents).hostClientThread.emplace(type);
 	LOG_DEBUG("Real TurnBasedHostClientThread created");
 
 	return {};
 }
 
 m2::void_expected m2::Game::JoinGame(mplayer::Type type, const std::string& addr) {
-	if (not std::holds_alternative<std::monostate>(_multi_player_threads)) {
+	if (not std::holds_alternative<std::monostate>(_multiPlayerComponents)) {
 		throw M2_ERROR("Joining game requires no other multiplayer threads to exist");
 	}
 
-	_multi_player_threads.emplace<network::TurnBasedRealClientThread>(type, addr);
+	_multiPlayerComponents.emplace<network::TurnBasedRealClientThread>(type, addr);
 	return {};
 }
 void m2::Game::LeaveGame() {
-	_multi_player_threads = std::monostate{};
+	_multiPlayerComponents = std::monostate{};
 }
 
 bool m2::Game::AddBot() {
@@ -208,31 +208,36 @@ bool m2::Game::AddBot() {
 	}
 
 	// Create an instance at the end of the list
-	const auto it = _bot_threads.emplace(_bot_threads.end());
+	auto& botList = std::get<TurnBasedServerComponents>(_multiPlayerComponents).botClientThreads;
+	const auto it = botList.emplace(botList.end());
 	LOG_INFO("Joining the game as bot client...");
 
 	LOG_DEBUG("Destroying temporary TurnBasedBotClientThread...");
-	it->first.~TurnBasedBotClientThread(); // Destruct the default object
+	it->~TurnBasedBotClientThread(); // Destruct the default object
 	LOG_DEBUG("Temporary TurnBasedBotClientThread destroyed, creating real TurnBasedBotClientThread");
 
-	new (&it->first) network::TurnBasedBotClientThread(ServerThread().GetType());
+	new (&*it) network::TurnBasedBotClientThread(ServerThread().GetType());
 	LOG_DEBUG("Real TurnBasedBotClientThread created");
 
-	if (it->first.is_active()) {
-		it->second = -1; // Index is initially unknown
+	if (it->is_active()) {
 		return true;
 	}
 	LOG_WARN("TurnBasedBotClientThread failed to connect, destroying client");
-	_bot_threads.erase(it);
+	botList.erase(it);
 	return false;
 }
 
 m2::network::TurnBasedBotClientThread& m2::Game::FindBot(const int receiver_index) {
-	const auto it = std::ranges::find_if(_bot_threads, IsSecondEquals<network::TurnBasedBotClientThread, int>(receiver_index));
-	if (it == _bot_threads.end()) {
+	if (not IsServer()) {
+		throw M2_ERROR("Only server may hold bots");
+	}
+
+	auto& botList = std::get<TurnBasedServerComponents>(_multiPlayerComponents).botClientThreads;
+	const auto it = std::ranges::find_if(botList, [&](const auto& bot) { return bot.GetReceiverIndex() == receiver_index; });
+	if (it == botList.end()) {
 		throw M2_ERROR("Bot not found");
 	}
-	return it->first;
+	return *it;
 }
 
 int m2::Game::TotalPlayerCount() {
@@ -316,12 +321,11 @@ m2::void_expected m2::Game::LoadMultiPlayerAsHost(
 	// If there are bots, we need to handle the first server update
 	LOG_DEBUG("Waiting 1s until the first server update is delivered to bots");
 	std::this_thread::sleep_for(std::chrono::seconds(1)); // TODO why? system takes some time to deliver the data to bots, even though they are on the same machine
-	for (auto& [bot, index] : _bot_threads) {
-		auto server_update = bot.pop_server_update();
-		if (not server_update) {
+	auto& botList = std::get<TurnBasedServerComponents>(_multiPlayerComponents).botClientThreads;
+	for (auto& bot : botList) {
+		if (const auto server_update = bot.pop_server_update(); not server_update) {
 			throw M2_ERROR("Bot hasn't received the TurnBasedServerUpdate");
 		}
-		index = server_update->receiver_index();
 	}
 
 	// Populate level
@@ -336,12 +340,10 @@ m2::void_expected m2::Game::LoadMultiPlayerAsHost(
 	// If there are bots, we need to consume the second server update as bots are never the first turn holder.
 	LOG_DEBUG("Waiting 1s until the second server update is delivered to bots");
 	std::this_thread::sleep_for(std::chrono::seconds(1));
-	for (auto& [bot, index] : _bot_threads) {
-		const auto server_update = bot.pop_server_update();
-		if (not server_update) {
+	for (auto& bot : botList) {
+		if (const auto server_update = bot.pop_server_update(); not server_update) {
 			throw M2_ERROR("Bot hasn't received the TurnBasedServerUpdate");
 		}
-		index = server_update->receiver_index();
 	}
 
 	return success;
@@ -475,8 +477,7 @@ void m2::Game::HandleNetworkEvents() {
 	if ((IsServer() && ServerThread().HasBeenShutdown()) || (IsRealClient() && TurnBasedRealClientThread().is_shutdown())) {
 		_level.reset();
 		ResetState();
-		_multi_player_threads = std::monostate{};
-		_bot_threads.clear();
+		_multiPlayerComponents = std::monostate{};
 		// Execute main menu
 		if (UiPanel::create_and_run_blocking(_proxy.MainMenuBlueprint()).IsQuit()) {
 			quit = true;
@@ -514,12 +515,10 @@ void m2::Game::ExecutePreStep() {
 		IF(phy.preStep)(phy);
 	}
 	if (IsServer()) {
-		if (not _bot_threads.empty()) {
-			// Check if any of the bots need to handle the TurnBasedServerUpdate
-			for (auto& bot : _bot_threads | std::views::keys) {
-				if (auto server_update = bot.pop_server_update()) {
-					_proxy.bot_handle_server_update(*server_update);
-				}
+		// Check if any of the bots need to handle the TurnBasedServerUpdate
+		for (auto& bot : std::get<TurnBasedServerComponents>(_multiPlayerComponents).botClientThreads) {
+			if (auto server_update = bot.pop_server_update()) {
+				_proxy.bot_handle_server_update(*server_update);
 			}
 		}
 
@@ -540,12 +539,10 @@ void m2::Game::ExecutePreStep() {
 		if (const auto server_command = TurnBasedHostClientThread().pop_server_command()) {
 			_proxy.handle_server_command(*server_command);
 		}
-		if (not _bot_threads.empty()) {
-			// Check if any of the bots need to handle the TurnBasedServerCommand
-			for (auto& [bot, index] : _bot_threads) {
-				if (auto server_command = bot.pop_server_command()) {
-					_proxy.bot_handle_server_command(*server_command, index);
-				}
+		// Check if any of the bots need to handle the TurnBasedServerCommand
+		for (auto& bot : std::get<TurnBasedServerComponents>(_multiPlayerComponents).botClientThreads) {
+			if (auto server_command = bot.pop_server_command()) {
+				_proxy.bot_handle_server_command(*server_command, *bot.GetReceiverIndex());
 			}
 		}
 	} else if (IsRealClient()) {
