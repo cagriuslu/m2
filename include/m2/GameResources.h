@@ -2,9 +2,10 @@
 #include <filesystem>
 
 namespace m2 {
-	/// Root resource directory can be queried before the Game is constructed
+	/// Returns the root resource directory without depending on Game.
 	std::filesystem::path GetResourceDir();
 
+	/// Class grouping various resource paths
 	class GameResources final {
 		// Engine Resources
 

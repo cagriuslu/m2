@@ -126,7 +126,8 @@ namespace m2 {
 		Game();
 		~Game();
 
-		int32_t Hash() const { return IHash(_proxy.gameIdentifier); }
+		// Pre-game management
+
 		bool IsMultiPlayer() const { return not std::holds_alternative<std::monostate>(_multi_player_threads); }
 		/// For server
 		void_expected HostGame(mplayer::Type type, unsigned max_connection_count);
@@ -149,7 +150,9 @@ namespace m2 {
 		int TurnHolderIndex();
 		bool IsOurTurn();
 		void QueueClientCommand(const m2g::pb::TurnBasedClientCommand& cmd);
+
 		// Level management
+
 		void_expected LoadSinglePlayer(const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& level_name = "");
 		void_expected LoadMultiPlayerAsHost(const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& level_name = "");
 		void_expected LoadMultiPlayerAsGuest(const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& level_name = "");
@@ -162,6 +165,8 @@ namespace m2 {
 
 		// Accessors
 
+		/// Platform independent hash of the game identifier for different peers to recognize each other.
+		int32_t Hash() const { return HashI(_proxy.gameIdentifier); }
 		const GameResources& GetResources() const { return _resources; }
 		const GameDimensions& Dimensions() const { return *_dimensions; }
 		const std::variant<Sprite,pb::TextLabel>& GetSpriteOrTextLabel(const m2g::pb::SpriteType sprite_type) const { return _sprites[pb::enum_index(sprite_type)]; }

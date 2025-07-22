@@ -3,5 +3,5 @@
 #include <cstdint>
 
 namespace m2 {
-    int32_t IHash(const std::string&);
+    int32_t HashI(const std::string&);
 }
