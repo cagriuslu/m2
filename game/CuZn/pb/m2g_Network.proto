@@ -4,7 +4,7 @@ package m2g.pb;
 import "m2g_ItemType.proto";
 import "m2g_SpriteType.proto";
 
-message ServerCommand {
+message TurnBasedServerCommand {
   message ActionNotification {
     int32 player_index = 1;
     string notification = 2;
@@ -21,7 +21,7 @@ message ServerCommand {
   }
 }
 
-message ClientCommand {
+message TurnBasedClientCommand {
   message BuildAction {
     ItemType card = 1;
     SpriteType industry_location = 2;

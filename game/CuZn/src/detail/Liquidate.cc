@@ -50,7 +50,7 @@ namespace {
 	};
 }
 
-m2::expected<std::pair<std::vector<m2::Object*>, int>> CanPlayerLiquidateFactories(m2::Character& player, const m2g::pb::ClientCommand_LiquidateAction& liquidate_action) {
+m2::expected<std::pair<std::vector<m2::Object*>, int>> CanPlayerLiquidateFactories(m2::Character& player, const m2g::pb::TurnBasedClientCommand_LiquidateAction& liquidate_action) {
 	LOG_DEBUG("Validating liquidate command");
 
 	// Check if the player needed a liquidation in the first place

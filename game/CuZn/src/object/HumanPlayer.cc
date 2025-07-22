@@ -175,7 +175,7 @@ m2::void_expected PlayerInitOtherInstance(m2::Object& obj) {
 
 	auto& chr = obj.AddFullCharacter();
 
-	// TODO check if the following is really necessary. If the ServerUpdate is verified, it's necessary.
+	// TODO check if the following is really necessary. If the TurnBasedServerUpdate is verified, it's necessary.
 	// TODO Otherwise, we don't need to fill the character with items and resources.
 
 	chr.SetResource(m2g::pb::MONEY, 17.0f);

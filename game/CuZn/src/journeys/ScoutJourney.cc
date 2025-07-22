@@ -32,7 +32,7 @@ void ExecuteScoutJourney() {
 				if (ask_for_confirmation("Scout using " + card_name_0 + ",", card_name_1 + ", and " + card_name_2 + " cards?", "OK", "Cancel")) {
 					LOG_INFO("Scout action confirmed");
 
-					m2g::pb::ClientCommand cc;
+					m2g::pb::TurnBasedClientCommand cc;
 					cc.mutable_scout_action()->set_card_0(*selected_card_0);
 					cc.mutable_scout_action()->set_card_1(*selected_card_1);
 					cc.mutable_scout_action()->set_card_2(*selected_card_2);
@@ -46,7 +46,7 @@ void ExecuteScoutJourney() {
 	LOG_INFO("Scout action cancelled");
 }
 
-m2::void_expected CanPlayerScout(m2::Character& player, const m2g::pb::ClientCommand_ScoutAction& scout_action) {
+m2::void_expected CanPlayerScout(m2::Character& player, const m2g::pb::TurnBasedClientCommand_ScoutAction& scout_action) {
 	// Check if prerequisites are met
 	if (auto prerequisite = CanPlayerAttemptToScout(player); not prerequisite) {
 		return m2::make_unexpected(prerequisite.error());
@@ -65,7 +65,7 @@ m2::void_expected CanPlayerScout(m2::Character& player, const m2g::pb::ClientCom
 	return {};
 }
 
-Card ExecuteScoutAction(m2::Character& player, const m2g::pb::ClientCommand_ScoutAction& scout_action) {
+Card ExecuteScoutAction(m2::Character& player, const m2g::pb::TurnBasedClientCommand_ScoutAction& scout_action) {
 	auto card_1_it = player.FindItems(scout_action.card_1());
 	player.RemoveItem(card_1_it);
 	auto card_2_it = player.FindItems(scout_action.card_2());

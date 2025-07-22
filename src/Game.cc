@@ -278,7 +278,7 @@ bool m2::Game::IsOurTurn() {
 	throw M2_ERROR("Not a multiplayer game");
 }
 
-void m2::Game::QueueClientCommand(const m2g::pb::ClientCommand& cmd) {
+void m2::Game::QueueClientCommand(const m2g::pb::TurnBasedClientCommand& cmd) {
 	if (IsServer()) {
 		TurnBasedHostClientThread().queue_client_command(cmd);
 	} else if (IsRealClient()) {
@@ -319,7 +319,7 @@ m2::void_expected m2::Game::LoadMultiPlayerAsHost(
 	for (auto& [bot, index] : _bot_threads) {
 		auto server_update = bot.pop_server_update();
 		if (not server_update) {
-			throw M2_ERROR("Bot hasn't received the ServerUpdate");
+			throw M2_ERROR("Bot hasn't received the TurnBasedServerUpdate");
 		}
 		index = server_update->receiver_index();
 	}
@@ -329,7 +329,7 @@ m2::void_expected m2::Game::LoadMultiPlayerAsHost(
 
 	// Execute second server update, which will fully initialize client levels.
 	_lastSentOrReceivedServerUpdateSequenceNo = M2_GAME.ServerThread().SendServerUpdate();
-	// Act as if ServerUpdate is received on the server-side as well
+	// Act as if TurnBasedServerUpdate is received on the server-side as well
 	LOG_DEBUG("Calling server-side post_server_update...");
 	_proxy.post_server_update(*_lastSentOrReceivedServerUpdateSequenceNo, false);
 
@@ -339,7 +339,7 @@ m2::void_expected m2::Game::LoadMultiPlayerAsHost(
 	for (auto& [bot, index] : _bot_threads) {
 		const auto server_update = bot.pop_server_update();
 		if (not server_update) {
-			throw M2_ERROR("Bot hasn't received the ServerUpdate");
+			throw M2_ERROR("Bot hasn't received the TurnBasedServerUpdate");
 		}
 		index = server_update->receiver_index();
 	}
@@ -358,12 +358,12 @@ m2::void_expected m2::Game::LoadMultiPlayerAsGuest(
 	auto success = _level->InitMultiPlayerAsGuest(level_path_or_blueprint, level_name);
 	m2ReflectUnexpected(success);
 
-	// Consume the initial ServerUpdate that triggered the level to be initialized
+	// Consume the initial TurnBasedServerUpdate that triggered the level to be initialized
 	auto expect_server_update = M2_GAME.TurnBasedRealClientThread().process_server_update();
 	m2ReflectUnexpected(expect_server_update);
 	_lastSentOrReceivedServerUpdateSequenceNo = expect_server_update->second;
 	m2ReturnUnexpectedUnless(expect_server_update->first == network::ServerUpdateStatus::PROCESSED,
-			"Unexpected ServerUpdate status");
+			"Unexpected TurnBasedServerUpdate status");
 	return {};
 }
 
@@ -490,7 +490,7 @@ void m2::Game::HandleNetworkEvents() {
 		if (TurnBasedRealClientThread().is_reconnected()) {
 			// Set as ready using the same ready_token
 			M2_GAME.TurnBasedRealClientThread().set_ready(true);
-			// Expect ServerUpdate, handle it normally
+			// Expect TurnBasedServerUpdate, handle it normally
 		}
 
 		// Check if the client has disconnected
@@ -515,7 +515,7 @@ void m2::Game::ExecutePreStep() {
 	}
 	if (IsServer()) {
 		if (not _bot_threads.empty()) {
-			// Check if any of the bots need to handle the ServerUpdate
+			// Check if any of the bots need to handle the TurnBasedServerUpdate
 			for (auto& bot : _bot_threads | std::views::keys) {
 				if (auto server_update = bot.pop_server_update()) {
 					_proxy.bot_handle_server_update(*server_update);
@@ -541,7 +541,7 @@ void m2::Game::ExecutePreStep() {
 			_proxy.handle_server_command(*server_command);
 		}
 		if (not _bot_threads.empty()) {
-			// Check if any of the bots need to handle the ServerCommand
+			// Check if any of the bots need to handle the TurnBasedServerCommand
 			for (auto& [bot, index] : _bot_threads) {
 				if (auto server_command = bot.pop_server_command()) {
 					_proxy.bot_handle_server_command(*server_command, index);
@@ -606,11 +606,11 @@ void m2::Game::ExecuteStep() {
 void m2::Game::ExecutePostStep() {
 	if (IsServer()) {
 		if (_server_update_necessary) {
-			LOG_DEBUG("Server update is necessary, sending ServerUpdate...");
+			LOG_DEBUG("Server update is necessary, sending TurnBasedServerUpdate...");
 			_lastSentOrReceivedServerUpdateSequenceNo = ServerThread().SendServerUpdate(_server_update_with_shutdown);
 			_server_update_necessary = false; // Unset flag
 
-			// Act as if ServerUpdate is received on the server-side as well
+			// Act as if TurnBasedServerUpdate is received on the server-side as well
 			LOG_DEBUG("Calling server-side post_server_update...");
 			_proxy.post_server_update(*_lastSentOrReceivedServerUpdateSequenceNo, _server_update_with_shutdown);
 
@@ -621,7 +621,7 @@ void m2::Game::ExecutePostStep() {
 			}
 		}
 	} else if (IsRealClient()) {
-		// Handle ServerUpdate
+		// Handle TurnBasedServerUpdate
 		auto status = TurnBasedRealClientThread().process_server_update();
 		m2SucceedOrThrowError(status);
 

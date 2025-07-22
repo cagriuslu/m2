@@ -148,7 +148,7 @@ namespace m2 {
 		int SelfIndex();
 		int TurnHolderIndex();
 		bool IsOurTurn();
-		void QueueClientCommand(const m2g::pb::ClientCommand& cmd);
+		void QueueClientCommand(const m2g::pb::TurnBasedClientCommand& cmd);
 		// Level management
 		void_expected LoadSinglePlayer(const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& level_name = "");
 		void_expected LoadMultiPlayerAsHost(const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& level_name = "");

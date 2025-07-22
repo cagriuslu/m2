@@ -8,7 +8,7 @@
 
 using namespace m2;
 
-void display_action_notification(const m2g::pb::ServerCommand::ActionNotification& action_notification) {
+void display_action_notification(const m2g::pb::TurnBasedServerCommand::ActionNotification& action_notification) {
 	LOG_INFO("Displaying action notification", action_notification.player_index(), action_notification.notification());
 
 	auto blueprint = UiPanelBlueprint{

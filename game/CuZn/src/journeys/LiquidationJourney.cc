@@ -70,7 +70,7 @@ std::optional<LiquidationJourneyStep> LiquidationJourney::HandleLocationMouseCli
 
 std::optional<LiquidationJourneyStep> LiquidationJourney::HandleLocationExitSignal() {
 	// Send the Liquidate action
-	m2g::pb::ClientCommand cc;
+	m2g::pb::TurnBasedClientCommand cc;
 	for (const auto& loc : _selected_locations) {
 		cc.mutable_liquidate_action()->add_locations_to_sell(loc);
 	}

@@ -200,7 +200,7 @@ std::optional<DevelopJourneyStep> DevelopJourney::HandleConfirmationEnterSignal(
 	if (confirmation) {
 		LOG_INFO("Develop action confirmed");
 
-		m2g::pb::ClientCommand cc;
+		m2g::pb::TurnBasedClientCommand cc;
 		cc.mutable_develop_action()->set_card(_selected_card);
 		cc.mutable_develop_action()->set_industry_tile_1(_selected_tile_1);
 		cc.mutable_develop_action()->set_industry_tile_2(_selected_tile_2);
@@ -214,7 +214,7 @@ std::optional<DevelopJourneyStep> DevelopJourney::HandleConfirmationEnterSignal(
 	return std::nullopt;
 }
 
-m2::void_expected CanPlayerDevelop(m2::Character& player, const m2g::pb::ClientCommand_DevelopAction& develop_action) {
+m2::void_expected CanPlayerDevelop(m2::Character& player, const m2g::pb::TurnBasedClientCommand_DevelopAction& develop_action) {
 	// Check if the prerequisites are met
 	if (auto prerequisite = CanPlayerAttemptToDevelop(player); not prerequisite) {
 		return make_unexpected(prerequisite.error());
@@ -338,7 +338,7 @@ m2::void_expected CanPlayerDevelop(m2::Character& player, const m2g::pb::ClientC
 	return {};
 }
 
-std::pair<Card,int> ExecuteDevelopAction(m2::Character& player, const m2g::pb::ClientCommand_DevelopAction& develop_action) {
+std::pair<Card,int> ExecuteDevelopAction(m2::Character& player, const m2g::pb::TurnBasedClientCommand_DevelopAction& develop_action) {
 	// Assume validation is done
 
 	// Calculate the cost of buying the resources

@@ -14,11 +14,11 @@ namespace m2 {
 			int clientIndex;
 		};
 		struct SendServerUpdate {
-			pb::NetworkMessage serverUpdate;
+			pb::TurnBasedNetworkMessage serverUpdate;
 		};
 		struct SendServerCommand {
 			int receiverIndex; /// If negative, all clients should receive the command
-			m2g::pb::ServerCommand serverCommand;
+			m2g::pb::TurnBasedServerCommand serverCommand;
 		};
 		std::variant<CloseLobby,UpdateTurnHolder,SendServerUpdate,SendServerCommand> variant;
 	};
@@ -30,7 +30,7 @@ namespace m2 {
 		};
 		struct ClientEvent {
 			struct CommandFromTurnHolder {
-				pb::NetworkMessage turnHolderCommand;
+				pb::TurnBasedNetworkMessage turnHolderCommand;
 			};
 			struct DisconnectedClient {
 				int clientIndex;
@@ -51,7 +51,7 @@ namespace m2 {
 		pb::ServerThreadState _state{pb::SERVER_INITIAL_STATE};
 		std::vector<network::TurnBasedClientManager> _clients;
 		int _turnHolderIndex{};
-		std::optional<pb::NetworkMessage> _lastServerUpdate;
+		std::optional<pb::TurnBasedNetworkMessage> _lastServerUpdate;
 
 	public:
 		TurnBasedServerActor(const mplayer::Type type, const int maxConnectionCount) : _type(type), _maxConnCount(maxConnectionCount) {}

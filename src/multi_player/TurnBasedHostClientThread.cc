@@ -23,7 +23,7 @@ const char* m2::network::TurnBasedHostClientThread::thread_name() const {
 bool m2::network::TurnBasedHostClientThread::is_shutdown() {
 	return locked_get_client_state() == pb::CLIENT_SHUTDOWN;
 }
-std::optional<m2g::pb::ServerCommand> m2::network::TurnBasedHostClientThread::pop_server_command() {
+std::optional<m2g::pb::TurnBasedServerCommand> m2::network::TurnBasedHostClientThread::pop_server_command() {
 	if (auto serverCommand = locked_pop_server_command()) {
 		return serverCommand->second;
 	}

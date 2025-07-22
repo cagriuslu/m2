@@ -37,13 +37,13 @@ int m2::network::TurnBasedRealClientThread::total_player_count() {
 		// Game is already running
 		return _last_processed_server_update->second.player_object_ids_size();
 	} else if (auto unprocessed_server_update = locked_peek_server_update()) {
-		// Game is not yet running, but a ServerUpdate is received (but not yet processed).
+		// Game is not yet running, but a TurnBasedServerUpdate is received (but not yet processed).
 		return unprocessed_server_update->player_object_ids_size();
 	} else {
 		throw M2_ERROR("Game not yet started");
 	}
 }
-std::optional<m2g::pb::ServerCommand> m2::network::TurnBasedRealClientThread::pop_server_command() {
+std::optional<m2g::pb::TurnBasedServerCommand> m2::network::TurnBasedRealClientThread::pop_server_command() {
 	if (auto serverCommand = locked_pop_server_command()) {
 		return serverCommand->second;
 	}
@@ -54,7 +54,7 @@ int m2::network::TurnBasedRealClientThread::self_index() {
 		// Game is already running
 		return _last_processed_server_update->second.receiver_index();
 	} else if (auto unprocessed_server_update = locked_peek_server_update()) {
-		// Game is not yet running, but a ServerUpdate is received (but not yet processed).
+		// Game is not yet running, but a TurnBasedServerUpdate is received (but not yet processed).
 		return unprocessed_server_update->receiver_index();
 	} else {
 		throw M2_ERROR("Game not yet started");
@@ -66,7 +66,7 @@ int m2::network::TurnBasedRealClientThread::turn_holder_index() {
 		// Game is already running
 		return _last_processed_server_update->second.turn_holder_index();
 	} else if (auto unprocessed_server_update = locked_peek_server_update()) {
-		// Game is not yet running, but a ServerUpdate is received (but not yet processed).
+		// Game is not yet running, but a TurnBasedServerUpdate is received (but not yet processed).
 		return unprocessed_server_update->turn_holder_index();
 	} else {
 		throw M2_ERROR("Game not yet started");
@@ -78,7 +78,7 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::SequenceNo>> m2::netw
 
 	auto unprocessed_server_update = locked_pop_server_update();
 	if (not unprocessed_server_update) {
-		LOG_TRACE("No ServerUpdate to process");
+		LOG_TRACE("No TurnBasedServerUpdate to process");
 		return std::make_pair(ServerUpdateStatus::NOT_FOUND, -1);
 	}
 
@@ -89,8 +89,8 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::SequenceNo>> m2::netw
 	_last_processed_server_update = std::move(unprocessed_server_update);
 
 	if (not _prev_processed_server_update) {
-		LOG_DEBUG("Processing first ServerUpdate");
-		// This will be the first ServerUpdate, that started the game.
+		LOG_DEBUG("Processing first TurnBasedServerUpdate");
+		// This will be the first TurnBasedServerUpdate, that started the game.
 		// Only do verification as level initialization should have initialized the same exact game state
 		const auto& server_update = _last_processed_server_update->second;
 
@@ -139,13 +139,13 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::SequenceNo>> m2::netw
 		}
 
 		if (server_update.shutdown()) {
-			return make_unexpected("Unexpected shutdown flag in first ServerUpdate");
+			return make_unexpected("Unexpected shutdown flag in first TurnBasedServerUpdate");
 		}
 
-		return std::make_pair(ServerUpdateStatus::PROCESSED, _last_processed_server_update->first); // Successfully processed the first ServerUpdate
+		return std::make_pair(ServerUpdateStatus::PROCESSED, _last_processed_server_update->first); // Successfully processed the first TurnBasedServerUpdate
 	}
 
-	LOG_DEBUG("Processing ServerUpdate");
+	LOG_DEBUG("Processing TurnBasedServerUpdate");
 	const auto& server_update = _last_processed_server_update->second;
 	{
 		const auto& prev_server_update = _prev_processed_server_update->second;
@@ -174,7 +174,7 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::SequenceNo>> m2::netw
 	};
 	std::vector<ObjectToCreate> objects_to_be_created;
 
-	// Iterate over ServerUpdate objects w/ character
+	// Iterate over TurnBasedServerUpdate objects w/ character
 	for (const auto& object_desc : server_update.objects_with_character()) {
 		if (auto it = _server_to_local_map.find(object_desc.object_id()); it != _server_to_local_map.end()) {
 			LOG_TRACE("Server object is still alive", object_desc.object_id(), it->first);
@@ -246,7 +246,7 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::SequenceNo>> m2::netw
 	for (auto it = _server_to_local_map.cbegin(); it != _server_to_local_map.cend(); /* no increment */) {
 		if (!it->second.second) {
 			auto object_to_delete = it->second.first;
-			LOG_DEBUG("Local object hasn't been visited by ServerUpdate, scheduling for deletion", it->second.first);
+			LOG_DEBUG("Local object hasn't been visited by TurnBasedServerUpdate, scheduling for deletion", it->second.first);
 			M2_DEFER(CreateObjectDeleter(object_to_delete));
 			it = _server_to_local_map.erase(it); // Erase from map
 		} else {

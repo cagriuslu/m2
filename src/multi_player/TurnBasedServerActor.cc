@@ -98,9 +98,9 @@ void m2::TurnBasedServerActor::ProcessInbox(MessageBox<TurnBasedServerActorInput
 			}
 			// Send updates
 			auto serverUpdateCopy = std::get<TurnBasedServerActorInput::SendServerUpdate>(msg->variant).serverUpdate;
-			for (auto i = 1; i < I(_clients.size()); ++i) { // ServerUpdate is not sent to self
+			for (auto i = 1; i < I(_clients.size()); ++i) { // TurnBasedServerUpdate is not sent to self
 				if (_clients[i].is_ready()) {
-					LOG_DEBUG("Queueing ServerUpdate to client", i);
+					LOG_DEBUG("Queueing TurnBasedServerUpdate to client", i);
 					serverUpdateCopy.mutable_server_update()->set_receiver_index(i);
 					_clients[i].queue_outgoing_message(serverUpdateCopy);
 				}
@@ -117,19 +117,19 @@ void m2::TurnBasedServerActor::ProcessInbox(MessageBox<TurnBasedServerActorInput
 			}
 		} else if (std::holds_alternative<TurnBasedServerActorInput::SendServerCommand>(msg->variant)) {
 			if (_state != pb::SERVER_LOBBY_CLOSED && _state != pb::SERVER_STARTED) {
-				throw M2_ERROR("Received unexpected ServerCommand command");
+				throw M2_ERROR("Received unexpected TurnBasedServerCommand command");
 			}
 			const auto& serverCommand = std::get<TurnBasedServerActorInput::SendServerCommand>(msg->variant).serverCommand;
 			const auto queueMsg = [this, &serverCommand](const int receiverIndex) {
-				pb::NetworkMessage message;
+				pb::TurnBasedNetworkMessage message;
 				message.set_game_hash(M2_GAME.Hash());
 				message.mutable_server_command()->CopyFrom(serverCommand);
 				if (_clients[receiverIndex].is_ready()) {
 					message.set_sequence_no(_clients[receiverIndex].ReturnAndIncrementServerCommandSequenceNo());
-					LOG_DEBUG("Queueing ServerCommand to client", receiverIndex);
+					LOG_DEBUG("Queueing TurnBasedServerCommand to client", receiverIndex);
 					_clients[receiverIndex].queue_outgoing_message(std::move(message));
 				} else {
-					LOG_WARN("Attempted to queue ServerCommand but client is disconnected");
+					LOG_WARN("Attempted to queue TurnBasedServerCommand but client is disconnected");
 				}
 			};
 			if (const auto receiverIndex = std::get<TurnBasedServerActorInput::SendServerCommand>(msg->variant).receiverIndex; receiverIndex < 0) {
@@ -155,10 +155,10 @@ void m2::TurnBasedServerActor::ProcessReceivedMessages(MessageBox<TurnBasedServe
 		if (const auto* peek = client.peek_incoming_message(); peek && peek->has_client_update()) {
 			// Check sequence no
 			if (peek->sequence_no() < client.expectedClientUpdateSequenceNo) {
-				LOG_WARN("Ignoring ClientUpdate with an outdated sequence number", peek->sequence_no());
+				LOG_WARN("Ignoring TurnBasedClientUpdate with an outdated sequence number", peek->sequence_no());
 				client.pop_incoming_message(); // Message "handled"
 			} else if (client.expectedClientUpdateSequenceNo < peek->sequence_no()) {
-				LOG_WARN("ClientUpdate with an unexpected sequence number received, kicking client", peek->sequence_no());
+				LOG_WARN("TurnBasedClientUpdate with an unexpected sequence number received, kicking client", peek->sequence_no());
 				client.set_misbehaved();
 				HandleMisbehavedClient(outbox, i);
 			} else {
@@ -171,7 +171,7 @@ void m2::TurnBasedServerActor::ProcessReceivedMessages(MessageBox<TurnBasedServe
 				} else if (_state == pb::SERVER_STARTED && client.is_untrusted()) {
 					if (client.set_ready_token(peek->client_update().ready_token())) {
 						if (_lastServerUpdate) {
-							LOG_INFO("Previously reconnected client has presented the correct ready token, will send ServerUpdate", i);
+							LOG_INFO("Previously reconnected client has presented the correct ready token, will send TurnBasedServerUpdate", i);
 							_lastServerUpdate->mutable_server_update()->set_receiver_index(i);
 							_clients[i].queue_outgoing_message(*_lastServerUpdate);
 						}
@@ -182,7 +182,7 @@ void m2::TurnBasedServerActor::ProcessReceivedMessages(MessageBox<TurnBasedServe
 					}
 					client.pop_incoming_message(); // Message handled
 				} else {
-					LOG_WARN("Received unexpected ClientUpdate", i);
+					LOG_WARN("Received unexpected TurnBasedClientUpdate", i);
 					client.set_misbehaved();
 					HandleMisbehavedClient(outbox, i);
 				}
@@ -190,20 +190,20 @@ void m2::TurnBasedServerActor::ProcessReceivedMessages(MessageBox<TurnBasedServe
 		} else if (peek && peek->has_client_command()) {
 			// Check sequence number
 			if (peek->sequence_no() < client.expectedClientCommandSequenceNo) {
-				LOG_WARN("Ignoring ClientCommand with an outdated sequence number", peek->sequence_no());
+				LOG_WARN("Ignoring TurnBasedClientCommand with an outdated sequence number", peek->sequence_no());
 				client.pop_incoming_message(); // Message "handled"
 			} else if (client.expectedClientCommandSequenceNo < peek->sequence_no()) {
-				LOG_WARN("ClientCommand with an unexpected sequence number received, closing client", peek->sequence_no());
+				LOG_WARN("TurnBasedClientCommand with an unexpected sequence number received, closing client", peek->sequence_no());
 				client.set_misbehaved();
 				HandleMisbehavedClient(outbox, i);
 			} else {
 				client.expectedClientCommandSequenceNo++;
 				if (_turnHolderIndex != i) {
-					LOG_WARN("Received ClientCommand from a non-turn-holder client", i);
+					LOG_WARN("Received TurnBasedClientCommand from a non-turn-holder client", i);
 					client.set_misbehaved();
 					HandleMisbehavedClient(outbox, i);
 				} else {
-					LOG_INFO("ClientCommand from player index with sequence number received, will be processed by game loop", i, peek->sequence_no());
+					LOG_INFO("TurnBasedClientCommand from player index with sequence number received, will be processed by game loop", i, peek->sequence_no());
 					outbox.PushMessage(TurnBasedServerActorOutput{
 						.variant = TurnBasedServerActorOutput::ClientEvent{
 							.eventVariant = TurnBasedServerActorOutput::ClientEvent::CommandFromTurnHolder{

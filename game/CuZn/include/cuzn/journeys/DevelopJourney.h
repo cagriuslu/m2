@@ -40,7 +40,7 @@ protected:
 };
 
 // For the server
-m2::void_expected CanPlayerDevelop(m2::Character& player, const m2g::pb::ClientCommand_DevelopAction& develop_action);
+m2::void_expected CanPlayerDevelop(m2::Character& player, const m2g::pb::TurnBasedClientCommand_DevelopAction& develop_action);
 
 // For the server
-std::pair<Card,int> ExecuteDevelopAction(m2::Character& player, const m2g::pb::ClientCommand_DevelopAction& develop_action);
+std::pair<Card,int> ExecuteDevelopAction(m2::Character& player, const m2g::pb::TurnBasedClientCommand_DevelopAction& develop_action);

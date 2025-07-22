@@ -298,7 +298,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::HandleConfirmationEnterSignal(
 	if (ask_for_confirmation("Are you sure?", "", "OK", "Cancel")) {
 		LOG_INFO("Network action confirmed");
 
-		m2g::pb::ClientCommand cc;
+		m2g::pb::TurnBasedClientCommand cc;
 		cc.mutable_network_action()->set_card(_selected_card);
 		cc.mutable_network_action()->set_connection_1(_selected_connection_1);
 		if (_build_double_railroads) {
@@ -345,7 +345,7 @@ decltype(NetworkJourney::_resource_sources)::iterator NetworkJourney::GetNextUns
 	});
 }
 
-m2::void_expected CanPlayerNetwork(m2::Character& player, const m2g::pb::ClientCommand_NetworkAction& network_action) {
+m2::void_expected CanPlayerNetwork(m2::Character& player, const m2g::pb::TurnBasedClientCommand_NetworkAction& network_action) {
 	// Check if the prerequisites are met
 	if (auto prerequisite = CanPlayerAttemptToNetwork(player); not prerequisite) {
 		return make_unexpected(prerequisite.error());
@@ -403,7 +403,7 @@ m2::void_expected CanPlayerNetwork(m2::Character& player, const m2g::pb::ClientC
 	return {};
 }
 
-std::pair<Card,int> ExecuteNetworkAction(m2::Character& player, const m2g::pb::ClientCommand_NetworkAction& network_action) {
+std::pair<Card,int> ExecuteNetworkAction(m2::Character& player, const m2g::pb::TurnBasedClientCommand_NetworkAction& network_action) {
 	// Assume everything is validated
 
 	// Take road tiles from player

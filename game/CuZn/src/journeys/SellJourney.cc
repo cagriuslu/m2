@@ -246,7 +246,7 @@ std::optional<SellJourneyStep> SellJourney::HandleConfirmationEnterSignal() {
 	const auto industry = ToIndustryOfFactoryCharacter(FindFactoryAtLocation(_selected_location)->GetCharacter());
 	const auto industry_name = M2_GAME.GetNamedItem(industry).in_game_name();
 	if (ask_for_confirmation("Sell " + industry_name + " in " + city_name, "using " + card_name + " card?", "OK", "Cancel")) {
-		m2g::pb::ClientCommand cc;
+		m2g::pb::TurnBasedClientCommand cc;
 		cc.mutable_sell_action()->set_card(_selected_card);
 		cc.mutable_sell_action()->set_industry_location(_selected_location);
 		cc.mutable_sell_action()->set_merchant_location(_merchant_location);
@@ -264,7 +264,7 @@ Industry SellJourney::selected_industry() const {
 	return ToIndustryOfFactoryCharacter(FindFactoryAtLocation(_selected_location)->GetCharacter());
 }
 
-m2::void_expected CanPlayerSell(m2::Character& player, const m2g::pb::ClientCommand_SellAction& sell_action) {
+m2::void_expected CanPlayerSell(m2::Character& player, const m2g::pb::TurnBasedClientCommand_SellAction& sell_action) {
 	auto prerequisite = CanPlayerAttemptToSell(player);
 	m2ReflectUnexpected(prerequisite);
 
@@ -328,7 +328,7 @@ m2::void_expected CanPlayerSell(m2::Character& player, const m2g::pb::ClientComm
 	return {};
 }
 
-Card ExecuteSellAction(m2::Character& player, const m2g::pb::ClientCommand_SellAction& sell_action) {
+Card ExecuteSellAction(m2::Character& player, const m2g::pb::TurnBasedClientCommand_SellAction& sell_action) {
 	// Assume validation is done
 
 	// Take resources

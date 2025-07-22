@@ -12,7 +12,7 @@ void ExecutePassJourney() {
 		if (ask_for_confirmation("Pass turn using " + card_name + " card?", "", "OK", "Cancel")) {
 			LOG_INFO("Pass action confirmed");
 
-			m2g::pb::ClientCommand cc;
+			m2g::pb::TurnBasedClientCommand cc;
 			cc.mutable_pass_action()->set_card(*selected_card);
 			M2G_PROXY.SendClientCommandAndWaitForServerUpdate(cc);
 

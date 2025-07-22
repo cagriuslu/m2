@@ -415,7 +415,7 @@ std::optional<BuildJourneyStep> BuildJourney::HandleConfirmationEnterSignal() {
 	if (ask_for_confirmation("Build " + industry_name + " in " + city_name, "using " + card_name + " card?", "OK", "Cancel")) {
 		LOG_INFO("Build action confirmed");
 
-		m2g::pb::ClientCommand cc;
+		m2g::pb::TurnBasedClientCommand cc;
 		cc.mutable_build_action()->set_card(_selected_card);
 		cc.mutable_build_action()->set_industry_location(_selected_location);
 		cc.mutable_build_action()->set_industry_tile(_industry_tile);
@@ -442,7 +442,7 @@ decltype(BuildJourney::_resource_sources)::iterator BuildJourney::GetNextUnspeci
 	});
 }
 
-m2::void_expected CanPlayerBuild(m2::Character& player, const m2g::pb::ClientCommand_BuildAction& build_action) {
+m2::void_expected CanPlayerBuild(m2::Character& player, const m2g::pb::TurnBasedClientCommand_BuildAction& build_action) {
 	// Check if prerequisites are met
 	if (auto prerequisite = CanPlayerAttemptToBuild(player); not prerequisite) {
 		return make_unexpected(prerequisite.error());
@@ -617,7 +617,7 @@ return_resources:
 	return {};
 }
 
-std::pair<Card,int> ExecuteBuildAction(m2::Character& player, const m2g::pb::ClientCommand_BuildAction& build_action) {
+std::pair<Card,int> ExecuteBuildAction(m2::Character& player, const m2g::pb::TurnBasedClientCommand_BuildAction& build_action) {
 	// Assume validation is done
 
 	// Take tile from player

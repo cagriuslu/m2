@@ -116,14 +116,14 @@ bool m2::network::TurnBasedClientManager::has_incoming_data(bool is_socket_reada
 		return not incoming_queue().empty();
 	}
 }
-const m2::pb::NetworkMessage* m2::network::TurnBasedClientManager::peek_incoming_message() {
+const m2::pb::TurnBasedNetworkMessage* m2::network::TurnBasedClientManager::peek_incoming_message() {
 	if (auto* incoming_queue = get_incoming_queue(); not incoming_queue || incoming_queue->empty()) {
 		return nullptr;
 	} else {
 		return &incoming_queue->front();
 	}
 }
-std::optional<m2::pb::NetworkMessage> m2::network::TurnBasedClientManager::pop_incoming_message() {
+std::optional<m2::pb::TurnBasedNetworkMessage> m2::network::TurnBasedClientManager::pop_incoming_message() {
 	auto* incoming_queue = get_incoming_queue();
 	if (not incoming_queue || incoming_queue->empty()) {
 		return std::nullopt;
@@ -142,7 +142,7 @@ bool m2::network::TurnBasedClientManager::has_outgoing_data() {
 m2::SequenceNo m2::network::TurnBasedClientManager::ReturnAndIncrementServerCommandSequenceNo() {
 	return _nextServerCommandSequenceNo++;
 }
-void m2::network::TurnBasedClientManager::queue_outgoing_message(m2::pb::NetworkMessage msg) {
+void m2::network::TurnBasedClientManager::queue_outgoing_message(m2::pb::TurnBasedNetworkMessage msg) {
 	outgoing_queue().emplace(std::move(msg));
 }
 void m2::network::TurnBasedClientManager::send_outgoing_data() {
@@ -173,25 +173,25 @@ m2::network::TcpSocketManager& m2::network::TurnBasedClientManager::socket_manag
 		[](auto&) -> m2::network::TcpSocketManager& { throw M2_ERROR("Socket unavailable, client is not connected"); },
 	}, _state);
 }
-std::queue<m2::pb::NetworkMessage>* m2::network::TurnBasedClientManager::get_incoming_queue() {
+std::queue<m2::pb::TurnBasedNetworkMessage>* m2::network::TurnBasedClientManager::get_incoming_queue() {
 	return std::visit(m2::overloaded{
-		[](Connected& s) -> std::queue<m2::pb::NetworkMessage>* { return &s.incoming_queue; },
-		[](Ready& s) -> std::queue<m2::pb::NetworkMessage>* { return &s.incoming_queue; },
-		[](ReconnectedUntrusted& s) -> std::queue<m2::pb::NetworkMessage>* { return &s.incoming_queue; },
-		[](auto&) -> std::queue<m2::pb::NetworkMessage>* { return nullptr; },
+		[](Connected& s) -> std::queue<m2::pb::TurnBasedNetworkMessage>* { return &s.incoming_queue; },
+		[](Ready& s) -> std::queue<m2::pb::TurnBasedNetworkMessage>* { return &s.incoming_queue; },
+		[](ReconnectedUntrusted& s) -> std::queue<m2::pb::TurnBasedNetworkMessage>* { return &s.incoming_queue; },
+		[](auto&) -> std::queue<m2::pb::TurnBasedNetworkMessage>* { return nullptr; },
 	}, _state);
 }
-std::queue<m2::pb::NetworkMessage>& m2::network::TurnBasedClientManager::incoming_queue() {
+std::queue<m2::pb::TurnBasedNetworkMessage>& m2::network::TurnBasedClientManager::incoming_queue() {
 	return std::visit(m2::overloaded{
-		[](Connected& s) -> std::queue<m2::pb::NetworkMessage>& { return s.incoming_queue; },
-		[](Ready& s) -> std::queue<m2::pb::NetworkMessage>& { return s.incoming_queue; },
-		[](ReconnectedUntrusted& s) -> std::queue<m2::pb::NetworkMessage>& { return s.incoming_queue; },
-		[](auto&) -> std::queue<m2::pb::NetworkMessage>& { throw M2_ERROR("Incoming queue unavailable, client is not connected"); },
+		[](Connected& s) -> std::queue<m2::pb::TurnBasedNetworkMessage>& { return s.incoming_queue; },
+		[](Ready& s) -> std::queue<m2::pb::TurnBasedNetworkMessage>& { return s.incoming_queue; },
+		[](ReconnectedUntrusted& s) -> std::queue<m2::pb::TurnBasedNetworkMessage>& { return s.incoming_queue; },
+		[](auto&) -> std::queue<m2::pb::TurnBasedNetworkMessage>& { throw M2_ERROR("Incoming queue unavailable, client is not connected"); },
 	}, _state);
 }
-std::queue<m2::pb::NetworkMessage>& m2::network::TurnBasedClientManager::outgoing_queue() {
+std::queue<m2::pb::TurnBasedNetworkMessage>& m2::network::TurnBasedClientManager::outgoing_queue() {
 	return std::visit(m2::overloaded{
-		[](Ready& s) -> std::queue<m2::pb::NetworkMessage>& { return s.outgoing_queue; },
-		[](auto&) -> std::queue<m2::pb::NetworkMessage>& { throw M2_ERROR("Outgoing queue unavailable, client is not ready"); },
+		[](Ready& s) -> std::queue<m2::pb::TurnBasedNetworkMessage>& { return s.outgoing_queue; },
+		[](auto&) -> std::queue<m2::pb::TurnBasedNetworkMessage>& { throw M2_ERROR("Outgoing queue unavailable, client is not ready"); },
 	}, _state);
 }

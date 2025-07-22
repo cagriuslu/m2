@@ -29,11 +29,11 @@ namespace m2g {
 
 		void post_multi_player_level_client_init(const std::string& name, const m2::pb::Level& level);
 		void multi_player_level_server_populate(const std::string& name, const m2::pb::Level& level);
-		std::optional<int> handle_client_command(int turn_holder_index, const pb::ClientCommand& client_command);
-		void handle_server_command(const pb::ServerCommand& server_command);
+		std::optional<int> handle_client_command(int turn_holder_index, const pb::TurnBasedClientCommand& client_command);
+		void handle_server_command(const pb::TurnBasedServerCommand& server_command);
 		void post_server_update(m2::SequenceNo, bool shutdown);
-		void bot_handle_server_update(const m2::pb::ServerUpdate& server_update);
-		void bot_handle_server_command(const m2g::pb::ServerCommand& server_command, int receiver_index);
+		void bot_handle_server_update(const m2::pb::TurnBasedServerUpdate& server_update);
+		void bot_handle_server_command(const m2g::pb::TurnBasedServerCommand& server_command, int receiver_index);
 		void post_tile_create(m2::Object& obj, pb::SpriteType sprite_type);
 		m2::void_expected LoadForegroundObjectFromLevelBlueprint(m2::Object& obj);
 		m2::void_expected init_server_update_fg_object(m2::Object&, const std::vector<m2g::pb::ItemType>&, const std::vector<m2::pb::Resource>&);
@@ -84,7 +84,7 @@ namespace m2g {
 
 		void enable_action_buttons();
 		void disable_action_buttons();
-		void SendClientCommandAndWaitForServerUpdate(const pb::ClientCommand& cc);
+		void SendClientCommandAndWaitForServerUpdate(const pb::TurnBasedClientCommand& cc);
 
 		// Server only fields
 
@@ -101,7 +101,7 @@ namespace m2g {
 		/// List of players that have already taken one or both of their actions. Front of the list is the player that went the first.
 		std::list<std::pair<PlayerIndex, SpentMoney>> _played_players;
 
-		using LiquidationDetails = std::optional<std::pair<PlayerIndex, pb::ServerCommand>>;
+		using LiquidationDetails = std::optional<std::pair<PlayerIndex, pb::TurnBasedServerCommand>>;
 		/// If non-null, the index of the player that should liquidate their assets is returned.
 		LiquidationDetails prepare_next_round();
 		LiquidationDetails prepare_railroad_era();

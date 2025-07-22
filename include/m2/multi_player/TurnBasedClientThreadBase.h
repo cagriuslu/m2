@@ -23,9 +23,9 @@ namespace m2::network::detail {
 		std::latch _latch{1};
 		std::mutex _mutex;
 		pb::ClientThreadState _state{pb::ClientThreadState::CLIENT_INITIAL_STATE};
-		std::queue<pb::NetworkMessage> _outgoing_queue, _incoming_queue;
-		std::optional<std::pair<SequenceNo,pb::ServerUpdate>> _received_server_update;
-		std::optional<std::pair<SequenceNo,m2g::pb::ServerCommand>> _received_server_command;
+		std::queue<pb::TurnBasedNetworkMessage> _outgoing_queue, _incoming_queue;
+		std::optional<std::pair<SequenceNo,pb::TurnBasedServerUpdate>> _received_server_update;
+		std::optional<std::pair<SequenceNo,m2g::pb::TurnBasedServerCommand>> _received_server_command;
 
 		// Inner thread variables
 		SequenceNo _expectedServerUpdateSequenceNo{}, _expectedServerCommandSequenceNo{};
@@ -52,17 +52,17 @@ namespace m2::network::detail {
 
 		pb::ClientThreadState locked_get_client_state();
 		bool locked_has_server_update();
-		const pb::ServerUpdate* locked_peek_server_update();
-		std::optional<std::pair<SequenceNo,pb::ServerUpdate>> locked_pop_server_update();
+		const pb::TurnBasedServerUpdate* locked_peek_server_update();
+		std::optional<std::pair<SequenceNo,pb::TurnBasedServerUpdate>> locked_pop_server_update();
 		bool locked_has_server_command();
-		std::optional<std::pair<SequenceNo,m2g::pb::ServerCommand>> locked_pop_server_command();
+		std::optional<std::pair<SequenceNo,m2g::pb::TurnBasedServerCommand>> locked_pop_server_command();
 
 		// Modifiers
 
 		void locked_set_ready(bool state);
 		/// Only for TurnBasedHostClientThread and TurnBasedBotClientThread
 		void locked_start_if_ready();
-		void locked_queue_client_command(const m2g::pb::ClientCommand& cmd);
+		void locked_queue_client_command(const m2g::pb::TurnBasedClientCommand& cmd);
 		void locked_shutdown();
 
 	private:

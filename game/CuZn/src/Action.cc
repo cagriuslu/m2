@@ -11,7 +11,7 @@
 #include <m2/Log.h>
 #include <m2/Game.h>
 
-m2::void_expected HandleActionWhileLiquidating(m2::Character& turnHolderCharacter, const m2g::pb::ClientCommand& clientCommand) {
+m2::void_expected HandleActionWhileLiquidating(m2::Character& turnHolderCharacter, const m2g::pb::TurnBasedClientCommand& clientCommand) {
 	if (not clientCommand.has_liquidate_action()) {
 		return m2::make_unexpected("Received unexpected command during liquidation");
 	}
@@ -28,7 +28,7 @@ m2::void_expected HandleActionWhileLiquidating(m2::Character& turnHolderCharacte
 	}
 }
 
-m2::expected<int> HandleActionWhileNotLiquidating(m2::Character& turnHolderCharacter, const m2g::pb::ClientCommand& clientCommand, m2g::pb::ServerCommand::ActionNotification& actionNotification) {
+m2::expected<int> HandleActionWhileNotLiquidating(m2::Character& turnHolderCharacter, const m2g::pb::TurnBasedClientCommand& clientCommand, m2g::pb::TurnBasedServerCommand::ActionNotification& actionNotification) {
 	if (clientCommand.has_liquidate_action()) {
 		return m2::make_unexpected("Received unexpected liquidation command");
 	}

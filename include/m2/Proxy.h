@@ -93,7 +93,7 @@ namespace m2 {
 		void post_multi_player_level_client_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
 
 		/// After the levels are initialized (identically), host can populate the random parts of the level, after which
-		/// second ServerUpdate will be published.
+		/// second TurnBasedServerUpdate will be published.
 		void multi_player_level_server_populate(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
 
 		/// Maps 0-based client indexes to the IDs of the objects that represent a client in this game instance.
@@ -105,21 +105,21 @@ namespace m2 {
 		std::vector<m2::ObjectId> multiPlayerObjectIds;
 
 		/// Should be implemented from the perspective of a server. Implementation should return the new turn holder
-		/// index if the command is accepted and a ServerUpdate is necessary. Implementation should return std::nullopt
-		/// if the command should be ignored and no ServerUpdate is necessary. Implementation should return -1 if the
-		/// game ended (one final ServerUpdate is sent in this case).
-		std::optional<int> handle_client_command(MAYBE int turn_holder_index, MAYBE const m2g::pb::ClientCommand& client_command) { return std::nullopt; }
+		/// index if the command is accepted and a TurnBasedServerUpdate is necessary. Implementation should return std::nullopt
+		/// if the command should be ignored and no TurnBasedServerUpdate is necessary. Implementation should return -1 if the
+		/// game ended (one final TurnBasedServerUpdate is sent in this case).
+		std::optional<int> handle_client_command(MAYBE int turn_holder_index, MAYBE const m2g::pb::TurnBasedClientCommand& client_command) { return std::nullopt; }
 		/// Should be implemented from the perspective of a client.
-		void handle_server_command(MAYBE const m2g::pb::ServerCommand& server_command) {}
+		void handle_server_command(MAYBE const m2g::pb::TurnBasedServerCommand& server_command) {}
 		/// Should be implemented from the perspective of a client. For the server, this function is called after the
-		/// ServerUpdate is published (except the initial ServerUpdate). For the client, it's called after the
-		/// ServerUpdate is received & processed by the engine. If shutdown is true, the shutdown flag is set in the
-		/// ServerUpdate and the server or the client will be shutdown after this call.
+		/// TurnBasedServerUpdate is published (except the initial TurnBasedServerUpdate). For the client, it's called after the
+		/// TurnBasedServerUpdate is received & processed by the engine. If shutdown is true, the shutdown flag is set in the
+		/// TurnBasedServerUpdate and the server or the client will be shutdown after this call.
 		void post_server_update(MAYBE SequenceNo sequenceNo, MAYBE bool shutdown) {}
 		/// Should be implemented from the perspective of a bot.
-		void bot_handle_server_update(MAYBE const m2::pb::ServerUpdate& server_update) {}
+		void bot_handle_server_update(MAYBE const m2::pb::TurnBasedServerUpdate& server_update) {}
 		/// Should be implemented from the perspective of a bot.
-		void bot_handle_server_command(MAYBE const m2g::pb::ServerCommand& server_command, MAYBE int receiver_index) {}
+		void bot_handle_server_command(MAYBE const m2g::pb::TurnBasedServerCommand& server_command, MAYBE int receiver_index) {}
 		/// Should be implemented from the perspective of a real client. The client has disconnected from the server and
 		/// 30 seconds has passed while trying to reconnect. Implementation should display the appropriate message and
 		/// return. Once returned, current level will be destroyed and main menu will be triggerred.
@@ -146,7 +146,7 @@ namespace m2 {
 
 		/// Load foreground object from a level blueprint
 		m2::void_expected LoadForegroundObjectFromLevelBlueprint(MAYBE m2::Object& obj) { throw M2_ERROR("Proxy is missing an object loader"); }
-		/// Load foreground object from a ServerUpdate. The item and resources should NOT be added to the character,
+		/// Load foreground object from a TurnBasedServerUpdate. The item and resources should NOT be added to the character,
 		/// because those will be added automatically after the initialization.
 		m2::void_expected init_server_update_fg_object(MAYBE m2::Object& obj, MAYBE const std::vector<m2g::pb::ItemType>& named_item_types, MAYBE const std::vector<m2::pb::Resource>& resources) { return {}; }
 

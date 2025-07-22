@@ -1,9 +1,9 @@
-#include <m2/multi_player/ServerUpdate.h>
+#include <m2/multi_player/TurnBasedServerUpdate.h>
 #include <m2/Game.h>
 
-m2::pb::NetworkMessage m2::GenerateServerUpdate(int32_t& nextSequenceNo, const int turnHolderIndex, const bool shutdown) {
-	// Prepare the ServerUpdate except the receiver_index field
-	pb::NetworkMessage message;
+m2::pb::TurnBasedNetworkMessage m2::GenerateServerUpdate(int32_t& nextSequenceNo, const int turnHolderIndex, const bool shutdown) {
+	// Prepare the TurnBasedServerUpdate except the receiver_index field
+	pb::TurnBasedNetworkMessage message;
 	message.set_game_hash(M2_GAME.Hash());
 	message.set_sequence_no(nextSequenceNo++);
 	message.mutable_server_update()->set_turn_holder_index(turnHolderIndex);
@@ -26,7 +26,7 @@ m2::pb::NetworkMessage m2::GenerateServerUpdate(int32_t& nextSequenceNo, const i
 					const auto* item_ptr = item_it.Get();
 					const auto* named_item_ptr = dynamic_cast<const NamedItem*>(item_ptr);
 					if (!named_item_ptr) {
-						throw M2_ERROR("ServerUpdate does not support unnamed items");
+						throw M2_ERROR("TurnBasedServerUpdate does not support unnamed items");
 					}
 					object_descriptor->add_named_items(named_item_ptr->Type());
 				}

@@ -3,23 +3,23 @@
 
 namespace m2::network {
 	enum class ServerUpdateStatus {
-		// There was no ServerUpdate
+		// There was no TurnBasedServerUpdate
 		NOT_FOUND = 0,
-		// ServerUpdate is processed successfully
+		// TurnBasedServerUpdate is processed successfully
 		PROCESSED = 1,
-		// ServerUpdate is processed but it was containing the shutdown flag
+		// TurnBasedServerUpdate is processed but it was containing the shutdown flag
 		PROCESSED_SHUTDOWN = 2
 	};
 
 	class TurnBasedRealClientThread final : private detail::TurnBasedClientThreadBase {
-		/// When a ServerUpdate is received from the server, it's placed in TurnBasedClientThreadBase::_received_server_update.
+		/// When a TurnBasedServerUpdate is received from the server, it's placed in TurnBasedClientThreadBase::_received_server_update.
 		/// peek_unprocessed_server_update() can be used to take a peek at it.
-		/// When process_server_update() is called, ServerUpdate is shifted as follows:
+		/// When process_server_update() is called, TurnBasedServerUpdate is shifted as follows:
 		/// _prev_processed_server_update << _last_processed_server_update << TurnBasedClientThreadBase::_received_server_update
-		std::optional<std::pair<SequenceNo,pb::ServerUpdate>> _prev_processed_server_update, _last_processed_server_update;
+		std::optional<std::pair<SequenceNo,pb::TurnBasedServerUpdate>> _prev_processed_server_update, _last_processed_server_update;
 
 		/// Mapping of server object IDs to local object IDs. The boolean represents if the object has been visited during
-		/// the processing of ServerUpdate or not. If an object is not visited, it must have been deleted on the server side.
+		/// the processing of TurnBasedServerUpdate or not. If an object is not visited, it must have been deleted on the server side.
 		std::unordered_map<ObjectId,std::pair<ObjectId,bool>> _server_to_local_map;
 
 	public:
@@ -54,8 +54,8 @@ namespace m2::network {
 
 		/// Query the total number of players in the game.
 		int total_player_count();
-		/// Try to pop the ServerCommand.
-		std::optional<m2g::pb::ServerCommand> pop_server_command();
+		/// Try to pop the TurnBasedServerCommand.
+		std::optional<m2g::pb::TurnBasedServerCommand> pop_server_command();
 		/// Query the index of this game instance in server's client list.
 		int self_index();
 		/// Query the index of the current turn holder.
@@ -67,11 +67,11 @@ namespace m2::network {
 
 		/// Signal readiness to server.
 		inline void set_ready(bool state) { locked_set_ready(state); }
-		/// Queue a ClientCommand to be sent to the server.
-		inline void queue_client_command(const m2g::pb::ClientCommand& c) { locked_queue_client_command(c); }
-		/// Returns PROCESSED if there was a ServerUpdate, and it was processed. Returns PROCESSED_SHUTDOWN if there was
-		/// a ServerUpdate, and it was processed, but it also contained the shutdown flag. In both these conditions, the
-		/// SequenceNo belonging to the ServerUpdate is also returned. Returns NOT_FOUND if there wasn't a ServerUpdate.
+		/// Queue a TurnBasedClientCommand to be sent to the server.
+		inline void queue_client_command(const m2g::pb::TurnBasedClientCommand& c) { locked_queue_client_command(c); }
+		/// Returns PROCESSED if there was a TurnBasedServerUpdate, and it was processed. Returns PROCESSED_SHUTDOWN if there was
+		/// a TurnBasedServerUpdate, and it was processed, but it also contained the shutdown flag. In both these conditions, the
+		/// SequenceNo belonging to the TurnBasedServerUpdate is also returned. Returns NOT_FOUND if there wasn't a TurnBasedServerUpdate.
 		/// Returns unexpected if an error occurs while processing.
 		expected<std::pair<ServerUpdateStatus,SequenceNo>> process_server_update();
 		/// Shutdown the client. This should be called only if the last ServerUpdateStatus indicated shutdown.

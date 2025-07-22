@@ -133,7 +133,7 @@ void m2g::Proxy::multi_player_level_server_populate(MAYBE const std::string& nam
 	}
 }
 
-std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYBE const m2g::pb::ClientCommand& client_command) {
+std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYBE const m2g::pb::TurnBasedClientCommand& client_command) {
 	LOG_INFO("Received command from client", turn_holder_index);
 	auto turn_holder_object_id = M2G_PROXY.multiPlayerObjectIds[turn_holder_index];
 	auto& turn_holder_character = M2_LEVEL.objects[turn_holder_object_id].GetCharacter();
@@ -141,7 +141,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 	if (_is_liquidating) {
 		if (auto liquidationSuccessful = HandleActionWhileLiquidating(turn_holder_character, client_command); not liquidationSuccessful) {
 			LOG_INFO("Failed to handle action while liquidating", liquidationSuccessful.error());
-			pb::ServerCommand sc;
+			pb::TurnBasedServerCommand sc;
 			sc.set_action_failure(liquidationSuccessful.error());
 			M2_GAME.ServerThread().SendServerCommand(sc, turn_holder_index);
 			return std::nullopt;
@@ -149,13 +149,13 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		_is_liquidating = false; // No longer liquidating
 	} else {
 		// Prepare action notification
-		pb::ServerCommand actionNotificationCommand;
-		pb::ServerCommand::ActionNotification* actionNotification = actionNotificationCommand.mutable_action_notification();
+		pb::TurnBasedServerCommand actionNotificationCommand;
+		pb::TurnBasedServerCommand::ActionNotification* actionNotification = actionNotificationCommand.mutable_action_notification();
 		actionNotification->set_player_index(turn_holder_index);
 		auto moneySpentIfSuccessful = HandleActionWhileNotLiquidating(turn_holder_character, client_command, *actionNotification);
 		if (not moneySpentIfSuccessful) {
 			LOG_INFO("Failed to handle action", moneySpentIfSuccessful.error());
-			pb::ServerCommand sc;
+			pb::TurnBasedServerCommand sc;
 			sc.set_action_failure(moneySpentIfSuccessful.error());
 			M2_GAME.ServerThread().SendServerCommand(sc, turn_holder_index);
 			return std::nullopt;
@@ -292,7 +292,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 	return next_turn_holder;
 }
 
-void m2g::Proxy::handle_server_command(const pb::ServerCommand& server_command) {
+void m2g::Proxy::handle_server_command(const pb::TurnBasedServerCommand& server_command) {
 	if (server_command.has_action_failure()) {
 		// If we have received this command, we must be showing the "WaitingForServerUpdate" screen, waiting for a response from the server
 		if (const auto* semiBlockingUiPanel = M2_LEVEL.SemiBlockingUiPanel(); semiBlockingUiPanel && semiBlockingUiPanel->Name() == "WaitingForServerUpdate") {
@@ -351,7 +351,7 @@ void m2g::Proxy::post_server_update(m2::SequenceNo, const bool shutdown) {
 	if (const auto* semiBlockingUiPanel = M2_LEVEL.SemiBlockingUiPanel(); semiBlockingUiPanel && semiBlockingUiPanel->Name() == "WaitingForServerUpdate") {
 		M2_LEVEL.DismissSemiBlockingUiPanel();
 	} else {
-		// Don't remove other type of screen. ServerUpdate is received when others take an action too
+		// Don't remove other type of screen. TurnBasedServerUpdate is received when others take an action too
 	}
 
 	// Delete the custom hud
@@ -388,12 +388,12 @@ void m2g::Proxy::post_server_update(m2::SequenceNo, const bool shutdown) {
 	}
 }
 
-void m2g::Proxy::bot_handle_server_update(const m2::pb::ServerUpdate& server_update) {
+void m2g::Proxy::bot_handle_server_update(const m2::pb::TurnBasedServerUpdate& server_update) {
 	auto receiver_index = server_update.receiver_index();
 	// If it's bot's turn, pass turn
 	if (receiver_index == server_update.turn_holder_index()) {
 		auto player_object_id = server_update.player_object_ids(receiver_index);
-		auto object_it = std::find_if(server_update.objects_with_character().begin(), server_update.objects_with_character().end(), [player_object_id](const m2::pb::ServerUpdate_ObjectDescriptor& obj_desc) {
+		auto object_it = std::find_if(server_update.objects_with_character().begin(), server_update.objects_with_character().end(), [player_object_id](const m2::pb::TurnBasedServerUpdate_ObjectDescriptor& obj_desc) {
 			return obj_desc.object_id() == player_object_id;
 		});
 		// Find any card
@@ -402,13 +402,13 @@ void m2g::Proxy::bot_handle_server_update(const m2::pb::ServerUpdate& server_upd
 		});
 		// Pass turn
 		LOG_INFO("Bot passing turn");
-		m2g::pb::ClientCommand cc;
+		m2g::pb::TurnBasedClientCommand cc;
 		cc.mutable_pass_action()->set_card(static_cast<m2g::pb::ItemType>(*card_it));
 		M2_GAME.FindBot(receiver_index).queue_client_command(cc);
 	}
 }
 
-void m2g::Proxy::bot_handle_server_command(MAYBE const m2g::pb::ServerCommand& server_command, MAYBE int receiver_index) {
+void m2g::Proxy::bot_handle_server_command(MAYBE const m2g::pb::TurnBasedServerCommand& server_command, MAYBE int receiver_index) {
 	INFO_FN();
 }
 
@@ -583,7 +583,7 @@ void m2g::Proxy::disable_action_buttons() {
 		button->enabled = false;
 	}
 }
-void m2g::Proxy::SendClientCommandAndWaitForServerUpdate(const pb::ClientCommand& cc) {
+void m2g::Proxy::SendClientCommandAndWaitForServerUpdate(const pb::TurnBasedClientCommand& cc) {
 	auto blueprint = m2::UiPanelBlueprint{
 			.name = "WaitingForServerUpdate",
 			.w = 1, .h = 1,
@@ -604,14 +604,14 @@ void m2g::Proxy::SendClientCommandAndWaitForServerUpdate(const pb::ClientCommand
 	M2_LEVEL.ShowSemiBlockingUiPanel(m2::RectF{0.3f, 0.3f, 0.4f, 0.4f}, std::make_unique<m2::UiPanelBlueprint>(blueprint));
 }
 
-std::optional<std::pair<m2g::Proxy::PlayerIndex, m2g::pb::ServerCommand>> m2g::Proxy::prepare_next_round() {
+std::optional<std::pair<m2g::Proxy::PlayerIndex, m2g::pb::TurnBasedServerCommand>> m2g::Proxy::prepare_next_round() {
 	LOG_INFO("Preparing next round");
 
 	// First, before preparing the next round, check if liquidation is necessary.
 	if (auto liquidation = IsLiquidationNecessary()) {
 		LOG_INFO("Liquidation is necessary");
-		// Prepare the ServerCommand and return
-		pb::ServerCommand sc;
+		// Prepare the TurnBasedServerCommand and return
+		pb::TurnBasedServerCommand sc;
 		sc.set_liquidate_assets_for_loan(liquidation->second);
 		return std::make_pair(liquidation->first, sc);
 	}
@@ -671,7 +671,7 @@ m2g::Proxy::LiquidationDetails m2g::Proxy::prepare_railroad_era() {
 	score_sold_factories_and_remove_obsolete();
 
 	// Send canal era results
-	pb::ServerCommand canal_era_result_command;
+	pb::TurnBasedServerCommand canal_era_result_command;
 	std::ranges::for_each(M2G_PROXY.multiPlayerObjectIds
 		| std::views::transform(m2::to_object_of_id)
 		| std::views::transform(m2::to_character_of_object),

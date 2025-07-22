@@ -5,7 +5,7 @@
 #include <string>
 #include <m2/sdl/Detail.h>
 
-m2::expected<m2::network::TcpSocketManager::ReadResult> m2::network::TcpSocketManager::read_incoming_data(std::queue<pb::NetworkMessage>& read_to) {
+m2::expected<m2::network::TcpSocketManager::ReadResult> m2::network::TcpSocketManager::read_incoming_data(std::queue<pb::TurnBasedNetworkMessage>& read_to) {
 	if (_incoming_buffer.size() <= _incoming_buffer_next_available_position) {
 		return TcpSocketManager::ReadResult::BUFFER_OVERFLOW;
 	}
@@ -47,7 +47,7 @@ m2::expected<m2::network::TcpSocketManager::ReadResult> m2::network::TcpSocketMa
 		// Found a message that starts at `next_possible_message_position` and is `strlen` length long
 		std::string possible_message{_incoming_buffer.data() + next_possible_message_position, strlen};
 		// Parse as protobuf
-		auto message = pb::json_string_to_message<pb::NetworkMessage>(possible_message);
+		auto message = pb::json_string_to_message<pb::TurnBasedNetworkMessage>(possible_message);
 		if (not message) {
 			LOG_ERROR("Invalid message received from peer", _index, message.error());
 			return TcpSocketManager::ReadResult::INVALID_MESSAGE;
@@ -74,7 +74,7 @@ m2::expected<m2::network::TcpSocketManager::ReadResult> m2::network::TcpSocketMa
 	return read_to.empty() ? TcpSocketManager::ReadResult::INCOMPLETE_MESSAGE_RECEIVED : TcpSocketManager::ReadResult::MESSAGE_RECEIVED;
 }
 
-m2::expected<m2::network::TcpSocketManager::SendResult> m2::network::TcpSocketManager::send_outgoing_data(std::queue<pb::NetworkMessage>& read_from) {
+m2::expected<m2::network::TcpSocketManager::SendResult> m2::network::TcpSocketManager::send_outgoing_data(std::queue<pb::TurnBasedNetworkMessage>& read_from) {
 	// We don't want to block the server thread indefinitely. So either send what's inside _outgoing_buffer, or try to
 	// send one message from the _outgoing_queue.
 
@@ -117,7 +117,7 @@ m2::expected<m2::network::TcpSocketManager::SendResult> m2::network::TcpSocketMa
 	return SendResult::OK;
 }
 
-void m2::network::TcpSocketManager::flush(std::queue<pb::NetworkMessage>& read_from, int timeout_ms) {
+void m2::network::TcpSocketManager::flush(std::queue<pb::TurnBasedNetworkMessage>& read_from, int timeout_ms) {
 	auto has_anything_to_send = [&](){
 		return (has_outgoing_data() || not read_from.empty());
 	};

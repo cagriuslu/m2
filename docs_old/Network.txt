@@ -19,11 +19,11 @@ level. During the initialization, Proxy::pre_multi_player_level_client_init and 
 be called. The execution of these functions should not differ in the server and the client. Then, ServerThread::send_server_update
 will be called automatically, which will publish the initial state of the game to the clients.
 - If ClientThread::is_started returns true on the client side, the game may call ClientThread::peek_unprocessed_server_update
-to have a peek at the ServerUpdate. At this point, the most important information in the ServerUpdate is the number of players.
+to have a peek at the TurnBasedServerUpdate. At this point, the most important information in the TurnBasedServerUpdate is the number of players.
 - The client game should call Game::load_multi_player_as_guest to start the game with the same parameters as the server.
 This function first initializes the given level. During the initialization, Proxy::pre_multi_player_level_client_init and
 Proxy::post_multi_player_level_client_init functions will be called. The execution of these functions should not differ in the
-server and the client. Then, ClientThread::process_server_update will be called automatically to consume the first ServerUpdate.
+server and the client. Then, ClientThread::process_server_update will be called automatically to consume the first TurnBasedServerUpdate.
 This initial call will only validate the client game state against the server game state. The client game should return
 to the game loop after Game::load_multi_player_as_guest returns.
 - On the server side, Game::load_multi_player_as_host function will then call Proxy::multi_player_level_server_populate for
@@ -34,7 +34,7 @@ The server game should return to the game loop after Game::load_multi_player_as_
 Any command produced by the clients other than the turn holder will be dropped by the server.
 - The server game loop will periodically check for ClientCommands during pre-step, and will call Proxy::handle_client_command
 for them to be processed. If Proxy::handle_client_command returns a value, a server update will be sent during post-step.
-- The client game loop will periodically check for ServerUpdate during post-step, and will process it if it's received.
+- The client game loop will periodically check for TurnBasedServerUpdate during post-step, and will process it if it's received.
 
 Both on the server and the client side, after the level is initialized (usually in Proxy::post_multi_player_level_client_init),
 Proxy.multiPlayerObjectIds should contain the IDs of the objects that'll correspond to human players. The order of the

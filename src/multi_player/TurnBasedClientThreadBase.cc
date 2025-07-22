@@ -29,14 +29,14 @@ bool m2::network::detail::TurnBasedClientThreadBase::locked_has_server_update() 
 	const std::lock_guard lock(_mutex);
 	return static_cast<bool>(_received_server_update);
 }
-const m2::pb::ServerUpdate* m2::network::detail::TurnBasedClientThreadBase::locked_peek_server_update() {
+const m2::pb::TurnBasedServerUpdate* m2::network::detail::TurnBasedClientThreadBase::locked_peek_server_update() {
 	const std::lock_guard lock(_mutex);
 	if (_received_server_update) {
 		return &_received_server_update->second;
 	}
 	return nullptr;
 }
-std::optional<std::pair<m2::SequenceNo,m2::pb::ServerUpdate>> m2::network::detail::TurnBasedClientThreadBase::locked_pop_server_update() {
+std::optional<std::pair<m2::SequenceNo,m2::pb::TurnBasedServerUpdate>> m2::network::detail::TurnBasedClientThreadBase::locked_pop_server_update() {
 	const std::lock_guard lock(_mutex);
 	if (_received_server_update) {
 		auto tmp = std::move(_received_server_update);
@@ -50,7 +50,7 @@ bool m2::network::detail::TurnBasedClientThreadBase::locked_has_server_command()
 	const std::lock_guard lock(_mutex);
 	return static_cast<bool>(_received_server_command);
 }
-std::optional<std::pair<m2::SequenceNo,m2g::pb::ServerCommand>> m2::network::detail::TurnBasedClientThreadBase::locked_pop_server_command() {
+std::optional<std::pair<m2::SequenceNo,m2g::pb::TurnBasedServerCommand>> m2::network::detail::TurnBasedClientThreadBase::locked_pop_server_command() {
 	const std::lock_guard lock(_mutex);
 	if (_received_server_command) {
 		auto tmp = std::move(_received_server_command);
@@ -77,7 +77,7 @@ void m2::network::detail::TurnBasedClientThreadBase::locked_set_ready(bool ready
 
 	{
 		const std::lock_guard lock(_mutex);
-		pb::NetworkMessage msg;
+		pb::TurnBasedNetworkMessage msg;
 		msg.set_game_hash(M2_GAME.Hash());
 		msg.mutable_client_update()->set_ready_token(ready ? _ready_token : 0);
 		_outgoing_queue.push(std::move(msg));
@@ -101,10 +101,10 @@ void m2::network::detail::TurnBasedClientThreadBase::locked_start_if_ready() {
 		locked_set_state(pb::CLIENT_STARTED);
 	}
 }
-void m2::network::detail::TurnBasedClientThreadBase::locked_queue_client_command(const m2g::pb::ClientCommand& cmd) {
+void m2::network::detail::TurnBasedClientThreadBase::locked_queue_client_command(const m2g::pb::TurnBasedClientCommand& cmd) {
 	INFO_FN();
 
-	pb::NetworkMessage msg;
+	pb::TurnBasedNetworkMessage msg;
 	msg.set_game_hash(M2_GAME.Hash());
 	msg.set_sequence_no(_nextClientCommandSequenceNo++);
 	msg.mutable_client_command()->CopyFrom(cmd);
@@ -241,7 +241,7 @@ void m2::network::detail::TurnBasedClientThreadBase::base_client_thread_func(Tur
 			auto& socket_manager = std::get<TcpSocketManager>(socket_manager_or_ticks_disconnected_at);
 			// Connected, reconnected, ready, or started
 
-			// Wait until the previous ServerUpdate & ServerCommand is processed
+			// Wait until the previous TurnBasedServerUpdate & TurnBasedServerCommand is processed
 			while (locked_has_unprocessed_server_update_or_command(thread_manager)) {
 				LOG_DEBUG("Waiting 250ms until unprocessed server updates or commands to be processed");
 				std::this_thread::sleep_for(std::chrono::milliseconds(250));
@@ -256,7 +256,7 @@ void m2::network::detail::TurnBasedClientThreadBase::base_client_thread_func(Tur
 				thread_manager->_incoming_queue.pop();
 				if (front_message.has_server_update()) {
 					if (thread_manager->_state == pb::CLIENT_CONNECTED || thread_manager->_state == pb::CLIENT_RECONNECTED) {
-						LOG_WARN("ServerUpdate received from server while not ready, closing client");
+						LOG_WARN("TurnBasedServerUpdate received from server while not ready, closing client");
 						thread_manager->unlocked_set_state(pb::CLIENT_MISBEHAVING_SERVER_QUIT);
 						continue;
 					} else if (not thread_manager->_received_server_update) {
@@ -277,13 +277,13 @@ void m2::network::detail::TurnBasedClientThreadBase::base_client_thread_func(Tur
 						}
 						// Check sequence number
 						if (front_message.sequence_no() < thread_manager->_expectedServerUpdateSequenceNo) {
-							LOG_WARN("Ignoring ServerUpdate with an outdated sequence number", front_message.sequence_no());
+							LOG_WARN("Ignoring TurnBasedServerUpdate with an outdated sequence number", front_message.sequence_no());
 						} else if (thread_manager->_expectedServerUpdateSequenceNo < front_message.sequence_no()) {
-							LOG_WARN("ServerUpdate with an unexpected sequence number received, closing client", front_message.sequence_no());
+							LOG_WARN("TurnBasedServerUpdate with an unexpected sequence number received, closing client", front_message.sequence_no());
 							thread_manager->unlocked_set_state(pb::CLIENT_MISBEHAVING_SERVER_QUIT);
 							continue;
 						} else {
-							LOG_INFO("ServerUpdate with sequence number received", front_message.sequence_no());
+							LOG_INFO("TurnBasedServerUpdate with sequence number received", front_message.sequence_no());
 							thread_manager->_expectedServerUpdateSequenceNo++;
 							auto* server_update = front_message.release_server_update();
 							thread_manager->_received_server_update.emplace(std::make_pair(front_message.sequence_no(), std::move(*server_update)));
@@ -292,19 +292,19 @@ void m2::network::detail::TurnBasedClientThreadBase::base_client_thread_func(Tur
 					}
 				} else if (front_message.has_server_command()) {
 					if (thread_manager->_state != pb::CLIENT_STARTED) {
-						LOG_WARN("ServerCommand received from server while not ready, closing client");
+						LOG_WARN("TurnBasedServerCommand received from server while not ready, closing client");
 						thread_manager->unlocked_set_state(pb::CLIENT_MISBEHAVING_SERVER_QUIT);
 						continue;
 					}
 					// Check sequence number
 					if (front_message.sequence_no() < thread_manager->_expectedServerCommandSequenceNo) {
-						LOG_WARN("Ignoring ServerCommand with an outdated sequence number", front_message.sequence_no());
+						LOG_WARN("Ignoring TurnBasedServerCommand with an outdated sequence number", front_message.sequence_no());
 					} else if (thread_manager->_expectedServerCommandSequenceNo < front_message.sequence_no()) {
-						LOG_WARN("ServerCommand with an unexpected sequence number received, closing client", front_message.sequence_no());
+						LOG_WARN("TurnBasedServerCommand with an unexpected sequence number received, closing client", front_message.sequence_no());
 						thread_manager->unlocked_set_state(pb::CLIENT_MISBEHAVING_SERVER_QUIT);
 						continue;
 					} else {
-						LOG_INFO("ServerCommand with sequence number received", front_message.sequence_no());
+						LOG_INFO("TurnBasedServerCommand with sequence number received", front_message.sequence_no());
 						thread_manager->_expectedServerCommandSequenceNo++;
 						auto* server_command = front_message.release_server_command();
 						thread_manager->_received_server_command.emplace(std::make_pair(front_message.sequence_no(), std::move(*server_command)));

@@ -1,12 +1,12 @@
 #include <m2/multi_player/TurnBasedServerActorInterface.h>
 #include <m2/Log.h>
-#include <m2/multi_player/ServerUpdate.h>
+#include <m2/multi_player/TurnBasedServerUpdate.h>
 
 namespace {
 	constexpr auto MAX_MESSAGES_TO_PROCESS_FROM_ACTOR_PER_CALL = 10;
 }
 
-std::optional<m2::pb::NetworkMessage> m2::TurnBasedServerActorInterface::PopCommandFromTurnHolderEvent() {
+std::optional<m2::pb::TurnBasedNetworkMessage> m2::TurnBasedServerActorInterface::PopCommandFromTurnHolderEvent() {
 	ProcessOutbox();
 	if (_clientEvent && std::holds_alternative<TurnBasedServerActorOutput::ClientEvent::CommandFromTurnHolder>(_clientEvent->eventVariant)) {
 		auto tmp = std::move(std::get<TurnBasedServerActorOutput::ClientEvent::CommandFromTurnHolder>(_clientEvent->eventVariant).turnHolderCommand);
@@ -43,7 +43,7 @@ m2::SequenceNo m2::TurnBasedServerActorInterface::SendServerUpdate(const bool sh
 	GetActorInbox().PushMessage(TurnBasedServerActorInput{.variant = TurnBasedServerActorInput::SendServerUpdate{.serverUpdate = std::move(serverUpdate)}});
 	return serverUpdateSequenceNo;
 }
-void m2::TurnBasedServerActorInterface::SendServerCommand(const m2g::pb::ServerCommand& command, const int receiverIndex) {
+void m2::TurnBasedServerActorInterface::SendServerCommand(const m2g::pb::TurnBasedServerCommand& command, const int receiverIndex) {
 	GetActorInbox().PushMessage(TurnBasedServerActorInput{.variant = TurnBasedServerActorInput::SendServerCommand{.receiverIndex = receiverIndex, .serverCommand = command}});
 }
 

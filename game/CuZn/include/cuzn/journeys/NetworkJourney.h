@@ -59,7 +59,7 @@ protected:
 };
 
 // For the server
-m2::void_expected CanPlayerNetwork(m2::Character& player, const m2g::pb::ClientCommand_NetworkAction& network_action);
+m2::void_expected CanPlayerNetwork(m2::Character& player, const m2g::pb::TurnBasedClientCommand_NetworkAction& network_action);
 
 // For the server
-std::pair<Card,int> ExecuteNetworkAction(m2::Character& player, const m2g::pb::ClientCommand_NetworkAction& network_action);
+std::pair<Card,int> ExecuteNetworkAction(m2::Character& player, const m2g::pb::TurnBasedClientCommand_NetworkAction& network_action);

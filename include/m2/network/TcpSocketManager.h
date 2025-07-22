@@ -32,7 +32,7 @@ namespace m2::network {
 		};
 		/// Should be called only if the socket is already readable (ex. select).
 		/// Returns ReadResult if expected, or the system error message if unexpected.
-		m2::expected<ReadResult> read_incoming_data(std::queue<pb::NetworkMessage>& read_to);
+		m2::expected<ReadResult> read_incoming_data(std::queue<pb::TurnBasedNetworkMessage>& read_to);
 
 		[[nodiscard]] bool has_outgoing_data() const { return _outgoing_buffer_bytes_left; }
 
@@ -43,9 +43,9 @@ namespace m2::network {
 		};
 		/// Send outgoing data if exists. Should be called only if the socket is already writeable (ex. select).
 		/// Returns the system error message if unexpected.
-		expected<SendResult> send_outgoing_data(std::queue<pb::NetworkMessage>& read_from);
+		expected<SendResult> send_outgoing_data(std::queue<pb::TurnBasedNetworkMessage>& read_from);
 
 		/// Wait until all outgoing data is sent and ignore if any error occurs.
-		void flush(std::queue<pb::NetworkMessage>& read_from, int timeout_ms);
+		void flush(std::queue<pb::TurnBasedNetworkMessage>& read_from, int timeout_ms);
 	};
 }

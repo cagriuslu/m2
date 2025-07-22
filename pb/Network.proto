@@ -27,7 +27,7 @@ enum ClientThreadState {
   CLIENT_CONNECTED = 1;
   // Signifies that the ClientThread is ready to begin the game.
   CLIENT_READY = 2;
-  // Signifies that the initial ServerUpdate is received, thus the game has begun.
+  // Signifies that the initial TurnBasedServerUpdate is received, thus the game has begun.
   CLIENT_STARTED = 3;
   // Signifies that the client has disconnected from the server, and trying to re-establish the connection.
   CLIENT_RECONNECTING = 4;
@@ -43,7 +43,7 @@ enum ClientThreadState {
   CLIENT_MISBEHAVING_SERVER_QUIT = 9;
 }
 
-message ServerUpdate {
+message TurnBasedServerUpdate {
   // (Hopefully) unique token for each created level. Use by the client to verify that upon reconnection, they connect
   // to the same game instance.
   uint64 level_token = 1;
@@ -71,16 +71,16 @@ message ServerUpdate {
   }
   repeated ObjectDescriptor objects_with_character = 5;
 
-  // If this flag is set, this ServerUpdate is the last one, and the client should shut down the game.
+  // If this flag is set, this TurnBasedServerUpdate is the last one, and the client should shut down the game.
   bool shutdown = 6;
 }
 
-message ClientUpdate {
+message TurnBasedClientUpdate {
   // If non-zero, signifies readiness. If the client reconnects, it needs to show the same token in 3 seconds.
   uint64 ready_token = 1;
 }
 
-message NetworkMessage {
+message TurnBasedNetworkMessage {
   int32 game_hash = 1;
   // Each message type and client maintains an independent sequence number. Since server commands are point to point,
   // different clients might expect a sequence number that's different from other clients. Server updates are global, so
@@ -89,13 +89,13 @@ message NetworkMessage {
   int32 sequence_no = 2;
   oneof type {
     // Sent by the server game code explicitly to trigger an action.
-    m2g.pb.ServerCommand server_command = 3;
+    m2g.pb.TurnBasedServerCommand server_command = 3;
     // Sent by the game engine automatically to transfer the state to clients.
-    m2.pb.ServerUpdate server_update = 4;
+    m2.pb.TurnBasedServerUpdate server_update = 4;
     // Sent by the client game code explicitly to trigger an action. Only the turn holder can send this command. ClientCommands
     // from other player's will be ignored.
-    m2g.pb.ClientCommand client_command = 5;
+    m2g.pb.TurnBasedClientCommand client_command = 5;
     // Sent by the game engine automatically
-    m2.pb.ClientUpdate client_update = 6;
+    m2.pb.TurnBasedClientUpdate client_update = 6;
   }
 }

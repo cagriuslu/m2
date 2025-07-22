@@ -8,7 +8,7 @@
 
 using namespace m2;
 
-void display_canal_era_result(const m2g::pb::ServerCommand::CanalEraResult& canal_era_result) {
+void display_canal_era_result(const m2g::pb::TurnBasedServerCommand::CanalEraResult& canal_era_result) {
 	LOG_INFO("Displaying CanalEraResult");
 
 	auto blueprint = UiPanelBlueprint{

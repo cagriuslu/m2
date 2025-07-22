@@ -15,11 +15,11 @@ namespace m2::network {
 
 		// Accessors
 		bool is_shutdown();
-		std::optional<m2g::pb::ServerCommand> pop_server_command();
+		std::optional<m2g::pb::TurnBasedServerCommand> pop_server_command();
 
 		// Modifiers
 		void start_if_ready() { locked_start_if_ready(); }
-		inline void queue_client_command(const m2g::pb::ClientCommand& c) { locked_queue_client_command(c); }
+		inline void queue_client_command(const m2g::pb::TurnBasedClientCommand& c) { locked_queue_client_command(c); }
 
 	private:
 		bool is_connected();

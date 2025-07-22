@@ -48,6 +48,6 @@ private:
 	[[nodiscard]] Industry selected_industry() const;
 };
 
-m2::void_expected CanPlayerSell(m2::Character& player, const m2g::pb::ClientCommand_SellAction& sell_action);
+m2::void_expected CanPlayerSell(m2::Character& player, const m2g::pb::TurnBasedClientCommand_SellAction& sell_action);
 
-Card ExecuteSellAction(m2::Character& player, const m2g::pb::ClientCommand_SellAction& sell_action);
+Card ExecuteSellAction(m2::Character& player, const m2g::pb::TurnBasedClientCommand_SellAction& sell_action);

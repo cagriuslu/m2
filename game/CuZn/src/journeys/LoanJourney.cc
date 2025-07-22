@@ -31,7 +31,7 @@ void ExecuteLoanJourney() {
 		if (ask_for_confirmation("Take a loan using ", card_name + " card?", "OK", "Cancel")) {
 			LOG_INFO("Loan action confirmed");
 
-			pb::ClientCommand cc;
+			pb::TurnBasedClientCommand cc;
 			cc.mutable_loan_action()->set_card(*selected_card);
 			M2G_PROXY.SendClientCommandAndWaitForServerUpdate(cc);
 
@@ -41,7 +41,7 @@ void ExecuteLoanJourney() {
 	LOG_INFO("Loan action cancelled");
 }
 
-m2::void_expected CanPlayerLoan(m2::Character& player, const m2g::pb::ClientCommand_LoanAction& loan_action) {
+m2::void_expected CanPlayerLoan(m2::Character& player, const m2g::pb::TurnBasedClientCommand_LoanAction& loan_action) {
 	// Check if prerequisites are met
 	if (auto prerequisite = CanPlayerAttemptToLoan(player); not prerequisite) {
 		return m2::make_unexpected(prerequisite.error());
@@ -55,7 +55,7 @@ m2::void_expected CanPlayerLoan(m2::Character& player, const m2g::pb::ClientComm
 	return {};
 }
 
-Card ExecuteLoanAction(m2::Character& player, const ClientCommand_LoanAction& loan_action) {
+Card ExecuteLoanAction(m2::Character& player, const TurnBasedClientCommand_LoanAction& loan_action) {
 	const auto currIncomePoints = PlayerIncomePoints(player);
 	const auto currIncomeLevel = IncomeLevelFromIncomePoints(currIncomePoints);
 	const auto newIncomeLevel = ClampIncomeLevel(currIncomeLevel - 3);

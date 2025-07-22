@@ -10,13 +10,13 @@ namespace m2::network {
 		// Client is connected but not yet ready
 		struct Connected {
 			TcpSocketManager socket_manager;
-			std::queue<pb::NetworkMessage> incoming_queue{};
+			std::queue<pb::TurnBasedNetworkMessage> incoming_queue{};
 		};
 		// Client is connected and ready
 		struct Ready {
 			TcpSocketManager socket_manager;
-			std::queue<pb::NetworkMessage> incoming_queue{};
-			std::queue<pb::NetworkMessage> outgoing_queue{};
+			std::queue<pb::TurnBasedNetworkMessage> incoming_queue{};
+			std::queue<pb::TurnBasedNetworkMessage> outgoing_queue{};
 			uint64_t ready_token;
 		};
 		// Client has disconnected due to network errors and may reconnect if it presents the same ready token
@@ -27,7 +27,7 @@ namespace m2::network {
 		// A client has reconnected but hasn't provided the correct ready token yet
 		struct ReconnectedUntrusted {
 			TcpSocketManager socket_manager;
-			std::queue<pb::NetworkMessage> incoming_queue{};
+			std::queue<pb::TurnBasedNetworkMessage> incoming_queue{};
 			uint64_t expected_ready_token; // Same as Ready::ready_token
 			sdl::ticks_t reconnected_at;
 		};
@@ -75,14 +75,14 @@ namespace m2::network {
 		/// Otherwise, only the local buffers will be checked.
 		bool has_incoming_data(bool is_socket_readable);
 		/// Take a peek at the next fully received message waiting to be processed. Returns nullptr if there are none.
-		const pb::NetworkMessage* peek_incoming_message();
+		const pb::TurnBasedNetworkMessage* peek_incoming_message();
 		/// Take out the next fully received message waiting to be processed. Returns std::nullopt if there are none.
-		std::optional<pb::NetworkMessage> pop_incoming_message();
+		std::optional<pb::TurnBasedNetworkMessage> pop_incoming_message();
 
 		[[nodiscard]] bool has_outgoing_data();
 		SequenceNo ReturnAndIncrementServerCommandSequenceNo();
 		/// Place a message in the outgoing message queue to be sent later.
-		void queue_outgoing_message(pb::NetworkMessage msg);
+		void queue_outgoing_message(pb::TurnBasedNetworkMessage msg);
 		/// Should be called only if the socket is already writeable.
 		void send_outgoing_data();
 
@@ -91,9 +91,9 @@ namespace m2::network {
 
 	private:
 		TcpSocketManager& socket_manager();
-		std::queue<pb::NetworkMessage>* get_incoming_queue();
-		std::queue<pb::NetworkMessage>& incoming_queue();
-		std::queue<pb::NetworkMessage>& outgoing_queue();
+		std::queue<pb::TurnBasedNetworkMessage>* get_incoming_queue();
+		std::queue<pb::TurnBasedNetworkMessage>& incoming_queue();
+		std::queue<pb::TurnBasedNetworkMessage>& outgoing_queue();
 	};
 
 	// Filters
