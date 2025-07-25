@@ -44,7 +44,9 @@ expected<TcpSocket> TcpSocket::create_server(uint16_t port) {
         return m2::make_unexpected("socket failed: " + m2::ToString(last_error));
     }
 
-    TcpSocket tcp_socket{INADDR_ANY, port};
+    TcpSocket tcp_socket;
+    tcp_socket._serverAddr = INADDR_ANY;
+    tcp_socket._serverPort = port;
     tcp_socket._platform_specific_data = new detail::PlatformSpecificTcpSocketData{.address_info = result, .socket = listen_socket};
     return std::move(tcp_socket);
 }
@@ -78,7 +80,9 @@ expected<TcpSocket> TcpSocket::create_client(const std::string& server_ip_addr, 
         return m2::make_unexpected("socket failed: " + m2::ToString(last_error));
     }
 
-    TcpSocket tcp_socket{reinterpret_cast<sockaddr_in*>(result->ai_addr)->sin_addr.S_un.S_addr, server_port};
+    TcpSocket tcp_socket;
+    tcp_socket._serverAddr = reinterpret_cast<sockaddr_in*>(result->ai_addr)->sin_addr.S_un.S_addr;
+    tcp_socket._serverPort = server_port;
     tcp_socket._platform_specific_data = new detail::PlatformSpecificTcpSocketData{.address_info = result, .socket = connect_socket};
     return std::move(tcp_socket);
 }
@@ -89,8 +93,10 @@ TcpSocket::TcpSocket(TcpSocket&& other) noexcept {
 
 TcpSocket& TcpSocket::operator=(TcpSocket&& other) noexcept {
     std::swap(_platform_specific_data, other._platform_specific_data);
-    std::swap(_addr, other._addr);
-    std::swap(_port, other._port);
+    std::swap(_serverAddr, other._serverAddr);
+    std::swap(_clientAddr, other._clientAddr);
+    std::swap(_serverPort, other._serverPort);
+    std::swap(_clientPort, other._clientPort);
     return *this;
 }
 
@@ -107,6 +113,10 @@ TcpSocket::~TcpSocket() {
 }
 
 expected<bool> TcpSocket::bind() {
+    if (not IsServerSideListeningSocket()) {
+        throw M2_ERROR("Bind called on a non-listening non-server socket");
+    }
+
     // Bind the socket
     auto bind_result = ::bind(_platform_specific_data->socket, _platform_specific_data->address_info->ai_addr, static_cast<int>(_platform_specific_data->address_info->ai_addrlen));
     if (bind_result == SOCKET_ERROR) {
@@ -121,6 +131,10 @@ expected<bool> TcpSocket::bind() {
 }
 
 void_expected TcpSocket::listen(int queue_size) {
+    if (not IsServerSideListeningSocket()) {
+        throw M2_ERROR("Listen called on a non-listening non-server socket");
+    }
+
     if (::listen(_platform_specific_data->socket, queue_size) == SOCKET_ERROR) {
         return m2::make_unexpected("listen failed: " + m2::ToString(WSAGetLastError()));
     }
@@ -129,6 +143,10 @@ void_expected TcpSocket::listen(int queue_size) {
 }
 
 expected<bool> TcpSocket::connect() {
+    if (not IsClientSideSocket()) {
+        throw M2_ERROR("Connect called on a non-client socket");
+    }
+
     int connect_result = ::connect(_platform_specific_data->socket, _platform_specific_data->address_info->ai_addr, static_cast<int>(_platform_specific_data->address_info->ai_addrlen));
     if (connect_result == SOCKET_ERROR) {
         auto last_error = WSAGetLastError();
@@ -141,6 +159,10 @@ expected<bool> TcpSocket::connect() {
 }
 
 expected<std::optional<TcpSocket>> TcpSocket::accept() {
+    if (not IsServerSideListeningSocket()) {
+        throw M2_ERROR("Accept called on a non-listening non-server socket");
+    }
+
     sockaddr child_address{};
     int child_address_len = sizeof(child_address);
     SOCKET new_socket = ::accept(_platform_specific_data->socket, &child_address, &child_address_len);
@@ -151,12 +173,19 @@ expected<std::optional<TcpSocket>> TcpSocket::accept() {
         return m2::make_unexpected("accept failed: " + m2::ToString(WSAGetLastError()));
     }
 
-    TcpSocket child_socket{reinterpret_cast<sockaddr_in*>(&child_address)->sin_addr.S_un.S_addr, reinterpret_cast<sockaddr_in*>(&child_address)->sin_port};
+    TcpSocket child_socket;
+    child_socket._clientAddr = reinterpret_cast<sockaddr_in*>(&child_address)->sin_addr.S_un.S_addr;
+    child_socket._serverPort = _serverPort;
+    child_socket._clientPort = reinterpret_cast<sockaddr_in*>(&child_address)->sin_port;
     child_socket._platform_specific_data = new detail::PlatformSpecificTcpSocketData{.socket = new_socket};
     return std::move(child_socket);
 }
 
 expected<int> TcpSocket::send(const uint8_t* buffer, size_t length) {
+    if (not IsServerSideConnectedSocket() && not IsClientSideSocket()) {
+        throw M2_ERROR("Send called on a non-connected socket");
+    }
+
     auto send_result = ::send(_platform_specific_data->socket, reinterpret_cast<const char*>(buffer), I(length), 0);
     if (send_result == SOCKET_ERROR) {
         auto last_error = WSAGetLastError();
@@ -171,6 +200,10 @@ expected<int> TcpSocket::send(const uint8_t* buffer, size_t length) {
 }
 
 expected<int> TcpSocket::recv(uint8_t* buffer, size_t length) {
+    if (not IsServerSideConnectedSocket() && not IsClientSideSocket()) {
+        throw M2_ERROR("Recv called on a non-connected socket");
+    }
+
     auto recv_result = ::recv(_platform_specific_data->socket, reinterpret_cast<char*>(buffer), I(length), 0);
     if (recv_result == SOCKET_ERROR) {
         auto last_error = WSAGetLastError();

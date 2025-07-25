@@ -248,26 +248,26 @@ void m2::TurnBasedServerActor::CheckConnectionListeningSocket(MessageBox<TurnBas
 		LOG_WARN("Client aborted connection by the time it was accepted");
 	} else {
 		if (_maxConnCount <= I(_clients.size())) {
-			LOG_INFO("Refusing connection because of connection limit", (*clientSocket)->ip_address_and_port());
+			LOG_INFO("Refusing connection because of connection limit", (*clientSocket)->GetClientIpAddressAndPort());
 		} else if (_state == pb::SERVER_LOBBY_OPEN) {
-			LOG_INFO("New client connected with index", _clients.size(), (*clientSocket)->ip_address_and_port());
+			LOG_INFO("New client connected with index", _clients.size(), (*clientSocket)->GetClientIpAddressAndPort());
 			_clients.emplace_back(std::move(**clientSocket), I(_clients.size()));
 			PublishStateUpdate(outbox);
 		} else if (_state == pb::SERVER_LOBBY_CLOSED) {
-			LOG_INFO("Refusing connection to closed lobby", (*clientSocket)->ip_address_and_port());
+			LOG_INFO("Refusing connection to closed lobby", (*clientSocket)->GetClientIpAddressAndPort());
 		} else if (_state == pb::SERVER_STARTED) {
 			// Check if there's a disconnected client
 			bool found = false;
 			for (int i = 0; i < I(_clients.size()) && not found; ++i) {
 				if (auto& client = _clients[i]; client.is_disconnected()
-						&& client.ip_address_and_port() == (*clientSocket)->ip_address_and_port()) {
-					LOG_INFO("Previously connected client with index connected again", i, (*clientSocket)->ip_address_and_port());
+						&& client.ip_address_and_port() == (*clientSocket)->GetClientIpAddressAndPort()) {
+					LOG_INFO("Previously connected client with index connected again", i, (*clientSocket)->GetClientIpAddressAndPort());
 					client.untrusted_client_reconnected(std::move(**clientSocket));
 					found = true;
 				}
 			}
 			if (not found) {
-				LOG_INFO("Refusing connection after game started", (*clientSocket)->ip_address_and_port());
+				LOG_INFO("Refusing connection after game started", (*clientSocket)->GetClientIpAddressAndPort());
 			}
 		} else {
 			throw M2_ERROR("Unexpected state");

@@ -16,10 +16,10 @@ namespace m2::mplayer {
         /// some of the events to the server so that the server can validate that clients are sending the same events to
         /// everyone. Before simulation is advanced, all events must be delivered to all clients, thus, lost packets can
         /// easily cause a lag. Possibility of a lost packets increase with the number of players, thus this networking
-        /// model isn't suitable for many (4+) players.
+        /// model isn't suitable for many (4+) players. In this variant, the physics engine is disabled.
         Lockstep,
-        /// Same as Lockstep, but the physics engine is disabled.
-        LockstepNoPhysics,
+        /// Same as Lockstep, but the physics engine enabled.
+        RealTime,
         /// In this mode, the clients send the input events to the server, but then either predicts the future, or
         /// interpolates the simulation by applying some delay to the incoming state updates. In the meanwhile, the
         /// server validates the events, advances the simulation, then publishes the state to the clients. Once the

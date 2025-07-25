@@ -6,6 +6,9 @@
 #include <queue>
 
 namespace m2::network {
+	/// \brief Allows sending and receiving of discrete messages (instead of individual bytes) over a TCP socket.
+	/// \details For TurnBased networking model, clients use the manager directly, while the server utilizes client
+	/// manager to hold the socket manager.
 	class TcpSocketManager {
 		TcpSocket _socket;
 		int _index; // Used for logging

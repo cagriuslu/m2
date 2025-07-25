@@ -20,7 +20,9 @@ m2::expected<m2::network::TcpSocket> m2::network::TcpSocket::create_server(const
         LOG_WARN("Unable to enable TCP linger", std::string(strerror(errno)));
     }
 
-    TcpSocket tcp_socket{INADDR_ANY, port};
+    TcpSocket tcp_socket;
+	tcp_socket._serverAddr = INADDR_ANY;
+	tcp_socket._serverPort = port;
     tcp_socket._platform_specific_data = new detail::PlatformSpecificTcpSocketData{.fd = socket_result};
     return std::move(tcp_socket);
 }
@@ -31,7 +33,9 @@ m2::expected<m2::network::TcpSocket> m2::network::TcpSocket::create_client(const
         return make_unexpected(strerror(errno));
     }
 
-    TcpSocket tcp_socket{inet_addr(server_ip_addr.c_str()), server_port};
+    TcpSocket tcp_socket;
+	tcp_socket._serverAddr = inet_addr(server_ip_addr.c_str());
+	tcp_socket._serverPort = server_port;
     tcp_socket._platform_specific_data = new detail::PlatformSpecificTcpSocketData{.fd = socket_result};
     return std::move(tcp_socket);
 }
@@ -42,8 +46,10 @@ m2::network::TcpSocket::TcpSocket(TcpSocket&& other) noexcept {
 
 m2::network::TcpSocket& m2::network::TcpSocket::operator=(TcpSocket&& other) noexcept {
 	std::swap(_platform_specific_data, other._platform_specific_data);
-	std::swap(_addr, other._addr);
-	std::swap(_port, other._port);
+	std::swap(_serverAddr, other._serverAddr);
+	std::swap(_clientAddr, other._clientAddr);
+	std::swap(_serverPort, other._serverPort);
+	std::swap(_clientPort, other._clientPort);
 	return *this;
 }
 
@@ -57,13 +63,17 @@ m2::network::TcpSocket::~TcpSocket() {
 }
 
 m2::expected<bool> m2::network::TcpSocket::bind() {
+	if (not IsServerSideListeningSocket()) {
+		throw M2_ERROR("Bind called on a non-listening non-server socket");
+	}
+
 	sockaddr_in sin{};
 #ifdef __APPLE__
 	sin.sin_len = sizeof(sin);
 #endif
 	sin.sin_family = AF_INET;
-	sin.sin_port = htons(_port);
-	sin.sin_addr.s_addr = _addr;
+	sin.sin_port = htons(_serverPort);
+	sin.sin_addr.s_addr = _serverAddr;
 	int bind_result = ::bind(_platform_specific_data->fd, reinterpret_cast<sockaddr*>(&sin), sizeof(sin));
 	if (bind_result == -1) {
 		if (errno == EADDRINUSE) {
@@ -75,6 +85,10 @@ m2::expected<bool> m2::network::TcpSocket::bind() {
 }
 
 m2::void_expected m2::network::TcpSocket::listen(const int queue_size) {
+	if (not IsServerSideListeningSocket()) {
+		throw M2_ERROR("Listen called on a non-listening non-server socket");
+	}
+
 	if (const auto listen_result = ::listen(_platform_specific_data->fd, queue_size); listen_result == -1) {
 		return make_unexpected(strerror(errno));
 	}
@@ -83,13 +97,17 @@ m2::void_expected m2::network::TcpSocket::listen(const int queue_size) {
 }
 
 m2::expected<bool> m2::network::TcpSocket::connect() {
+	if (not IsClientSideSocket()) {
+		throw M2_ERROR("Connect called on a non-client socket");
+	}
+
 	sockaddr_in sin{};
 #ifdef __APPLE__
 	sin.sin_len = sizeof(sin);
 #endif
 	sin.sin_family = AF_INET;
-	sin.sin_port = htons(_port);
-	sin.sin_addr.s_addr = _addr;
+	sin.sin_port = htons(_serverPort);
+	sin.sin_addr.s_addr = _serverAddr;
 	if (const auto connect_result = ::connect(_platform_specific_data->fd, reinterpret_cast<sockaddr*>(&sin), sizeof(sin)); connect_result == -1) {
 		if (errno == ECONNREFUSED || errno == EHOSTUNREACH || errno == ENETUNREACH || errno == ETIMEDOUT) {
 			// Connection failed due to reasons not under our control
@@ -101,6 +119,10 @@ m2::expected<bool> m2::network::TcpSocket::connect() {
 }
 
 m2::expected<std::optional<m2::network::TcpSocket>> m2::network::TcpSocket::accept() {
+	if (not IsServerSideListeningSocket()) {
+		throw M2_ERROR("Accept called on a non-listening non-server socket");
+	}
+
 	sockaddr child_address{};
 	socklen_t child_address_len = sizeof(sockaddr);
 	int new_socket = ::accept(_platform_specific_data->fd, &child_address, &child_address_len);
@@ -111,12 +133,19 @@ m2::expected<std::optional<m2::network::TcpSocket>> m2::network::TcpSocket::acce
 		return make_unexpected(strerror(errno));
 	}
 
-	TcpSocket child_socket{reinterpret_cast<sockaddr_in*>(&child_address)->sin_addr.s_addr, reinterpret_cast<sockaddr_in*>(&child_address)->sin_port};
+	TcpSocket child_socket;
+	child_socket._clientAddr = reinterpret_cast<sockaddr_in*>(&child_address)->sin_addr.s_addr;
+	child_socket._serverPort = _serverPort;
+	child_socket._clientPort = reinterpret_cast<sockaddr_in*>(&child_address)->sin_port;
     child_socket._platform_specific_data = new detail::PlatformSpecificTcpSocketData{.fd = new_socket};
     return std::move(child_socket);
 }
 
 m2::expected<int> m2::network::TcpSocket::send(const uint8_t* buffer, const size_t length) {
+	if (not IsServerSideConnectedSocket() && not IsClientSideSocket()) {
+		throw M2_ERROR("Send called on a non-connected socket");
+	}
+
 	const auto send_result = ::send(_platform_specific_data->fd, buffer, length, 0);
 	if (send_result == -1) {
 		if (errno == EAGAIN || errno == EWOULDBLOCK) {
@@ -128,6 +157,10 @@ m2::expected<int> m2::network::TcpSocket::send(const uint8_t* buffer, const size
 }
 
 m2::expected<int> m2::network::TcpSocket::recv(uint8_t* buffer, const size_t length) {
+	if (not IsServerSideConnectedSocket() && not IsClientSideSocket()) {
+		throw M2_ERROR("Recv called on a non-connected socket");
+	}
+
 	const auto recv_result = ::recv(_platform_specific_data->fd, buffer, length, 0);
 	if (recv_result == -1) {
 		if (errno == EAGAIN || errno == EWOULDBLOCK) {

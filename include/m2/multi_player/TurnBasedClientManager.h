@@ -6,6 +6,8 @@
 #include <variant>
 
 namespace m2::network {
+	/// \brief A state machine holding the socket connection to the client.
+	/// \details Used by the server only.
 	class TurnBasedClientManager {
 		// Client is connected but not yet ready
 		struct Connected {

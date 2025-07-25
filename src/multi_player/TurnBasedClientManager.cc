@@ -2,7 +2,7 @@
 #include <m2/Log.h>
 
 m2::network::TurnBasedClientManager::TurnBasedClientManager(TcpSocket&& socket, int index)
-	: _index(index), _ip_address_and_port(socket.ip_address_and_port()),
+	: _index(index), _ip_address_and_port(socket.GetClientIpAddressAndPort()),
 	_state(Connected{TcpSocketManager{std::move(socket), index}}) {}
 
 bool m2::network::TurnBasedClientManager::is_connected() const {
@@ -77,7 +77,7 @@ void m2::network::TurnBasedClientManager::honorably_disconnect() {
 
 
 void m2::network::TurnBasedClientManager::untrusted_client_reconnected(TcpSocket&& socket) {
-	if (socket.ip_address_and_port() != ip_address_and_port()) {
+	if (socket.GetClientIpAddressAndPort() != ip_address_and_port()) {
 		throw M2_ERROR("Address and/or port mismatch");
 	}
 	if (not std::holds_alternative<HonorablyDisconnected>(_state)) {
