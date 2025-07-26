@@ -26,7 +26,6 @@ m2::expected<m2::network::TcpSocket> m2::network::TcpSocket::CreateServerSideSoc
     tcp_socket._platform_specific_data = new detail::PlatformSpecificTcpSocketData{.fd = socket_result};
     return std::move(tcp_socket);
 }
-
 m2::expected<m2::network::TcpSocket> m2::network::TcpSocket::CreateClientSideSocket(const std::string& server_ip_addr, const uint16_t server_port) {
     const auto socket_result = ::socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (socket_result == -1) {
@@ -39,11 +38,9 @@ m2::expected<m2::network::TcpSocket> m2::network::TcpSocket::CreateClientSideSoc
     tcp_socket._platform_specific_data = new detail::PlatformSpecificTcpSocketData{.fd = socket_result};
     return std::move(tcp_socket);
 }
-
 m2::network::TcpSocket::TcpSocket(TcpSocket&& other) noexcept {
 	*this = std::move(other);
 }
-
 m2::network::TcpSocket& m2::network::TcpSocket::operator=(TcpSocket&& other) noexcept {
 	std::swap(_platform_specific_data, other._platform_specific_data);
 	std::swap(_serverAddr, other._serverAddr);
@@ -52,7 +49,6 @@ m2::network::TcpSocket& m2::network::TcpSocket::operator=(TcpSocket&& other) noe
 	std::swap(_clientPort, other._clientPort);
 	return *this;
 }
-
 m2::network::TcpSocket::~TcpSocket() {
 	if (_platform_specific_data) {
 		if (0 <= _platform_specific_data->fd) {

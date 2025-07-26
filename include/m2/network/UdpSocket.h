@@ -11,21 +11,34 @@ namespace m2 {
 
 	class UdpSocket {
 		detail::PlatformSpecificUdpSocketData* _platformSpecificData{};
+		network::Port _selfPort{};
 
-		/// Platform specific data should be initialized after calling this constructor
+		/// \details Platform specific data should be initialized after calling this constructor
 		UdpSocket() = default;
 
 	public:
-		static expected<UdpSocket> Create(network::Port localPort);
+		static expected<UdpSocket> CreateServerSideSocket(network::Port port);
+		static expected<UdpSocket> CreateClientSideSocket();
 		UdpSocket(const UdpSocket& other) = delete;
 		UdpSocket& operator=(const UdpSocket& other) = delete;
 		UdpSocket(UdpSocket&& other) noexcept;
 		UdpSocket& operator=(UdpSocket&& other) noexcept;
 		~UdpSocket();
 
+		// Accessors
+
+		[[nodiscard]] bool IsServerSideSocket() const { return _selfPort; }
+		[[nodiscard]] bool IsClientSideSocket() const { return _selfPort == 0; }
+
+		// Modifiers
+
+		/// If expected, returns the number of bytes queued into kernel's buffer. If the buffer is full, the return
+		/// value may be zero, or less than `length`. Otherwise, unexpected is returned with the error message.
 		expected<int> send(network::IpAddress peerAddr, network::Port peerPort, const uint8_t* buffer, size_t length);
 		expected<int> send(const network::IpAddress peerAddr, const network::Port peerPort, const char* buffer, const size_t length) { return send(peerAddr, peerPort, reinterpret_cast<const uint8_t*>(buffer), length); }
 
+		/// If expected, returns the number of bytes actually received. Otherwise, unexpected is returned with the error
+		/// message.
 		expected<std::pair<int, network::IpAddressAndPort>> recv(uint8_t* buffer, size_t length);
 		expected<std::pair<int, network::IpAddressAndPort>> recv(char* buffer, const size_t length) { return recv(reinterpret_cast<uint8_t*>(buffer), length); }
 	};
