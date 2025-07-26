@@ -1,0 +1,24 @@
+syntax = "proto3";
+package m2.pb;
+
+message LockstepNetworkMessage {}
+
+// This message is serialized into the body of the UDP packet without any headers or footers.
+message LockstepUdpPacket {
+  // UDP is connectionless, each packet needs to prove that it is ours.
+  fixed32 game_hash = 1;
+
+  // Highest 11 bits: Sequence number of the message whose chunk is contained in this message, if there's a chunk.
+  // Next 5 bits: Chunk index of the message chunk contained in this message.
+  // Next 5 bits: Total number of chunks in the message whose chunk is contained in this message, if there's a chunk.
+  // Last 11 bits: Sequence number of the message partially (or not at all) received by the sender of this packet.
+  fixed32 message_and_ack_details = 2;
+
+  // Each bit, starting from the least significant one, represents a received chunk of the message whose sequence number
+  // is mentioned in the last 11 bits of message_and_ack_details. Up to 32 chunks can be described this way. This puts a
+  // limit on the size of the message that can be carried with lockstep UDP packets.
+  fixed32 ack_bits = 3;
+
+  // A chunk of the message that forms a LockstepNetworkMessage once pieced together.
+  bytes message_chunk = 4;
+}
