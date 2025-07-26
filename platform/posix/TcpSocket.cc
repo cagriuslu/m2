@@ -7,7 +7,7 @@
 #include <arpa/inet.h>
 #include <m2/Log.h>
 
-m2::expected<m2::network::TcpSocket> m2::network::TcpSocket::create_server(const uint16_t port) {
+m2::expected<m2::network::TcpSocket> m2::network::TcpSocket::CreateServerSideSocket(const uint16_t port) {
     const auto socket_result = ::socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (socket_result == -1) {
         return make_unexpected(strerror(errno));
@@ -27,7 +27,7 @@ m2::expected<m2::network::TcpSocket> m2::network::TcpSocket::create_server(const
     return std::move(tcp_socket);
 }
 
-m2::expected<m2::network::TcpSocket> m2::network::TcpSocket::create_client(const std::string& server_ip_addr, const uint16_t server_port) {
+m2::expected<m2::network::TcpSocket> m2::network::TcpSocket::CreateClientSideSocket(const std::string& server_ip_addr, const uint16_t server_port) {
     const auto socket_result = ::socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (socket_result == -1) {
         return make_unexpected(strerror(errno));

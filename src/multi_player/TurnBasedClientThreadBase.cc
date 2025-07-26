@@ -175,7 +175,7 @@ void m2::network::detail::TurnBasedClientThreadBase::base_client_thread_func(Tur
 			}
 
 			// Socket not yet created, or we just got disconnected. Create socket.
-			auto socket = TcpSocket::create_client(thread_manager->_addr, 1162);
+			auto socket = TcpSocket::CreateClientSideSocket(thread_manager->_addr, 1162);
 			if (not socket) {
 				LOG_FATAL("TcpSocket creation failed", socket.error());
 				return;

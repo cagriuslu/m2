@@ -14,7 +14,7 @@ WSADATA g_wsa_data;
 using namespace m2;
 using namespace m2::network;
 
-expected<TcpSocket> TcpSocket::create_server(uint16_t port) {
+expected<TcpSocket> TcpSocket::CreateServerSideSocket(uint16_t port) {
     std::call_once(g_initialize_winsock_once, []() {
         // Initialize WinSock2
         if (int result = WSAStartup(MAKEWORD(2,2), &g_wsa_data); result != 0) {
@@ -51,7 +51,7 @@ expected<TcpSocket> TcpSocket::create_server(uint16_t port) {
     return std::move(tcp_socket);
 }
 
-expected<TcpSocket> TcpSocket::create_client(const std::string& server_ip_addr, uint16_t server_port) {
+expected<TcpSocket> TcpSocket::CreateClientSideSocket(const std::string& server_ip_addr, uint16_t server_port) {
     std::call_once(g_initialize_winsock_once, []() {
         // Initialize WinSock2
         if (int result = WSAStartup(MAKEWORD(2,2), &g_wsa_data); result != 0) {

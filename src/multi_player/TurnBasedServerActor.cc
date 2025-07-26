@@ -35,7 +35,7 @@ bool m2::TurnBasedServerActor::operator()(MessageBox<TurnBasedServerActorInput>&
 }
 
 void m2::TurnBasedServerActor::CreateSocket() {
-	_connectionListeningSocket = network::TcpSocket::create_server(TCP_PORT_NO);
+	_connectionListeningSocket = network::TcpSocket::CreateServerSideSocket(TCP_PORT_NO);
 	if (not _connectionListeningSocket) {
 		throw M2_ERROR("TcpSocket creation failed: " + _connectionListeningSocket.error());
 	}

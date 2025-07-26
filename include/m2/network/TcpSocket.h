@@ -19,8 +19,8 @@ namespace m2::network {
 		TcpSocket() = default;
 
 	public:
-        static expected<TcpSocket> create_server(uint16_t port); // TODO rename to CreateServerSideSocket
-        static expected<TcpSocket> create_client(const std::string& server_ip_addr, uint16_t server_port); // TODO rename to CreateClientSideSocket
+        static expected<TcpSocket> CreateServerSideSocket(uint16_t port);
+        static expected<TcpSocket> CreateClientSideSocket(const std::string& server_ip_addr, uint16_t server_port);
 		TcpSocket(const TcpSocket& other) = delete;
 		TcpSocket& operator=(const TcpSocket& other) = delete;
 		TcpSocket(TcpSocket&& other) noexcept;
