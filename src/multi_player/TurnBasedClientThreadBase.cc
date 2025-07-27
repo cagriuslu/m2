@@ -3,7 +3,7 @@
 #include <m2/network/Select.h>
 #include <m2/Game.h>
 #include <m2/Log.h>
-#include <m2/network/TcpSocketManager.h>
+#include <m2/multi_player/turn_based/TcpSocketManager.h>
 
 m2::network::detail::TurnBasedClientThreadBase::TurnBasedClientThreadBase(mplayer::Type type, std::string addr, bool ping_broadcast)
 		: _type(type), _addr(std::move(addr)), _ping_broadcast(ping_broadcast), _ready_token(RandomNonZero64()),

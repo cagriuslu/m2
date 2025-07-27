@@ -5,7 +5,7 @@
 #include <mutex>
 #include "../Object.h"
 #include "../network/PingBroadcastThread.h"
-#include "../network/TcpSocketManager.h"
+#include "turn_based/TcpSocketManager.h"
 #include <m2/network/SequenceNo.h>
 #include <latch>
 

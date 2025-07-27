@@ -10,6 +10,7 @@ namespace m2::network {
 		struct PlatformSpecificTcpSocketData;
 	}
 
+	/// \brief Platform-agnostic TCP socket object.
 	class TcpSocket {
 		detail::PlatformSpecificTcpSocketData* _platform_specific_data{};
 		IpAddress _serverAddr{}, _clientAddr{};

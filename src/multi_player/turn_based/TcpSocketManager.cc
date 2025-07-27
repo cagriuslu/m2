@@ -1,4 +1,4 @@
-#include <m2/network/TcpSocketManager.h>
+#include <m2/multi_player/turn_based/TcpSocketManager.h>
 #include <m2/protobuf/Detail.h>
 #include <m2/Log.h>
 #include <m2/Game.h>

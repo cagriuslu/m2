@@ -1,5 +1,5 @@
 #pragma once
-#include "../network/TcpSocketManager.h"
+#include "turn_based/TcpSocketManager.h"
 #include "../network/IpAddressAndPort.h"
 #include <m2/network/SequenceNo.h>
 #include "../sdl/Detail.h"
