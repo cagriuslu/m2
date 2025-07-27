@@ -8,7 +8,7 @@
 namespace m2::network {
 	/// \brief A state machine holding the socket connection to the client.
 	/// \details Used by the server only.
-	class TurnBasedClientManager {
+	class TurnBasedClientConnectionManager {
 		// Client is connected but not yet ready
 		struct Connected {
 			multiplayer::turnbased::MessagePasser socket_manager;
@@ -35,7 +35,7 @@ namespace m2::network {
 		};
 		// Client has misbehaved
 		struct Misbehaved {};
-		// TurnBasedClientManager has been shutdown
+		// TurnBasedClientConnectionManager has been shutdown
 		struct Shutdown {};
 
 		int _index;
@@ -44,7 +44,7 @@ namespace m2::network {
 		std::variant<Connected, Ready, HonorablyDisconnected, ReconnectedUntrusted, Misbehaved, Shutdown> _state;
 
 	public:
-		TurnBasedClientManager(TcpSocket&& socket, int index);
+		TurnBasedClientConnectionManager(TcpSocket&& socket, int index);
 
 		// Properties
 		SequenceNo expectedClientCommandSequenceNo{}, expectedClientUpdateSequenceNo{};
@@ -99,5 +99,5 @@ namespace m2::network {
 	};
 
 	// Filters
-	inline bool is_client_ready(const TurnBasedClientManager& c) { return c.is_ready(); }
+	inline bool is_client_ready(const TurnBasedClientConnectionManager& c) { return c.is_ready(); }
 }

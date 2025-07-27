@@ -1,15 +1,15 @@
-#include <../../include/m2/multi_player/TurnBasedClientManager.h>
+#include <../../include/m2/multi_player/TurnBasedClientConnectionManager.h>
 #include <m2/Log.h>
 
-m2::network::TurnBasedClientManager::TurnBasedClientManager(TcpSocket&& socket, const int index)
+m2::network::TurnBasedClientConnectionManager::TurnBasedClientConnectionManager(TcpSocket&& socket, const int index)
 	: _index(index), _ip_address_and_port(socket.GetClientIpAddressAndPort()),
 	_state(Connected{multiplayer::turnbased::MessagePasser{std::move(socket), index}}) {}
 
-bool m2::network::TurnBasedClientManager::is_connected() const {
+bool m2::network::TurnBasedClientConnectionManager::is_connected() const {
 	return std::holds_alternative<Connected>(_state) || std::holds_alternative<Ready>(_state)
 	    || std::holds_alternative<ReconnectedUntrusted>(_state);
 }
-m2::network::TcpSocket& m2::network::TurnBasedClientManager::tcp_socket() {
+m2::network::TcpSocket& m2::network::TurnBasedClientConnectionManager::tcp_socket() {
 	return std::visit(overloaded{
 			[](Connected& s) -> TcpSocket& { return s.socket_manager.socket(); },
 			[](Ready& s) -> TcpSocket& { return s.socket_manager.socket(); },
@@ -17,34 +17,34 @@ m2::network::TcpSocket& m2::network::TurnBasedClientManager::tcp_socket() {
 			[](auto&) -> TcpSocket& { throw M2_ERROR("TcpSocket unavailable, client is not connected"); },
 		}, _state);
 }
-bool m2::network::TurnBasedClientManager::is_ready() const {
+bool m2::network::TurnBasedClientConnectionManager::is_ready() const {
 	return std::holds_alternative<Ready>(_state);
 }
-bool m2::network::TurnBasedClientManager::is_disconnected() const {
+bool m2::network::TurnBasedClientConnectionManager::is_disconnected() const {
 	return std::holds_alternative<HonorablyDisconnected>(_state);
 }
-bool m2::network::TurnBasedClientManager::is_untrusted() const {
+bool m2::network::TurnBasedClientConnectionManager::is_untrusted() const {
 	return std::holds_alternative<ReconnectedUntrusted>(_state);
 }
-bool m2::network::TurnBasedClientManager::is_disconnected_or_untrusted() const {
+bool m2::network::TurnBasedClientConnectionManager::is_disconnected_or_untrusted() const {
 	return std::visit(overloaded{
 		[](HonorablyDisconnected&) { return true; },
 		[](ReconnectedUntrusted&) { return true; },
 		[](auto&) { return false; },
 	}, _state);
 }
-std::optional<m2::sdl::ticks_t> m2::network::TurnBasedClientManager::disconnected_or_untrusted_since() const {
+std::optional<m2::sdl::ticks_t> m2::network::TurnBasedClientConnectionManager::disconnected_or_untrusted_since() const {
 	return std::visit(overloaded{
 		[](HonorablyDisconnected& s) -> std::optional<sdl::ticks_t> { return s.disconnected_at; },
 		[](ReconnectedUntrusted& s) -> std::optional<sdl::ticks_t> { return s.reconnected_at; },
 		[](auto&) -> std::optional<sdl::ticks_t> { return std::nullopt; },
 	}, _state);
 }
-bool m2::network::TurnBasedClientManager::has_misbehaved() const {
+bool m2::network::TurnBasedClientConnectionManager::has_misbehaved() const {
 	return std::holds_alternative<Misbehaved>(_state);
 }
 
-bool m2::network::TurnBasedClientManager::set_ready_token(const uint64_t ready_token) {
+bool m2::network::TurnBasedClientConnectionManager::set_ready_token(const uint64_t ready_token) {
 	if (std::holds_alternative<Connected>(_state)) {
 		// Switch to ready state
 		auto socket_manager = std::move(std::get<Connected>(_state).socket_manager);
@@ -64,7 +64,7 @@ bool m2::network::TurnBasedClientManager::set_ready_token(const uint64_t ready_t
 	}
 	throw M2_ERROR("Unexpected ready token");
 }
-void m2::network::TurnBasedClientManager::honorably_disconnect() {
+void m2::network::TurnBasedClientConnectionManager::honorably_disconnect() {
 	const auto ready_token = std::visit(overloaded{
 		[](Connected&) -> uint64_t { return 0; },
 		[](const Ready& s) -> uint64_t { return s.ready_token; },
@@ -75,7 +75,7 @@ void m2::network::TurnBasedClientManager::honorably_disconnect() {
 }
 
 
-void m2::network::TurnBasedClientManager::untrusted_client_reconnected(TcpSocket&& socket) {
+void m2::network::TurnBasedClientConnectionManager::untrusted_client_reconnected(TcpSocket&& socket) {
 	if (socket.GetClientIpAddressAndPort() != ip_address_and_port()) {
 		throw M2_ERROR("Address and/or port mismatch");
 	}
@@ -89,11 +89,11 @@ void m2::network::TurnBasedClientManager::untrusted_client_reconnected(TcpSocket
 	}
 	throw M2_ERROR("Unexpected new socket");
 }
-void m2::network::TurnBasedClientManager::set_misbehaved() {
+void m2::network::TurnBasedClientConnectionManager::set_misbehaved() {
 	_state = Misbehaved{};
 }
 
-bool m2::network::TurnBasedClientManager::has_incoming_data(const bool is_socket_readable) {
+bool m2::network::TurnBasedClientConnectionManager::has_incoming_data(const bool is_socket_readable) {
 	if (is_socket_readable) {
 		auto& socket_manager_ = socket_manager();
 		auto& incoming_queue_ = incoming_queue();
@@ -119,14 +119,14 @@ bool m2::network::TurnBasedClientManager::has_incoming_data(const bool is_socket
 	}
 	return not incoming_queue().empty();
 }
-const m2::pb::TurnBasedNetworkMessage* m2::network::TurnBasedClientManager::peek_incoming_message() {
+const m2::pb::TurnBasedNetworkMessage* m2::network::TurnBasedClientConnectionManager::peek_incoming_message() {
 	if (const auto* incoming_queue = get_incoming_queue(); not incoming_queue || incoming_queue->empty()) {
 		return nullptr;
 	} else {
 		return &incoming_queue->front();
 	}
 }
-std::optional<m2::pb::TurnBasedNetworkMessage> m2::network::TurnBasedClientManager::pop_incoming_message() {
+std::optional<m2::pb::TurnBasedNetworkMessage> m2::network::TurnBasedClientConnectionManager::pop_incoming_message() {
 	auto* incoming_queue = get_incoming_queue();
 	if (not incoming_queue || incoming_queue->empty()) {
 		return std::nullopt;
@@ -139,16 +139,16 @@ std::optional<m2::pb::TurnBasedNetworkMessage> m2::network::TurnBasedClientManag
 	return std::move(msg);
 }
 
-bool m2::network::TurnBasedClientManager::has_outgoing_data() {
+bool m2::network::TurnBasedClientConnectionManager::has_outgoing_data() {
 	return socket_manager().has_outgoing_data() || not outgoing_queue().empty();
 }
-m2::SequenceNo m2::network::TurnBasedClientManager::ReturnAndIncrementServerCommandSequenceNo() {
+m2::SequenceNo m2::network::TurnBasedClientConnectionManager::ReturnAndIncrementServerCommandSequenceNo() {
 	return _nextServerCommandSequenceNo++;
 }
-void m2::network::TurnBasedClientManager::queue_outgoing_message(pb::TurnBasedNetworkMessage msg) {
+void m2::network::TurnBasedClientConnectionManager::queue_outgoing_message(pb::TurnBasedNetworkMessage msg) {
 	outgoing_queue().emplace(std::move(msg));
 }
-void m2::network::TurnBasedClientManager::send_outgoing_data() {
+void m2::network::TurnBasedClientConnectionManager::send_outgoing_data() {
 	auto& socket_manager_ = socket_manager();
 
 	auto send_result = socket_manager_.send_outgoing_data(outgoing_queue());
@@ -161,14 +161,14 @@ void m2::network::TurnBasedClientManager::send_outgoing_data() {
 		throw M2_ERROR("An invalid or too large outgoing message was queued to client: " + ToString(socket_manager_.index()) + " " + ToString(static_cast<int>(*send_result)));
 	}
 }
-void m2::network::TurnBasedClientManager::flush_and_shutdown() {
+void m2::network::TurnBasedClientConnectionManager::flush_and_shutdown() {
 	if (is_ready()) {
 		socket_manager().flush(outgoing_queue(), 10000);
 	}
 	_state = Shutdown{};
 }
 
-m2::multiplayer::turnbased::MessagePasser& m2::network::TurnBasedClientManager::socket_manager() {
+m2::multiplayer::turnbased::MessagePasser& m2::network::TurnBasedClientConnectionManager::socket_manager() {
 	return std::visit(overloaded{
 		[](Connected& s) -> multiplayer::turnbased::MessagePasser& { return s.socket_manager; },
 		[](Ready& s) -> multiplayer::turnbased::MessagePasser& { return s.socket_manager; },
@@ -176,7 +176,7 @@ m2::multiplayer::turnbased::MessagePasser& m2::network::TurnBasedClientManager::
 		[](auto&) -> multiplayer::turnbased::MessagePasser& { throw M2_ERROR("Socket unavailable, client is not connected"); },
 	}, _state);
 }
-std::queue<m2::pb::TurnBasedNetworkMessage>* m2::network::TurnBasedClientManager::get_incoming_queue() {
+std::queue<m2::pb::TurnBasedNetworkMessage>* m2::network::TurnBasedClientConnectionManager::get_incoming_queue() {
 	return std::visit(overloaded{
 		[](Connected& s) -> std::queue<pb::TurnBasedNetworkMessage>* { return &s.incoming_queue; },
 		[](Ready& s) -> std::queue<pb::TurnBasedNetworkMessage>* { return &s.incoming_queue; },
@@ -184,7 +184,7 @@ std::queue<m2::pb::TurnBasedNetworkMessage>* m2::network::TurnBasedClientManager
 		[](auto&) -> std::queue<pb::TurnBasedNetworkMessage>* { return nullptr; },
 	}, _state);
 }
-std::queue<m2::pb::TurnBasedNetworkMessage>& m2::network::TurnBasedClientManager::incoming_queue() {
+std::queue<m2::pb::TurnBasedNetworkMessage>& m2::network::TurnBasedClientConnectionManager::incoming_queue() {
 	return std::visit(overloaded{
 		[](Connected& s) -> std::queue<pb::TurnBasedNetworkMessage>& { return s.incoming_queue; },
 		[](Ready& s) -> std::queue<pb::TurnBasedNetworkMessage>& { return s.incoming_queue; },
@@ -192,7 +192,7 @@ std::queue<m2::pb::TurnBasedNetworkMessage>& m2::network::TurnBasedClientManager
 		[](auto&) -> std::queue<pb::TurnBasedNetworkMessage>& { throw M2_ERROR("Incoming queue unavailable, client is not connected"); },
 	}, _state);
 }
-std::queue<m2::pb::TurnBasedNetworkMessage>& m2::network::TurnBasedClientManager::outgoing_queue() {
+std::queue<m2::pb::TurnBasedNetworkMessage>& m2::network::TurnBasedClientConnectionManager::outgoing_queue() {
 	return std::visit(overloaded{
 		[](Ready& s) -> std::queue<pb::TurnBasedNetworkMessage>& { return s.outgoing_queue; },
 		[](auto&) -> std::queue<pb::TurnBasedNetworkMessage>& { throw M2_ERROR("Outgoing queue unavailable, client is not ready"); },

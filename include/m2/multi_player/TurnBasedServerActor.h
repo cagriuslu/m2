@@ -1,6 +1,6 @@
 #pragma once
 #include "Type.h"
-#include "TurnBasedClientManager.h"
+#include "TurnBasedClientConnectionManager.h"
 #include <m2/network/PingBroadcastThread.h>
 #include <m2/network/Select.h>
 #include <m2/network/TcpSocket.h>
@@ -49,7 +49,7 @@ namespace m2 {
 		expected<network::TcpSocket> _connectionListeningSocket{unexpect_t{}, "Uninitialized"};
 		std::optional<network::PingBroadcastThread> _pingBroadcastThread;
 		pb::ServerThreadState _state{pb::SERVER_INITIAL_STATE};
-		std::vector<network::TurnBasedClientManager> _clients;
+		std::vector<network::TurnBasedClientConnectionManager> _clients;
 		int _turnHolderIndex{};
 		std::optional<pb::TurnBasedNetworkMessage> _lastServerUpdate;
 

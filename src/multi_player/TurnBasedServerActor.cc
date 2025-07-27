@@ -286,7 +286,7 @@ void m2::TurnBasedServerActor::CheckReadableClientSockets(const network::TcpSock
 	}
 	// If the lobby is not yet closed, remove disconnected clients
 	if (_state == pb::ServerThreadState::SERVER_LOBBY_OPEN) {
-		if (const auto eraseIt = std::ranges::remove_if(_clients, &network::TurnBasedClientManager::is_disconnected_or_untrusted).begin();
+		if (const auto eraseIt = std::ranges::remove_if(_clients, &network::TurnBasedClientConnectionManager::is_disconnected_or_untrusted).begin();
 				eraseIt != _clients.end()) {
 			_clients.erase(eraseIt, _clients.end());
 			PublishStateUpdate(outbox);
