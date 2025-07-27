@@ -228,8 +228,9 @@ void m2::TurnBasedServerActor::CheckDisconnectedClients(MessageBox<TurnBasedServ
 		}
 	}
 }
-std::optional<m2::TurnBasedServerActor::ReadAndWriteTcpSocketHandles> m2::TurnBasedServerActor::SelectSockets(const ReadAndWriteTcpSocketHandles& preSelectHandles) {
-	auto selectResult = network::Select{}(preSelectHandles.first, preSelectHandles.second, 250);
+std::optional<m2::network::SelectResult<m2::network::TcpSocket>> m2::TurnBasedServerActor::SelectSockets(
+		const std::pair<network::TcpSocketHandles, network::TcpSocketHandles>& preSelectHandles) {
+	auto selectResult = network::Select::WaitUntilSocketsReady(preSelectHandles.first, preSelectHandles.second, 250);
 	if (not selectResult) {
 		throw M2_ERROR("Select failed: " + selectResult.error());
 	}
@@ -304,7 +305,7 @@ void m2::TurnBasedServerActor::CheckWritableClientSockets(const network::TcpSock
 	}
 }
 
-m2::TurnBasedServerActor::ReadAndWriteTcpSocketHandles m2::TurnBasedServerActor::GetSocketHandlesToReadAndWrite() {
+std::pair<m2::network::TcpSocketHandles, m2::network::TcpSocketHandles> m2::TurnBasedServerActor::GetSocketHandlesToReadAndWrite() {
 	network::TcpSocketHandles socketsToRead;
 	socketsToRead.emplace_back(&*_connectionListeningSocket); // Add the main socket
 	for (auto& client : _clients) {

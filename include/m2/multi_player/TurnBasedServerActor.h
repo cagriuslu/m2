@@ -41,8 +41,6 @@ namespace m2 {
 	};
 
 	class TurnBasedServerActor final : ActorBase<TurnBasedServerActorInput, TurnBasedServerActorOutput> {
-		using ReadAndWriteTcpSocketHandles = std::pair<network::TcpSocketHandles, network::TcpSocketHandles>;
-
 		const mplayer::Type _type;
 		const int _maxConnCount;
 
@@ -78,12 +76,13 @@ namespace m2 {
 		void ProcessInbox(MessageBox<TurnBasedServerActorInput>&, MessageBox<TurnBasedServerActorOutput>&);
 		void ProcessReceivedMessages(MessageBox<TurnBasedServerActorOutput>&);
 		void CheckDisconnectedClients(MessageBox<TurnBasedServerActorOutput>&);
-		static std::optional<ReadAndWriteTcpSocketHandles> SelectSockets(const ReadAndWriteTcpSocketHandles&);
+		static std::optional<network::SelectResult<network::TcpSocket>> SelectSockets(
+			const std::pair<network::TcpSocketHandles, network::TcpSocketHandles>&);
 		void CheckConnectionListeningSocket(MessageBox<TurnBasedServerActorOutput>&, const network::TcpSocketHandles&);
 		void CheckReadableClientSockets(const network::TcpSocketHandles&, MessageBox<TurnBasedServerActorOutput>&);
 		void CheckWritableClientSockets(const network::TcpSocketHandles&);
 
-		ReadAndWriteTcpSocketHandles GetSocketHandlesToReadAndWrite();
+		std::pair<network::TcpSocketHandles, network::TcpSocketHandles> GetSocketHandlesToReadAndWrite();
 		void SetStateAndPublish(MessageBox<TurnBasedServerActorOutput>&, pb::ServerThreadState);
 		void PublishStateUpdate(MessageBox<TurnBasedServerActorOutput>&) const;
 		void HandleDisconnectedClient(MessageBox<TurnBasedServerActorOutput>&, int clientIndex);

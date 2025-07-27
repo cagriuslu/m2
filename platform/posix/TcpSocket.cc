@@ -1,6 +1,6 @@
 #include <m2/network/TcpSocket.h>
 #include <m2/network/Select.h>
-#include "PlatformSpecificTcpSocketData.h"
+#include "PlatformSpecificSocketData.h"
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <unistd.h>
@@ -23,7 +23,7 @@ m2::expected<m2::network::TcpSocket> m2::network::TcpSocket::CreateServerSideSoc
     TcpSocket tcp_socket;
 	tcp_socket._serverAddr = INADDR_ANY;
 	tcp_socket._serverPort = port;
-    tcp_socket._platform_specific_data = new detail::PlatformSpecificTcpSocketData{.fd = socket_result};
+    tcp_socket._platform_specific_data = new detail::PlatformSpecificSocketData{.fd = socket_result};
     return std::move(tcp_socket);
 }
 m2::expected<m2::network::TcpSocket> m2::network::TcpSocket::CreateClientSideSocket(const std::string& server_ip_addr, const uint16_t server_port) {
@@ -35,7 +35,7 @@ m2::expected<m2::network::TcpSocket> m2::network::TcpSocket::CreateClientSideSoc
     TcpSocket tcp_socket;
 	tcp_socket._serverAddr = inet_addr(server_ip_addr.c_str());
 	tcp_socket._serverPort = server_port;
-    tcp_socket._platform_specific_data = new detail::PlatformSpecificTcpSocketData{.fd = socket_result};
+    tcp_socket._platform_specific_data = new detail::PlatformSpecificSocketData{.fd = socket_result};
     return std::move(tcp_socket);
 }
 m2::network::TcpSocket::TcpSocket(TcpSocket&& other) noexcept {
@@ -133,7 +133,7 @@ m2::expected<std::optional<m2::network::TcpSocket>> m2::network::TcpSocket::acce
 	child_socket._clientAddr = reinterpret_cast<sockaddr_in*>(&child_address)->sin_addr.s_addr;
 	child_socket._serverPort = _serverPort;
 	child_socket._clientPort = reinterpret_cast<sockaddr_in*>(&child_address)->sin_port;
-    child_socket._platform_specific_data = new detail::PlatformSpecificTcpSocketData{.fd = new_socket};
+    child_socket._platform_specific_data = new detail::PlatformSpecificSocketData{.fd = new_socket};
     return std::move(child_socket);
 }
 

@@ -1,5 +1,5 @@
 #include <m2/network/TcpSocket.h>
-#include "PlatformSpecificTcpSocketData.h"
+#include "PlatformSpecificSocketData.h"
 #include <WinSock2.h>
 #include <WS2tcpip.h>
 #include <iphlpapi.h>
@@ -47,7 +47,7 @@ expected<TcpSocket> TcpSocket::CreateServerSideSocket(uint16_t port) {
     TcpSocket tcp_socket;
     tcp_socket._serverAddr = INADDR_ANY;
     tcp_socket._serverPort = port;
-    tcp_socket._platform_specific_data = new detail::PlatformSpecificTcpSocketData{.address_info = result, .socket = listen_socket};
+    tcp_socket._platform_specific_data = new detail::PlatformSpecificSocketData{.address_info = result, .socket = listen_socket};
     return std::move(tcp_socket);
 }
 
@@ -83,7 +83,7 @@ expected<TcpSocket> TcpSocket::CreateClientSideSocket(const std::string& server_
     TcpSocket tcp_socket;
     tcp_socket._serverAddr = reinterpret_cast<sockaddr_in*>(result->ai_addr)->sin_addr.S_un.S_addr;
     tcp_socket._serverPort = server_port;
-    tcp_socket._platform_specific_data = new detail::PlatformSpecificTcpSocketData{.address_info = result, .socket = connect_socket};
+    tcp_socket._platform_specific_data = new detail::PlatformSpecificSocketData{.address_info = result, .socket = connect_socket};
     return std::move(tcp_socket);
 }
 
@@ -177,7 +177,7 @@ expected<std::optional<TcpSocket>> TcpSocket::accept() {
     child_socket._clientAddr = reinterpret_cast<sockaddr_in*>(&child_address)->sin_addr.S_un.S_addr;
     child_socket._serverPort = _serverPort;
     child_socket._clientPort = reinterpret_cast<sockaddr_in*>(&child_address)->sin_port;
-    child_socket._platform_specific_data = new detail::PlatformSpecificTcpSocketData{.socket = new_socket};
+    child_socket._platform_specific_data = new detail::PlatformSpecificSocketData{.socket = new_socket};
     return std::move(child_socket);
 }
 

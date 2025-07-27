@@ -210,7 +210,7 @@ void m2::network::detail::TurnBasedClientThreadBase::base_client_thread_func(Tur
 						sockets_to_read.emplace_back(&*socket);
 						// Select
 						LOG_INFO("Waiting 100ms in case the server rejects the new connection");
-						auto select_result = Select{}(sockets_to_read, {}, 100);
+						auto select_result = Select::WaitUntilSocketsReady(sockets_to_read, {}, 100);
 						if (not select_result) {
 							throw M2_ERROR("Select failed: " + select_result.error());
 						}
@@ -218,7 +218,7 @@ void m2::network::detail::TurnBasedClientThreadBase::base_client_thread_func(Tur
 							// Timeout occurred, all good, the socket isn't closed.
 							socket_manager_or_ticks_disconnected_at.emplace<multiplayer::turnbased::MessagePasser>(std::move(*socket), -1);
 							thread_manager->locked_set_state(pb::CLIENT_CONNECTED);
-						} else if (not select_result.value().value().first.empty()) {
+						} else if (not select_result.value().value().readableSockets.empty()) {
 							// Server should not have sent anything until we signalled as ready.
 							LOG_WARN("Connection was closed from server because the socket is readable immediately upon connection");
 							// This means (most likely) that the server has disconnected the socket.
@@ -324,7 +324,7 @@ void m2::network::detail::TurnBasedClientThreadBase::base_client_thread_func(Tur
 				sockets_to_write.emplace_back(&socket_manager.socket());
 			}
 			// Select
-			auto select_result = Select{}(sockets_to_read, sockets_to_write, 250);
+			auto select_result = Select::WaitUntilSocketsReady(sockets_to_read, sockets_to_write, 250);
 			if (not select_result) {
 				throw M2_ERROR("Select failed: " + select_result.error());
 			}
@@ -333,7 +333,7 @@ void m2::network::detail::TurnBasedClientThreadBase::base_client_thread_func(Tur
 				continue;
 			}
 			// If there's anything to read
-			if (not select_result.value().value().first.empty()) {
+			if (not select_result.value().value().readableSockets.empty()) {
 				const std::lock_guard lock(thread_manager->_mutex);
 				auto read_result = socket_manager.read_incoming_data(thread_manager->_incoming_queue);
 				if (not read_result) {
@@ -348,7 +348,7 @@ void m2::network::detail::TurnBasedClientThreadBase::base_client_thread_func(Tur
 				}
 			}
 			// If there's anything to write
-			if (not select_result.value().value().second.empty()) {
+			if (not select_result.value().value().writableSockets.empty()) {
 				const std::lock_guard lock(thread_manager->_mutex);
 				auto send_result = socket_manager.send_outgoing_data(thread_manager->_outgoing_queue);
 				if (not send_result) {
