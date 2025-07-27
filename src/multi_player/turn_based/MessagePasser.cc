@@ -1,13 +1,15 @@
-#include <m2/multi_player/turn_based/TcpSocketManager.h>
+#include <m2/multi_player/turn_based/MessagePasser.h>
 #include <m2/protobuf/Detail.h>
 #include <m2/Log.h>
 #include <m2/Game.h>
 #include <string>
 #include <m2/sdl/Detail.h>
 
-m2::expected<m2::network::TcpSocketManager::ReadResult> m2::network::TcpSocketManager::read_incoming_data(std::queue<pb::TurnBasedNetworkMessage>& read_to) {
+using namespace m2::multiplayer::turnbased;
+
+m2::expected<MessagePasser::ReadResult> MessagePasser::read_incoming_data(std::queue<pb::TurnBasedNetworkMessage>& read_to) {
 	if (_incoming_buffer.size() <= _incoming_buffer_next_available_position) {
-		return TcpSocketManager::ReadResult::BUFFER_OVERFLOW;
+		return ReadResult::BUFFER_OVERFLOW;
 	}
 
 	// Assuming that the socket is already readable, read from the next available position at the buffer
@@ -50,12 +52,12 @@ m2::expected<m2::network::TcpSocketManager::ReadResult> m2::network::TcpSocketMa
 		auto message = pb::json_string_to_message<pb::TurnBasedNetworkMessage>(possible_message);
 		if (not message) {
 			LOG_ERROR("Invalid message received from peer", _index, message.error());
-			return TcpSocketManager::ReadResult::INVALID_MESSAGE;
+			return ReadResult::INVALID_MESSAGE;
 		}
 		// Check game_hash
 		if (message->game_hash() != M2_GAME.Hash()) {
 			LOG_ERROR("Game hash mismatch", _index, possible_message);
-			return TcpSocketManager::ReadResult::GAME_HASH_MISMATCH;
+			return ReadResult::GAME_HASH_MISMATCH;
 		}
 		LOG_INFO("Saving message to incoming queue of self", _index, possible_message);
 		read_to.emplace(std::move(*message));
@@ -71,10 +73,10 @@ m2::expected<m2::network::TcpSocketManager::ReadResult> m2::network::TcpSocketMa
 		_incoming_buffer_next_available_position -= vacuum_count;
 	}
 
-	return read_to.empty() ? TcpSocketManager::ReadResult::INCOMPLETE_MESSAGE_RECEIVED : TcpSocketManager::ReadResult::MESSAGE_RECEIVED;
+	return read_to.empty() ? ReadResult::INCOMPLETE_MESSAGE_RECEIVED : ReadResult::MESSAGE_RECEIVED;
 }
 
-m2::expected<m2::network::TcpSocketManager::SendResult> m2::network::TcpSocketManager::send_outgoing_data(std::queue<pb::TurnBasedNetworkMessage>& read_from) {
+m2::expected<MessagePasser::SendResult> MessagePasser::send_outgoing_data(std::queue<pb::TurnBasedNetworkMessage>& read_from) {
 	// We don't want to block the server thread indefinitely. So either send what's inside _outgoing_buffer, or try to
 	// send one message from the _outgoing_queue.
 
@@ -84,7 +86,7 @@ m2::expected<m2::network::TcpSocketManager::SendResult> m2::network::TcpSocketMa
 			return SendResult::OK;
 		}
 		// Extract message from outgoing queue
-		auto msg = std::move(read_from.front());
+		const auto msg = std::move(read_from.front());
 		read_from.pop();
 		// Convert to string
 		auto str = pb::message_to_json_string(msg);
@@ -117,8 +119,8 @@ m2::expected<m2::network::TcpSocketManager::SendResult> m2::network::TcpSocketMa
 	return SendResult::OK;
 }
 
-void m2::network::TcpSocketManager::flush(std::queue<pb::TurnBasedNetworkMessage>& read_from, int timeout_ms) {
-	auto has_anything_to_send = [&](){
+void MessagePasser::flush(std::queue<pb::TurnBasedNetworkMessage>& read_from, const int timeout_ms) {
+	auto has_anything_to_send = [&] {
 		return (has_outgoing_data() || not read_from.empty());
 	};
 
@@ -127,7 +129,7 @@ void m2::network::TcpSocketManager::flush(std::queue<pb::TurnBasedNetworkMessage
 		return;
 	}
 
-	auto start_ticks = sdl::get_ticks();
+	const auto start_ticks = sdl::get_ticks();
 	while ((sdl::get_ticks() - start_ticks < timeout_ms) && has_anything_to_send()) {
 		if (auto send_result = send_outgoing_data(read_from); not send_result || send_result != SendResult::OK) {
 			LOG_WARN("Error while flushing", send_result.error());

@@ -3,7 +3,7 @@
 #include <m2/network/Select.h>
 #include <m2/Game.h>
 #include <m2/Log.h>
-#include <m2/multi_player/turn_based/TcpSocketManager.h>
+#include <m2/multi_player/turn_based/MessagePasser.h>
 
 m2::network::detail::TurnBasedClientThreadBase::TurnBasedClientThreadBase(mplayer::Type type, std::string addr, bool ping_broadcast)
 		: _type(type), _addr(std::move(addr)), _ping_broadcast(ping_broadcast), _ready_token(RandomNonZero64()),
@@ -152,13 +152,13 @@ void m2::network::detail::TurnBasedClientThreadBase::base_client_thread_func(Tur
 		return thread_manager->_received_server_update || thread_manager->_received_server_command;
 	};
 
-	std::variant<std::monostate, TcpSocketManager, sdl::ticks_t> socket_manager_or_ticks_disconnected_at;
+	std::variant<std::monostate, multiplayer::turnbased::MessagePasser, sdl::ticks_t> socket_manager_or_ticks_disconnected_at;
 	std::optional<PingBroadcastThread> ping_broadcast_thread;
 	while (locked_should_continue_running(thread_manager)) {
 		if (auto state = thread_manager->locked_get_client_state();
 			state == pb::CLIENT_INITIAL_STATE || state == pb::CLIENT_RECONNECTING) {
 			// Sanity check
-			if (std::holds_alternative<TcpSocketManager>(socket_manager_or_ticks_disconnected_at)) {
+			if (std::holds_alternative<multiplayer::turnbased::MessagePasser>(socket_manager_or_ticks_disconnected_at)) {
 				throw M2_ERROR("Unexpected socket");
 			}
 
@@ -216,7 +216,7 @@ void m2::network::detail::TurnBasedClientThreadBase::base_client_thread_func(Tur
 						}
 						if (*select_result == std::nullopt) {
 							// Timeout occurred, all good, the socket isn't closed.
-							socket_manager_or_ticks_disconnected_at.emplace<TcpSocketManager>(std::move(*socket), -1);
+							socket_manager_or_ticks_disconnected_at.emplace<multiplayer::turnbased::MessagePasser>(std::move(*socket), -1);
 							thread_manager->locked_set_state(pb::CLIENT_CONNECTED);
 						} else if (not select_result.value().value().first.empty()) {
 							// Server should not have sent anything until we signalled as ready.
@@ -227,7 +227,7 @@ void m2::network::detail::TurnBasedClientThreadBase::base_client_thread_func(Tur
 							throw M2_ERROR("Unexpected select result");
 						}
 					} else if (state == pb::CLIENT_RECONNECTING) {
-						socket_manager_or_ticks_disconnected_at.emplace<TcpSocketManager>(std::move(*socket), -1);
+						socket_manager_or_ticks_disconnected_at.emplace<multiplayer::turnbased::MessagePasser>(std::move(*socket), -1);
 						thread_manager->locked_set_state(pb::CLIENT_RECONNECTED);
 					} else {
 						throw M2_ERROR("Unexpected state");
@@ -235,10 +235,10 @@ void m2::network::detail::TurnBasedClientThreadBase::base_client_thread_func(Tur
 				}
 			}
 		} else {
-			if (not std::holds_alternative<TcpSocketManager>(socket_manager_or_ticks_disconnected_at)) {
+			if (not std::holds_alternative<multiplayer::turnbased::MessagePasser>(socket_manager_or_ticks_disconnected_at)) {
 				throw M2_ERROR("Expected socket");
 			}
-			auto& socket_manager = std::get<TcpSocketManager>(socket_manager_or_ticks_disconnected_at);
+			auto& socket_manager = std::get<multiplayer::turnbased::MessagePasser>(socket_manager_or_ticks_disconnected_at);
 			// Connected, reconnected, ready, or started
 
 			// Wait until the previous TurnBasedServerUpdate & TurnBasedServerCommand is processed
@@ -341,7 +341,7 @@ void m2::network::detail::TurnBasedClientThreadBase::base_client_thread_func(Tur
 					socket_manager_or_ticks_disconnected_at.emplace<sdl::ticks_t>(sdl::get_ticks());
 					thread_manager->unlocked_set_state(pb::CLIENT_RECONNECTING);
 					continue;
-				} else if (*read_result != TcpSocketManager::ReadResult::MESSAGE_RECEIVED && *read_result != TcpSocketManager::ReadResult::INCOMPLETE_MESSAGE_RECEIVED) {
+				} else if (*read_result != multiplayer::turnbased::MessagePasser::ReadResult::MESSAGE_RECEIVED && *read_result != multiplayer::turnbased::MessagePasser::ReadResult::INCOMPLETE_MESSAGE_RECEIVED) {
 					LOG_WARN("Invalid data received from server, closing client", static_cast<int>(*read_result));
 					thread_manager->unlocked_set_state(pb::CLIENT_MISBEHAVING_SERVER_QUIT);
 					continue;
@@ -356,7 +356,7 @@ void m2::network::detail::TurnBasedClientThreadBase::base_client_thread_func(Tur
 					socket_manager_or_ticks_disconnected_at.emplace<sdl::ticks_t>(sdl::get_ticks());
 					thread_manager->unlocked_set_state(pb::CLIENT_RECONNECTING);
 					continue;
-				} else if (*send_result != TcpSocketManager::SendResult::OK) {
+				} else if (*send_result != multiplayer::turnbased::MessagePasser::SendResult::OK) {
 					throw M2_ERROR("An invalid or too large outgoing message was queued to server: " + m2::ToString(static_cast<int>(*send_result)));
 				}
 			}

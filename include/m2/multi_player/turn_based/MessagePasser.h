@@ -5,12 +5,12 @@
 #include <array>
 #include <queue>
 
-namespace m2::network {
+namespace m2::multiplayer::turnbased {
 	/// \brief Allows sending and receiving of discrete messages (instead of individual bytes) over a TCP socket.
 	/// \details For TurnBased networking model, clients use the manager directly, while the server utilizes client
 	/// manager to hold the socket manager.
-	class TcpSocketManager {
-		TcpSocket _socket;
+	class MessagePasser {
+		network::TcpSocket _socket;
 		int _index; // Used for logging
 
 		std::array<char, 65536> _incoming_buffer{};
@@ -21,9 +21,9 @@ namespace m2::network {
 		size_t _outgoing_buffer_bytes_left{};
 
 	public:
-		TcpSocketManager(TcpSocket&& s, int index) : _socket(std::move(s)), _index(index) {}
+		MessagePasser(network::TcpSocket&& s, int index) : _socket(std::move(s)), _index(index) {}
 
-		TcpSocket& socket() { return _socket; }
+		network::TcpSocket& socket() { return _socket; }
 		[[nodiscard]] int index() const { return _index; }
 
 		enum class ReadResult {

@@ -1,5 +1,5 @@
 #pragma once
-#include "turn_based/TcpSocketManager.h"
+#include "turn_based/MessagePasser.h"
 #include "../network/IpAddressAndPort.h"
 #include <m2/network/SequenceNo.h>
 #include "../sdl/Detail.h"
@@ -11,12 +11,12 @@ namespace m2::network {
 	class TurnBasedClientManager {
 		// Client is connected but not yet ready
 		struct Connected {
-			TcpSocketManager socket_manager;
+			multiplayer::turnbased::MessagePasser socket_manager;
 			std::queue<pb::TurnBasedNetworkMessage> incoming_queue{};
 		};
 		// Client is connected and ready
 		struct Ready {
-			TcpSocketManager socket_manager;
+			multiplayer::turnbased::MessagePasser socket_manager;
 			std::queue<pb::TurnBasedNetworkMessage> incoming_queue{};
 			std::queue<pb::TurnBasedNetworkMessage> outgoing_queue{};
 			uint64_t ready_token;
@@ -28,7 +28,7 @@ namespace m2::network {
 		};
 		// A client has reconnected but hasn't provided the correct ready token yet
 		struct ReconnectedUntrusted {
-			TcpSocketManager socket_manager;
+			multiplayer::turnbased::MessagePasser socket_manager;
 			std::queue<pb::TurnBasedNetworkMessage> incoming_queue{};
 			uint64_t expected_ready_token; // Same as Ready::ready_token
 			sdl::ticks_t reconnected_at;
@@ -92,7 +92,7 @@ namespace m2::network {
 		void flush_and_shutdown();
 
 	private:
-		TcpSocketManager& socket_manager();
+		multiplayer::turnbased::MessagePasser& socket_manager();
 		std::queue<pb::TurnBasedNetworkMessage>* get_incoming_queue();
 		std::queue<pb::TurnBasedNetworkMessage>& incoming_queue();
 		std::queue<pb::TurnBasedNetworkMessage>& outgoing_queue();
