@@ -234,7 +234,7 @@ std::optional<m2::network::SelectResult<m2::network::TcpSocket>> m2::TurnBasedSe
 	if (not selectResult) {
 		throw M2_ERROR("Select failed: " + selectResult.error());
 	}
-	return *selectResult;
+	return std::move(*selectResult);
 }
 void m2::TurnBasedServerActor::CheckConnectionListeningSocket(MessageBox<TurnBasedServerActorOutput>& outbox, const network::TcpSocketHandles& readableSockets) {
 	// Check if main socket is readable

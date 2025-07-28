@@ -1,24 +1,44 @@
 syntax = "proto3";
 package m2.pb;
 
-message LockstepNetworkMessage {}
+// Each LockstepMessage has a different SequenceNo starting from 1.
+message LockstepMessage {}
 
-// This message is serialized into the body of the UDP packet without any headers or footers.
+// Each LockstepSmallMessage has a different OrderNo starting from 1. A small message contains either a full
+// LockstepMessage if it is small enough. Or, a part of a LockstepMessage is contained for reconstruction later.
+message LockstepSmallMessage {
+  // If complete_message is set, contains the SequenceNo of the full LockstepMessage. If message_part is set, contains
+  // the SequenceNo of the message that is partially contained.
+  fixed32 message_sequence_no = 1;
+
+  oneof Type {
+    LockstepMessage complete_message = 2;
+    bytes message_part = 3;
+  }
+
+  // If message_part is set, contains the total size of the LockstepMessage once reconstructed.
+  uint32 reconstructed_message_size = 4;
+}
+
+// This message is serialized to the body of a UDP packet without any headers or footers.
 message LockstepUdpPacket {
   // UDP is connectionless, each packet needs to prove that it is ours.
   fixed32 game_hash = 1;
 
-  // Highest 11 bits: Sequence number of the message whose chunk is contained in this message, if there's a chunk.
-  // Next 5 bits: Chunk index of the message chunk contained in this message.
-  // Next 5 bits: Total number of chunks in the message whose chunk is contained in this message, if there's a chunk.
-  // Last 11 bits: Sequence number of the message partially (or not at all) received by the sender of this packet.
-  fixed32 message_and_ack_details = 2;
+  // Order number of the most recently received LockstepSmallMessage by the sender of this packet.
+  fixed32 most_recent_ack = 2;
 
-  // Each bit, starting from the least significant one, represents a received chunk of the message whose sequence number
-  // is mentioned in the last 11 bits of message_and_ack_details. Up to 32 chunks can be described this way. This puts a
-  // limit on the size of the message that can be carried with lockstep UDP packets.
-  fixed32 ack_bits = 3;
+  // Each bit, starting from the least significant one, represents the delivery status of a LockstepSmallMessage from
+  // the point of the sender of this packet. Each set bit represents a message that is received. Least significant bit
+  // corresponds to the message before most_recent_ack.
+  fixed32 ack_history_bits = 3;
 
-  // A chunk of the message that forms a LockstepNetworkMessage once pieced together.
-  bytes message_chunk = 4;
+  // Order number of the oldest gap in the received LockstepSmallMessages by the sender of this packet. This field is
+  // particularly useful if an old message that doesn't fit into ack_history_bits is still missing.
+  fixed32 oldest_nack = 4;
+
+  // Order number of the first LockstepSmallMessages in this packet.
+  fixed32 first_order_no = 5;
+
+  repeated LockstepSmallMessage small_messages = 6;
 }
