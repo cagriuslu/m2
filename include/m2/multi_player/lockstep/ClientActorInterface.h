@@ -1,0 +1,10 @@
+#pragma once
+#include "ClientActor.h"
+#include <m2/mt/actor/ActorInterfaceBase.h>
+
+namespace m2::multiplayer::lockstep {
+	class ClientActorInterface final : public ActorInterfaceBase<ClientActor, ClientActorInput, ClientActorOutput> {
+	public:
+		explicit ClientActorInterface(network::IpAddressAndPort serverAddress) : ActorInterfaceBase(std::move(serverAddress)) {}
+	};
+}
