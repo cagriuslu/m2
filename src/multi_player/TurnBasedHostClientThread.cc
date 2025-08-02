@@ -1,8 +1,8 @@
 #include <../../include/m2/multi_player/TurnBasedHostClientThread.h>
 #include <m2/Log.h>
 
-m2::network::TurnBasedHostClientThread::TurnBasedHostClientThread(mplayer::Type type)
-	: detail::TurnBasedClientThreadBase(type, "127.0.0.1", false) {
+m2::network::TurnBasedHostClientThread::TurnBasedHostClientThread(std::in_place_t)
+	: detail::TurnBasedClientThreadBase("127.0.0.1", false) {
 	latch();
 
 	// Wait until the client is connected

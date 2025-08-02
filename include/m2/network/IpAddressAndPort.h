@@ -12,6 +12,7 @@ namespace m2::network {
 	using IpAddressAndPort = std::pair<IpAddress,Port>;
 
 	expected<std::vector<std::string>> get_ip_addresses();
+	IpAddress ToIpAddress(const std::string&);
 }
 
 namespace m2 {

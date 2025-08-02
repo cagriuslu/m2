@@ -40,7 +40,7 @@ const UiPanelBlueprint main_menu_blueprint = {
 				.text = "HOST",
 				.wrapped_font_size_in_units = 5.0f,
 				.onAction = [](MAYBE const widget::Text& self) {
-					M2_GAME.HostGame(m2::mplayer::Type::TurnBased, 4);
+					M2_GAME.HostTurnBasedGame(4);
 					if (auto action = m2::UiPanel::create_and_run_blocking(&server_lobby); action.IsReturn()) {
 						// If the sub menu has returned, stay at main menu
 						return MakeContinueAction();

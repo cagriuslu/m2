@@ -23,7 +23,7 @@ namespace m2::network {
 		std::unordered_map<ObjectId,std::pair<ObjectId,bool>> _server_to_local_map;
 
 	public:
-		TurnBasedRealClientThread(mplayer::Type type, std::string addr);
+		explicit TurnBasedRealClientThread(std::string addr);
 		TurnBasedRealClientThread(const TurnBasedRealClientThread& other) = delete;
 		TurnBasedRealClientThread& operator=(const TurnBasedRealClientThread& other) = delete;
 		TurnBasedRealClientThread(TurnBasedRealClientThread&& other) = delete;

@@ -125,7 +125,7 @@ const UiPanelBlueprint ip_port_form = {
 				.wrapped_font_size_in_units = 5.0f,
 				.onAction = [](MAYBE const widget::Text& self) {
 					auto* ip_input_widget = self.Parent().FindWidget<TextInput>();
-					M2_GAME.JoinGame(m2::mplayer::Type::TurnBased, ip_input_widget->text_input());
+					M2_GAME.JoinTurnBasedGame(ip_input_widget->text_input());
 					return m2::UiPanel::create_and_run_blocking(&client_lobby);
 				}
 			}

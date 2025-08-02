@@ -3,7 +3,12 @@
 #include <WinSock2.h>
 #else
 #include <netinet/in.h>
+#include <arpa/inet.h>
 #endif
+
+m2::network::IpAddress m2::network::ToIpAddress(const std::string& str) {
+	return inet_addr(str.c_str());
+}
 
 std::string m2::ToString(const network::IpAddressAndPort& ip_port) {
 	const auto ip = ntohl(ip_port.first);

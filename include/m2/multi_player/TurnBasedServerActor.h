@@ -41,7 +41,6 @@ namespace m2 {
 	};
 
 	class TurnBasedServerActor final : ActorBase<TurnBasedServerActorInput, TurnBasedServerActorOutput> {
-		const mplayer::Type _type;
 		const int _maxConnCount;
 
 		expected<network::TcpSocket> _connectionListeningSocket{unexpect_t{}, "Uninitialized"};
@@ -52,7 +51,7 @@ namespace m2 {
 		std::optional<pb::TurnBasedNetworkMessage> _lastServerUpdate;
 
 	public:
-		TurnBasedServerActor(const mplayer::Type type, const int maxConnectionCount) : _type(type), _maxConnCount(maxConnectionCount) {}
+		TurnBasedServerActor(const int maxConnectionCount) : _maxConnCount(maxConnectionCount) {}
 		~TurnBasedServerActor() override = default;
 
 		const char* ThreadNameForLogging() const override { return "SR"; }
@@ -76,7 +75,7 @@ namespace m2 {
 		void ProcessInbox(MessageBox<TurnBasedServerActorInput>&, MessageBox<TurnBasedServerActorOutput>&);
 		void ProcessReceivedMessages(MessageBox<TurnBasedServerActorOutput>&);
 		void CheckDisconnectedClients(MessageBox<TurnBasedServerActorOutput>&);
-		static std::optional<network::SelectResult<network::TcpSocket>> SelectSockets(
+		static std::optional<network::TcpSelectResult> SelectSockets(
 			const std::pair<network::TcpSocketHandles, network::TcpSocketHandles>&);
 		void CheckConnectionListeningSocket(MessageBox<TurnBasedServerActorOutput>&, const network::TcpSocketHandles&);
 		void CheckReadableClientSockets(const network::TcpSocketHandles&, MessageBox<TurnBasedServerActorOutput>&);

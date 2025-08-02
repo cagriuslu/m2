@@ -33,7 +33,7 @@ m2::expected<m2::network::TcpSocket> m2::network::TcpSocket::CreateClientSideSoc
     }
 
     TcpSocket tcp_socket;
-	tcp_socket._serverAddr = inet_addr(server_ip_addr.c_str());
+	tcp_socket._serverAddr = ToIpAddress(server_ip_addr);
 	tcp_socket._serverPort = server_port;
     tcp_socket._platform_specific_data = new detail::PlatformSpecificSocketData{.fd = socket_result};
     return std::move(tcp_socket);

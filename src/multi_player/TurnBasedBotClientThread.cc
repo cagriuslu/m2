@@ -1,8 +1,8 @@
 #include <../../include/m2/multi_player/TurnBasedBotClientThread.h>
 #include <m2/Log.h>
 
-m2::network::TurnBasedBotClientThread::TurnBasedBotClientThread(mplayer::Type type)
-	: detail::TurnBasedClientThreadBase(type, "127.0.0.1", false) {
+m2::network::TurnBasedBotClientThread::TurnBasedBotClientThread(std::in_place_t)
+	: detail::TurnBasedClientThreadBase("127.0.0.1", false) {
 	latch();
 
 	// Wait until the bot is connected. The Bot thread waits 100 millisecond to ensure that the connection to host is not

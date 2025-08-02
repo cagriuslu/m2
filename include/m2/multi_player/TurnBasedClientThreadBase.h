@@ -13,7 +13,6 @@ namespace m2::network::detail {
 	/// Base class of ClientThreads
 	class TurnBasedClientThreadBase {
 		// Main thread variables
-		MAYBE const mplayer::Type _type{};
 		const std::string _addr;
 		const bool _ping_broadcast{};
 		uint64_t _ready_token{};
@@ -39,7 +38,7 @@ namespace m2::network::detail {
 
 	public:
 		TurnBasedClientThreadBase() = default; // Does nothing
-		TurnBasedClientThreadBase(mplayer::Type type, std::string addr, bool ping_broadcast);
+		TurnBasedClientThreadBase(std::string addr, bool ping_broadcast);
 		TurnBasedClientThreadBase(const TurnBasedClientThreadBase& other) = delete;
 		TurnBasedClientThreadBase& operator=(const TurnBasedClientThreadBase& other) = delete;
 		TurnBasedClientThreadBase(TurnBasedClientThreadBase&& other) = delete;

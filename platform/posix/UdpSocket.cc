@@ -56,7 +56,7 @@ m2::network::UdpSocket::~UdpSocket() {
 	}
 }
 
-m2::expected<int> m2::network::UdpSocket::send(const IpAddress peerAddr, const network::Port peerPort, const uint8_t* buffer, const size_t length) {
+m2::expected<int> m2::network::UdpSocket::send(const IpAddress& peerAddr, const Port& peerPort, const uint8_t* buffer, const size_t length) {
 	// Prepare destination address
 	sockaddr_in sin{};
 #ifdef __APPLE__

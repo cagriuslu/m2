@@ -7,18 +7,16 @@
 
 namespace m2 {
 	class TurnBasedServerActorInterface final : public ActorInterfaceBase<TurnBasedServerActor, TurnBasedServerActorInput, TurnBasedServerActorOutput> {
-		const mplayer::Type _type;
 		SequenceNo _nextServerUpdateSequenceNo{};
 		int _turnHolderIndex{};
 		TurnBasedServerActorOutput::StateUpdate _serverActorState{};
 		std::optional<TurnBasedServerActorOutput::ClientEvent> _clientEvent;
 
 	public:
-		TurnBasedServerActorInterface(const mplayer::Type type, const int maxConnectionCount): ActorInterfaceBase(type, maxConnectionCount), _type(type) {}
+		TurnBasedServerActorInterface(const int maxConnectionCount): ActorInterfaceBase(maxConnectionCount) {}
 
 		// Accessors
 		
-		[[nodiscard]] mplayer::Type GetType() const { return _type; }
 		/// Returns true if the server is still listening for external connections.
 		bool IsListening() { ProcessOutbox(); return _serverActorState.threadState == pb::SERVER_LOBBY_OPEN; }
 		bool IsLobbyClosed() { ProcessOutbox(); return _serverActorState.threadState == pb::SERVER_LOBBY_CLOSED; }

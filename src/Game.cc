@@ -167,14 +167,14 @@ m2::Game::~Game() {
 	SDL_Quit();
 }
 
-m2::void_expected m2::Game::HostGame(const mplayer::Type type, const unsigned max_connection_count) {
+m2::void_expected m2::Game::HostTurnBasedGame(unsigned max_connection_count) {
 	if (not std::holds_alternative<std::monostate>(_multiPlayerComponents)) {
 		throw M2_ERROR("Hosting game requires no other multiplayer threads to exist");
 	}
 
 	LOG_INFO("Creating server instance...");
 	_multiPlayerComponents.emplace<TurnBasedServerComponents>();
-	std::get<TurnBasedServerComponents>(_multiPlayerComponents).serverActorInterface.emplace(type, max_connection_count);
+	std::get<TurnBasedServerComponents>(_multiPlayerComponents).serverActorInterface.emplace(max_connection_count);
 	LOG_DEBUG("Real ServerThread created");
 
 	// Wait until the server is up
@@ -184,18 +184,38 @@ m2::void_expected m2::Game::HostGame(const mplayer::Type type, const unsigned ma
 	// TODO prevent other clients from joining until the host client joins
 
 	LOG_INFO("Server is listening, joining the game as host client...");
-	std::get<TurnBasedServerComponents>(_multiPlayerComponents).hostClientThread.emplace(type);
+	std::get<TurnBasedServerComponents>(_multiPlayerComponents).hostClientThread.emplace();
 	LOG_DEBUG("Real TurnBasedHostClientThread created");
 
 	return {};
 }
+m2::void_expected m2::Game::HostLockstepGame(unsigned max_connection_count) {
+	if (not std::holds_alternative<std::monostate>(_multiPlayerComponents)) {
+		throw M2_ERROR("Hosting game requires no other multiplayer threads to exist");
+	}
 
-m2::void_expected m2::Game::JoinGame(mplayer::Type type, const std::string& addr) {
+	LOG_INFO("Creating server...");
+	_multiPlayerComponents.emplace<multiplayer::lockstep::ServerComponents>();
+	std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).serverActorInterface.emplace(max_connection_count);
+	LOG_DEBUG("Server created");
+
+	std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+
+	LOG_INFO("Server is listening, joining the game as host client...");
+	std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).hostClientActorInterface.emplace(network::IpAddressAndPort{
+		network::ToIpAddress("127.0.0.1"), 1162
+	});
+	LOG_DEBUG("Host client created");
+
+	return {};
+}
+
+m2::void_expected m2::Game::JoinTurnBasedGame(const std::string& addr) {
 	if (not std::holds_alternative<std::monostate>(_multiPlayerComponents)) {
 		throw M2_ERROR("Joining game requires no other multiplayer threads to exist");
 	}
 
-	_multiPlayerComponents.emplace<network::TurnBasedRealClientThread>(type, addr);
+	_multiPlayerComponents.emplace<network::TurnBasedRealClientThread>(addr);
 	return {};
 }
 void m2::Game::LeaveGame() {
@@ -216,7 +236,7 @@ bool m2::Game::AddBot() {
 	it->~TurnBasedBotClientThread(); // Destruct the default object
 	LOG_DEBUG("Temporary TurnBasedBotClientThread destroyed, creating real TurnBasedBotClientThread");
 
-	new (&*it) network::TurnBasedBotClientThread(ServerThread().GetType());
+	new (&*it) network::TurnBasedBotClientThread(std::in_place);
 	LOG_DEBUG("Real TurnBasedBotClientThread created");
 
 	if (it->is_active()) {

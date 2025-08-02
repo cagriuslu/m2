@@ -5,8 +5,8 @@
 #include <m2/Log.h>
 #include <m2/multi_player/turn_based/MessagePasser.h>
 
-m2::network::detail::TurnBasedClientThreadBase::TurnBasedClientThreadBase(mplayer::Type type, std::string addr, bool ping_broadcast)
-		: _type(type), _addr(std::move(addr)), _ping_broadcast(ping_broadcast), _ready_token(RandomNonZero64()),
+m2::network::detail::TurnBasedClientThreadBase::TurnBasedClientThreadBase(std::string addr, bool ping_broadcast)
+		: _addr(std::move(addr)), _ping_broadcast(ping_broadcast), _ready_token(RandomNonZero64()),
 		_thread(base_client_thread_func, this) {
 	LOG_INFO("Constructing ClientThread with ready-token", _ready_token);
 }

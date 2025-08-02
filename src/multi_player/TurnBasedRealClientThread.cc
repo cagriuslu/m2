@@ -23,8 +23,8 @@ namespace {
 	}
 }
 
-m2::network::TurnBasedRealClientThread::TurnBasedRealClientThread(mplayer::Type type, std::string addr)
-	: detail::TurnBasedClientThreadBase{type, std::move(addr), true} {
+m2::network::TurnBasedRealClientThread::TurnBasedRealClientThread(std::string addr)
+	: detail::TurnBasedClientThreadBase{std::move(addr), true} {
 	latch();
 }
 

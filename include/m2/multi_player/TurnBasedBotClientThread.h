@@ -7,7 +7,7 @@ namespace m2::network {
 
 	public:
 		TurnBasedBotClientThread() = default;
-		explicit TurnBasedBotClientThread(mplayer::Type type);
+		explicit TurnBasedBotClientThread(std::in_place_t);
 		TurnBasedBotClientThread(const TurnBasedBotClientThread& other) = delete;
 		TurnBasedBotClientThread& operator=(const TurnBasedBotClientThread& other) = delete;
 		TurnBasedBotClientThread(TurnBasedBotClientThread&& other) = delete;

@@ -5,7 +5,7 @@ namespace m2::network {
 	class TurnBasedHostClientThread final : private detail::TurnBasedClientThreadBase {
 	public:
 		TurnBasedHostClientThread() = default;
-		explicit TurnBasedHostClientThread(mplayer::Type type);
+		explicit TurnBasedHostClientThread(std::in_place_t);
 		TurnBasedHostClientThread(const TurnBasedHostClientThread& other) = delete;
 		TurnBasedHostClientThread& operator=(const TurnBasedHostClientThread& other) = delete;
 		TurnBasedHostClientThread(TurnBasedHostClientThread&& other) = delete;

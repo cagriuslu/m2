@@ -29,6 +29,7 @@
 #include <m2g_KeyType.pb.h>
 #include <m2/video/Shape.h>
 #include <m2/GameResources.h>
+#include <m2/multi_player/lockstep/ServerComponents.h>
 
 #define M2_GAME (m2::Game::Instance())
 #define M2_DEFER(f) (M2_GAME.AddDeferredAction(f))
@@ -49,7 +50,7 @@ namespace m2 {
 		mutable std::optional<VecF> _mouse_position_world_m;
 		mutable std::optional<VecF> _screen_center_to_mouse_position_m;  // Doesn't mean much in 2.5D mode
 
-		std::variant<std::monostate, TurnBasedServerComponents, network::TurnBasedRealClientThread> _multiPlayerComponents;
+		std::variant<std::monostate, TurnBasedServerComponents, network::TurnBasedRealClientThread, multiplayer::lockstep::ServerComponents> _multiPlayerComponents;
 		bool _server_update_necessary{}, _server_update_with_shutdown{};
 		std::optional<SequenceNo> _lastSentOrReceivedServerUpdateSequenceNo;
 
@@ -124,10 +125,10 @@ namespace m2 {
 		// Pre-game management
 
 		bool IsMultiPlayer() const { return not std::holds_alternative<std::monostate>(_multiPlayerComponents); }
-		/// For server
-		void_expected HostGame(mplayer::Type type, unsigned max_connection_count);
+		void_expected HostTurnBasedGame(unsigned max_connection_count);
+		void_expected HostLockstepGame(unsigned max_connection_count);
 		/// For client
-		void_expected JoinGame(mplayer::Type type, const std::string& addr);
+		void_expected JoinTurnBasedGame(const std::string& addr);
 		/// For client
 		void LeaveGame();
 		/// For server
