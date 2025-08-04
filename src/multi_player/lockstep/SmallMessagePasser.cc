@@ -8,16 +8,16 @@ using namespace m2::multiplayer::lockstep;
 pb::LockstepUdpPacket SmallMessagePasser::PeerConnectionParameters::CreateOutgoingPacketFromTailMessages() const {
 	// Find the first message after which all messages can fit into the UDP packet
 	auto firstSmallMessageToSendReverseIt = [this]() {
-		auto spaceLeftInMessage = MAX_UDP_PACKET_SIZE - LockstepUdpPacketHeaderSize();
+		auto spaceLeftInMessage = MAX_UDP_PACKET_SIZE - UdpPacketHeaderSize();
 		auto rit = outgoingNackMessages.rbegin();
 		for (; rit != outgoingNackMessages.rend(); ++rit) {
 			// Assert message size as well
 			const auto msgSize = rit->second.ByteSizeLong();
-			if (LockstepSmallMessageMaxSize() < I(msgSize)) {
+			if (SmallMessageMaxSize() < I(msgSize)) {
 				throw M2_ERROR("Small message is larger than allowed");
 			}
-			if (I(msgSize) + EACH_SMALL_MESSAGE_HEADER_SIZE <= spaceLeftInMessage) {
-				spaceLeftInMessage -= msgSize + EACH_SMALL_MESSAGE_HEADER_SIZE;
+			if (I(msgSize) + N_BYTES_ADDED_TO_HEADER_FOR_EACH_SMALL_MESSAGE <= spaceLeftInMessage) {
+				spaceLeftInMessage -= msgSize + N_BYTES_ADDED_TO_HEADER_FOR_EACH_SMALL_MESSAGE;
 				continue;
 			}
 			// Current message won't fit
@@ -43,7 +43,6 @@ pb::LockstepUdpPacket SmallMessagePasser::PeerConnectionParameters::CreateOutgoi
 	}
 	return packet;
 }
-
 int32_t SmallMessagePasser::PeerConnectionParameters::GetMostRecentAck() const {
 	if (gapHistory) {
 		return gapHistory->oldestGapOrderNo + I(gapHistory->messagesSinceOldestGap.size()) - 1;

@@ -16,7 +16,7 @@ std::optional<ControlMessage> ConnectionToServer::GatherOutgoingMessages(std::qu
 				searchingForServer.responsesReceived < N_RESPONSES_TO_ASSUME_CONNECTION) {
 			if (not searchingForServer.lastConnectionAttemptAt
 				|| CONNECTION_ATTEMPT_PERIOD < searchingForServer.lastConnectionAttemptAt->GetDurationSinceMs()) {
-				LOG_INFO("Queueing ping in search of the server");
+				LOG_DEBUG("Queueing ping in search of the server");
 				out.emplace(); // Empty message is a ping
 				searchingForServer.lastConnectionAttemptAt = Stopwatch{};
 				return std::nullopt;

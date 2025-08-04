@@ -7,7 +7,14 @@
 #include <deque>
 
 namespace m2::multiplayer::lockstep {
+	/// \brief Small lockstep UDP message passer
+	/// \details This class is responsible for passing LockstepSmallMessage protobuf objects between the instances of
+	/// itself belonging to different peers. Small messages are small enough to be carried by one UDP packet. If they
+	/// are small enough, more than one such message can even be carried inside one UDP packet. This class ensures that
+	/// every small message is delivered to the peer by means of ACKs and retransmissions. The messages are then
+	/// reordered on the receiver side.
 	class SmallMessagePasser {
+		/// \details Each peer, if ever responded to by this instance, gains an entry in the list of connections.
 		struct PeerConnectionParameters {
 			network::IpAddressAndPort peerAddress;
 
@@ -17,8 +24,6 @@ namespace m2::multiplayer::lockstep {
 			/// Front of the queue corresponds to the oldest non-acknowledged message
 			std::deque<std::pair<network::OrderNo,pb::LockstepSmallMessage>> outgoingNackMessages;
 			std::optional<Stopwatch> lastMessageSentAt;
-
-			pb::LockstepUdpPacket CreateOutgoingPacketFromTailMessages() const;
 
 			// Receiving parameters
 
@@ -33,9 +38,10 @@ namespace m2::multiplayer::lockstep {
 			};
 			std::optional<GapHistorySinceOldestNack> gapHistory; /// Exists only if there's a gap
 
+			pb::LockstepUdpPacket CreateOutgoingPacketFromTailMessages() const;
 			[[nodiscard]] int32_t GetMostRecentAck() const;
 			[[nodiscard]] int32_t GetAckHistoryBits() const;
-			int32_t GetOldestNack() const;
+			[[nodiscard]] int32_t GetOldestNack() const;
 		};
 
 		network::UdpSocket _socket;
@@ -54,6 +60,7 @@ namespace m2::multiplayer::lockstep {
 		void ReadSmallMessages(std::queue<SmallMessageAndSender>& out);
 
 		void SendSmallMessage(SmallMessageAndReceiver&& in);
+		void SendRetransmissions();
 
 	private:
 		PeerConnectionParameters* FindPeerConnectionParameters(const network::IpAddressAndPort& address);

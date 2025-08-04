@@ -17,7 +17,7 @@ message LockstepSmallMessage {
   }
 
   // If message_part is set, contains the total size of the LockstepMessage once reconstructed.
-  uint32 reconstructed_message_size = 4;
+  fixed32 reconstructed_message_size = 4;
 }
 
 // This message is serialized to the body of a UDP packet without any headers or footers.

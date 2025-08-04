@@ -1,7 +1,7 @@
 #include <m2/multi_player/lockstep/Message.h>
 #include <Lockstep.pb.h>
 
-int m2::multiplayer::lockstep::LockstepUdpPacketHeaderSize() {
+int m2::multiplayer::lockstep::UdpPacketHeaderSize() {
 	static int size = []() {
 		pb::LockstepUdpPacket packet;
 		packet.set_game_hash(INT32_MAX);
@@ -13,10 +13,25 @@ int m2::multiplayer::lockstep::LockstepUdpPacketHeaderSize() {
 	}();
 	return size;
 }
-
-int m2::multiplayer::lockstep::LockstepSmallMessageMaxSize() {
+int m2::multiplayer::lockstep::SmallMessageMaxSize() {
 	static int size = []() {
-		return MAX_UDP_PACKET_SIZE - LockstepUdpPacketHeaderSize() - EACH_SMALL_MESSAGE_HEADER_SIZE;
+		return MAX_UDP_PACKET_SIZE - UdpPacketHeaderSize() - N_BYTES_ADDED_TO_HEADER_FOR_EACH_SMALL_MESSAGE;
+	}();
+	return size;
+}
+int m2::multiplayer::lockstep::SmallMessageHeaderSize() {
+	static int size = []() {
+		pb::LockstepSmallMessage msg;
+		msg.set_message_sequence_no(INT32_MAX);
+		msg.set_reconstructed_message_size(INT32_MAX);
+		return msg.ByteSizeLong();
+	}();
+	return size;
+}
+int m2::multiplayer::lockstep::CompleteMessageMaxSize() {
+	static int size = []() {
+		constexpr auto bytesAddedForCompleteMessage = 4;
+		return SmallMessageMaxSize() - SmallMessageHeaderSize() - bytesAddedForCompleteMessage;
 	}();
 	return size;
 }

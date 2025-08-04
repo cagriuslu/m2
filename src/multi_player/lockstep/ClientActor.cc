@@ -11,7 +11,7 @@ bool ClientActor::Initialize(MessageBox<ClientActorInput>&, MessageBox<ClientAct
 	LOG_INFO("Lockstep ClientActor Initialize");
 	auto expectSocket = network::UdpSocket::CreateClientSideSocket();
 	if (not expectSocket) {
-		LOG_WARN("Unable to create a UDP socket", expectSocket.error());
+		LOG_ERROR("Unable to create a UDP socket", expectSocket.error());
 		return false;
 	}
 	_messagePasser.emplace(std::move(*expectSocket));
@@ -41,8 +41,6 @@ bool ClientActor::operator()(MessageBox<ClientActorInput>&, MessageBox<ClientAct
 		}
 		// TODO gather other outgoing messages
 	}
-
-	// std::this_thread::sleep_for(std::chrono::milliseconds{500});
 
 	return true;
 }
