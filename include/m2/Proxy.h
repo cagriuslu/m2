@@ -11,7 +11,7 @@
 #include <Level.pb.h>
 #include <string_view>
 #include <array>
-#include "network/SequenceNo.h"
+#include "network/Types.h"
 #include "ui/MessageBox.h"
 #include "ObjectBlueprint.h"
 
@@ -115,7 +115,7 @@ namespace m2 {
 		/// TurnBasedServerUpdate is published (except the initial TurnBasedServerUpdate). For the client, it's called after the
 		/// TurnBasedServerUpdate is received & processed by the engine. If shutdown is true, the shutdown flag is set in the
 		/// TurnBasedServerUpdate and the server or the client will be shutdown after this call.
-		void post_server_update(MAYBE SequenceNo sequenceNo, MAYBE bool shutdown) {}
+		void post_server_update(MAYBE network::SequenceNo sequenceNo, MAYBE bool shutdown) {}
 		/// Should be implemented from the perspective of a bot.
 		void bot_handle_server_update(MAYBE const m2::pb::TurnBasedServerUpdate& server_update) {}
 		/// Should be implemented from the perspective of a bot.

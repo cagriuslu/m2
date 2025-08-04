@@ -36,7 +36,7 @@ void m2::TurnBasedServerActorInterface::SetTurnHolder(const int clientIndex) {
 	_turnHolderIndex = clientIndex;
 	GetActorInbox().PushMessage(TurnBasedServerActorInput{.variant = TurnBasedServerActorInput::UpdateTurnHolder{.clientIndex = clientIndex}});
 }
-m2::SequenceNo m2::TurnBasedServerActorInterface::SendServerUpdate(const bool shutdownAfter) {
+m2::network::SequenceNo m2::TurnBasedServerActorInterface::SendServerUpdate(const bool shutdownAfter) {
 	INFO_FN();
 	auto serverUpdate = GenerateServerUpdate(_nextServerUpdateSequenceNo, _turnHolderIndex, shutdownAfter);
 	const auto serverUpdateSequenceNo = serverUpdate.sequence_no();

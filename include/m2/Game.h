@@ -52,7 +52,7 @@ namespace m2 {
 
 		std::variant<std::monostate, TurnBasedServerComponents, network::TurnBasedRealClientThread, multiplayer::lockstep::ServerComponents> _multiPlayerComponents;
 		bool _server_update_necessary{}, _server_update_with_shutdown{};
-		std::optional<SequenceNo> _lastSentOrReceivedServerUpdateSequenceNo;
+		std::optional<network::SequenceNo> _lastSentOrReceivedServerUpdateSequenceNo;
 
 		////////////////////////////////////////////////////////////////////////
 		////////////////////////////// RESOURCES ///////////////////////////////
@@ -140,7 +140,7 @@ namespace m2 {
 		TurnBasedServerActorInterface& ServerThread() { return *std::get<TurnBasedServerComponents>(_multiPlayerComponents).serverActorInterface; }
 		network::TurnBasedHostClientThread& TurnBasedHostClientThread() { return *std::get<TurnBasedServerComponents>(_multiPlayerComponents).hostClientThread; }
 		network::TurnBasedRealClientThread& TurnBasedRealClientThread() { return std::get<network::TurnBasedRealClientThread>(_multiPlayerComponents); }
-		std::optional<SequenceNo> LastServerUpdateSequenceNo() const { return _lastSentOrReceivedServerUpdateSequenceNo; }
+		std::optional<network::SequenceNo> LastServerUpdateSequenceNo() const { return _lastSentOrReceivedServerUpdateSequenceNo; }
 		int TotalPlayerCount();
 		int SelfIndex();
 		int TurnHolderIndex();

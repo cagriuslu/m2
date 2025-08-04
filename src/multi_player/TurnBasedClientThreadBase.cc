@@ -36,7 +36,7 @@ const m2::pb::TurnBasedServerUpdate* m2::network::detail::TurnBasedClientThreadB
 	}
 	return nullptr;
 }
-std::optional<std::pair<m2::SequenceNo,m2::pb::TurnBasedServerUpdate>> m2::network::detail::TurnBasedClientThreadBase::locked_pop_server_update() {
+std::optional<std::pair<m2::network::SequenceNo,m2::pb::TurnBasedServerUpdate>> m2::network::detail::TurnBasedClientThreadBase::locked_pop_server_update() {
 	const std::lock_guard lock(_mutex);
 	if (_received_server_update) {
 		auto tmp = std::move(_received_server_update);
@@ -50,7 +50,7 @@ bool m2::network::detail::TurnBasedClientThreadBase::locked_has_server_command()
 	const std::lock_guard lock(_mutex);
 	return static_cast<bool>(_received_server_command);
 }
-std::optional<std::pair<m2::SequenceNo,m2g::pb::TurnBasedServerCommand>> m2::network::detail::TurnBasedClientThreadBase::locked_pop_server_command() {
+std::optional<std::pair<m2::network::SequenceNo,m2g::pb::TurnBasedServerCommand>> m2::network::detail::TurnBasedClientThreadBase::locked_pop_server_command() {
 	const std::lock_guard lock(_mutex);
 	if (_received_server_command) {
 		auto tmp = std::move(_received_server_command);

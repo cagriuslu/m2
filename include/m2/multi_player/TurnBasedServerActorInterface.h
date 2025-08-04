@@ -1,13 +1,13 @@
 #pragma once
 #include "TurnBasedServerActor.h"
 #include "Type.h"
-#include <m2/network/SequenceNo.h>
+#include <m2/network/Types.h>
 #include <m2/mt/actor/ActorInterfaceBase.h>
 #include <m2/Meta.h>
 
 namespace m2 {
 	class TurnBasedServerActorInterface final : public ActorInterfaceBase<TurnBasedServerActor, TurnBasedServerActorInput, TurnBasedServerActorOutput> {
-		SequenceNo _nextServerUpdateSequenceNo{};
+		network::SequenceNo _nextServerUpdateSequenceNo{};
 		int _turnHolderIndex{};
 		TurnBasedServerActorOutput::StateUpdate _serverActorState{};
 		std::optional<TurnBasedServerActorOutput::ClientEvent> _clientEvent;
@@ -35,7 +35,7 @@ namespace m2 {
 		void TryCloseLobby();
 		void SetTurnHolder(int clientIndex);
 		/// Returns the sequence number of the sent TurnBasedServerUpdate
-		SequenceNo SendServerUpdate(bool shutdownAfter = false);
+		network::SequenceNo SendServerUpdate(bool shutdownAfter = false);
 		void SendServerCommand(const m2g::pb::TurnBasedServerCommand& command, int receiverIndex = -1);
 
 	private:

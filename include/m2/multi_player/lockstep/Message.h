@@ -4,6 +4,11 @@
 #include <utility>
 
 namespace m2::multiplayer::lockstep {
+	constexpr int MAX_UDP_PACKET_SIZE = 1200;
+	int LockstepUdpPacketHeaderSize();
+	constexpr int EACH_SMALL_MESSAGE_HEADER_SIZE = 4; // 1 byte higher than necessary
+	int LockstepSmallMessageMaxSize();
+
 	struct MessageAndSender {
 		pb::LockstepMessage message;
 		network::IpAddressAndPort sender;
@@ -17,12 +22,10 @@ namespace m2::multiplayer::lockstep {
 	struct SmallMessageAndSender {
 		pb::LockstepSmallMessage smallMessage;
 		network::IpAddressAndPort sender;
-		int32_t orderNo;
 	};
 
 	struct SmallMessageAndReceiver {
 		pb::LockstepSmallMessage smallMessage;
 		network::IpAddressAndPort receiver;
-		int32_t orderNo;
 	};
 }

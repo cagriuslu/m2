@@ -73,7 +73,7 @@ int m2::network::TurnBasedRealClientThread::turn_holder_index() {
 	}
 }
 
-m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::SequenceNo>> m2::network::TurnBasedRealClientThread::process_server_update() {
+m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::network::SequenceNo>> m2::network::TurnBasedRealClientThread::process_server_update() {
 	TRACE_FN();
 
 	auto unprocessed_server_update = locked_pop_server_update();

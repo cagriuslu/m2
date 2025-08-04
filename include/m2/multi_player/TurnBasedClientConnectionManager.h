@@ -1,7 +1,7 @@
 #pragma once
 #include "turn_based/MessagePasser.h"
 #include "../network/IpAddressAndPort.h"
-#include <m2/network/SequenceNo.h>
+#include <m2/network/Types.h>
 #include "../sdl/Detail.h"
 #include <variant>
 

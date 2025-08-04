@@ -142,7 +142,7 @@ std::optional<m2::pb::TurnBasedNetworkMessage> m2::network::TurnBasedClientConne
 bool m2::network::TurnBasedClientConnectionManager::has_outgoing_data() {
 	return socket_manager().has_outgoing_data() || not outgoing_queue().empty();
 }
-m2::SequenceNo m2::network::TurnBasedClientConnectionManager::ReturnAndIncrementServerCommandSequenceNo() {
+m2::network::SequenceNo m2::network::TurnBasedClientConnectionManager::ReturnAndIncrementServerCommandSequenceNo() {
 	return _nextServerCommandSequenceNo++;
 }
 void m2::network::TurnBasedClientConnectionManager::queue_outgoing_message(pb::TurnBasedNetworkMessage msg) {

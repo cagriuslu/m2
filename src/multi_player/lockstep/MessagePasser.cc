@@ -23,12 +23,14 @@ expected<MessagePasser::ReadResult> MessagePasser::ReadMessages(std::queue<Messa
 }
 
 expected<MessagePasser::SendResult> MessagePasser::SendMessage(MessageAndReceiver&& in) {
-	// TODO assume complete message
+	// TODO assuming complete message
+	pb::LockstepSmallMessage smallMsg;
+	// TODO sequence no
+	smallMsg.mutable_complete_message()->CopyFrom(in.message);
+	// TODO reconstructed message size
 	_smallMessagePasser.SendSmallMessage(SmallMessageAndReceiver{
-		.smallMessage = {},
-		.receiver = std::move(in.receiver),
-		.orderNo = 0
+		.smallMessage = std::move(smallMsg),
+		.receiver = std::move(in.receiver)
 	});
-
 	return SendResult::MESSAGE_QUEUED;
 }
