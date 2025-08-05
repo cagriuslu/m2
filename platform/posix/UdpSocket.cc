@@ -56,8 +56,7 @@ m2::network::UdpSocket::~UdpSocket() {
 	}
 }
 
-m2::expected<int> m2::network::UdpSocket::send(const IpAddress& peerAddr, const Port& peerPort, const uint8_t* buffer, const size_t length) {
-	// Prepare destination address
+m2::void_expected m2::network::UdpSocket::send(const IpAddress& peerAddr, const Port& peerPort, const uint8_t* buffer, const size_t length) {
 	sockaddr_in sin{};
 #ifdef __APPLE__
 	sin.sin_len = sizeof(sin);
@@ -69,11 +68,14 @@ m2::expected<int> m2::network::UdpSocket::send(const IpAddress& peerAddr, const 
 	const auto sendResult = ::sendto(_platformSpecificData->fd, buffer, length, 0, reinterpret_cast<sockaddr*>(&sin), sizeof(sin));
 	if (sendResult == -1) {
 		if (errno == EAGAIN || errno == EWOULDBLOCK) {
-			throw M2_ERROR("Blocking socket returned EAGAIN for send");
+			return make_unexpected("Blocked socket returned EAGAIN");
 		}
 		return make_unexpected(strerror(errno));
 	}
-	return I(sendResult);
+	if (sendResult != I(length)) {
+		return make_unexpected("Unable to send the whole UDP payload");
+	}
+	return {};
 }
 
 m2::expected<std::pair<int, m2::network::IpAddressAndPort>> m2::network::UdpSocket::recv(uint8_t* buffer, const size_t length) {

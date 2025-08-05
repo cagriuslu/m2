@@ -92,18 +92,20 @@ void SmallMessagePasser::ReadSmallMessages(std::queue<SmallMessageAndSender>& ou
 	}
 }
 
-void SmallMessagePasser::SendSmallMessage(SmallMessageAndReceiver&& in) {
-	auto& peerConnParams = FindOrCreatePeerConnectionParameters(in.receiver);
+m2::void_expected SmallMessagePasser::SendSmallMessage(SmallMessageAndReceiver&& in) {
 	// Insert message to non-acknowledged messages
-	peerConnParams.outgoingNackMessages.emplace_back(std::make_pair(peerConnParams.nextOutgoingOrderNo++, std::move(in.smallMessage)));
+	auto& peerConnParams = FindOrCreatePeerConnectionParameters(in.receiver);
+	peerConnParams.outgoingNackMessages.emplace_back(peerConnParams.nextOutgoingOrderNo++, std::move(in.smallMessage));
+	// Prepare a packet specially for the peer
 	const pb::LockstepUdpPacket packet = peerConnParams.CreateOutgoingPacketFromTailMessages();
+	// Serialize and send
 	const auto bytes = packet.SerializeAsString();
-	const auto expectNBytes = _socket.send(in.receiver.first, in.receiver.second, bytes.data(), bytes.size());
-	if (not expectNBytes) {
-		throw M2_ERROR("Unable to send packet: " + expectNBytes.error());
-	}
-	LOG_INFO("Sent bytes", *expectNBytes);
+	const auto expectSuccess = _socket.send(in.receiver.first, in.receiver.second, bytes.data(), bytes.size());
+	m2ReflectUnexpected(expectSuccess);
+	LOG_DEBUG("Sent small message", in.receiver, packet.first_order_no(), packet.small_messages_size(), bytes.size());
+	// Store current time for calculating retransmission later
 	peerConnParams.lastMessageSentAt = Stopwatch{};
+	return {};
 }
 
 SmallMessagePasser::PeerConnectionParameters* SmallMessagePasser::FindPeerConnectionParameters(const network::IpAddressAndPort& address) {

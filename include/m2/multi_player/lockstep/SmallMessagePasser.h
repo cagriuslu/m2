@@ -59,7 +59,7 @@ namespace m2::multiplayer::lockstep {
 
 		void ReadSmallMessages(std::queue<SmallMessageAndSender>& out);
 
-		void SendSmallMessage(SmallMessageAndReceiver&& in);
+		void_expected SendSmallMessage(SmallMessageAndReceiver&& in);
 		void SendRetransmissions();
 
 	private:
