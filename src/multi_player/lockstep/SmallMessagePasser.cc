@@ -85,7 +85,7 @@ void SmallMessagePasser::ReadSmallMessages(std::queue<SmallMessageAndSender>& ou
 
 	if (pb::LockstepUdpPacket packet; packet.ParseFromArray(_recvBuffer, recvResult->first)) {
 		for (auto& smallMsg : packet.small_messages()) {
-			out.emplace(std::move(smallMsg), std::make_pair(recvResult->second.first, recvResult->second.second));
+			out.emplace(smallMsg, recvResult->second);
 		}
 	} else {
 		LOG_WARN("Unable to parse received message");
@@ -100,7 +100,7 @@ m2::void_expected SmallMessagePasser::SendSmallMessage(SmallMessageAndReceiver&&
 	const pb::LockstepUdpPacket packet = peerConnParams.CreateOutgoingPacketFromTailMessages();
 	// Serialize and send
 	const auto bytes = packet.SerializeAsString();
-	const auto expectSuccess = _socket.send(in.receiver.first, in.receiver.second, bytes.data(), bytes.size());
+	const auto expectSuccess = _socket.send(in.receiver, bytes.data(), bytes.size());
 	m2ReflectUnexpected(expectSuccess);
 	LOG_DEBUG("Sent small message", in.receiver, packet.first_order_no(), packet.small_messages_size(), bytes.size());
 	// Store current time for calculating retransmission later

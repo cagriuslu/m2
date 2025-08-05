@@ -1,7 +1,6 @@
 #pragma once
-#include "IpAddressAndPort.h"
+#include "Types.h"
 #include "../Meta.h"
-#include <cstdio>
 
 namespace m2::network {
 	// Forward declarations
@@ -13,7 +12,7 @@ namespace m2::network {
 	/// \brief Platform-agnostic TCP socket object.
 	class TcpSocket {
 		detail::PlatformSpecificSocketData* _platform_specific_data{};
-		IpAddress _serverAddr{}, _clientAddr{};
+		network::IpAddress _serverAddr{}, _clientAddr{};
 		Port _serverPort{}, _clientPort{};
 
 		/// \details Platform specific data should be initialized after calling this constructor.
@@ -32,9 +31,9 @@ namespace m2::network {
 
 		[[nodiscard]] IpAddressAndPort GetServerIpAddressAndPort() const { return IpAddressAndPort{_serverAddr, _serverPort}; }
 		[[nodiscard]] IpAddressAndPort GetClientIpAddressAndPort() const { return IpAddressAndPort{_clientAddr, _clientPort}; }
-		[[nodiscard]] bool IsServerSideListeningSocket() const { return _serverAddr == 0 && _clientAddr == 0 && _serverPort && _clientPort == 0; }
-		[[nodiscard]] bool IsServerSideConnectedSocket() const { return _serverAddr == 0 && _clientAddr && _serverPort && _clientPort; }
-		[[nodiscard]] bool IsClientSideSocket() const { return _serverAddr && _clientAddr == 0 && _serverPort && _clientPort == 0; }
+		[[nodiscard]] bool IsServerSideListeningSocket() const { return !_serverAddr && !_clientAddr && _serverPort && !_clientPort; }
+		[[nodiscard]] bool IsServerSideConnectedSocket() const { return !_serverAddr && _clientAddr && _serverPort && _clientPort; }
+		[[nodiscard]] bool IsClientSideSocket() const { return _serverAddr && !_clientAddr && _serverPort && !_clientPort; }
 
 		// Modifiers
 

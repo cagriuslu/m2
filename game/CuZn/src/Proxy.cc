@@ -346,7 +346,7 @@ void m2g::Proxy::handle_server_command(const pb::TurnBasedServerCommand& server_
 	}
 }
 
-void m2g::Proxy::post_server_update(m2::SequenceNo, const bool shutdown) {
+void m2g::Proxy::post_server_update(m2::network::SequenceNo, const bool shutdown) {
 	// If we have received a server update, we might have taken an action and showing the "WaitingForServerUpdate" screen.
 	if (const auto* semiBlockingUiPanel = M2_LEVEL.SemiBlockingUiPanel(); semiBlockingUiPanel && semiBlockingUiPanel->Name() == "WaitingForServerUpdate") {
 		M2_LEVEL.DismissSemiBlockingUiPanel();

@@ -203,7 +203,8 @@ m2::void_expected m2::Game::HostLockstepGame(unsigned max_connection_count) {
 
 	LOG_INFO("Server is listening, joining the game as host client...");
 	std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).hostClientActorInterface.emplace(network::IpAddressAndPort{
-		network::ToIpAddress("127.0.0.1"), 1162
+		.ipAddress = network::IpAddress::CreateFromString("127.0.0.1"),
+		.port = network::Port::CreateFromHostOrder(1162)
 	});
 	LOG_DEBUG("Host client created");
 

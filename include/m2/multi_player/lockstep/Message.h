@@ -1,5 +1,5 @@
 #pragma once
-#include <m2/network/IpAddressAndPort.h>
+#include <m2/network/Types.h>
 #include <Lockstep.pb.h>
 #include <utility>
 

@@ -8,21 +8,21 @@
 #include <m2/Log.h>
 
 m2::expected<m2::network::TcpSocket> m2::network::TcpSocket::CreateServerSideSocket(const uint16_t port) {
-    const auto socket_result = ::socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if (socket_result == -1) {
-        return make_unexpected(strerror(errno));
-    }
+	const auto socket_result = ::socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (socket_result == -1) {
+		return make_unexpected(strerror(errno));
+	}
 
-    // Enable linger for 10 seconds, because when the game is finished, the server sends the final TurnBasedServerUpdate and
-    // immediately closes the connection. The socket should linger for some time for the final TurnBasedServerUpdate to be sent.
-    constexpr linger l{.l_onoff = 1, .l_linger = 10};
-    if (setsockopt(socket_result, SOL_SOCKET, SO_LINGER, &l, sizeof(l)) == -1) {
-        LOG_WARN("Unable to enable TCP linger", std::string(strerror(errno)));
-    }
+	// Enable linger for 10 seconds, because when the game is finished, the server sends the final TurnBasedServerUpdate and
+	// immediately closes the connection. The socket should linger for some time for the final TurnBasedServerUpdate to be sent.
+	constexpr linger l{.l_onoff = 1, .l_linger = 10};
+	if (setsockopt(socket_result, SOL_SOCKET, SO_LINGER, &l, sizeof(l)) == -1) {
+		LOG_WARN("Unable to enable TCP linger", std::string(strerror(errno)));
+	}
 
-    TcpSocket tcp_socket;
-	tcp_socket._serverAddr = INADDR_ANY;
-	tcp_socket._serverPort = port;
+	TcpSocket tcp_socket;
+	tcp_socket._serverAddr = IpAddress{};
+	tcp_socket._serverPort = Port::CreateFromHostOrder(port);
     tcp_socket._platform_specific_data = new detail::PlatformSpecificSocketData{.fd = socket_result};
     return std::move(tcp_socket);
 }
@@ -33,8 +33,8 @@ m2::expected<m2::network::TcpSocket> m2::network::TcpSocket::CreateClientSideSoc
     }
 
     TcpSocket tcp_socket;
-	tcp_socket._serverAddr = ToIpAddress(server_ip_addr);
-	tcp_socket._serverPort = server_port;
+	tcp_socket._serverAddr = IpAddress::CreateFromString(server_ip_addr);
+	tcp_socket._serverPort = Port::CreateFromHostOrder(server_port);
     tcp_socket._platform_specific_data = new detail::PlatformSpecificSocketData{.fd = socket_result};
     return std::move(tcp_socket);
 }
@@ -68,8 +68,8 @@ m2::expected<bool> m2::network::TcpSocket::bind() {
 	sin.sin_len = sizeof(sin);
 #endif
 	sin.sin_family = AF_INET;
-	sin.sin_port = htons(_serverPort);
-	sin.sin_addr.s_addr = _serverAddr;
+	sin.sin_port = _serverPort.GetInNetworkOrder();
+	sin.sin_addr.s_addr = _serverAddr.GetInNetworkOrder();
 	int bind_result = ::bind(_platform_specific_data->fd, reinterpret_cast<sockaddr*>(&sin), sizeof(sin));
 	if (bind_result == -1) {
 		if (errno == EADDRINUSE) {
@@ -102,8 +102,8 @@ m2::expected<bool> m2::network::TcpSocket::connect() {
 	sin.sin_len = sizeof(sin);
 #endif
 	sin.sin_family = AF_INET;
-	sin.sin_port = htons(_serverPort);
-	sin.sin_addr.s_addr = _serverAddr;
+	sin.sin_port = _serverPort.GetInNetworkOrder();
+	sin.sin_addr.s_addr = _serverAddr.GetInNetworkOrder();
 	if (const auto connect_result = ::connect(_platform_specific_data->fd, reinterpret_cast<sockaddr*>(&sin), sizeof(sin)); connect_result == -1) {
 		if (errno == ECONNREFUSED || errno == EHOSTUNREACH || errno == ENETUNREACH || errno == ETIMEDOUT) {
 			// Connection failed due to reasons not under our control
@@ -130,9 +130,9 @@ m2::expected<std::optional<m2::network::TcpSocket>> m2::network::TcpSocket::acce
 	}
 
 	TcpSocket child_socket;
-	child_socket._clientAddr = reinterpret_cast<sockaddr_in*>(&child_address)->sin_addr.s_addr;
+	child_socket._clientAddr = IpAddress::CreateFromNetworkOrder(reinterpret_cast<sockaddr_in*>(&child_address)->sin_addr.s_addr);
 	child_socket._serverPort = _serverPort;
-	child_socket._clientPort = reinterpret_cast<sockaddr_in*>(&child_address)->sin_port;
+	child_socket._clientPort = Port::CreateFromNetworkOrder(reinterpret_cast<sockaddr_in*>(&child_address)->sin_port);
     child_socket._platform_specific_data = new detail::PlatformSpecificSocketData{.fd = new_socket};
     return std::move(child_socket);
 }

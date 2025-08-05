@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 
-m2::expected<m2::network::UdpSocket> m2::network::UdpSocket::CreateServerSideSocket(const Port port) {
+m2::expected<m2::network::UdpSocket> m2::network::UdpSocket::CreateServerSideSocket(const Port& port) {
 	const auto socketResult = ::socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (socketResult == -1) {
 		return make_unexpected(strerror(errno));
@@ -18,7 +18,7 @@ m2::expected<m2::network::UdpSocket> m2::network::UdpSocket::CreateServerSideSoc
 	sin.sin_len = sizeof(sin);
 #endif
 	sin.sin_family = AF_INET;
-	sin.sin_port = port;
+	sin.sin_port = port.GetInNetworkOrder();
 	sin.sin_addr.s_addr = INADDR_ANY;
 	if (const auto bindResult = ::bind(socketResult, reinterpret_cast<sockaddr*>(&sin), sizeof(sin)); bindResult == -1) {
 		return make_unexpected(strerror(errno));
@@ -56,14 +56,14 @@ m2::network::UdpSocket::~UdpSocket() {
 	}
 }
 
-m2::void_expected m2::network::UdpSocket::send(const IpAddress& peerAddr, const Port& peerPort, const uint8_t* buffer, const size_t length) {
+m2::void_expected m2::network::UdpSocket::send(const IpAddressAndPort& peerAddrAndPort, const uint8_t* buffer, const size_t length) {
 	sockaddr_in sin{};
 #ifdef __APPLE__
 	sin.sin_len = sizeof(sin);
 #endif
 	sin.sin_family = AF_INET;
-	sin.sin_port = peerPort;
-	sin.sin_addr.s_addr = peerAddr;
+	sin.sin_port = peerAddrAndPort.port.GetInNetworkOrder();
+	sin.sin_addr.s_addr = peerAddrAndPort.ipAddress.GetInNetworkOrder();
 
 	const auto sendResult = ::sendto(_platformSpecificData->fd, buffer, length, 0, reinterpret_cast<sockaddr*>(&sin), sizeof(sin));
 	if (sendResult == -1) {
@@ -92,5 +92,8 @@ m2::expected<std::pair<int, m2::network::IpAddressAndPort>> m2::network::UdpSock
 	if (recvResult == 0) {
 		return make_unexpected("Unexpected recvfrom result for a UDP socket: 0");
 	}
-	return std::make_pair(I(recvResult), IpAddressAndPort{sin.sin_addr.s_addr, sin.sin_port});
+	return std::make_pair(I(recvResult), IpAddressAndPort{
+		.ipAddress = IpAddress::CreateFromNetworkOrder(sin.sin_addr.s_addr),
+		.port = Port::CreateFromNetworkOrder(sin.sin_port)
+	});
 }

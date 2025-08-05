@@ -1,5 +1,5 @@
 #pragma once
-#include <m2/network/IpAddressAndPort.h>
+#include <m2/network/Types.h>
 #include <m2/Meta.h>
 
 namespace m2::network {
@@ -17,7 +17,7 @@ namespace m2::network {
 		UdpSocket() = default;
 
 	public:
-		static expected<UdpSocket> CreateServerSideSocket(Port port);
+		static expected<UdpSocket> CreateServerSideSocket(const Port& port);
 		static expected<UdpSocket> CreateClientSideSocket();
 		UdpSocket(const UdpSocket& other) = delete;
 		UdpSocket& operator=(const UdpSocket& other) = delete;
@@ -27,15 +27,15 @@ namespace m2::network {
 
 		// Accessors
 
-		[[nodiscard]] bool IsServerSideSocket() const { return _selfPort; }
-		[[nodiscard]] bool IsClientSideSocket() const { return _selfPort == 0; }
+		[[nodiscard]] bool IsServerSideSocket() const { return static_cast<bool>(_selfPort); }
+		[[nodiscard]] bool IsClientSideSocket() const { return not _selfPort; }
 
 		// Modifiers
 
 		/// If expected, returns the number of bytes queued into kernel's buffer. If the buffer is full, the return
 		/// value may be zero, or less than `length`. Otherwise, unexpected is returned with the error message.
-		void_expected send(const IpAddress& peerAddr, const Port& peerPort, const uint8_t* buffer, size_t length);
-		void_expected send(const IpAddress& peerAddr, const Port& peerPort, const char* buffer, const size_t length) { return send(peerAddr, peerPort, reinterpret_cast<const uint8_t*>(buffer), length); }
+		void_expected send(const IpAddressAndPort& peerAddrAndPort, const uint8_t* buffer, size_t length);
+		void_expected send(const IpAddressAndPort& peerAddrAndPort, const char* buffer, const size_t length) { return send(peerAddrAndPort, reinterpret_cast<const uint8_t*>(buffer), length); }
 
 		/// If expected, returns the number of bytes actually received. Otherwise, unexpected is returned with the error
 		/// message.

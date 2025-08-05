@@ -15,7 +15,7 @@ namespace {
 
 bool ServerActor::Initialize(MessageBox<ServerActorInput>&, MessageBox<ServerActorOutput>&) {
 	LOG_INFO("Lockstep ServerActor Initialize");
-	auto expectSocket = network::UdpSocket::CreateServerSideSocket(1162);
+	auto expectSocket = network::UdpSocket::CreateServerSideSocket(network::Port::CreateFromHostOrder(1162));
 	if (not expectSocket) {
 		LOG_WARN("Unable to create a UDP socket", expectSocket.error());
 		return false;
