@@ -31,7 +31,7 @@ bool ClientActor::operator()(MessageBox<ClientActorInput>&, MessageBox<ClientAct
 	}
 	if (not writeableSockets.empty()) {
 		std::queue<pb::LockstepMessage> outgoingMessages;
-		_serverConnection->GatherOutgoingMessages(outgoingMessages);
+		_serverConnection->GatherOutgoingMessages(_messagePasser->GetConnectionStatistics(_serverAddressAndPort), outgoingMessages);
 		while (not outgoingMessages.empty()) {
 			_messagePasser->SendMessage(MessageAndReceiver{
 				.message = std::move(outgoingMessages.front()),
