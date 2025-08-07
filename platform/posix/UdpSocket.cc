@@ -56,7 +56,7 @@ m2::network::UdpSocket::~UdpSocket() {
 	}
 }
 
-m2::void_expected m2::network::UdpSocket::send(const IpAddressAndPort& peerAddrAndPort, const uint8_t* buffer, const size_t length) {
+m2::void_expected m2::network::UdpSocket::Send(const IpAddressAndPort& peerAddrAndPort, const uint8_t* buffer, const size_t length) {
 	sockaddr_in sin{};
 #ifdef __APPLE__
 	sin.sin_len = sizeof(sin);

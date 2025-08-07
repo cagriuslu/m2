@@ -34,8 +34,8 @@ namespace m2::network {
 
 		/// If expected, returns the number of bytes queued into kernel's buffer. If the buffer is full, the return
 		/// value may be zero, or less than `length`. Otherwise, unexpected is returned with the error message.
-		void_expected send(const IpAddressAndPort& peerAddrAndPort, const uint8_t* buffer, size_t length);
-		void_expected send(const IpAddressAndPort& peerAddrAndPort, const char* buffer, const size_t length) { return send(peerAddrAndPort, reinterpret_cast<const uint8_t*>(buffer), length); }
+		void_expected Send(const IpAddressAndPort& peerAddrAndPort, const uint8_t* buffer, size_t length);
+		void_expected Send(const IpAddressAndPort& peerAddrAndPort, const char* buffer, const size_t length) { return Send(peerAddrAndPort, reinterpret_cast<const uint8_t*>(buffer), length); }
 
 		/// If expected, returns the number of bytes actually received. Otherwise, unexpected is returned with the error
 		/// message.

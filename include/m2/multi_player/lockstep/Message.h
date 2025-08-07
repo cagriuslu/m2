@@ -1,5 +1,6 @@
 #pragma once
 #include <m2/network/Types.h>
+#include <m2/Chrono.h>
 #include <Lockstep.pb.h>
 #include <utility>
 
@@ -36,5 +37,10 @@ namespace m2::multiplayer::lockstep {
 	struct SmallMessageAndReceiver {
 		pb::LockstepSmallMessage smallMessage;
 		network::IpAddressAndPort receiver;
+	};
+	struct OutgoingNackSmallMessage {
+		network::OrderNo orderNo;
+		pb::LockstepSmallMessage smallMessage;
+		Stopwatch firstSentAt;
 	};
 }

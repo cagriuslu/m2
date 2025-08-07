@@ -2,6 +2,7 @@
 #include "Message.h"
 #include <m2/network/UdpSocket.h>
 #include <m2/network/Types.h>
+#include <m2/multi_player/lockstep/ConnectionStatistics.h>
 #include <m2/Chrono.h>
 #include <Lockstep.pb.h>
 #include <deque>
@@ -17,12 +18,13 @@ namespace m2::multiplayer::lockstep {
 		/// \details Each peer, if ever responded to by this instance, gains an entry in the list of connections.
 		struct PeerConnectionParameters {
 			network::IpAddressAndPort peerAddress;
+			ConnectionStatistics connectionStatistics;
 
 			// Sending parameters
 
 			network::OrderNo nextOutgoingOrderNo{1};
 			/// Front of the queue corresponds to the oldest non-acknowledged message
-			std::deque<std::pair<network::OrderNo,pb::LockstepSmallMessage>> outgoingNackMessages;
+			std::deque<OutgoingNackSmallMessage> outgoingNackMessages;
 			std::optional<Stopwatch> lastMessageSentAt;
 
 			// Receiving parameters
@@ -38,7 +40,9 @@ namespace m2::multiplayer::lockstep {
 			};
 			std::optional<GapHistorySinceOldestNack> gapHistory; /// Exists only if there's a gap
 
-			pb::LockstepUdpPacket CreateOutgoingPacketFromTailMessages() const;
+			explicit PeerConnectionParameters(const network::IpAddressAndPort address) : peerAddress(address), connectionStatistics(nextOutgoingOrderNo) {}
+
+			[[nodiscard]] pb::LockstepUdpPacket CreateOutgoingPacketFromTailMessages() const;
 			[[nodiscard]] int32_t GetMostRecentAck() const;
 			[[nodiscard]] int32_t GetAckHistoryBits() const;
 			[[nodiscard]] int32_t GetOldestNack() const;
@@ -54,6 +58,7 @@ namespace m2::multiplayer::lockstep {
 		// Accessors
 
 		[[nodiscard]] network::UdpSocket& GetSocket() { return _socket; }
+		[[nodiscard]] ConnectionStatistics* GetConnectionStatistics(const network::IpAddressAndPort& address);
 
 		// Modifiers
 

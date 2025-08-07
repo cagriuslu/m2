@@ -12,11 +12,11 @@ pb::LockstepUdpPacket SmallMessagePasser::PeerConnectionParameters::CreateOutgoi
 		auto rit = outgoingNackMessages.rbegin();
 		for (; rit != outgoingNackMessages.rend(); ++rit) {
 			// Assert message size as well
-			const auto msgSize = rit->second.ByteSizeLong();
-			if (SmallMessageMaxSize() < I(msgSize)) {
+			const auto msgSize = I(rit->smallMessage.ByteSizeLong());
+			if (SmallMessageMaxSize() < msgSize) {
 				throw M2_ERROR("Small message is larger than allowed");
 			}
-			if (I(msgSize) + N_BYTES_ADDED_TO_HEADER_FOR_EACH_SMALL_MESSAGE <= spaceLeftInMessage) {
+			if (msgSize + N_BYTES_ADDED_TO_HEADER_FOR_EACH_SMALL_MESSAGE <= spaceLeftInMessage) {
 				spaceLeftInMessage -= msgSize + N_BYTES_ADDED_TO_HEADER_FOR_EACH_SMALL_MESSAGE;
 				continue;
 			}
@@ -32,10 +32,10 @@ pb::LockstepUdpPacket SmallMessagePasser::PeerConnectionParameters::CreateOutgoi
 	packet.set_most_recent_ack(GetMostRecentAck());
 	packet.set_ack_history_bits(GetAckHistoryBits());
 	packet.set_oldest_nack(GetOldestNack());
-	packet.set_first_order_no(firstSmallMessageToSendReverseIt->first);
+	packet.set_first_order_no(firstSmallMessageToSendReverseIt->orderNo);
 	// Limit iteration count
 	m2Repeat(I(outgoingNackMessages.size())) {
-		packet.add_small_messages()->CopyFrom(firstSmallMessageToSendReverseIt->second);
+		packet.add_small_messages()->CopyFrom(firstSmallMessageToSendReverseIt->smallMessage);
 		if (firstSmallMessageToSendReverseIt == outgoingNackMessages.rbegin()) {
 			break;
 		}
@@ -73,6 +73,13 @@ int32_t SmallMessagePasser::PeerConnectionParameters::GetOldestNack() const {
 	return 0;
 }
 
+ConnectionStatistics* SmallMessagePasser::GetConnectionStatistics(const network::IpAddressAndPort& address) {
+	if (auto* existing = FindPeerConnectionParameters(address)) {
+		return &existing->connectionStatistics;
+	}
+	return nullptr;
+}
+
 void SmallMessagePasser::ReadSmallMessages(std::queue<SmallMessageAndSender>& out) {
 	// Assume the socket is readable
 	auto recvResult = _socket.recv(_recvBuffer, sizeof(_recvBuffer));
@@ -80,6 +87,8 @@ void SmallMessagePasser::ReadSmallMessages(std::queue<SmallMessageAndSender>& ou
 		LOG_WARN("Unable to recv", recvResult.error());
 	}
 	LOG_INFO("Received bytes", recvResult->first, recvResult->second);
+
+	// TODO if the peer is known, accept the message. otherwise accept the message only if the socket is a server socket
 
 	// TODO other tasks
 
@@ -95,12 +104,12 @@ void SmallMessagePasser::ReadSmallMessages(std::queue<SmallMessageAndSender>& ou
 m2::void_expected SmallMessagePasser::SendSmallMessage(SmallMessageAndReceiver&& in) {
 	// Insert message to non-acknowledged messages
 	auto& peerConnParams = FindOrCreatePeerConnectionParameters(in.receiver);
-	peerConnParams.outgoingNackMessages.emplace_back(peerConnParams.nextOutgoingOrderNo++, std::move(in.smallMessage));
+	peerConnParams.outgoingNackMessages.emplace_back(peerConnParams.nextOutgoingOrderNo++, std::move(in.smallMessage), Stopwatch{});
 	// Prepare a packet specially for the peer
 	const pb::LockstepUdpPacket packet = peerConnParams.CreateOutgoingPacketFromTailMessages();
 	// Serialize and send
 	const auto bytes = packet.SerializeAsString();
-	const auto expectSuccess = _socket.send(in.receiver, bytes.data(), bytes.size());
+	const auto expectSuccess = _socket.Send(in.receiver, bytes.data(), bytes.size());
 	m2ReflectUnexpected(expectSuccess);
 	LOG_DEBUG("Sent small message", in.receiver, packet.first_order_no(), packet.small_messages_size(), bytes.size());
 	// Store current time for calculating retransmission later
@@ -118,7 +127,7 @@ SmallMessagePasser::PeerConnectionParameters* SmallMessagePasser::FindPeerConnec
 SmallMessagePasser::PeerConnectionParameters& SmallMessagePasser::FindOrCreatePeerConnectionParameters(const network::IpAddressAndPort& address) {
 	auto* existing = FindPeerConnectionParameters(address);
 	if (not existing) {
-		_peerConnectionParameters.emplace_back(PeerConnectionParameters{.peerAddress = address});
+		_peerConnectionParameters.emplace_back(address);
 		existing = &_peerConnectionParameters.back();
 	}
 	return *existing;
