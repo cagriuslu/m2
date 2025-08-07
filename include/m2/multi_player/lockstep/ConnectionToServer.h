@@ -1,6 +1,6 @@
 #pragma once
 #include "MessagePasser.h"
-#include "ControlMessage.h"
+#include "ConnectionStatistics.h"
 #include <m2/network/IpAddressAndPort.h>
 #include <m2/Chrono.h>
 #include <queue>
@@ -8,10 +8,7 @@
 
 namespace m2::multiplayer::lockstep {
 	class ConnectionToServer final {
-		struct SearchingForServer {
-			std::optional<Stopwatch> lastConnectionAttemptAt;
-			unsigned responsesReceived{};
-		};
+		struct SearchingForServer {};
 		struct CheckingAdmittanceCriteria {};
 
 		std::variant<SearchingForServer,CheckingAdmittanceCriteria> _state{};
@@ -19,8 +16,8 @@ namespace m2::multiplayer::lockstep {
 	public:
 		ConnectionToServer() = default;
 
-		std::optional<ControlMessage> GatherOutgoingMessages(std::queue<pb::LockstepMessage>& out);
+		void GatherOutgoingMessages(ConnectionStatistics*, std::queue<pb::LockstepMessage>& out);
 
-		std::optional<ControlMessage> DeliverIncomingMessage(pb::LockstepMessage&& in);
+		void DeliverIncomingMessage(ConnectionStatistics*, pb::LockstepMessage&& in);
 	};
 }
