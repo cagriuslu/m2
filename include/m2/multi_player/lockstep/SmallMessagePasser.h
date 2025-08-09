@@ -36,7 +36,7 @@ namespace m2::multiplayer::lockstep {
 			/// Messages received after a gap. These won't be returned until the gap is closed. Front is the oldest.
 			std::map<network::OrderNo, pb::LockstepSmallMessage> messagesSinceGap;
 
-			explicit PeerConnectionParameters(const network::IpAddressAndPort address) : peerAddress(address), connectionStatistics(nextOutgoingOrderNo) {}
+			explicit PeerConnectionParameters(const network::IpAddressAndPort address) : peerAddress(address) {}
 
 			[[nodiscard]] pb::LockstepUdpPacket CreateOutgoingPacketFromTailMessages() const;
 			[[nodiscard]] int32_t GetMostRecentAck() const;

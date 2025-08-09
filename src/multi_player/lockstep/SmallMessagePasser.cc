@@ -45,7 +45,7 @@ pb::LockstepUdpPacket SmallMessagePasser::PeerConnectionParameters::CreateOutgoi
 }
 int32_t SmallMessagePasser::PeerConnectionParameters::GetMostRecentAck() const {
 	if (not messagesSinceGap.empty()) {
-		return messagesSinceGap.rbegin()->second.order_no();
+		return I(messagesSinceGap.rbegin()->second.order_no());
 	}
 	return lastOrderlyReceivedOrderNo;
 }
@@ -72,12 +72,14 @@ int32_t SmallMessagePasser::PeerConnectionParameters::GetOldestNack() const {
 		if (messagesSinceGap.begin()->second.order_no() < 1) {
 			throw M2_ERROR("Small message with order no less than 1 ended up in the queue");
 		}
-		return messagesSinceGap.begin()->second.order_no() - 1;
+		return I(messagesSinceGap.begin()->second.order_no()) - 1;
 	}
 	return 0;
 }
 
 void SmallMessagePasser::PeerConnectionParameters::ProcessPeerAcks(const int32_t mostRecentAck, int32_t ackHistoryBits, const int32_t oldestNack) {
+	const auto nackCountBefore = outgoingNackMessages.size();
+
 	// Discard messages up to the oldest NACK
 	if (oldestNack) {
 		std::erase_if(outgoingNackMessages, [&](const auto& msg) {
@@ -101,6 +103,10 @@ void SmallMessagePasser::PeerConnectionParameters::ProcessPeerAcks(const int32_t
 		}
 		ackHistoryBits >>= 1;
 	}
+
+	const auto nackCountAfter = outgoingNackMessages.size();
+	const auto ackCount = nackCountBefore - nackCountAfter;
+	connectionStatistics.IncrementAckedOutgoingPacketCount(I(ackCount));
 }
 void SmallMessagePasser::PeerConnectionParameters::ProcessReceivedMessages(google::protobuf::RepeatedPtrField<pb::LockstepSmallMessage>* smallMessages,
 		std::queue<SmallMessageAndSender>& out) {
@@ -166,6 +172,7 @@ void_expected SmallMessagePasser::SendSmallMessage(SmallMessageAndReceiver&& in)
 	auto& peerConnParams = FindOrCreatePeerConnectionParameters(in.receiver);
 	in.smallMessage.set_order_no(peerConnParams.nextOutgoingOrderNo++); // Assign the order no
 	peerConnParams.outgoingNackMessages.emplace_back(std::move(in.smallMessage), Stopwatch{});
+	peerConnParams.connectionStatistics.IncrementOutgoingPacketCount();
 	// Prepare a packet specially for the peer
 	const pb::LockstepUdpPacket packet = peerConnParams.CreateOutgoingPacketFromTailMessages();
 	// Serialize and send

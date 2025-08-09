@@ -2,12 +2,18 @@
 
 namespace m2::multiplayer::lockstep {
 	class ConnectionStatistics {
-		const network::OrderNo& _nextOutgoingOrderNo;
+		int _totalQueuedOutgoingPackets{};
+		int _totalAckedOutgoingPackets{};
 
 	public:
-		explicit ConnectionStatistics(const network::OrderNo& nextOutgoingOrderNo) : _nextOutgoingOrderNo(nextOutgoingOrderNo) {}
+		// Accessors
 
-		[[nodiscard]] int GetQueuedMessageCount() const { return _nextOutgoingOrderNo - 1; }
-		[[nodiscard]] int GetAcknowledgedOutgoingMessageCount() const { return 0; } // TODO
+		[[nodiscard]] int GetTotalQueuedOutgoingPackets() const { return _totalQueuedOutgoingPackets; }
+		[[nodiscard]] int GetTotalAckedOutgoingPackets() const { return _totalAckedOutgoingPackets; }
+
+		// Modifiers
+
+		void IncrementOutgoingPacketCount(const int count = 1) { _totalQueuedOutgoingPackets += count; }
+		void IncrementAckedOutgoingPacketCount(const int count = 1) { _totalAckedOutgoingPackets += count; }
 	};
 }

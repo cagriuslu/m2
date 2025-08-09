@@ -13,9 +13,10 @@ void ConnectionToServer::GatherOutgoingMessages(ConnectionStatistics* connStats,
 	if (std::holds_alternative<SearchingForServer>(_state)) {
 		if (not connStats) {
 			out.emplace(); // Send the first ping
-		} else if (const auto nAckedMsgs = connStats->GetAcknowledgedOutgoingMessageCount(); nAckedMsgs < N_RESPONSES_TO_ASSUME_CONNECTION) {
-			if (connStats->GetQueuedMessageCount() == nAckedMsgs) {
-				out.emplace(); // Send another ping
+		} else if (const auto nAckedMsgs = connStats->GetTotalAckedOutgoingPackets(); nAckedMsgs < N_RESPONSES_TO_ASSUME_CONNECTION) {
+			if (connStats->GetTotalQueuedOutgoingPackets() == nAckedMsgs) {
+				// All pings have been ACKed, send another ping
+				out.emplace();
 			}
 		} else {
 			// TODO check connection quality
