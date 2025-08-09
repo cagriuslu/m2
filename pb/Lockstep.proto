@@ -7,17 +7,20 @@ message LockstepMessage {}
 // Each LockstepSmallMessage has a different OrderNo starting from 1. A small message contains either a full
 // LockstepMessage if it is small enough. Or, a part of a LockstepMessage is contained for reconstruction later.
 message LockstepSmallMessage {
+  // Order number of this small message
+  fixed32 order_no = 1;
+
   // If complete_message is set, contains the SequenceNo of the full LockstepMessage. If message_part is set, contains
   // the SequenceNo of the message that is partially contained.
-  fixed32 message_sequence_no = 1;
+  fixed32 message_sequence_no = 2;
 
   oneof Type {
-    LockstepMessage complete_message = 2;
-    bytes message_part = 3;
+    LockstepMessage complete_message = 3;
+    bytes message_part = 4;
   }
 
   // If message_part is set, contains the total size of the LockstepMessage once reconstructed.
-  fixed32 reconstructed_message_size = 4;
+  fixed32 reconstructed_message_size = 5;
 }
 
 // This message is serialized to the body of a UDP packet without any headers or footers.
@@ -25,20 +28,21 @@ message LockstepUdpPacket {
   // UDP is connectionless, each packet needs to prove that it is ours.
   fixed32 game_hash = 1;
 
+  // Highest 8 bits: Major version. Middle 16 bits: Minor version. Lowest 8 bits: Patch version.
+  fixed32 version = 2;
+
   // Order number of the most recently received LockstepSmallMessage by the sender of this packet.
-  fixed32 most_recent_ack = 2;
+  fixed32 most_recent_ack = 3;
 
   // Each bit, starting from the least significant one, represents the delivery status of a LockstepSmallMessage from
   // the point of the sender of this packet. Each set bit represents a message that is received. Least significant bit
   // corresponds to the message before most_recent_ack.
-  fixed32 ack_history_bits = 3;
+  fixed32 ack_history_bits = 4;
 
   // Order number of the oldest gap in the received LockstepSmallMessages by the sender of this packet. This field is
   // particularly useful if an old message that doesn't fit into ack_history_bits is still missing.
-  fixed32 oldest_nack = 4;
+  fixed32 oldest_nack = 5;
 
-  // Order number of the first LockstepSmallMessages in this packet.
-  fixed32 first_order_no = 5;
-
+  // Messages doesn't need to be incremental, but it needs to be in order.
   repeated LockstepSmallMessage small_messages = 6;
 }

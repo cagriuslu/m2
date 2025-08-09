@@ -39,8 +39,8 @@ namespace m2::network {
 
 		/// If expected, returns the number of bytes actually received. Otherwise, unexpected is returned with the error
 		/// message.
-		expected<std::pair<int, IpAddressAndPort>> recv(uint8_t* buffer, size_t length);
-		expected<std::pair<int, IpAddressAndPort>> recv(char* buffer, const size_t length) { return recv(reinterpret_cast<uint8_t*>(buffer), length); }
+		expected<std::pair<int, IpAddressAndPort>> Recv(uint8_t* buffer, size_t length);
+		expected<std::pair<int, IpAddressAndPort>> Recv(char* buffer, const size_t length) { return Recv(reinterpret_cast<uint8_t*>(buffer), length); }
 
 		/// Give Select class access to the internals
 		friend Select;

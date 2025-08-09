@@ -1,5 +1,6 @@
 #include <m2/multi_player/lockstep/SmallMessagePasser.h>
 #include <m2/Game.h>
+#include <ranges>
 
 using namespace m2;
 using namespace m2::multiplayer;
@@ -32,7 +33,6 @@ pb::LockstepUdpPacket SmallMessagePasser::PeerConnectionParameters::CreateOutgoi
 	packet.set_most_recent_ack(GetMostRecentAck());
 	packet.set_ack_history_bits(GetAckHistoryBits());
 	packet.set_oldest_nack(GetOldestNack());
-	packet.set_first_order_no(firstSmallMessageToSendReverseIt->orderNo);
 	// Limit iteration count
 	m2Repeat(I(outgoingNackMessages.size())) {
 		packet.add_small_messages()->CopyFrom(firstSmallMessageToSendReverseIt->smallMessage);
@@ -44,22 +44,23 @@ pb::LockstepUdpPacket SmallMessagePasser::PeerConnectionParameters::CreateOutgoi
 	return packet;
 }
 int32_t SmallMessagePasser::PeerConnectionParameters::GetMostRecentAck() const {
-	if (gapHistory) {
-		return gapHistory->oldestGapOrderNo + I(gapHistory->messagesSinceOldestGap.size()) - 1;
+	if (not messagesSinceGap.empty()) {
+		return messagesSinceGap.rbegin()->second.order_no();
 	}
 	return lastOrderlyReceivedOrderNo;
 }
 int32_t SmallMessagePasser::PeerConnectionParameters::GetAckHistoryBits() const {
-	if (gapHistory) {
-		int32_t bits = 0, i = 0;
-		for (auto rit = gapHistory->messagesSinceOldestGap.rbegin(); rit != gapHistory->messagesSinceOldestGap.rend(); ++rit) {
-			if (*rit) {
-				bits |= 1 << i; // Set the bit if a corresponding message is received
+	if (not messagesSinceGap.empty()) {
+		int32_t bits = 0;
+		auto orderNo = GetMostRecentAck() - 1;
+		for (int i = 0; i < 32; ++i, --orderNo) {
+			if (lastOrderlyReceivedOrderNo < orderNo) {
+				if (messagesSinceGap.contains(orderNo)) {
+					bits |= 1 << i; // Set the bit if the corresponding message is received
+				}
+			} else {
+				bits |= 1 << i; // Messages before and including lastOrderlyReceivedOrderNo are received
 			}
-			++i;
-		}
-		for (; i < 32; ++i) {
-			bits |= 1 << i; // Set left over bits
 		}
 		return bits;
 	}
@@ -67,10 +68,59 @@ int32_t SmallMessagePasser::PeerConnectionParameters::GetAckHistoryBits() const 
 	return I(0xFFFFFFFF);
 }
 int32_t SmallMessagePasser::PeerConnectionParameters::GetOldestNack() const {
-	if (gapHistory) {
-		return gapHistory->oldestGapOrderNo;
+	if (not messagesSinceGap.empty()) {
+		if (messagesSinceGap.begin()->second.order_no() < 1) {
+			throw M2_ERROR("Small message with order no less than 1 ended up in the queue");
+		}
+		return messagesSinceGap.begin()->second.order_no() - 1;
 	}
 	return 0;
+}
+
+void SmallMessagePasser::PeerConnectionParameters::ProcessPeerAcks(const int32_t mostRecentAck, int32_t ackHistoryBits, const int32_t oldestNack) {
+	// Discard messages up to the oldest NACK
+	if (oldestNack) {
+		std::erase_if(outgoingNackMessages, [&](const auto& msg) {
+			return I(msg.smallMessage.order_no()) < oldestNack;
+		});
+	}
+	// Discard mostRecentAck
+	if (mostRecentAck) {
+		std::erase_if(outgoingNackMessages, [&](const auto& msg) {
+			return I(msg.smallMessage.order_no()) == mostRecentAck;
+		});
+	}
+	// Iterate over bits of ackHistoryBits from the least significant
+	for (int i = 0; i < 32; ++i) {
+		if (const auto orderNoOfBit = mostRecentAck - i - 1; 0 < orderNoOfBit) {
+			if (ackHistoryBits & 0x1) {
+				std::erase_if(outgoingNackMessages, [&](const auto& msg) {
+					return I(msg.smallMessage.order_no()) == orderNoOfBit;
+				});
+			}
+		}
+		ackHistoryBits >>= 1;
+	}
+}
+void SmallMessagePasser::PeerConnectionParameters::ProcessReceivedMessages(google::protobuf::RepeatedPtrField<pb::LockstepSmallMessage>* smallMessages,
+		std::queue<SmallMessageAndSender>& out) {
+	// Move all messages to messagesSinceGap
+	for (auto& msg : *smallMessages) {
+		const auto orderNo = msg.order_no();
+		messagesSinceGap.emplace(orderNo, std::move(msg));
+	}
+	smallMessages->Clear();
+	// Iterate messages to check for orderly messages
+	for (auto it = messagesSinceGap.begin(); it != messagesSinceGap.end(); ) {
+		if (I(it->second.order_no()) == lastOrderlyReceivedOrderNo + 1) {
+			out.emplace(std::move(it->second));
+			++lastOrderlyReceivedOrderNo;
+			it = messagesSinceGap.erase(it);
+		} else {
+			break;
+		}
+	}
+	sendAck = true;
 }
 
 ConnectionStatistics* SmallMessagePasser::GetConnectionStatistics(const network::IpAddressAndPort& address) {
@@ -81,40 +131,54 @@ ConnectionStatistics* SmallMessagePasser::GetConnectionStatistics(const network:
 }
 
 void SmallMessagePasser::ReadSmallMessages(std::queue<SmallMessageAndSender>& out) {
-	// Assume the socket is readable
-	auto recvResult = _socket.recv(_recvBuffer, sizeof(_recvBuffer));
+	// Assuming the socket is readable
+	auto recvResult = _socket.Recv(_recvBuffer, sizeof(_recvBuffer));
 	if (not recvResult) {
 		LOG_WARN("Unable to recv", recvResult.error());
+		return;
 	}
 	LOG_INFO("Received bytes", recvResult->first, recvResult->second);
 
-	// TODO if the peer is known, accept the message. otherwise accept the message only if the socket is a server socket
-
-	// TODO other tasks
+	PeerConnectionParameters* peer;
+	if (peer = FindPeerConnectionParameters(recvResult->second); not peer) {
+		if (_blockUnknownConnections) {
+			LOG_DEBUG("Dropping message from unknown source", recvResult->second);
+			return;
+		}
+		LOG_INFO("Accepting message from unknown source", recvResult->second);
+		peer = &FindOrCreatePeerConnectionParameters(recvResult->second);
+	}
 
 	if (pb::LockstepUdpPacket packet; packet.ParseFromArray(_recvBuffer, recvResult->first)) {
-		for (auto& smallMsg : packet.small_messages()) {
-			out.emplace(smallMsg, recvResult->second);
+		if (I(packet.game_hash()) != M2_GAME.Hash()) {
+			LOG_DEBUG("Game hash mismatch");
+			return;
 		}
+		// TODO check version
+		peer->ProcessPeerAcks(I(packet.most_recent_ack()), I(packet.ack_history_bits()), I(packet.oldest_nack()));
+		peer->ProcessReceivedMessages(packet.mutable_small_messages(), out);
 	} else {
 		LOG_WARN("Unable to parse received message");
 	}
 }
-
-m2::void_expected SmallMessagePasser::SendSmallMessage(SmallMessageAndReceiver&& in) {
+void_expected SmallMessagePasser::SendSmallMessage(SmallMessageAndReceiver&& in) {
 	// Insert message to non-acknowledged messages
 	auto& peerConnParams = FindOrCreatePeerConnectionParameters(in.receiver);
-	peerConnParams.outgoingNackMessages.emplace_back(peerConnParams.nextOutgoingOrderNo++, std::move(in.smallMessage), Stopwatch{});
+	in.smallMessage.set_order_no(peerConnParams.nextOutgoingOrderNo++); // Assign the order no
+	peerConnParams.outgoingNackMessages.emplace_back(std::move(in.smallMessage), Stopwatch{});
 	// Prepare a packet specially for the peer
 	const pb::LockstepUdpPacket packet = peerConnParams.CreateOutgoingPacketFromTailMessages();
 	// Serialize and send
 	const auto bytes = packet.SerializeAsString();
 	const auto expectSuccess = _socket.Send(in.receiver, bytes.data(), bytes.size());
 	m2ReflectUnexpected(expectSuccess);
-	LOG_DEBUG("Sent small message", in.receiver, packet.first_order_no(), packet.small_messages_size(), bytes.size());
+	LOG_DEBUG("Sent small message", in.receiver, bytes.size(), packet.small_messages_size());
 	// Store current time for calculating retransmission later
 	peerConnParams.lastMessageSentAt = Stopwatch{};
 	return {};
+}
+void SmallMessagePasser::SendRetransmissionsAndAcks() {
+	// TODO
 }
 
 SmallMessagePasser::PeerConnectionParameters* SmallMessagePasser::FindPeerConnectionParameters(const network::IpAddressAndPort& address) {

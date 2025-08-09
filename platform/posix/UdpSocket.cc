@@ -78,7 +78,7 @@ m2::void_expected m2::network::UdpSocket::Send(const IpAddressAndPort& peerAddrA
 	return {};
 }
 
-m2::expected<std::pair<int, m2::network::IpAddressAndPort>> m2::network::UdpSocket::recv(uint8_t* buffer, const size_t length) {
+m2::expected<std::pair<int, m2::network::IpAddressAndPort>> m2::network::UdpSocket::Recv(uint8_t* buffer, const size_t length) {
 	// Prepare source address
 	sockaddr_in sin{};
 	socklen_t slen = sizeof(sin);

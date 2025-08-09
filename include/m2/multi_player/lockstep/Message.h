@@ -38,8 +38,8 @@ namespace m2::multiplayer::lockstep {
 		pb::LockstepSmallMessage smallMessage;
 		network::IpAddressAndPort receiver;
 	};
+
 	struct OutgoingNackSmallMessage {
-		network::OrderNo orderNo;
 		pb::LockstepSmallMessage smallMessage;
 		Stopwatch firstSentAt;
 	};
