@@ -9,13 +9,7 @@ namespace m2::multiplayer::lockstep {
 	class MessagePasser {
 		struct PeerConnectionParameters {
 			network::IpAddressAndPort peerAddress;
-
-			// Sending parameters
-
 			network::SequenceNo nextOutgoingSequenceNo{1};
-
-			// Receiving parameters
-
 			network::SequenceNo lastReceivedSequenceNo{0};
 		};
 
@@ -26,20 +20,17 @@ namespace m2::multiplayer::lockstep {
 	public:
 		explicit MessagePasser(network::UdpSocket&& s) : _smallMessagePasser(std::move(s)) {}
 
+		// Accessors
+
 		network::UdpSocket& GetSocket() { return _smallMessagePasser.GetSocket(); }
-		ConnectionStatistics* GetConnectionStatistics(const network::IpAddressAndPort& address) { return _smallMessagePasser.GetConnectionStatistics(address); }
+		const ConnectionStatistics* GetConnectionStatistics(const network::IpAddressAndPort& address) { return _smallMessagePasser.GetConnectionStatistics(address); }
 
-		enum class ReadResult {
-			MESSAGE_RECEIVED,
-		};
-		expected<ReadResult> ReadMessages(std::queue<MessageAndSender>& out);
+		// Modifiers
 
-		enum class SendResult {
-			MESSAGE_QUEUED,
-		};
-		expected<SendResult> SendMessage(MessageAndReceiver&& in);
-
-		void Flush();
+		void_expected ReadMessages(std::queue<MessageAndSender>& out);
+		void_expected QueueMessage(MessageAndReceiver&& in);
+		void SendOutgoingPackets() { _smallMessagePasser.SendOutgoingPackets(); }
+		void Flush() { _smallMessagePasser.Flush(); }
 
 	private:
 		PeerConnectionParameters* FindPeerConnectionParameters(const network::IpAddressAndPort& address);

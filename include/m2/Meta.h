@@ -119,6 +119,23 @@ namespace m2 {
 		return destination;
 	}
 
+	template <typename Container, typename UnaryOperation>
+	void Flush(Container& container, const UnaryOperation& operation) {
+		// Assuming the container is iterable
+		for (auto& it : container) {
+			operation(std::move(it));
+		}
+		container.clear();
+	}
+	template <typename T, typename UnaryOperation>
+	void Flush(std::queue<T>& container, const UnaryOperation& operation) {
+		// Assuming the container allows only sequential access
+		while (not container.empty()) {
+			operation(std::move(container.front()));
+			container.pop();
+		}
+	}
+
 	template <typename InputIt, typename Operation>
 	void ForEachAdjacentPair(InputIt first, InputIt last, Operation operation) {
 		if(first == last) {

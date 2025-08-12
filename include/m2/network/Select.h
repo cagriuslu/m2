@@ -30,9 +30,15 @@ namespace m2::network {
 		static expected<std::optional<UdpSelectResult>> WaitUntilSocketsReady(const UdpSocketHandles& readSockets,
 			const UdpSocketHandles& writeSockets, uint64_t timeoutMs);
 
-		static expected<std::optional<UdpSelectResult>> WaitUntilSocketReady(UdpSocket* bidirectionalSocket,
-				const uint64_t timeoutMs) {
+		static expected<std::optional<UdpSelectResult>> WaitUntilSocketReady(UdpSocket* bidirectionalSocket, const uint64_t timeoutMs) {
 			return WaitUntilSocketsReady(UdpSocketHandles{bidirectionalSocket}, UdpSocketHandles{bidirectionalSocket}, timeoutMs);
 		}
+
+		/// \brief Checks if the given socket is readable.
+		/// \details This is a synchronous call that returns without blocking.
+		static expected<bool> IsSocketReadable(UdpSocket* socket);
+		/// \brief Checks if the given socket is writable.
+		/// \details This is a synchronous call that returns without blocking.
+		static expected<bool> IsSocketWritable(UdpSocket* socket);
 	};
 }

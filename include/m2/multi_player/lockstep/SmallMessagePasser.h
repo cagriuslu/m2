@@ -17,17 +17,19 @@ namespace m2::multiplayer::lockstep {
 	/// reordered on the receiver side.
 	class SmallMessagePasser {
 		/// \details Each peer, if ever responded to by this instance, gains an entry in the list of connections.
-		struct PeerConnectionParameters {
+		class PeerConnectionParameters {
 			network::IpAddressAndPort peerAddress;
 			ConnectionStatistics connectionStatistics;
-			bool sendAck{};
+			/// Signifies that unsent outgoing messages exist.
+			bool dirtyOutgoing{};
+			/// Signified that unset ACK exists.
+			bool dirtyAck{};
 
 			// Sending parameters
 
 			network::OrderNo nextOutgoingOrderNo{1};
 			/// Front of the queue corresponds to the oldest non-acknowledged message
 			std::deque<OutgoingNackSmallMessage> outgoingNackMessages;
-			std::optional<Stopwatch> lastMessageSentAt;
 
 			// Receiving parameters
 
@@ -36,13 +38,20 @@ namespace m2::multiplayer::lockstep {
 			/// Messages received after a gap. These won't be returned until the gap is closed. Front is the oldest.
 			std::map<network::OrderNo, pb::LockstepSmallMessage> messagesSinceGap;
 
+		public:
 			explicit PeerConnectionParameters(const network::IpAddressAndPort address) : peerAddress(address) {}
 
-			[[nodiscard]] pb::LockstepUdpPacket CreateOutgoingPacketFromTailMessages() const;
+			[[nodiscard]] const network::IpAddressAndPort& GetPeerAddress() const { return peerAddress; }
+			[[nodiscard]] const ConnectionStatistics& GetConnectionStatistics() const;
+			[[nodiscard]] bool IsDirty() const { return dirtyOutgoing || dirtyAck; }
 			[[nodiscard]] int32_t GetMostRecentAck() const;
 			[[nodiscard]] int32_t GetAckHistoryBits() const;
 			[[nodiscard]] int32_t GetOldestNack() const;
+			[[nodiscard]] const Stopwatch* GetTimeSinceOldestNackTransmission() const;
 
+			[[nodiscard]] pb::LockstepUdpPacket CreateOutgoingPacketFromTailMessagesAndUpdateTimers();
+			[[nodiscard]] pb::LockstepUdpPacket CreateOutgoingPacketFromHeadMessagesAndUpdateTimers();
+			void QueueOutgoingMessage(pb::LockstepSmallMessage&&);
 			void ProcessPeerAcks(int32_t mostRecentAck, int32_t ackHistoryBits, int32_t oldestNack);
 			void ProcessReceivedMessages(google::protobuf::RepeatedPtrField<pb::LockstepSmallMessage>*, std::queue<SmallMessageAndSender>& out);
 		};
@@ -58,14 +67,15 @@ namespace m2::multiplayer::lockstep {
 		// Accessors
 
 		[[nodiscard]] network::UdpSocket& GetSocket() { return _socket; }
-		[[nodiscard]] ConnectionStatistics* GetConnectionStatistics(const network::IpAddressAndPort& address);
+		[[nodiscard]] const ConnectionStatistics* GetConnectionStatistics(const network::IpAddressAndPort& address);
 
 		// Modifiers
 
 		void BlockUnknownConnections() { _blockUnknownConnections = true; }
-		void ReadSmallMessages(std::queue<SmallMessageAndSender>& out);
-		void_expected SendSmallMessage(SmallMessageAndReceiver&& in);
-		void SendRetransmissionsAndAcks();
+		void_expected ReadSmallMessages(std::queue<SmallMessageAndSender>& out);
+		void QueueSmallMessage(SmallMessageAndReceiver&& in);
+		void_expected SendOutgoingPackets(); //  Also makes retransmissions and Acks
+		void Flush();
 
 	private:
 		PeerConnectionParameters* FindPeerConnectionParameters(const network::IpAddressAndPort& address);

@@ -41,6 +41,6 @@ namespace m2::multiplayer::lockstep {
 
 	struct OutgoingNackSmallMessage {
 		pb::LockstepSmallMessage smallMessage;
-		Stopwatch firstSentAt;
+		Stopwatch lastSentAt;
 	};
 }

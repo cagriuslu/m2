@@ -67,3 +67,14 @@ expected<std::optional<SelectResult<UdpSocket>>> Select::WaitUntilSocketsReady(c
 	return WaitUntilSocketsReadyTemplate<UdpSocket>(readSockets, writeSockets, timeoutMs,
 		[](const UdpSocket* s) -> int { return s->_platformSpecificData->fd; });
 }
+
+expected<bool> Select::IsSocketReadable(UdpSocket* socket) {
+	const auto selectResult = WaitUntilSocketsReady(UdpSocketHandles{socket}, UdpSocketHandles{}, 0);
+	m2ReflectUnexpected(selectResult);
+	return selectResult->has_value() && std::ranges::contains(selectResult->value().readableSockets, socket);
+}
+expected<bool> Select::IsSocketWritable(UdpSocket* socket) {
+	const auto selectResult = WaitUntilSocketsReady(UdpSocketHandles{}, UdpSocketHandles{socket}, 0);
+	m2ReflectUnexpected(selectResult);
+	return selectResult->has_value() && std::ranges::contains(selectResult->value().writableSockets, socket);
+}
