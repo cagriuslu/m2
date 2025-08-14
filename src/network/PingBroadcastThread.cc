@@ -1,5 +1,6 @@
 #include <m2/network/PingBroadcastThread.h>
 #include <m2/Log.h>
+#include <m2/LogHelpers.h>
 #include <cstdlib>
 #include <m2/mt/WaitOnCondition.h>
 

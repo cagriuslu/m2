@@ -1,5 +1,6 @@
 #include <m2/multi_player/lockstep/SmallMessagePasser.h>
 #include <m2/Game.h>
+#include <m2/Log.h>
 #include <ranges>
 
 using namespace m2;
@@ -109,25 +110,35 @@ pb::LockstepUdpPacket SmallMessagePasser::PeerConnectionParameters::CreateOutgoi
 void SmallMessagePasser::PeerConnectionParameters::QueueOutgoingMessage(pb::LockstepSmallMessage&& in) {
 	// Insert message to non-acknowledged messages
 	const auto orderNo = nextOutgoingOrderNo++;
+	LOG_DEBUG("Queueing outgoing small message for peer, with order number", peerAddress, orderNo);
 	in.set_order_no(orderNo); // Assign order number
 	outgoingNackMessages.emplace_back(std::move(in), Stopwatch{});
 	connectionStatistics.IncrementOutgoingPacketCount();
 	dirtyOutgoing = true;
-	LOG_DEBUG("Queued outgoing small message for peer, with order number", peerAddress, orderNo);
 }
 void SmallMessagePasser::PeerConnectionParameters::ProcessPeerAcks(const int32_t mostRecentAck, int32_t ackHistoryBits, const int32_t oldestNack) {
 	const auto nackCountBefore = outgoingNackMessages.size();
 
+	std::vector<network::OrderNo> ackedOrderNos;
+
 	// Discard messages up to the oldest NACK
 	if (oldestNack) {
 		std::erase_if(outgoingNackMessages, [&](const auto& msg) {
-			return I(msg.smallMessage.order_no()) < oldestNack;
+			const auto shouldDiscard = I(msg.smallMessage.order_no()) < oldestNack;
+			if (shouldDiscard) {
+				ackedOrderNos.emplace_back(msg.smallMessage.order_no());
+			}
+			return shouldDiscard;
 		});
 	}
 	// Discard mostRecentAck
 	if (mostRecentAck) {
 		std::erase_if(outgoingNackMessages, [&](const auto& msg) {
-			return I(msg.smallMessage.order_no()) == mostRecentAck;
+			const auto shouldDiscard = I(msg.smallMessage.order_no()) == mostRecentAck;
+			if (shouldDiscard) {
+				ackedOrderNos.emplace_back(msg.smallMessage.order_no());
+			}
+			return shouldDiscard;
 		});
 	}
 	// Iterate over bits of ackHistoryBits from the least significant
@@ -135,12 +146,18 @@ void SmallMessagePasser::PeerConnectionParameters::ProcessPeerAcks(const int32_t
 		if (const auto orderNoOfBit = mostRecentAck - i - 1; 0 < orderNoOfBit) {
 			if (ackHistoryBits & 0x1) {
 				std::erase_if(outgoingNackMessages, [&](const auto& msg) {
-					return I(msg.smallMessage.order_no()) == orderNoOfBit;
+					const auto shouldDiscard = I(msg.smallMessage.order_no()) == orderNoOfBit;
+					if (shouldDiscard) {
+						ackedOrderNos.emplace_back(msg.smallMessage.order_no());
+					}
+					return shouldDiscard;
 				});
 			}
 		}
 		ackHistoryBits >>= 1;
 	}
+
+	LOG_DEBUG("Peer acknowledged small messages with order number", peerAddress, ackedOrderNos);
 
 	const auto nackCountAfter = outgoingNackMessages.size();
 	const auto ackCount = nackCountBefore - nackCountAfter;
@@ -154,7 +171,7 @@ void SmallMessagePasser::PeerConnectionParameters::ProcessReceivedMessages(googl
 	for (auto& msg : *smallMessages) {
 		if (const auto msgOrderNo = I(msg.order_no()); lastOrderlyReceivedOrderNo < msgOrderNo) {
 			if (const auto [_, inserted] = messagesSinceGap.emplace(msgOrderNo, std::move(msg)); inserted) {
-				LOG_DEBUG("Received packet from peer, with order number", peerAddress, msgOrderNo);
+				LOG_DEBUG("Received new small message from peer, with order number", peerAddress, msgOrderNo);
 			}
 		}
 	}
@@ -244,7 +261,7 @@ void_expected SmallMessagePasser::SendOutgoingPackets() {
 				const auto bytes = packet.SerializeAsString();
 				const auto success = _socket.Send(peer.GetPeerAddress(), bytes.data(), bytes.size());
 				m2ReflectUnexpected(success);
-				LOG_DEBUG("Sent fresh packet to peer, of size, with small message count", peer.GetPeerAddress(), bytes.size(), packet.small_messages_size());
+				LOG_DEBUG("Sent fresh packet to peer, of size, with small message count", peer.GetPeerAddress(), bytes.size(), packet.small_messages());
 			}
 		}
 
@@ -257,7 +274,7 @@ void_expected SmallMessagePasser::SendOutgoingPackets() {
 				const auto bytes = packet.SerializeAsString();
 				const auto success = _socket.Send(peer.GetPeerAddress(), bytes.data(), bytes.size());
 				m2ReflectUnexpected(success);
-				LOG_DEBUG("Sent retransmission packet to peer, of size, with small message count", peer.GetPeerAddress(), bytes.size(), packet.small_messages_size());
+				LOG_DEBUG("Sent retransmission packet to peer, of size, with small message count", peer.GetPeerAddress(), bytes.size(), packet.small_messages());
 			}
 		}
 	}
@@ -281,4 +298,13 @@ SmallMessagePasser::PeerConnectionParameters& SmallMessagePasser::FindOrCreatePe
 		existing = &_peerConnectionParameters.back();
 	}
 	return *existing;
+}
+
+std::string m2::ToString(const google::protobuf::RepeatedPtrField<pb::LockstepSmallMessage>& smallMessages) {
+	std::string s = "[";
+	for (const auto& msg : smallMessages) {
+		s += ToString(msg.order_no()) + ",";
+	}
+	s += "]";
+	return s;
 }

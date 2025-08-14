@@ -82,3 +82,7 @@ namespace m2::multiplayer::lockstep {
 		PeerConnectionParameters& FindOrCreatePeerConnectionParameters(const network::IpAddressAndPort& address);
 	};
 }
+
+namespace m2 {
+	std::string ToString(const google::protobuf::RepeatedPtrField<pb::LockstepSmallMessage>& smallMessages);
+}

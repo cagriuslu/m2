@@ -40,11 +40,11 @@ void_expected MessagePasser::QueueMessage(MessageAndReceiver&& in) {
 	pb::LockstepSmallMessage smallMsg;
 	smallMsg.set_message_sequence_no(msgSequenceNo);
 	smallMsg.mutable_complete_message()->Swap(&in.message);
+	LOG_DEBUG("Queueing outgoing message for peer, with sequence number", in.receiver, msgSequenceNo);
 	_smallMessagePasser.QueueSmallMessage(SmallMessageAndReceiver{
 		.smallMessage = std::move(smallMsg),
 		.receiver = in.receiver
 	});
-	LOG_DEBUG("Queued outgoing message for peer, with sequence number", in.receiver, msgSequenceNo);
 	return {};
 }
 

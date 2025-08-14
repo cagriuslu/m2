@@ -16,6 +16,14 @@ m2::network::Port m2::network::Port::CreateFromHostOrder(uint16_t port) {
 	return Port{htons(port)};
 }
 
+std::string m2::ToString(const std::vector<network::OrderNo>& orderNos) {
+	std::string s = "[";
+	for (const auto& orderNo : orderNos) {
+		s += ToString(orderNo) + ",";
+	}
+	s += "]";
+	return s;
+}
 std::string m2::ToString(const network::IpAddress& ip) {
 	const auto inNetworkOrder = ip.GetInNetworkOrder();
 	const auto first = (inNetworkOrder & 0xFFu) >> 0;

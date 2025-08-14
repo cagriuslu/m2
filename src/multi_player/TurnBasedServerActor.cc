@@ -1,5 +1,6 @@
 #include <m2/multi_player/TurnBasedServerActor.h>
 #include <m2/Game.h>
+#include <m2/Log.h>
 
 namespace {
 	constexpr uint16_t TCP_PORT_NO = 1162;

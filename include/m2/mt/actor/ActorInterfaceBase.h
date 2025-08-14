@@ -1,5 +1,5 @@
 #pragma once
-#include <m2/Log.h>
+#include <m2/LogHelpers.h>
 #include "ActorLifetimeManager.h"
 #include "ActorBase.h"
 #include <thread>

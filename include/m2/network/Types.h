@@ -47,6 +47,7 @@ namespace m2::network {
 }
 
 namespace m2 {
+	std::string ToString(const std::vector<network::OrderNo>&);
 	std::string ToString(const network::IpAddress&);
 	std::string ToString(const network::Port&);
 	std::string ToString(const network::IpAddressAndPort&);
