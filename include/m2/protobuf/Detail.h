@@ -10,6 +10,9 @@
 #include "../Meta.h"
 
 namespace m2 {
+	template <typename T>
+	concept ProtoEnum = google::protobuf::is_proto_enum<T>::value;
+
 	namespace pb {
 		template <typename ProtoType>
 		expected<ProtoType> json_string_to_message(const std::string& str) {
@@ -97,27 +100,27 @@ namespace m2 {
 			}
 		}
 
-		template <typename EnumT>
+		template <ProtoEnum T>
 		int enum_value_count() {
-			static const auto* const descriptor = ::google::protobuf::GetEnumDescriptor<EnumT>();
+			static const auto* const descriptor = ::google::protobuf::GetEnumDescriptor<T>();
 			return descriptor->value_count();
 		}
 
-		template <typename EnumT>
-		int enum_index(EnumT enum_value) {
-			static const auto* const descriptor = ::google::protobuf::GetEnumDescriptor<EnumT>();
+		template <ProtoEnum T>
+		int enum_index(T enum_value) {
+			static const auto* const descriptor = ::google::protobuf::GetEnumDescriptor<T>();
 			return descriptor->FindValueByNumber(enum_value)->index();
 		}
 
-		template <typename EnumT>
-		EnumT enum_value(int index) {
-			static const auto* const descriptor = ::google::protobuf::GetEnumDescriptor<EnumT>();
-			return static_cast<EnumT>(descriptor->value(index)->number());
+		template <ProtoEnum T>
+		T enum_value(int index) {
+			static const auto* const descriptor = ::google::protobuf::GetEnumDescriptor<T>();
+			return static_cast<T>(descriptor->value(index)->number());
 		}
 
-		template <typename EnumT, typename ParserT>
-		expected<EnumT> _enum_value(ParserT* parser, const std::string& name) {
-			EnumT en;
+		template <ProtoEnum T, typename ParserT>
+		expected<T> _enum_value(ParserT* parser, const std::string& name) {
+			T en;
 			if (parser(name, &en)) {
 				return en;
 			} else {
@@ -125,33 +128,33 @@ namespace m2 {
 			}
 		}
 
-		template <typename EnumT>
+		template <ProtoEnum T>
 		const std::string& enum_name(int index) {
-			static const auto* const descriptor = ::google::protobuf::GetEnumDescriptor<EnumT>();
+			static const auto* const descriptor = ::google::protobuf::GetEnumDescriptor<T>();
 			return descriptor->value(index)->name();
 		}
 
-		template <typename EnumT>
-		const std::string& enum_name(EnumT enum_value) {
-			static const auto* const descriptor = ::google::protobuf::GetEnumDescriptor<EnumT>();
+		template <ProtoEnum T>
+		const std::string& enum_name(T enum_value) {
+			static const auto* const descriptor = ::google::protobuf::GetEnumDescriptor<T>();
 			return descriptor->FindValueByNumber(enum_value)->name();
 		}
 
-		template <typename EnumT>
-		void for_each_enum_value(const std::function<void(EnumT)>& op) {
-			for (int i = 0; i < enum_value_count<EnumT>(); ++i) {
-				op(enum_value<EnumT>(i));
+		template <ProtoEnum T>
+		void for_each_enum_value(const std::function<void(T)>& op) {
+			for (int i = 0; i < enum_value_count<T>(); ++i) {
+				op(enum_value<T>(i));
 			}
 		}
 	}  // namespace pb
 
-	template <typename EnumT>
-	std::string ToString(const EnumT& enum_val) {
+	template <ProtoEnum T>
+	std::string ToString(const T& enum_val) {
 		return pb::enum_name(enum_val);
 	}
 
-	template <typename EnumT>
-	std::string ToString(const std::vector<EnumT>& enum_arr) {
+	template <ProtoEnum T>
+	std::string ToString(const std::vector<T>& enum_arr) {
 		std::string s = "[";
 		for (const auto& enum_val : enum_arr) {
 			s = s + ToString(enum_val) + ",";
