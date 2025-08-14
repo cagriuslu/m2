@@ -1,5 +1,4 @@
 #include <SDL2/SDL_image.h>
-#include <m2/Log.h>
 #include <m2/Game.h>
 #include <m2/Level.h>
 #include <m2/Meta.h>
@@ -13,10 +12,11 @@
 #include <m2/game/object/Tile.h>
 #include <m2/protobuf/Detail.h>
 #include <m2/sheet_editor/Ui.h>
+#include <m2/third_party/physics/box2d/DebugDraw.h>
+#include <m2/ui/widget/Text.h>
+#include <m2/Log.h>
 #include <filesystem>
 #include <iterator>
-#include <m2/ui/widget/Text.h>
-#include <m2/third_party/physics/box2d/DebugDraw.h>
 
 using namespace m2;
 

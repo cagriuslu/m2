@@ -1,4 +1,5 @@
 #include <m2/Log.h>
+#include <m2/LogHelpers.h>
 #include <m2/M2.h>
 #include <cstdarg>
 #include <thread>

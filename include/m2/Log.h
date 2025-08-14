@@ -39,8 +39,6 @@
 #define INFO_FN() LOG_INFO("f", __FUNCTION__)
 
 namespace m2 {
-	// Sets the name of the thread so that it could be used during logging
-	void SetThreadNameForLogging(const char* thread_name);
 	void LogStacktrace();
 	const std::string& ToString(const pb::LogLevel&);
 
@@ -59,8 +57,7 @@ namespace m2 {
 			constexpr auto argsSize = std::tuple_size_v<std::tuple<Ts...>>;
 			fprintf(stderr, argsSize ? "%s: " : "%s", msg);
 			{
-				using namespace m2;
-				[](...) {}(fprintf(stderr, "%s ", ToString(ts).c_str())...);
+				[](...) {}(fprintf(stderr, "%s ", ::m2::ToString(ts).c_str())...);
 			}
 			fprintf(stderr, "\n");
 		}
