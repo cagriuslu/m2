@@ -148,6 +148,8 @@ void SmallMessagePasser::PeerConnectionParameters::ProcessPeerAcks(const int32_t
 }
 void SmallMessagePasser::PeerConnectionParameters::ProcessReceivedMessages(google::protobuf::RepeatedPtrField<pb::LockstepSmallMessage>* smallMessages,
 		std::queue<SmallMessageAndSender>& out) {
+	const auto outOfOrderMessageCountBefore = messagesSinceGap.size();
+
 	// Move all messages to messagesSinceGap
 	for (auto& msg : *smallMessages) {
 		if (const auto msgOrderNo = I(msg.order_no()); lastOrderlyReceivedOrderNo < msgOrderNo) {
@@ -157,6 +159,10 @@ void SmallMessagePasser::PeerConnectionParameters::ProcessReceivedMessages(googl
 		}
 	}
 	smallMessages->Clear();
+
+	const auto outOfOrderMessageCountAfter = messagesSinceGap.size();
+	const auto lastOrderlyReceivedOrderNoBefore = lastOrderlyReceivedOrderNo;
+
 	// Iterate messages to check for orderly messages
 	for (auto it = messagesSinceGap.begin(); it != messagesSinceGap.end(); ) {
 		if (const auto msgOrderNo = it->first; msgOrderNo == lastOrderlyReceivedOrderNo + 1) {
@@ -168,7 +174,11 @@ void SmallMessagePasser::PeerConnectionParameters::ProcessReceivedMessages(googl
 			break;
 		}
 	}
-	dirtyAck = true;
+
+	const auto lastOrderlyReceivedOrderNoAfter = lastOrderlyReceivedOrderNo;
+
+	dirtyAck = outOfOrderMessageCountBefore != outOfOrderMessageCountAfter
+		|| lastOrderlyReceivedOrderNoBefore != lastOrderlyReceivedOrderNoAfter;
 }
 
 const ConnectionStatistics* SmallMessagePasser::GetConnectionStatistics(const network::IpAddressAndPort& address) {
@@ -182,7 +192,7 @@ void_expected SmallMessagePasser::ReadSmallMessages(std::queue<SmallMessageAndSe
 	m2Repeat(N_PACKETS_TO_ATTEMPT_TO_READ) {
 		const auto isReadable = network::Select::IsSocketReadable(&_socket);
 		m2ReflectUnexpected(isReadable);
-		if (isReadable.value() == false) {
+		if (not isReadable.value()) {
 			return {};
 		}
 

@@ -29,7 +29,7 @@ namespace m2::multiplayer::lockstep {
 
 		void_expected ReadMessages(std::queue<MessageAndSender>& out);
 		void_expected QueueMessage(MessageAndReceiver&& in);
-		void SendOutgoingPackets() { _smallMessagePasser.SendOutgoingPackets(); }
+		void_expected SendOutgoingPackets() { return _smallMessagePasser.SendOutgoingPackets(); }
 		void Flush() { _smallMessagePasser.Flush(); }
 
 	private:
