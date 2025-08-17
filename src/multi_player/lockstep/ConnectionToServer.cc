@@ -9,22 +9,26 @@ namespace {
 	constexpr int N_RESPONSES_TO_ASSUME_CONNECTION = 3;
 }
 
-void ConnectionToServer::GatherOutgoingMessages(ConnectionStatistics* connStats, std::queue<pb::LockstepMessage>& out) {
-	if (std::holds_alternative<SearchingForServer>(_state)) {
+void ConnectionToServer::GatherOutgoingMessages(const ConnectionStatistics* connStats, std::queue<pb::LockstepMessage>& out) {
+	if (std::holds_alternative<SearchForServer>(_state)) {
 		if (not connStats) {
-			out.emplace(); // Send the first ping
+			LOG_DEBUG("Queueing first ping toward server");
+			out.emplace();
 		} else if (const auto nAckedMsgs = connStats->GetTotalAckedOutgoingPackets(); nAckedMsgs < N_RESPONSES_TO_ASSUME_CONNECTION) {
+			// Check if previous ping have been ACKed
 			if (connStats->GetTotalQueuedOutgoingPackets() == nAckedMsgs) {
-				// All pings have been ACKed, send another ping
+				LOG_DEBUG("Queueing another ping toward server");
 				out.emplace();
 			}
-		} else {
-			// TODO check connection quality
+		} else { // nAckedMsgs == N_RESPONSES_TO_ASSUME_CONNECTION
+			// Enough pings have been made
+			_state = WaitForPlayers{};
 		}
+	} else if (std::holds_alternative<WaitForPlayers>(_state)) {
+		// TODO
 	}
-	// TODO
 }
 
-void ConnectionToServer::DeliverIncomingMessage(ConnectionStatistics*, pb::LockstepMessage&& in) {
+void ConnectionToServer::DeliverIncomingMessage(const ConnectionStatistics*, pb::LockstepMessage&& in) {
 	// TODO
 }

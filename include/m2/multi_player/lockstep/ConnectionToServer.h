@@ -8,16 +8,16 @@
 
 namespace m2::multiplayer::lockstep {
 	class ConnectionToServer final {
-		struct SearchingForServer {};
-		struct CheckingAdmittanceCriteria {};
+		struct SearchForServer {};
+		struct WaitForPlayers {};
 
-		std::variant<SearchingForServer,CheckingAdmittanceCriteria> _state{};
+		std::variant<SearchForServer,WaitForPlayers> _state{};
 
 	public:
 		ConnectionToServer() = default;
 
-		void GatherOutgoingMessages(ConnectionStatistics*, std::queue<pb::LockstepMessage>& out);
+		void GatherOutgoingMessages(const ConnectionStatistics*, std::queue<pb::LockstepMessage>& out);
 
-		void DeliverIncomingMessage(ConnectionStatistics*, pb::LockstepMessage&& in);
+		void DeliverIncomingMessage(const ConnectionStatistics*, pb::LockstepMessage&& in);
 	};
 }

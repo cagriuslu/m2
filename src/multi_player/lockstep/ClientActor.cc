@@ -26,21 +26,41 @@ bool ClientActor::operator()(MessageBox<ClientActorInput>&, MessageBox<ClientAct
 		return true; // Timeout occurred, try again later
 	}
 	const auto& [readableSockets, writeableSockets] = **selectResult;
+
 	if (not readableSockets.empty()) {
-		// TODO read messages
-	}
-	if (not writeableSockets.empty()) {
-		std::queue<pb::LockstepMessage> outgoingMessages;
-		_serverConnection->GatherOutgoingMessages(_messagePasser->GetConnectionStatistics(_serverAddressAndPort), outgoingMessages);
-		while (not outgoingMessages.empty()) {
-			_messagePasser->SendMessage(MessageAndReceiver{
-				.message = std::move(outgoingMessages.front()),
-				.receiver = _serverAddressAndPort
-			});
-			outgoingMessages.pop();
+		std::queue<MessageAndSender> messages;
+		if (const auto success = _messagePasser->ReadMessages(messages); not success) {
+			LOG_ERROR("Unrecoverable error while reading", success.error());
+			return false;
 		}
-		// TODO gather other outgoing messages
+		// TODO process messages
+	}
+
+	GatherAndQueueOutgoingMessages();
+	if (not writeableSockets.empty()) {
+		if (const auto success = _messagePasser->SendOutgoingPackets(); not success) {
+			LOG_ERROR("Unrecoverable error while sending", success.error());
+			return false;
+		}
 	}
 
 	return true;
+}
+
+void ClientActor::GatherAndQueueOutgoingMessages() {
+	const auto flushOperationGenerator = [this](const network::IpAddressAndPort& address) {
+		return [this, address](pb::LockstepMessage&& msg) {
+			_messagePasser->QueueMessage(MessageAndReceiver{
+				.message = std::move(msg),
+				.receiver = address
+			});
+		};
+	};
+
+	std::queue<pb::LockstepMessage> outgoingMessages;
+	// Server connection
+	_serverConnection->GatherOutgoingMessages(_messagePasser->GetConnectionStatistics(_serverAddressAndPort), outgoingMessages);
+	Flush(outgoingMessages, flushOperationGenerator(_serverAddressAndPort));
+	// Peer connections
+	// TODO gather messages to peers
 }

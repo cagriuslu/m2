@@ -31,38 +31,42 @@ bool ServerActor::operator()(MessageBox<ServerActorInput>&, MessageBox<ServerAct
 		return true; // Timeout occurred, try again later
 	}
 	const auto& [readableSockets, writeableSockets] = **selectResult;
-	PullIncomingMessages(readableSockets);
-	ProcessOneReceivedMessage();
+
+	if (not readableSockets.empty()) {
+		std::queue<MessageAndSender> messages;
+		if (const auto success = _messagePasser->ReadMessages(messages); not success) {
+			LOG_ERROR("Unrecoverable error while reading", success.error());
+			return false;
+		}
+		// Process messages
+		while (not messages.empty()) {
+			const auto msg = std::move(messages.front());
+			messages.pop();
+
+			std::visit(overloaded{
+				[this, &msg](LobbyOpen& lo) {
+					auto* client = FindClient(msg.sender);
+					if (not client) {
+						LOG_INFO("received msg from an unknown source");
+						// TODO
+					} else {
+						// TODO
+					}
+				},
+				[](const std::monostate&) {},
+			}, _state);
+		}
+	}
+
+	// TODO gather and queue outgoing messages
+	if (not writeableSockets.empty()) {
+		if (const auto success = _messagePasser->SendOutgoingPackets(); not success) {
+			LOG_ERROR("Unrecoverable error while sending", success.error());
+			return false;
+		}
+	}
 
 	return true;
-}
-
-void ServerActor::PullIncomingMessages(const network::SocketHandles<network::UdpSocket>& readableSockets) {
-	if (not readableSockets.empty()) {
-		LOG_DEBUG("Socket is readable");
-		const auto readResult = _messagePasser->ReadMessages(_receivedMessages);
-		// TODO handle result
-	}
-}
-void ServerActor::ProcessOneReceivedMessage() {
-	if (_receivedMessages.empty()) {
-		return;
-	}
-	const auto msg = std::move(_receivedMessages.front());
-	_receivedMessages.pop();
-
-	std::visit(overloaded{
-		[this, &msg](LobbyOpen& lo) {
-			auto* client = FindClient(msg.sender);
-			if (not client) {
-				LOG_INFO("received msg from an unknown source");
-				// TODO
-			} else {
-				// TODO
-			}
-		},
-		[](const std::monostate&) {},
-	}, _state);
 }
 
 ConnectionToClient* ServerActor::FindClient(const network::IpAddressAndPort& address) {

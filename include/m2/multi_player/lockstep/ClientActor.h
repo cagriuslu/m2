@@ -29,5 +29,6 @@ namespace m2::multiplayer::lockstep {
 		void Deinitialize(MessageBox<ClientActorInput>&, MessageBox<ClientActorOutput>&) override {}
 
 	private:
+		void GatherAndQueueOutgoingMessages();
 	};
 }
