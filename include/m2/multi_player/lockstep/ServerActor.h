@@ -23,7 +23,6 @@ namespace m2::multiplayer::lockstep {
 
 		const int _maxClientCount;
 		std::optional<MessagePasser> _messagePasser;
-		// std::queue<MessageAndSender> _receivedMessages;
 		std::variant<std::monostate, LobbyOpen> _state;
 
 	public:

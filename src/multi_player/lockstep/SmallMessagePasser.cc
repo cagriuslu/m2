@@ -8,8 +8,9 @@ using namespace m2::multiplayer;
 using namespace m2::multiplayer::lockstep;
 
 namespace {
-	constexpr int N_PACKETS_TO_ATTEMPT_TO_READ = 8;
+	constexpr int N_ATTEMPTS_TO_READ_PACKETS = 8;
 	constexpr std::chrono::milliseconds RETRANSMISSION_TIMEOUT{250};
+	constexpr std::chrono::milliseconds KEEP_ALIVE_PING_TIMEOUT{5000};
 }
 
 const ConnectionStatistics& SmallMessagePasser::PeerConnectionParameters::GetConnectionStatistics() const {
@@ -107,6 +108,19 @@ pb::LockstepUdpPacket SmallMessagePasser::PeerConnectionParameters::CreateOutgoi
 
 	return packet;
 }
+pb::LockstepUdpPacket SmallMessagePasser::PeerConnectionParameters::CreateOutgoingKeepAlivePacket() {
+	pb::LockstepUdpPacket packet;
+	packet.set_game_hash(M2_GAME.Hash());
+	packet.set_most_recent_ack(GetMostRecentAck());
+	packet.set_ack_history_bits(GetAckHistoryBits());
+	packet.set_oldest_nack(GetOldestNack());
+
+	// Keep-alive packet doesn't contain any messages
+
+	dirtyAck = false;
+
+	return packet;
+}
 void SmallMessagePasser::PeerConnectionParameters::QueueOutgoingMessage(pb::LockstepSmallMessage&& in) {
 	// Insert message to non-acknowledged messages
 	const auto orderNo = nextOutgoingOrderNo++;
@@ -157,14 +171,23 @@ void SmallMessagePasser::PeerConnectionParameters::ProcessPeerAcks(const int32_t
 		ackHistoryBits >>= 1;
 	}
 
-	LOG_DEBUG("Peer acknowledged small messages with order number", peerAddress, ackedOrderNos);
-
 	const auto nackCountAfter = outgoingNackMessages.size();
 	const auto ackCount = nackCountBefore - nackCountAfter;
 	connectionStatistics.IncrementAckedOutgoingPacketCount(I(ackCount));
+
+	if (ackCount) {
+		LOG_DEBUG("Peer acknowledged small messages with order number", peerAddress, ackedOrderNos);
+	}
 }
 void SmallMessagePasser::PeerConnectionParameters::ProcessReceivedMessages(google::protobuf::RepeatedPtrField<pb::LockstepSmallMessage>* smallMessages,
 		std::queue<SmallMessageAndSender>& out) {
+	lastAnyMessageReceivedAt = Stopwatch{};
+
+	if (smallMessages->empty()) {
+		LOG_DEBUG("Received keep-alive packet from peer", peerAddress);
+		return;
+	}
+
 	const auto outOfOrderMessageCountBefore = messagesSinceGap.size();
 
 	// Move all messages to messagesSinceGap
@@ -206,7 +229,7 @@ const ConnectionStatistics* SmallMessagePasser::GetConnectionStatistics(const ne
 }
 
 void_expected SmallMessagePasser::ReadSmallMessages(std::queue<SmallMessageAndSender>& out) {
-	m2Repeat(N_PACKETS_TO_ATTEMPT_TO_READ) {
+	m2Repeat(N_ATTEMPTS_TO_READ_PACKETS) {
 		const auto isReadable = network::Select::IsSocketReadable(&_socket);
 		m2ReflectUnexpected(isReadable);
 		if (not isReadable.value()) {
@@ -225,7 +248,7 @@ void_expected SmallMessagePasser::ReadSmallMessages(std::queue<SmallMessageAndSe
 			LOG_INFO("Accepting packet from unknown source, of size", recvResult->second, recvResult->first);
 			peer = &FindOrCreatePeerConnectionParameters(recvResult->second);
 		} else {
-			LOG_INFO("Received packet from peer, of size", recvResult->second, recvResult->first);
+			LOG_DEBUG("Received packet from peer, of size", recvResult->second, recvResult->first);
 		}
 
 		if (pb::LockstepUdpPacket packet; packet.ParseFromArray(_recvBuffer, recvResult->first)) {
@@ -262,6 +285,7 @@ void_expected SmallMessagePasser::SendOutgoingPackets() {
 				const auto success = _socket.Send(peer.GetPeerAddress(), bytes.data(), bytes.size());
 				m2ReflectUnexpected(success);
 				LOG_DEBUG("Sent fresh packet to peer, of size, with small message count", peer.GetPeerAddress(), bytes.size(), packet.small_messages());
+				peer.MarkAnyMessageSent();
 			}
 		}
 
@@ -275,6 +299,21 @@ void_expected SmallMessagePasser::SendOutgoingPackets() {
 				const auto success = _socket.Send(peer.GetPeerAddress(), bytes.data(), bytes.size());
 				m2ReflectUnexpected(success);
 				LOG_DEBUG("Sent retransmission packet to peer, of size, with small message count", peer.GetPeerAddress(), bytes.size(), packet.small_messages());
+				peer.MarkAnyMessageSent();
+			}
+		}
+
+		// Ping the peer if no other messages were sent to the peer for a long time
+		if (peer.GetTimeSinceAnySentMessage().HasTimePassed(KEEP_ALIVE_PING_TIMEOUT)) {
+			const auto isWritable = network::Select::IsSocketWritable(&_socket);
+			m2ReflectUnexpected(isWritable);
+			if (isWritable.value()) {
+				const auto packet = peer.CreateOutgoingKeepAlivePacket();
+				const auto bytes = packet.SerializeAsString();
+				const auto success = _socket.Send(peer.GetPeerAddress(), bytes.data(), bytes.size());
+				m2ReflectUnexpected(success);
+				LOG_DEBUG("Sent keep-alive packet to peer", peer.GetPeerAddress());
+				peer.MarkAnyMessageSent();
 			}
 		}
 	}

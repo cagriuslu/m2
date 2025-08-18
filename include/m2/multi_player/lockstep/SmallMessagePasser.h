@@ -30,6 +30,7 @@ namespace m2::multiplayer::lockstep {
 			network::OrderNo nextOutgoingOrderNo{1};
 			/// Front of the queue corresponds to the oldest non-acknowledged message
 			std::deque<OutgoingNackSmallMessage> outgoingNackMessages;
+			Stopwatch lastAnyMessageSentAt; // Initialize when the object is created
 
 			// Receiving parameters
 
@@ -37,6 +38,7 @@ namespace m2::multiplayer::lockstep {
 			network::OrderNo lastOrderlyReceivedOrderNo{0};
 			/// Messages received after a gap. These won't be returned until the gap is closed. Front is the oldest.
 			std::map<network::OrderNo, pb::LockstepSmallMessage> messagesSinceGap;
+			std::optional<Stopwatch> lastAnyMessageReceivedAt;
 
 		public:
 			explicit PeerConnectionParameters(const network::IpAddressAndPort address) : peerAddress(address) {}
@@ -47,10 +49,13 @@ namespace m2::multiplayer::lockstep {
 			[[nodiscard]] int32_t GetMostRecentAck() const;
 			[[nodiscard]] int32_t GetAckHistoryBits() const;
 			[[nodiscard]] int32_t GetOldestNack() const;
+			[[nodiscard]] const Stopwatch& GetTimeSinceAnySentMessage() const { return lastAnyMessageSentAt; }
 			[[nodiscard]] const Stopwatch* GetTimeSinceOldestNackTransmission() const;
 
 			[[nodiscard]] pb::LockstepUdpPacket CreateOutgoingPacketFromTailMessagesAndUpdateTimers();
 			[[nodiscard]] pb::LockstepUdpPacket CreateOutgoingPacketFromHeadMessagesAndUpdateTimers();
+			[[nodiscard]] pb::LockstepUdpPacket CreateOutgoingKeepAlivePacket();
+			void MarkAnyMessageSent() { lastAnyMessageSentAt = {}; }
 			void QueueOutgoingMessage(pb::LockstepSmallMessage&&);
 			void ProcessPeerAcks(int32_t mostRecentAck, int32_t ackHistoryBits, int32_t oldestNack);
 			void ProcessReceivedMessages(google::protobuf::RepeatedPtrField<pb::LockstepSmallMessage>*, std::queue<SmallMessageAndSender>& out);
