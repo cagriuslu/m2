@@ -106,6 +106,17 @@ namespace m2 {
 		return std::set<elem_t>{r.begin(), r.end()};
 	}
 
+	// Variant utilities
+
+	template <typename> struct Dummy {};
+	template <typename T, typename VariantT>
+	struct GetIndexInVariant;
+	template <typename T, typename... Ts>
+	struct GetIndexInVariant<T, std::variant<Ts...>> : std::integral_constant<size_t, std::variant<Dummy<Ts>...>(Dummy<T>()).index()> {};
+	// First, unwraps the types contained in a variant with std::variant<Ts...>. Then, forms a new variant by wrapping
+	// each variant type within a Dummy type. Then, initializes this new variant with the Dummy wrapped version of T.
+	// Then, queries the index of this new variant. Use ::value to get the index of T in VariantT.
+
 	// Algorithms
 
 	template <typename InputIt, typename OutputIt, typename UnaryPredicate, typename UnaryOperation>
