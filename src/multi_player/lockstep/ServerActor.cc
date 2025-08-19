@@ -13,7 +13,7 @@ namespace {
 	};
 }
 
-bool ServerActor::Initialize(MessageBox<ServerActorInput>&, MessageBox<ServerActorOutput>&) {
+bool ServerActor::Initialize(MessageBox<ServerActorInput>&, MessageBox<ServerActorOutput>& outbox) {
 	LOG_INFO("Lockstep ServerActor Initialize");
 	auto expectSocket = network::UdpSocket::CreateServerSideSocket(network::Port::CreateFromHostOrder(1162));
 	if (not expectSocket) {
@@ -21,6 +21,13 @@ bool ServerActor::Initialize(MessageBox<ServerActorInput>&, MessageBox<ServerAct
 		return false;
 	}
 	_messagePasser.emplace(std::move(*expectSocket));
+	_state.emplace([&outbox](const State& newState) {
+		outbox.PushMessage(ServerActorOutput{
+			.variant = ServerActorOutput::ServerStateUpdate{
+				.stateIndex = newState.index()
+			}
+		});
+	}, State{});
 	return true;
 }
 
@@ -44,7 +51,7 @@ bool ServerActor::operator()(MessageBox<ServerActorInput>&, MessageBox<ServerAct
 			messages.pop();
 
 			std::visit(overloaded{
-				[this, &msg](LobbyOpen& lo) {
+				[this, &msg](const LobbyOpen& lo) {
 					auto* client = FindClient(msg.sender);
 					if (not client) {
 						LOG_INFO("received msg from an unknown source");
@@ -54,7 +61,7 @@ bool ServerActor::operator()(MessageBox<ServerActorInput>&, MessageBox<ServerAct
 					}
 				},
 				[](const std::monostate&) {},
-			}, _state);
+			}, _state->Get());
 		}
 	}
 
@@ -71,7 +78,7 @@ bool ServerActor::operator()(MessageBox<ServerActorInput>&, MessageBox<ServerAct
 
 ConnectionToClient* ServerActor::FindClient(const network::IpAddressAndPort& address) {
 	return std::visit(overloaded {
-		[&address](StateWithClients auto& s) -> ConnectionToClient* {
+		[&address](const StateWithClients auto& s) -> ConnectionToClient* {
 			for (auto& clientAndAddress : s.clients) {
 				if (clientAndAddress.address == address) {
 					return clientAndAddress.client.get();
@@ -79,6 +86,6 @@ ConnectionToClient* ServerActor::FindClient(const network::IpAddressAndPort& add
 			}
 			return nullptr;
 		},
-		[](auto&) -> ConnectionToClient* { return nullptr; }
-	}, _state);
+		[](const auto&) -> ConnectionToClient* { return nullptr; }
+	}, _state->Get());
 }

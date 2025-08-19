@@ -11,8 +11,8 @@ namespace m2::multiplayer::lockstep {
 
 		// Accessors
 
-		bool IsSearchingForServer() { ProcessOutbox(); return _connectionToServerState.state == ConnectionToServerState::SEARCHING_FOR_SERVER; }
-		bool IsWaitingForPlayers() { ProcessOutbox(); return _connectionToServerState.state == ConnectionToServerState::WAITING_FOR_PLAYERS; }
+		bool IsSearchingForServer();
+		bool IsWaitingForPlayers();
 
 	private:
 		void ProcessOutbox();

@@ -1,17 +1,16 @@
 #pragma once
 #include "ConnectionToClient.h"
+#include "ServerActorInputOutput.h"
 #include <m2/mt/actor/ActorBase.h>
 #include <m2/multi_player/lockstep/MessagePasser.h>
-#include <m2/network/Select.h>
+#include <m2/ManagedObject.h>
 #include <vector>
 #include <memory>
 #include <optional>
 
 namespace m2::multiplayer::lockstep {
-	struct ServerActorInput {};
-	struct ServerActorOutput {};
-
 	class ServerActor final : ActorBase<ServerActorInput,ServerActorOutput> {
+	public:
 		struct Client {
 			network::IpAddressAndPort address;
 			std::unique_ptr<ConnectionToClient> client;
@@ -20,10 +19,12 @@ namespace m2::multiplayer::lockstep {
 		struct LobbyOpen {
 			std::vector<Client> clients;
 		};
+		using State = std::variant<std::monostate, LobbyOpen>;
 
+	private:
 		const int _maxClientCount;
 		std::optional<MessagePasser> _messagePasser;
-		std::variant<std::monostate, LobbyOpen> _state;
+		std::optional<ManagedObject<State>> _state;
 
 	public:
 		explicit ServerActor(const int maxClientCount) : ActorBase(), _maxClientCount(maxClientCount) {}
