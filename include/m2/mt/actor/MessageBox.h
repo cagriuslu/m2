@@ -1,6 +1,8 @@
 #pragma once
 #include <m2/mt/ProtectedObject.h>
+#include <m2/Meta.h>
 #include <deque>
+#include <algorithm>
 
 namespace m2 {
     /// \brief Synchronized message box used in communicating with an actor.
@@ -39,6 +41,18 @@ namespace m2 {
                 }
             });
             return out.has_value();
+        }
+        /// Messages are kept pulling, up to nMaxMessages, as long as handler returns true.
+        void PopMessages(const std::function<bool(const T&)>& handler, const int nMaxMessages) {
+            m2Repeat(nMaxMessages) {
+                if (std::optional<T> msg; PopMessage(msg) && msg) {
+                    if (not handler(*msg)) {
+                        return;
+                    }
+                } else {
+                    return;
+                }
+            }
         }
     };
 }

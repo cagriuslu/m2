@@ -9,8 +9,17 @@ namespace {
 	constexpr int N_RESPONSES_TO_ASSUME_CONNECTION = 3;
 }
 
+void ConnectionToServer::StateManager::MarkServerAsFound() {
+	_state = WaitForPlayers{};
+	_clientOutbox.PushMessage(ClientActorOutput{
+		.variant = ClientActorOutput::ConnectionToServerStateUpdate{
+			.state = ConnectionToServerState::WAITING_FOR_PLAYERS
+		}
+	});
+}
+
 void ConnectionToServer::GatherOutgoingMessages(const ConnectionStatistics* connStats, std::queue<pb::LockstepMessage>& out) {
-	if (std::holds_alternative<SearchForServer>(_state)) {
+	if (_stateManager.ShouldSearchForServer()) {
 		if (not connStats) {
 			LOG_DEBUG("Queueing first ping toward server");
 			out.emplace();
@@ -22,9 +31,9 @@ void ConnectionToServer::GatherOutgoingMessages(const ConnectionStatistics* conn
 			}
 		} else { // nAckedMsgs == N_RESPONSES_TO_ASSUME_CONNECTION
 			// Enough pings have been made
-			_state = WaitForPlayers{};
+			_stateManager.MarkServerAsFound();
 		}
-	} else if (std::holds_alternative<WaitForPlayers>(_state)) {
+	} else if (_stateManager.ShouldWaitForPlayers()) {
 		// TODO
 	}
 }

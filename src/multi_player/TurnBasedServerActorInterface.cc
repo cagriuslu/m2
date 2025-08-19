@@ -48,18 +48,16 @@ void m2::TurnBasedServerActorInterface::SendServerCommand(const m2g::pb::TurnBas
 }
 
 void m2::TurnBasedServerActorInterface::ProcessOutbox() {
-	// Process up to a certain number of messages
-	auto nProcessedMessages = 0;
-	std::optional<TurnBasedServerActorOutput> msg;
-	while (nProcessedMessages++ < MAX_MESSAGES_TO_PROCESS_FROM_ACTOR_PER_CALL && GetActorOutbox().PopMessage(msg) && msg) {
-		if (std::holds_alternative<TurnBasedServerActorOutput::StateUpdate>(msg->variant)) {
-			_serverActorState = std::get<TurnBasedServerActorOutput::StateUpdate>(msg->variant);
-		} else if (std::holds_alternative<TurnBasedServerActorOutput::ClientEvent>(msg->variant)) {
+	GetActorOutbox().PopMessages([this](const TurnBasedServerActorOutput& msg) {
+		if (std::holds_alternative<TurnBasedServerActorOutput::StateUpdate>(msg.variant)) {
+			_serverActorState = std::get<TurnBasedServerActorOutput::StateUpdate>(msg.variant);
+		} else if (std::holds_alternative<TurnBasedServerActorOutput::ClientEvent>(msg.variant)) {
 			if (_clientEvent) {
 				// Do not process messages further until processed
-				return;
+				return false;
 			}
-			_clientEvent = std::get<TurnBasedServerActorOutput::ClientEvent>(msg->variant);
+			_clientEvent = std::get<TurnBasedServerActorOutput::ClientEvent>(msg.variant);
 		}
-	}
+		return true;
+	}, MAX_MESSAGES_TO_PROCESS_FROM_ACTOR_PER_CALL);
 }

@@ -7,7 +7,7 @@ using namespace m2;
 using namespace m2::multiplayer;
 using namespace m2::multiplayer::lockstep;
 
-bool ClientActor::Initialize(MessageBox<ClientActorInput>&, MessageBox<ClientActorOutput>&) {
+bool ClientActor::Initialize(MessageBox<ClientActorInput>&, MessageBox<ClientActorOutput>& outbox) {
 	LOG_INFO("Lockstep ClientActor Initialize");
 	auto expectSocket = network::UdpSocket::CreateClientSideSocket();
 	if (not expectSocket) {
@@ -15,7 +15,7 @@ bool ClientActor::Initialize(MessageBox<ClientActorInput>&, MessageBox<ClientAct
 		return false;
 	}
 	_messagePasser.emplace(std::move(*expectSocket));
-	_serverConnection.emplace();
+	_serverConnection.emplace(outbox);
 	return true;
 }
 

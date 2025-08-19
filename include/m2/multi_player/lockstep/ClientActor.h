@@ -1,13 +1,11 @@
 #pragma once
+#include "ClientActorInputOutput.h"
 #include "ConnectionToServer.h"
 #include "MessagePasser.h"
 #include <m2/mt/actor/ActorBase.h>
 #include <m2/network/Select.h>
 
 namespace m2::multiplayer::lockstep {
-	struct ClientActorInput {};
-	struct ClientActorOutput {};
-
 	class ClientActor final : ActorBase<ClientActorInput,ClientActorOutput> {
 		const network::IpAddressAndPort _serverAddressAndPort;
 		std::optional<MessagePasser> _messagePasser;
