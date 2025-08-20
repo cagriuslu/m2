@@ -1,5 +1,6 @@
 #include <unistd.h>
 #include <m2/multi_player/lockstep/ServerActor.h>
+#include <m2/network/Select.h>
 #include <m2/Log.h>
 
 using namespace m2;
@@ -28,6 +29,7 @@ bool ServerActor::Initialize(MessageBox<ServerActorInput>&, MessageBox<ServerAct
 			}
 		});
 	}, State{});
+	_state->Emplace(LobbyOpen{});
 	return true;
 }
 

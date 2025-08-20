@@ -30,7 +30,7 @@ void ConnectionToServer::GatherOutgoingMessages(const ConnectionStatistics* conn
 			}
 		} else { // nAckedMsgs == N_RESPONSES_TO_ASSUME_CONNECTION
 			// Enough pings have been made
-			_state.Set(WaitForPlayers{});
+			_state.Emplace(WaitForPlayers{});
 		}
 	} else if (std::holds_alternative<WaitForPlayers>(_state.Get())) {
 		// TODO

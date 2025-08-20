@@ -20,18 +20,6 @@ namespace m2 {
 
 		const T& Get() const { return _obj; }
 
-		void Set(T newValue) {
-			_obj = std::move(newValue);
-			if (_writeHook) {
-				_writeHook(_obj);
-			}
-		}
-		void Set(const T& newValue) {
-			_obj = newValue;
-			if (_writeHook) {
-				_writeHook(_obj);
-			}
-		}
 		void Set(T&& newValue) {
 			_obj = std::move(newValue);
 			if (_writeHook) {
@@ -39,8 +27,9 @@ namespace m2 {
 			}
 		}
 		template <typename... TArgs>
-		void Set(TArgs... args) {
-			_obj = T{args...};
+		void Emplace(TArgs... args) {
+			_obj.~T();
+			new (&_obj) T{std::forward<TArgs>(args)...};
 			if (_writeHook) {
 				_writeHook(_obj);
 			}

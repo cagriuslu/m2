@@ -199,7 +199,11 @@ m2::void_expected m2::Game::HostLockstepGame(unsigned max_connection_count) {
 	std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).serverActorInterface.emplace(max_connection_count);
 	LOG_DEBUG("Server created");
 
-	std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+	// Wait until the lobby is open
+	while (not GetLockstepServerActor().IsLobbyOpen()) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(25));
+	}
+	// TODO prevent other clients from joining until the host client joins
 
 	LOG_INFO("Server is listening, joining the game as host client...");
 	std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).hostClientActorInterface.emplace(network::IpAddressAndPort{
@@ -207,6 +211,11 @@ m2::void_expected m2::Game::HostLockstepGame(unsigned max_connection_count) {
 		.port = network::Port::CreateFromHostOrder(1162)
 	});
 	LOG_DEBUG("Host client created");
+
+	// Wait until the host client connects to the server
+	while (GetLockstepHostClientActor().IsSearchingForServer()) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(25));
+	}
 
 	return {};
 }
