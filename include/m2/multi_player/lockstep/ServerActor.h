@@ -10,14 +10,16 @@
 
 namespace m2::multiplayer::lockstep {
 	class ServerActor final : ActorBase<ServerActorInput,ServerActorOutput> {
-	public:
-		struct Client {
-			network::IpAddressAndPort address;
-			std::unique_ptr<ConnectionToClient> client;
+		class ClientList {
+			std::vector<ConnectionToClient> _clients;
+		public:
+			ConnectionToClient* Find(const network::IpAddressAndPort&);
+			ConnectionToClient* Add(const network::IpAddressAndPort&, MessagePasser&);
 		};
 
+	public:
 		struct LobbyOpen {
-			std::vector<Client> clients;
+			ClientList clientList;
 		};
 		using State = std::variant<std::monostate, LobbyOpen>;
 
@@ -37,8 +39,5 @@ namespace m2::multiplayer::lockstep {
 		bool operator()(MessageBox<ServerActorInput>&, MessageBox<ServerActorOutput>&) override;
 
 		void Deinitialize(MessageBox<ServerActorInput>&, MessageBox<ServerActorOutput>&) override {}
-
-	private:
-		ConnectionToClient* FindClient(const network::IpAddressAndPort&);
 	};
 }

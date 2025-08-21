@@ -2,7 +2,11 @@ syntax = "proto3";
 package m2.pb;
 
 // Each LockstepMessage has a different SequenceNo starting from 1.
-message LockstepMessage {}
+message LockstepMessage {
+  oneof type {
+    bool set_ready_state = 1;
+  }
+}
 
 // Each LockstepSmallMessage has a different OrderNo starting from 1. A small message contains either a full
 // LockstepMessage if it is small enough. Or, a part of a LockstepMessage is contained for reconstruction later.

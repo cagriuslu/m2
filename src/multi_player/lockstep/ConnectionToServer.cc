@@ -9,24 +9,42 @@ namespace {
 	constexpr int N_RESPONSES_TO_ASSUME_CONNECTION = 3;
 }
 
-ConnectionToServer::ConnectionToServer(MessageBox<ClientActorOutput>& clientOutbox) : _state([&clientOutbox](const State& newState) {
-	clientOutbox.PushMessage(ClientActorOutput{
-		.variant = ClientActorOutput::ConnectionToServerStateUpdate{
-			.stateIndex = newState.index()
-		}
-	});
-}, State{}) {}
+ConnectionToServer::ConnectionToServer(network::IpAddressAndPort serverAddress, MessagePasser& messagePasser, MessageBox<ClientActorOutput>& clientOutbox)
+	: _serverAddressAndPort(std::move(serverAddress)), _messagePasser(messagePasser),
+	_state([&clientOutbox](const State& newState) {
+		clientOutbox.PushMessage(ClientActorOutput{
+			.variant = ClientActorOutput::ConnectionToServerStateUpdate{
+				.stateIndex = newState.index()
+			}
+		});
+	}, State{}) {}
 
-void ConnectionToServer::GatherOutgoingMessages(const ConnectionStatistics* connStats, std::queue<pb::LockstepMessage>& out) {
+void ConnectionToServer::SetReadyState(const bool readyState) {
+	if (std::holds_alternative<WaitForPlayers>(_state.Get())) {
+		if (std::get<WaitForPlayers>(_state.Get()).readyState != readyState) {
+			pb::LockstepMessage msg;
+			msg.set_set_ready_state(readyState);
+			LOG_INFO("Queueing readiness message", readyState);
+			QueueOutgoingMessage(std::move(msg));
+			_state.Mutate([&](State& state) {
+				std::get<WaitForPlayers>(state).readyState = readyState;
+			});
+		}
+	} else {
+		throw M2_ERROR("Attempt to set ready state outside of the lobby");
+	}
+}
+void ConnectionToServer::QueueOutgoingMessages() {
+	const ConnectionStatistics* connStats = _messagePasser.GetConnectionStatistics(_serverAddressAndPort);
 	if (std::holds_alternative<SearchForServer>(_state.Get())) {
 		if (not connStats) {
 			LOG_DEBUG("Queueing first ping toward server");
-			out.emplace();
+			QueueOutgoingMessage({});
 		} else if (const auto nAckedMsgs = connStats->GetTotalAckedOutgoingPackets(); nAckedMsgs < N_RESPONSES_TO_ASSUME_CONNECTION) {
 			// Check if previous ping have been ACKed
 			if (connStats->GetTotalQueuedOutgoingPackets() == nAckedMsgs) {
 				LOG_DEBUG("Queueing another ping toward server");
-				out.emplace();
+				QueueOutgoingMessage({});
 			}
 		} else { // nAckedMsgs == N_RESPONSES_TO_ASSUME_CONNECTION
 			// Enough pings have been made
@@ -36,7 +54,13 @@ void ConnectionToServer::GatherOutgoingMessages(const ConnectionStatistics* conn
 		// TODO
 	}
 }
-
 void ConnectionToServer::DeliverIncomingMessage(const ConnectionStatistics*, pb::LockstepMessage&& in) {
 	// TODO
+}
+
+void ConnectionToServer::QueueOutgoingMessage(pb::LockstepMessage&& msg) const {
+	_messagePasser.QueueMessage(MessageAndReceiver{
+		.message = std::move(msg),
+		.receiver = _serverAddressAndPort
+	});
 }

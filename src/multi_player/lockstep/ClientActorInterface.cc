@@ -15,6 +15,14 @@ bool ClientActorInterface::IsWaitingForPlayers() {
 	return _connectionToServerState.stateIndex == GetIndexInVariant<ConnectionToServer::WaitForPlayers, ConnectionToServer::State>::value;
 }
 
+void ClientActorInterface::SetReadyState(const bool state) {
+	GetActorInbox().PushMessage(ClientActorInput{
+		.variant = ClientActorInput::SetReadyState{
+			.state = state
+		}
+	});
+}
+
 void ClientActorInterface::ProcessOutbox() {
 	GetActorOutbox().PopMessages([this](const ClientActorOutput& msg) {
 		if (std::holds_alternative<ClientActorOutput::ConnectionToServerStateUpdate>(msg.variant)) {

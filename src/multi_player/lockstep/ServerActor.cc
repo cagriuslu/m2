@@ -7,11 +7,17 @@ using namespace m2;
 using namespace m2::multiplayer;
 using namespace m2::multiplayer::lockstep;
 
-namespace {
-	template <typename StateT>
-	concept StateWithClients = requires(StateT s) {
-		s.clients;
-	};
+ConnectionToClient* ServerActor::ClientList::Find(const network::IpAddressAndPort& address) {
+	for (auto& client : _clients) {
+		if (client.GetAddressAndPort() == address) {
+			return &client;
+		}
+	}
+	return nullptr;
+}
+ConnectionToClient* ServerActor::ClientList::Add(const network::IpAddressAndPort& address, MessagePasser& msgPasser) {
+	_clients.emplace_back(address, msgPasser);
+	return &_clients.back();
 }
 
 bool ServerActor::Initialize(MessageBox<ServerActorInput>&, MessageBox<ServerActorOutput>& outbox) {
@@ -52,18 +58,24 @@ bool ServerActor::operator()(MessageBox<ServerActorInput>&, MessageBox<ServerAct
 			const auto msg = std::move(messages.front());
 			messages.pop();
 
-			std::visit(overloaded{
-				[this, &msg](const LobbyOpen& lo) {
-					auto* client = FindClient(msg.sender);
-					if (not client) {
-						LOG_INFO("received msg from an unknown source");
+			_state->Mutate([this, &msg](State& state) {
+				std::visit(overloaded{
+					[this, &msg](LobbyOpen& lobby) {
+						auto* client = lobby.clientList.Find(msg.sender);
+						if (not client) {
+							LOG_INFO("Accepting peer to lobby", msg.sender);
+							client = lobby.clientList.Add(msg.sender, *_messagePasser);
+						}
+						if (msg.message.type_case() == pb::LockstepMessage::TYPE_NOT_SET) {}
+						else if (msg.message.has_set_ready_state()) {
+							LOG_INFO("Setting ready state for peer", msg.sender, msg.message.set_ready_state());
+							client->SetReadyState(msg.message.set_ready_state());
+						}
 						// TODO
-					} else {
-						// TODO
-					}
-				},
-				[](const std::monostate&) {},
-			}, _state->Get());
+					},
+					[](const std::monostate&) {},
+				}, state);
+			});
 		}
 	}
 
@@ -76,18 +88,4 @@ bool ServerActor::operator()(MessageBox<ServerActorInput>&, MessageBox<ServerAct
 	}
 
 	return true;
-}
-
-ConnectionToClient* ServerActor::FindClient(const network::IpAddressAndPort& address) {
-	return std::visit(overloaded {
-		[&address](const StateWithClients auto& s) -> ConnectionToClient* {
-			for (auto& clientAndAddress : s.clients) {
-				if (clientAndAddress.address == address) {
-					return clientAndAddress.client.get();
-				}
-			}
-			return nullptr;
-		},
-		[](const auto&) -> ConnectionToClient* { return nullptr; }
-	}, _state->Get());
 }

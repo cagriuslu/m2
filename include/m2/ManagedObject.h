@@ -18,14 +18,17 @@ namespace m2 {
 		template <typename... TArgs>
 		explicit ManagedObject(std::function<void(T&)> writeHook, TArgs... args) : _obj(args...), _writeHook(std::move(writeHook)) {}
 
+		/// Access the object
 		const T& Get() const { return _obj; }
 
+		/// Replace the object and call the write-hook after
 		void Set(T&& newValue) {
 			_obj = std::move(newValue);
 			if (_writeHook) {
 				_writeHook(_obj);
 			}
 		}
+		/// Replace the object and call the write-hook after
 		template <typename... TArgs>
 		void Emplace(TArgs... args) {
 			_obj.~T();
@@ -34,6 +37,7 @@ namespace m2 {
 				_writeHook(_obj);
 			}
 		}
+		/// Mutate the object and call the write-hook after
 		void Mutate(const std::function<void(T&)>& mutator) {
 			if (mutator) {
 				mutator(_obj);

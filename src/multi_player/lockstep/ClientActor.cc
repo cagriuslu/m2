@@ -15,11 +15,13 @@ bool ClientActor::Initialize(MessageBox<ClientActorInput>&, MessageBox<ClientAct
 		return false;
 	}
 	_messagePasser.emplace(std::move(*expectSocket));
-	_serverConnection.emplace(outbox);
+	_serverConnection.emplace(_serverAddressAndPort, *_messagePasser, outbox);
 	return true;
 }
 
-bool ClientActor::operator()(MessageBox<ClientActorInput>&, MessageBox<ClientActorOutput>&) {
+bool ClientActor::operator()(MessageBox<ClientActorInput>& inbox, MessageBox<ClientActorOutput>&) {
+	ProcessOneMessageFromInbox(inbox);
+
 	auto selectResult = network::Select::WaitUntilSocketReady(&_messagePasser->GetSocket(), 50);
 	m2SucceedOrThrowError(selectResult);
 	if (not *selectResult) {
@@ -36,7 +38,8 @@ bool ClientActor::operator()(MessageBox<ClientActorInput>&, MessageBox<ClientAct
 		// TODO process messages
 	}
 
-	GatherAndQueueOutgoingMessages();
+	_serverConnection->QueueOutgoingMessages();
+
 	if (not writeableSockets.empty()) {
 		if (const auto success = _messagePasser->SendOutgoingPackets(); not success) {
 			LOG_ERROR("Unrecoverable error while sending", success.error());
@@ -47,20 +50,12 @@ bool ClientActor::operator()(MessageBox<ClientActorInput>&, MessageBox<ClientAct
 	return true;
 }
 
-void ClientActor::GatherAndQueueOutgoingMessages() {
-	const auto flushOperationGenerator = [this](const network::IpAddressAndPort& address) {
-		return [this, address](pb::LockstepMessage&& msg) {
-			_messagePasser->QueueMessage(MessageAndReceiver{
-				.message = std::move(msg),
-				.receiver = address
-			});
-		};
-	};
-
-	std::queue<pb::LockstepMessage> outgoingMessages;
-	// Server connection
-	_serverConnection->GatherOutgoingMessages(_messagePasser->GetConnectionStatistics(_serverAddressAndPort), outgoingMessages);
-	Flush(outgoingMessages, flushOperationGenerator(_serverAddressAndPort));
-	// Peer connections
-	// TODO gather messages to peers
+void ClientActor::ProcessOneMessageFromInbox(MessageBox<ClientActorInput>& inbox) {
+	inbox.PopMessages([this](const ClientActorInput& msg) {
+		if (std::holds_alternative<ClientActorInput::SetReadyState>(msg.variant)) {
+			const auto& readyState = std::get<ClientActorInput::SetReadyState>(msg.variant).state;
+			_serverConnection->SetReadyState(readyState);
+		}
+		return true;
+	}, 1);
 }

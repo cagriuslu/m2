@@ -184,7 +184,7 @@ void SmallMessagePasser::PeerConnectionParameters::ProcessReceivedMessages(googl
 	lastAnyMessageReceivedAt = Stopwatch{};
 
 	if (smallMessages->empty()) {
-		LOG_DEBUG("Received keep-alive packet from peer", peerAddress);
+		LOG_DEBUG("Received empty packet from peer", peerAddress);
 		return;
 	}
 

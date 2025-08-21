@@ -12,6 +12,11 @@ namespace m2::multiplayer::lockstep {
 		// Accessors
 
 		bool IsLobbyOpen();
+		bool IsLobbyClosed();
+
+		// Modifiers
+
+		void TryCloseLobby();
 
 	private:
 		void ProcessOutbox();

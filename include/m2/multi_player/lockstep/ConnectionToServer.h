@@ -13,17 +13,26 @@ namespace m2::multiplayer::lockstep {
 	class ConnectionToServer final {
 	public:
 		struct SearchForServer {};
-		struct WaitForPlayers {};
+		struct WaitForPlayers {
+			bool readyState{};
+		};
 		using State = std::variant<SearchForServer,WaitForPlayers>;
 
 	private:
+		const network::IpAddressAndPort _serverAddressAndPort;
+		MessagePasser& _messagePasser;
 		ManagedObject<State> _state;
 
 	public:
-		explicit ConnectionToServer(MessageBox<ClientActorOutput>& clientOutbox);
+		ConnectionToServer(network::IpAddressAndPort serverAddress, MessagePasser& messagePasser, MessageBox<ClientActorOutput>& clientOutbox);
 
-		void GatherOutgoingMessages(const ConnectionStatistics*, std::queue<pb::LockstepMessage>& out);
+		// Modifiers
 
+		void SetReadyState(bool state);
+		void QueueOutgoingMessages();
 		void DeliverIncomingMessage(const ConnectionStatistics*, pb::LockstepMessage&& in);
+
+	private:
+		void QueueOutgoingMessage(pb::LockstepMessage&& msg) const;
 	};
 }

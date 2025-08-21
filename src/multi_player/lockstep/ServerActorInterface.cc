@@ -9,6 +9,10 @@ bool ServerActorInterface::IsLobbyOpen() {
 	return _serverStateUpdate.stateIndex == GetIndexInVariant<ServerActor::LobbyOpen, ServerActor::State>::value;
 }
 
+void ServerActorInterface::TryCloseLobby() {
+	GetActorInbox().PushMessage(ServerActorInput{.variant = ServerActorInput::CloseLobby{}});
+}
+
 void ServerActorInterface::ProcessOutbox() {
 	GetActorOutbox().PopMessages([this](const ServerActorOutput& msg) {
 		if (std::holds_alternative<ServerActorOutput::ServerStateUpdate>(msg.variant)) {

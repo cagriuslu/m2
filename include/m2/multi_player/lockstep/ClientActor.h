@@ -15,7 +15,7 @@ namespace m2::multiplayer::lockstep {
 		std::optional<ConnectionToServer> _serverConnection;
 
 	public:
-		explicit ClientActor(network::IpAddressAndPort serverAddress) : ActorBase(), _serverAddressAndPort(serverAddress) {}
+		explicit ClientActor(network::IpAddressAndPort serverAddress) : ActorBase(), _serverAddressAndPort(std::move(serverAddress)) {}
 		~ClientActor() override = default;
 
 		[[nodiscard]] const char* ThreadNameForLogging() const override { return "CL"; }
@@ -27,6 +27,6 @@ namespace m2::multiplayer::lockstep {
 		void Deinitialize(MessageBox<ClientActorInput>&, MessageBox<ClientActorOutput>&) override {}
 
 	private:
-		void GatherAndQueueOutgoingMessages();
+		void ProcessOneMessageFromInbox(MessageBox<ClientActorInput>&);
 	};
 }

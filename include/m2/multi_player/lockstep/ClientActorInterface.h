@@ -14,6 +14,10 @@ namespace m2::multiplayer::lockstep {
 		bool IsSearchingForServer();
 		bool IsWaitingForPlayers();
 
+		// Modifiers
+
+		void SetReadyState(bool state);
+
 	private:
 		void ProcessOutbox();
 	};

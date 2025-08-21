@@ -217,6 +217,8 @@ m2::void_expected m2::Game::HostLockstepGame(unsigned max_connection_count) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(25));
 	}
 
+	GetLockstepHostClientActor().SetReadyState(true);
+
 	return {};
 }
 

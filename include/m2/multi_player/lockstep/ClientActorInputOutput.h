@@ -2,7 +2,12 @@
 #include <variant>
 
 namespace m2::multiplayer::lockstep {
-	struct ClientActorInput {};
+	struct ClientActorInput {
+		struct SetReadyState {
+			bool state;
+		};
+		std::variant<SetReadyState> variant;
+	};
 
 	struct ClientActorOutput {
 		struct ConnectionToServerStateUpdate {
