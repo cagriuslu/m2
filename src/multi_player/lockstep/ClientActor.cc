@@ -35,9 +35,17 @@ bool ClientActor::operator()(MessageBox<ClientActorInput>& inbox, MessageBox<Cli
 			LOG_ERROR("Unrecoverable error while reading", success.error());
 			return false;
 		}
-		// TODO process messages
+		// Process messages
+		while (not messages.empty()) {
+			auto msg = std::move(messages.front()); messages.pop();
+			if (msg.sender == _serverConnection->GetAddressAndPort()) {
+				_serverConnection->DeliverIncomingMessage(std::move(msg.message));
+			}
+			// TODO other peers
+		}
 	}
 
+	// Gather outgoing messages from connection managers
 	_serverConnection->QueueOutgoingMessages();
 
 	if (not writeableSockets.empty()) {

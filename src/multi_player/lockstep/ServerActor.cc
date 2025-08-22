@@ -7,6 +7,20 @@ using namespace m2;
 using namespace m2::multiplayer;
 using namespace m2::multiplayer::lockstep;
 
+bool ServerActor::ClientList::Contains(const network::IpAddressAndPort& address) const {
+	return std::ranges::any_of(_clients, [&address](const ConnectionToClient& client) {
+		return client.GetAddressAndPort() == address;
+	});
+}
+const ConnectionToClient* ServerActor::ClientList::Find(const network::IpAddressAndPort& address) const {
+	for (const auto& client : _clients) {
+		if (client.GetAddressAndPort() == address) {
+			return &client;
+		}
+	}
+	return nullptr;
+}
+
 ConnectionToClient* ServerActor::ClientList::Find(const network::IpAddressAndPort& address) {
 	for (auto& client : _clients) {
 		if (client.GetAddressAndPort() == address) {
@@ -39,7 +53,9 @@ bool ServerActor::Initialize(MessageBox<ServerActorInput>&, MessageBox<ServerAct
 	return true;
 }
 
-bool ServerActor::operator()(MessageBox<ServerActorInput>&, MessageBox<ServerActorOutput>&) {
+bool ServerActor::operator()(MessageBox<ServerActorInput>& inbox, MessageBox<ServerActorOutput>&) {
+	ProcessOneMessageFromInbox(inbox);
+
 	auto selectResult = network::Select::WaitUntilSocketReady(&_messagePasser->GetSocket(), 50);
 	m2SucceedOrThrowError(selectResult);
 	if (not *selectResult) {
@@ -55,27 +71,30 @@ bool ServerActor::operator()(MessageBox<ServerActorInput>&, MessageBox<ServerAct
 		}
 		// Process messages
 		while (not messages.empty()) {
-			const auto msg = std::move(messages.front());
-			messages.pop();
-
-			_state->Mutate([this, &msg](State& state) {
-				std::visit(overloaded{
-					[this, &msg](LobbyOpen& lobby) {
-						auto* client = lobby.clientList.Find(msg.sender);
-						if (not client) {
-							LOG_INFO("Accepting peer to lobby", msg.sender);
-							client = lobby.clientList.Add(msg.sender, *_messagePasser);
-						}
-						if (msg.message.type_case() == pb::LockstepMessage::TYPE_NOT_SET) {}
-						else if (msg.message.has_set_ready_state()) {
-							LOG_INFO("Setting ready state for peer", msg.sender, msg.message.set_ready_state());
-							client->SetReadyState(msg.message.set_ready_state());
-						}
-						// TODO
-					},
-					[](const std::monostate&) {},
-				}, state);
-			});
+			const auto msg = std::move(messages.front()); messages.pop();
+			if (msg.message.type_case() == pb::LockstepMessage::TYPE_NOT_SET) {
+				// Empty message received, it is used for sign-up when the lobby is open
+				if (std::holds_alternative<LobbyOpen>(_state->Get())) {
+					const auto& lobby = std::get<LobbyOpen>(_state->Get());
+					if (not lobby.clientList.Contains(msg.sender) && lobby.clientList.Size() < _maxClientCount) {
+						LOG_INFO("Accepting peer to lobby", msg.sender);
+						_state->Mutate([this, &msg](State& state) {
+							std::get<LobbyOpen>(state).clientList.Add(msg.sender, *_messagePasser);
+						});
+					}
+				}
+			} else if (msg.message.has_set_ready_state()) {
+				// Ready state received, only allowed for known clients when the lobby is open
+				if (std::holds_alternative<LobbyOpen>(_state->Get())) {
+					const auto& lobby = std::get<LobbyOpen>(_state->Get());
+					if (const auto* client = lobby.clientList.Find(msg.sender); client && client->GetReadyState() != msg.message.set_ready_state()) {
+						LOG_INFO("Setting ready state for peer", msg.sender, msg.message.set_ready_state());
+						_state->Mutate([&msg](State& state) {
+							std::get<LobbyOpen>(state).clientList.Find(msg.sender)->SetReadyState(msg.message.set_ready_state());
+						});
+					}
+				}
+			}
 		}
 	}
 
@@ -88,4 +107,30 @@ bool ServerActor::operator()(MessageBox<ServerActorInput>&, MessageBox<ServerAct
 	}
 
 	return true;
+}
+
+void ServerActor::ProcessOneMessageFromInbox(MessageBox<ServerActorInput>& inbox) {
+	inbox.PopMessages([this](const ServerActorInput& msg) {
+		if (std::holds_alternative<ServerActorInput::CloseLobby>(msg.variant)) {
+			if (std::holds_alternative<LobbyOpen>(_state->Get())) {
+				const auto& lobby = std::get<LobbyOpen>(_state->Get());
+				if (std::ranges::all_of(lobby.clientList.cbegin(), lobby.clientList.cend(), [](const ConnectionToClient& client) {
+					return client.GetReadyState();
+				})) {
+					LOG_INFO("Closing lobby");
+					_state->Mutate([](State& state) {
+						state = LobbyClosed{.clientList = std::move(std::get<LobbyOpen>(state).clientList)};
+						for (auto& client : std::get<LobbyClosed>(state).clientList) {
+							client.SetLobbyAsClosed();
+						}
+					});
+				} else {
+					LOG_INFO("Lobby closure requested but not every client is ready");
+				}
+			} else {
+				throw M2_ERROR("Lobby closure requested while lobby isn't open");
+			}
+		}
+		return true;
+	}, 1);
 }

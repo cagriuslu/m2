@@ -54,11 +54,20 @@ void ConnectionToServer::QueueOutgoingMessages() {
 		// TODO
 	}
 }
-void ConnectionToServer::DeliverIncomingMessage(const ConnectionStatistics*, pb::LockstepMessage&& in) {
-	// TODO
+void ConnectionToServer::DeliverIncomingMessage(pb::LockstepMessage&& msg) {
+	if (msg.has_set_ready_state()) {
+		LOG_WARN("Server sent readiness message");
+	} else if (msg.has_lobby_closed()) {
+		if (std::holds_alternative<WaitForPlayers>(_state.Get())) {
+			LOG_INFO("Received lobby closure message, closing lobby");
+			_state.Emplace(LobbyClose{});
+		} else {
+			LOG_WARN("Received lobby close message when the lobby isn't open");
+		}
+	}
 }
 
-void ConnectionToServer::QueueOutgoingMessage(pb::LockstepMessage&& msg) const {
+void ConnectionToServer::QueueOutgoingMessage(pb::LockstepMessage&& msg) {
 	_messagePasser.QueueMessage(MessageAndReceiver{
 		.message = std::move(msg),
 		.receiver = _serverAddressAndPort

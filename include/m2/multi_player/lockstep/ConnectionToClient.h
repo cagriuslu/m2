@@ -14,9 +14,14 @@ namespace m2::multiplayer::lockstep {
 		// Accessors
 
 		const network::IpAddressAndPort& GetAddressAndPort() const { return _addressAndPort; }
+		bool GetReadyState() const { return _readyState; }
 
 		// Modifiers
 
 		void SetReadyState(const bool state) { _readyState = state; }
+		void SetLobbyAsClosed();
+
+	private:
+		void QueueOutgoingMessage(pb::LockstepMessage&& msg);
 	};
 }

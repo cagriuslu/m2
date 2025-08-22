@@ -16,7 +16,8 @@ namespace m2::multiplayer::lockstep {
 		struct WaitForPlayers {
 			bool readyState{};
 		};
-		using State = std::variant<SearchForServer,WaitForPlayers>;
+		struct LobbyClose {};
+		using State = std::variant<SearchForServer,WaitForPlayers,LobbyClose>;
 
 	private:
 		const network::IpAddressAndPort _serverAddressAndPort;
@@ -26,13 +27,17 @@ namespace m2::multiplayer::lockstep {
 	public:
 		ConnectionToServer(network::IpAddressAndPort serverAddress, MessagePasser& messagePasser, MessageBox<ClientActorOutput>& clientOutbox);
 
+		// Accessors
+
+		const network::IpAddressAndPort& GetAddressAndPort() const { return _serverAddressAndPort; }
+
 		// Modifiers
 
 		void SetReadyState(bool state);
 		void QueueOutgoingMessages();
-		void DeliverIncomingMessage(const ConnectionStatistics*, pb::LockstepMessage&& in);
+		void DeliverIncomingMessage(pb::LockstepMessage&& msg);
 
 	private:
-		void QueueOutgoingMessage(pb::LockstepMessage&& msg) const;
+		void QueueOutgoingMessage(pb::LockstepMessage&& msg);
 	};
 }

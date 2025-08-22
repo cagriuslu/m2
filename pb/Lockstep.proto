@@ -3,8 +3,11 @@ package m2.pb;
 
 // Each LockstepMessage has a different SequenceNo starting from 1.
 message LockstepMessage {
+  message LobbyClosed {}
+
   oneof type {
     bool set_ready_state = 1;
+    LobbyClosed lobby_closed = 2;
   }
 }
 
