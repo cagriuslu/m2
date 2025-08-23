@@ -9,8 +9,10 @@ bool ServerActorInterface::IsLobbyOpen() {
 	return _serverStateUpdate.stateIndex == GetIndexInVariant<ServerActor::LobbyOpen, ServerActor::State>::value;
 }
 
-void ServerActorInterface::TryCloseLobby() {
-	GetActorInbox().PushMessage(ServerActorInput{.variant = ServerActorInput::CloseLobby{}});
+void ServerActorInterface::TryFreezeLobby(const m2g::pb::LockstepGameInitParams& gameInitParams) {
+	GetActorInbox().PushMessage(ServerActorInput{.variant = ServerActorInput::FreezeLobby{
+		.gameInitParams = gameInitParams
+	}});
 }
 
 void ServerActorInterface::ProcessOutbox() {

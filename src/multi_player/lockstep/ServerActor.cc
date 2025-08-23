@@ -111,17 +111,18 @@ bool ServerActor::operator()(MessageBox<ServerActorInput>& inbox, MessageBox<Ser
 
 void ServerActor::ProcessOneMessageFromInbox(MessageBox<ServerActorInput>& inbox) {
 	inbox.PopMessages([this](const ServerActorInput& msg) {
-		if (std::holds_alternative<ServerActorInput::CloseLobby>(msg.variant)) {
+		if (std::holds_alternative<ServerActorInput::FreezeLobby>(msg.variant)) {
+			const auto& lobbyFreezeMsg = std::get<ServerActorInput::FreezeLobby>(msg.variant);
 			if (std::holds_alternative<LobbyOpen>(_state->Get())) {
 				const auto& lobby = std::get<LobbyOpen>(_state->Get());
 				if (std::ranges::all_of(lobby.clientList.cbegin(), lobby.clientList.cend(), [](const ConnectionToClient& client) {
 					return client.GetReadyState();
 				})) {
 					LOG_INFO("Closing lobby");
-					_state->Mutate([](State& state) {
-						state = LobbyClosed{.clientList = std::move(std::get<LobbyOpen>(state).clientList)};
-						for (auto& client : std::get<LobbyClosed>(state).clientList) {
-							client.SetLobbyAsClosed();
+					_state->Mutate([&lobbyFreezeMsg](State& state) {
+						state = LobbyFrozen{.clientList = std::move(std::get<LobbyOpen>(state).clientList)};
+						for (auto& client : std::get<LobbyFrozen>(state).clientList) {
+							client.SetLobbyAsFrozen(lobbyFreezeMsg.gameInitParams);
 						}
 					});
 				} else {

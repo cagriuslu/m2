@@ -1,13 +1,15 @@
 syntax = "proto3";
 package m2.pb;
 
+import "m2g_Lockstep.proto";
+
 // Each LockstepMessage has a different SequenceNo starting from 1.
 message LockstepMessage {
   message LobbyClosed {}
 
   oneof type {
     bool set_ready_state = 1;
-    LobbyClosed lobby_closed = 2;
+    m2g.pb.LockstepGameInitParams freeze_lobby_with_init_params = 2;
   }
 }
 

@@ -19,7 +19,7 @@ namespace m2::multiplayer::lockstep {
 		// Modifiers
 
 		void SetReadyState(const bool state) { _readyState = state; }
-		void SetLobbyAsClosed();
+		void SetLobbyAsFrozen(const m2g::pb::LockstepGameInitParams&);
 
 	private:
 		void QueueOutgoingMessage(pb::LockstepMessage&& msg);

@@ -6,6 +6,7 @@
 #include <m2/mt/actor/MessageBox.h>
 #include <m2/Chrono.h>
 #include <m2/ManagedObject.h>
+#include <m2g_Lockstep.pb.h>
 #include <queue>
 #include <optional>
 
@@ -13,11 +14,13 @@ namespace m2::multiplayer::lockstep {
 	class ConnectionToServer final {
 	public:
 		struct SearchForServer {};
-		struct WaitForPlayers {
+		struct WaitingInLobby {
 			bool readyState{};
 		};
-		struct LobbyClose {};
-		using State = std::variant<SearchForServer,WaitForPlayers,LobbyClose>;
+		struct LobbyFrozen {
+			m2g::pb::LockstepGameInitParams gameInitParams;
+		};
+		using State = std::variant<SearchForServer,WaitingInLobby,LobbyFrozen>;
 
 	private:
 		const network::IpAddressAndPort _serverAddressAndPort;

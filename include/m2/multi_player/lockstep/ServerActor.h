@@ -32,10 +32,10 @@ namespace m2::multiplayer::lockstep {
 		struct LobbyOpen {
 			ClientList clientList;
 		};
-		struct LobbyClosed {
+		struct LobbyFrozen {
 			ClientList clientList;
 		};
-		using State = std::variant<std::monostate, LobbyOpen, LobbyClosed>;
+		using State = std::variant<std::monostate, LobbyOpen, LobbyFrozen>;
 
 	private:
 		const int _maxClientCount;

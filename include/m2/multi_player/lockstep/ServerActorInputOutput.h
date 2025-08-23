@@ -1,10 +1,13 @@
 #pragma once
+#include <m2g_Lockstep.pb.h>
 #include <variant>
 
 namespace m2::multiplayer::lockstep {
 	struct ServerActorInput {
-		struct CloseLobby {};
-		std::variant<CloseLobby> variant;
+		struct FreezeLobby {
+			m2g::pb::LockstepGameInitParams gameInitParams;
+		};
+		std::variant<FreezeLobby> variant;
 	};
 
 	struct ServerActorOutput {

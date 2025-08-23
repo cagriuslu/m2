@@ -1,4 +1,5 @@
 #pragma once
+#include <m2g_Lockstep.pb.h>
 #include <variant>
 
 namespace m2::multiplayer::lockstep {
@@ -14,5 +15,6 @@ namespace m2::multiplayer::lockstep {
 			size_t stateIndex{};
 		};
 		std::variant<ConnectionToServerStateUpdate> variant;
+		std::optional<m2g::pb::LockstepGameInitParams> gameInitParams;
 	};
 }

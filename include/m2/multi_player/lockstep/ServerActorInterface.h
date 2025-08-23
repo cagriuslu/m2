@@ -1,6 +1,7 @@
 #pragma once
 #include "ServerActor.h"
 #include <m2/mt/actor/ActorInterfaceBase.h>
+#include <m2g_Lockstep.pb.h>
 
 namespace m2::multiplayer::lockstep {
 	class ServerActorInterface final : public ActorInterfaceBase<ServerActor, ServerActorInput, ServerActorOutput> {
@@ -16,7 +17,7 @@ namespace m2::multiplayer::lockstep {
 
 		// Modifiers
 
-		void TryCloseLobby();
+		void TryFreezeLobby(const m2g::pb::LockstepGameInitParams&);
 
 	private:
 		void ProcessOutbox();

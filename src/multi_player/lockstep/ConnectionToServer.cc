@@ -15,19 +15,22 @@ ConnectionToServer::ConnectionToServer(network::IpAddressAndPort serverAddress, 
 		clientOutbox.PushMessage(ClientActorOutput{
 			.variant = ClientActorOutput::ConnectionToServerStateUpdate{
 				.stateIndex = newState.index()
-			}
+			},
+			.gameInitParams = std::holds_alternative<LobbyFrozen>(newState)
+				? std::optional{std::get<LobbyFrozen>(newState).gameInitParams}
+				: std::optional<m2g::pb::LockstepGameInitParams>{}
 		});
 	}, State{}) {}
 
 void ConnectionToServer::SetReadyState(const bool readyState) {
-	if (std::holds_alternative<WaitForPlayers>(_state.Get())) {
-		if (std::get<WaitForPlayers>(_state.Get()).readyState != readyState) {
+	if (std::holds_alternative<WaitingInLobby>(_state.Get())) {
+		if (std::get<WaitingInLobby>(_state.Get()).readyState != readyState) {
 			pb::LockstepMessage msg;
 			msg.set_set_ready_state(readyState);
 			LOG_INFO("Queueing readiness message", readyState);
 			QueueOutgoingMessage(std::move(msg));
 			_state.Mutate([&](State& state) {
-				std::get<WaitForPlayers>(state).readyState = readyState;
+				std::get<WaitingInLobby>(state).readyState = readyState;
 			});
 		}
 	} else {
@@ -48,21 +51,23 @@ void ConnectionToServer::QueueOutgoingMessages() {
 			}
 		} else { // nAckedMsgs == N_RESPONSES_TO_ASSUME_CONNECTION
 			// Enough pings have been made
-			_state.Emplace(WaitForPlayers{});
+			_state.Emplace(WaitingInLobby{});
 		}
-	} else if (std::holds_alternative<WaitForPlayers>(_state.Get())) {
+	} else if (std::holds_alternative<WaitingInLobby>(_state.Get())) {
 		// TODO
 	}
 }
 void ConnectionToServer::DeliverIncomingMessage(pb::LockstepMessage&& msg) {
 	if (msg.has_set_ready_state()) {
 		LOG_WARN("Server sent readiness message");
-	} else if (msg.has_lobby_closed()) {
-		if (std::holds_alternative<WaitForPlayers>(_state.Get())) {
-			LOG_INFO("Received lobby closure message, closing lobby");
-			_state.Emplace(LobbyClose{});
+	} else if (msg.has_freeze_lobby_with_init_params()) {
+		if (std::holds_alternative<WaitingInLobby>(_state.Get())) {
+			LOG_INFO("Received lobby freeze message, closing lobby");
+			_state.Emplace(LobbyFrozen{
+				.gameInitParams = msg.freeze_lobby_with_init_params()
+			});
 		} else {
-			LOG_WARN("Received lobby close message when the lobby isn't open");
+			LOG_WARN("Received lobby freeze message when the lobby isn't open");
 		}
 	}
 }

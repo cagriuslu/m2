@@ -8,10 +8,10 @@ using namespace m2::multiplayer::lockstep;
 ConnectionToClient::ConnectionToClient(network::IpAddressAndPort address, MessagePasser& messagePasser)
 	: _addressAndPort(std::move(address)), _messagePasser(messagePasser) {}
 
-void ConnectionToClient::SetLobbyAsClosed() {
+void ConnectionToClient::SetLobbyAsFrozen(const m2g::pb::LockstepGameInitParams& gameInitParams) {
 	pb::LockstepMessage msg;
-	msg.mutable_lobby_closed();
-	LOG_INFO("Queueing lobby closure message to client", _addressAndPort);
+	msg.mutable_freeze_lobby_with_init_params()->CopyFrom(gameInitParams);
+	LOG_INFO("Queueing lobby freeze message to client", _addressAndPort);
 	QueueOutgoingMessage(std::move(msg));
 }
 
