@@ -25,12 +25,13 @@ namespace m2 {
             });
             return frontMsg;
         }
-        /// Waits until the given condition is true for **any** message in the queue
+        /// Waits until the condition is true for any message in the queue. Messages aren't popped.
         void WaitMessage(const std::function<bool(const T&)>& condition) const {
             _protectedQueue.Read([](const std::deque<T>&) {}, [&](const std::deque<T>& queue) -> bool {
                 return std::any_of(queue.begin(), queue.end(), condition);
             });
         }
+        /// Tries to pop one message from the queue. Does not block.
         bool PopMessage(std::optional<T>& out) {
             _protectedQueue.Write([&out](std::deque<T>& queue) {
                 if (not queue.empty()) {
@@ -42,17 +43,68 @@ namespace m2 {
             });
             return out.has_value();
         }
-        /// Messages are kept pulling, up to nMaxMessages, as long as handler returns true.
-        void PopMessages(const std::function<bool(const T&)>& handler, const int nMaxMessages) {
-            m2Repeat(nMaxMessages) {
-                if (std::optional<T> msg; PopMessage(msg) && msg) {
-                    if (not handler(*msg)) {
-                        return;
+        /// Pops up to nMaxMessages messages.
+        void PopMessages(const std::function<void(const T&)>& handler, const int nMaxMessages = -1) {
+            std::optional<T> msg;
+            if (nMaxMessages < 0) {
+                while (PopMessage(msg)) {
+                    if (msg) {
+                        handler(*msg);
                     }
-                } else {
-                    return;
+                }
+            } else {
+                m2Repeat(nMaxMessages) {
+                    if (PopMessage(msg)) {
+                        if (msg) {
+                            handler(*msg);
+                        }
+                    }
+                }
+            }
+        }
+        /// Pops up to nMaxMessages messages as long as the handler returns true.
+        void PopMessagesUntil(const std::function<bool(const T&)>& handler, const int nMaxMessages = -1) {
+            std::optional<T> msg;
+            if (nMaxMessages < 0) {
+                while (PopMessage(msg)) {
+                    if (msg) {
+                        if (not handler(*msg)) {
+                            return;
+                        }
+                    }
+                }
+            } else {
+                m2Repeat(nMaxMessages) {
+                    if (PopMessage(msg)) {
+                        if (msg) {
+                            if (not handler(*msg)) {
+                                return;
+                            }
+                        }
+                    }
                 }
             }
         }
     };
+
+    /// Synchronously send a question, and wait for an answer
+    template <typename TSend, typename TRecv>
+    void SendQuestionReceiveAnswerSync(MessageBox<TSend>& sendBox, TSend&& msgToSend, MessageBox<TRecv>& recvBox,
+            const std::function<bool(const TRecv&)>& isResponseInteresting,
+            const std::function<void(const TRecv&)>& interestingResponseHandler,
+            const std::function<void(const TRecv&)>& uninterestingResponseHandler) {
+        // Send question
+        sendBox.PushMessage(std::move(msgToSend));
+        // Wait for answer that we're interested in
+        recvBox.WaitMessage(isResponseInteresting);
+        // Fetch returning messages
+        recvBox.PopMessagesUntil([&](const TRecv& msg) -> bool {
+            if (isResponseInteresting(msg)) {
+                interestingResponseHandler(msg);
+                return false; // Stop
+            }
+            uninterestingResponseHandler(msg);
+            return true; // Continue
+        });
+    }
 }
