@@ -13,7 +13,7 @@ namespace m2::multiplayer::lockstep {
 		// Accessors
 
 		bool IsLobbyOpen();
-		bool IsLobbyClosed();
+		bool IsLobbyFrozen();
 
 		// Modifiers
 

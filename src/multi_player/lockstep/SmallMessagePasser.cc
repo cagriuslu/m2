@@ -127,7 +127,7 @@ void SmallMessagePasser::PeerConnectionParameters::QueueOutgoingMessage(pb::Lock
 	LOG_DEBUG("Queueing outgoing small message for peer, with order number", peerAddress, orderNo);
 	in.set_order_no(orderNo); // Assign order number
 	outgoingNackMessages.emplace_back(std::move(in), Stopwatch{});
-	connectionStatistics.IncrementOutgoingPacketCount();
+	connectionStatistics.IncrementOutgoingSmallMessageCount();
 	dirtyOutgoing = true;
 }
 void SmallMessagePasser::PeerConnectionParameters::ProcessPeerAcks(const int32_t mostRecentAck, int32_t ackHistoryBits, const int32_t oldestNack) {
@@ -173,7 +173,7 @@ void SmallMessagePasser::PeerConnectionParameters::ProcessPeerAcks(const int32_t
 
 	const auto nackCountAfter = outgoingNackMessages.size();
 	const auto ackCount = nackCountBefore - nackCountAfter;
-	connectionStatistics.IncrementAckedOutgoingPacketCount(I(ackCount));
+	connectionStatistics.IncrementAckedOutgoingSmallMessageCount(I(ackCount));
 
 	if (ackCount) {
 		LOG_DEBUG("Peer acknowledged small messages with order number", peerAddress, ackedOrderNos);

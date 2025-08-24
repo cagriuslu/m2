@@ -2,18 +2,19 @@
 
 namespace m2::multiplayer::lockstep {
 	class ConnectionStatistics {
-		int _totalQueuedOutgoingPackets{};
-		int _totalAckedOutgoingPackets{};
+		int _totalQueuedOutgoingSmallMessages{};
+		int _totalAckedOutgoingSmallMessages{};
 
 	public:
 		// Accessors
 
-		[[nodiscard]] int GetTotalQueuedOutgoingPackets() const { return _totalQueuedOutgoingPackets; }
-		[[nodiscard]] int GetTotalAckedOutgoingPackets() const { return _totalAckedOutgoingPackets; }
+		[[nodiscard]] int GetTotalQueuedOutgoingSmallMessages() const { return _totalQueuedOutgoingSmallMessages; }
+		[[nodiscard]] int GetTotalAckedOutgoingSmallMessages() const { return _totalAckedOutgoingSmallMessages; }
+		[[nodiscard]] bool IsAllOutgoingSmallMessagesDelivered() const { return _totalQueuedOutgoingSmallMessages == _totalAckedOutgoingSmallMessages; }
 
 		// Modifiers
 
-		void IncrementOutgoingPacketCount(const int count = 1) { _totalQueuedOutgoingPackets += count; }
-		void IncrementAckedOutgoingPacketCount(const int count = 1) { _totalAckedOutgoingPackets += count; }
+		void IncrementOutgoingSmallMessageCount(const int count = 1) { _totalQueuedOutgoingSmallMessages += count; }
+		void IncrementAckedOutgoingSmallMessageCount(const int count = 1) { _totalAckedOutgoingSmallMessages += count; }
 	};
 }

@@ -43,9 +43,9 @@ void ConnectionToServer::QueueOutgoingMessages() {
 		if (not connStats) {
 			LOG_DEBUG("Queueing first ping toward server");
 			QueueOutgoingMessage({});
-		} else if (const auto nAckedMsgs = connStats->GetTotalAckedOutgoingPackets(); nAckedMsgs < N_RESPONSES_TO_ASSUME_CONNECTION) {
+		} else if (const auto nAckedMsgs = connStats->GetTotalAckedOutgoingSmallMessages(); nAckedMsgs < N_RESPONSES_TO_ASSUME_CONNECTION) {
 			// Check if previous ping have been ACKed
-			if (connStats->GetTotalQueuedOutgoingPackets() == nAckedMsgs) {
+			if (connStats->GetTotalQueuedOutgoingSmallMessages() == nAckedMsgs) {
 				LOG_DEBUG("Queueing another ping toward server");
 				QueueOutgoingMessage({});
 			}
