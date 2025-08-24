@@ -3,9 +3,17 @@
 #include <m2/network/Select.h>
 #include <m2/Log.h>
 
+#include "m2/single_player/State.h"
+
 using namespace m2;
 using namespace m2::multiplayer;
 using namespace m2::multiplayer::lockstep;
+
+namespace {
+	/// A concept that requires a state to have a clientList of type ClientList
+	template <typename StateT>
+	concept StateWithClientList = std::same_as<decltype(std::declval<StateT>().clientList), ServerActor::ClientList>;
+}
 
 bool ServerActor::ClientList::Contains(const network::IpAddressAndPort& address) const {
 	return std::ranges::any_of(_clients, [&address](const ConnectionToClient& client) {
@@ -53,8 +61,8 @@ bool ServerActor::Initialize(MessageBox<ServerActorInput>&, MessageBox<ServerAct
 	return true;
 }
 
-bool ServerActor::operator()(MessageBox<ServerActorInput>& inbox, MessageBox<ServerActorOutput>&) {
-	ProcessOneMessageFromInbox(inbox);
+bool ServerActor::operator()(MessageBox<ServerActorInput>& inbox, MessageBox<ServerActorOutput>& outbox) {
+	ProcessOneMessageFromInbox(inbox, outbox);
 
 	auto selectResult = network::Select::WaitUntilSocketReady(&_messagePasser->GetSocket(), 50);
 	m2SucceedOrThrowError(selectResult);
@@ -109,8 +117,8 @@ bool ServerActor::operator()(MessageBox<ServerActorInput>& inbox, MessageBox<Ser
 	return true;
 }
 
-void ServerActor::ProcessOneMessageFromInbox(MessageBox<ServerActorInput>& inbox) {
-	inbox.PopMessages([this](const ServerActorInput& msg) {
+void ServerActor::ProcessOneMessageFromInbox(MessageBox<ServerActorInput>& inbox, MessageBox<ServerActorOutput>& outbox) {
+	inbox.PopMessages([this, &outbox](const ServerActorInput& msg) {
 		if (std::holds_alternative<ServerActorInput::FreezeLobby>(msg.variant)) {
 			const auto& lobbyFreezeMsg = std::get<ServerActorInput::FreezeLobby>(msg.variant);
 			if (std::holds_alternative<LobbyOpen>(_state->Get())) {
@@ -118,7 +126,7 @@ void ServerActor::ProcessOneMessageFromInbox(MessageBox<ServerActorInput>& inbox
 				if (std::ranges::all_of(lobby.clientList.cbegin(), lobby.clientList.cend(), [](const ConnectionToClient& client) {
 					return client.GetReadyState();
 				})) {
-					LOG_INFO("Closing lobby");
+					LOG_INFO("Freezing lobby");
 					_state->Mutate([&lobbyFreezeMsg](State& state) {
 						state = LobbyFrozen{.clientList = std::move(std::get<LobbyOpen>(state).clientList)};
 						for (auto& client : std::get<LobbyFrozen>(state).clientList) {
@@ -131,6 +139,18 @@ void ServerActor::ProcessOneMessageFromInbox(MessageBox<ServerActorInput>& inbox
 			} else {
 				throw M2_ERROR("Lobby closure requested while lobby isn't open");
 			}
+		} else if (std::holds_alternative<ServerActorInput::IsAllOutgoingMessagesDelivered>(msg.variant)) {
+			const bool answer = std::visit(overloaded {
+				[](const StateWithClientList auto& s) {
+					return std::all_of(s.clientList.cbegin(), s.clientList.cend(), [](const auto& client) -> bool {
+						return client.IsAllOutgoingMessagesDelivered();
+					});
+				},
+				[](const auto&) { return true; }
+			}, _state->Get());
+			outbox.PushMessage(ServerActorOutput{
+				.variant = ServerActorOutput::IsAllOutgoingMessagesDelivered{.answer = answer}
+			});
 		}
 		return true;
 	}, 1);

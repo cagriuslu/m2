@@ -221,7 +221,7 @@ void SmallMessagePasser::PeerConnectionParameters::ProcessReceivedMessages(googl
 		|| lastOrderlyReceivedOrderNoBefore != lastOrderlyReceivedOrderNoAfter;
 }
 
-const ConnectionStatistics* SmallMessagePasser::GetConnectionStatistics(const network::IpAddressAndPort& address) {
+const ConnectionStatistics* SmallMessagePasser::GetConnectionStatistics(const network::IpAddressAndPort& address) const {
 	if (const auto* existing = FindPeerConnectionParameters(address)) {
 		return &existing->GetConnectionStatistics();
 	}
@@ -323,6 +323,13 @@ void SmallMessagePasser::Flush() {
 	// TODO
 }
 
+const SmallMessagePasser::PeerConnectionParameters* SmallMessagePasser::FindPeerConnectionParameters(const network::IpAddressAndPort& address) const {
+	const auto predicate = [&address](const auto& pcp) { return pcp.GetPeerAddress() == address; };
+	if (const auto it = std::ranges::find_if(_peerConnectionParameters, predicate); it != _peerConnectionParameters.end()) {
+		return &*it;
+	}
+	return nullptr;
+}
 SmallMessagePasser::PeerConnectionParameters* SmallMessagePasser::FindPeerConnectionParameters(const network::IpAddressAndPort& address) {
 	const auto predicate = [&address](const auto& pcp) { return pcp.GetPeerAddress() == address; };
 	if (const auto it = std::ranges::find_if(_peerConnectionParameters, predicate); it != _peerConnectionParameters.end()) {

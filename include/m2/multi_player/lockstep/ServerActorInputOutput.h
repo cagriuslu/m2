@@ -7,13 +7,17 @@ namespace m2::multiplayer::lockstep {
 		struct FreezeLobby {
 			m2g::pb::LockstepGameInitParams gameInitParams;
 		};
-		std::variant<FreezeLobby> variant;
+		struct IsAllOutgoingMessagesDelivered {};
+		std::variant<FreezeLobby, IsAllOutgoingMessagesDelivered> variant;
 	};
 
 	struct ServerActorOutput {
 		struct ServerStateUpdate {
 			size_t stateIndex{};
 		};
-		std::variant<ServerStateUpdate> variant;
+		struct IsAllOutgoingMessagesDelivered {
+			bool answer{};
+		};
+		std::variant<ServerStateUpdate, IsAllOutgoingMessagesDelivered> variant;
 	};
 }

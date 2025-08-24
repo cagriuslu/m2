@@ -4,9 +4,34 @@ using namespace m2;
 using namespace m2::multiplayer;
 using namespace m2::multiplayer::lockstep;
 
+ServerActorInterface::ServerActorInterface(const int maxClientCount) : ActorInterfaceBase(maxClientCount),
+	_stateUpdateProcessor([this](const ServerActorOutput& msg) {
+		if (std::holds_alternative<ServerActorOutput::ServerStateUpdate>(msg.variant)) {
+			this->_serverStateUpdate = std::get<ServerActorOutput::ServerStateUpdate>(msg.variant);
+		}
+	}) {}
+
 bool ServerActorInterface::IsLobbyOpen() {
-	ProcessOutbox();
+	GetActorOutbox().PopMessages(_stateUpdateProcessor);
 	return _serverStateUpdate.stateIndex == GetIndexInVariant<ServerActor::LobbyOpen, ServerActor::State>::value;
+}
+bool ServerActorInterface::IsLobbyFrozen() {
+	auto question = ServerActorInput{.variant = ServerActorInput::IsAllOutgoingMessagesDelivered{}};
+	const auto isResponseInteresting = [](const ServerActorOutput& msg) {
+		return std::holds_alternative<ServerActorOutput::IsAllOutgoingMessagesDelivered>(msg.variant);
+	};
+	bool answer{};
+	const auto interestingResponseHandler = [&answer](const ServerActorOutput& msg) {
+		if (std::holds_alternative<ServerActorOutput::IsAllOutgoingMessagesDelivered>(msg.variant)) {
+			answer = std::get<ServerActorOutput::IsAllOutgoingMessagesDelivered>(msg.variant).answer;
+		}
+	};
+	const auto uninterestingResponseHandler = _stateUpdateProcessor;
+
+	SendQuestionReceiveAnswerSync<ServerActorInput,ServerActorOutput>(GetActorInbox(), std::move(question),
+		GetActorOutbox(), isResponseInteresting, interestingResponseHandler, uninterestingResponseHandler);
+
+	return answer;
 }
 
 void ServerActorInterface::TryFreezeLobby(const m2g::pb::LockstepGameInitParams& gameInitParams) {
@@ -14,13 +39,3 @@ void ServerActorInterface::TryFreezeLobby(const m2g::pb::LockstepGameInitParams&
 		.gameInitParams = gameInitParams
 	}});
 }
-
-void ServerActorInterface::ProcessOutbox() {
-	GetActorOutbox().PopMessages([this](const ServerActorOutput& msg) {
-		if (std::holds_alternative<ServerActorOutput::ServerStateUpdate>(msg.variant)) {
-			_serverStateUpdate = std::get<ServerActorOutput::ServerStateUpdate>(msg.variant);
-		}
-		return true;
-	}, 10);
-}
-

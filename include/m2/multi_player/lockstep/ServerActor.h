@@ -10,6 +10,7 @@
 
 namespace m2::multiplayer::lockstep {
 	class ServerActor final : ActorBase<ServerActorInput,ServerActorOutput> {
+	public:
 		class ClientList {
 			std::vector<ConnectionToClient> _clients;
 		public:
@@ -28,7 +29,6 @@ namespace m2::multiplayer::lockstep {
 			ConnectionToClient* Add(const network::IpAddressAndPort&, MessagePasser&);
 		};
 
-	public:
 		struct LobbyOpen {
 			ClientList clientList;
 		};
@@ -55,6 +55,6 @@ namespace m2::multiplayer::lockstep {
 		void Deinitialize(MessageBox<ServerActorInput>&, MessageBox<ServerActorOutput>&) override {}
 
 	private:
-		void ProcessOneMessageFromInbox(MessageBox<ServerActorInput>&);
+		void ProcessOneMessageFromInbox(MessageBox<ServerActorInput>&, MessageBox<ServerActorOutput>&);
 	};
 }

@@ -72,7 +72,7 @@ namespace m2::multiplayer::lockstep {
 		// Accessors
 
 		[[nodiscard]] network::UdpSocket& GetSocket() { return _socket; }
-		[[nodiscard]] const ConnectionStatistics* GetConnectionStatistics(const network::IpAddressAndPort& address);
+		[[nodiscard]] const ConnectionStatistics* GetConnectionStatistics(const network::IpAddressAndPort& address) const;
 
 		// Modifiers
 
@@ -83,6 +83,7 @@ namespace m2::multiplayer::lockstep {
 		void Flush();
 
 	private:
+		const PeerConnectionParameters* FindPeerConnectionParameters(const network::IpAddressAndPort& address) const;
 		PeerConnectionParameters* FindPeerConnectionParameters(const network::IpAddressAndPort& address);
 		PeerConnectionParameters& FindOrCreatePeerConnectionParameters(const network::IpAddressAndPort& address);
 	};

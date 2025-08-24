@@ -13,8 +13,9 @@ namespace m2::multiplayer::lockstep {
 
 		// Accessors
 
-		const network::IpAddressAndPort& GetAddressAndPort() const { return _addressAndPort; }
-		bool GetReadyState() const { return _readyState; }
+		[[nodiscard]] const network::IpAddressAndPort& GetAddressAndPort() const { return _addressAndPort; }
+		[[nodiscard]] bool IsAllOutgoingMessagesDelivered() const { return _messagePasser.GetConnectionStatistics(_addressAndPort)->IsAllOutgoingSmallMessagesDelivered(); }
+		[[nodiscard]] bool GetReadyState() const { return _readyState; }
 
 		// Modifiers
 

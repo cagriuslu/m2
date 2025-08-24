@@ -5,21 +5,20 @@
 
 namespace m2::multiplayer::lockstep {
 	class ServerActorInterface final : public ActorInterfaceBase<ServerActor, ServerActorInput, ServerActorOutput> {
+		const std::function<void(const ServerActorOutput&)> _stateUpdateProcessor;
 		ServerActorOutput::ServerStateUpdate _serverStateUpdate{};
 
 	public:
-		explicit ServerActorInterface(const int maxClientCount) : ActorInterfaceBase(maxClientCount) {}
+		explicit ServerActorInterface(int maxClientCount);
 
 		// Accessors
 
 		bool IsLobbyOpen();
+		/// Checks if lobby freeze message is delivered to all clients. Blocks until the server actor responds.
 		bool IsLobbyFrozen();
 
 		// Modifiers
 
 		void TryFreezeLobby(const m2g::pb::LockstepGameInitParams&);
-
-	private:
-		void ProcessOutbox();
 	};
 }

@@ -23,7 +23,7 @@ namespace m2::multiplayer::lockstep {
 		// Accessors
 
 		network::UdpSocket& GetSocket() { return _smallMessagePasser.GetSocket(); }
-		const ConnectionStatistics* GetConnectionStatistics(const network::IpAddressAndPort& address) { return _smallMessagePasser.GetConnectionStatistics(address); }
+		const ConnectionStatistics* GetConnectionStatistics(const network::IpAddressAndPort& address) const { return _smallMessagePasser.GetConnectionStatistics(address); }
 
 		// Modifiers
 
