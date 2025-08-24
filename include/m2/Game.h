@@ -125,6 +125,7 @@ namespace m2 {
 		// Pre-game management
 
 		bool IsMultiPlayer() const { return not std::holds_alternative<std::monostate>(_multiPlayerComponents); }
+		bool IsTurnBasedMultiPlayer() const { return std::holds_alternative<TurnBasedServerComponents>(_multiPlayerComponents) || std::holds_alternative<network::TurnBasedRealClientThread>(_multiPlayerComponents); }
 		void_expected HostTurnBasedGame(unsigned max_connection_count);
 		void_expected HostLockstepGame(unsigned max_connection_count);
 		/// For client

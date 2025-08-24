@@ -103,7 +103,7 @@ namespace {
 UiAction UiPanel::run_blocking() {
 	LOG_DEBUG("Running blocking UI", blueprint->name);
 
-	if (M2_GAME.IsMultiPlayer() && not M2_GAME.IsOurTurn()) {
+	if (M2_GAME.IsTurnBasedMultiPlayer() && not M2_GAME.IsOurTurn()) {
 		// Running a blocking UI in this case could lead to client commands being blocked from processing
 		LOG_WARN("Running blocking UI panel during a multiplayer game while it's not our turn");
 	}

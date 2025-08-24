@@ -15,7 +15,7 @@ bool ServerActorInterface::IsLobbyOpen() {
 	GetActorOutbox().PopMessages(_stateUpdateProcessor);
 	return _serverStateUpdate.stateIndex == GetIndexInVariant<ServerActor::LobbyOpen, ServerActor::State>::value;
 }
-bool ServerActorInterface::IsLobbyFrozen() {
+bool ServerActorInterface::IsLobbyFrozenForEveryone() {
 	auto question = ServerActorInput{.variant = ServerActorInput::IsAllOutgoingMessagesDelivered{}};
 	const auto isResponseInteresting = [](const ServerActorOutput& msg) {
 		return std::holds_alternative<ServerActorOutput::IsAllOutgoingMessagesDelivered>(msg.variant);

@@ -15,7 +15,7 @@ namespace m2::multiplayer::lockstep {
 
 		bool IsLobbyOpen();
 		/// Checks if lobby freeze message is delivered to all clients. Blocks until the server actor responds.
-		bool IsLobbyFrozen();
+		bool IsLobbyFrozenForEveryone();
 
 		// Modifiers
 
