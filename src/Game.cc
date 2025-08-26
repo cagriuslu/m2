@@ -335,7 +335,7 @@ m2::void_expected m2::Game::LoadSinglePlayer(
 	return _level->InitSinglePlayer(level_path_or_blueprint, level_name);
 }
 
-m2::void_expected m2::Game::LoadMultiPlayerAsHost(
+m2::void_expected m2::Game::LoadTurnBasedMultiPlayerAsHost(
 	const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& level_name) {
 	_level.reset();
 	ResetState();
@@ -343,7 +343,7 @@ m2::void_expected m2::Game::LoadMultiPlayerAsHost(
 	_dimensions->SetGameAspectRatio(_proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
 	_level.emplace();
 
-	auto success = _level->InitMultiPlayerAsHost(level_path_or_blueprint, level_name);
+	auto success = _level->InitTurnBasedMultiPlayerAsHost(level_path_or_blueprint, level_name);
 	m2ReflectUnexpected(success);
 
 	// Execute the first server update, which will trigger clients to initialize their levels, but not fully.
@@ -381,7 +381,7 @@ m2::void_expected m2::Game::LoadMultiPlayerAsHost(
 	return success;
 }
 
-m2::void_expected m2::Game::LoadMultiPlayerAsGuest(
+m2::void_expected m2::Game::LoadTurnBasedMultiPlayerAsGuest(
 	const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& level_name) {
 	_level.reset();
 	ResetState();
@@ -389,7 +389,7 @@ m2::void_expected m2::Game::LoadMultiPlayerAsGuest(
 	_dimensions->SetGameAspectRatio(_proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
 	_level.emplace();
 
-	auto success = _level->InitMultiPlayerAsGuest(level_path_or_blueprint, level_name);
+	auto success = _level->InitTurnBasedMultiPlayerAsGuest(level_path_or_blueprint, level_name);
 	m2ReflectUnexpected(success);
 
 	// Consume the initial TurnBasedServerUpdate that triggered the level to be initialized

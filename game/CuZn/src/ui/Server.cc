@@ -27,7 +27,7 @@ static TextBlueprint client_count = {
 
 		// Check if the lobby closure is successful
 		if (M2_GAME.ServerThread().IsLobbyClosed()) {
-			const auto expect_success = M2_GAME.LoadMultiPlayerAsHost(M2_GAME.GetResources().GetLevelsDir() / "Map.json", m2::ToString(ccount));
+			const auto expect_success = M2_GAME.LoadTurnBasedMultiPlayerAsHost(M2_GAME.GetResources().GetLevelsDir() / "Map.json", m2::ToString(ccount));
 			m2SucceedOrThrowError(expect_success);
 			return MakeClearStackAction();
 		}

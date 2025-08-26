@@ -83,8 +83,8 @@ namespace m2 {
 		bool isPanning{};
 
 		void_expected InitSinglePlayer(const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name);
-		void_expected InitMultiPlayerAsHost(const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name);
-		void_expected InitMultiPlayerAsGuest(const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name);
+		void_expected InitTurnBasedMultiPlayerAsHost(const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name);
+		void_expected InitTurnBasedMultiPlayerAsGuest(const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name);
 		void_expected InitLevelEditor(const std::filesystem::path& lb_path);
 		void_expected InitSheetEditor(const std::filesystem::path& path);
 		void_expected InitBulkSheetEditor(const std::filesystem::path& path);
