@@ -152,9 +152,9 @@ namespace m2 {
 
 		// Level management
 
-		void_expected LoadSinglePlayer(const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& level_name = "");
-		void_expected LoadTurnBasedMultiPlayerAsHost(const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& level_name = "");
-		void_expected LoadTurnBasedMultiPlayerAsGuest(const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& level_name = "");
+		void_expected LoadSinglePlayer(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& level_name = "");
+		void_expected LoadTurnBasedMultiPlayerAsHost(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& level_name = "");
+		void_expected LoadTurnBasedMultiPlayerAsGuest(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& level_name = "");
 		void_expected LoadLevelEditor(const std::string& level_resource_path);
 		void_expected LoadSheetEditor();
 		void_expected LoadBulkSheetEditor();

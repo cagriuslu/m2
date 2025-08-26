@@ -45,28 +45,25 @@ Level::~Level() {
 }
 
 void_expected Level::InitSinglePlayer(
-    const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name) {
+    const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name) {
 	stateVariant.emplace<splayer::State>();
 	return InitAnyPlayer(
-	    level_path_or_blueprint, name, true, &m2g::Proxy::pre_single_player_level_init, &m2g::Proxy::post_single_player_level_init);
+	    levelPathOrBlueprint, name, true, &m2g::Proxy::pre_single_player_level_init, &m2g::Proxy::post_single_player_level_init);
 }
-
 void_expected Level::InitTurnBasedMultiPlayerAsHost(
-    const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name) {
+    const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name) {
 	INFO_FN();
-	stateVariant.emplace<mplayer::State>();
+	stateVariant.emplace<multiplayer::turnbased::State>();
 	return InitAnyPlayer(
-	    level_path_or_blueprint, name, false, &m2g::Proxy::pre_multi_player_level_client_init, &m2g::Proxy::post_multi_player_level_client_init);
+	    levelPathOrBlueprint, name, false, &m2g::Proxy::pre_multi_player_level_client_init, &m2g::Proxy::post_multi_player_level_client_init);
 }
-
 void_expected Level::InitTurnBasedMultiPlayerAsGuest(
-    const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name) {
+    const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name) {
 	DEBUG_FN();
-	stateVariant.emplace<mplayer::State>();
+	stateVariant.emplace<multiplayer::turnbased::State>();
 	return InitAnyPlayer(
-	    level_path_or_blueprint, name, false, &m2g::Proxy::pre_multi_player_level_client_init, &m2g::Proxy::post_multi_player_level_client_init);
+	    levelPathOrBlueprint, name, false, &m2g::Proxy::pre_multi_player_level_client_init, &m2g::Proxy::post_multi_player_level_client_init);
 }
-
 void_expected Level::InitLevelEditor(const std::filesystem::path& lb_path) {
 	_lbPath = lb_path;
 	stateVariant.emplace<level_editor::State>();
@@ -97,7 +94,6 @@ void_expected Level::InitLevelEditor(const std::filesystem::path& lb_path) {
 
 	return {};
 }
-
 void_expected Level::InitSheetEditor(const std::filesystem::path& path) {
 	// Create state
 	auto state = sheet_editor::State::create(path);
@@ -122,7 +118,6 @@ void_expected Level::InitSheetEditor(const std::filesystem::path& path) {
 
 	return {};
 }
-
 void_expected Level::InitBulkSheetEditor(const std::filesystem::path& path) {
 	// Create state
 	auto state = bulk_sheet_editor::State::Create(path);
@@ -143,7 +138,6 @@ void_expected Level::InitBulkSheetEditor(const std::filesystem::path& path) {
 
 	return {};
 }
-
 void_expected Level::ResetSheetEditor() {
 	objects.Clear();
 
@@ -214,6 +208,24 @@ std::pair<Pool<Graphic>&, DrawList*> Level::GetGraphicPoolAndDrawList(const Draw
 	}
 	const auto fgLayer = std::get<ForegroundDrawLayer>(drawLayer);
 	return std::pair<Pool<Graphic>&,DrawList*>{fgGraphics, &fgDrawLists[I(fgLayer)]};
+}
+pb::ProjectionType Level::ProjectionType() const {
+	const auto isEditor = std::holds_alternative<level_editor::State>(stateVariant)
+		|| std::holds_alternative<sheet_editor::State>(stateVariant)
+		|| std::holds_alternative<bulk_sheet_editor::State>(stateVariant);
+	if (isEditor) {
+		return pb::ProjectionType::PARALLEL;
+	}
+	return _lb ? _lb->projection_type() : pb::ProjectionType::PARALLEL;
+}
+m3::VecF Level::CameraOffset() const {
+	if (not _lb) {
+		return {};
+	}
+	return m3::VecF{
+		ProjectionType() == pb::PERSPECTIVE_XYZ ? _lb->camera_offset() : 0.0f,
+		_lb->camera_offset(),
+		_lb->camera_z_offset()};
 }
 float Level::HorizontalFov() const { return _lb ? _lb->horizontal_fov() : M2_GAME.Dimensions().GameM().x; }
 
@@ -299,17 +311,17 @@ void Level::DismissSemiBlockingUiPanelDeferred() {
 }
 
 void_expected Level::InitAnyPlayer(
-    const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name,
-    bool physical_world, void (m2g::Proxy::*pre_level_init)(const std::string&, const pb::Level&),
-    void (m2g::Proxy::*post_level_init)(const std::string&, const pb::Level&)) {
-	if (std::holds_alternative<std::filesystem::path>(level_path_or_blueprint)) {
-		_lbPath = std::get<std::filesystem::path>(level_path_or_blueprint);
+	    const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name,
+	    bool physical_world, void (m2g::Proxy::*pre_level_init)(const std::string&, const pb::Level&),
+	    void (m2g::Proxy::*post_level_init)(const std::string&, const pb::Level&)) {
+	if (std::holds_alternative<std::filesystem::path>(levelPathOrBlueprint)) {
+		_lbPath = std::get<std::filesystem::path>(levelPathOrBlueprint);
 		auto lb = pb::json_file_to_message<pb::Level>(*_lbPath);
 		m2ReflectUnexpected(lb);
 		_lb = *lb;
 	} else {
 		_lbPath = {};
-		_lb = std::get<pb::Level>(level_path_or_blueprint);
+		_lb = std::get<pb::Level>(levelPathOrBlueprint);
 	}
 	_name = name;
 

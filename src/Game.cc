@@ -326,24 +326,24 @@ void m2::Game::QueueClientCommand(const m2g::pb::TurnBasedClientCommand& cmd) {
 }
 
 m2::void_expected m2::Game::LoadSinglePlayer(
-	const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& level_name) {
+	const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& level_name) {
 	_level.reset();
 	ResetState();
 	// Reinit dimensions with proxy in case an editor was initialized before
 	_dimensions->SetGameAspectRatio(_proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
 	_level.emplace();
-	return _level->InitSinglePlayer(level_path_or_blueprint, level_name);
+	return _level->InitSinglePlayer(levelPathOrBlueprint, level_name);
 }
 
 m2::void_expected m2::Game::LoadTurnBasedMultiPlayerAsHost(
-	const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& level_name) {
+	const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& level_name) {
 	_level.reset();
 	ResetState();
 	// Reinit dimensions with proxy in case an editor was initialized before
 	_dimensions->SetGameAspectRatio(_proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
 	_level.emplace();
 
-	auto success = _level->InitTurnBasedMultiPlayerAsHost(level_path_or_blueprint, level_name);
+	auto success = _level->InitTurnBasedMultiPlayerAsHost(levelPathOrBlueprint, level_name);
 	m2ReflectUnexpected(success);
 
 	// Execute the first server update, which will trigger clients to initialize their levels, but not fully.
@@ -382,14 +382,14 @@ m2::void_expected m2::Game::LoadTurnBasedMultiPlayerAsHost(
 }
 
 m2::void_expected m2::Game::LoadTurnBasedMultiPlayerAsGuest(
-	const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& level_name) {
+	const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& level_name) {
 	_level.reset();
 	ResetState();
 	// Reinit dimensions with proxy in case an editor was initialized before
 	_dimensions->SetGameAspectRatio(_proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
 	_level.emplace();
 
-	auto success = _level->InitTurnBasedMultiPlayerAsGuest(level_path_or_blueprint, level_name);
+	auto success = _level->InitTurnBasedMultiPlayerAsGuest(levelPathOrBlueprint, level_name);
 	m2ReflectUnexpected(success);
 
 	// Consume the initial TurnBasedServerUpdate that triggered the level to be initialized

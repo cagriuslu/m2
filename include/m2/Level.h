@@ -7,12 +7,13 @@
 #include <m2/game/Pathfinder.h>
 #include <m2/game/Selection.h>
 #include <m2/level_editor/State.h>
-#include <m2/multi_player/State.h>
 #include <m2/m3/VecF.h>
 #include <m2/physics/World.h>
 #include <m2/sdl/Detail.h>
 #include <m2/sheet_editor/State.h>
 #include <m2/single_player/State.h>
+#include <m2/multi_player/lockstep/State.h>
+#include <m2/multi_player/turn_based/State.h>
 #include <m2/ui/UiPanel.h>
 #include <Level.pb.h>
 #include <box2d/b2_world.h>
@@ -76,15 +77,22 @@ namespace m2 {
 
 		std::optional<sdl::ticks_t> rootBlockingUiBeginTicks;  // Exists only if there is an ongoing blocking UI
 		std::queue<std::function<void()>> deferredActions;
-		std::variant<std::monostate, splayer::State, mplayer::State, level_editor::State, sheet_editor::State, bulk_sheet_editor::State> stateVariant;
+		std::variant<
+			std::monostate,
+			splayer::State,
+			multiplayer::lockstep::State,
+			multiplayer::turnbased::State,
+			level_editor::State,
+			sheet_editor::State,
+			bulk_sheet_editor::State> stateVariant;
 
 		/// In panning mode, mouse states are not cleared by UI elements so that panning the map is possible even
 		/// thought the mouse spills into UI elements.
 		bool isPanning{};
 
-		void_expected InitSinglePlayer(const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name);
-		void_expected InitTurnBasedMultiPlayerAsHost(const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name);
-		void_expected InitTurnBasedMultiPlayerAsGuest(const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name);
+		void_expected InitSinglePlayer(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name);
+		void_expected InitTurnBasedMultiPlayerAsHost(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name);
+		void_expected InitTurnBasedMultiPlayerAsGuest(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name);
 		void_expected InitLevelEditor(const std::filesystem::path& lb_path);
 		void_expected InitSheetEditor(const std::filesystem::path& path);
 		void_expected InitBulkSheetEditor(const std::filesystem::path& path);
@@ -108,16 +116,8 @@ namespace m2 {
 		/// Inclusive rectangle that contains all terrain graphics inside. The unit is meters.
 		[[nodiscard]] const RectI& BackgroundBoundary() const { return _backgroundBoundary; }
 		const std::string& Identifier() const { return _lb ? _lb->identifier() : gEmptyString; }
-		pb::ProjectionType ProjectionType() const {
-			return (std::holds_alternative<splayer::State>(stateVariant) || std::holds_alternative<mplayer::State>(stateVariant)) && _lb
-			    ? _lb->projection_type()
-			    : pb::ProjectionType::PARALLEL;
-		}
-		m3::VecF CameraOffset() const {
-			return _lb
-			    ? m3::VecF{ProjectionType() == pb::PERSPECTIVE_XYZ ? _lb->camera_offset() : 0.0f, _lb->camera_offset(), _lb->camera_z_offset()}
-			    : m3::VecF{};
-		}
+		pb::ProjectionType ProjectionType() const;
+		m3::VecF CameraOffset() const;
 		float HorizontalFov() const;
 		Object* Player() { return objects.Get(playerId); }
 		Object* Camera() { return objects.Get(cameraId); }
@@ -194,7 +194,7 @@ namespace m2 {
 
 	   private:
 		void_expected InitAnyPlayer(
-		    const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name,
+		    const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name,
 		    bool physical_world, void (m2g::Proxy::*pre_level_init)(const std::string&, const pb::Level&),
 		    void (m2g::Proxy::*post_level_init)(const std::string&, const pb::Level&));
 
