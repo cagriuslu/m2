@@ -284,7 +284,7 @@ void_expected SmallMessagePasser::SendOutgoingPackets() {
 				const auto bytes = packet.SerializeAsString();
 				const auto success = _socket.Send(peer.GetPeerAddress(), bytes.data(), bytes.size());
 				m2ReflectUnexpected(success);
-				LOG_DEBUG("Sent fresh packet to peer, of size, with small message count", peer.GetPeerAddress(), bytes.size(), packet.small_messages());
+				LOG_DEBUG("Sent fresh packet to peer, of size, with small message order numbers", peer.GetPeerAddress(), bytes.size(), packet.small_messages());
 				peer.MarkAnyMessageSent();
 			}
 		}

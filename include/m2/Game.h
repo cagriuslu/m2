@@ -155,6 +155,7 @@ namespace m2 {
 		void_expected LoadSinglePlayer(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& level_name = "");
 		void_expected LoadTurnBasedMultiPlayerAsHost(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& level_name = "");
 		void_expected LoadTurnBasedMultiPlayerAsGuest(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& level_name = "");
+		void_expected LoadLockstep(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& levelName, const m2g::pb::LockstepGameInitParams* gameInitParams);
 		void_expected LoadLevelEditor(const std::string& level_resource_path);
 		void_expected LoadSheetEditor();
 		void_expected LoadBulkSheetEditor();

@@ -334,7 +334,6 @@ m2::void_expected m2::Game::LoadSinglePlayer(
 	_level.emplace();
 	return _level->InitSinglePlayer(levelPathOrBlueprint, level_name);
 }
-
 m2::void_expected m2::Game::LoadTurnBasedMultiPlayerAsHost(
 	const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& level_name) {
 	_level.reset();
@@ -380,7 +379,6 @@ m2::void_expected m2::Game::LoadTurnBasedMultiPlayerAsHost(
 
 	return success;
 }
-
 m2::void_expected m2::Game::LoadTurnBasedMultiPlayerAsGuest(
 	const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& level_name) {
 	_level.reset();
@@ -400,7 +398,20 @@ m2::void_expected m2::Game::LoadTurnBasedMultiPlayerAsGuest(
 			"Unexpected TurnBasedServerUpdate status");
 	return {};
 }
+m2::void_expected m2::Game::LoadLockstep(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& levelName, const m2g::pb::LockstepGameInitParams* gameInitParams) {
+	_level.reset();
+	ResetState();
+	// Reinit dimensions with proxy in case an editor was initialized before
+	_dimensions->SetGameAspectRatio(_proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
+	_level.emplace();
 
+	auto success = _level->InitLockstepMultiPlayer(levelPathOrBlueprint, levelName, gameInitParams);
+	m2ReflectUnexpected(success);
+
+	// TODO sync clients and start the game
+
+	return {};
+}
 m2::void_expected m2::Game::LoadLevelEditor(const std::string& level_resource_path) {
 	_level.reset();
 	ResetState();
@@ -409,7 +420,6 @@ m2::void_expected m2::Game::LoadLevelEditor(const std::string& level_resource_pa
 	_level.emplace();
 	return _level->InitLevelEditor(level_resource_path);
 }
-
 m2::void_expected m2::Game::LoadSheetEditor() {
 	_level.reset();
 	ResetState();
@@ -418,7 +428,6 @@ m2::void_expected m2::Game::LoadSheetEditor() {
 	_level.emplace();
 	return _level->InitSheetEditor(_resources.GetSpriteSheetsPath());
 }
-
 m2::void_expected m2::Game::LoadBulkSheetEditor() {
 	_level.reset();
 	ResetState();
