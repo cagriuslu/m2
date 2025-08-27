@@ -44,9 +44,9 @@ int main(const int argc, char **argv) {
 			}
 			LOG_INFO("Main menu loaded a level");
 			M2_LEVEL.BeginGameLoop();
-			sinceLastPhy = sdl::Stopwatch{M2_GAME._level->PauseTicksHandle()};
-			sinceLastGfx = sdl::Stopwatch{M2_GAME._level->PauseTicksHandle()};
-			sinceLastFps = sdl::Stopwatch{M2_GAME._level->PauseTicksHandle()};
+			sinceLastPhy = sdl::Stopwatch{M2_GAME._level->GetPauseTicksHandle()};
+			sinceLastGfx = sdl::Stopwatch{M2_GAME._level->GetPauseTicksHandle()};
+			sinceLastFps = sdl::Stopwatch{M2_GAME._level->GetPauseTicksHandle()};
 		}
 
 		////////////////////////////////////////////////////////////////////////

@@ -35,7 +35,7 @@
 #define M2_DEFER(f) (M2_GAME.AddDeferredAction(f))
 #define M2G_PROXY (M2_GAME.Proxy())
 #define M2_LEVEL (M2_GAME.GetLevel())
-#define M2_PLAYER (*M2_LEVEL.Player())
+#define M2_PLAYER (*M2_LEVEL.GetPlayer())
 
 namespace m2 {
 	/// \brief Container of all objects managed by the game engine.

@@ -33,7 +33,7 @@ namespace {
 				.variant = widget::TextBlueprint{
 					.text = "Set Rect",
 					.onAction = [](MAYBE const widget::Text& self) -> UiAction {
-						if (auto* selection = M2_LEVEL.PrimarySelection(); selection->IsComplete()) {
+						if (auto* selection = M2_LEVEL.GetPrimarySelection(); selection->IsComplete()) {
 							const auto intSelection = selection->IntegerSelectionRectM();
 							std::get<sheet_editor::State>(M2_LEVEL.stateVariant).SetSpriteRect(*intSelection);
 							selection->Reset();
@@ -47,7 +47,7 @@ namespace {
 				.variant = widget::TextBlueprint{
 					.text = "Set Center",
 					.onAction = [](MAYBE const widget::Text& self) -> UiAction {
-						if (auto* selection = M2_LEVEL.SecondarySelection(); selection->IsComplete()) {
+						if (auto* selection = M2_LEVEL.GetSecondarySelection(); selection->IsComplete()) {
 							const auto originSelection = selection->HalfCellSelectionsM();
 							std::get<sheet_editor::State>(M2_LEVEL.stateVariant).SetSpriteOrigin(originSelection->first);
 							selection->Reset();
@@ -62,8 +62,8 @@ namespace {
 					.text = "Reset",
 					.onAction = [](MAYBE const widget::Text& self) -> UiAction {
 						std::get<sheet_editor::State>(M2_LEVEL.stateVariant).ResetSpriteRectAndOrigin();
-						M2_LEVEL.PrimarySelection()->Reset();
-						M2_LEVEL.SecondarySelection()->Reset();
+						M2_LEVEL.GetPrimarySelection()->Reset();
+						M2_LEVEL.GetSecondarySelection()->Reset();
 						return MakeContinueAction();
 					}
 				}
@@ -96,7 +96,7 @@ namespace {
 				.variant = widget::TextBlueprint{
 					.text = "Set Rect",
 					.onAction = [](MAYBE const widget::Text& self) -> UiAction {
-						if (auto* selection = M2_LEVEL.PrimarySelection(); selection->IsComplete()) {
+						if (auto* selection = M2_LEVEL.GetPrimarySelection(); selection->IsComplete()) {
 							const auto intSelection = selection->IntegerSelectionRectM();
 							std::get<sheet_editor::State>(M2_LEVEL.stateVariant).AddForegroundCompanionRect(*intSelection);
 							selection->Reset();
@@ -110,7 +110,7 @@ namespace {
 				.variant = widget::TextBlueprint{
 					.text = "Set Center",
 					.onAction = [](MAYBE const widget::Text& self) -> UiAction {
-						if (auto* selection = M2_LEVEL.SecondarySelection(); selection->IsComplete()) {
+						if (auto* selection = M2_LEVEL.GetSecondarySelection(); selection->IsComplete()) {
 							const auto originSelection = selection->HalfCellSelectionsM();
 							std::get<sheet_editor::State>(M2_LEVEL.stateVariant).SetForegroundCompanionOrigin(originSelection->first);
 							selection->Reset();
@@ -125,8 +125,8 @@ namespace {
 					.text = "Reset",
 					.onAction = [](MAYBE const widget::Text& self) -> UiAction {
 						std::get<sheet_editor::State>(M2_LEVEL.stateVariant).ResetForegroundCompanion();
-						M2_LEVEL.PrimarySelection()->Reset();
-						M2_LEVEL.SecondarySelection()->Reset();
+						M2_LEVEL.GetPrimarySelection()->Reset();
+						M2_LEVEL.GetSecondarySelection()->Reset();
 						return MakeContinueAction();
 					}
 				}
@@ -220,7 +220,7 @@ namespace {
 						if (const auto selectedIndexes = self.Parent().FindWidget<widget::TextSelection>("FixtureSelection")->GetSelectedIndexes();
 								not selectedIndexes.empty()) {
 							const auto selectedIndex = selectedIndexes[0];
-							if (auto* selection = M2_LEVEL.PrimarySelection(); selection->IsComplete()) {
+							if (auto* selection = M2_LEVEL.GetPrimarySelection(); selection->IsComplete()) {
 								std::get<sheet_editor::State>(M2_LEVEL.stateVariant).StoreFixture(selectedIndex,
 										*selection->HalfCellSelectionRectM(), selection->HalfCellSelectionsM()->first,
 										selection->HalfCellSelectionsM()->second);

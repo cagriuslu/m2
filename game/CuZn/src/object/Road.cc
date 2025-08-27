@@ -86,7 +86,7 @@ m2::void_expected InitRoad(m2::Object& obj, const Connection connection) {
 
 		// Draw background with player's color
 		const auto background_color =
-				(M2_LEVEL.DimmingExceptions() && not M2_LEVEL.DimmingExceptions()->contains(gfx.OwnerId()))
+				(M2_LEVEL.GetDimmingExceptions() && not M2_LEVEL.GetDimmingExceptions()->contains(gfx.OwnerId()))
 				? color * M2G_PROXY.dimming_factor : color;
 		m2::Graphic::ColorRect(cell_rect, background_color);
 

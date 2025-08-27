@@ -162,12 +162,12 @@ void State::Draw() const {
 	const auto& sprite = SelectedSprite();
 	auto spriteOrigin = SelectedSpriteOrigin();
 
-	if (M2_LEVEL.RightHud()->Name() == "RectModeRightHud") {
+	if (M2_LEVEL.GetRightHud()->Name() == "RectModeRightHud") {
 		// Draw selection
-		if (const auto cellSelection = M2_LEVEL.PrimarySelection()->CellSelectionRectM()) {
+		if (const auto cellSelection = M2_LEVEL.GetPrimarySelection()->CellSelectionRectM()) {
 			Graphic::ColorRect(*cellSelection, SELECTION_COLOR);
 		}
-		if (const auto centerSelection = M2_LEVEL.SecondarySelection()->HalfCellSelectionsM()) {
+		if (const auto centerSelection = M2_LEVEL.GetSecondarySelection()->HalfCellSelectionsM()) {
 			Graphic::DrawCross(centerSelection->first, CROSS_COLOR);
 		}
 		// Draw already existing
@@ -178,12 +178,12 @@ void State::Draw() const {
 		const auto rectCenter = RectF{rect}.Shift({-0.5f, -0.5f}).GetCenterPoint();
 		const auto centerToOriginVecPx = VecF{sprite.regular().center_to_origin_vec_px()};
 		Graphic::DrawCross(rectCenter + centerToOriginVecPx, CONFIRMED_CROSS_COLOR);
-	} else if (M2_LEVEL.RightHud()->Name() == "ForegroundCompanionModeRightHud") {
+	} else if (M2_LEVEL.GetRightHud()->Name() == "ForegroundCompanionModeRightHud") {
 		// Draw selection
-		if (const auto cellSelection = M2_LEVEL.PrimarySelection()->CellSelectionRectM()) {
+		if (const auto cellSelection = M2_LEVEL.GetPrimarySelection()->CellSelectionRectM()) {
 			Graphic::ColorRect(*cellSelection, SELECTION_COLOR);
 		}
-		if (const auto centerSelection = M2_LEVEL.SecondarySelection()->HalfCellSelectionsM()) {
+		if (const auto centerSelection = M2_LEVEL.GetSecondarySelection()->HalfCellSelectionsM()) {
 			Graphic::DrawCross(centerSelection->first, CROSS_COLOR);
 		}
 		// Draw already existing
@@ -194,22 +194,22 @@ void State::Draw() const {
 		const auto rectCenter = RectF{rect}.Shift({-0.5f, -0.5f}).GetCenterPoint();
 		const auto fCompCenterToOriginVecPx = VecF{sprite.regular().foreground_companion().center_to_origin_vec_px()};
 		Graphic::DrawCross(rectCenter + fCompCenterToOriginVecPx, CONFIRMED_CROSS_COLOR);
-	} else if (M2_LEVEL.RightHud()->Name() == "FixtureModeRightHud") {
-		if (const auto selectedFixtureIndex = M2_LEVEL.RightHud()->FindWidget<widget::TextSelection>("FixtureSelection")->GetSelectedIndexes();
+	} else if (M2_LEVEL.GetRightHud()->Name() == "FixtureModeRightHud") {
+		if (const auto selectedFixtureIndex = M2_LEVEL.GetRightHud()->FindWidget<widget::TextSelection>("FixtureSelection")->GetSelectedIndexes();
 				not selectedFixtureIndex.empty()) {
 			const auto selectedIndex = selectedFixtureIndex[0];
 			if (const auto& fixture = sprite.regular().fixtures(selectedIndex); fixture.has_rectangle()) {
-				if (const auto halfCellSelection = M2_LEVEL.PrimarySelection()->HalfCellSelectionRectM()) {
+				if (const auto halfCellSelection = M2_LEVEL.GetPrimarySelection()->HalfCellSelectionRectM()) {
 					Graphic::ColorRect(*halfCellSelection, SELECTION_COLOR);
 				}
 			} else if (fixture.has_circle()) {
-				if (const auto halfCellSelection = M2_LEVEL.PrimarySelection()->HalfCellSelectionsM()) {
+				if (const auto halfCellSelection = M2_LEVEL.GetPrimarySelection()->HalfCellSelectionsM()) {
 					const auto center = halfCellSelection->first;
 					const auto radius = center.GetDistanceTo(halfCellSelection->second);
 					Graphic::ColorDisk(center, radius, SELECTION_COLOR);
 				}
 			} else if (fixture.has_chain()) {
-				if (const auto halfCellSelection = M2_LEVEL.PrimarySelection()->HalfCellSelectionsM()) {
+				if (const auto halfCellSelection = M2_LEVEL.GetPrimarySelection()->HalfCellSelectionsM()) {
 					const auto point = halfCellSelection->first;
 					Graphic::DrawCross(point, CROSS_COLOR);
 				}

@@ -734,7 +734,7 @@ void m2::Game::Draw() {
 	// Check if only one background layer needs to be drawn
 	const auto onlyBackgroundLayerToDraw = [&]() -> std::optional<BackgroundDrawLayer> {
 		if (std::holds_alternative<level_editor::State>(_level->stateVariant)) {
-			if (const auto& rightHudName = _level->RightHud()->Name();
+			if (const auto& rightHudName = _level->GetRightHud()->Name();
 					rightHudName == "PaintBgRightHud" || rightHudName == "SampleBgRightHud" || rightHudName == "SelectBgRightHud") {
 				const auto& levelEditorState = std::get<level_editor::State>(_level->stateVariant);
 				return levelEditorState.GetSelectedBackgroundLayer();
@@ -789,7 +789,7 @@ void m2::Game::DebugDraw() {
 		}
 	}
 
-	if (IsProjectionTypePerspective(_level->ProjectionType())) {
+	if (IsProjectionTypePerspective(_level->GetProjectionType())) {
 		SDL_SetRenderDrawColor(M2_GAME.renderer, 255, 255, 255, 127);
 		for (int y = 0; y < 20; ++y) {
 			for (int x = 0; x < 20; ++x) {
@@ -933,8 +933,8 @@ const m2::VecF& m2::Game::ScreenCenterToMousePositionM() const {
 
 m2::sdl::TextureUniquePtr m2::Game::DrawGameToTexture(const VecF& camera_position) {
 	// Temporarily change camera position
-	const auto prev_camera_position = GetLevel().Camera()->position;
-	GetLevel().Camera()->position = camera_position;
+	const auto prev_camera_position = GetLevel().GetCamera()->position;
+	GetLevel().GetCamera()->position = camera_position;
 
 	// Create an empty render target
 	auto render_target = sdl::create_drawable_texture_of_screen_size();
@@ -952,7 +952,7 @@ m2::sdl::TextureUniquePtr m2::Game::DrawGameToTexture(const VecF& camera_positio
 	SDL_SetRenderTarget(renderer, prev_render_target);
 
 	// Reinstate old camera position
-	GetLevel().Camera()->position = prev_camera_position;
+	GetLevel().GetCamera()->position = prev_camera_position;
 
 	return render_target;
 }
@@ -1024,10 +1024,10 @@ void m2::Game::RecalculateMousePosition() const {
 	_screen_center_to_mouse_position_m = VecF{
 		F(screen_center_to_mouse_position_px.x) / Dimensions().OutputPixelsPerMeter(), F(screen_center_to_mouse_position_px.y) / Dimensions().OutputPixelsPerMeter()};
 
-	if (IsProjectionTypePerspective(_level->ProjectionType())) {
+	if (IsProjectionTypePerspective(_level->GetProjectionType())) {
 		// Mouse moves on the plane centered at the player looking towards the camera
 		// Find m3::VecF of the mouse position in the world starting from the player position
-		const auto sin_of_player_to_camera_angle = M2_LEVEL.CameraOffset().z / M2_LEVEL.CameraOffset().length();
+		const auto sin_of_player_to_camera_angle = M2_LEVEL.GetCameraOffset().z / M2_LEVEL.GetCameraOffset().length();
 		const auto cos_of_player_to_camera_angle =
 			sqrtf(1.0f - sin_of_player_to_camera_angle * sin_of_player_to_camera_angle);
 

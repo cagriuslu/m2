@@ -8,7 +8,7 @@ using namespace m2;
 
 namespace {
 	std::optional<m2g::pb::SpriteType> SelectedSprite() {
-		if (const auto selections = M2_LEVEL.LeftHud()->FindWidget<widget::TextSelection>("SpriteTypeSelection")->GetSelectedOptions();
+		if (const auto selections = M2_LEVEL.GetLeftHud()->FindWidget<widget::TextSelection>("SpriteTypeSelection")->GetSelectedOptions();
 				not selections.empty()) {
 			return static_cast<m2g::pb::SpriteType>(I(selections[0]));
 		}
@@ -26,7 +26,7 @@ namespace {
 				.variant = widget::TextBlueprint{
 					.text = "Set Rect", .onAction = [](MAYBE const widget::Text& self) -> UiAction {
 						const auto selectedSprite = SelectedSprite();
-						if (const auto* selection = M2_LEVEL.PrimarySelection(); selection->IsComplete()) {
+						if (const auto* selection = M2_LEVEL.GetPrimarySelection(); selection->IsComplete()) {
 							std::get<bulk_sheet_editor::State>(M2_LEVEL.stateVariant).SetRect(*selectedSprite, *selection->IntegerSelectionRectM());
 							std::get<bulk_sheet_editor::State>(M2_LEVEL.stateVariant).LookUpAndStoreSpriteRect(*selectedSprite);
 						}

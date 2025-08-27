@@ -78,25 +78,25 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj) {
 		// Limit the player inside the level
 		const auto& dims = M2_GAME.Dimensions();
 		// If the map is zoomed out so much that the black space is showing on the left and the right
-		if (M2_LEVEL.BackgroundBoundary().w < dims.GameM().x) {
-			o.position.x = m2::F(M2_LEVEL.BackgroundBoundary().GetXCenter());
+		if (M2_LEVEL.GetBackgroundBoundary().w < dims.GameM().x) {
+			o.position.x = m2::F(M2_LEVEL.GetBackgroundBoundary().GetXCenter());
 		} else {
 			if (o.position.x < dims.GameM().x / 2.0f) {
 				o.position.x = dims.GameM().x / 2.0f; // Left
 			}
-			if (M2_LEVEL.BackgroundBoundary().GetX2() < o.position.x + dims.GameM().x / 2.0f) {
-				o.position.x = M2_LEVEL.BackgroundBoundary().GetX2() - dims.GameM().x / 2.0f; // Right
+			if (M2_LEVEL.GetBackgroundBoundary().GetX2() < o.position.x + dims.GameM().x / 2.0f) {
+				o.position.x = M2_LEVEL.GetBackgroundBoundary().GetX2() - dims.GameM().x / 2.0f; // Right
 			}
 		}
 		// If the map is zoomed out so much that the black space is showing on the top and the bottom
-		if (M2_LEVEL.BackgroundBoundary().h < dims.GameM().y) {
-			o.position.y = m2::F(M2_LEVEL.BackgroundBoundary().GetYCenter());
+		if (M2_LEVEL.GetBackgroundBoundary().h < dims.GameM().y) {
+			o.position.y = m2::F(M2_LEVEL.GetBackgroundBoundary().GetYCenter());
 		} else {
 			if (o.position.y < dims.GameM().y / 2.0f) {
 				o.position.y = dims.GameM().y / 2.0f; // Top
 			}
-			if (M2_LEVEL.BackgroundBoundary().GetY2() < o.position.y + dims.GameM().y / 2.0f) {
-				o.position.y = M2_LEVEL.BackgroundBoundary().GetY2() - dims.GameM().y / 2.0f; // Bottom
+			if (M2_LEVEL.GetBackgroundBoundary().GetY2() < o.position.y + dims.GameM().y / 2.0f) {
+				o.position.y = M2_LEVEL.GetBackgroundBoundary().GetY2() - dims.GameM().y / 2.0f; // Bottom
 			}
 		}
 

@@ -64,8 +64,8 @@ Id obj::CreateGod() {
 			if (M2_GAME.events.PopMouseButtonPress(MouseButton::SECONDARY)) {
 				HandleSecondaryButtonPress(mousePosition);
 			}
-			if (M2_GAME.events.PopMouseButtonRelease(MouseButton::PRIMARY) && M2_LEVEL.PrimarySelection() && M2_LEVEL.PrimarySelection()->IsComplete()) {
-				const auto [first, second] = *M2_LEVEL.PrimarySelection()->SelectionsM();
+			if (M2_GAME.events.PopMouseButtonRelease(MouseButton::PRIMARY) && M2_LEVEL.GetPrimarySelection() && M2_LEVEL.GetPrimarySelection()->IsComplete()) {
+				const auto [first, second] = *M2_LEVEL.GetPrimarySelection()->SelectionsM();
 				HandlePrimarySelectionComplete(first, second);
 			}
 		}

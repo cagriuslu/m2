@@ -90,14 +90,14 @@ void bulk_sheet_editor::State::SetRect(const m2g::pb::SpriteType sprite, const R
 		sprite_.mutable_regular()->mutable_rect()->set_w(rect.w);
 		sprite_.mutable_regular()->mutable_rect()->set_h(rect.h);
 	});
-	IF(M2_LEVEL.PrimarySelection())->Reset();
+	IF(M2_LEVEL.GetPrimarySelection())->Reset();
 }
 void bulk_sheet_editor::State::Reset(const m2g::pb::SpriteType sprite) {
 	sheet_editor::modify_sprite_in_sheet(_sprite_sheets_path, sprite, [&](pb::Sprite& sprite_) {
 		sprite_.mutable_regular()->clear_rect();
 		sprite_.mutable_regular()->clear_center_to_origin_vec_px();
 	});
-	IF(M2_LEVEL.PrimarySelection())->Reset();
+	IF(M2_LEVEL.GetPrimarySelection())->Reset();
 }
 
 void bulk_sheet_editor::State::Draw() const {
@@ -120,7 +120,7 @@ void bulk_sheet_editor::State::Draw() const {
 		Graphic::ColorRect(world_coordinates_m.Shift({-0.5f, -0.5f}), CONFIRMED_SELECTION_COLOR);
 	}
 	// Draw selection
-	if (const auto* selection = M2_LEVEL.PrimarySelection(); selection) {
+	if (const auto* selection = M2_LEVEL.GetPrimarySelection(); selection) {
 		if (const auto cellSelection = selection->CellSelectionRectM()) {
 			Graphic::ColorRect(*cellSelection, SELECTION_COLOR);
 		}

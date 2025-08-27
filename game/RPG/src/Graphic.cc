@@ -5,7 +5,7 @@ void DrawAddons(const m2::Graphic& gfx, float health) {
 		const auto& sprite = *std::get<const m2::Sprite*>(gfx.visual);
 
 		SDL_Rect dst_rect{};
-		if (m2::IsProjectionTypeParallel(M2_LEVEL.ProjectionType())) {
+		if (m2::IsProjectionTypeParallel(M2_LEVEL.GetProjectionType())) {
 			const auto src_rect = static_cast<SDL_Rect>(sprite.GetRect());
 			const auto screen_origin_to_sprite_center_px_vec = sprite.ScreenOriginToCenterVecOutpx(gfx.Owner().position);
 			dst_rect = SDL_Rect{

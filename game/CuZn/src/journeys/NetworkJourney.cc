@@ -270,7 +270,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::HandleResourceMouseClickSignal
 		// Check if location has a built factory
 		if (auto *factory = FindFactoryAtLocation(selected_location)) {
 			// Check if the location is one of the dimming exceptions
-			if (M2_LEVEL.DimmingExceptions()->contains(factory->GetId())) {
+			if (M2_LEVEL.GetDimmingExceptions()->contains(factory->GetId())) {
 				// Reserve resource
 				factory->GetCharacter().RemoveResource(unspecified_resource->resource_type, 1.0f);
 				unspecified_resource->reserved_object = factory;

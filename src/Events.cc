@@ -69,17 +69,17 @@ bool Events::Gather() {
 				++mouse_button_press_count;
 				++mouse_buttons_pressed[u(button_to_mouse_button(e.button.button))];
 				if (M2_GAME.HasLevel()) {
-					if (auto* primarySelection = M2_LEVEL.PrimarySelection();
+					if (auto* primarySelection = M2_LEVEL.GetPrimarySelection();
 						primarySelection && PeekMouseButtonPress(MouseButton::PRIMARY, primarySelection->ScreenBoundaryPx())) {
 						primarySelection->SetFirstAndClearSecondPositionM(M2_GAME.MousePositionWorldM());
-						if (auto* secondarySelection = M2_LEVEL.SecondarySelection()) {
+						if (auto* secondarySelection = M2_LEVEL.GetSecondarySelection()) {
 							secondarySelection->Reset();
 						}
 					}
-					if (auto* secondarySelection = M2_LEVEL.SecondarySelection();
+					if (auto* secondarySelection = M2_LEVEL.GetSecondarySelection();
 							secondarySelection && PeekMouseButtonPress(MouseButton::SECONDARY, secondarySelection->ScreenBoundaryPx())) {
 						secondarySelection->SetFirstAndClearSecondPositionM(M2_GAME.MousePositionWorldM());
-						if (auto* primarySelection = M2_LEVEL.PrimarySelection()) {
+						if (auto* primarySelection = M2_LEVEL.GetPrimarySelection()) {
 							primarySelection->Reset();
 						}
 					}
@@ -89,17 +89,17 @@ bool Events::Gather() {
 				++mouse_button_release_count;
 				++mouse_buttons_released[u(button_to_mouse_button(e.button.button))];
 				if (M2_GAME.HasLevel()) {
-					if (auto* primarySelection = M2_LEVEL.PrimarySelection();
+					if (auto* primarySelection = M2_LEVEL.GetPrimarySelection();
 						primarySelection && PeekMouseButtonRelease(MouseButton::PRIMARY, primarySelection->ScreenBoundaryPx())) {
 						primarySelection->SetSecondPositionIfFirstSetM(M2_GAME.MousePositionWorldM());
-						if (auto* secondarySelection = M2_LEVEL.SecondarySelection()) {
+						if (auto* secondarySelection = M2_LEVEL.GetSecondarySelection()) {
 							secondarySelection->Reset();
 						}
 					}
-					if (auto* secondarySelection = M2_LEVEL.SecondarySelection();
+					if (auto* secondarySelection = M2_LEVEL.GetSecondarySelection();
 							secondarySelection && PeekMouseButtonRelease(MouseButton::SECONDARY, secondarySelection->ScreenBoundaryPx())) {
 						secondarySelection->SetSecondPositionIfFirstSetM(M2_GAME.MousePositionWorldM());
-						if (auto* primarySelection = M2_LEVEL.PrimarySelection()) {
+						if (auto* primarySelection = M2_LEVEL.GetPrimarySelection()) {
 							primarySelection->Reset();
 						}
 					}

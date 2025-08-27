@@ -425,7 +425,7 @@ namespace {
 				.variant = TextBlueprint{
 					.text = "Copy",
 					.onAction = [](MAYBE const Text& self) -> UiAction {
-						if (const auto integerSelection = M2_LEVEL.PrimarySelection()->IntegerSelectionRectM()) {
+						if (const auto integerSelection = M2_LEVEL.GetPrimarySelection()->IntegerSelectionRectM()) {
 							std::get<level_editor::State>(M2_LEVEL.stateVariant).CopyBackground(*integerSelection);
 						}
 						return MakeContinueAction();
@@ -437,7 +437,7 @@ namespace {
 				.variant = TextBlueprint{
 					.text = "Paste",
 					.onAction = [](MAYBE const Text& self) -> UiAction {
-						if (const auto integerSelection = M2_LEVEL.PrimarySelection()->IntegerSelectionRectM()) {
+						if (const auto integerSelection = M2_LEVEL.GetPrimarySelection()->IntegerSelectionRectM()) {
 							std::get<level_editor::State>(M2_LEVEL.stateVariant).PasteBackground(integerSelection->GetTopLeftPoint());
 						}
 						return MakeContinueAction();
@@ -449,7 +449,7 @@ namespace {
 				.variant = TextBlueprint{
 					.text = "Erase",
 					.onAction = [](MAYBE const Text& self) -> UiAction {
-						if (const auto integerSelection = M2_LEVEL.PrimarySelection()->IntegerSelectionRectM()) {
+						if (const auto integerSelection = M2_LEVEL.GetPrimarySelection()->IntegerSelectionRectM()) {
 							std::get<level_editor::State>(M2_LEVEL.stateVariant).EraseBackground(*integerSelection);
 						}
 						return MakeContinueAction();
@@ -461,7 +461,7 @@ namespace {
 				.variant = TextBlueprint{
 					.text = "Fill",
 					.onAction = [](MAYBE const Text& self) -> UiAction {
-						if (const auto* selection = M2_LEVEL.PrimarySelection(); selection->IsComplete()) {
+						if (const auto* selection = M2_LEVEL.GetPrimarySelection(); selection->IsComplete()) {
 							const auto area = selection->IntegerSelectionRectM();
 							const auto action = UiPanel::create_and_run_blocking(&gFillDialog, RectF{0.2f, 0.1f, 0.6f, 0.8f});
 							(void) action.IfReturn<std::vector<m2g::pb::SpriteType>>([&](const auto& selectedSprites) {
@@ -527,8 +527,8 @@ namespace {
 						}
 						// Create ghost
 						if (const auto selections = self.GetSelectedOptions(); not selections.empty()) {
-							const auto snapToGrid = M2_LEVEL.LeftHud()->FindWidget<CheckboxWithText>("SnapToGridCheckbox")->GetState();
-							const auto splitCount = M2_LEVEL.LeftHud()->FindWidget<IntegerSelection>("CellSplitCount")->value();
+							const auto snapToGrid = M2_LEVEL.GetLeftHud()->FindWidget<CheckboxWithText>("SnapToGridCheckbox")->GetState();
+							const auto splitCount = M2_LEVEL.GetLeftHud()->FindWidget<IntegerSelection>("CellSplitCount")->value();
 							levelEditorState.ghostId = obj::CreateGhost(*M2_GAME.GetMainSpriteOfObject(static_cast<m2g::pb::ObjectType>(I(selections[0]))), snapToGrid ? splitCount : 0);
 						}
 						return MakeContinueAction();
@@ -614,7 +614,7 @@ namespace {
 				.variant = TextBlueprint{
 					.text = "Copy",
 					.onAction = [](MAYBE const Text& self) -> UiAction {
-						if (M2_LEVEL.PrimarySelection()->IsComplete()) {
+						if (M2_LEVEL.GetPrimarySelection()->IsComplete()) {
 							std::get<level_editor::State>(M2_LEVEL.stateVariant).CopyForeground();
 						}
 						return MakeContinueAction();
@@ -626,7 +626,7 @@ namespace {
 				.variant = TextBlueprint{
 					.text = "Paste",
 					.onAction = [](MAYBE const Text& self) -> UiAction {
-						if (M2_LEVEL.PrimarySelection()->IsComplete()) {
+						if (M2_LEVEL.GetPrimarySelection()->IsComplete()) {
 							std::get<level_editor::State>(M2_LEVEL.stateVariant).PasteForeground();
 						}
 						return MakeContinueAction();
@@ -638,7 +638,7 @@ namespace {
 				.variant = TextBlueprint{
 					.text = "Remove",
 					.onAction = [](MAYBE const Text& self) -> UiAction {
-						if (M2_LEVEL.PrimarySelection()->IsComplete()) {
+						if (M2_LEVEL.GetPrimarySelection()->IsComplete()) {
 							std::get<level_editor::State>(M2_LEVEL.stateVariant).RemoveForegroundObject();
 						}
 						return MakeContinueAction();
@@ -732,7 +732,7 @@ namespace {
 				.variant = TextBlueprint{
 					.text = "Store Point",
 					.onAction = [](const Text& self) -> UiAction {
-						if (const auto* selection = M2_LEVEL.SecondarySelection(); selection->IsComplete()) {
+						if (const auto* selection = M2_LEVEL.GetSecondarySelection(); selection->IsComplete()) {
 							const auto* fixtureSelectionWidget = self.Parent().FindWidget<TextSelection>("FixtureSelection");
 							if (const auto selectedIndexes = fixtureSelectionWidget->GetSelectedIndexes(); not selectedIndexes.empty()) {
 								const auto selectedIndex = selectedIndexes[0];
@@ -752,7 +752,7 @@ namespace {
 				.variant = TextBlueprint{
 					.text = "Store Arc",
 					.onAction = [](const Text& self) -> UiAction {
-						if (const auto* selection = M2_LEVEL.SecondarySelection(); selection->IsComplete()) {
+						if (const auto* selection = M2_LEVEL.GetSecondarySelection(); selection->IsComplete()) {
 							const auto point = selection->SelectionsM()->first;
 
 							const auto* fixtureSelectionWidget = self.Parent().FindWidget<TextSelection>("FixtureSelection");
@@ -906,7 +906,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
 								return;
 							}
 							M2_LEVEL.ReplaceRightHud(&gDrawFgRightHud, M2_GAME.Dimensions().RightHud());
-							M2_LEVEL.RightHud()->state = std::make_unique<DrawFgRightHudState>(typ);
+							M2_LEVEL.GetRightHud()->state = std::make_unique<DrawFgRightHudState>(typ);
 						});
 					return MakeContinueAction();
 				}
@@ -957,7 +957,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
 				.initial_state = false,
 				.onAction = [](const CheckboxWithText& self) {
 					// Press the cancel button if PlaceFgRightHud is active because the Ghost needs to be recreated
-					if (M2_LEVEL.RightHud()->Name() == "PlaceFgRightHud") {
+					if (M2_LEVEL.GetRightHud()->Name() == "PlaceFgRightHud") {
 						self.Parent().FindWidget<Text>("CancelButton")->trigger_action();
 					}
 					return MakeContinueAction();

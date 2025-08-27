@@ -11,7 +11,7 @@ namespace {
 		static m3::VecF prev_camera_offset;
 		static float sin{};
 
-		if (const auto camera_offset = M2_LEVEL.CameraOffset(); prev_camera_offset != camera_offset) {
+		if (const auto camera_offset = M2_LEVEL.GetCameraOffset(); prev_camera_offset != camera_offset) {
 			prev_camera_offset = camera_offset;
 
 			sin = camera_offset.z / camera_offset.length();
@@ -23,7 +23,7 @@ namespace {
 		static m3::VecF prev_camera_offset;
 		static float cos{};
 
-		if (const auto camera_offset = M2_LEVEL.CameraOffset(); prev_camera_offset != camera_offset) {
+		if (const auto camera_offset = M2_LEVEL.GetCameraOffset(); prev_camera_offset != camera_offset) {
 			prev_camera_offset = camera_offset;
 
 			cos = sqrtf(1.0f - camera_sin() * camera_sin());
@@ -51,7 +51,7 @@ m2::VecF m2::ScreenOriginToPositionVecPx(const VecF& position) {
 	return CameraToPositionVecPx(position) + VecF{M2_GAME.Dimensions().WindowDimensions().x / 2, M2_GAME.Dimensions().WindowDimensions().y / 2 };
 }
 m2::VecF m2::PixelToPositionVecM(const VecI& pixelPosition) {
-	if (M2_LEVEL.ProjectionType() != pb::PARALLEL) {
+	if (M2_LEVEL.GetProjectionType() != pb::PARALLEL) {
 		throw M2_ERROR("Unable to calculate pixel position for non-parallel projection");
 	}
 	const auto screenCenterToPixelPositionVectorInPixels =
@@ -64,7 +64,7 @@ m2::VecF m2::PixelToPositionVecM(const VecI& pixelPosition) {
 	return screenCenterToPixelPositionVectorInMeters + camera_position;
 }
 m2::RectF m2::ViewportM() {
-	if (M2_LEVEL.ProjectionType() != pb::PARALLEL) {
+	if (M2_LEVEL.GetProjectionType() != pb::PARALLEL) {
 		throw M2_ERROR("Unable to calculate viewport for non-parallel projection");
 	}
 	const auto top_left = PixelToPositionVecM(VecI{M2_GAME.Dimensions().Game().x, M2_GAME.Dimensions().Game().y});
@@ -75,7 +75,7 @@ m2::RectF m2::ViewportM() {
 m3::VecF m3::CameraPositionM() {
 	const auto* camera = M2_LEVEL.objects.Get(M2_LEVEL.cameraId);
 	const auto raw_camera_position = VecF{camera->position.x, camera->position.y, 0.0f};
-	const auto camera_position = raw_camera_position + M2_LEVEL.CameraOffset();
+	const auto camera_position = raw_camera_position + M2_LEVEL.GetCameraOffset();
 	return camera_position;
 }
 m3::VecF m3::FocusPositionM() {
@@ -87,11 +87,11 @@ float m3::VisibleWidthM() {
 	static auto prev_horizontal_fov = INFINITY;
 
 	static float visible_width{};
-	if (const auto camera_offset = M2_LEVEL.CameraOffset(); prev_camera_offset != camera_offset || prev_horizontal_fov != M2_LEVEL.HorizontalFov()) {
+	if (const auto camera_offset = M2_LEVEL.GetCameraOffset(); prev_camera_offset != camera_offset || prev_horizontal_fov != M2_LEVEL.GetHorizontalFov()) {
 		prev_camera_offset = camera_offset;
-		prev_horizontal_fov = M2_LEVEL.HorizontalFov();
+		prev_horizontal_fov = M2_LEVEL.GetHorizontalFov();
 
-		const auto tan_of_half_horizontal_fov = tanf(m2::ToRadians(M2_LEVEL.HorizontalFov()) / 2.0f);
+		const auto tan_of_half_horizontal_fov = tanf(m2::ToRadians(M2_LEVEL.GetHorizontalFov()) / 2.0f);
 		visible_width = 2 * camera_offset.length() * tan_of_half_horizontal_fov;
 	}
 	return visible_width;
@@ -130,7 +130,7 @@ std::optional<m2::VecF> m3::FocusToProjectionInCameraPlaneCoordinatesM(const Vec
 	}
 
 	float horizontal_projection, vertical_projection;
-	if (M2_LEVEL.ProjectionType() == m2::pb::PERSPECTIVE_YZ) {
+	if (M2_LEVEL.GetProjectionType() == m2::pb::PERSPECTIVE_YZ) {
 		static const auto unit_vector_along_x = VecF{1.0f, 0.0f, 0.0f};
 		horizontal_projection = focus_to_projection->dot(unit_vector_along_x);
 		const auto projection_x = VecF{horizontal_projection, 0.0f, 0.0f};
@@ -141,7 +141,7 @@ std::optional<m2::VecF> m3::FocusToProjectionInCameraPlaneCoordinatesM(const Vec
 		const auto projection_y_length = projection_y.length();
 		const auto projection_y_sign = 0 <= projection_y.y ? 1.0f : -1.0f;
 		vertical_projection = projection_y_length * projection_y_sign;
-	} else if (M2_LEVEL.ProjectionType() == m2::pb::PERSPECTIVE_XYZ) {
+	} else if (M2_LEVEL.GetProjectionType() == m2::pb::PERSPECTIVE_XYZ) {
 		static const auto horizontal_unit_vector = VecF{m2::SQROOT_2, -m2::SQROOT_2, 0.0f};
 		horizontal_projection = focus_to_projection->dot(horizontal_unit_vector);
 
@@ -184,7 +184,7 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 
 		// Check if foreground or background
 		const bool is_foreground = M2_LEVEL.fgGraphics.GetId(&gfx);
-		const auto projector = IsProjectionTypePerspective(M2_LEVEL.ProjectionType())
+		const auto projector = IsProjectionTypePerspective(M2_LEVEL.GetProjectionType())
 				? &Sprite::DrawIn3dWorld
 				: &Sprite::DrawIn2dWorld;
 		const auto spriteDrawer = [&](const bool foregroundCompanion) -> void {
@@ -218,7 +218,7 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 		}
 		// Draw text label
 		const bool is_foreground = M2_LEVEL.fgGraphics.GetId(&gfx);
-		const auto projector = IsProjectionTypePerspective(M2_LEVEL.ProjectionType())
+		const auto projector = IsProjectionTypePerspective(M2_LEVEL.GetProjectionType())
 				? &DrawTextLabelIn3dWorld
 				: &DrawTextLabelIn2dWorld;
 		projector(textLabel, gfx.textLabelRect, gfx.Owner().position, gfx.Owner().orientation, is_foreground, gfx.z);
@@ -292,7 +292,7 @@ void m2::Graphic::DrawCross(const VecF& worldPosition, const float radiusM, cons
 }
 void m2::Graphic::DrawLine(const VecF& world_position_1, const VecF& world_position_2, SDL_Color color) {
 	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
-	if (IsProjectionTypeParallel(M2_LEVEL.ProjectionType())) {
+	if (IsProjectionTypeParallel(M2_LEVEL.GetProjectionType())) {
 		const auto p1 = static_cast<VecI>(ScreenOriginToPositionVecPx(world_position_1));
 		const auto p2 = static_cast<VecI>(ScreenOriginToPositionVecPx(world_position_2));
 		SDL_RenderDrawLine(M2_GAME.renderer, p1.x, p1.y, p2.x, p2.y);
@@ -343,7 +343,7 @@ void m2::Graphic::DrawGridLines(const float startFrom, const float frequency, co
 
 bool m2::Graphic::DimRenderingIfNecessary(Id object_id, SDL_Texture* texture) {
 	// Dim the sprite if dimming mode is enabled
-	if (const auto& DimmingExceptions = M2_LEVEL.DimmingExceptions()) {
+	if (const auto& DimmingExceptions = M2_LEVEL.GetDimmingExceptions()) {
 		if (not DimmingExceptions->contains(object_id)) {
 			static uint8_t mod = static_cast<uint8_t>(RoundU(M2G_PROXY.dimming_factor * F(255)));
 			SDL_SetTextureColorMod(texture, mod, mod, mod);

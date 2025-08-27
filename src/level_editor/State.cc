@@ -24,10 +24,10 @@ m2::level_editor::State::State() : _persistentSpriteSheets(m2MoveOrThrowError(sh
 
 m2::BackgroundDrawLayer m2::level_editor::State::GetSelectedBackgroundLayer() const {
 	return static_cast<BackgroundDrawLayer>(
-			I(M2_LEVEL.LeftHud()->FindWidget<widget::TextSelection>("BackgroundLayerSelection")->GetSelectedOptions()[0]));
+			I(M2_LEVEL.GetLeftHud()->FindWidget<widget::TextSelection>("BackgroundLayerSelection")->GetSelectedOptions()[0]));
 }
 bool m2::level_editor::State::GetSnapToGridStatus() const {
-	return M2_LEVEL.LeftHud()->FindWidget<widget::CheckboxWithText>("SnapToGridCheckbox")->GetState();
+	return M2_LEVEL.GetLeftHud()->FindWidget<widget::CheckboxWithText>("SnapToGridCheckbox")->GetState();
 }
 std::vector<m2::level_editor::State::ForegroundObjectPlaceholderMap::const_iterator> m2::level_editor::State::GetForegroundObjectsOfType(m2g::pb::ObjectType objType) const {
 	std::vector<ForegroundObjectPlaceholderMap::const_iterator> its;
@@ -62,7 +62,7 @@ void m2::level_editor::State::LoadLevelBlueprint(const pb::Level& lb) {
 }
 
 void m2::level_editor::State::HandleMousePrimaryButton(const VecF& position) {
-	if (M2_LEVEL.RightHud() && M2_LEVEL.RightHud()->Name() == "PlaceFgRightHud") {
+	if (M2_LEVEL.GetRightHud() && M2_LEVEL.GetRightHud()->Name() == "PlaceFgRightHud") {
 		if (const auto sampledObject = ApplySampling(position); sampledObject != _foregroundObjectPlaceholders.end()) {
 			if (not std::get<pb::LevelObject>(sampledObject->second).is_locked()) {
 				// Remove the original object
@@ -70,34 +70,34 @@ void m2::level_editor::State::HandleMousePrimaryButton(const VecF& position) {
 				M2_DEFER(CreateObjectDeleter(id));
 				_foregroundObjectPlaceholders.erase(sampledObject);
 				// Store the indicator that an object is being moved
-				auto* primarySelection = M2_LEVEL.PrimarySelection();
+				auto* primarySelection = M2_LEVEL.GetPrimarySelection();
 				primarySelection->state = std::make_unique<MovingAnObjectIndicator>();
 			}
 		}
-	} else if (M2_LEVEL.RightHud() && M2_LEVEL.RightHud()->Name() == "SampleFgRightHud") {
+	} else if (M2_LEVEL.GetRightHud() && M2_LEVEL.GetRightHud()->Name() == "SampleFgRightHud") {
 		// Applying sampling without removing the original object
 		ApplySampling(position);
 	}
 }
 void m2::level_editor::State::HandleMouseSecondaryButton(const VecF& position) {
-	if (M2_LEVEL.RightHud()->Name() == "PaintBgRightHud") {
+	if (M2_LEVEL.GetRightHud()->Name() == "PaintBgRightHud") {
 		// Background operations are supported only for the positive quadrant
 		if (not position.RoundI().IsNegative()) {
-			if (const auto selections = M2_LEVEL.RightHud()->FindWidget<widget::TextSelection>("SpriteTypeSelection")->GetSelectedOptions();
+			if (const auto selections = M2_LEVEL.GetRightHud()->FindWidget<widget::TextSelection>("SpriteTypeSelection")->GetSelectedOptions();
 				not selections.empty()) {
 				const auto selectedSpriteType = static_cast<m2g::pb::SpriteType>(I(selections[0]));
 				PaintBackground(VecI{position.RoundI().x, position.RoundI().y}, selectedSpriteType);
 			}
 		}
-	} else if (M2_LEVEL.RightHud()->Name() == "SampleBgRightHud") {
+	} else if (M2_LEVEL.GetRightHud()->Name() == "SampleBgRightHud") {
 		// Background operations are supported only for the positive quadrant
 		if (not position.RoundI().IsNegative()) {
 			if (const auto it = _backgroundSpritePlaceholders[I(GetSelectedBackgroundLayer())].find(position.RoundI());
 				it != _backgroundSpritePlaceholders[I(GetSelectedBackgroundLayer())].end()) {
 				// Find and press the Paint button
-				M2_LEVEL.LeftHud()->FindWidget<widget::Text>("PaintBgButton")->trigger_action();
+				M2_LEVEL.GetLeftHud()->FindWidget<widget::Text>("PaintBgButton")->trigger_action();
 				// Find sprite type selection and set it
-				auto* spriteTypeSelection = M2_LEVEL.RightHud()->FindWidget<widget::TextSelection>("SpriteTypeSelection");
+				auto* spriteTypeSelection = M2_LEVEL.GetRightHud()->FindWidget<widget::TextSelection>("SpriteTypeSelection");
 				// Find the index of the option that corresponds to the sprite
 				const auto& options = spriteTypeSelection->GetOptions();
 				for (size_t i = 0; i < options.size(); ++i) {
@@ -108,31 +108,31 @@ void m2::level_editor::State::HandleMouseSecondaryButton(const VecF& position) {
 				}
 			}
 		}
-	} else if (M2_LEVEL.RightHud()->Name() == "PlaceFgRightHud") {
-		if (const auto selections = M2_LEVEL.RightHud()->FindWidget<widget::TextSelection>("ObjectTypeSelection")->GetSelectedOptions(); not selections.empty()) {
+	} else if (M2_LEVEL.GetRightHud()->Name() == "PlaceFgRightHud") {
+		if (const auto selections = M2_LEVEL.GetRightHud()->FindWidget<widget::TextSelection>("ObjectTypeSelection")->GetSelectedOptions(); not selections.empty()) {
 			const auto selectedObjectType = static_cast<m2g::pb::ObjectType>(I(selections[0]));
-			const auto selectedGroupType = static_cast<m2g::pb::GroupType>(I(M2_LEVEL.RightHud()->FindWidget<widget::TextSelection>("GroupTypeSelection")->GetSelectedOptions()[0]));
-			const auto selectedGroupInstance = M2_LEVEL.RightHud()->FindWidget<widget::IntegerSelection>("GroupInstanceSelection")->value();
-			const auto orientation = ToRadians(M2_LEVEL.RightHud()->FindWidget<widget::IntegerSelection>("OrientationInput")->value());
-			const auto snapToGrid = M2_LEVEL.LeftHud()->FindWidget<widget::CheckboxWithText>("SnapToGridCheckbox")->GetState();
-			const auto splitCount = M2_LEVEL.LeftHud()->FindWidget<widget::IntegerSelection>("CellSplitCount")->value();
+			const auto selectedGroupType = static_cast<m2g::pb::GroupType>(I(M2_LEVEL.GetRightHud()->FindWidget<widget::TextSelection>("GroupTypeSelection")->GetSelectedOptions()[0]));
+			const auto selectedGroupInstance = M2_LEVEL.GetRightHud()->FindWidget<widget::IntegerSelection>("GroupInstanceSelection")->value();
+			const auto orientation = ToRadians(M2_LEVEL.GetRightHud()->FindWidget<widget::IntegerSelection>("OrientationInput")->value());
+			const auto snapToGrid = M2_LEVEL.GetLeftHud()->FindWidget<widget::CheckboxWithText>("SnapToGridCheckbox")->GetState();
+			const auto splitCount = M2_LEVEL.GetLeftHud()->FindWidget<widget::IntegerSelection>("CellSplitCount")->value();
 			const auto placePosition = snapToGrid ? M2_GAME.MousePositionWorldM().RoundToBin(splitCount) : position;
 			PlaceForeground(placePosition, orientation, selectedObjectType, selectedGroupType, selectedGroupInstance);
 		}
 	}
 }
 void m2::level_editor::State::HandleMousePrimarySelectionComplete(const VecF& firstPosition, const VecF& secondPosition) {
-	if (M2_LEVEL.RightHud() && M2_LEVEL.RightHud()->Name() == "PlaceFgRightHud" && M2_LEVEL.PrimarySelection()->state) {
-		if (dynamic_cast<MovingAnObjectIndicator*>(M2_LEVEL.PrimarySelection()->state.get())) {
+	if (M2_LEVEL.GetRightHud() && M2_LEVEL.GetRightHud()->Name() == "PlaceFgRightHud" && M2_LEVEL.GetPrimarySelection()->state) {
+		if (dynamic_cast<MovingAnObjectIndicator*>(M2_LEVEL.GetPrimarySelection()->state.get())) {
 			// An object was picked up from the ground. Place it.
 			HandleMouseSecondaryButton(secondPosition);
 			// No longer moving an object
-			M2_LEVEL.PrimarySelection()->state.reset();
+			M2_LEVEL.GetPrimarySelection()->state.reset();
 		}
 	}
-	if (M2_LEVEL.RightHud() && M2_LEVEL.RightHud()->Name() == "DrawFgRightHud" && M2_LEVEL.RightHud()->state) {
-		if (const auto* drawFgState = dynamic_cast<DrawFgRightHudState*>(M2_LEVEL.RightHud()->state.get())) {
-			const auto* fixtureSelectionWidget = M2_LEVEL.RightHud()->FindWidget<widget::TextSelection>("FixtureSelection");
+	if (M2_LEVEL.GetRightHud() && M2_LEVEL.GetRightHud()->Name() == "DrawFgRightHud" && M2_LEVEL.GetRightHud()->state) {
+		if (const auto* drawFgState = dynamic_cast<DrawFgRightHudState*>(M2_LEVEL.GetRightHud()->state.get())) {
+			const auto* fixtureSelectionWidget = M2_LEVEL.GetRightHud()->FindWidget<widget::TextSelection>("FixtureSelection");
 			if (const auto selectedIndexes = fixtureSelectionWidget->GetSelectedIndexes(); not selectedIndexes.empty()) {
 				const auto selectedIndex = selectedIndexes[0];
 				if (const auto fixtureType = GetSpriteFixtureTypes(drawFgState->SelectedObjectMainSpriteType())[selectedIndex];
@@ -147,7 +147,7 @@ void m2::level_editor::State::HandleMousePrimarySelectionComplete(const VecF& fi
 						return;
 					}
 
-					const auto splitCount = M2_LEVEL.LeftHud()->FindWidget<widget::IntegerSelection>("CellSplitCount")->value();
+					const auto splitCount = M2_LEVEL.GetLeftHud()->FindWidget<widget::IntegerSelection>("CellSplitCount")->value();
 					const auto binnedSecondPositionPx = secondPosition.RoundToBin(splitCount);
 					const auto pointOffset = WorldCoordinateToSpriteCoordinate(fgObjectIt, binnedSecondPositionPx);
 					_persistentSpriteSheets->ModifySprite(drawFgState->SelectedObjectMainSpriteType(), [&](pb::Sprite& sprite) {
@@ -246,19 +246,19 @@ void m2::level_editor::State::RemoveFixture(const m2g::pb::SpriteType st, const 
 	_persistentSpriteSheets->RemoveFixtureFromSprite(st, selectedIndex);
 }
 void m2::level_editor::State::StoreWorldPoint(const int selectedIndex, const VecF& pointM) {
-	const auto splitCount = M2_LEVEL.LeftHud()->FindWidget<widget::IntegerSelection>("CellSplitCount")->value();
+	const auto splitCount = M2_LEVEL.GetLeftHud()->FindWidget<widget::IntegerSelection>("CellSplitCount")->value();
 	const auto binnedPointM = pointM.RoundToBin(splitCount);
 
-	const auto& state = dynamic_cast<DrawFgRightHudState&>(*M2_LEVEL.RightHud()->state);
+	const auto& state = dynamic_cast<DrawFgRightHudState&>(*M2_LEVEL.GetRightHud()->state);
 	const auto fgObjectIt = GetForegroundObjectsOfType(state.SelectedObjectType())[0];
 	const auto pointOffset = WorldCoordinateToSpriteCoordinate(fgObjectIt, binnedPointM);
 	StoreFixturePoint(state.SelectedObjectMainSpriteType(), selectedIndex, pointOffset);
 }
 void m2::level_editor::State::StoreArc(int selectedIndex, const VecF& pointM, const ArcDescription& arc) {
-	const auto splitCount = M2_LEVEL.LeftHud()->FindWidget<widget::IntegerSelection>("CellSplitCount")->value();
+	const auto splitCount = M2_LEVEL.GetLeftHud()->FindWidget<widget::IntegerSelection>("CellSplitCount")->value();
 	const auto binnedPointM = pointM.RoundToBin(splitCount);
 
-	auto& state = dynamic_cast<DrawFgRightHudState&>(*M2_LEVEL.RightHud()->state);
+	auto& state = dynamic_cast<DrawFgRightHudState&>(*M2_LEVEL.GetRightHud()->state);
 	const auto fgObjectIt = GetForegroundObjectsOfType(state.SelectedObjectType())[0];
 	const auto pointOffset = WorldCoordinateToSpriteCoordinate(fgObjectIt, binnedPointM);
 
@@ -274,7 +274,7 @@ void m2::level_editor::State::StoreArc(int selectedIndex, const VecF& pointM, co
 	StoreArc(selectedIndex, prevPointOffset, pointOffset, angleInRads, arc.pieceCount, arc.drawTowardsRight);
 }
 void m2::level_editor::State::StoreTangent(const int selectedIndex, const TangentDescription& tangent) {
-	const auto& state = dynamic_cast<DrawFgRightHudState&>(*M2_LEVEL.RightHud()->state);
+	const auto& state = dynamic_cast<DrawFgRightHudState&>(*M2_LEVEL.GetRightHud()->state);
 	const auto& spritePb = GetSpritePb(state.SelectedObjectMainSpriteType());
 	const auto& chain = spritePb.regular().fixtures(selectedIndex).chain();
 
@@ -331,7 +331,7 @@ void m2::level_editor::State::StoreTangent(const int selectedIndex, const Tangen
 	}
 }
 void m2::level_editor::State::UndoPoint(const int selectedIndex) {
-	const auto& state = dynamic_cast<DrawFgRightHudState&>(*M2_LEVEL.RightHud()->state);
+	const auto& state = dynamic_cast<DrawFgRightHudState&>(*M2_LEVEL.GetRightHud()->state);
 	_persistentSpriteSheets->ModifySprite(state.SelectedObjectMainSpriteType(), [&](pb::Sprite& sprite) {
 		if (auto* fixture = sprite.mutable_regular()->mutable_fixtures(selectedIndex); fixture->has_chain()) {
 			if (auto* chain = fixture->mutable_chain(); chain->points_size()) {
@@ -343,10 +343,10 @@ void m2::level_editor::State::UndoPoint(const int selectedIndex) {
 }
 
 void m2::level_editor::State::Draw() const {
-	const auto splitCount = M2_LEVEL.LeftHud()->FindWidget<widget::IntegerSelection>("CellSplitCount")->value();
+	const auto splitCount = M2_LEVEL.GetLeftHud()->FindWidget<widget::IntegerSelection>("CellSplitCount")->value();
 
 	const auto drawGridSelectionIfActive = [] {
-		if (const auto* selection = M2_LEVEL.PrimarySelection()) {
+		if (const auto* selection = M2_LEVEL.GetPrimarySelection()) {
 			if (const auto integerSelection = selection->IntegerSelectionRectM()) {
 				integerSelection->ForEachCell([=](const VecI& cell) {
 					Graphic::ColorCell(cell, SELECTION_COLOR);
@@ -382,34 +382,34 @@ void m2::level_editor::State::Draw() const {
 		}
 	};
 
-	if (M2_LEVEL.RightHud()->Name() == "SelectBgRightHud") {
+	if (M2_LEVEL.GetRightHud()->Name() == "SelectBgRightHud") {
 		drawGridSelectionIfActive();
-	} else if (M2_LEVEL.RightHud()->Name() == "SelectFgRightHud") {
+	} else if (M2_LEVEL.GetRightHud()->Name() == "SelectFgRightHud") {
 		if (GetSnapToGridStatus()) {
 			drawGridSelectionIfActive();
 		} else {
-			if (const auto* selection = M2_LEVEL.PrimarySelection()) {
+			if (const auto* selection = M2_LEVEL.GetPrimarySelection()) {
 				if (const auto rawSelection = selection->SelectionRectM()) {
 					Graphic::ColorRect(*rawSelection, SELECTION_COLOR);
 				}
 			}
 		}
-	} else if (M2_LEVEL.RightHud()->Name() == "DrawFgRightHud") {
-		const auto* fixtureSelectionWidget = M2_LEVEL.RightHud()->FindWidget<widget::TextSelection>("FixtureSelection");
+	} else if (M2_LEVEL.GetRightHud()->Name() == "DrawFgRightHud") {
+		const auto* fixtureSelectionWidget = M2_LEVEL.GetRightHud()->FindWidget<widget::TextSelection>("FixtureSelection");
 		const auto selectedIndexes = fixtureSelectionWidget->GetSelectedIndexes();
 		const auto selectedFixtureIndex = selectedIndexes.empty() ? std::optional<int>{} : selectedIndexes[0];
 
 		// Draw selection (as cross)
-		if (const auto selections = M2_LEVEL.SecondarySelection()->SelectionsM()) {
+		if (const auto selections = M2_LEVEL.GetSecondarySelection()->SelectionsM()) {
 			const auto point = selections->first.RoundToBin(splitCount);
 			Graphic::DrawCross(point, sheet_editor::CROSS_COLOR);
 		}
 		// Draw already existing fixtures
-		const auto& state = dynamic_cast<DrawFgRightHudState&>(*M2_LEVEL.RightHud()->state);
+		const auto& state = dynamic_cast<DrawFgRightHudState&>(*M2_LEVEL.GetRightHud()->state);
 		const auto ppm = std::get<Sprite>(M2_GAME.GetSpriteOrTextLabel(state.SelectedObjectMainSpriteType())).Ppm();
 		const auto overridePointPosition = [&]() -> std::optional<std::pair<int,VecF>> {
 			// Draw drag-and-drop
-			if (const auto selection = M2_LEVEL.PrimarySelection()->SelectionsM(); selection && not M2_LEVEL.PrimarySelection()->IsComplete()) {
+			if (const auto selection = M2_LEVEL.GetPrimarySelection()->SelectionsM(); selection && not M2_LEVEL.GetPrimarySelection()->IsComplete()) {
 				if (selectedFixtureIndex) {
 					if (const auto fixtureType = GetSpriteFixtureTypes(state.SelectedObjectMainSpriteType())[*selectedFixtureIndex];
 							fixtureType == pb::Fixture::FixtureTypeCase::kChain) {
@@ -441,7 +441,7 @@ void m2::level_editor::State::Draw() const {
 	}
 
 	// Draw grid if enabled
-	if (M2_LEVEL.LeftHud()->FindWidget<widget::CheckboxWithText>("ShowGridCheckbox")->GetState()) {
+	if (M2_LEVEL.GetLeftHud()->FindWidget<widget::CheckboxWithText>("ShowGridCheckbox")->GetState()) {
 		Graphic::DrawGridLines(-0.5f, 1.0f, {127, 127, 255, 80});
 		if (splitCount != 1) {
 			Graphic::DrawGridLines(-0.5f, 1.0f / F(splitCount), {127, 127, 255, 60});
@@ -454,7 +454,7 @@ void m2::level_editor::State::Draw() const {
 m2::void_expected m2::level_editor::State::Save() {
 	pb::Level level;
 	// Start from the current level
-	if (const auto lb = M2_LEVEL.LevelBlueprint()) {
+	if (const auto lb = M2_LEVEL.GetLevelBlueprint()) {
 		level = *lb;
 	}
 
@@ -474,7 +474,7 @@ m2::void_expected m2::level_editor::State::Save() {
 	}
 
 	// Save level
-	const auto levelSaveSuccess = pb::message_to_json_file(level, *M2_LEVEL.Path());
+	const auto levelSaveSuccess = pb::message_to_json_file(level, *M2_LEVEL.GetLevelFilePath());
 	m2ReflectUnexpected(levelSaveSuccess);
 
 	// Save sprite sheet
@@ -512,20 +512,20 @@ m2::level_editor::State::ForegroundObjectPlaceholderMap::iterator m2::level_edit
 	}
 	if (foundIt != _foregroundObjectPlaceholders.end()) {
 		// Find and press the Place button
-		if (not M2_LEVEL.RightHud() || M2_LEVEL.RightHud()->Name() != "PlaceFgRightHud") {
+		if (not M2_LEVEL.GetRightHud() || M2_LEVEL.GetRightHud()->Name() != "PlaceFgRightHud") {
 			// Press the button only if not already pressed, otherwise the selection is recreated.
-			M2_LEVEL.LeftHud()->FindWidget<widget::Text>("PlaceFgButton")->trigger_action();
+			M2_LEVEL.GetLeftHud()->FindWidget<widget::Text>("PlaceFgButton")->trigger_action();
 		}
 
 		// Find object properties and set it
 
 		const auto orientationDegreesUnbounded = RoundI(ToDegrees(std::get<pb::LevelObject>(foundIt->second).orientation()));
 		const auto orientationDegrees = ((orientationDegreesUnbounded % 360) + 360) % 360;
-		auto* orientationInput = M2_LEVEL.RightHud()->FindWidget<widget::IntegerSelection>("OrientationInput");
+		auto* orientationInput = M2_LEVEL.GetRightHud()->FindWidget<widget::IntegerSelection>("OrientationInput");
 		orientationInput->SetValue(orientationDegrees);
 
 		const auto objectType = std::get<pb::LevelObject>(foundIt->second).type();
-		auto* objectTypeSelection = M2_LEVEL.RightHud()->FindWidget<widget::TextSelection>("ObjectTypeSelection");
+		auto* objectTypeSelection = M2_LEVEL.GetRightHud()->FindWidget<widget::TextSelection>("ObjectTypeSelection");
 		// Find the index of the option that corresponds to the object type
 		const auto& objectTypeOptions = objectTypeSelection->GetOptions();
 		for (size_t i = 0; i < objectTypeOptions.size(); ++i) {
@@ -536,7 +536,7 @@ m2::level_editor::State::ForegroundObjectPlaceholderMap::iterator m2::level_edit
 		}
 
 		const auto groupType = std::get<pb::LevelObject>(foundIt->second).group().type();
-		auto* groupTypeSelection = M2_LEVEL.RightHud()->FindWidget<widget::TextSelection>("GroupTypeSelection");
+		auto* groupTypeSelection = M2_LEVEL.GetRightHud()->FindWidget<widget::TextSelection>("GroupTypeSelection");
 		// Find the index of the option that corresponds to the group type
 		const auto& groupTypeOptions = groupTypeSelection->GetOptions();
 		for (size_t i = 0; i < groupTypeOptions.size(); ++i) {
@@ -547,13 +547,13 @@ m2::level_editor::State::ForegroundObjectPlaceholderMap::iterator m2::level_edit
 		}
 
 		const auto groupInstance = std::get<pb::LevelObject>(foundIt->second).group().instance();
-		auto* groupInstanceSelection = M2_LEVEL.RightHud()->FindWidget<widget::IntegerSelection>("GroupInstanceSelection");
+		auto* groupInstanceSelection = M2_LEVEL.GetRightHud()->FindWidget<widget::IntegerSelection>("GroupInstanceSelection");
 		groupInstanceSelection->SetValue(groupInstance);
 	}
 	return foundIt;
 }
 m2::RectF m2::level_editor::State::ForegroundSelectionArea() const {
-	const auto* selection = M2_LEVEL.PrimarySelection();
+	const auto* selection = M2_LEVEL.GetPrimarySelection();
 	if (GetSnapToGridStatus()) {
 		return *selection->CellSelectionRectM();
 	} else {
@@ -583,7 +583,7 @@ void m2::level_editor::State::StoreFixturePoint(const m2g::pb::SpriteType st, co
 	});
 }
 void m2::level_editor::State::StoreArc(const int selectedIndex, const VecF& fromPointOffset, const VecF& toPointOffset, const float angleInRads, const int pieceCount, const bool drawTowardsRight) {
-	const auto& state = dynamic_cast<DrawFgRightHudState&>(*M2_LEVEL.RightHud()->state);
+	const auto& state = dynamic_cast<DrawFgRightHudState&>(*M2_LEVEL.GetRightHud()->state);
 	const auto& spritePb = GetSpritePb(state.SelectedObjectMainSpriteType());
 	const auto& chain = spritePb.regular().fixtures(selectedIndex).chain();
 	if (chain.points_size() == 0) {

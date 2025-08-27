@@ -51,7 +51,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 
 	auto& chr = obj.AddFullCharacter();
 	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_DASH_2S));
-	if (M2_LEVEL.Identifier() != "MeleeTutorialClosed") {
+	if (M2_LEVEL.GetLevelIdentifier() != "MeleeTutorialClosed") {
 		// 4th level is melee tutorial
 		chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_GUN));
 	}

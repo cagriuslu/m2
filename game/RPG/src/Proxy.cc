@@ -189,7 +189,7 @@ const m2::UiPanelBlueprint* m2g::Proxy::generate_right_hud() {
 	    .variant = m2::widget::ProgressBarBlueprint{
 	        .bar_color = SDL_Color{0, 127, 255, 255},
 	        .onUpdate = [](m2::widget::ProgressBar& self) {
-		        if (const auto *player = M2_LEVEL.Player(); player) {
+		        if (const auto *player = M2_LEVEL.GetPlayer(); player) {
 			        if (const auto ammo = player->GetCharacter().GetResource(pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO); ammo != 0.0f) {
 				        if (const auto weapon = player->GetCharacter().FindItems(pb::ITEM_CATEGORY_SPECIAL_RANGED_WEAPON); weapon) {
 					        self.SetProgress(ammo / weapon->GetAcquireBenefit(pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO));
@@ -205,8 +205,8 @@ const m2::UiPanelBlueprint* m2g::Proxy::generate_right_hud() {
 }
 
 void m2g::Proxy::set_ammo_display_state(bool enabled) {
-	M2_LEVEL.RightHud()->widgets[0]->enabled = enabled;
-	M2_LEVEL.RightHud()->widgets[1]->enabled = enabled;
+	M2_LEVEL.GetRightHud()->widgets[0]->enabled = enabled;
+	M2_LEVEL.GetRightHud()->widgets[1]->enabled = enabled;
 }
 
 const m2::UiPanelBlueprint* m2g::Proxy::you_died_menu() {
@@ -217,7 +217,7 @@ const m2::UiPanelBlueprint* m2g::Proxy::you_died_menu() {
 	    .background_color = SDL_Color{127, 0, 0, 127}
 	};
 
-	auto lb_path = M2_LEVEL.Path();
+	auto lb_path = M2_LEVEL.GetLevelFilePath();
 	if (lb_path) {
 		_you_died_menu.widgets.emplace_back(m2::UiWidgetBlueprint{
 		    .x = 70, .y = 70, .w = 20, .h = 6,
@@ -225,7 +225,7 @@ const m2::UiPanelBlueprint* m2g::Proxy::you_died_menu() {
 		        .text = "Retry",
 		        .onAction = [=, this](MAYBE const m2::widget::Text &self) -> m2::UiAction {
 			        alive_enemy_count = 0;
-			        m2SucceedOrThrowError(M2_GAME.LoadSinglePlayer(*lb_path, M2_LEVEL.Name()));
+			        m2SucceedOrThrowError(M2_GAME.LoadSinglePlayer(*lb_path, M2_LEVEL.GetName()));
 			        return m2::MakeReturnAction();
 		        }
 		    }

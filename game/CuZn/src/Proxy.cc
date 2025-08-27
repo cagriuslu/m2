@@ -295,7 +295,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 void m2g::Proxy::handle_server_command(const pb::TurnBasedServerCommand& server_command) {
 	if (server_command.has_action_failure()) {
 		// If we have received this command, we must be showing the "WaitingForServerUpdate" screen, waiting for a response from the server
-		if (const auto* semiBlockingUiPanel = M2_LEVEL.SemiBlockingUiPanel(); semiBlockingUiPanel && semiBlockingUiPanel->Name() == "WaitingForServerUpdate") {
+		if (const auto* semiBlockingUiPanel = M2_LEVEL.GetSemiBlockingUiPanel(); semiBlockingUiPanel && semiBlockingUiPanel->Name() == "WaitingForServerUpdate") {
 			M2_LEVEL.DismissSemiBlockingUiPanel();
 			// Show failure screen
 			auto blueprint = UiPanelBlueprint{
@@ -348,7 +348,7 @@ void m2g::Proxy::handle_server_command(const pb::TurnBasedServerCommand& server_
 
 void m2g::Proxy::post_server_update(m2::network::SequenceNo, const bool shutdown) {
 	// If we have received a server update, we might have taken an action and showing the "WaitingForServerUpdate" screen.
-	if (const auto* semiBlockingUiPanel = M2_LEVEL.SemiBlockingUiPanel(); semiBlockingUiPanel && semiBlockingUiPanel->Name() == "WaitingForServerUpdate") {
+	if (const auto* semiBlockingUiPanel = M2_LEVEL.GetSemiBlockingUiPanel(); semiBlockingUiPanel && semiBlockingUiPanel->Name() == "WaitingForServerUpdate") {
 		M2_LEVEL.DismissSemiBlockingUiPanel();
 	} else {
 		// Don't remove other type of screen. TurnBasedServerUpdate is received when others take an action too
@@ -573,13 +573,13 @@ namespace {
 
 void m2g::Proxy::enable_action_buttons() {
 	for (const auto& button_name : action_button_names) {
-		auto* button = M2_LEVEL.LeftHud()->FindWidget<m2::widget::Text>(button_name);
+		auto* button = M2_LEVEL.GetLeftHud()->FindWidget<m2::widget::Text>(button_name);
 		button->enabled = true;
 	}
 }
 void m2g::Proxy::disable_action_buttons() {
 	for (const auto& button_name : action_button_names) {
-		auto* button = M2_LEVEL.LeftHud()->FindWidget<m2::widget::Text>(button_name);
+		auto* button = M2_LEVEL.GetLeftHud()->FindWidget<m2::widget::Text>(button_name);
 		button->enabled = false;
 	}
 }

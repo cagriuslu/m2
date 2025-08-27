@@ -218,7 +218,7 @@ std::pair<Pool<Graphic>&, DrawList*> Level::GetGraphicPoolAndDrawList(const Draw
 	const auto fgLayer = std::get<ForegroundDrawLayer>(drawLayer);
 	return std::pair<Pool<Graphic>&,DrawList*>{fgGraphics, &fgDrawLists[I(fgLayer)]};
 }
-pb::ProjectionType Level::ProjectionType() const {
+pb::ProjectionType Level::GetProjectionType() const {
 	const auto isEditor = std::holds_alternative<level_editor::State>(stateVariant)
 		|| std::holds_alternative<sheet_editor::State>(stateVariant)
 		|| std::holds_alternative<bulk_sheet_editor::State>(stateVariant);
@@ -227,16 +227,16 @@ pb::ProjectionType Level::ProjectionType() const {
 	}
 	return _lb ? _lb->projection_type() : pb::ProjectionType::PARALLEL;
 }
-m3::VecF Level::CameraOffset() const {
+m3::VecF Level::GetCameraOffset() const {
 	if (not _lb) {
 		return {};
 	}
 	return m3::VecF{
-		ProjectionType() == pb::PERSPECTIVE_XYZ ? _lb->camera_offset() : 0.0f,
+		GetProjectionType() == pb::PERSPECTIVE_XYZ ? _lb->camera_offset() : 0.0f,
 		_lb->camera_offset(),
 		_lb->camera_z_offset()};
 }
-float Level::HorizontalFov() const { return _lb ? _lb->horizontal_fov() : M2_GAME.Dimensions().GameM().x; }
+float Level::GetHorizontalFov() const { return _lb ? _lb->horizontal_fov() : M2_GAME.Dimensions().GameM().x; }
 
 sdl::ticks_t Level::GetLevelDuration() const {
 	return sdl::get_ticks_since(*_beginTicks, *_pauseTicks);

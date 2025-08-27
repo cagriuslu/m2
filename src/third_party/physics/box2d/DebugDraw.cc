@@ -22,7 +22,7 @@ void DebugDraw::DrawSolidPolygon(const b2Vec2* vertices, const int32 vertexCount
 	}
 }
 void DebugDraw::DrawCircle(const b2Vec2& center, const float radius, const b2Color& color) {
-	if (IsProjectionTypeParallel(M2_LEVEL.ProjectionType())) {
+	if (IsProjectionTypeParallel(M2_LEVEL.GetProjectionType())) {
 		// Draw a true circle from the cache
 		const int r = RoundI(M2_GAME.Dimensions().OutputPixelsPerMeter() * radius);
 		const auto srcRect = static_cast<SDL_Rect>(M2_GAME.GetShapeCache().Create(std::make_shared<Circle>(r)));

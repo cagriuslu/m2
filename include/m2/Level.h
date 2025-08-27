@@ -94,9 +94,9 @@ namespace m2 {
 
 		[[nodiscard]] bool IsEditor() const;
 		[[nodiscard]] bool IsMarkedForDeletion() const { return _markedForDeletion; }
-		std::optional<std::filesystem::path> Path() const { return _lbPath; }
-		std::optional<pb::Level> LevelBlueprint() const { return _lb; }
-		const std::string& Name() const { return _name; }
+		std::optional<std::filesystem::path> GetLevelFilePath() const { return _lbPath; }
+		std::optional<pb::Level> GetLevelBlueprint() const { return _lb; }
+		const std::string& GetName() const { return _name; }
 		/// Returns the drawable layer that a graphics component belongs to.
 		DrawLayer GetDrawLayer(GraphicId);
 		/// Returns the pool (and optionally, the draw list) that a graphics component belongs to.
@@ -105,14 +105,14 @@ namespace m2 {
 		std::pair<Pool<Graphic>&, DrawList*> GetGraphicPoolAndDrawList(DrawLayer);
 		World& World2() { return world2; }
 		/// Inclusive rectangle that contains all terrain graphics inside. The unit is meters.
-		[[nodiscard]] const RectI& BackgroundBoundary() const { return _backgroundBoundary; }
-		const std::string& Identifier() const { return _lb ? _lb->identifier() : gEmptyString; }
-		pb::ProjectionType ProjectionType() const;
-		m3::VecF CameraOffset() const;
-		float HorizontalFov() const;
-		Object* Player() { return objects.Get(playerId); }
-		Object* Camera() { return objects.Get(cameraId); }
-		const sdl::ticks_t* PauseTicksHandle() const { return &*_pauseTicks; }
+		[[nodiscard]] const RectI& GetBackgroundBoundary() const { return _backgroundBoundary; }
+		const std::string& GetLevelIdentifier() const { return _lb ? _lb->identifier() : gEmptyString; }
+		pb::ProjectionType GetProjectionType() const;
+		m3::VecF GetCameraOffset() const;
+		float GetHorizontalFov() const;
+		Object* GetPlayer() { return objects.Get(playerId); }
+		Object* GetCamera() { return objects.Get(cameraId); }
+		const sdl::ticks_t* GetPauseTicksHandle() const { return &*_pauseTicks; }
 		sdl::ticks_t GetLevelDuration() const;
 
 		// Modifiers
@@ -121,41 +121,40 @@ namespace m2 {
 		void AddPauseTicks(const sdl::ticks_t ticks) { _pauseTicks = _pauseTicks ? *_pauseTicks + ticks : ticks; }
 		void MarkForDeletion() { _markedForDeletion = true; }
 
-		// Features
+		// Dimming control
 
 		/// "Dimming with exceptions" is a mod where sprite sheets are dimmed for all objects except the exceptions.
-		const std::optional<std::set<ObjectId>>& DimmingExceptions() const { return _dimmingExceptions; }
+		const std::optional<std::set<ObjectId>>& GetDimmingExceptions() const { return _dimmingExceptions; }
 		void EnableDimmingWithExceptions(std::set<ObjectId>&& exceptions);
 		void DisableDimmingWithExceptions();
 
+		// Selection control
+
 		void EnablePrimarySelection(RectI screenBoundaryPx) { _primarySelection.emplace(screenBoundaryPx); }
 		void EnableSecondarySelection(RectI screenBoundaryPx) { _secondarySelection.emplace(screenBoundaryPx); }
-		Selection* PrimarySelection() { return _primarySelection ? &*_primarySelection : nullptr; }
-		Selection* SecondarySelection() { return _secondarySelection ? &*_secondarySelection : nullptr; }
+		Selection* GetPrimarySelection() { return _primarySelection ? &*_primarySelection : nullptr; }
+		Selection* GetSecondarySelection() { return _secondarySelection ? &*_secondarySelection : nullptr; }
 		void DisablePrimarySelection() { _primarySelection.reset(); }
 		void DisableSecondarySelection() { _secondarySelection.reset(); }
+
+		// UI control
 
 		/// Show the HUD UI elements. HUD is set to be shown at start of the game.
 		void EnableHud();
 		/// Hides the HUD UI elements. UI elements would get disabled, thus they won't receive any events or updates.
 		void DisableHud();
 
-		UiPanel* LeftHud() { return _leftHudUiPanel ? &*_leftHudUiPanel : nullptr; }
-		UiPanel* RightHud() { return _rightHudUiPanel ? &*_rightHudUiPanel : nullptr; }
-		template <typename... Args> void ReplaceLeftHud(Args&&... args) {
-			_leftHudUiPanel.emplace(std::forward<Args>(args)...);
-		}
-		template <typename... Args> void ReplaceRightHud(Args&&... args) {
-			_rightHudUiPanel.emplace(std::forward<Args>(args)...);
-		}
+		UiPanel* GetLeftHud() { return _leftHudUiPanel ? &*_leftHudUiPanel : nullptr; }
+		UiPanel* GetRightHud() { return _rightHudUiPanel ? &*_rightHudUiPanel : nullptr; }
+		template <typename... Args> void ReplaceLeftHud(Args&&... args) { _leftHudUiPanel.emplace(std::forward<Args>(args)...); }
+		template <typename... Args> void ReplaceRightHud(Args&&... args) { _rightHudUiPanel.emplace(std::forward<Args>(args)...); }
 
 		void ShowMessage(const std::string& msg, float timeoutS = 0.0f);
 		void HideMessage();
 
 		/// Adds a UI element that is drawn above the HUD. The UI doesn't block the game loop and consumes only the
 		/// events meant for itself.
-		template <typename... Args>
-		std::list<UiPanel>::iterator AddCustomNonblockingUiPanel(Args&&... args) {
+		template <typename... Args> std::list<UiPanel>::iterator AddCustomNonblockingUiPanel(Args&&... args) {
 			return _customNonblockingUiPanels.emplace(_customNonblockingUiPanels.end(), std::forward<Args>(args)...);
 		}
 		/// Removes the custom UI immediately. Can be called from the UI itself if the UI blueprint is static
@@ -179,7 +178,7 @@ namespace m2 {
 		/// movement, button, and key presses are not delivered to other panels or game objects. The UI is semi-blocking
 		/// in the sense that other panels are still updated and the game loop keeps running.
 		void ShowSemiBlockingUiPanel(RectF position_ratio, std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> blueprint);
-		UiPanel* SemiBlockingUiPanel() { return _semiBlockingUiPanel ? &*_semiBlockingUiPanel : nullptr; }
+		UiPanel* GetSemiBlockingUiPanel() { return _semiBlockingUiPanel ? &*_semiBlockingUiPanel : nullptr; }
 		void DismissSemiBlockingUiPanel(); // Should not be called from the custom UI itself
 		void DismissSemiBlockingUiPanelDeferred(); // Can be called from the custom UI itself
 

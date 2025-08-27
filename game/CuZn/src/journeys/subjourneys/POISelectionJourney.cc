@@ -62,11 +62,11 @@ std::optional<POISelectionJourneyStep> POISelectionJourney::HandleSignal(const P
 			if (const auto world_position = signal.world_position()) {
 				if (const auto industry_location = industry_location_on_position(*world_position)) {
 					// Look up factory if exists, otherwise the background sprite
-					if (auto* factory = FindFactoryAtLocation(*industry_location); factory && M2_LEVEL.DimmingExceptions()->contains(factory->GetId())) {
+					if (auto* factory = FindFactoryAtLocation(*industry_location); factory && M2_LEVEL.GetDimmingExceptions()->contains(factory->GetId())) {
 						M2_LEVEL.HideMessage();
 						LOG_INFO("Player selected factory of interest, notifying main journey", *industry_location);
 						notify_main_journey(*industry_location);
-					} else if (M2_LEVEL.DimmingExceptions()->contains(std::get<m2::ObjectId>(M2G_PROXY.industry_positions[*industry_location]))) {
+					} else if (M2_LEVEL.GetDimmingExceptions()->contains(std::get<m2::ObjectId>(M2G_PROXY.industry_positions[*industry_location]))) {
 						M2_LEVEL.HideMessage();
 						LOG_INFO("Player selected empty industry location of interest, notifying main journey", *industry_location);
 						notify_main_journey(*industry_location);
@@ -74,12 +74,12 @@ std::optional<POISelectionJourneyStep> POISelectionJourney::HandleSignal(const P
 						LOG_INFO("Player selected uninteresting industry location", *industry_location);
 					}
 				} else if (auto merchant_location = merchant_location_on_position(*world_position);
-					merchant_location && M2_LEVEL.DimmingExceptions()->contains(std::get<m2::ObjectId>(M2G_PROXY.merchant_positions[*merchant_location]))) {
+					merchant_location && M2_LEVEL.GetDimmingExceptions()->contains(std::get<m2::ObjectId>(M2G_PROXY.merchant_positions[*merchant_location]))) {
 					M2_LEVEL.HideMessage();
 					LOG_INFO("Player selected merchant location of interest, notifying main journey", *merchant_location);
 					notify_main_journey(*merchant_location);
 				} else if (auto connection = connection_on_position(*world_position);
-					connection && M2_LEVEL.DimmingExceptions()->contains(std::get<m2::ObjectId>(M2G_PROXY.connection_positions[*connection]))) {
+					connection && M2_LEVEL.GetDimmingExceptions()->contains(std::get<m2::ObjectId>(M2G_PROXY.connection_positions[*connection]))) {
 					M2_LEVEL.HideMessage();
 					LOG_INFO("Player selected connection of interest, notifying main journey", *connection);
 					notify_main_journey(*connection);
