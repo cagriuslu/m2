@@ -361,7 +361,7 @@ m2::void_expected m2::Game::LoadTurnBasedMultiPlayerAsHost(
 	}
 
 	// Populate level
-	M2G_PROXY.multi_player_level_server_populate(level_name, *_level->_lb);
+	M2G_PROXY.turnBasedServerPopulate(level_name, *_level->_lb);
 
 	// Execute second server update, which will fully initialize client levels.
 	_lastSentOrReceivedServerUpdateSequenceNo = M2_GAME.ServerThread().SendServerUpdate();

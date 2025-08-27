@@ -39,7 +39,7 @@ const m2::UiPanelBlueprint* m2g::Proxy::LeftHudBlueprint() { return &left_hud_bl
 
 const m2::UiPanelBlueprint* m2g::Proxy::RightHudBlueprint() { return &right_hud_blueprint; }
 
-void m2g::Proxy::post_multi_player_level_client_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {
+void m2g::Proxy::postTurnBasedLevelClientInit(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {
 	DEBUG_FN();
 
 	auto client_count = M2_GAME.TotalPlayerCount();
@@ -79,7 +79,7 @@ void m2g::Proxy::post_multi_player_level_client_init(MAYBE const std::string& na
 		status_bar_window_ratio());
 }
 
-void m2g::Proxy::multi_player_level_server_populate(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {
+void m2g::Proxy::turnBasedServerPopulate(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {
 	auto client_count = M2_GAME.ServerThread().GetClientCount();
 
 	// Assign licenses to active merchants

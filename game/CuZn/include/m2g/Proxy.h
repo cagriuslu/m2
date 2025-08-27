@@ -27,8 +27,8 @@ namespace m2g {
 		const m2::UiPanelBlueprint* LeftHudBlueprint();
 		const m2::UiPanelBlueprint* RightHudBlueprint();
 
-		void post_multi_player_level_client_init(const std::string& name, const m2::pb::Level& level);
-		void multi_player_level_server_populate(const std::string& name, const m2::pb::Level& level);
+		void postTurnBasedLevelClientInit(const std::string& name, const m2::pb::Level& level);
+		void turnBasedServerPopulate(const std::string& name, const m2::pb::Level& level);
 		std::optional<int> handle_client_command(int turn_holder_index, const pb::TurnBasedClientCommand& client_command);
 		void handle_server_command(const pb::TurnBasedServerCommand& server_command);
 		void post_server_update(m2::network::SequenceNo, bool shutdown);

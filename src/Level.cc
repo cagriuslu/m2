@@ -16,7 +16,6 @@
 #include <m2/ui/widget/Text.h>
 #include <m2/Log.h>
 #include <filesystem>
-#include <iterator>
 
 using namespace m2;
 
@@ -47,22 +46,32 @@ Level::~Level() {
 void_expected Level::InitSinglePlayer(
     const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name) {
 	stateVariant.emplace<splayer::State>();
-	return InitAnyPlayer(
-	    levelPathOrBlueprint, name, true, &m2g::Proxy::pre_single_player_level_init, &m2g::Proxy::post_single_player_level_init);
+	return InitAnyPlayer(levelPathOrBlueprint, name, true,
+		[](const std::string& name_, const pb::Level& lb) { M2G_PROXY.pre_single_player_level_init(name_, lb); },
+		[](const std::string& name_, const pb::Level& lb) { M2G_PROXY.post_single_player_level_init(name_, lb); });
 }
 void_expected Level::InitTurnBasedMultiPlayerAsHost(
     const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name) {
 	INFO_FN();
 	stateVariant.emplace<multiplayer::turnbased::State>();
-	return InitAnyPlayer(
-	    levelPathOrBlueprint, name, false, &m2g::Proxy::pre_multi_player_level_client_init, &m2g::Proxy::post_multi_player_level_client_init);
+	return InitAnyPlayer(levelPathOrBlueprint, name, false,
+		[](const std::string&, const pb::Level&) {},
+		[](const std::string& name_, const pb::Level& lb) { M2G_PROXY.postTurnBasedLevelClientInit(name_, lb); });
 }
 void_expected Level::InitTurnBasedMultiPlayerAsGuest(
     const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name) {
-	DEBUG_FN();
+	INFO_FN();
 	stateVariant.emplace<multiplayer::turnbased::State>();
-	return InitAnyPlayer(
-	    levelPathOrBlueprint, name, false, &m2g::Proxy::pre_multi_player_level_client_init, &m2g::Proxy::post_multi_player_level_client_init);
+	return InitAnyPlayer(levelPathOrBlueprint, name, false,
+		[](const std::string&, const pb::Level&) {},
+		[](const std::string& name_, const pb::Level& lb) { M2G_PROXY.postTurnBasedLevelClientInit(name_, lb); });
+}
+void_expected Level::InitLockstepMultiPlayer(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name, const m2g::pb::LockstepGameInitParams* gameInitParams) {
+	INFO_FN();
+	stateVariant.emplace<multiplayer::lockstep::State>();
+	return InitAnyPlayer(levelPathOrBlueprint, name, false,
+		[](const std::string&, const pb::Level&) {},
+		[&gameInitParams](const std::string& name_, const pb::Level& lb) { M2G_PROXY.postLockstepLevelInit(name_, lb, gameInitParams); });
 }
 void_expected Level::InitLevelEditor(const std::filesystem::path& lb_path) {
 	_lbPath = lb_path;
@@ -312,8 +321,8 @@ void Level::DismissSemiBlockingUiPanelDeferred() {
 
 void_expected Level::InitAnyPlayer(
 	    const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name,
-	    bool physical_world, void (m2g::Proxy::*pre_level_init)(const std::string&, const pb::Level&),
-	    void (m2g::Proxy::*post_level_init)(const std::string&, const pb::Level&)) {
+	    bool physical_world, const std::function<void(const std::string&, const pb::Level&)>& preLevelInit,
+		const std::function<void(const std::string&, const pb::Level&)>& postLevelInit) {
 	if (std::holds_alternative<std::filesystem::path>(levelPathOrBlueprint)) {
 		_lbPath = std::get<std::filesystem::path>(levelPathOrBlueprint);
 		auto lb = pb::json_file_to_message<pb::Level>(*_lbPath);
@@ -325,7 +334,7 @@ void_expected Level::InitAnyPlayer(
 	}
 	_name = name;
 
-	(M2G_PROXY.*pre_level_init)(_name, *_lb);
+	preLevelInit(_name, *_lb);
 
 	_leftHudUiPanel.emplace(M2G_PROXY.LeftHudBlueprint(), M2_GAME.Dimensions().LeftHud());
 	_rightHudUiPanel.emplace(M2G_PROXY.RightHudBlueprint(), M2_GAME.Dimensions().RightHud());
@@ -417,7 +426,7 @@ void_expected Level::InitAnyPlayer(
 	//_rightHudUiPanel->update_contents();
 	//message_box_ui_panel->update_contents();
 
-	(M2G_PROXY.*post_level_init)(_name, *_lb);
+	postLevelInit(_name, *_lb);
 
 	return {};
 }
