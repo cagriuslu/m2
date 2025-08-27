@@ -90,16 +90,6 @@ namespace m2 {
 		/// thought the mouse spills into UI elements.
 		bool isPanning{};
 
-		void_expected InitSinglePlayer(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name);
-		void_expected InitTurnBasedMultiPlayerAsHost(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name);
-		void_expected InitTurnBasedMultiPlayerAsGuest(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name);
-		void_expected InitLockstepMultiPlayer(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name, const m2g::pb::LockstepGameInitParams*);
-		void_expected InitLevelEditor(const std::filesystem::path& lb_path);
-		void_expected InitSheetEditor(const std::filesystem::path& path);
-		void_expected InitBulkSheetEditor(const std::filesystem::path& path);
-		void_expected ResetSheetEditor();
-		void_expected ResetBulkSheetEditor();
-
 		// Accessors
 
 		[[nodiscard]] bool IsEditor() const;
@@ -195,9 +185,18 @@ namespace m2 {
 
 	   private:
 		void_expected InitAnyPlayer(
-		    const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name,
-		    bool physical_world, const std::function<void(const std::string&, const pb::Level&)>& preLevelInit,
-		    const std::function<void(const std::string&, const pb::Level&)>& postLevelInit);
+			const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name,
+			bool physical_world, const std::function<void(const std::string&, const pb::Level&)>& preLevelInit,
+			const std::function<void(const std::string&, const pb::Level&)>& postLevelInit);
+		void_expected InitSinglePlayer(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name);
+		void_expected InitTurnBasedMultiPlayerAsHost(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name);
+		void_expected InitTurnBasedMultiPlayerAsGuest(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name);
+		void_expected InitLockstepMultiPlayer(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name, const m2g::pb::LockstepGameInitParams*);
+		void_expected InitLevelEditor(const std::filesystem::path& lb_path);
+		void_expected InitSheetEditor(const std::filesystem::path& path);
+		void_expected InitBulkSheetEditor(const std::filesystem::path& path);
+		void_expected ResetSheetEditor();
+		void_expected ResetBulkSheetEditor();
 
 		/// Returns the position with respect to GameAndHud
 		VecI CalculateMouseHoverUiPanelTopLeftPosition() const;
