@@ -2,3 +2,5 @@ syntax = "proto3";
 package m2g.pb;
 
 message LockstepGameInitParams {}
+
+message LockstepPlayerInput {}

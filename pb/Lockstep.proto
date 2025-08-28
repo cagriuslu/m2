@@ -5,11 +5,18 @@ import "m2g_Lockstep.proto";
 
 // Each LockstepMessage has a different SequenceNo starting from 1.
 message LockstepMessage {
-  message LobbyClosed {}
+  message PlayerInputs {
+    repeated m2g.pb.LockstepPlayerInput player_inputs = 1;
+  }
 
   oneof type {
+    // When a client is ready, this option is used to signal this to the server.
     bool set_ready_state = 1;
+    // When all clients are ready, this option is used by the server to share the game init parameters with the clients.
     m2g.pb.LockstepGameInitParams freeze_lobby_with_init_params = 2;
+    // Once the game begins, this option is filled and sent to other peers periodically by the clients, even if the
+    // player hasn't taken any action.
+    PlayerInputs player_inputs = 3;
   }
 }
 

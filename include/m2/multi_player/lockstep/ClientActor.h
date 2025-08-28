@@ -13,6 +13,13 @@ namespace m2::multiplayer::lockstep {
 		// Connections
 
 		std::optional<ConnectionToServer> _serverConnection;
+		// Player inputs from this instance are collected here, to be sent to every peer each tick.
+		std::deque<m2g::pb::LockstepPlayerInput> _unsentPlayerInputs;
+		// Last timepoint where the previous player inputs are sent to peers.
+		std::optional<Stopwatch> _lastPlayerInputsSentAt;
+		// Player inputs from this instance that are already sent to peers are stored here until inputs from all other
+		// peers are received.
+		std::optional<std::deque<m2g::pb::LockstepPlayerInput>> _nextSelfPlayerInputs;
 
 	public:
 		explicit ClientActor(network::IpAddressAndPort serverAddress) : ActorBase(), _serverAddressAndPort(std::move(serverAddress)) {}
@@ -27,6 +34,8 @@ namespace m2::multiplayer::lockstep {
 		void Deinitialize(MessageBox<ClientActorInput>&, MessageBox<ClientActorOutput>&) override {}
 
 	private:
+		bool IsAllPlayerInputsReceived() const;
+
 		void ProcessOneMessageFromInbox(MessageBox<ClientActorInput>&);
 	};
 }

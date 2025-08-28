@@ -398,17 +398,23 @@ m2::void_expected m2::Game::LoadTurnBasedMultiPlayerAsGuest(
 			"Unexpected TurnBasedServerUpdate status");
 	return {};
 }
-m2::void_expected m2::Game::LoadLockstep(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& levelName, const m2g::pb::LockstepGameInitParams* gameInitParams) {
+m2::void_expected m2::Game::LoadLockstep(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& levelName, const m2g::pb::LockstepGameInitParams& gameInitParams) {
 	_level.reset();
 	ResetState();
 	// Reinit dimensions with proxy in case an editor was initialized before
 	_dimensions->SetGameAspectRatio(_proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
 	_level.emplace();
 
+	// Make sure the client state is proper. Game should only be loaded when the lobby is frozen.
+	if (not GetLockstepHostClientActor().IsLobbyFrozen()) {
+		throw M2_ERROR("Unexpected lockstep client actor state");
+	}
+
 	auto success = _level->InitLockstepMultiPlayer(levelPathOrBlueprint, levelName, gameInitParams);
 	m2ReflectUnexpected(success);
 
-	// TODO sync clients and start the game
+	// Queue an empty player input to start the game
+	GetLockstepHostClientActor().QueuePlayerInput({});
 
 	return {};
 }

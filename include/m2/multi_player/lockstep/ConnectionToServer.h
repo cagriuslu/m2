@@ -20,7 +20,8 @@ namespace m2::multiplayer::lockstep {
 		struct LobbyFrozen {
 			m2g::pb::LockstepGameInitParams gameInitParams;
 		};
-		using State = std::variant<SearchForServer,WaitingInLobby,LobbyFrozen>;
+		struct GameStarted {};
+		using State = std::variant<SearchForServer,WaitingInLobby,LobbyFrozen,GameStarted>;
 
 	private:
 		const network::IpAddressAndPort _serverAddressAndPort;
@@ -37,7 +38,7 @@ namespace m2::multiplayer::lockstep {
 		// Modifiers
 
 		void SetReadyState(bool state);
-		void QueueOutgoingMessages();
+		void QueueOutgoingMessages(const std::deque<m2g::pb::LockstepPlayerInput>*);
 		void DeliverIncomingMessage(pb::LockstepMessage&& msg);
 
 	private:

@@ -87,6 +87,7 @@ namespace m2 {
 		void pre_single_player_level_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
 		void post_single_player_level_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
 
+		const std::chrono::milliseconds lockstepGameTickPeriod{250};
 		/// This function must be identical in the host and the client, because the levels are expected to be identical
 		/// after they are initialized.
 		void postTurnBasedLevelClientInit(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
@@ -94,7 +95,7 @@ namespace m2 {
 		/// second TurnBasedServerUpdate will be published.
 		void turnBasedServerPopulate(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
 
-		void postLockstepLevelInit(MAYBE const std::string& name, MAYBE const m2::pb::Level& level, MAYBE const m2g::pb::LockstepGameInitParams* gameInitParams) {}
+		void postLockstepLevelInit(MAYBE const std::string& name, MAYBE const m2::pb::Level& level, MAYBE const m2g::pb::LockstepGameInitParams& gameInitParams) {}
 
 		/// Maps 0-based client indexes to the IDs of the objects that represent a client in this game instance.
 		/// While loading the level, this vector should be filled with IDs of identical player objects.

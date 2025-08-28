@@ -1,5 +1,6 @@
 #pragma once
 #include <m2g_Lockstep.pb.h>
+#include <deque>
 #include <variant>
 
 namespace m2::multiplayer::lockstep {
@@ -7,14 +8,20 @@ namespace m2::multiplayer::lockstep {
 		struct SetReadyState {
 			bool state;
 		};
-		std::variant<SetReadyState> variant;
+		struct QueuePlayerInput {
+			m2g::pb::LockstepPlayerInput playerInput;
+		};
+		std::variant<SetReadyState,QueuePlayerInput> variant;
 	};
 
 	struct ClientActorOutput {
 		struct ConnectionToServerStateUpdate {
 			size_t stateIndex{};
 		};
-		std::variant<ConnectionToServerStateUpdate> variant;
-		std::optional<m2g::pb::LockstepGameInitParams> gameInitParams;
+		struct PlayerInputsToSimulate {
+			std::deque<m2g::pb::LockstepPlayerInput> selfPlayerInputs;
+		};
+		std::variant<ConnectionToServerStateUpdate,PlayerInputsToSimulate> variant;
+		std::optional<m2g::pb::LockstepGameInitParams> gameInitParams{};
 	};
 }

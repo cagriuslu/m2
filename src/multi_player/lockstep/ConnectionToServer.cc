@@ -37,8 +37,18 @@ void ConnectionToServer::SetReadyState(const bool readyState) {
 		throw M2_ERROR("Attempt to set ready state outside of the lobby");
 	}
 }
-void ConnectionToServer::QueueOutgoingMessages() {
+void ConnectionToServer::QueueOutgoingMessages(const std::deque<m2g::pb::LockstepPlayerInput>* unsentPlayerInputs) {
+	const auto queuePlayerInputs = [this](const std::deque<m2g::pb::LockstepPlayerInput>& playerInputs) {
+		pb::LockstepMessage msg;
+		msg.mutable_player_inputs(); // Set this option even if there are no inputs
+		for (const auto& playerInput : playerInputs) {
+			msg.mutable_player_inputs()->add_player_inputs()->CopyFrom(playerInput);
+		}
+		QueueOutgoingMessage(std::move(msg));
+	};
+
 	const ConnectionStatistics* connStats = _messagePasser.GetConnectionStatistics(_serverAddressAndPort);
+
 	if (std::holds_alternative<SearchForServer>(_state.Get())) {
 		if (not connStats) {
 			LOG_DEBUG("Queueing first ping toward server");
@@ -53,8 +63,10 @@ void ConnectionToServer::QueueOutgoingMessages() {
 			// Enough pings have been made
 			_state.Emplace(WaitingInLobby{});
 		}
-	} else if (std::holds_alternative<WaitingInLobby>(_state.Get())) {
-		// TODO
+	} else if (std::holds_alternative<LobbyFrozen>(_state.Get()) && unsentPlayerInputs) {
+		queuePlayerInputs(*unsentPlayerInputs);
+	} else if (std::holds_alternative<GameStarted>(_state.Get()) && unsentPlayerInputs) {
+		queuePlayerInputs(*unsentPlayerInputs);
 	}
 }
 void ConnectionToServer::DeliverIncomingMessage(pb::LockstepMessage&& msg) {

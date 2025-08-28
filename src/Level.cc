@@ -66,7 +66,7 @@ void_expected Level::InitTurnBasedMultiPlayerAsGuest(
 		[](const std::string&, const pb::Level&) {},
 		[](const std::string& name_, const pb::Level& lb) { M2G_PROXY.postTurnBasedLevelClientInit(name_, lb); });
 }
-void_expected Level::InitLockstepMultiPlayer(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name, const m2g::pb::LockstepGameInitParams* gameInitParams) {
+void_expected Level::InitLockstepMultiPlayer(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name, const m2g::pb::LockstepGameInitParams& gameInitParams) {
 	INFO_FN();
 	stateVariant.emplace<multiplayer::lockstep::State>();
 	return InitAnyPlayer(levelPathOrBlueprint, name, false,

@@ -190,7 +190,7 @@ namespace m2 {
 		void_expected InitSinglePlayer(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name);
 		void_expected InitTurnBasedMultiPlayerAsHost(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name);
 		void_expected InitTurnBasedMultiPlayerAsGuest(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name);
-		void_expected InitLockstepMultiPlayer(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name, const m2g::pb::LockstepGameInitParams*);
+		void_expected InitLockstepMultiPlayer(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name, const m2g::pb::LockstepGameInitParams&);
 		void_expected InitLevelEditor(const std::filesystem::path& lb_path);
 		void_expected InitSheetEditor(const std::filesystem::path& path);
 		void_expected InitBulkSheetEditor(const std::filesystem::path& path);

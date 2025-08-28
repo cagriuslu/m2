@@ -30,11 +30,34 @@ void ClientActorInterface::SetReadyState(const bool state) {
 		}
 	});
 }
+void ClientActorInterface::QueuePlayerInput(m2g::pb::LockstepPlayerInput&& playerInput) {
+	if (_readyToSimulatePlayersInputs) {
+		throw M2_ERROR("Unsimulated player inputs must be simulated before queueing new player inputs");
+	}
+	GetActorInbox().PushMessage(ClientActorInput{
+		.variant = ClientActorInput::QueuePlayerInput{
+			.playerInput = std::move(playerInput)
+		}
+	});
+}
+void ClientActorInterface::PopReadyToSimulatePlayerInputs(std::optional<std::deque<m2g::pb::LockstepPlayerInput>>& out) {
+	if (_readyToSimulatePlayersInputs) {
+		out = std::move(_readyToSimulatePlayersInputs);
+		_readyToSimulatePlayersInputs.reset();
+	} else {
+		out.reset();
+	}
+}
 
 void ClientActorInterface::ProcessOutbox() {
 	GetActorOutbox().PopMessages([this](const ClientActorOutput& msg) {
 		if (std::holds_alternative<ClientActorOutput::ConnectionToServerStateUpdate>(msg.variant)) {
 			_connectionToServerState = std::get<ClientActorOutput::ConnectionToServerStateUpdate>(msg.variant);
+		} else if (std::holds_alternative<ClientActorOutput::PlayerInputsToSimulate>(msg.variant)) {
+			if (_readyToSimulatePlayersInputs) {
+				throw M2_ERROR("Next player inputs are received before the previous inputs are simulated");
+			}
+			_readyToSimulatePlayersInputs = std::move(std::get<ClientActorOutput::PlayerInputsToSimulate>(msg.variant).selfPlayerInputs);
 		}
 		if (msg.gameInitParams) {
 			_gameInitParams = std::move(msg.gameInitParams);

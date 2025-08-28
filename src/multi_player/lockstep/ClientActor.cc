@@ -1,5 +1,6 @@
 #include <m2/multi_player/lockstep/ClientActor.h>
 #include <m2/network/UdpSocket.h>
+#include <m2/Game.h>
 #include <m2/Log.h>
 #include <thread>
 
@@ -19,7 +20,7 @@ bool ClientActor::Initialize(MessageBox<ClientActorInput>&, MessageBox<ClientAct
 	return true;
 }
 
-bool ClientActor::operator()(MessageBox<ClientActorInput>& inbox, MessageBox<ClientActorOutput>&) {
+bool ClientActor::operator()(MessageBox<ClientActorInput>& inbox, MessageBox<ClientActorOutput>& outbox) {
 	ProcessOneMessageFromInbox(inbox);
 
 	auto selectResult = network::Select::WaitUntilSocketReady(&_messagePasser->GetSocket(), 50);
@@ -46,7 +47,31 @@ bool ClientActor::operator()(MessageBox<ClientActorInput>& inbox, MessageBox<Cli
 	}
 
 	// Gather outgoing messages from connection managers
-	_serverConnection->QueueOutgoingMessages();
+	const auto firstPlayerInputAvailable = not _unsentPlayerInputs.empty() && not _lastPlayerInputsSentAt;
+	const auto timeToSendPlayerInputs = IsAllPlayerInputsReceived() && _lastPlayerInputsSentAt && _lastPlayerInputsSentAt->HasTimePassed(M2G_PROXY.lockstepGameTickPeriod);
+	if (firstPlayerInputAvailable || timeToSendPlayerInputs) {
+		_serverConnection->QueueOutgoingMessages(&_unsentPlayerInputs);
+		// TODO send also to other peers
+
+		// If it was time to send player inputs, it is also time to return all player inputs to the game.
+		// Although, these inputs should be simulated in the next cycle.
+		if (timeToSendPlayerInputs && _nextSelfPlayerInputs) {
+			// TODO gather inputs from peers
+			outbox.PushMessage(ClientActorOutput{
+				.variant = ClientActorOutput::PlayerInputsToSimulate{
+					.selfPlayerInputs = std::move(*_nextSelfPlayerInputs)
+				}
+			});
+			// TODO clear peer inputs
+			_nextSelfPlayerInputs.reset();
+		}
+		_nextSelfPlayerInputs = std::move(_unsentPlayerInputs);
+		_unsentPlayerInputs.clear();
+		_lastPlayerInputsSentAt = Stopwatch{};
+	} else {
+		_serverConnection->QueueOutgoingMessages(nullptr);
+		// TODO send also to other peers
+	}
 
 	if (not writeableSockets.empty()) {
 		if (const auto success = _messagePasser->SendOutgoingPackets(); not success) {
@@ -58,11 +83,19 @@ bool ClientActor::operator()(MessageBox<ClientActorInput>& inbox, MessageBox<Cli
 	return true;
 }
 
+bool ClientActor::IsAllPlayerInputsReceived() const {
+	// TODO iterate all peers, check if player inputs are received
+	return true;
+}
+
 void ClientActor::ProcessOneMessageFromInbox(MessageBox<ClientActorInput>& inbox) {
 	inbox.PopMessages([this](const ClientActorInput& msg) {
 		if (std::holds_alternative<ClientActorInput::SetReadyState>(msg.variant)) {
 			const auto& readyState = std::get<ClientActorInput::SetReadyState>(msg.variant).state;
 			_serverConnection->SetReadyState(readyState);
+		} else if (std::holds_alternative<ClientActorInput::QueuePlayerInput>(msg.variant)) {
+			auto& playerInput = std::get<ClientActorInput::QueuePlayerInput>(msg.variant);
+			_unsentPlayerInputs.emplace_back(std::move(playerInput.playerInput));
 		}
 		return true;
 	}, 1);
