@@ -72,11 +72,15 @@ int main(const int argc, char **argv) {
 		////////////////////////////////////////////////////////////////////////
 		/////////////////////////////// PHYSICS ////////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		for (last_phy_count = 0;
-			// Up to 4 times, if enough time has passed since last phy, if game hasn't quit
-			last_phy_count < 4 && TIME_BETWEEN_PHYSICS_SIMULATIONS_MS <= sinceLastPhy->measure(M2_LEVEL.GetTotalPauseDurationMsTMP()) && !M2_GAME.quit;
-			// Increment phy counters, subtract period from stopwatch
-			++last_phy_count, ++phy_count, sinceLastPhy->subtract_from_lap(TIME_BETWEEN_PHYSICS_SIMULATIONS_MS)) {
+		last_phy_count = 0;
+		// Up to 4 times
+		m2Repeat(4) {
+			BREAK_IF_QUIT();
+
+			const auto enoughTimeHasPassed = TIME_BETWEEN_PHYSICS_SIMULATIONS_MS <= sinceLastPhy->measure(M2_LEVEL.GetTotalPauseDurationMsTMP());
+			if (not enoughTimeHasPassed) {
+				break;
+			}
 
 			M2_GAME._delta_time_s = TIME_BETWEEN_PHYSICS_SIMULATIONS_F;
 			M2_GAME.ExecutePreStep();
@@ -90,6 +94,11 @@ int main(const int argc, char **argv) {
 			M2_GAME.UpdateSounds();
 			M2_GAME.ExecuteDeferredActions();
 			M2_GAME.RecalculateDirectionalAudio();
+
+			// Increment phy counters, subtract period from stopwatch
+			++last_phy_count;
+			++phy_count;
+			sinceLastPhy->subtract_from_lap(TIME_BETWEEN_PHYSICS_SIMULATIONS_MS);
 		}
 		if (last_phy_count == 4) {
 			sinceLastPhy->new_lap();

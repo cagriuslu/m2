@@ -28,13 +28,16 @@ namespace m2 {
 
 	class Level final {
 		bool _markedForDeletion{false};
+
 		std::optional<std::filesystem::path> _lbPath;
 		std::optional<pb::Level> _lb;
 		std::string _name;
 		RectI _backgroundBoundary; // In meters
+
 		std::optional<Stopwatch> _beganAt; /// A stopwatch that began when the level started
 		Stopwatch::Duration _totalPauseDuration; /// Total duration spent while the level was paused
 		std::optional<Stopwatch> _pausedAt; //// A stopwatch that is initialized only when the level is first paused
+
 
 		// Special properties effecting the simulation
 
