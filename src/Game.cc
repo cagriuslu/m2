@@ -615,7 +615,7 @@ void m2::Game::ExecuteStep() {
 	// Integrate physics
 	for (auto* world : _level->world) {
 		if (world) {
-			world->Step(phy_period, velocity_iterations, position_iterations);
+			world->Step(TIME_BETWEEN_PHYSICS_SIMULATIONS_F, velocity_iterations, position_iterations);
 		}
 	}
 	// Update positions

@@ -26,6 +26,9 @@ namespace m2 {
 		[[nodiscard]] std::chrono::microseconds GetDurationSinceUs() const {
 			return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - _startTimePoint);
 		}
+		[[nodiscard]] float GetDurationSinceF() const {
+			return std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::steady_clock::now() - _startTimePoint).count();
+		}
 
 		[[nodiscard]] bool HasTimePassed(const Duration& d) const {
 			return d <= GetDurationSince();

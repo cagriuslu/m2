@@ -104,9 +104,6 @@ namespace m2 {
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////////// CONFIG ////////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		static constexpr unsigned phy_frequency{100};
-		static constexpr float phy_period{1.0f / static_cast<float>(phy_frequency)};
-		static constexpr unsigned phy_period_ticks{1000u / phy_frequency};
 		static constexpr int velocity_iterations{8};
 		static constexpr int position_iterations{3};
 		static constexpr float max_hearing_distance_m{20.0f};

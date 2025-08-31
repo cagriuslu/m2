@@ -74,12 +74,11 @@ int main(const int argc, char **argv) {
 		////////////////////////////////////////////////////////////////////////
 		for (last_phy_count = 0;
 			// Up to 4 times, if enough time has passed since last phy, if game hasn't quit
-			last_phy_count < 4 && M2_GAME.phy_period_ticks <= sinceLastPhy->measure() && !M2_GAME.quit;
+			last_phy_count < 4 && TIME_BETWEEN_PHYSICS_SIMULATIONS_MS <= sinceLastPhy->measure() && !M2_GAME.quit;
 			// Increment phy counters, subtract period from stopwatch
-			++last_phy_count, ++phy_count, sinceLastPhy->subtract_from_lap(M2_GAME.phy_period_ticks)) {
-			// Advance time by M2_GAME.phy_period
-			M2_GAME._delta_time_s = M2_GAME.phy_period;
+			++last_phy_count, ++phy_count, sinceLastPhy->subtract_from_lap(TIME_BETWEEN_PHYSICS_SIMULATIONS_MS)) {
 
+			M2_GAME._delta_time_s = TIME_BETWEEN_PHYSICS_SIMULATIONS_F;
 			M2_GAME.ExecutePreStep();
 			M2_GAME.ExecuteDeferredActions();
 			M2_GAME.UpdateCharacters();
