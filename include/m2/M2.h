@@ -10,12 +10,10 @@
 namespace m2 {
 	extern const std::string EMPTY_STRING;
 
-	constexpr auto PHYSICS_SIMULATIONS_PER_SECOND{100};
-	constexpr Stopwatch::Duration TIME_BETWEEN_PHYSICS_SIMULATIONS{Stopwatch::OneSecondInDuration().count() / PHYSICS_SIMULATIONS_PER_SECOND};
-	static_assert(Stopwatch::OneSecondInDuration().count() % PHYSICS_SIMULATIONS_PER_SECOND == 0,
-		"Precision of the stopwatch (ticks per second) is not an integer multiple of the physics simulation frequency");
+	constexpr auto TIME_BETWEEN_PHYSICS_SIMULATIONS{std::chrono::duration_cast<Stopwatch::Duration>(std::chrono::milliseconds{10})};
 	constexpr auto TIME_BETWEEN_PHYSICS_SIMULATIONS_MS{std::chrono::duration_cast<std::chrono::milliseconds>(TIME_BETWEEN_PHYSICS_SIMULATIONS).count()};
 	constexpr auto TIME_BETWEEN_PHYSICS_SIMULATIONS_F{std::chrono::duration_cast<std::chrono::duration<float>>(TIME_BETWEEN_PHYSICS_SIMULATIONS).count()};
+	constexpr auto TIME_BETWEEN_FPS_LOGS{std::chrono::duration_cast<Stopwatch::Duration>(std::chrono::seconds{10})};
 
 	/// Each physics layer designates a separate physical world. Objects in different layers cannot collide.
 	enum class PhysicsLayer {

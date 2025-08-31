@@ -23,8 +23,8 @@ int main(const int argc, char **argv) {
 
 	Game::CreateInstance();
 
-	std::optional<sdl::Stopwatch> sinceLastPhy, sinceLastFps;
-	std::optional<Stopwatch> prevGfxUpdateAt;
+	std::optional<sdl::Stopwatch> sinceLastPhy;
+	std::optional<Stopwatch> prevGfxUpdateAt, prevFpsLogAt;
 	unsigned phy_count{}, gfx_count{}, last_phy_count = UINT_MAX;
 	while (not M2_GAME.quit) {
 		// If the level is marked for deletion, delete it
@@ -49,8 +49,8 @@ int main(const int argc, char **argv) {
 
 			M2_LEVEL.BeginGameLoop();
 			sinceLastPhy = sdl::Stopwatch{};
-			prevGfxUpdateAt = Stopwatch{}; // Act as-if a graphics update was done
-			sinceLastFps = sdl::Stopwatch{};
+			prevGfxUpdateAt = Stopwatch{}; // Act as-if a graphics update was just done
+			prevFpsLogAt = Stopwatch{}; // Act as-if FPS log was just done
 		}
 
 		////////////////////////////////////////////////////////////////////////
@@ -81,7 +81,8 @@ int main(const int argc, char **argv) {
 		m2Repeat(4) {
 			BREAK_IF_QUIT();
 
-			const auto enoughTimeHasPassed = TIME_BETWEEN_PHYSICS_SIMULATIONS_MS <= sinceLastPhy->measure(M2_LEVEL.GetTotalPauseDurationMsTMP());
+			sinceLastPhy->measure(M2_LEVEL.GetTotalPauseDurationMsTMP());
+			const auto enoughTimeHasPassed = TIME_BETWEEN_PHYSICS_SIMULATIONS_MS <= sinceLastPhy->duration_of_lap();
 			if (not enoughTimeHasPassed) {
 				break;
 			}
@@ -128,8 +129,8 @@ int main(const int argc, char **argv) {
 		M2_GAME.FlipBuffers();
 		++gfx_count;
 
-		if (sinceLastFps->measure(M2_LEVEL.GetTotalPauseDurationMsTMP()); 10000 < sinceLastFps->lap()) {
-			sinceLastFps->subtract_from_lap(10000);
+		if (prevFpsLogAt->HasTimePassed(TIME_BETWEEN_FPS_LOGS)) {
+			prevFpsLogAt->AdvanceStartTimePoint(TIME_BETWEEN_FPS_LOGS);
 			LOGF_DEBUG("PHY count %d, GFX count %d, FPS %f", phy_count, gfx_count, gfx_count / 10.0f);
 			phy_count = 0;
 			gfx_count = 0;
