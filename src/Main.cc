@@ -23,7 +23,8 @@ int main(const int argc, char **argv) {
 
 	Game::CreateInstance();
 
-	std::optional<sdl::Stopwatch> sinceLastPhy, sinceLastGfx, sinceLastFps;
+	std::optional<sdl::Stopwatch> sinceLastPhy, sinceLastFps;
+	std::optional<Stopwatch> prevGfxUpdateAt;
 	unsigned phy_count{}, gfx_count{}, last_phy_count = UINT_MAX;
 	while (not M2_GAME.quit) {
 		// If the level is marked for deletion, delete it
@@ -33,6 +34,8 @@ int main(const int argc, char **argv) {
 
 		// Try to load a level if there's no level
 		if (not M2_GAME.HasLevel()) {
+			prevGfxUpdateAt.reset();
+
 			LOG_DEBUG("Executing main menu...");
 			if (UiPanel::create_and_run_blocking(M2G_PROXY.MainMenuBlueprint()).IsQuit()) {
 				LOG_INFO("Main menu returned QUIT");
@@ -43,9 +46,10 @@ int main(const int argc, char **argv) {
 				continue;
 			}
 			LOG_INFO("Main menu loaded a level");
+
 			M2_LEVEL.BeginGameLoop();
 			sinceLastPhy = sdl::Stopwatch{};
-			sinceLastGfx = sdl::Stopwatch{};
+			prevGfxUpdateAt = Stopwatch{}; // Act as-if a graphics update was done
 			sinceLastFps = sdl::Stopwatch{};
 		}
 
@@ -109,8 +113,8 @@ int main(const int argc, char **argv) {
 		/////////////////////////////// GRAPHICS ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 		// Measure and advance time
-		sinceLastGfx->measure(M2_LEVEL.GetTotalPauseDurationMsTMP());
-		M2_GAME._delta_time_s = static_cast<float>(sinceLastGfx->last()) / 1000.0f;
+		const auto durationSinceLastGfx = prevGfxUpdateAt->Reset();
+		M2_GAME._delta_time_s = std::chrono::duration_cast<std::chrono::duration<float>>(durationSinceLastGfx).count();
 
 		M2_GAME.ExecutePreDraw();
 		M2_GAME.UpdateHudContents();
