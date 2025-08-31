@@ -48,8 +48,12 @@ namespace m2 {
 			return durationBeforeReset;
 		}
 		/// Advances the starting point of the stopwatch so that it behaves as if it was started later.
-		void AdvanceStartTimePoint(const Duration& duration) {
+		void AdvanceStartingPoint(const Duration& duration) {
 			_startTimePoint += duration;
+		}
+		/// Retreats the starting point of the stopwatch so that it behaves as if it was started earlier.
+		void RetracktStartingPoint(const Duration& duration) {
+			_startTimePoint -= duration;
 		}
 	};
 }

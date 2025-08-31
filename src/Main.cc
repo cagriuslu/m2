@@ -2,7 +2,6 @@
 #include <m2/Proxy.h>
 #include "m2/Game.h"
 #include "m2/sdl/Detail.h"
-#include "m2/sdl/Stopwatch.h"
 #include <SDL.h>
 #include <SDL2/SDL_image.h>
 #include <m2/Log.h>
@@ -23,23 +22,23 @@ int main(const int argc, char **argv) {
 
 	Game::CreateInstance();
 
-	std::optional<sdl::Stopwatch> sinceLastPhy;
-	// These stopwatches are used to keep track of when something was done the last time. However, they are unaware of
-	// any pauses. Thus, total pause duration must be subtracted before comparisons and calculations.
+	// Used to keep track of when the physics update was last executed. This stopwatch is usually not reset after each
+	// simulation, but its starting point is advanced by physics simulation period, thus the duration will contain the
+	// total pause duration since the beginning of the level, and it must be subtracked before use. Rarely, the
+	// stopwatch could be reset if the engine can't keep up with real time. In this case, the starting point of the
+	// stopwatch will be retrated by the total pause duration to keep the calculations simple.
 	std::optional<Stopwatch> prevPhyUpdateAt;
-	std::optional<Stopwatch::Duration> prevTotalPauseDurationDuringLastPhy;
-
 	// Used to keep track of when the graphics update was last executed. This stopwatch is reset after every execution,
 	// thus each measurement might contain the pause duration since the last execution. To find the pause duration since
 	// the last execution, total pause duration during last update and current update are compared.
 	std::optional<Stopwatch> prevGfxUpdateAt;
 	std::optional<Stopwatch::Duration> prevTotalPauseDurationDuringLastGfx;
-	// Used to keep track of when the FPS log was last printed. This stopwatch is never reset, but instead advanced
-	// by log period after each execution, thus the duration will contain the total pause duration since the beginning
-	// of the level, and it must be subtracked before use.
+	// Used to keep track of when the FPS log was last printed. This stopwatch is never reset, but instead its starting
+	// point is advanced by log period after each execution, thus the duration will contain the total pause duration
+	// since the beginning of the level, and it must be subtracked before use.
 	std::optional<Stopwatch> prevFpsLogAt;
 
-	unsigned phy_count{}, gfx_count{}, last_phy_count = UINT_MAX;
+	unsigned totalPhySimulationCount{}, totalGfxUpdateCount{}, prevPhySimulationCount = UINT_MAX;
 
 	while (not M2_GAME.quit) {
 		// If the level is marked for deletion, delete it
@@ -61,9 +60,7 @@ int main(const int argc, char **argv) {
 			LOG_INFO("Main menu loaded a level");
 
 			M2_LEVEL.BeginGameLoop();
-			sinceLastPhy = sdl::Stopwatch{};
 			prevPhyUpdateAt = Stopwatch{}; // Act as-if a physics update was just done
-			prevTotalPauseDurationDuringLastPhy = Stopwatch::Duration{};
 			prevGfxUpdateAt = Stopwatch{}; // Act as-if a graphics update was just done
 			prevTotalPauseDurationDuringLastGfx = Stopwatch::Duration{};
 			prevFpsLogAt = Stopwatch{}; // Act as-if FPS log was just done
@@ -72,7 +69,7 @@ int main(const int argc, char **argv) {
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////// EVENT HANDLING ////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		if (last_phy_count) {
+		if (prevPhySimulationCount) {
 			// Clear the events only if the physics step has executed
 			// Otherwise some keys/buttons may not have been handled
 			M2_GAME.events.Clear();
@@ -92,16 +89,14 @@ int main(const int argc, char **argv) {
 		////////////////////////////////////////////////////////////////////////
 		/////////////////////////////// PHYSICS ////////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		last_phy_count = 0;
-		// Up to 4 times
-		m2Repeat(4) {
+		prevPhySimulationCount = 0;
+		m2Repeat(4) { // Up to 4 times
 			BREAK_IF_QUIT();
 
-			sinceLastPhy->measure(M2_LEVEL.GetTotalPauseDurationMsTMP());
-			const auto enoughTimeHasPassed = TIME_BETWEEN_PHYSICS_SIMULATIONS_MS <= sinceLastPhy->duration_of_lap();
-			if (not enoughTimeHasPassed) {
+			if (prevPhyUpdateAt->GetDurationSince() - M2_LEVEL.GetTotalPauseDuration() < TIME_BETWEEN_PHYSICS_SIMULATIONS) {
 				break;
 			}
+			prevPhyUpdateAt->AdvanceStartingPoint(TIME_BETWEEN_PHYSICS_SIMULATIONS);
 
 			M2_GAME._delta_time_s = TIME_BETWEEN_PHYSICS_SIMULATIONS_F;
 			M2_GAME.ExecutePreStep();
@@ -117,12 +112,13 @@ int main(const int argc, char **argv) {
 			M2_GAME.RecalculateDirectionalAudio();
 
 			// Increment phy counters, subtract period from stopwatch
-			++last_phy_count;
-			++phy_count;
-			sinceLastPhy->subtract_from_lap(TIME_BETWEEN_PHYSICS_SIMULATIONS_MS);
+			++prevPhySimulationCount;
+			++totalPhySimulationCount;
 		}
-		if (last_phy_count == 4) {
-			sinceLastPhy->new_lap();
+		if (prevPhySimulationCount == 4) {
+			LOG_WARN("Physics simulation can't keep up with wall clock, simulation will jump forward");
+			prevPhyUpdateAt->Reset();
+			prevPhyUpdateAt->RetracktStartingPoint(M2_LEVEL.GetTotalPauseDuration());
 		}
 		BREAK_IF_QUIT();
 
@@ -146,13 +142,13 @@ int main(const int argc, char **argv) {
 		M2_GAME.DrawHud();
 		M2_GAME.DrawEnvelopes();
 		M2_GAME.FlipBuffers();
-		++gfx_count;
+		++totalGfxUpdateCount;
 
-		if (TIME_BETWEEN_FPS_LOGS < prevFpsLogAt->GetDurationSince() - M2_LEVEL.GetTotalPauseDuration()) {
-			prevFpsLogAt->AdvanceStartTimePoint(TIME_BETWEEN_FPS_LOGS);
-			LOGF_DEBUG("PHY count %d, GFX count %d, FPS %f", phy_count, gfx_count, gfx_count / 10.0f);
-			phy_count = 0;
-			gfx_count = 0;
+		if (TIME_BETWEEN_FPS_LOGS <= prevFpsLogAt->GetDurationSince() - M2_LEVEL.GetTotalPauseDuration()) {
+			prevFpsLogAt->AdvanceStartingPoint(TIME_BETWEEN_FPS_LOGS);
+			LOGF_DEBUG("PHY count %d, GFX count %d, FPS %f", totalPhySimulationCount, totalGfxUpdateCount, totalGfxUpdateCount / 10.0f);
+			totalPhySimulationCount = 0;
+			totalGfxUpdateCount = 0;
 		}
 	}
 

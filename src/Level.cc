@@ -173,6 +173,11 @@ bool Level::IsEditor() const {
 			|| std::holds_alternative<sheet_editor::State>(stateVariant)
 			|| std::holds_alternative<bulk_sheet_editor::State>(stateVariant);
 }
+Stopwatch::Duration Level::GetTotalSimulatedDuration() const {
+	const auto durationSinceLevelBegan = _beganAt->GetDurationSince();
+	const auto unsimulatedDuration = _totalPauseDuration + (_pausedAt ? _pausedAt->GetDurationSince() : Stopwatch::Duration{});
+	return durationSinceLevelBegan - unsimulatedDuration;
+}
 DrawLayer Level::GetDrawLayer(const GraphicId gfxId) {
 	const auto shiftedGfxPoolId = ToShiftedPoolId(gfxId);
 

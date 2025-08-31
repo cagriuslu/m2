@@ -38,7 +38,6 @@ namespace m2 {
 		Stopwatch::Duration _totalPauseDuration; /// Total duration spent while the level was paused
 		std::optional<Stopwatch> _pausedAt; //// A stopwatch that is initialized only when the level is first paused
 
-
 		// Special properties effecting the simulation
 
 		std::optional<std::set<ObjectId>> _dimmingExceptions;
@@ -102,10 +101,7 @@ namespace m2 {
 		std::optional<pb::Level> GetLevelBlueprint() const { return _lb; }
 		const std::string& GetName() const { return _name; }
 		bool IsPaused() const { return static_cast<bool>(_pausedAt); }
-		// TODO remove
-		int GetLevelDurationMsTMP() const { return std::chrono::duration_cast<std::chrono::milliseconds>(_beganAt->GetDurationSince() - _totalPauseDuration).count(); }
-		// TODO remove
-		int GetTotalPauseDurationMsTMP() const { return std::chrono::duration_cast<std::chrono::milliseconds>(_totalPauseDuration).count(); }
+		Stopwatch::Duration GetTotalSimulatedDuration() const;
 		Stopwatch::Duration GetTotalPauseDuration() const { return _totalPauseDuration; }
 		/// Returns the drawable layer that a graphics component belongs to.
 		DrawLayer GetDrawLayer(GraphicId);
