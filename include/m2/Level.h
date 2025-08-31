@@ -106,6 +106,7 @@ namespace m2 {
 		int GetLevelDurationMsTMP() const { return std::chrono::duration_cast<std::chrono::milliseconds>(_beganAt->GetDurationSince() - _totalPauseDuration).count(); }
 		// TODO remove
 		int GetTotalPauseDurationMsTMP() const { return std::chrono::duration_cast<std::chrono::milliseconds>(_totalPauseDuration).count(); }
+		Stopwatch::Duration GetTotalPauseDuration() const { return _totalPauseDuration; }
 		/// Returns the drawable layer that a graphics component belongs to.
 		DrawLayer GetDrawLayer(GraphicId);
 		/// Returns the pool (and optionally, the draw list) that a graphics component belongs to.

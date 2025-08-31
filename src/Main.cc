@@ -24,8 +24,23 @@ int main(const int argc, char **argv) {
 	Game::CreateInstance();
 
 	std::optional<sdl::Stopwatch> sinceLastPhy;
-	std::optional<Stopwatch> prevGfxUpdateAt, prevFpsLogAt;
+	// These stopwatches are used to keep track of when something was done the last time. However, they are unaware of
+	// any pauses. Thus, total pause duration must be subtracted before comparisons and calculations.
+	std::optional<Stopwatch> prevPhyUpdateAt;
+	std::optional<Stopwatch::Duration> prevTotalPauseDurationDuringLastPhy;
+
+	// Used to keep track of when the graphics update was last executed. This stopwatch is reset after every execution,
+	// thus each measurement might contain the pause duration since the last execution. To find the pause duration since
+	// the last execution, total pause duration during last update and current update are compared.
+	std::optional<Stopwatch> prevGfxUpdateAt;
+	std::optional<Stopwatch::Duration> prevTotalPauseDurationDuringLastGfx;
+	// Used to keep track of when the FPS log was last printed. This stopwatch is never reset, but instead advanced
+	// by log period after each execution, thus the duration will contain the total pause duration since the beginning
+	// of the level, and it must be subtracked before use.
+	std::optional<Stopwatch> prevFpsLogAt;
+
 	unsigned phy_count{}, gfx_count{}, last_phy_count = UINT_MAX;
+
 	while (not M2_GAME.quit) {
 		// If the level is marked for deletion, delete it
 		if (M2_GAME.HasLevel() && M2_LEVEL.IsMarkedForDeletion()) {
@@ -34,8 +49,6 @@ int main(const int argc, char **argv) {
 
 		// Try to load a level if there's no level
 		if (not M2_GAME.HasLevel()) {
-			prevGfxUpdateAt.reset();
-
 			LOG_DEBUG("Executing main menu...");
 			if (UiPanel::create_and_run_blocking(M2G_PROXY.MainMenuBlueprint()).IsQuit()) {
 				LOG_INFO("Main menu returned QUIT");
@@ -49,7 +62,10 @@ int main(const int argc, char **argv) {
 
 			M2_LEVEL.BeginGameLoop();
 			sinceLastPhy = sdl::Stopwatch{};
+			prevPhyUpdateAt = Stopwatch{}; // Act as-if a physics update was just done
+			prevTotalPauseDurationDuringLastPhy = Stopwatch::Duration{};
 			prevGfxUpdateAt = Stopwatch{}; // Act as-if a graphics update was just done
+			prevTotalPauseDurationDuringLastGfx = Stopwatch::Duration{};
 			prevFpsLogAt = Stopwatch{}; // Act as-if FPS log was just done
 		}
 
@@ -113,9 +129,12 @@ int main(const int argc, char **argv) {
 		////////////////////////////////////////////////////////////////////////
 		/////////////////////////////// GRAPHICS ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		// Measure and advance time
-		const auto durationSinceLastGfx = prevGfxUpdateAt->Reset();
-		M2_GAME._delta_time_s = std::chrono::duration_cast<std::chrono::duration<float>>(durationSinceLastGfx).count();
+
+		const auto currentTotalPauseDuration = M2_LEVEL.GetTotalPauseDuration();
+		const auto pauseDurationSinceLastGfx = currentTotalPauseDuration - *prevTotalPauseDurationDuringLastGfx;
+		const auto ingameDurationSinceLastGfx = prevGfxUpdateAt->Reset() - pauseDurationSinceLastGfx;
+		M2_GAME._delta_time_s = std::chrono::duration_cast<std::chrono::duration<float>>(ingameDurationSinceLastGfx).count();
+		prevTotalPauseDurationDuringLastGfx = currentTotalPauseDuration;
 
 		M2_GAME.ExecutePreDraw();
 		M2_GAME.UpdateHudContents();
@@ -129,7 +148,7 @@ int main(const int argc, char **argv) {
 		M2_GAME.FlipBuffers();
 		++gfx_count;
 
-		if (prevFpsLogAt->HasTimePassed(TIME_BETWEEN_FPS_LOGS)) {
+		if (TIME_BETWEEN_FPS_LOGS < prevFpsLogAt->GetDurationSince() - M2_LEVEL.GetTotalPauseDuration()) {
 			prevFpsLogAt->AdvanceStartTimePoint(TIME_BETWEEN_FPS_LOGS);
 			LOGF_DEBUG("PHY count %d, GFX count %d, FPS %f", phy_count, gfx_count, gfx_count / 10.0f);
 			phy_count = 0;
