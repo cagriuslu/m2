@@ -106,7 +106,7 @@ namespace m2 {
 		World& World2() { return world2; }
 		/// Inclusive rectangle that contains all terrain graphics inside. The unit is meters.
 		[[nodiscard]] const RectI& GetBackgroundBoundary() const { return _backgroundBoundary; }
-		const std::string& GetLevelIdentifier() const { return _lb ? _lb->identifier() : gEmptyString; }
+		const std::string& GetLevelIdentifier() const { return _lb ? _lb->identifier() : EMPTY_STRING; }
 		pb::ProjectionType GetProjectionType() const;
 		m3::VecF GetCameraOffset() const;
 		float GetHorizontalFov() const;

@@ -20,6 +20,7 @@ namespace m2::sdl {
 			return (_lap = (_lap < t) ? 0 : _lap - t);
 		}
 		void new_lap() { _lap = 0; }
+		[[nodiscard]] ticks_t lap() const { return _lap; }
 		[[nodiscard]] ticks_t last() const { return _last_measurement; }
 	};
 }
