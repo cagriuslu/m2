@@ -2,7 +2,7 @@
 
 using namespace m2;
 
-const std::string m2::gEmptyString;
+const std::string m2::EMPTY_STRING;
 
 namespace {
 	uintptr_t gStoredStackPosition{};

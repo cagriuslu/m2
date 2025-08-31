@@ -1,4 +1,5 @@
 #pragma once
+#include "Chrono.h"
 #include "Meta.h"
 #include <array>
 
@@ -7,7 +8,12 @@
 #define IF_TYPE(ref, type) if (std::holds_alternative<type>(ref)) std::get<type>(ref) // TODO make this a function
 
 namespace m2 {
-	extern const std::string gEmptyString;
+	extern const std::string EMPTY_STRING;
+
+	constexpr auto PHYSICS_SIMULATIONS_PER_SECOND{100};
+	constexpr Stopwatch::Duration TIME_BETWEEN_PHYSICS_SIMULATIONS{Stopwatch::OneSecondInDuration().count() / PHYSICS_SIMULATIONS_PER_SECOND};
+	static_assert(Stopwatch::OneSecondInDuration().count() % PHYSICS_SIMULATIONS_PER_SECOND == 0,
+		"Precision of the stopwatch (ticks per second) is not an integer multiple of the physics simulation frequency");
 
 	/// Each physics layer designates a separate physical world. Objects in different layers cannot collide.
 	enum class PhysicsLayer {
