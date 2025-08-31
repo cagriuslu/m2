@@ -3,16 +3,14 @@
 
 namespace m2::sdl {
 	class Stopwatch {
-		const ticks_t* _pause_ticks_ref;
 		ticks_t _total_ticks{};
 		ticks_t _lap{};
 		ticks_t _last_measurement{};
 
 	public:
-		explicit Stopwatch(const ticks_t* pause_ticks_ref) : _pause_ticks_ref(pause_ticks_ref) {}
-		ticks_t measure() {
+		ticks_t measure(ticks_t pause_ticks) {
 			// Measure how much time has passed since last reset lap
-			_last_measurement = get_ticks_since(_total_ticks, _pause_ticks_ref ? *_pause_ticks_ref : 0);
+			_last_measurement = get_ticks_since(_total_ticks, pause_ticks);
 			_total_ticks += _last_measurement;
 			return (_lap += _last_measurement);
 		}

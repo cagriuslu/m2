@@ -238,19 +238,27 @@ m3::VecF Level::GetCameraOffset() const {
 }
 float Level::GetHorizontalFov() const { return _lb ? _lb->horizontal_fov() : M2_GAME.Dimensions().GameM().x; }
 
-sdl::ticks_t Level::GetLevelDuration() const {
-	return sdl::get_ticks_since(*_beginTicks, *_pauseTicks);
-}
-
 void Level::BeginGameLoop() {
-	if (_beginTicks) {
-		throw M2_ERROR("BeginGameLoop called for a second time");
+	if (_beganAt) {
+		throw M2_ERROR("Level already began");
 	}
-
-	// This means this is the first time the game loop is executing
-	// Initialize start_ticks counters
-	_beginTicks = sdl::get_ticks();
-	_pauseTicks = 0;
+	_beganAt = Stopwatch{};
+	_totalPauseDuration = {};
+	_pausedAt.reset();
+}
+void Level::Pause() {
+	if (_pausedAt) {
+		throw M2_ERROR("Attempt to pause an already paused level");
+	}
+	_pausedAt = Stopwatch{};
+}
+void Level::Unpause() {
+	if (not _pausedAt) {
+		throw M2_ERROR("Attempt to unpause an already unpaused level");
+	}
+	const auto pauseDuration = _pausedAt->GetDurationSince();
+	_totalPauseDuration += pauseDuration;
+	_pausedAt.reset();
 }
 
 void Level::EnableDimmingWithExceptions(std::set<ObjectId>&& exceptions) {

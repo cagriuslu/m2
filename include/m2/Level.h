@@ -32,7 +32,9 @@ namespace m2 {
 		std::optional<pb::Level> _lb;
 		std::string _name;
 		RectI _backgroundBoundary; // In meters
-		std::optional<sdl::ticks_t> _beginTicks, _pauseTicks;
+		std::optional<Stopwatch> _beganAt; /// A stopwatch that began when the level started
+		Stopwatch::Duration _totalPauseDuration; /// Total duration spent while the level was paused
+		std::optional<Stopwatch> _pausedAt; //// A stopwatch that is initialized only when the level is first paused
 
 		// Special properties effecting the simulation
 
@@ -75,7 +77,6 @@ namespace m2 {
 		std::optional<SoundListener> leftListener, rightListener;
 		std::optional<Pathfinder> pathfinder; // Pathfinder works only on ForegroundLayer::F0 and background layers.
 
-		std::optional<sdl::ticks_t> rootBlockingUiBeginTicks;  // Exists only if there is an ongoing blocking UI
 		std::queue<std::function<void()>> deferredActions;
 		std::variant<
 			std::monostate,
@@ -97,6 +98,11 @@ namespace m2 {
 		std::optional<std::filesystem::path> GetLevelFilePath() const { return _lbPath; }
 		std::optional<pb::Level> GetLevelBlueprint() const { return _lb; }
 		const std::string& GetName() const { return _name; }
+		bool IsPaused() const { return static_cast<bool>(_pausedAt); }
+		// TODO remove
+		int GetLevelDurationMsTMP() const { return std::chrono::duration_cast<std::chrono::milliseconds>(_beganAt->GetDurationSince() - _totalPauseDuration).count(); }
+		// TODO remove
+		int GetTotalPauseDurationMsTMP() const { return std::chrono::duration_cast<std::chrono::milliseconds>(_totalPauseDuration).count(); }
 		/// Returns the drawable layer that a graphics component belongs to.
 		DrawLayer GetDrawLayer(GraphicId);
 		/// Returns the pool (and optionally, the draw list) that a graphics component belongs to.
@@ -112,13 +118,12 @@ namespace m2 {
 		float GetHorizontalFov() const;
 		Object* GetPlayer() { return objects.Get(playerId); }
 		Object* GetCamera() { return objects.Get(cameraId); }
-		const sdl::ticks_t* GetPauseTicksHandle() const { return &*_pauseTicks; }
-		sdl::ticks_t GetLevelDuration() const;
 
 		// Modifiers
 
 		void BeginGameLoop();
-		void AddPauseTicks(const sdl::ticks_t ticks) { _pauseTicks = _pauseTicks ? *_pauseTicks + ticks : ticks; }
+		void Pause();
+		void Unpause();
 		void MarkForDeletion() { _markedForDeletion = true; }
 
 		// Dimming control

@@ -253,21 +253,18 @@ UiAction UiPanel::create_and_run_blocking(std::variant<const UiPanelBlueprint*,
 		const std::variant<std::monostate, RectI, RectF>& fullscreen_or_pixel_rect_or_relation_to_game_and_hud,
 		sdl::TextureUniquePtr background_texture) {
 	// Check if there is already a blocking UI panel
-	if (not M2_GAME.HasLevel() || M2_LEVEL.rootBlockingUiBeginTicks) {
-		// Execute panel without keeping time, it's being kept already
+	if (not M2_GAME.HasLevel() || M2_LEVEL.IsPaused()) {
+		// Execute panel without pausing the level as it's paused already
 		return UiPanel{std::move(static_or_unique_blueprint), fullscreen_or_pixel_rect_or_relation_to_game_and_hud,
 				std::move(background_texture)}.run_blocking();
 	}
 
-	// Save begin ticks for later and other nested UIs
-	M2_LEVEL.rootBlockingUiBeginTicks = sdl::get_ticks();
-	// Execute panel
+	// Execute panel after pausing the level
+	M2_LEVEL.Pause();
 	auto action = UiPanel{std::move(static_or_unique_blueprint),
 			fullscreen_or_pixel_rect_or_relation_to_game_and_hud, std::move(background_texture)}.run_blocking();
-	// Add pause ticks
-	M2_LEVEL.AddPauseTicks(sdl::get_ticks_since(*M2_LEVEL.rootBlockingUiBeginTicks));
-	M2_LEVEL.rootBlockingUiBeginTicks.reset();
-	// Return
+	M2_LEVEL.Unpause();
+
 	return action;
 }
 

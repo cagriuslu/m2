@@ -44,9 +44,9 @@ int main(const int argc, char **argv) {
 			}
 			LOG_INFO("Main menu loaded a level");
 			M2_LEVEL.BeginGameLoop();
-			sinceLastPhy = sdl::Stopwatch{M2_GAME._level->GetPauseTicksHandle()};
-			sinceLastGfx = sdl::Stopwatch{M2_GAME._level->GetPauseTicksHandle()};
-			sinceLastFps = sdl::Stopwatch{M2_GAME._level->GetPauseTicksHandle()};
+			sinceLastPhy = sdl::Stopwatch{};
+			sinceLastGfx = sdl::Stopwatch{};
+			sinceLastFps = sdl::Stopwatch{};
 		}
 
 		////////////////////////////////////////////////////////////////////////
@@ -74,7 +74,7 @@ int main(const int argc, char **argv) {
 		////////////////////////////////////////////////////////////////////////
 		for (last_phy_count = 0;
 			// Up to 4 times, if enough time has passed since last phy, if game hasn't quit
-			last_phy_count < 4 && TIME_BETWEEN_PHYSICS_SIMULATIONS_MS <= sinceLastPhy->measure() && !M2_GAME.quit;
+			last_phy_count < 4 && TIME_BETWEEN_PHYSICS_SIMULATIONS_MS <= sinceLastPhy->measure(M2_LEVEL.GetTotalPauseDurationMsTMP()) && !M2_GAME.quit;
 			// Increment phy counters, subtract period from stopwatch
 			++last_phy_count, ++phy_count, sinceLastPhy->subtract_from_lap(TIME_BETWEEN_PHYSICS_SIMULATIONS_MS)) {
 
@@ -100,7 +100,7 @@ int main(const int argc, char **argv) {
 		/////////////////////////////// GRAPHICS ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 		// Measure and advance time
-		sinceLastGfx->measure();
+		sinceLastGfx->measure(M2_LEVEL.GetTotalPauseDurationMsTMP());
 		M2_GAME._delta_time_s = static_cast<float>(sinceLastGfx->last()) / 1000.0f;
 
 		M2_GAME.ExecutePreDraw();
@@ -115,7 +115,7 @@ int main(const int argc, char **argv) {
 		M2_GAME.FlipBuffers();
 		++gfx_count;
 
-		if (sinceLastFps->measure(); 10000 < sinceLastFps->lap()) {
+		if (sinceLastFps->measure(M2_LEVEL.GetTotalPauseDurationMsTMP()); 10000 < sinceLastFps->lap()) {
 			sinceLastFps->subtract_from_lap(10000);
 			LOGF_DEBUG("PHY count %d, GFX count %d, FPS %f", phy_count, gfx_count, gfx_count / 10.0f);
 			phy_count = 0;
