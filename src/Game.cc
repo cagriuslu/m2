@@ -555,7 +555,7 @@ void m2::Game::HandleNetworkEvents() {
 	}
 }
 
-void m2::Game::ExecutePreStep() {
+void m2::Game::ExecutePreStep(const Stopwatch::Duration& delta) {
 	_proxy.OnPreStep();
 	ExecuteDeferredActions();
 	for (auto& phy : _level->physics) {
@@ -600,7 +600,7 @@ void m2::Game::ExecutePreStep() {
 	}
 }
 
-void m2::Game::UpdateCharacters() {
+void m2::Game::UpdateCharacters(const Stopwatch::Duration& delta) {
 	for (auto& character : _level->characters) {
 		auto& chr = ToCharacterBase(character);
 		chr.AutomaticUpdate();
@@ -611,7 +611,7 @@ void m2::Game::UpdateCharacters() {
 	}
 }
 
-void m2::Game::ExecuteStep() {
+void m2::Game::ExecuteStep(const Stopwatch::Duration& delta) {
 	// Integrate physics
 	for (auto* world : _level->world) {
 		if (world) {
@@ -647,7 +647,7 @@ void m2::Game::ExecuteStep() {
 	}
 }
 
-void m2::Game::ExecutePostStep() {
+void m2::Game::ExecutePostStep(const Stopwatch::Duration& delta) {
 	if (IsServer()) {
 		if (_server_update_necessary) {
 			LOG_DEBUG("Server update is necessary, sending TurnBasedServerUpdate...");
@@ -690,13 +690,13 @@ void m2::Game::ExecutePostStep() {
 	}
 }
 
-void m2::Game::UpdateSounds() {
+void m2::Game::UpdateSounds(const Stopwatch::Duration& delta) {
 	for (auto& sound_emitter : _level->soundEmitters) {
 		IF(sound_emitter.update)(sound_emitter);
 	}
 }
 
-void m2::Game::ExecutePreDraw() {
+void m2::Game::ExecutePreDraw(const Stopwatch::Duration& delta) {
 	for (auto& gfx : _level->fgGraphics) {
 		if (gfx.enabled) {
 			IF(gfx.preDraw)(gfx);
@@ -704,7 +704,7 @@ void m2::Game::ExecutePreDraw() {
 	}
 }
 
-void m2::Game::UpdateHudContents() {
+void m2::Game::UpdateHudContents(const Stopwatch::Duration& delta) {
 	// TODO handle returned actions
 	IF(_level->_leftHudUiPanel)->UpdateContents(_delta_time_s);
 	IF(_level->_rightHudUiPanel)->UpdateContents(_delta_time_s);
@@ -736,7 +736,7 @@ void m2::Game::ClearBackBuffer() const {
 	SDL_RenderClear(renderer);
 }
 
-void m2::Game::Draw() {
+void m2::Game::Draw(const Stopwatch::Duration& delta) {
 	// Check if only one background layer needs to be drawn
 	const auto onlyBackgroundLayerToDraw = [&]() -> std::optional<BackgroundDrawLayer> {
 		if (std::holds_alternative<level_editor::State>(_level->stateVariant)) {
@@ -773,13 +773,13 @@ void m2::Game::Draw() {
 	}
 }
 
-void m2::Game::DrawLights() {
+void m2::Game::DrawLights(const Stopwatch::Duration& delta) {
 	for (auto& light : _level->lights) {
 		IF(light.onDraw)(light);
 	}
 }
 
-void m2::Game::ExecutePostDraw() {
+void m2::Game::ExecutePostDraw(const Stopwatch::Duration& delta) {
 	for (auto& gfx : _level->fgGraphics) {
 		if (gfx.enabled) {
 			IF(gfx.postDraw)(gfx);
@@ -809,7 +809,7 @@ void m2::Game::DebugDraw() {
 #endif
 }
 
-void m2::Game::DrawHud() {
+void m2::Game::DrawHud(const Stopwatch::Duration& delta) {
 	IF(_level->_leftHudUiPanel)->Draw();
 	IF(_level->_rightHudUiPanel)->Draw();
 	IF(_level->_messageBoxUiPanel)->Draw();
@@ -950,8 +950,8 @@ m2::sdl::TextureUniquePtr m2::Game::DrawGameToTexture(const VecF& camera_positio
 
 	// Draw
 	ClearBackBuffer();
-	Draw();
-	DrawLights();
+	Draw({});
+	DrawLights({});
 	DrawEnvelopes();
 
 	// Reinstate old render target

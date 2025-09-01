@@ -53,8 +53,8 @@ bool ClientActor::operator()(MessageBox<ClientActorInput>& inbox, MessageBox<Cli
 		_serverConnection->QueueOutgoingMessages(&_unsentPlayerInputs);
 		// TODO send also to other peers
 
-		// If it was time to send player inputs, it is also time to return all player inputs to the game.
-		// Although, these inputs should be simulated in the next cycle.
+		// If all player inputs are received, and game tick period has passed since the last time the inputs were sent
+		// to other peers, we can return the inputs to the client interface for them to be simulated.
 		if (timeToSendPlayerInputs && _nextSelfPlayerInputs) {
 			// TODO gather inputs from peers
 			outbox.PushMessage(ClientActorOutput{

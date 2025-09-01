@@ -99,15 +99,15 @@ int main(const int argc, char **argv) {
 			prevPhyUpdateAt->AdvanceStartingPoint(TIME_BETWEEN_PHYSICS_SIMULATIONS);
 
 			M2_GAME._delta_time_s = TIME_BETWEEN_PHYSICS_SIMULATIONS_F;
-			M2_GAME.ExecutePreStep();
+			M2_GAME.ExecutePreStep(TIME_BETWEEN_PHYSICS_SIMULATIONS);
 			M2_GAME.ExecuteDeferredActions();
-			M2_GAME.UpdateCharacters();
+			M2_GAME.UpdateCharacters(TIME_BETWEEN_PHYSICS_SIMULATIONS);
 			M2_GAME.ExecuteDeferredActions();
-			M2_GAME.ExecuteStep();
+			M2_GAME.ExecuteStep(TIME_BETWEEN_PHYSICS_SIMULATIONS);
 			M2_GAME.ExecuteDeferredActions();
-			M2_GAME.ExecutePostStep();
+			M2_GAME.ExecutePostStep(TIME_BETWEEN_PHYSICS_SIMULATIONS);
 			M2_GAME.ExecuteDeferredActions();
-			M2_GAME.UpdateSounds();
+			M2_GAME.UpdateSounds(TIME_BETWEEN_PHYSICS_SIMULATIONS);
 			M2_GAME.ExecuteDeferredActions();
 			M2_GAME.RecalculateDirectionalAudio();
 
@@ -132,14 +132,14 @@ int main(const int argc, char **argv) {
 		M2_GAME._delta_time_s = std::chrono::duration_cast<std::chrono::duration<float>>(ingameDurationSinceLastGfx).count();
 		prevTotalPauseDurationDuringLastGfx = currentTotalPauseDuration;
 
-		M2_GAME.ExecutePreDraw();
-		M2_GAME.UpdateHudContents();
+		M2_GAME.ExecutePreDraw(ingameDurationSinceLastGfx);
+		M2_GAME.UpdateHudContents(ingameDurationSinceLastGfx);
 		M2_GAME.ClearBackBuffer();
-		M2_GAME.Draw();
-		M2_GAME.DrawLights();
-		M2_GAME.ExecutePostDraw();
+		M2_GAME.Draw(ingameDurationSinceLastGfx);
+		M2_GAME.DrawLights(ingameDurationSinceLastGfx);
+		M2_GAME.ExecutePostDraw(ingameDurationSinceLastGfx);
 		M2_GAME.DebugDraw();
-		M2_GAME.DrawHud();
+		M2_GAME.DrawHud(ingameDurationSinceLastGfx);
 		M2_GAME.DrawEnvelopes();
 		M2_GAME.FlipBuffers();
 		++totalGfxUpdateCount;
