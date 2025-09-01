@@ -6,11 +6,9 @@
 #include <m2/Error.h>
 #include <m2/Object.h>
 #include <m2/video/Sprite.h>
-#include <m2/String.h>
 #include <m2/bulk_sheet_editor/Ui.h>
 #include <m2/sdl/Detail.h>
 #include <m2/sheet_editor/Ui.h>
-#include <m2/FileSystem.h>
 #include <filesystem>
 #include <ranges>
 #include "m2/component/Graphic.h"
@@ -603,11 +601,11 @@ void m2::Game::ExecutePreStep(const Stopwatch::Duration& delta) {
 void m2::Game::UpdateCharacters(const Stopwatch::Duration& delta) {
 	for (auto& character : _level->characters) {
 		auto& chr = ToCharacterBase(character);
-		chr.AutomaticUpdate();
+		chr.AutomaticUpdate(delta);
 	}
 	for (auto& character : _level->characters) {
 		auto& chr = ToCharacterBase(character);
-		IF(chr.update)(chr);
+		IF(chr.update)(chr, delta);
 	}
 }
 
@@ -615,7 +613,7 @@ void m2::Game::ExecuteStep(const Stopwatch::Duration& delta) {
 	// Integrate physics
 	for (auto* world : _level->world) {
 		if (world) {
-			world->Step(TIME_BETWEEN_PHYSICS_SIMULATIONS_F, velocity_iterations, position_iterations);
+			world->Step(ToDurationF(delta), velocity_iterations, position_iterations);
 		}
 	}
 	// Update positions
@@ -692,14 +690,14 @@ void m2::Game::ExecutePostStep(const Stopwatch::Duration& delta) {
 
 void m2::Game::UpdateSounds(const Stopwatch::Duration& delta) {
 	for (auto& sound_emitter : _level->soundEmitters) {
-		IF(sound_emitter.update)(sound_emitter);
+		IF(sound_emitter.update)(sound_emitter, delta);
 	}
 }
 
 void m2::Game::ExecutePreDraw(const Stopwatch::Duration& delta) {
 	for (auto& gfx : _level->fgGraphics) {
 		if (gfx.enabled) {
-			IF(gfx.preDraw)(gfx);
+			IF(gfx.preDraw)(gfx, delta);
 		}
 	}
 }
@@ -736,7 +734,7 @@ void m2::Game::ClearBackBuffer() const {
 	SDL_RenderClear(renderer);
 }
 
-void m2::Game::Draw(const Stopwatch::Duration& delta) {
+void m2::Game::Draw() {
 	// Check if only one background layer needs to be drawn
 	const auto onlyBackgroundLayerToDraw = [&]() -> std::optional<BackgroundDrawLayer> {
 		if (std::holds_alternative<level_editor::State>(_level->stateVariant)) {
@@ -773,7 +771,7 @@ void m2::Game::Draw(const Stopwatch::Duration& delta) {
 	}
 }
 
-void m2::Game::DrawLights(const Stopwatch::Duration& delta) {
+void m2::Game::DrawLights() {
 	for (auto& light : _level->lights) {
 		IF(light.onDraw)(light);
 	}
@@ -782,7 +780,7 @@ void m2::Game::DrawLights(const Stopwatch::Duration& delta) {
 void m2::Game::ExecutePostDraw(const Stopwatch::Duration& delta) {
 	for (auto& gfx : _level->fgGraphics) {
 		if (gfx.enabled) {
-			IF(gfx.postDraw)(gfx);
+			IF(gfx.postDraw)(gfx, delta);
 		}
 	}
 }
@@ -809,7 +807,7 @@ void m2::Game::DebugDraw() {
 #endif
 }
 
-void m2::Game::DrawHud(const Stopwatch::Duration& delta) {
+void m2::Game::DrawHud() {
 	IF(_level->_leftHudUiPanel)->Draw();
 	IF(_level->_rightHudUiPanel)->Draw();
 	IF(_level->_messageBoxUiPanel)->Draw();
@@ -950,8 +948,8 @@ m2::sdl::TextureUniquePtr m2::Game::DrawGameToTexture(const VecF& camera_positio
 
 	// Draw
 	ClearBackBuffer();
-	Draw({});
-	DrawLights({});
+	Draw();
+	DrawLights();
 	DrawEnvelopes();
 
 	// Reinstate old render target

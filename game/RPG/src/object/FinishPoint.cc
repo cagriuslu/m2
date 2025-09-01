@@ -39,7 +39,7 @@ m2::void_expected rpg::init_finish_point(m2::Object& obj) {
 			});
 		}
 	};
-	gfx.preDraw = [](MAYBE m2::Graphic& gfx) {
+	gfx.preDraw = [](MAYBE m2::Graphic& gfx, const m2::Stopwatch::Duration&) {
 		// Check enemy counter, adjust sprite effect
 		if (M2G_PROXY.alive_enemy_count) {
 			gfx.visual = &std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(m2g::pb::CASTLE_FINISH_POINT_SPRITE_GRAYSCALE));

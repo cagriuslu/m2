@@ -51,9 +51,11 @@ namespace m2 {
 		void AdvanceStartingPoint(const Duration& duration) {
 			_startTimePoint += duration;
 		}
-		/// Retreats the starting point of the stopwatch so that it behaves as if it was started earlier.
-		void RetracktStartingPoint(const Duration& duration) {
+		/// Retract the starting point of the stopwatch so that it behaves as if it was started earlier.
+		void RetractStartingPoint(const Duration& duration) {
 			_startTimePoint -= duration;
 		}
 	};
+
+	inline float ToDurationF(const Stopwatch::Duration& d) { return std::chrono::duration_cast<std::chrono::duration<float>>(d).count(); }
 }

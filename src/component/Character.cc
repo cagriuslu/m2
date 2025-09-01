@@ -138,7 +138,7 @@ namespace {
 }
 
 m2::TinyCharacter::TinyCharacter(uint64_t object_id) : Character(object_id) {}
-void m2::TinyCharacter::AutomaticUpdate() {
+void m2::TinyCharacter::AutomaticUpdate(const Stopwatch::Duration& delta) {
 	if (_item && _item->Usage() == pb::AUTOMATIC) {
 		UseItem(BeginItems(), M2_GAME.DeltaTimeS());
 	}
@@ -293,7 +293,7 @@ void m2::FullCharacterIteratorIncrementor(m2::Character::Iterator& it) {
 }
 
 m2::FullCharacter::FullCharacter(uint64_t object_id) : Character(object_id) {}
-void m2::FullCharacter::AutomaticUpdate() {
+void m2::FullCharacter::AutomaticUpdate(const Stopwatch::Duration& delta) {
 	for (auto it = BeginItems(); it != EndItems(); ++it) {
 		if (it->Usage() == pb::AUTOMATIC) {
 			UseItem(it, M2_GAME.DeltaTimeS());

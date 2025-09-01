@@ -118,7 +118,7 @@ int main(const int argc, char **argv) {
 		if (prevPhySimulationCount == 4) {
 			LOG_WARN("Physics simulation can't keep up with wall clock, simulation will jump forward");
 			prevPhyUpdateAt->Reset();
-			prevPhyUpdateAt->RetracktStartingPoint(M2_LEVEL.GetTotalPauseDuration());
+			prevPhyUpdateAt->RetractStartingPoint(M2_LEVEL.GetTotalPauseDuration());
 		}
 		BREAK_IF_QUIT();
 
@@ -135,11 +135,11 @@ int main(const int argc, char **argv) {
 		M2_GAME.ExecutePreDraw(ingameDurationSinceLastGfx);
 		M2_GAME.UpdateHudContents(ingameDurationSinceLastGfx);
 		M2_GAME.ClearBackBuffer();
-		M2_GAME.Draw(ingameDurationSinceLastGfx);
-		M2_GAME.DrawLights(ingameDurationSinceLastGfx);
+		M2_GAME.Draw();
+		M2_GAME.DrawLights();
 		M2_GAME.ExecutePostDraw(ingameDurationSinceLastGfx);
 		M2_GAME.DebugDraw();
-		M2_GAME.DrawHud(ingameDurationSinceLastGfx);
+		M2_GAME.DrawHud();
 		M2_GAME.DrawEnvelopes();
 		M2_GAME.FlipBuffers();
 		++totalGfxUpdateCount;

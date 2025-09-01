@@ -198,11 +198,11 @@ namespace m2 {
 		void ExecutePreDraw(const Stopwatch::Duration& delta);
 		void UpdateHudContents(const Stopwatch::Duration& delta);
 		void ClearBackBuffer() const;
-		void Draw(const Stopwatch::Duration& delta);
-		void DrawLights(const Stopwatch::Duration& delta);
+		void Draw();
+		void DrawLights();
 		void ExecutePostDraw(const Stopwatch::Duration& delta);
 		void DebugDraw();
-		void DrawHud(const Stopwatch::Duration& delta);
+		void DrawHud();
 		void DrawEnvelopes() const;
 		void FlipBuffers() const;
 

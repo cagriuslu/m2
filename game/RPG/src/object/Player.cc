@@ -133,7 +133,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 			}
 		}
 	};
-	chr.update = [](MAYBE m2::Character& chr) {
+	chr.update = [](MAYBE m2::Character& chr, const m2::Stopwatch::Duration&) {
 		// Check if died
 		if (not chr.HasResource(m2g::pb::RESOURCE_HP)) {
 			LOG_INFO("You died");
@@ -180,7 +180,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 		}
 		return std::nullopt;
 	};
-	gfx.preDraw = [&](MAYBE m2::Graphic& gfx) {
+	gfx.preDraw = [&](MAYBE m2::Graphic& gfx, const m2::Stopwatch::Duration&) {
 		impl.animation_fsm.time(M2_GAME.DeltaTimeS());
 	};
 	gfx.onDraw = [&](m2::Graphic& gfx) {

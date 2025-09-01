@@ -99,7 +99,7 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 			if (obj.GetSoundId() == 0) {
 				// Add sound emitter
 				auto& sound_emitter = obj.AddSoundEmitter();
-				sound_emitter.update = [&](m2::SoundEmitter& se) {
+				sound_emitter.update = [&](m2::SoundEmitter& se, const m2::Stopwatch::Duration&) {
 					// Play sound
 					if (se.playbacks.empty()) {
 						auto playback_id = M2_GAME.audio_manager->Play(&M2_GAME.songs[m2g::pb::SONG_DAMAGE_TO_ENEMY], m2::AudioManager::PlayPolicy::ONCE, 0.10f);
@@ -159,7 +159,7 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 			impl.animation_fsm.signal(m2::AnimationFsmSignal{m2g::pb::ANIMATION_STATE_IDLE});
 		}
 	};
-	gfx.preDraw = [&](m2::Graphic&) {
+	gfx.preDraw = [&](m2::Graphic&, const m2::Stopwatch::Duration&) {
 		using namespace m2::pb;
 		impl.animation_fsm.time(M2_GAME.DeltaTimeS());
 		if (chr.HasResource(RESOURCE_DAMAGE_EFFECT_TTL)) {

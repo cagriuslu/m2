@@ -62,7 +62,7 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& intend
 	chr.AddNamedItem(M2_GAME.GetNamedItem(ITEM_AUTOMATIC_TTL));
 	chr.AddResource(RESOURCE_TTL, ttl);
 
-	chr.update = [=, &phy, &obj](m2::Character& chr) {
+	chr.update = [=, &phy, &obj](m2::Character& chr, const m2::Stopwatch::Duration&) {
 		if (!chr.HasResource(RESOURCE_TTL)) {
 			if (is_explosive) {
 				LOG_DEBUG("Exploding...");

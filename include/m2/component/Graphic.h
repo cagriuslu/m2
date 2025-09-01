@@ -75,9 +75,10 @@ namespace m2 {
 		bool enabled{true};
 		bool draw{true};
 
-		using Callback = std::function<void(Graphic&)>;
+		using Callback = std::function<void(Graphic&, const Stopwatch::Duration& delta)>;
+		using DrawCallback = std::function<void(Graphic&)>;
 		Callback preDraw{};
-		Callback onDraw{};
+		DrawCallback onDraw{};
 		Callback postDraw{};
 
 		std::variant<std::monostate, const Sprite*, const pb::TextLabel*> visual;

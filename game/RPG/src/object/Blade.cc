@@ -54,7 +54,7 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF &direction, 
 	chr.AddNamedItem(M2_GAME.GetNamedItem(ITEM_AUTOMATIC_TTL));
 	chr.AddResource(RESOURCE_TTL, average_ttl);
 
-	chr.update = [](m2::Character& chr) {
+	chr.update = [](m2::Character& chr, const m2::Stopwatch::Duration&) {
 		if (!chr.HasResource(RESOURCE_TTL)) {
 			M2_DEFER(m2::CreateObjectDeleter(chr.OwnerId()));
 		}

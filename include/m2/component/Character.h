@@ -31,7 +31,7 @@ namespace m2 {
 
 	class Character : public Component {
 	public:
-		std::function<void(Character& self)> update;
+		std::function<void(Character& self, const Stopwatch::Duration& delta)> update;
 		std::function<std::optional<m2g::pb::InteractionData>(Character& self, Character* other, const m2g::pb::InteractionData& data)> on_interaction;
 
 		class Iterator {
@@ -69,7 +69,7 @@ namespace m2 {
 		Character() = default;
 		explicit Character(uint64_t object_id);
 
-		virtual void AutomaticUpdate() = 0;
+		virtual void AutomaticUpdate(const Stopwatch::Duration& delta) = 0;
 		std::optional<m2g::pb::InteractionData> ExecuteInteraction(Character& initiator, const m2g::pb::InteractionData& data);
 		std::optional<m2g::pb::InteractionData> ExecuteInteraction(const m2g::pb::InteractionData& data);
 
@@ -117,7 +117,7 @@ namespace m2 {
 		TinyCharacter() = default;
 		explicit TinyCharacter(uint64_t object_id);
 
-		void AutomaticUpdate() override;
+		void AutomaticUpdate(const Stopwatch::Duration& delta) override;
 
 		[[nodiscard]] Iterator FindItems(m2g::pb::ItemType item_type) const override;
 		[[nodiscard]] Iterator FindItems(m2g::pb::ItemCategory item_cat) const override;
@@ -156,7 +156,7 @@ namespace m2 {
 		FullCharacter() = default;
 		explicit FullCharacter(uint64_t object_id);
 
-		void AutomaticUpdate() override;
+		void AutomaticUpdate(const Stopwatch::Duration& delta) override;
 
 		[[nodiscard]] Iterator FindItems(m2g::pb::ItemType item_type) const override;
 		[[nodiscard]] Iterator FindItems(m2g::pb::ItemCategory item_cat) const override;
