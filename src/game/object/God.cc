@@ -29,7 +29,7 @@ namespace {
 Id obj::CreateGod() {
 	const auto it = CreateObject({});
 
-	it->AddPhysique().preStep = [](MAYBE Physique& phy, const Stopwatch::Duration&) {
+	it->AddPhysique().preStep = [](MAYBE Physique& phy, const Stopwatch::Duration& delta) {
 		auto& obj = phy.Owner();
 
 		VecF move_direction;
@@ -45,7 +45,7 @@ Id obj::CreateGod() {
 		if (M2_GAME.events.IsKeyDown(m2g::pb::KeyType::MOVE_RIGHT)) {
 			move_direction.x += 1.0f;
 		}
-		obj.position += move_direction.Normalize() * (M2_GAME.DeltaTimeS() * M2_GAME.Dimensions().GameM().y);
+		obj.position += move_direction.Normalize() * (ToDurationF(delta) * M2_GAME.Dimensions().GameM().y);
 		// Prevent God from going into negative quadrants
 		obj.position = obj.position.Clamp(VecF{0.0f, 0.0f}, std::nullopt);
 

@@ -38,7 +38,7 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 	chr.AddNamedItem(M2_GAME.GetNamedItem(ITEM_REUSABLE_JUMP));
 	chr.AddNamedItem(M2_GAME.GetNamedItem(ITEM_AUTOMATIC_JUMP_ENERGY));
 
-	phy.preStep = [&obj, &chr](m2::Physique& phy, const m2::Stopwatch::Duration&) {
+	phy.preStep = [&obj, &chr](m2::Physique& phy, const m2::Stopwatch::Duration& delta) {
 		// Character movement
 		auto [direction_enum, direction_vector] = m2::calculate_character_movement(MOVE_LEFT, MOVE_RIGHT, NO_KEY, NO_KEY);
 		if (direction_enum == m2::CHARMOVEMENT_NONE) {
@@ -63,7 +63,7 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 
 		// Mouse button
 		if (M2_GAME.events.IsMouseButtonDown(m2::MouseButton::PRIMARY)) {
-			m2::box2d::FindObjectsNearPositionUnderMouse(obj.position, 2.0f, [](m2::Physique& other_phy) -> bool {
+			m2::box2d::FindObjectsNearPositionUnderMouse(obj.position, 2.0f, [&delta](m2::Physique& other_phy) -> bool {
 				auto& obj_under_mouse = other_phy.Owner();
 				// If object under mouse has character
 				if (obj_under_mouse.GetCharacterId()) {
@@ -71,7 +71,7 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 					// If character has HP
 					if (chr_under_mouse.HasResource(RESOURCE_HP)) {
 						// Damage object
-						chr_under_mouse.RemoveResource(RESOURCE_HP, 2.0f * M2_GAME.DeltaTimeS());
+						chr_under_mouse.RemoveResource(RESOURCE_HP, 2.0f * m2::ToDurationF(delta));
 						// Show health bar
 						auto hp = chr_under_mouse.GetResource(RESOURCE_HP);
 						// If object under mouse runs out of HP

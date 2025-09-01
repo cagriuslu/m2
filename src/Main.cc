@@ -98,7 +98,6 @@ int main(const int argc, char **argv) {
 			}
 			prevPhyUpdateAt->AdvanceStartingPoint(TIME_BETWEEN_PHYSICS_SIMULATIONS);
 
-			M2_GAME._delta_time_s = TIME_BETWEEN_PHYSICS_SIMULATIONS_F;
 			M2_GAME.ExecutePreStep(TIME_BETWEEN_PHYSICS_SIMULATIONS);
 			M2_GAME.ExecuteDeferredActions();
 			M2_GAME.UpdateCharacters(TIME_BETWEEN_PHYSICS_SIMULATIONS);
@@ -129,7 +128,6 @@ int main(const int argc, char **argv) {
 		const auto currentTotalPauseDuration = M2_LEVEL.GetTotalPauseDuration();
 		const auto pauseDurationSinceLastGfx = currentTotalPauseDuration - *prevTotalPauseDurationDuringLastGfx;
 		const auto ingameDurationSinceLastGfx = prevGfxUpdateAt->Reset() - pauseDurationSinceLastGfx;
-		M2_GAME._delta_time_s = std::chrono::duration_cast<std::chrono::duration<float>>(ingameDurationSinceLastGfx).count();
 		prevTotalPauseDurationDuringLastGfx = currentTotalPauseDuration;
 
 		M2_GAME.ExecutePreDraw(ingameDurationSinceLastGfx);

@@ -78,10 +78,10 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 	// Increment enemy counter
 	M2G_PROXY.alive_enemy_count++;
 
-	phy.preStep = [&](MAYBE m2::Physique& phy, const m2::Stopwatch::Duration&) {
+	phy.preStep = [&](MAYBE m2::Physique& phy, const m2::Stopwatch::Duration& delta) {
 		std::visit(m2::overloaded {
 			[](MAYBE std::monostate& v) {},
-			[](auto& v) { v.time(M2_GAME.DeltaTimeS()); }
+			[&delta](auto& v) { v.time(m2::ToDurationF(delta)); }
 		}, impl.ai_fsm);
 		std::visit(m2::overloaded {
 			[](ChaserFsm& v) { v.signal(ChaserFsmSignal{ChaserFsmSignal::Type::PHY_STEP}); },
@@ -159,9 +159,9 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 			impl.animation_fsm.signal(m2::AnimationFsmSignal{m2g::pb::ANIMATION_STATE_IDLE});
 		}
 	};
-	gfx.preDraw = [&](m2::Graphic&, const m2::Stopwatch::Duration&) {
+	gfx.preDraw = [&](m2::Graphic&, const m2::Stopwatch::Duration& delta) {
 		using namespace m2::pb;
-		impl.animation_fsm.time(M2_GAME.DeltaTimeS());
+		impl.animation_fsm.time(m2::ToDurationF(delta));
 		if (chr.HasResource(RESOURCE_DAMAGE_EFFECT_TTL)) {
 			impl.animation_fsm.signal(m2::AnimationFsmSignal{ANIMATION_STATE_HURT});
 		} else {
@@ -193,7 +193,7 @@ void rpg::Enemy::move_towards(m2::Object& obj, m2::VecF direction, float force) 
 		auto anim_state_type = rpg::detail::to_animation_state_type(char_move_dir);
 		dynamic_cast<Enemy&>(*obj.impl).animation_fsm.signal(m2::AnimationFsmSignal{anim_state_type});
 		// Apply force
-		m2::VecF force_direction = direction * (M2_GAME.DeltaTimeS() * force);
+		m2::VecF force_direction = direction * (m2::ToDurationF(m2::TIME_BETWEEN_PHYSICS_SIMULATIONS) * force);
 		obj.GetPhysique().body[I(m2::PhysicsLayer::P0)]->ApplyForceToCenter(force_direction);
 	}
 }

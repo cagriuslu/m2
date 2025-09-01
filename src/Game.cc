@@ -703,12 +703,13 @@ void m2::Game::ExecutePreDraw(const Stopwatch::Duration& delta) {
 }
 
 void m2::Game::UpdateHudContents(const Stopwatch::Duration& delta) {
+	const auto deltaF = ToDurationF(delta);
 	// TODO handle returned actions
-	IF(_level->_leftHudUiPanel)->UpdateContents(_delta_time_s);
-	IF(_level->_rightHudUiPanel)->UpdateContents(_delta_time_s);
-	IF(_level->_messageBoxUiPanel)->UpdateContents(_delta_time_s);
+	IF(_level->_leftHudUiPanel)->UpdateContents(deltaF);
+	IF(_level->_rightHudUiPanel)->UpdateContents(deltaF);
+	IF(_level->_messageBoxUiPanel)->UpdateContents(deltaF);
 	for (auto &panel : _level->_customNonblockingUiPanels) {
-		auto action{panel.UpdateContents(_delta_time_s)};
+		auto action{panel.UpdateContents(deltaF)};
 		action.IfQuit([this] { quit = true; });
 		if (auto anyReturnContainer = action.ExtractAnyReturnContainer()) {
 			// If UI returned, kill the panel. We cannot delete it yet, the iterator is held by the client, but we
@@ -716,9 +717,9 @@ void m2::Game::UpdateHudContents(const Stopwatch::Duration& delta) {
 			panel.KillWithReturnValue(std::move(*anyReturnContainer));
 		}
 	}
-	IF(_level->_mouseHoverUiPanel)->UpdateContents(_delta_time_s);
+	IF(_level->_mouseHoverUiPanel)->UpdateContents(deltaF);
 	if (_level->_semiBlockingUiPanel) {
-		_level->_semiBlockingUiPanel->UpdateContents(_delta_time_s)
+		_level->_semiBlockingUiPanel->UpdateContents(deltaF)
 				.IfQuit([this] {
 					quit = true;
 				})

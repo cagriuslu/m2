@@ -66,7 +66,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 	obj.impl = std::make_unique<rpg::Player>(obj);
 	auto& impl = dynamic_cast<Player&>(*obj.impl);
 
-	phy.preStep = [&, id=id](m2::Physique& phy, const m2::Stopwatch::Duration&) {
+	phy.preStep = [&, id=id](m2::Physique& phy, const m2::Stopwatch::Duration& delta) {
 		auto& chr = obj.GetCharacter();
 		auto vector_to_mouse = (M2_GAME.MousePositionWorldM() - obj.position).Normalize();
 
@@ -83,7 +83,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 		}
 		if (direction_vector) {
 			// Apply force
-			phy.body[I(m2::PhysicsLayer::P0)]->ApplyForceToCenter(direction_vector * (move_force * M2_GAME.DeltaTimeS()));
+			phy.body[I(m2::PhysicsLayer::P0)]->ApplyForceToCenter(direction_vector * (move_force * m2::ToDurationF(delta)));
 		}
 
 		// Primary weapon
@@ -180,8 +180,8 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 		}
 		return std::nullopt;
 	};
-	gfx.preDraw = [&](MAYBE m2::Graphic& gfx, const m2::Stopwatch::Duration&) {
-		impl.animation_fsm.time(M2_GAME.DeltaTimeS());
+	gfx.preDraw = [&](MAYBE m2::Graphic& gfx, const m2::Stopwatch::Duration& delta) {
+		impl.animation_fsm.time(m2::ToDurationF(delta));
 	};
 	gfx.onDraw = [&](m2::Graphic& gfx) {
 		// Draw the sprite itself

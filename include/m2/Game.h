@@ -5,7 +5,6 @@
 #include "Item.h"
 #include "Level.h"
 #include "Meta.h"
-#include "Object.h"
 #include "Proxy.h"
 #include "audio/Song.h"
 #include <m2/video/Sprite.h>
@@ -65,7 +64,6 @@ namespace m2 {
 
 	public:  // TODO private
 		std::optional<Level> _level;
-		float _delta_time_s{};
 
 		static void CreateInstance();
 		static Game& Instance() { return *_instance; }
@@ -173,7 +171,6 @@ namespace m2 {
 		void ForEachNamedItem(const std::function<bool(m2g::pb::ItemType, const NamedItem&)>& op) const;
 		std::optional<m2g::pb::SpriteType> GetMainSpriteOfObject(m2g::pb::ObjectType) const;
 		void ForEachObjectWithMainSprite(const std::function<bool(m2g::pb::ObjectType, m2g::pb::SpriteType)>& op) const;
-		float DeltaTimeS() const { return _delta_time_s; }
 		[[nodiscard]] VecI MousePositionPx() const { return events.MousePosition(); }
 		const VecF& MousePositionWorldM() const; // TODO move into Level?
 		const VecF& ScreenCenterToMousePositionM() const; // TODO move into Level?
