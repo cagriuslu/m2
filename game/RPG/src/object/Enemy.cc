@@ -78,7 +78,7 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 	// Increment enemy counter
 	M2G_PROXY.alive_enemy_count++;
 
-	phy.preStep = [&](MAYBE m2::Physique& phy) {
+	phy.preStep = [&](MAYBE m2::Physique& phy, const m2::Stopwatch::Duration&) {
 		std::visit(m2::overloaded {
 			[](MAYBE std::monostate& v) {},
 			[](auto& v) { v.time(M2_GAME.DeltaTimeS()); }
@@ -153,7 +153,7 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 		}
 		return std::nullopt;
 	};
-	phy.postStep = [&](MAYBE m2::Physique& phy) {
+	phy.postStep = [&](MAYBE m2::Physique& phy, const m2::Stopwatch::Duration&) {
 		m2::VecF velocity = m2::VecF{phy.body[I(m2::PhysicsLayer::P0)]->GetLinearVelocity()};
 		if (velocity.IsNear(m2::VecF{}, 0.1f)) {
 			impl.animation_fsm.signal(m2::AnimationFsmSignal{m2g::pb::ANIMATION_STATE_IDLE});

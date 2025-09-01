@@ -12,7 +12,7 @@ m2::void_expected LoadPlayer(m2::Object& obj) {
 	// Load edges of the screen
 	LoadEdge();
 
-	obj.AddPhysique().preStep = [](MAYBE m2::Physique& phy) {
+	obj.AddPhysique().preStep = [](MAYBE m2::Physique& phy, const m2::Stopwatch::Duration&) {
 		if (M2_GAME.events.PopKeyPress(m2g::pb::TOGGLE_LIGHT)) {
 			M2G_PROXY.MutableSimulationInputs().set_light(!M2G_PROXY.SimulationInputs().light());
 		}

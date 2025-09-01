@@ -66,7 +66,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 	obj.impl = std::make_unique<rpg::Player>(obj);
 	auto& impl = dynamic_cast<Player&>(*obj.impl);
 
-	phy.preStep = [&, id=id](m2::Physique& phy) {
+	phy.preStep = [&, id=id](m2::Physique& phy, const m2::Stopwatch::Duration&) {
 		auto& chr = obj.GetCharacter();
 		auto vector_to_mouse = (M2_GAME.MousePositionWorldM() - obj.position).Normalize();
 

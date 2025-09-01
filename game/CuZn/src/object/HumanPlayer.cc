@@ -44,7 +44,7 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj) {
 	m2Repeat(road_possession_limit) { chr.AddNamedItem(road_item); }
 
 	auto& phy = obj.AddPhysique();
-	phy.preStep = [&o = obj](MAYBE m2::Physique& _) {
+	phy.preStep = [&o = obj](m2::Physique&, const m2::Stopwatch::Duration&) {
 		auto& impl = dynamic_cast<HumanPlayer&>(*o.impl);
 		// Start map movement with mouse
 		if (M2_GAME.events.PopMouseButtonPress(m2::MouseButton::PRIMARY, M2_GAME.Dimensions().Game())) {

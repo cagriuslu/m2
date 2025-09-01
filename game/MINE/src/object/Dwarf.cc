@@ -38,7 +38,7 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 	chr.AddNamedItem(M2_GAME.GetNamedItem(ITEM_REUSABLE_JUMP));
 	chr.AddNamedItem(M2_GAME.GetNamedItem(ITEM_AUTOMATIC_JUMP_ENERGY));
 
-	phy.preStep = [&obj, &chr](m2::Physique& phy) {
+	phy.preStep = [&obj, &chr](m2::Physique& phy, const m2::Stopwatch::Duration&) {
 		// Character movement
 		auto [direction_enum, direction_vector] = m2::calculate_character_movement(MOVE_LEFT, MOVE_RIGHT, NO_KEY, NO_KEY);
 		if (direction_enum == m2::CHARMOVEMENT_NONE) {

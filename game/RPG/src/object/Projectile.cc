@@ -112,7 +112,7 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& intend
 			}
 		}
 	};
-	phy.postStep = [&chr](m2::Physique& phy) {
+	phy.postStep = [&chr](m2::Physique& phy, const m2::Stopwatch::Duration&) {
 		if (chr.HasResource(RESOURCE_EXPLOSION_TTL)) {
 			LOG_DEBUG("Exploded");
 			M2_DEFER(m2::CreateObjectDeleter(phy.OwnerId()));

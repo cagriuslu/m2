@@ -54,7 +54,7 @@ m2::void_expected LoadBall(m2::Object& obj) {
 
 	MAYBE auto& gfx = obj.AddGraphic(m2::ForegroundDrawLayer::F0_BOTTOM, m2g::pb::SPRITE_BASIC_BALL);
 
-	phy.preStep = [initialPos = obj.position](m2::Physique& phy_) {
+	phy.preStep = [initialPos = obj.position](m2::Physique& phy_, const m2::Stopwatch::Duration&) {
 		if (M2_GAME.events.PopKeyRelease(m2g::pb::BALL_LAUNCHER) /*&& M2G_PROXY.isOnBallLauncher*/) {
 			if (phy_.body[m2::I(m2::PhysicsLayer::P0)]->IsEnabled()) {
 				phy_.body[m2::I(m2::PhysicsLayer::P0)]->ApplyForceToCenter({0.0f, -7500.0f});

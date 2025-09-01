@@ -33,7 +33,7 @@ m2::void_expected rpg::create_spikes(m2::Object& obj) {
 	obj.impl = std::make_unique<Spikes>();
 	auto& impl = dynamic_cast<Spikes&>(*obj.impl);
 
-	phy.preStep = [&, rigidBodyDef](MAYBE m2::Physique& self) {
+	phy.preStep = [&, rigidBodyDef](MAYBE m2::Physique& self, const m2::Stopwatch::Duration&) {
 		// Check if the spikes are in, and triggered
 		if (std::get<const m2::Sprite*>(gfx.visual) == &spikes_in && impl.trigger_timer) {
 			if (impl.trigger_timer->has_ticks_passed(200)) {

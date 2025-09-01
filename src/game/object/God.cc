@@ -29,7 +29,7 @@ namespace {
 Id obj::CreateGod() {
 	const auto it = CreateObject({});
 
-	it->AddPhysique().preStep = [](MAYBE Physique& phy) {
+	it->AddPhysique().preStep = [](MAYBE Physique& phy, const Stopwatch::Duration&) {
 		auto& obj = phy.Owner();
 
 		VecF move_direction;

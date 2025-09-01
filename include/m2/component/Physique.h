@@ -6,7 +6,7 @@
 
 namespace m2 {
 	struct Physique final : Component {
-		using Callback = std::function<void(Physique&)>;
+		using Callback = std::function<void(Physique&, const Stopwatch::Duration&)>;
 		Callback preStep{};
 		Callback postStep{};
 

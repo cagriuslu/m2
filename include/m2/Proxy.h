@@ -156,8 +156,8 @@ namespace m2 {
 
 		/// A callback that's called every pre-step. Since this callback is not tied to any object, object creating and
 		/// destruction can be done here safely.
-		void OnPreStep() {}
+		void OnPreStep(MAYBE const Stopwatch::Duration& delta) {}
 		/// A callback that's called every pre-step.
-		void OnPostStep() {}
+		void OnPostStep(MAYBE const Stopwatch::Duration& delta) {}
 	};
 }

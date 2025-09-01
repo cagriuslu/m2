@@ -556,10 +556,10 @@ void m2::Game::HandleNetworkEvents() {
 }
 
 void m2::Game::ExecutePreStep(const Stopwatch::Duration& delta) {
-	_proxy.OnPreStep();
+	_proxy.OnPreStep(delta);
 	ExecuteDeferredActions();
 	for (auto& phy : _level->physics) {
-		IF(phy.preStep)(phy);
+		IF(phy.preStep)(phy, delta);
 	}
 	if (IsServer()) {
 		// Check if any of the bots need to handle the TurnBasedServerUpdate
@@ -681,12 +681,12 @@ void m2::Game::ExecutePostStep(const Stopwatch::Duration& delta) {
 	}
 
 	if (not _level->IsEditor()) {
-		_proxy.OnPostStep();
+		_proxy.OnPostStep(delta);
 		ExecuteDeferredActions();
 	}
 
 	for (auto& phy : _level->physics) {
-		IF(phy.postStep)(phy);
+		IF(phy.postStep)(phy, delta);
 	}
 }
 

@@ -45,7 +45,7 @@ namespace m2g {
 		/// The default group object is sufficient, because we only need to access the other members
 		m2::Group* create_group(pb::GroupType) { return new m2::Group(); }
 
-		void OnPostStep();
+		void OnPostStep(const m2::Stopwatch::Duration&);
 
 		// Custom properties
 

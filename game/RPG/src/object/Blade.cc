@@ -67,7 +67,7 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF &direction, 
 			// TODO knock-back
 		}
 	};
-	phy.postStep = [&](m2::Physique& phy) {
+	phy.postStep = [&](m2::Physique& phy, const m2::Stopwatch::Duration&) {
 		if (auto* originator = obj.TryGetParent()) {
 			phy.body[I(m2::PhysicsLayer::P0)]->SetPosition(originator->position);
 		} else {
