@@ -172,8 +172,8 @@ m2::RectI m2::RectI::TrimToSquare() const {
 	return *this;
 }
 m2::RectI m2::RectI::TrimToAspectRatio(int desired_w, int desired_h) const {
-	auto desired_aspect_ratio = F(desired_w) / F(desired_h);
-	auto current_aspect_ratio = F(w) / F(h);
+	auto desired_aspect_ratio = ToFloat(desired_w) / ToFloat(desired_h);
+	auto current_aspect_ratio = ToFloat(w) / ToFloat(h);
 	if (desired_aspect_ratio == current_aspect_ratio) {
 		return *this;
 	}
@@ -181,12 +181,12 @@ m2::RectI m2::RectI::TrimToAspectRatio(int desired_w, int desired_h) const {
 	// If desired aspect ratio is wider than current aspect ratio
 	if (current_aspect_ratio < desired_aspect_ratio) {
 		// Trim top and bottom
-		auto desired_height = RoundI(F(w) / desired_aspect_ratio);
+		auto desired_height = RoundI(ToFloat(w) / desired_aspect_ratio);
 		auto height_diff = h - desired_height;
 		return this->TrimTop(height_diff / 2).TrimBottom(height_diff / 2);
 	} else {
 		// If desired aspect ratio is longer than current aspect ratio, trim left and right
-		auto desired_width = RoundI(F(h) * desired_aspect_ratio);
+		auto desired_width = RoundI(ToFloat(h) * desired_aspect_ratio);
 		auto width_diff = w - desired_width;
 		return this->TrimLeft(width_diff / 2).TrimRight(width_diff / 2);
 	}
@@ -224,10 +224,10 @@ std::optional<m2::RectI> m2::RectI::GetIntersection(const m2::RectI& other) cons
 }
 m2::RectI m2::RectI::ApplyRatio(const RectF& ratio_rect) const {
 	return RectI{
-		I(roundf(F(x) + F(w) * ratio_rect.x)),
-		I(roundf(F(y) + F(h) * ratio_rect.y)),
-	    I(roundf(F(w) * ratio_rect.w)),
-	    I(roundf(F(h) * ratio_rect.h))
+		I(roundf(ToFloat(x) + ToFloat(w) * ratio_rect.x)),
+		I(roundf(ToFloat(y) + ToFloat(h) * ratio_rect.y)),
+	    I(roundf(ToFloat(w) * ratio_rect.w)),
+	    I(roundf(ToFloat(h) * ratio_rect.h))
 	};
 }
 

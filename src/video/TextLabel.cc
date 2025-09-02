@@ -33,10 +33,10 @@ void m2::DrawTextLabelBackgroundIn2dWorld(const pb::TextLabel& tl, const RectI& 
 	const auto backgroundColor = RGBA{tl.background_color()};
 	const auto trueBackgroundColor = isDimmed ? backgroundColor * M2G_PROXY.dimming_factor : backgroundColor;
 	RectF rect{
-		position.x - F(sourceRect.w) / 2.0f / M2_GAME.Dimensions().OutputPixelsPerMeter(),
-		position.y - F(sourceRect.h) / 2.0f / M2_GAME.Dimensions().OutputPixelsPerMeter(),
-		F(sourceRect.w) / M2_GAME.Dimensions().OutputPixelsPerMeter(),
-		F(sourceRect.h) / M2_GAME.Dimensions().OutputPixelsPerMeter()
+		position.x - ToFloat(sourceRect.w) / 2.0f / M2_GAME.Dimensions().OutputPixelsPerMeter(),
+		position.y - ToFloat(sourceRect.h) / 2.0f / M2_GAME.Dimensions().OutputPixelsPerMeter(),
+		ToFloat(sourceRect.w) / M2_GAME.Dimensions().OutputPixelsPerMeter(),
+		ToFloat(sourceRect.h) / M2_GAME.Dimensions().OutputPixelsPerMeter()
 	};
 	// Push the text label
 	rect.x += tl.push_dimensions().x();

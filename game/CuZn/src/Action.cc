@@ -21,7 +21,7 @@ m2::void_expected HandleActionWhileLiquidating(m2::Character& turnHolderCharacte
 		for (const auto* factory : expectFactoriesAndGain->first) {
 			M2_LEVEL.objects.Free(factory->GetId());
 		}
-		turnHolderCharacter.AddResource(m2g::pb::MONEY, m2::F(expectFactoriesAndGain->second));
+		turnHolderCharacter.AddResource(m2g::pb::MONEY, m2::ToFloat(expectFactoriesAndGain->second));
 		return {}; // Liquidation successful
 	} else {
 		return m2::make_unexpected(expectFactoriesAndGain.error());
@@ -110,7 +110,7 @@ m2::expected<int> HandleActionWhileNotLiquidating(m2::Character& turnHolderChara
 	}
 	// Deduct money from player
 	LOG_INFO("Deducting money from player", moneySpent);
-	turnHolderCharacter.RemoveResource(m2g::pb::MONEY, m2::F(moneySpent));
+	turnHolderCharacter.RemoveResource(m2g::pb::MONEY, m2::ToFloat(moneySpent));
 
 	return moneySpent;
 }

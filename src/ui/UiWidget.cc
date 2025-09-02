@@ -144,12 +144,12 @@ void UiWidget::DrawSpriteOrTextLabel(const std::variant<Sprite, pb::TextLabel>& 
 		texture = M2_GAME.GetTextLabelCache().Texture();
 	}
 
-	const auto sprite_aspect_ratio = F(src_rect.w) / F(src_rect.h);
-	const auto widget_aspect_ratio = F(dst_rect.w) / F(dst_rect.h);
+	const auto sprite_aspect_ratio = ToFloat(src_rect.w) / ToFloat(src_rect.h);
+	const auto widget_aspect_ratio = ToFloat(dst_rect.w) / ToFloat(dst_rect.h);
 	const float sprite_size_multiplier =
-		sprite_aspect_ratio < widget_aspect_ratio  // Compare aspect ratios of sprite and widget
-		? F(dst_rect.h) / F(src_rect.h) // UiWidget is wider than the sprite
-		: F(dst_rect.w) / F(src_rect.w);  // Sprite is wider than the widget
+		sprite_aspect_ratio < widget_aspect_ratio // Compare aspect ratios of sprite and widget
+		? ToFloat(dst_rect.h) / ToFloat(src_rect.h) // UiWidget is wider than the sprite
+		: ToFloat(dst_rect.w) / ToFloat(src_rect.w); // Sprite is wider than the widget
 
 	const auto actual_dst_rect = SDL_Rect{
 		.x = dst_rect.x + (dst_rect.w - RoundI(src_rect.w * sprite_size_multiplier)) / 2,

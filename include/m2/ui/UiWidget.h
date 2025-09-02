@@ -58,8 +58,8 @@ namespace m2 {
 
 		void draw_background_color() const;
 
-		[[nodiscard]] float horizontal_pixels_per_unit() const { return F(Rect().w) / F(blueprint->w); }
-		[[nodiscard]] float vertical_pixels_per_unit() const { return F(Rect().h) / F(blueprint->h); }
+		[[nodiscard]] float horizontal_pixels_per_unit() const { return ToFloat(Rect().w) / ToFloat(blueprint->w); }
+		[[nodiscard]] float vertical_pixels_per_unit() const { return ToFloat(Rect().h) / ToFloat(blueprint->h); }
 		[[nodiscard]] int vertical_border_width_px() const;
 		[[nodiscard]] int horizontal_border_width_px() const;
 		[[nodiscard]] int vertical_padding_width_px() const;

@@ -113,10 +113,10 @@ void bulk_sheet_editor::State::Draw() const {
 	// Draw currectly selected sprite's rect
 	if (_savedSpriteRect) {
 		auto world_coordinates_m = RectF{
-			F(_savedSpriteRect->x),
-			F(_savedSpriteRect->y),
-			F(_savedSpriteRect->w),
-			F(_savedSpriteRect->h)};
+			ToFloat(_savedSpriteRect->x),
+			ToFloat(_savedSpriteRect->y),
+			ToFloat(_savedSpriteRect->w),
+			ToFloat(_savedSpriteRect->h)};
 		Graphic::ColorRect(world_coordinates_m.Shift({-0.5f, -0.5f}), CONFIRMED_SELECTION_COLOR);
 	}
 	// Draw selection
@@ -128,10 +128,10 @@ void bulk_sheet_editor::State::Draw() const {
 	// Draw pixel grid lines
 	Graphic::DrawGridLines(-0.5f, 1.0f, {127, 127, 255, 80});
 	// Draw PPM grid lines
-	Graphic::DrawGridLines(-0.5f, F(_ppm));
+	Graphic::DrawGridLines(-0.5f, ToFloat(_ppm));
 	// Draw sheet boundaries
 	Graphic::DrawVerticalLine(-0.5f, {255, 0, 0, 255});
 	Graphic::DrawHorizontalLine(-0.5f, {255, 0, 0, 255});
-	Graphic::DrawVerticalLine(F(_textureDimensions.x) - 0.5f, {255, 0, 0, 255});
-	Graphic::DrawHorizontalLine(F(_textureDimensions.y) - 0.5f, {255, 0, 0, 255});
+	Graphic::DrawVerticalLine(ToFloat(_textureDimensions.x) - 0.5f, {255, 0, 0, 255});
+	Graphic::DrawHorizontalLine(ToFloat(_textureDimensions.y) - 0.5f, {255, 0, 0, 255});
 }

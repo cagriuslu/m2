@@ -243,12 +243,12 @@ void State::Draw() const {
 	// Draw pixel grid lines
 	Graphic::DrawGridLines(-0.5f, 1.0f, {255, 255, 255, 25});
 	// Draw PPM grid lines
-	Graphic::DrawGridLines(-0.5f, F(_ppm), {255, 255, 255, 100});
+	Graphic::DrawGridLines(-0.5f, ToFloat(_ppm), {255, 255, 255, 100});
 	// Draw sheet boundaries
 	Graphic::DrawVerticalLine(-0.5f, {255, 0, 0, 255});
 	Graphic::DrawHorizontalLine(-0.5f, {255, 0, 0, 255});
-	Graphic::DrawVerticalLine(F(_textureDimensions.x) - 0.5f, {255, 0, 0, 255});
-	Graphic::DrawHorizontalLine(F(_textureDimensions.y) - 0.5f, {255, 0, 0, 255});
+	Graphic::DrawVerticalLine(ToFloat(_textureDimensions.x) - 0.5f, {255, 0, 0, 255});
+	Graphic::DrawHorizontalLine(ToFloat(_textureDimensions.y) - 0.5f, {255, 0, 0, 255});
 }
 
 void State::ModifySelectedSprite(const std::function<void(pb::Sprite&)>& modifier) {

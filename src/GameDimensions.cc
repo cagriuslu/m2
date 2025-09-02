@@ -48,8 +48,8 @@ m2::GameDimensions::GameDimensions(void* renderer, const int gamePpm, const int 
 	_leftHud = {0, 0, hudWidth, hudHeight};
 	_rightHud = {windowDimensions.x - hudWidth, 0, hudWidth, hudHeight};
 
-	_gameAndHudM = {F(_gameAndHud.w) / F(_gamePpm), F(_gameAndHud.h) / F(_gamePpm)};
-	_gameM = {F(_game.w) / F(_gamePpm), F(_game.h) / F(_gamePpm)};
+	_gameAndHudM = {ToFloat(_gameAndHud.w) / ToFloat(_gamePpm), ToFloat(_gameAndHud.h) / ToFloat(_gamePpm)};
+	_gameM = {ToFloat(_game.w) / ToFloat(_gamePpm), ToFloat(_game.h) / ToFloat(_gamePpm)};
 }
 
 m2::VecI m2::GameDimensions::WindowDimensions() const {
@@ -58,13 +58,13 @@ m2::VecI m2::GameDimensions::WindowDimensions() const {
 	return {w, h};
 }
 float m2::GameDimensions::OutputPixelsPerMeter() const {
-	return F(_gamePpm) * _scale;
+	return ToFloat(_gamePpm) * _scale;
 }
 float m2::GameDimensions::GameWidthToGameAndHudWidthRatio() const {
-	return F(_game.w) / F(_gameAndHud.w);
+	return ToFloat(_game.w) / ToFloat(_gameAndHud.w);
 }
 float m2::GameDimensions::HudWidthToGameAndHudWidthRatio() const {
-	return F(_leftHud.w) / F(_gameAndHud.w);
+	return ToFloat(_leftHud.w) / ToFloat(_gameAndHud.w);
 }
 
 void m2::GameDimensions::SetGameAspectRatio(const int gameAspectRatioMul, const int gameAspectRatioDiv) {
@@ -77,7 +77,7 @@ void m2::GameDimensions::OnWindowResize() {
 
 	const auto windowDimensions = WindowDimensions();
 	// The unit is pixels, but in fractional form
-	const auto minimumGameAndHudDimensions = VecF{_gameAndHudM.x * F(_gamePpm), _gameAndHudM.y * F(_gamePpm)};
+	const auto minimumGameAndHudDimensions = VecF{_gameAndHudM.x * ToFloat(_gamePpm), _gameAndHudM.y * ToFloat(_gamePpm)};
 
 	const auto idealWidthForSelectedWindowHeight = windowDimensions.y * GAME_AND_HUD_ASPECT_RATIO_MUL
 		/ GAME_AND_HUD_ASPECT_RATIO_DIV;
@@ -88,7 +88,7 @@ void m2::GameDimensions::OnWindowResize() {
 		const int realWindowWidthRemainder = realWindowWidth % GAME_AND_HUD_ASPECT_RATIO_MUL;
 		const int windowWidthForCorrectAspectRation = realWindowWidth - realWindowWidthRemainder;
 		// Use the _gameAndHudM width for scale calculation
-		_scale = F(windowWidthForCorrectAspectRation) / minimumGameAndHudDimensions.x;
+		_scale = ToFloat(windowWidthForCorrectAspectRation) / minimumGameAndHudDimensions.x;
 	} else {
 		// Screen is exact or wider than expected, we might have left and right envelopes.
 		// Ensure that only the 16:9 part of the window is taken into scale calculation
@@ -96,7 +96,7 @@ void m2::GameDimensions::OnWindowResize() {
 		const int realWindowHeightRemainder = realWindowHeight % GAME_AND_HUD_ASPECT_RATIO_DIV;
 		const int windowHeightForCorrectAspectRation = realWindowHeight - realWindowHeightRemainder;
 		// Use the _gameAndHudM height for scale calculation
-		_scale = F(windowHeightForCorrectAspectRation) / minimumGameAndHudDimensions.y;
+		_scale = ToFloat(windowHeightForCorrectAspectRation) / minimumGameAndHudDimensions.y;
 	}
 
 	const int gameHeight = RoundI(minimumGameAndHudDimensions.y * _scale);
@@ -136,12 +136,12 @@ void m2::GameDimensions::SetGameHeightM(const float heightM) {
 	// We also don't prefer to change the PPM directly, instead we change the scale: PPM = GamePpm * Scale
 	// Thus: GameHeightM = GameHeightPx / (GamePpm * Scale)
 	// Thus: Scale = GameHeightPx / (GamePpm * GameHeightM)
-	SetScale(F(_game.h) / (F(_gamePpm) * heightM));
+	SetScale(ToFloat(_game.h) / (ToFloat(_gamePpm) * heightM));
 }
 
 m2::VecI m2::GameDimensions::EstimateMinimumWindowDimensions(const int gamePpm, const float gameHeightM) {
 	// We expect minimum window height to be integer multiple of GAME_AND_HUD_ASPECT_RATIO_DIV
-	const int requestedWindowHeight = RoundI(gameHeightM * F(gamePpm));
+	const int requestedWindowHeight = RoundI(gameHeightM * ToFloat(gamePpm));
 	const int requestedWindowHeightRemainder = requestedWindowHeight % GAME_AND_HUD_ASPECT_RATIO_DIV;
 	const int calculatedWindowHeight = requestedWindowHeight - requestedWindowHeightRemainder;
 
@@ -173,6 +173,6 @@ void m2::GameDimensions::ReadjustAfterScaleChange() {
 	// Scale adjustment is used to adjust the zoom of the game. This means, we must keep envelopes, gameAndHud, game,
 	// leftHud, rightHud, messageBox exactly the same. The portion of the game shown inside the game area, thus
 	// gameAndHudM and gameM, can be adjusted instead.
-	_gameAndHudM = {F(_gameAndHud.w) / OutputPixelsPerMeter(), F(_gameAndHud.h) / OutputPixelsPerMeter()};
-	_gameM = {F(_game.w) / OutputPixelsPerMeter(), F(_game.h) / OutputPixelsPerMeter()};
+	_gameAndHudM = {ToFloat(_gameAndHud.w) / OutputPixelsPerMeter(), ToFloat(_gameAndHud.h) / OutputPixelsPerMeter()};
+	_gameM = {ToFloat(_game.w) / OutputPixelsPerMeter(), ToFloat(_game.h) / OutputPixelsPerMeter()};
 }

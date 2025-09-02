@@ -4,7 +4,7 @@
 int CalculateCost(int capacity, int current_resource_count, int to_buy) {
 	auto cost_of_one = [&](int resource_count) {
 		if (0 < resource_count) {
-			return (capacity / 2) + 1 - m2::I(ceilf(m2::F(resource_count) / 2.0f));
+			return (capacity / 2) + 1 - m2::I(ceilf(m2::ToFloat(resource_count) / 2.0f));
 		} else {
 			return (capacity / 2) + 1;
 		}
@@ -19,7 +19,7 @@ int CalculateCost(int capacity, int current_resource_count, int to_buy) {
 
 std::pair<int,int> CalculateRevenue(int capacity, int current_resource_count, int count) {
 	auto revenue_of_one = [&](int resource_count) {
-		return (capacity / 2) - m2::I(floorf(m2::F(resource_count) / 2.0f));
+		return (capacity / 2) - m2::I(floorf(m2::ToFloat(resource_count) / 2.0f));
 	};
 
 	int sold = 0;

@@ -34,16 +34,16 @@ namespace m2::audio::synthesizer {
 		const auto SampleScaler = [&attackNoteLength, &decayNoteLength, &activeNoteLength, &releaseNoteLength, sustainVolume](const size_t writtenSampleCount, const SampleType unscaledSample) {
 			if (writtenSampleCount < attackNoteLength) {
 				// Attack
-				return Lerp(0.0f, unscaledSample, F(writtenSampleCount) / F(attackNoteLength));
+				return Lerp(0.0f, unscaledSample, ToFloat(writtenSampleCount) / ToFloat(attackNoteLength));
 			} else if (writtenSampleCount < attackNoteLength + decayNoteLength) {
 				// Decay
-				return Lerp(unscaledSample, unscaledSample * sustainVolume, F(writtenSampleCount - attackNoteLength) / F(decayNoteLength));
+				return Lerp(unscaledSample, unscaledSample * sustainVolume, ToFloat(writtenSampleCount - attackNoteLength) / ToFloat(decayNoteLength));
 			} else if (writtenSampleCount < activeNoteLength) {
 				// Sustain
 				return unscaledSample * sustainVolume;
 			} else {
 				// Release
-				return Lerp(unscaledSample * sustainVolume, 0.0f, F(writtenSampleCount - activeNoteLength) / F(releaseNoteLength));
+				return Lerp(unscaledSample * sustainVolume, 0.0f, ToFloat(writtenSampleCount - activeNoteLength) / ToFloat(releaseNoteLength));
 			}
 		};
 

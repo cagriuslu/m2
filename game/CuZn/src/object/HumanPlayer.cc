@@ -79,7 +79,7 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj) {
 		const auto& dims = M2_GAME.Dimensions();
 		// If the map is zoomed out so much that the black space is showing on the left and the right
 		if (M2_LEVEL.GetBackgroundBoundary().w < dims.GameM().x) {
-			o.position.x = m2::F(M2_LEVEL.GetBackgroundBoundary().GetXCenter());
+			o.position.x = m2::ToFloat(M2_LEVEL.GetBackgroundBoundary().GetXCenter());
 		} else {
 			if (o.position.x < dims.GameM().x / 2.0f) {
 				o.position.x = dims.GameM().x / 2.0f; // Left
@@ -90,7 +90,7 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj) {
 		}
 		// If the map is zoomed out so much that the black space is showing on the top and the bottom
 		if (M2_LEVEL.GetBackgroundBoundary().h < dims.GameM().y) {
-			o.position.y = m2::F(M2_LEVEL.GetBackgroundBoundary().GetYCenter());
+			o.position.y = m2::ToFloat(M2_LEVEL.GetBackgroundBoundary().GetYCenter());
 		} else {
 			if (o.position.y < dims.GameM().y / 2.0f) {
 				o.position.y = dims.GameM().y / 2.0f; // Top

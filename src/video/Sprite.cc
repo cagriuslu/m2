@@ -124,7 +124,7 @@ void m2::Sprite::DrawIn2dWorld(const VecF& position, const bool foregroundCompan
 			GetTexture(foregroundCompanion),
 			&sourceRect,
 			OriginalRotationRadians(),
-			M2_GAME.Dimensions().OutputPixelsPerMeter() / F(Ppm()),
+			M2_GAME.Dimensions().OutputPixelsPerMeter() / ToFloat(Ppm()),
 			CenterToOriginVecOutpx(foregroundCompanion),
 			ScreenOriginToCenterVecOutpx(position, foregroundCompanion),
 			angle
@@ -136,7 +136,7 @@ void m2::Sprite::DrawIn3dWorld(const VecF& position, const bool foregroundCompan
 			M2_GAME.renderer,
 			GetTexture(foregroundCompanion),
 			&sourceRect,
-			F(Ppm()),
+			ToFloat(Ppm()),
 			CenterToOriginVecOutpx(foregroundCompanion),
 			OriginalRotationRadians(),
 			TextureTotalDims(foregroundCompanion),

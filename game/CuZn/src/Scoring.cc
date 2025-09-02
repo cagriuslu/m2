@@ -16,7 +16,7 @@ void score_links_and_remove_roads() {
 			[](m2::Character& player) {
 				const auto linkCount = PlayerLinkCount(player);
 				LOG_INFO("Player link count", linkCount);
-				player.AddResource(pb::VICTORY_POINTS, m2::F(linkCount));
+				player.AddResource(pb::VICTORY_POINTS, m2::ToFloat(linkCount));
 			});
 	RemoveAllRoads();
 }

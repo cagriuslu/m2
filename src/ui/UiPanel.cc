@@ -123,7 +123,7 @@ UiAction UiPanel::run_blocking() {
 	auto last_loop_ticks = sdl::get_ticks();
 	while (true) {
 		auto current_ticks = sdl::get_ticks();
-		auto delta_time_s = F(current_ticks - last_loop_ticks) / 1000.0f;
+		auto delta_time_s = ToFloat(current_ticks - last_loop_ticks) / 1000.0f;
 		last_loop_ticks = current_ticks;
 
 		////////////////////////////////////////////////////////////////////////
@@ -216,10 +216,10 @@ UiPanel::UiPanel(std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBl
 		const auto& pixel_rect = std::get<RectI>(fullscreen_or_pixel_rect_or_relation_to_game_and_hud);
 		const auto& game_and_hud_dims = M2_GAME.Dimensions().GameAndHud();
 		_relation_to_game_and_hud_dims = RectF{
-			F(pixel_rect.x - game_and_hud_dims.x) / F(game_and_hud_dims.w),
-			F(pixel_rect.y - game_and_hud_dims.y) / F(game_and_hud_dims.h),
-			F(pixel_rect.w) / F(game_and_hud_dims.w),
-			F(pixel_rect.h) / F(game_and_hud_dims.h)};
+			ToFloat(pixel_rect.x - game_and_hud_dims.x) / ToFloat(game_and_hud_dims.w),
+			ToFloat(pixel_rect.y - game_and_hud_dims.y) / ToFloat(game_and_hud_dims.h),
+			ToFloat(pixel_rect.w) / ToFloat(game_and_hud_dims.w),
+			ToFloat(pixel_rect.h) / ToFloat(game_and_hud_dims.h)};
 	} else {
 		// Relation to game_and_hud
 		_relation_to_game_and_hud_dims = std::get<RectF>(fullscreen_or_pixel_rect_or_relation_to_game_and_hud);
@@ -294,10 +294,10 @@ const AnyReturnContainer* UiPanel::PeekReturnValueContainer() const {
 RectI UiPanel::Rect() const {
 	const auto& game_and_hud_dims = M2_GAME.Dimensions().GameAndHud();
 	return RectI{
-		RoundI(F(game_and_hud_dims.x) + _relation_to_game_and_hud_dims.x * F(game_and_hud_dims.w)),
-		RoundI(F(game_and_hud_dims.y) + _relation_to_game_and_hud_dims.y * F(game_and_hud_dims.h)),
-		RoundI(_relation_to_game_and_hud_dims.w * F(game_and_hud_dims.w)),
-		RoundI(_relation_to_game_and_hud_dims.h * F(game_and_hud_dims.h))};
+		RoundI(ToFloat(game_and_hud_dims.x) + _relation_to_game_and_hud_dims.x * ToFloat(game_and_hud_dims.w)),
+		RoundI(ToFloat(game_and_hud_dims.y) + _relation_to_game_and_hud_dims.y * ToFloat(game_and_hud_dims.h)),
+		RoundI(_relation_to_game_and_hud_dims.w * ToFloat(game_and_hud_dims.w)),
+		RoundI(_relation_to_game_and_hud_dims.h * ToFloat(game_and_hud_dims.h))};
 }
 
 void UiPanel::KillWithReturnValue(AnyReturnContainer&& arc) {
@@ -310,8 +310,8 @@ void UiPanel::KillWithReturnValue(AnyReturnContainer&& arc) {
 void UiPanel::SetTopLeftPosition(const VecI& newPosition) {
 	const auto& game_and_hud_dims = M2_GAME.Dimensions().GameAndHud();
 	_relation_to_game_and_hud_dims = RectF{
-			F(newPosition.x) / F(game_and_hud_dims.w),
-			F(newPosition.y) / F(game_and_hud_dims.h),
+			ToFloat(newPosition.x) / ToFloat(game_and_hud_dims.w),
+			ToFloat(newPosition.y) / ToFloat(game_and_hud_dims.h),
 			_relation_to_game_and_hud_dims.w,
 			_relation_to_game_and_hud_dims.h};
 	RecalculateRects();
@@ -432,7 +432,7 @@ int UiPanel::vertical_border_width_px() const {
 		return 0;
 	} else {
 		// Pixels per unit
-		float pixel_pitch = F(Rect().w) / F(blueprint->w);
+		float pixel_pitch = ToFloat(Rect().w) / ToFloat(blueprint->w);
 		return std::max(1, RoundI(pixel_pitch * blueprint->border_width));
 	}
 }
@@ -442,7 +442,7 @@ int UiPanel::horizontal_border_width_px() const {
 		return 0;
 	} else {
 		// Pixels per unit
-		float pixel_pitch = F(Rect().h) / F(blueprint->h);
+		float pixel_pitch = ToFloat(Rect().h) / ToFloat(blueprint->h);
 		return std::max(1, RoundI(pixel_pitch * blueprint->border_width));
 	}
 }

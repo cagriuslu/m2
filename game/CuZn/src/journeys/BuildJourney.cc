@@ -674,9 +674,9 @@ std::pair<Card,int> ExecuteBuildAction(m2::Character& player, const m2g::pb::Tur
 			// Sell to market
 			M2G_PROXY.sell_coal_to_market(sell_count);
 			// Gain revenue
-			player.AddResource(MONEY, m2::F(revenue));
+			player.AddResource(MONEY, m2::ToFloat(revenue));
 			// Keep the rest
-			it->GetCharacter().AddResource(COAL_CUBE_COUNT, m2::F(gained_resource_count - sell_count));
+			it->GetCharacter().AddResource(COAL_CUBE_COUNT, m2::ToFloat(gained_resource_count - sell_count));
 		} else {
 			it->GetCharacter().AddResource(COAL_CUBE_COUNT, tile_item.GetAttribute(COAL_BONUS));
 		}
@@ -686,9 +686,9 @@ std::pair<Card,int> ExecuteBuildAction(m2::Character& player, const m2g::pb::Tur
 		// Sell to market
 		M2G_PROXY.sell_iron_to_market(sell_count);
 		// Gain revenue
-		player.AddResource(MONEY, m2::F(revenue));
+		player.AddResource(MONEY, m2::ToFloat(revenue));
 		// Keep the rest
-		it->GetCharacter().AddResource(IRON_CUBE_COUNT, m2::F(gained_resource_count - sell_count));
+		it->GetCharacter().AddResource(IRON_CUBE_COUNT, m2::ToFloat(gained_resource_count - sell_count));
 	} else if (tile_category == ITEM_CATEGORY_BREWERY_TILE) {
 		it->GetCharacter().AddResource(BEER_BARREL_COUNT, tile_item.GetAttribute(
 			M2G_PROXY.is_canal_era() ? BEER_BONUS_FIRST_ERA : BEER_BONUS_SECOND_ERA));

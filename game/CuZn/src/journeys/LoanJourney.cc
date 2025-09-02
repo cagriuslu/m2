@@ -60,7 +60,7 @@ Card ExecuteLoanAction(m2::Character& player, const TurnBasedClientCommand_LoanA
 	const auto currIncomeLevel = IncomeLevelFromIncomePoints(currIncomePoints);
 	const auto newIncomeLevel = ClampIncomeLevel(currIncomeLevel - 3);
 	const auto newIncomePoints = HighestIncomePointsOfLevel(newIncomeLevel);
-	player.SetAttribute(INCOME_POINTS, m2::F(ClampIncomePoints(newIncomePoints)));
+	player.SetAttribute(INCOME_POINTS, m2::ToFloat(ClampIncomePoints(newIncomePoints)));
 	player.AddResource(MONEY, 30.0f);
 	return loan_action.card();
 }

@@ -127,9 +127,9 @@ float m2::RoundToBin(const float value, const int unitBinCount) {
 	const auto floor = floorf(value);
 	const auto fractional = value - floor;
 	// Apply binning only to the fractional part, we don't want to explode the whole number
-	const auto raised = fractional * F(unitBinCount);
+	const auto raised = fractional * ToFloat(unitBinCount);
 	const auto raisedBinned = roundf(raised);
-	const auto binned = raisedBinned / F(unitBinCount);
+	const auto binned = raisedBinned / ToFloat(unitBinCount);
 	return floor + binned;
 }
 

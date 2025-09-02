@@ -139,7 +139,7 @@ void m2::level_editor::State::HandleMousePrimarySelectionComplete(const VecF& fi
 						fixtureType == pb::Fixture::FixtureTypeCase::kChain) {
 					const auto fgObjectIt = GetForegroundObjectsOfType(drawFgState->SelectedObjectType())[0];
 					const auto firstPositionPx = WorldCoordinateToSpriteCoordinate(fgObjectIt, firstPosition);
-					const auto spritePpm = F(SpritePpm(fgObjectIt));
+					const auto spritePpm = ToFloat(SpritePpm(fgObjectIt));
 					const auto& spritePb = GetSpritePb(drawFgState->SelectedObjectMainSpriteType());
 					const auto& chain = spritePb.regular().fixtures(selectedIndex).chain();
 					const auto closestPointIndex = FindClosestChainPointInRange(chain, spritePpm, firstPositionPx);
@@ -415,7 +415,7 @@ void m2::level_editor::State::Draw() const {
 							fixtureType == pb::Fixture::FixtureTypeCase::kChain) {
 						const auto fgObjectIt = GetForegroundObjectsOfType(state.SelectedObjectType())[0];
 						const auto firstPositionPx = WorldCoordinateToSpriteCoordinate(fgObjectIt, selection->first);
-						const auto spritePpm = F(SpritePpm(fgObjectIt));
+						const auto spritePpm = ToFloat(SpritePpm(fgObjectIt));
 						const auto& spritePb = GetSpritePb(state.SelectedObjectMainSpriteType());
 						const auto& chain = spritePb.regular().fixtures(*selectedFixtureIndex).chain();
 						const auto closestPointIndex = FindClosestChainPointInRange(chain, spritePpm, firstPositionPx);
@@ -444,7 +444,7 @@ void m2::level_editor::State::Draw() const {
 	if (M2_LEVEL.GetLeftHud()->FindWidget<widget::CheckboxWithText>("ShowGridCheckbox")->GetState()) {
 		Graphic::DrawGridLines(-0.5f, 1.0f, {127, 127, 255, 80});
 		if (splitCount != 1) {
-			Graphic::DrawGridLines(-0.5f, 1.0f / F(splitCount), {127, 127, 255, 60});
+			Graphic::DrawGridLines(-0.5f, 1.0f / ToFloat(splitCount), {127, 127, 255, 60});
 		}
 	}
 	// Draw axes
@@ -605,9 +605,9 @@ void m2::level_editor::State::StoreArc(const int selectedIndex, const VecF& from
 
 	// Generate points from center and radius
 	const auto circleCenterToPrevPoint = prevPointOffsetToCircleCenter * -1.0f;
-	const auto angleStep = angleInRads / F(pieceCount);
+	const auto angleStep = angleInRads / ToFloat(pieceCount);
 	for (auto i = 0; i < pieceCount; ++i) {
-		const auto rotationAmount = F(i + 1) * (drawTowardsRight ? angleStep * -1.0f : angleStep);
+		const auto rotationAmount = ToFloat(i + 1) * (drawTowardsRight ? angleStep * -1.0f : angleStep);
 		const auto circleCenterToArcPoint = circleCenterToPrevPoint.Rotate(rotationAmount);
 		const auto arcPoint = circleCenterToArcPoint + circleCenter;
 		StoreFixturePoint(state.SelectedObjectMainSpriteType(), selectedIndex, arcPoint);

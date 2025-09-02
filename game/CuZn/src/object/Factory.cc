@@ -70,7 +70,7 @@ void SellFactory(m2::Character& factory_chr) {
 	// Earn income points
 	const auto incomeBonus = m2::RoundI(tileTtem.GetAttribute(INCOME_POINTS_BONUS));
 	const auto currIncomePoints = m2::RoundI(factory_chr.Owner().TryGetParent()->GetCharacter().GetAttribute(INCOME_POINTS));
-	factory_chr.Owner().TryGetParent()->GetCharacter().SetAttribute(INCOME_POINTS, m2::F(ClampIncomePoints(currIncomePoints + incomeBonus)));
+	factory_chr.Owner().TryGetParent()->GetCharacter().SetAttribute(INCOME_POINTS, m2::ToFloat(ClampIncomePoints(currIncomePoints + incomeBonus)));
 	// Flip the tile
 	factory_chr.SetResource(IS_SOLD, 1.0f);
 }

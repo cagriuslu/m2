@@ -1027,7 +1027,7 @@ void m2::Game::RecalculateMousePosition() const {
 	const auto screen_center_to_mouse_position_px =
 		VecI{mouse_position.x - Dimensions().WindowDimensions().x / 2, mouse_position.y - Dimensions().WindowDimensions().y / 2};
 	_screen_center_to_mouse_position_m = VecF{
-		F(screen_center_to_mouse_position_px.x) / Dimensions().OutputPixelsPerMeter(), F(screen_center_to_mouse_position_px.y) / Dimensions().OutputPixelsPerMeter()};
+		ToFloat(screen_center_to_mouse_position_px.x) / Dimensions().OutputPixelsPerMeter(), ToFloat(screen_center_to_mouse_position_px.y) / Dimensions().OutputPixelsPerMeter()};
 
 	if (IsProjectionTypePerspective(_level->GetProjectionType())) {
 		// Mouse moves on the plane centered at the player looking towards the camera
@@ -1036,9 +1036,9 @@ void m2::Game::RecalculateMousePosition() const {
 		const auto cos_of_player_to_camera_angle =
 			sqrtf(1.0f - sin_of_player_to_camera_angle * sin_of_player_to_camera_angle);
 
-		const auto y_offset = F(screen_center_to_mouse_position_px.y) / m3::Ppm() * sin_of_player_to_camera_angle;
-		const auto z_offset = -(F(screen_center_to_mouse_position_px.y) / m3::Ppm()) * cos_of_player_to_camera_angle;
-		const auto x_offset = F(screen_center_to_mouse_position_px.x) / m3::Ppm();
+		const auto y_offset = ToFloat(screen_center_to_mouse_position_px.y) / m3::Ppm() * sin_of_player_to_camera_angle;
+		const auto z_offset = -(ToFloat(screen_center_to_mouse_position_px.y) / m3::Ppm()) * cos_of_player_to_camera_angle;
+		const auto x_offset = ToFloat(screen_center_to_mouse_position_px.x) / m3::Ppm();
 		const auto player_position = m3::FocusPositionM();
 		const auto mouse_position_world_m =
 			m3::VecF{player_position.x + x_offset, player_position.y + y_offset, player_position.z + z_offset};

@@ -18,7 +18,7 @@ namespace m2 {
 	constexpr unsigned U(const auto t) { return static_cast<unsigned>(t); }
 	constexpr uint8_t U8(const auto t) { return static_cast<uint8_t>(t); }
 	constexpr size_t Z(const auto t) { return static_cast<size_t>(t); }
-	constexpr float F(const auto t) { return static_cast<float>(t); }
+	constexpr float ToFloat(const auto t) { return static_cast<float>(t); }
 	constexpr double D(const auto t) { return static_cast<double>(t); }
 	std::string S(const auto& s) { return std::string(s); }
 	inline int RoundI(const float t) { return static_cast<int>(roundf(t)); }

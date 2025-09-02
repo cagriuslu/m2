@@ -353,15 +353,15 @@ Card ExecuteSellAction(m2::Character& player, const m2g::pb::TurnBasedClientComm
 	if (DoesBeerSourcesContainMerchant(sell_action.beer_sources(), sell_action.merchant_location())) {
 		if (const auto incomePointsBenefit = MerchantIncomePointsBenefit(sell_action.merchant_location())) {
 			LOG_INFO("Player income points benefit", incomePointsBenefit);
-			player.SetAttribute(INCOME_POINTS, F(ClampIncomePoints(PlayerIncomePoints(player) + incomePointsBenefit)));
+			player.SetAttribute(INCOME_POINTS, ToFloat(ClampIncomePoints(PlayerIncomePoints(player) + incomePointsBenefit)));
 		}
 		if (const auto victoryPointsBenefit = MerchantVictoryPointsBenefit(sell_action.merchant_location())) {
 			LOG_INFO("Player victory points benefit", victoryPointsBenefit);
-			player.AddResource(VICTORY_POINTS, F(victoryPointsBenefit));
+			player.AddResource(VICTORY_POINTS, ToFloat(victoryPointsBenefit));
 		}
 		if (const auto moneyPointsBenefit = MerchantMoneyBenefit(sell_action.merchant_location())) {
 			LOG_INFO("Player income points benefit", moneyPointsBenefit);
-			player.AddResource(MONEY, F(moneyPointsBenefit));
+			player.AddResource(MONEY, ToFloat(moneyPointsBenefit));
 		}
 	}
 

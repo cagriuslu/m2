@@ -25,21 +25,21 @@ namespace {
 
 RectangleShape RectangleShape::FromSpriteRectangleFixture(const pb::Fixture_RectangleFixture& rf, const int ppm) {
 	RectangleShape rs;
-	rs.offset = VecF{rf.sprite_origin_to_fixture_center_vec_px()} / F(ppm);
-	rs.dimensions = VecF{rf.dims_px()} / F(ppm);
+	rs.offset = VecF{rf.sprite_origin_to_fixture_center_vec_px()} / ToFloat(ppm);
+	rs.dimensions = VecF{rf.dims_px()} / ToFloat(ppm);
 	rs.angleInRads = rf.angle_rads();
 	return rs;
 }
 CircleShape CircleShape::FromSpriteCircleFixture(const pb::Fixture_CircleFixture& cf, const int ppm) {
 	CircleShape cs;
-	cs.offset = VecF{cf.sprite_origin_to_fixture_center_vec_px()} / F(ppm);
-	cs.radius = cf.radius_px() / F(ppm);
+	cs.offset = VecF{cf.sprite_origin_to_fixture_center_vec_px()} / ToFloat(ppm);
+	cs.radius = cf.radius_px() / ToFloat(ppm);
 	return cs;
 }
 ChainShape ChainShape::FromSpriteChainFixture(const pb::Fixture_ChainFixture& cf, int ppm) {
 	ChainShape cs{.points = std::vector<VecF>(cf.points_size())};
 	std::ranges::transform(cf.points(), cs.points.begin(), [ppm](const auto& point) {
-		return VecF{point} / F(ppm);
+		return VecF{point} / ToFloat(ppm);
 	});
 	return cs;
 }

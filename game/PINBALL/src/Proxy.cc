@@ -177,7 +177,7 @@ namespace {
 										}
 										return sum;
 									});
-							const auto averageHunger = sumOfHunger / m2::F(count);
+							const auto averageHunger = sumOfHunger / m2::ToFloat(count);
 							const auto averageSatisfaction = 1.0f - averageHunger;
 							self.SetProgress(averageSatisfaction);
 						} else {
@@ -222,7 +222,7 @@ namespace {
 										}
 										return sum;
 									});
-							const auto averageHunger = sumOfHunger / m2::F(count);
+							const auto averageHunger = sumOfHunger / m2::ToFloat(count);
 							const auto averageSatisfaction = 1.0f - averageHunger;
 							self.SetProgress(averageSatisfaction);
 						} else {

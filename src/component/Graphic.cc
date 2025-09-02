@@ -58,8 +58,8 @@ m2::VecF m2::PixelToPositionVecM(const VecI& pixelPosition) {
 			VecI{pixelPosition.x - (M2_GAME.Dimensions().WindowDimensions().x / 2),
 				pixelPosition.y - (M2_GAME.Dimensions().WindowDimensions().y / 2)};
 	const auto screenCenterToPixelPositionVectorInMeters =
-			VecF{F(screenCenterToPixelPositionVectorInPixels.x) / M2_GAME.Dimensions().OutputPixelsPerMeter(),
-				F(screenCenterToPixelPositionVectorInPixels.y) / M2_GAME.Dimensions().OutputPixelsPerMeter()};
+			VecF{ToFloat(screenCenterToPixelPositionVectorInPixels.x) / M2_GAME.Dimensions().OutputPixelsPerMeter(),
+				ToFloat(screenCenterToPixelPositionVectorInPixels.y) / M2_GAME.Dimensions().OutputPixelsPerMeter()};
 	const auto camera_position = M2_LEVEL.objects[M2_LEVEL.cameraId].position;
 	return screenCenterToPixelPositionVectorInMeters + camera_position;
 }
@@ -345,7 +345,7 @@ bool m2::Graphic::DimRenderingIfNecessary(Id object_id, SDL_Texture* texture) {
 	// Dim the sprite if dimming mode is enabled
 	if (const auto& DimmingExceptions = M2_LEVEL.GetDimmingExceptions()) {
 		if (not DimmingExceptions->contains(object_id)) {
-			static uint8_t mod = static_cast<uint8_t>(RoundU(M2G_PROXY.dimming_factor * F(255)));
+			static uint8_t mod = static_cast<uint8_t>(RoundU(M2G_PROXY.dimming_factor * ToFloat(255)));
 			SDL_SetTextureColorMod(texture, mod, mod, mod);
 			return true;
 		}
@@ -369,10 +369,10 @@ void m2::DrawTextureIn2dWorld(
 
 	// Calculate the destination
 	const auto dstRect = SDL_Rect{
-		I(screenOriginToTextureCenterVecInOutputPixels.x - F(sourceRect->w) * outputToSourcePpmRatio / 2.0f),
-		I(screenOriginToTextureCenterVecInOutputPixels.y - F(sourceRect->h) * outputToSourcePpmRatio / 2.0f),
-		CeilI(F(sourceRect->w) * outputToSourcePpmRatio),
-		CeilI(F(sourceRect->h) * outputToSourcePpmRatio)
+		I(screenOriginToTextureCenterVecInOutputPixels.x - ToFloat(sourceRect->w) * outputToSourcePpmRatio / 2.0f),
+		I(screenOriginToTextureCenterVecInOutputPixels.y - ToFloat(sourceRect->h) * outputToSourcePpmRatio / 2.0f),
+		CeilI(ToFloat(sourceRect->w) * outputToSourcePpmRatio),
+		CeilI(ToFloat(sourceRect->h) * outputToSourcePpmRatio)
 		// TODO using I() and ceilf() here is quite problematic, but I couldn't find any other way of ensuring not
 		//  leaving any gaps between sprites
 		// TODO unfortunately, we can't draw pixel perfect sprites with floating point scaling. However, the game can
@@ -417,9 +417,9 @@ void m2::DrawTextureIn3dWorld(
 	if (isForeground) {
 		auto sprite_x_offset_in_dest_px = sourceCenterToOriginVectorInOutputPixels.x;
 		auto point_0_not_rotated = m3::VecF{
-				xyPositionInWorldM.x - F(sourceRect->w) / sourcePpm / 2.0f - sprite_x_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter(),
+				xyPositionInWorldM.x - ToFloat(sourceRect->w) / sourcePpm / 2.0f - sprite_x_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter(),
 				xyPositionInWorldM.y,
-				F(sourceRect->h) / sourcePpm
+				ToFloat(sourceRect->h) / sourcePpm
 		};
 		auto point_1_not_rotated = m3::VecF{
 				xyPositionInWorldM.x + ((float)sourceRect->w / sourcePpm / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter()),
@@ -507,29 +507,29 @@ void m2::DrawTextureIn3dWorld(
 		vertices[0].position = static_cast<SDL_FPoint>(*projected_point_0);
 		vertices[0].color = {255, 255, 255, 255};
 		vertices[0].tex_coord = SDL_FPoint{
-				F(sourceRect->x) / sourceTextureSheetDimensions.x,
-				F(sourceRect->y) / sourceTextureSheetDimensions.y,
+				ToFloat(sourceRect->x) / sourceTextureSheetDimensions.x,
+				ToFloat(sourceRect->y) / sourceTextureSheetDimensions.y,
 		};
 
 		vertices[1].position = static_cast<SDL_FPoint>(*projected_point_1);
 		vertices[1].color = {255, 255, 255, 255};
 		vertices[1].tex_coord = SDL_FPoint{
-				F(sourceRect->x + sourceRect->w) / sourceTextureSheetDimensions.x,
-				F(sourceRect->y) / sourceTextureSheetDimensions.y,
+				ToFloat(sourceRect->x + sourceRect->w) / sourceTextureSheetDimensions.x,
+				ToFloat(sourceRect->y) / sourceTextureSheetDimensions.y,
 		};
 
 		vertices[2].position = static_cast<SDL_FPoint>(*projected_point_2);
 		vertices[2].color = {255, 255, 255, 255};
 		vertices[2].tex_coord = SDL_FPoint{
-				F(sourceRect->x) / sourceTextureSheetDimensions.x,
-				F(sourceRect->y + sourceRect->h) / sourceTextureSheetDimensions.y,
+				ToFloat(sourceRect->x) / sourceTextureSheetDimensions.x,
+				ToFloat(sourceRect->y + sourceRect->h) / sourceTextureSheetDimensions.y,
 		};
 
 		vertices[3].position = static_cast<SDL_FPoint>(*projected_point_3);
 		vertices[3].color = {255, 255, 255, 255};
 		vertices[3].tex_coord = SDL_FPoint{
-				F(sourceRect->x + sourceRect->w) / sourceTextureSheetDimensions.x,
-				F(sourceRect->y + sourceRect->h) / sourceTextureSheetDimensions.y,
+				ToFloat(sourceRect->x + sourceRect->w) / sourceTextureSheetDimensions.x,
+				ToFloat(sourceRect->y + sourceRect->h) / sourceTextureSheetDimensions.y,
 		};
 
 		static const int indices[6] = {0, 1, 2, 2, 1, 3};

@@ -19,7 +19,7 @@ namespace m2 {
 		int32_t _value{};
 
 		static Fixed UnsafeFromInt(const int i)       noexcept { return Fixed{std::in_place, i << PRECISION}; }
-		static Fixed UnsafeFromFloat(const float f)   noexcept { return Fixed{std::in_place, RoundI(F(LEAST_SIGNIFICANT_INTEGER_BIT_MASK) * f)}; }
+		static Fixed UnsafeFromFloat(const float f)   noexcept { return Fixed{std::in_place, RoundI(::m2::ToFloat(LEAST_SIGNIFICANT_INTEGER_BIT_MASK) * f)}; }
 		static Fixed UnsafeFromDouble(const double d) noexcept { return Fixed{std::in_place, RoundI(D(LEAST_SIGNIFICANT_INTEGER_BIT_MASK) * d)}; }
 
 	public:
@@ -68,7 +68,7 @@ namespace m2 {
 		/// The result is an approximation because the fractional part of the number will be thrown away
 		[[nodiscard]] int32_t ToInteger() const { return _value >> PRECISION; }
 		/// The result is an approximation because floating point numbers get less accurate away from origin
-		[[nodiscard]] float ToFloat() const { return F(_value) / F(0x1 << PRECISION); }
+		[[nodiscard]] float ToFloat() const { return ::m2::ToFloat(_value) / ::m2::ToFloat(0x1 << PRECISION); }
 		/// The result is an approximation because floating point numbers get less accurate away from origin
 		[[nodiscard]] double ToDouble() const { return D(_value) / D(0x1 << PRECISION); }
 		/// Returns the raw value contained inside

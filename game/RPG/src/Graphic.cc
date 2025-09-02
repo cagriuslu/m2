@@ -9,8 +9,8 @@ void DrawAddons(const m2::Graphic& gfx, float health) {
 			const auto src_rect = static_cast<SDL_Rect>(sprite.GetRect());
 			const auto screen_origin_to_sprite_center_px_vec = sprite.ScreenOriginToCenterVecOutpx(gfx.Owner().position);
 			dst_rect = SDL_Rect{
-				m2::RoundI(screen_origin_to_sprite_center_px_vec.x - (m2::F(src_rect.w) * M2_GAME.Dimensions().OutputPixelsPerMeter() / m2::F(sprite.Ppm()) / 2.0f)),
-				m2::RoundI(screen_origin_to_sprite_center_px_vec.y + (m2::F(src_rect.h) * M2_GAME.Dimensions().OutputPixelsPerMeter() * 11.0f / m2::F(sprite.Ppm()) / 2.0f / 10.0f)), // Give an offset of 1.1
+				m2::RoundI(screen_origin_to_sprite_center_px_vec.x - (m2::ToFloat(src_rect.w) * M2_GAME.Dimensions().OutputPixelsPerMeter() / m2::ToFloat(sprite.Ppm()) / 2.0f)),
+				m2::RoundI(screen_origin_to_sprite_center_px_vec.y + (m2::ToFloat(src_rect.h) * M2_GAME.Dimensions().OutputPixelsPerMeter() * 11.0f / m2::ToFloat(sprite.Ppm()) / 2.0f / 10.0f)), // Give an offset of 1.1
 				m2::RoundI(M2_GAME.Dimensions().OutputPixelsPerMeter()),
 				m2::RoundI(M2_GAME.Dimensions().OutputPixelsPerMeter() * 12.0f / 100.0f) // 0.15 m height
 		};
@@ -30,7 +30,7 @@ void DrawAddons(const m2::Graphic& gfx, float health) {
 
 		// Green part
 		const float percentage = health < 0.0f ? 0.0f : (1.0f < health) ? 1.0f : health;
-		const auto green_rect = SDL_Rect{dst_rect.x + 1, dst_rect.y + 1, m2::I(roundf(percentage * m2::F(dst_rect.w - 2))), dst_rect.h - 2};
+		const auto green_rect = SDL_Rect{dst_rect.x + 1, dst_rect.y + 1, m2::I(roundf(percentage * m2::ToFloat(dst_rect.w - 2))), dst_rect.h - 2};
 		SDL_SetRenderDrawColor(M2_GAME.renderer, 0, 255, 0, 255);
 		SDL_RenderFillRect(M2_GAME.renderer, &green_rect);
 }
