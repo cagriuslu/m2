@@ -1,7 +1,4 @@
 #pragma once
-#include <functional>
-#include <memory>
-
 #include "Group.h"
 #include "ObjectImpl.h"
 #include <m2/containers/Pool.h>
@@ -14,15 +11,11 @@
 #include "m2/Component.h"
 #include "m2/game/Fsm.h"
 #include "m2/math/VecF.h"
+#include "ObjectId.h"
+#include <functional>
+#include <memory>
 
 namespace m2 {
-	using ObjectId = Id;
-	using PhysiqueId = Id;
-	using GraphicId = Id;
-	using LightId = Id;
-	using SoundEmitterId = Id;
-	using CharacterId = Id;
-
 	/// Basis of all objects in the game.
 	/// How to decide if a component should reside in Pool or impl?
 	/// If the component is iterated by the Main Game Loop => Pool

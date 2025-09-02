@@ -1,7 +1,8 @@
 #pragma once
 #include "Controls.h"
 #include "Group.h"
-#include "Object.h"
+#include "ObjectId.h"
+#include <m2/third_party/physics/RigidBody.h>
 #include "ui/UiPanelBlueprint.h"
 #include "math/Rational.h"
 #include "component/Graphic.h"
