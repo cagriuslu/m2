@@ -610,28 +610,30 @@ void m2::Game::UpdateCharacters(const Stopwatch::Duration& delta) {
 }
 
 void m2::Game::ExecuteStep(const Stopwatch::Duration& delta) {
-	// Integrate physics
-	for (auto* world : _level->world) {
-		if (world) {
-			world->Step(ToDurationF(delta), velocity_iterations, position_iterations);
+	if constexpr (not m2g::Proxy::deterministic) {
+		// Integrate physics
+		for (auto* world : _level->world) {
+			if (world) {
+				world->Step(ToDurationF(delta), velocity_iterations, position_iterations);
+			}
 		}
-	}
-	// Update positions
-	for (auto& phy : _level->physics) {
-		for (const auto& body : phy.body) {
-			if (body && body->IsEnabled()) {
-				auto& obj = phy.Owner();
-				auto oldPosition = obj.position;
-				// Update object
-				obj.position = body->GetPosition();
-				obj.orientation = body->GetAngle();
-				// Update draw list if necessary
-				if (oldPosition != obj.position) {
-					const auto gfxId = obj.GetGraphicId();
-					const auto poolAndDrawList = _level->GetGraphicPoolAndDrawList(gfxId);
-					poolAndDrawList.second->QueueUpdate(phy.OwnerId(), obj.position);
+		// Update positions
+		for (auto& phy : _level->physics) {
+			for (const auto& body : phy.body) {
+				if (body && body->IsEnabled()) {
+					auto& obj = phy.Owner();
+					auto oldPosition = obj.position;
+					// Update object
+					obj.position = body->GetPosition();
+					obj.orientation = body->GetAngle();
+					// Update draw list if necessary
+					if (oldPosition != obj.position) {
+						const auto gfxId = obj.GetGraphicId();
+						const auto poolAndDrawList = _level->GetGraphicPoolAndDrawList(gfxId);
+						poolAndDrawList.second->QueueUpdate(phy.OwnerId(), obj.position);
+					}
+					break;
 				}
-				break;
 			}
 		}
 	}
@@ -640,7 +642,7 @@ void m2::Game::ExecuteStep(const Stopwatch::Duration& delta) {
 		drawList.Update();
 	}
 	// If the world is NOT static, the pathfinder's cache should be cleared.
-	if (not _proxy.world_is_static) {
+	if constexpr (not ::m2g::Proxy::worldIsStatic) {
 		_level->pathfinder->clear_cache();
 	}
 }

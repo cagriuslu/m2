@@ -18,6 +18,7 @@ namespace m2 {
 		// Attributes
 
 		static Float Zero() { return Float{}; }
+		static Float One() { return Float{1.0f}; }
 		static Float Max() { return Float{FLT_MAX}; }
 		static Float Min() { return Float{-FLT_MAX}; }
 

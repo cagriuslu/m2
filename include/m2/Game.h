@@ -6,6 +6,7 @@
 #include "Level.h"
 #include "Meta.h"
 #include "Proxy.h"
+#include "GameTypes.h"
 #include "audio/Song.h"
 #include <m2/video/Sprite.h>
 #include "game/Animation.h"

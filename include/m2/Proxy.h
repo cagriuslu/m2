@@ -27,6 +27,9 @@ namespace m2 {
 		/// Friendly name of the game that's use as the window title.
 		const std::string gameFriendlyName = "<game-friendly-name>";
 
+		/// Determines if the engine will behave in a deterministic way
+		static constexpr bool deterministic = false;
+
 		/// PPM (pixels per meter) of the overall game. Ideally, this number should be the greatest common factor of all
 		/// sprites used in the game. In case there could be outliers, this values isn't calculated from Sprite Sheets,
 		/// but instead hardcoded in Proxy.
@@ -52,7 +55,7 @@ namespace m2 {
 		const VecF gravity{};
 
 		/// Is the world (background, the obstacles) static? If true, pathfinder uses caching.
-		const bool world_is_static = true;
+		static constexpr bool worldIsStatic = true;
 
 		/// Is lightning enabled? Darkens the textures.
 		const bool lightning = false;

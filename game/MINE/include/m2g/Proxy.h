@@ -6,7 +6,7 @@ namespace m2g {
 	   public:
 		const std::string gameIdentifier = "MINE";
 		const m2::VecF gravity{0.0f, 10.0f};
-		const bool world_is_static = false;
+		static constexpr bool worldIsStatic = false;
 		const std::vector<m2::ObjectBlueprint> objectBlueprints = {
 			{.objectType = pb::DWARF, .defaultSpriteType = pb::DWARF_FULL},
 			{.objectType = pb::BLACKSMITH, .defaultSpriteType = pb::BLACKSMITH_FULL},
