@@ -1,6 +1,6 @@
 syntax = "proto3";
 package m2.pb;
 
-message F {
+message FF {
   float value = 1;
 }

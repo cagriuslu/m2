@@ -6,5 +6,5 @@
 #include <type_traits>
 
 namespace m2 {
-	using F = std::conditional_t<GAME_IS_DETERMINISTIC, Fixed, Float>;
+	using FF = std::conditional_t<GAME_IS_DETERMINISTIC, Fixed, Float>;
 }
