@@ -28,9 +28,6 @@ namespace m2 {
 		/// Friendly name of the game that's use as the window title.
 		const std::string gameFriendlyName = "<game-friendly-name>";
 
-		/// Determines if the engine will behave in a deterministic way
-		static constexpr bool deterministic = false;
-
 		/// PPM (pixels per meter) of the overall game. Ideally, this number should be the greatest common factor of all
 		/// sprites used in the game. In case there could be outliers, this values isn't calculated from Sprite Sheets,
 		/// but instead hardcoded in Proxy.

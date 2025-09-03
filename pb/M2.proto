@@ -1,8 +1,0 @@
-syntax = "proto3";
-package m2.pb;
-
-import "m2g_SpriteType.proto";
-
-message SpriteTypeArray {
-  repeated m2g.pb.SpriteType items = 1;
-}

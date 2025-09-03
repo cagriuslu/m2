@@ -610,7 +610,7 @@ void m2::Game::UpdateCharacters(const Stopwatch::Duration& delta) {
 }
 
 void m2::Game::ExecuteStep(const Stopwatch::Duration& delta) {
-	if constexpr (not m2g::Proxy::deterministic) {
+	if constexpr (not GAME_IS_DETERMINISTIC) {
 		// Integrate physics
 		for (auto* world : _level->world) {
 			if (world) {

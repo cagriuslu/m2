@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 # Options
+option(GAME_IS_DETERMINISTIC "Compile the game in deterministic mode" OFF) # Usually set by the game's CMakeLists.txt
 option(DEBUG "Enable debug mode" OFF)
 option(BUILDING_DEPS "Signifies that CMake is executed recursively to build the dependencies" OFF)
 if(DEBUG)
@@ -109,10 +110,16 @@ endif()
 
 add_subdirectory(game)
 
+# Print options
+message("GAME_IS_DETERMINISTIC: ${GAME_IS_DETERMINISTIC}")
+if(GAME_IS_DETERMINISTIC)
+    add_compile_definitions(_GAME_IS_DETERMINISTIC)
+endif()
+
 # Generate protobuf files
 # Extract the filenames of game proto files
-foreach(GAME_PROTO_FILEPATH ${GAME_PROTO_FILES})
-    cmake_path(GET GAME_PROTO_FILEPATH FILENAME GAME_PROTO_FILENAME)
+foreach(GAME_PROTO_FILE ${GAME_PROTO_FILES})
+    cmake_path(GET GAME_PROTO_FILE FILENAME GAME_PROTO_FILENAME)
     list(APPEND GAME_PROTO_FILENAMES "${GAME_PROTO_FILENAME}")
 endforeach()
 # Gather names of the default proto files
@@ -125,6 +132,11 @@ foreach(PROTO_DEFAULT_FILE ${PROTO_FILES_WITH_DEFAULT_FALLBACK})
     endif()
 endforeach()
 file(GLOB PROTO_FILES "pb/*.proto")
+if(GAME_IS_DETERMINISTIC)
+    list(APPEND PROTO_FILES "pb-deterministic/GameTypes.proto")
+else()
+    list(APPEND PROTO_FILES "pb-standard/GameTypes.proto")
+endif()
 protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS "${PROTO_FILES}" "${GAME_PROTO_FILES}")
 
 # Post-build actions

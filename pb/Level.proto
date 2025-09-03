@@ -3,8 +3,8 @@ package m2.pb;
 
 import "m2g_GroupType.proto";
 import "m2g_ObjectType.proto";
+import "m2g_SpriteType.proto";
 import "VecF.proto";
-import "M2.proto";
 
 message Group {
   m2g.pb.GroupType type = 1;
@@ -19,6 +19,9 @@ message LevelObject {
   bool is_locked = 5; // If locked, level editor isn't allowed to move or remove the object
 }
 
+message SpriteTypeArray {
+  repeated m2g.pb.SpriteType items = 1;
+}
 message BackgroundLayer {
   repeated SpriteTypeArray background_rows = 1;
   repeated SpriteTypeArray second_background_rows = 2; // Second quadrant, negative x, positive y, UNUSED
