@@ -21,10 +21,20 @@ message Attribute {
 }
 
 enum Usage {
-  CONSUMABLE = 0; // Item is destroyed after first use
-  REUSABLE = 1; // Cost & Benefits are applied manually
-  AUTOMATIC = 2; // Benefits are applied automatically every second
-  PASSIVE = 3; // Item cannot be used
+  // Item cannot be used, only held.
+  STATIC = 0;
+
+  // Item is constantly "in-use". The costs are deducted and benefits are applied automatically by the engine. When this
+  // option is selected, the costs are benefits are pre-second values.
+  AUTOMATIC = 1;
+
+  // Item must be used manually and once at a time. The costs are deducted and benefits are applied by the engine. The
+  // item doesn't disappear after use.
+  REUSABLE = 2;
+
+  // Item must be used manually and only once. The costs are deducted and benefits are applied by the engine. The item
+  // disappears after one use.
+  CONSUMABLE = 3;
 }
 
 /// An item also represents a capability

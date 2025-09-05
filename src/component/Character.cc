@@ -86,8 +86,8 @@ bool m2::Character::UseItem(const Iterator& item_it, float resource_multiplier) 
 	if (item_it == EndItems()) {
 		return false;
 	}
-	if (item_it->Usage() == pb::PASSIVE) {
-		LOG_WARN("Attempted to use PASSIVE item_it", item_it->Type());
+	if (item_it->Usage() == pb::STATIC) {
+		LOG_WARN("Attempted to use STATIC item_it", item_it->Type());
 		return false;
 	}
 
