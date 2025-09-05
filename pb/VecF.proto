@@ -1,7 +1,14 @@
 syntax = "proto3";
 package m2.pb;
 
+import "GameTypes.proto";
+
 message VecF {
   float x = 1;
   float y = 2;
+}
+
+message VecFF {
+  FF x = 1;
+  FF y = 2;
 }
