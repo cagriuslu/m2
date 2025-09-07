@@ -20,12 +20,6 @@
 using namespace m2;
 
 namespace {
-	constexpr std::array bgDrawLayerToLayerMap = {
-		std::pair(BackgroundDrawLayer::B0, pb::ABOVE_GROUND_FLAT),
-		std::pair(BackgroundDrawLayer::B1, pb::SEA_LEVEL_FLAT),
-		std::pair(BackgroundDrawLayer::B2, pb::UNDER_WATER_FLAT),
-		std::pair(BackgroundDrawLayer::B3, pb::SEABED_FLAT),
-	};
 	constexpr std::array fgDrawLayerToLayerMap = {
 		std::pair(ForegroundDrawLayer::FM1_BOTTOM, pb::BEDROCK_UPRIGHT),
 		std::pair(ForegroundDrawLayer::FM1_TOP, pb::SEABED_UPRIGHT),
@@ -203,9 +197,9 @@ Stopwatch::Duration Level::GetTotalSimulatedDuration() const {
 DrawLayer Level::GetDrawLayer(const GraphicId gfxId) {
 	const auto shiftedGfxPoolId = ToShiftedPoolId(gfxId);
 
-	for (int i = 0; i < I(BackgroundDrawLayer::_n); ++i) {
+	for (int i = 0; i < FLAT_GRAPHICS_LAYER_COUNT; ++i) {
 		if (flatGraphics[i].GetShiftedPoolId() == shiftedGfxPoolId) {
-			return static_cast<BackgroundDrawLayer>(i);
+			return static_cast<pb::FlatGraphicsLayer>(i);
 		}
 	}
 	if (uprightGraphics.GetShiftedPoolId() == shiftedGfxPoolId) {
@@ -238,10 +232,9 @@ std::pair<Pool<Graphic>&, DrawList*> Level::GetGraphicPoolAndDrawList(const Grap
 
 }
 std::pair<Pool<Graphic>&, DrawList*> Level::GetGraphicPoolAndDrawList(const DrawLayer drawLayer) {
-	if (std::holds_alternative<BackgroundDrawLayer>(drawLayer)) {
-		const auto bgLayer = std::get<BackgroundDrawLayer>(drawLayer);
-		const auto layer = bgDrawLayerToLayerMap.at(I(bgLayer));
-		return std::pair<Pool<Graphic>&,DrawList*>{flatGraphics.at(I(layer.second)), nullptr};
+	if (std::holds_alternative<pb::FlatGraphicsLayer>(drawLayer)) {
+		const auto bgLayer = std::get<pb::FlatGraphicsLayer>(drawLayer);
+		return std::pair<Pool<Graphic>&,DrawList*>{flatGraphics.at(I(bgLayer)), nullptr};
 	}
 	const auto fgLayer = std::get<ForegroundDrawLayer>(drawLayer);
 	const auto layer = fgDrawLayerToLayerMap.at(I(fgLayer));
@@ -427,7 +420,7 @@ void_expected Level::InitAnyPlayer(
 					}
 
 					LOGF_TRACE("Creating tile from %d sprite at (%d,%d)...", sprite_type, x, y);
-					auto it = obj::CreateTile(static_cast<BackgroundDrawLayer>(l), VecF{x, y}, sprite_type);
+					auto it = obj::CreateTile(static_cast<pb::FlatGraphicsLayer>(l), VecF{x, y}, sprite_type);
 					M2G_PROXY.post_tile_create(*it, sprite_type);
 					LOG_TRACE("Created tile", it.GetId());
 				}

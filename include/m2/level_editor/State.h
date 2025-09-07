@@ -19,7 +19,7 @@ namespace m2::level_editor {
 		using ForegroundObjectPlaceholderMap = std::multimap<VecF, std::tuple<Id, pb::Object>, VecFCompareTopLeftToBottomRight>;
 		using ForegroundObjectClipboardMap = std::multimap<VecF, pb::Object, VecFCompareTopLeftToBottomRight>;
 
-		std::array<BackgroundSpritePlaceholderMap, gBackgroundDrawLayerCount> _backgroundSpritePlaceholders;
+		std::array<BackgroundSpritePlaceholderMap, FLAT_GRAPHICS_LAYER_COUNT> _backgroundSpritePlaceholders;
 		ForegroundObjectPlaceholderMap _foregroundObjectPlaceholders;
 		BackgroundSpriteClipboardMap _backgroundSpriteClipboard;
 		ForegroundObjectClipboardMap _foregroundObjectClipboard;
@@ -38,7 +38,7 @@ namespace m2::level_editor {
 
 		// Accessors
 
-		[[nodiscard]] BackgroundDrawLayer GetSelectedBackgroundLayer() const;
+		[[nodiscard]] pb::FlatGraphicsLayer GetSelectedBackgroundLayer() const;
 		[[nodiscard]] bool GetSnapToGridStatus() const;
 		[[nodiscard]] std::vector<ForegroundObjectPlaceholderMap::const_iterator> GetForegroundObjectsOfType(m2g::pb::ObjectType) const;
 

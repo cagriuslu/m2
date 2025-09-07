@@ -39,6 +39,7 @@ enum ProjectionType {
   PERSPECTIVE_YZ = 2;
 }
 
+// TODO not yet implemented
 // A layer that contains densely packed graphic objects. For each object, only the sprite type is described.
 message DenseFlatGraphicsLayer {
   FlatGraphicsLayer layer = 1;

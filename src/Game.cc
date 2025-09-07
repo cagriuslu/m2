@@ -739,7 +739,7 @@ void m2::Game::ClearBackBuffer() const {
 
 void m2::Game::Draw() {
 	// Check if only one background layer needs to be drawn
-	const auto onlyBackgroundLayerToDraw = [&]() -> std::optional<BackgroundDrawLayer> {
+	const auto onlyBackgroundLayerToDraw = [&]() -> std::optional<pb::FlatGraphicsLayer> {
 		if (std::holds_alternative<level_editor::State>(_level->stateVariant)) {
 			if (const auto& rightHudName = _level->GetRightHud()->Name();
 					rightHudName == "PaintBgRightHud" || rightHudName == "SampleBgRightHud" || rightHudName == "SelectBgRightHud") {
@@ -752,8 +752,8 @@ void m2::Game::Draw() {
 
 	for (const auto& layer : gDrawOrder) {
 		// Skip if another background layer needs drawing
-		if (onlyBackgroundLayerToDraw && std::holds_alternative<BackgroundDrawLayer>(layer)
-				&& *onlyBackgroundLayerToDraw != std::get<BackgroundDrawLayer>(layer)) {
+		if (onlyBackgroundLayerToDraw && std::holds_alternative<pb::FlatGraphicsLayer>(layer)
+				&& *onlyBackgroundLayerToDraw != std::get<pb::FlatGraphicsLayer>(layer)) {
 			continue;
 		}
 		if (const auto poolAndDrawList = _level->GetGraphicPoolAndDrawList(layer); not poolAndDrawList.second) {

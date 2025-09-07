@@ -19,18 +19,6 @@ namespace m2 {
 	constexpr int UPRIGHT_GRAPHICS_LAYER_COUNT = pb::UprightGraphicsLayer_ARRAYSIZE;
 	constexpr int PHYSICS_LAYER_COUNT = pb::PhysicsLayer_ARRAYSIZE;
 
-	/// Background layers are graphics-only layers. An object can have a Graphic component in any of the background
-	/// layers. Background layers are drawn from back to front and B0 is drawn the last, thus it's on the front.
-	/// Background Graphic components are not ordered, thus they should not overlap.
-	enum class BackgroundDrawLayer {
-		B0,
-		B1,
-		B2,
-		B3,
-		_n // End sentinel
-	};
-	constexpr int gBackgroundDrawLayerCount = static_cast<int>(BackgroundDrawLayer::_n);
-
 	enum class ForegroundDrawLayer {
 		FM1_BOTTOM,
 		FM1_TOP,
@@ -42,7 +30,7 @@ namespace m2 {
 	};
 	constexpr int gForegroundDrawLayerCount = static_cast<int>(ForegroundDrawLayer::_n);
 
-	using DrawLayer = std::variant<BackgroundDrawLayer, ForegroundDrawLayer>;
+	using DrawLayer = std::variant<pb::FlatGraphicsLayer, ForegroundDrawLayer>;
 	extern std::array<DrawLayer, 10> gDrawOrder;
 
 	/// Returns the number of codepoints in a UTF-8 string.

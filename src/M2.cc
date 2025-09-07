@@ -15,12 +15,12 @@ namespace {
 const std::string m2::EMPTY_STRING;
 
 std::array<DrawLayer, 10> m2::gDrawOrder = {
-	BackgroundDrawLayer::B3,
-	BackgroundDrawLayer::B2,
+	pb::FlatGraphicsLayer::BACKGROUND_FLAT,
+	pb::FlatGraphicsLayer::BEDROCK_FLAT,
 	ForegroundDrawLayer::FM1_BOTTOM,
 	ForegroundDrawLayer::FM1_TOP,
-	BackgroundDrawLayer::B1,
-	BackgroundDrawLayer::B0,
+	pb::FlatGraphicsLayer::SEABED_FLAT,
+	pb::FlatGraphicsLayer::UNDER_WATER_FLAT,
 	ForegroundDrawLayer::F0_BOTTOM,
 	ForegroundDrawLayer::F0_TOP,
 	ForegroundDrawLayer::F1_BOTTOM,
