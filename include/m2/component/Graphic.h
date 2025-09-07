@@ -73,7 +73,6 @@ namespace m3 {
 
 namespace m2 {
 	struct Graphic final : Component {
-		pb::GraphicsLayer layer{};
 		bool enabled{true};
 		bool draw{true};
 

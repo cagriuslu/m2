@@ -11,7 +11,6 @@ namespace m2 {
 		Callback preStep{};
 		Callback postStep{};
 
-		pb::PhysicsLayer layer;
 		// An object has either body or rigidBodyIndex.
 		std::array<std::optional<third_party::physics::RigidBody>, gPhysicsLayerCount> body{};
 		std::optional<int> rigidBodyIndex;

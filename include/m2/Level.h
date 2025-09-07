@@ -65,6 +65,8 @@ namespace m2 {
 		// is using that component is created/destroyed very rapidly.
 		Pool<Object> objects;
 		std::map<GroupIdentifier, std::unique_ptr<Group>, GroupIdentifier::Less> groups;
+		std::array<Pool<Graphic>, FLAT_GRAPHICS_LAYER_COUNT> flatGraphics;
+		std::array<std::pair<Pool<Graphic>, DrawList>, UPRIGHT_GRAPHICS_LAYER_COUNT> uprightGraphics;
 		std::array<Pool<Graphic>, gBackgroundDrawLayerCount> bgGraphics;
 		Pool<Graphic> fgGraphics;
 		std::array<DrawList, gForegroundDrawLayerCount> fgDrawLists;

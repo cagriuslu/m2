@@ -1,6 +1,7 @@
 syntax = "proto3";
 package m2.pb;
 
+// The order also represents the draw order
 enum GraphicsLayer {
   // Supports flat graphics only
   BACKGROUND = 0;

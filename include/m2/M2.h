@@ -1,6 +1,7 @@
 #pragma once
 #include "Chrono.h"
 #include "Meta.h"
+#include <M2.pb.h>
 #include <array>
 
 #define MAYBE [[maybe_unused]] // TODO get rid of this
@@ -12,6 +13,24 @@ namespace m2 {
 
 	constexpr auto TIME_BETWEEN_PHYSICS_SIMULATIONS{std::chrono::duration_cast<Stopwatch::Duration>(std::chrono::milliseconds{10})};
 	constexpr auto TIME_BETWEEN_FPS_LOGS{std::chrono::duration_cast<Stopwatch::Duration>(std::chrono::seconds{10})};
+
+	constexpr auto FLAT_GRAPHICS_LAYERS = {
+		pb::GraphicsLayer::BACKGROUND,
+		pb::GraphicsLayer::BEDROCK_FLAT,
+		pb::GraphicsLayer::BELOW_GROUND_FLAT,
+		pb::GraphicsLayer::GROUND_FLAT,
+		pb::GraphicsLayer::ABOVE_GROUND_FLAT,
+		pb::GraphicsLayer::FOREGROUND,
+	};
+	constexpr int FLAT_GRAPHICS_LAYER_COUNT = FLAT_GRAPHICS_LAYERS.size();
+
+	constexpr auto UPRIGHT_GRAPHICS_LAYERS = {
+		pb::GraphicsLayer::BEDROCK_UPRIGHT,
+		pb::GraphicsLayer::BELOW_GROUND_UPRIGHT,
+		pb::GraphicsLayer::GROUND_UPRIGHT,
+		pb::GraphicsLayer::ABOVE_GROUND_UPRIGHT,
+	};
+	constexpr int UPRIGHT_GRAPHICS_LAYER_COUNT = FLAT_GRAPHICS_LAYERS.size();
 
 	/// Each physics layer designates a separate physical world. Objects in different layers cannot collide.
 	enum class PhysicsLayer {

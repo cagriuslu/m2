@@ -24,12 +24,19 @@ Level::~Level() {
 
 	objects.Clear();
 	groups.clear();
-	physics.Clear();
+	for (auto& g : flatGraphics) {
+		g.Clear();
+	}
+	for (auto& g : uprightGraphics) {
+		g.first.Clear();
+	}
 	for (auto& bg : bgGraphics) {
 		bg.Clear();
 	}
 	fgGraphics.Clear();
+	physics.Clear();
 	lights.Clear();
+	soundEmitters.Clear();
 	characters.Clear();
 
 	if (_debugDraw) {
