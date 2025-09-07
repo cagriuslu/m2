@@ -67,7 +67,7 @@ namespace m2 {
 		std::map<GroupIdentifier, std::unique_ptr<Group>, GroupIdentifier::Less> groups;
 		/// Flat graphics in the same pool are drawn without any specific order
 		std::array<Pool<Graphic>, FLAT_GRAPHICS_LAYER_COUNT> flatGraphics;
-		/// Upright graphics are stored in the same pool
+		/// All upright graphics are stored in the same pool
 		Pool<Graphic> uprightGraphics;
 		/// Upright graphics are drawn from back to front, top to bottom
 		std::array<DrawList, UPRIGHT_GRAPHICS_LAYER_COUNT> uprightDrawLists;

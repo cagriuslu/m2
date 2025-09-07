@@ -34,42 +34,6 @@ namespace {
 		std::pair(ForegroundDrawLayer::F1_BOTTOM, pb::ABOVE_GROUND_UPRIGHT),
 		std::pair(ForegroundDrawLayer::F1_TOP, pb::AIRBORNE_UPRIGHT),
 	};
-	constexpr std::array layerToFlatGraphicsPoolIndex = {
-		std::pair(pb::BACKGROUND_FLAT, 0),
-		std::pair(pb::BEDROCK_FLAT, 1),
-		std::pair(pb::BEDROCK_UPRIGHT, -1),
-		std::pair(pb::SEABED_FLAT, 2),
-		std::pair(pb::SEABED_UPRIGHT, -1),
-		std::pair(pb::UNDER_WATER_FLAT, 3),
-		std::pair(pb::UNDER_WATER_UPRIGHT, -1),
-		std::pair(pb::SEA_LEVEL_FLAT, 4),
-		std::pair(pb::SEA_LEVEL_UPRIGHT, -1),
-		std::pair(pb::ABOVE_GROUND_FLAT, 5),
-		std::pair(pb::ABOVE_GROUND_UPRIGHT, -1),
-		std::pair(pb::AIRBORNE_FLAT, 6),
-		std::pair(pb::AIRBORNE_UPRIGHT, -1),
-		std::pair(pb::SPACE_FLAT, 7),
-		std::pair(pb::SPACE_UPRIGHT, -1),
-		std::pair(pb::FOREGROUND_FLAT, 8),
-	};
-	constexpr std::array layerToUprightGraphicsDrawListIndex = {
-		std::pair(pb::BACKGROUND_FLAT, -1),
-		std::pair(pb::BEDROCK_FLAT, -1),
-		std::pair(pb::BEDROCK_UPRIGHT, 0),
-		std::pair(pb::SEABED_FLAT, -1),
-		std::pair(pb::SEABED_UPRIGHT, 1),
-		std::pair(pb::UNDER_WATER_FLAT, -1),
-		std::pair(pb::UNDER_WATER_UPRIGHT, 2),
-		std::pair(pb::SEA_LEVEL_FLAT, -1),
-		std::pair(pb::SEA_LEVEL_UPRIGHT, 3),
-		std::pair(pb::ABOVE_GROUND_FLAT, -1),
-		std::pair(pb::ABOVE_GROUND_UPRIGHT, 4),
-		std::pair(pb::AIRBORNE_FLAT, -1),
-		std::pair(pb::AIRBORNE_UPRIGHT, 5),
-		std::pair(pb::SPACE_FLAT, -1),
-		std::pair(pb::SPACE_UPRIGHT, 6),
-		std::pair(pb::FOREGROUND_FLAT, -1),
-	};
 }
 
 Level::~Level() {
@@ -273,13 +237,11 @@ std::pair<Pool<Graphic>&, DrawList*> Level::GetGraphicPoolAndDrawList(const Draw
 	if (std::holds_alternative<BackgroundDrawLayer>(drawLayer)) {
 		const auto bgLayer = std::get<BackgroundDrawLayer>(drawLayer);
 		const auto layer = bgDrawLayerToLayerMap.at(I(bgLayer));
-		const auto layerPoolIndex = layerToFlatGraphicsPoolIndex.at(I(layer.second));
-		return std::pair<Pool<Graphic>&,DrawList*>{flatGraphics.at(layerPoolIndex.second), nullptr};
+		return std::pair<Pool<Graphic>&,DrawList*>{flatGraphics.at(I(layer.second)), nullptr};
 	}
 	const auto fgLayer = std::get<ForegroundDrawLayer>(drawLayer);
 	const auto layer = fgDrawLayerToLayerMap.at(I(fgLayer));
-	const auto drawListIndex = layerToUprightGraphicsDrawListIndex.at(I(layer.second)).second;
-	return std::pair<Pool<Graphic>&,DrawList*>{uprightGraphics, &uprightDrawLists.at(drawListIndex)};
+	return std::pair<Pool<Graphic>&,DrawList*>{uprightGraphics, &uprightDrawLists.at(I(layer.second))};
 }
 pb::ProjectionType Level::GetProjectionType() const {
 	const auto isEditor = std::holds_alternative<level_editor::State>(stateVariant)

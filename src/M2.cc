@@ -2,8 +2,6 @@
 
 using namespace m2;
 
-const std::string m2::EMPTY_STRING;
-
 namespace {
 	uintptr_t gStoredStackPosition{};
 
@@ -13,6 +11,8 @@ namespace {
 		return ptr - 8;
 	}
 }
+
+const std::string m2::EMPTY_STRING;
 
 std::array<DrawLayer, 10> m2::gDrawOrder = {
 	BackgroundDrawLayer::B3,

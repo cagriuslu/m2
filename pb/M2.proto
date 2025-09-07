@@ -1,30 +1,37 @@
 syntax = "proto3";
 package m2.pb;
 
-// The order also represents the draw order
-enum Layer {
+// Enum must be sequential because Enum_ARRAYSIZE is used as array size.
+enum FlatGraphicsLayer {
   BACKGROUND_FLAT = 0;
-
   BEDROCK_FLAT = 1;
-  BEDROCK_UPRIGHT = 2;
+  SEABED_FLAT = 2;
+  UNDER_WATER_FLAT = 3;
+  SEA_LEVEL_FLAT = 4;
+  ABOVE_GROUND_FLAT = 5;
+  AIRBORNE_FLAT = 6;
+  SPACE_FLAT = 7;
+  FOREGROUND_FLAT = 8;
+}
 
-  SEABED_FLAT = 3;
-  SEABED_UPRIGHT = 4;
+// Enum must be sequential because Enum_ARRAYSIZE is used as array size.
+enum UprightGraphicsLayer {
+  BEDROCK_UPRIGHT = 0;
+  SEABED_UPRIGHT = 1;
+  UNDER_WATER_UPRIGHT = 2;
+  SEA_LEVEL_UPRIGHT = 3;
+  ABOVE_GROUND_UPRIGHT = 4;
+  AIRBORNE_UPRIGHT = 5;
+  SPACE_UPRIGHT = 6;
+}
 
-  UNDER_WATER_FLAT = 5;
-  UNDER_WATER_UPRIGHT = 6;
-
-  SEA_LEVEL_FLAT = 7;
-  SEA_LEVEL_UPRIGHT = 8;
-
-  ABOVE_GROUND_FLAT = 9;
-  ABOVE_GROUND_UPRIGHT = 10;
-
-  AIRBORNE_FLAT = 11;
-  AIRBORNE_UPRIGHT = 12;
-
-  SPACE_FLAT = 13;
-  SPACE_UPRIGHT = 14;
-
-  FOREGROUND_FLAT = 15;
+// Enum must be sequential because Enum_ARRAYSIZE is used as array size.
+enum PhysicsLayer {
+  BEDROCK = 0;
+  SEABED = 1;
+  UNDER_WATER = 2;
+  SEA_LEVEL = 3;
+  ABOVE_GROUND = 4;
+  AIRBORNE = 5;
+  SPACE = 6;
 }

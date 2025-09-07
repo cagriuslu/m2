@@ -1,4 +1,5 @@
 #pragma once
+#include <m2/protobuf/Detail.h>
 #include "Chrono.h"
 #include "Meta.h"
 #include <M2.pb.h>
@@ -14,41 +15,9 @@ namespace m2 {
 	constexpr auto TIME_BETWEEN_PHYSICS_SIMULATIONS{std::chrono::duration_cast<Stopwatch::Duration>(std::chrono::milliseconds{10})};
 	constexpr auto TIME_BETWEEN_FPS_LOGS{std::chrono::duration_cast<Stopwatch::Duration>(std::chrono::seconds{10})};
 
-	constexpr auto FLAT_GRAPHICS_LAYERS = {
-		pb::Layer::BACKGROUND_FLAT,
-		pb::Layer::BEDROCK_FLAT,
-		pb::Layer::SEABED_FLAT,
-		pb::Layer::UNDER_WATER_FLAT,
-		pb::Layer::SEA_LEVEL_FLAT,
-		pb::Layer::ABOVE_GROUND_FLAT,
-		pb::Layer::AIRBORNE_FLAT,
-		pb::Layer::SPACE_FLAT,
-		pb::Layer::FOREGROUND_FLAT,
-	};
-	constexpr int FLAT_GRAPHICS_LAYER_COUNT = FLAT_GRAPHICS_LAYERS.size();
-
-	constexpr auto UPRIGHT_GRAPHICS_LAYERS = {
-		pb::Layer::BEDROCK_UPRIGHT,
-		pb::Layer::SEABED_UPRIGHT,
-		pb::Layer::UNDER_WATER_UPRIGHT,
-		pb::Layer::SEA_LEVEL_UPRIGHT,
-		pb::Layer::ABOVE_GROUND_UPRIGHT,
-		pb::Layer::AIRBORNE_UPRIGHT,
-		pb::Layer::SPACE_UPRIGHT,
-	};
-	constexpr int UPRIGHT_GRAPHICS_LAYER_COUNT = UPRIGHT_GRAPHICS_LAYERS.size();
-
-	// Pairs belong to the same physical world
-	constexpr auto PHYSICS_LAYER_PAIRS = {
-		std::array{pb::Layer::BEDROCK_FLAT, pb::Layer::BEDROCK_UPRIGHT},
-		std::array{pb::Layer::SEABED_FLAT, pb::Layer::SEABED_UPRIGHT},
-		std::array{pb::Layer::UNDER_WATER_FLAT, pb::Layer::UNDER_WATER_UPRIGHT},
-		std::array{pb::Layer::SEA_LEVEL_FLAT, pb::Layer::SEA_LEVEL_UPRIGHT},
-		std::array{pb::Layer::ABOVE_GROUND_FLAT, pb::Layer::ABOVE_GROUND_UPRIGHT},
-		std::array{pb::Layer::AIRBORNE_FLAT, pb::Layer::AIRBORNE_UPRIGHT},
-		std::array{pb::Layer::SPACE_FLAT, pb::Layer::SPACE_UPRIGHT},
-	};
-	constexpr int PHYSICS_LAYER_COUNT = PHYSICS_LAYER_PAIRS.size();
+	constexpr int FLAT_GRAPHICS_LAYER_COUNT = pb::FlatGraphicsLayer_ARRAYSIZE;
+	constexpr int UPRIGHT_GRAPHICS_LAYER_COUNT = pb::UprightGraphicsLayer_ARRAYSIZE;
+	constexpr int PHYSICS_LAYER_COUNT = pb::PhysicsLayer_ARRAYSIZE;
 
 	/// Each physics layer designates a separate physical world. Objects in different layers cannot collide.
 	enum class PhysicsLayer {
