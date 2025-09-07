@@ -83,9 +83,8 @@ namespace m2 {
 		[[nodiscard]] virtual Iterator EndItems() const = 0;
 		[[nodiscard]] std::vector<m2g::pb::ItemType> NamedItemTypes() const;
 		[[nodiscard]] std::vector<m2g::pb::ItemType> NamedItemTypes(m2g::pb::ItemCategory item_cat) const;
-		virtual void AddUnnamedItem(std::unique_ptr<const UnnamedItem>&& item) = 0; // Item is moved
-		virtual void AddNamedItem(const NamedItem& item) = 0;
-		virtual void AddNamedItemWithoutBenefits(const NamedItem& item) = 0;
+		virtual void AddNamedItem(const Item& item) = 0;
+		virtual void AddNamedItemWithoutBenefits(const Item& item) = 0;
 		bool UseItem(const Iterator& item_it, float resource_multiplier = 1.0f);
 		virtual void RemoveItem(const Iterator& item) = 0;
 		virtual void ClearItems() = 0;
@@ -123,9 +122,8 @@ namespace m2 {
 		[[nodiscard]] Iterator FindItems(m2g::pb::ItemCategory item_cat) const override;
 		[[nodiscard]] Iterator BeginItems() const override;
 		[[nodiscard]] Iterator EndItems() const override;
-		void AddUnnamedItem(std::unique_ptr<const UnnamedItem>&& item) override;
-		void AddNamedItem(const NamedItem& item) override;
-		void AddNamedItemWithoutBenefits(const NamedItem& item) override;
+		void AddNamedItem(const Item& item) override;
+		void AddNamedItemWithoutBenefits(const Item& item) override;
 		void RemoveItem(const Iterator& item) override;
 		void ClearItems() override;
 
@@ -162,9 +160,8 @@ namespace m2 {
 		[[nodiscard]] Iterator FindItems(m2g::pb::ItemCategory item_cat) const override;
 		[[nodiscard]] Iterator BeginItems() const override;
 		[[nodiscard]] Iterator EndItems() const override;
-		void AddUnnamedItem(std::unique_ptr<const UnnamedItem>&& item) override;
-		void AddNamedItem(const NamedItem& item) override;
-		void AddNamedItemWithoutBenefits(const NamedItem& item) override;
+		void AddNamedItem(const Item& item) override;
+		void AddNamedItemWithoutBenefits(const Item& item) override;
 		void RemoveItem(const Iterator& item) override;
 		void ClearItems() override;
 

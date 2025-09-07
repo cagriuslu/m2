@@ -91,7 +91,7 @@ namespace m2 {
 		std::vector<SpriteSheet> spriteSheets;
 		std::optional<SpriteEffectsSheet> spriteEffectsSheet;
 		std::vector<m2g::pb::SpriteType> level_editor_background_sprites;
-		pb::LUT<pb::Item, NamedItem> named_items;
+		pb::LUT<pb::Item, Item> named_items;
 		pb::LUT<pb::Animation, Animation> animations;
 		pb::LUT<pb::Song, Song> songs;
 		std::multimap<m2g::pb::KeyType, SDL_Scancode> keyToScancodeMap;
@@ -168,8 +168,8 @@ namespace m2 {
 		const GameDimensions& Dimensions() const { return *_dimensions; }
 		const std::variant<Sprite,pb::TextLabel>& GetSpriteOrTextLabel(const m2g::pb::SpriteType sprite_type) const { return _sprites[pb::enum_index(sprite_type)]; }
 		void ForEachSprite(const std::function<bool(m2g::pb::SpriteType, const Sprite&)>& op) const;
-		const NamedItem& GetNamedItem(const m2g::pb::ItemType item_type) const { return named_items[item_type]; }
-		void ForEachNamedItem(const std::function<bool(m2g::pb::ItemType, const NamedItem&)>& op) const;
+		const Item& GetNamedItem(const m2g::pb::ItemType item_type) const { return named_items[item_type]; }
+		void ForEachNamedItem(const std::function<bool(m2g::pb::ItemType, const Item&)>& op) const;
 		std::optional<m2g::pb::SpriteType> GetMainSpriteOfObject(m2g::pb::ObjectType) const;
 		void ForEachObjectWithMainSprite(const std::function<bool(m2g::pb::ObjectType, m2g::pb::SpriteType)>& op) const;
 		[[nodiscard]] VecI MousePositionPx() const { return events.MousePosition(); }

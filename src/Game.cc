@@ -140,7 +140,7 @@ m2::Game::Game() {
 
 	_objectBlueprints = LoadObjectBlueprints(_proxy.objectBlueprints);
 
-	named_items = pb::LUT<pb::Item, NamedItem>::load(_resources.GetItemsPath(), &pb::Items::items);
+	named_items = pb::LUT<pb::Item, Item>::load(_resources.GetItemsPath(), &pb::Items::items);
 	LOG_INFO("Loaded named items", named_items.size());
 
 	animations = pb::LUT<pb::Animation, Animation>::load(_resources.GetAnimationsPath(), &pb::Animations::animations);
@@ -899,7 +899,7 @@ void m2::Game::ForEachSprite(const std::function<bool(m2g::pb::SpriteType, const
 	}
 }
 
-void m2::Game::ForEachNamedItem(const std::function<bool(m2g::pb::ItemType, const NamedItem&)>& op) const {
+void m2::Game::ForEachNamedItem(const std::function<bool(m2g::pb::ItemType, const Item&)>& op) const {
 	for (int i = 0; i < pb::enum_value_count<m2g::pb::ItemType>(); ++i) {
 		if (const auto type = pb::enum_value<m2g::pb::ItemType>(i); not op(type, GetNamedItem(type))) {
 			return;

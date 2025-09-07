@@ -41,7 +41,7 @@ std::vector<m2g::pb::ItemType> PrepareMerchantLicenseList(int client_count) {
 
 	// Prepare the list
 	std::vector<m2g::pb::ItemType> merchant_licenses;
-	M2_GAME.ForEachNamedItem([&merchant_licenses, count_attr](MAYBE m2g::pb::ItemType item_type, const m2::NamedItem& item) {
+	M2_GAME.ForEachNamedItem([&merchant_licenses, count_attr](MAYBE m2g::pb::ItemType item_type, const m2::Item& item) {
 		if (item.Category() == pb::ITEM_CATEGORY_MERCHANT_LICENSE) {
 			auto license_count = m2::RoundI(item.GetAttribute(count_attr));
 			merchant_licenses.insert(merchant_licenses.end(), license_count, item.Type());
@@ -74,7 +74,7 @@ std::vector<m2g::pb::ItemType> PrepareDrawDeck(int client_count) {
 
 	// Prepare deck
 	std::vector<m2g::pb::ItemType> draw_deck;
-	M2_GAME.ForEachNamedItem([&draw_deck, count_attr](MAYBE m2g::pb::ItemType item_type, const m2::NamedItem& item) {
+	M2_GAME.ForEachNamedItem([&draw_deck, count_attr](MAYBE m2g::pb::ItemType item_type, const m2::Item& item) {
 		if (item.Category() == pb::ITEM_CATEGORY_INDUSTRY_CARD || item.Category() == pb::ITEM_CATEGORY_CITY_CARD) {
 			auto card_count = static_cast<int>(item.GetAttribute(count_attr));
 			draw_deck.insert(draw_deck.end(), card_count, item.Type());

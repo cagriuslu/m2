@@ -66,7 +66,7 @@ std::vector<m2g::pb::ItemType> m2::Character::NamedItemTypes() const {
 	std::vector<m2g::pb::ItemType> types;
 	for (auto it = BeginItems(); it != EndItems(); ++it) {
 		auto* item = it.Get();
-		if (auto* named_item = dynamic_cast<const NamedItem*>(item)) {
+		if (auto* named_item = dynamic_cast<const Item*>(item)) {
 			types.emplace_back(named_item->Type());
 		}
 	}
@@ -76,7 +76,7 @@ std::vector<m2g::pb::ItemType> m2::Character::NamedItemTypes(const m2g::pb::Item
 	std::vector<m2g::pb::ItemType> types;
 	for (auto it = FindItems(item_cat); it != EndItems(); ++it) {
 		auto* item = it.Get();
-		if (auto* named_item = dynamic_cast<const NamedItem*>(item)) {
+		if (auto* named_item = dynamic_cast<const Item*>(item)) {
 			types.emplace_back(named_item->Type());
 		}
 	}
@@ -157,18 +157,7 @@ m2::Character::Iterator m2::TinyCharacter::BeginItems() const {
 m2::Character::Iterator m2::TinyCharacter::EndItems() const {
 	return {*this, tiny_character_iterator_incrementor, {}, 0, nullptr};
 }
-void m2::TinyCharacter::AddUnnamedItem(std::unique_ptr<const UnnamedItem>&& item) {
-	_item = SmartPointer<const Item>{std::move(item)};
-	// Get acquire benefits
-	for (size_t i = 0; i < _item->GetAcquireBenefitCount(); ++i) {
-		const auto benefit = _item->GetAcquireBenefitByIndex(i);
-		AddResource(benefit.first, benefit.second);
-	}
-	if (_item->UseOnAcquire()) {
-		UseItem(BeginItems());
-	}
-}
-void m2::TinyCharacter::AddNamedItem(const NamedItem& item) {
+void m2::TinyCharacter::AddNamedItem(const Item& item) {
 	_item = SmartPointer<const Item>{&item};
 	// Get acquire benefits
 	for (size_t i = 0; i < _item->GetAcquireBenefitCount(); ++i) {
@@ -179,7 +168,7 @@ void m2::TinyCharacter::AddNamedItem(const NamedItem& item) {
 		UseItem(BeginItems());
 	}
 }
-void m2::TinyCharacter::AddNamedItemWithoutBenefits(const NamedItem& item) {
+void m2::TinyCharacter::AddNamedItemWithoutBenefits(const Item& item) {
 	_item = SmartPointer<const Item>{&item};
 }
 void m2::TinyCharacter::RemoveItem(const Iterator& item) {
@@ -327,18 +316,7 @@ m2::Character::Iterator m2::FullCharacter::BeginItems() const {
 m2::Character::Iterator m2::FullCharacter::EndItems() const {
 	return {*this, FullCharacterIteratorIncrementor, {}, 0, nullptr};
 }
-void m2::FullCharacter::AddUnnamedItem(std::unique_ptr<const UnnamedItem>&& item) {
-	_items.emplace_back(std::move(item));
-	// Get acquire benefits
-	for (size_t i = 0; i < _items.back()->GetAcquireBenefitCount(); ++i) {
-		const auto benefit = _items.back()->GetAcquireBenefitByIndex(i);
-		AddResource(benefit.first, benefit.second);
-	}
-	if (_items.back()->UseOnAcquire()) {
-		UseItem(Iterator{*this, FullCharacterIteratorIncrementor, {}, _items.size() - 1, _items.back().get()});
-	}
-}
-void m2::FullCharacter::AddNamedItem(const NamedItem& item) {
+void m2::FullCharacter::AddNamedItem(const Item& item) {
 	_items.emplace_back(&item);
 	// Get acquire benefits
 	for (size_t i = 0; i < _items.back()->GetAcquireBenefitCount(); ++i) {
@@ -349,7 +327,7 @@ void m2::FullCharacter::AddNamedItem(const NamedItem& item) {
 		UseItem(Iterator{*this, FullCharacterIteratorIncrementor, {}, _items.size() - 1, _items.back().get()});
 	}
 }
-void m2::FullCharacter::AddNamedItemWithoutBenefits(const NamedItem& item) {
+void m2::FullCharacter::AddNamedItemWithoutBenefits(const Item& item) {
 	_items.emplace_back(&item);
 }
 void m2::FullCharacter::RemoveItem(const Iterator& item) {

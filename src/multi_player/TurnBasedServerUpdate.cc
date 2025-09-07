@@ -24,7 +24,7 @@ m2::pb::TurnBasedNetworkMessage m2::GenerateServerUpdate(int32_t& nextSequenceNo
 				object_descriptor->set_parent_id(v.Owner().GetParentId());
 				for (auto item_it = v.BeginItems(); item_it != v.EndItems(); ++item_it) {
 					const auto* item_ptr = item_it.Get();
-					const auto* named_item_ptr = dynamic_cast<const NamedItem*>(item_ptr);
+					const auto* named_item_ptr = dynamic_cast<const Item*>(item_ptr);
 					if (!named_item_ptr) {
 						throw M2_ERROR("TurnBasedServerUpdate does not support unnamed items");
 					}
