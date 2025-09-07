@@ -13,18 +13,6 @@ namespace m2 {
 	constexpr auto TIME_BETWEEN_PHYSICS_SIMULATIONS{std::chrono::duration_cast<Stopwatch::Duration>(std::chrono::milliseconds{10})};
 	constexpr auto TIME_BETWEEN_FPS_LOGS{std::chrono::duration_cast<Stopwatch::Duration>(std::chrono::seconds{10})};
 
-	/// Each object belongs to one of the layers. Objects in different layers usually doesn't interact with each other.
-	enum class ObjectLayer {
-		BACKGROUND,
-		BEDROCK,
-		BELOW_GROUND,
-		GROUND,
-		ABOVE_GROUND,
-		FOREGROUND,
-		_n
-	};
-	constexpr auto OBJECT_LAYER_COUNT = static_cast<int>(ObjectLayer::_n);
-
 	/// Each physics layer designates a separate physical world. Objects in different layers cannot collide.
 	enum class PhysicsLayer {
 		PM1, // Underground in a top-down game

@@ -7,6 +7,7 @@
 #include "../m3/Plane.h"
 #include "../math/RectF.h"
 #include <Level.pb.h>
+#include <M2.pb.h>
 #include <functional>
 #include <m2/video/Color.h>
 
@@ -71,17 +72,8 @@ namespace m3 {
 }
 
 namespace m2 {
-	/// Each Graphic is either laying flat, or standing upright. Flat graphics are drawn before upright graphics of the
-	/// same object layer.
-	enum class GraphicsLayer {
-		FLAT,
-		UPRIGHT,
-		_n
-	};
-	constexpr auto GRAPHICS_LAYER_COUNT = static_cast<int>(GraphicsLayer::_n);
-
 	struct Graphic final : Component {
-		GraphicsLayer layer{};
+		pb::GraphicsLayer layer{};
 		bool enabled{true};
 		bool draw{true};
 

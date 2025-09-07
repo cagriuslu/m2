@@ -1,0 +1,22 @@
+syntax = "proto3";
+package m2.pb;
+
+enum GraphicsLayer {
+  BACKGROUND = 0;
+  BEDROCK_FLAT = 1;
+  BEDROCK_UPRIGHT = 2;
+  BELOW_GROUND_FLAT = 3;
+  BELOW_GROUND_UPRIGHT = 4;
+  GROUND_FLAT = 5;
+  GROUND_UPRIGHT = 6;
+  ABOVE_GROUND_FLAT = 7;
+  ABOVE_GROUND_UPRIGHT = 8;
+  FOREGROUND = 9;
+}
+
+enum PhysicsLayer {
+  BEDROCK = 0;
+  BELOW_GROUND = 1;
+  GROUND = 2;
+  ABOVE_GROUND = 3;
+}

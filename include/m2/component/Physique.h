@@ -2,6 +2,7 @@
 #include "../Component.h"
 #include "../box2d/ContactListener.h"
 #include <m2/third_party/physics/RigidBody.h>
+#include <M2.pb.h>
 #include <functional>
 
 namespace m2 {
@@ -10,6 +11,7 @@ namespace m2 {
 		Callback preStep{};
 		Callback postStep{};
 
+		pb::PhysicsLayer layer;
 		// An object has either body or rigidBodyIndex.
 		std::array<std::optional<third_party::physics::RigidBody>, gPhysicsLayerCount> body{};
 		std::optional<int> rigidBodyIndex;
