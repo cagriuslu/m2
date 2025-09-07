@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <variant>
+#include <queue>
 #include <set>
 #include <ranges>
 #include <optional>

@@ -36,3 +36,8 @@ TEST(MicroPool, basic) {
 	EXPECT_EQ(myPool.cbegin(), myPool.cend());
 	EXPECT_EQ(myPool.begin(), myPool.end());
 }
+
+TEST(MicroPool, ranges) {
+	m2::MicroPool<int, 10> myPool;
+	std::ranges::for_each(myPool.begin(), myPool.end(), [](const int&) {});
+}
