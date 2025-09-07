@@ -17,9 +17,7 @@ message Object {
   float orientation = 2; // In radians
   m2g.pb.ObjectType type = 3;
   Group group = 4;
-  GraphicsLayer graphics_layer = 5;
-  PhysicsLayer physics_layer = 6;
-  bool is_locked = 7; // If locked, level editor isn't allowed to move or remove the object
+  bool is_locked = 5; // If locked, level editor isn't allowed to move or remove the object
 }
 
 message SpriteTypeArray {
@@ -43,7 +41,7 @@ enum ProjectionType {
 
 // A layer that contains densely packed graphic objects. For each object, only the sprite type is described.
 message DenseGraphicsLayer {
-  GraphicsLayer graphics_layer = 1;
+  Layer layer = 1;
   repeated SpriteTypeArray first_quadrant_rows = 2;
   repeated SpriteTypeArray second_quadrant_rows = 3;
   repeated SpriteTypeArray third_quadrant_rows = 4;

@@ -5,33 +5,6 @@
 #include <m2/Object.h>
 #include <cmath>
 
-namespace {
-	float camera_sin() {
-		// Do not recalculate unless the camera offset changed
-		static m3::VecF prev_camera_offset;
-		static float sin{};
-
-		if (const auto camera_offset = M2_LEVEL.GetCameraOffset(); prev_camera_offset != camera_offset) {
-			prev_camera_offset = camera_offset;
-
-			sin = camera_offset.z / camera_offset.length();
-		}
-		return sin;
-	}
-	float camera_cos() {
-		// Do not recalculate unless the camera offset changed
-		static m3::VecF prev_camera_offset;
-		static float cos{};
-
-		if (const auto camera_offset = M2_LEVEL.GetCameraOffset(); prev_camera_offset != camera_offset) {
-			prev_camera_offset = camera_offset;
-
-			cos = sqrtf(1.0f - camera_sin() * camera_sin());
-		}
-		return cos;
-	}
-}
-
 bool m2::IsProjectionTypeParallel(const pb::ProjectionType pt) {
 	return pt == pb::PARALLEL;
 }

@@ -853,7 +853,7 @@ void m2::Game::OnWindowResize() {
 		for (auto& gfx : _level->fgGraphics) {
 			gfx.textLabelRect = {};
 		}
-		for (auto& terrainGraphics : std::ranges::reverse_view(_level->bgGraphics)) {
+		for (auto& terrainGraphics : std::ranges::reverse_view(_level->flatGraphics)) {
 			for (auto& gfx : terrainGraphics) {
 				gfx.textLabelRect = {};
 			}
@@ -867,7 +867,7 @@ void m2::Game::SetScale(const float scale) {
 		for (auto& gfx : _level->fgGraphics) {
 			gfx.textLabelRect = {};
 		}
-		for (auto& terrainGraphics : std::ranges::reverse_view(_level->bgGraphics)) {
+		for (auto& terrainGraphics : std::ranges::reverse_view(_level->flatGraphics)) {
 			for (auto& gfx : terrainGraphics) {
 				gfx.textLabelRect = {};
 			}
@@ -881,7 +881,7 @@ void m2::Game::SetGameHeightM(const float heightM) {
 		for (auto& gfx : _level->fgGraphics) {
 			gfx.textLabelRect = {};
 		}
-		for (auto& terrainGraphics : std::ranges::reverse_view(_level->bgGraphics)) {
+		for (auto& terrainGraphics : std::ranges::reverse_view(_level->flatGraphics)) {
 			for (auto& gfx : terrainGraphics) {
 				gfx.textLabelRect = {};
 			}

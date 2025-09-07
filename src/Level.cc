@@ -27,12 +27,7 @@ Level::~Level() {
 	for (auto& g : flatGraphics) {
 		g.Clear();
 	}
-	for (auto& g : uprightGraphics) {
-		g.first.Clear();
-	}
-	for (auto& bg : bgGraphics) {
-		bg.Clear();
-	}
+	uprightGraphics.Clear();
 	fgGraphics.Clear();
 	physics.Clear();
 	lights.Clear();
@@ -189,7 +184,7 @@ DrawLayer Level::GetDrawLayer(const GraphicId gfxId) {
 	const auto shiftedGfxPoolId = ToShiftedPoolId(gfxId);
 
 	for (int i = 0; i < I(BackgroundDrawLayer::_n); ++i) {
-		if (bgGraphics[i].GetShiftedPoolId() == shiftedGfxPoolId) {
+		if (flatGraphics[i].GetShiftedPoolId() == shiftedGfxPoolId) {
 			return static_cast<BackgroundDrawLayer>(i);
 		}
 	}
@@ -206,9 +201,9 @@ DrawLayer Level::GetDrawLayer(const GraphicId gfxId) {
 std::pair<Pool<Graphic>&, DrawList*> Level::GetGraphicPoolAndDrawList(const GraphicId gfxId) {
 	const auto shiftedGfxPoolId = ToShiftedPoolId(gfxId);
 
-	for (auto& bgPool : bgGraphics) {
-		if (bgPool.GetShiftedPoolId() == shiftedGfxPoolId) {
-			return std::pair<Pool<Graphic>&,DrawList*>{bgPool, nullptr};
+	for (auto& pool : flatGraphics) {
+		if (pool.GetShiftedPoolId() == shiftedGfxPoolId) {
+			return std::pair<Pool<Graphic>&,DrawList*>{pool, nullptr};
 		}
 	}
 	if (fgGraphics.GetShiftedPoolId() == shiftedGfxPoolId) {
@@ -223,9 +218,35 @@ std::pair<Pool<Graphic>&, DrawList*> Level::GetGraphicPoolAndDrawList(const Grap
 
 }
 std::pair<Pool<Graphic>&, DrawList*> Level::GetGraphicPoolAndDrawList(const DrawLayer drawLayer) {
+	static const std::array bgDrawLayerToLayerMap = {
+		std::pair(BackgroundDrawLayer::B0, pb::ABOVE_GROUND_FLAT),
+		std::pair(BackgroundDrawLayer::B1, pb::SEA_LEVEL_FLAT),
+		std::pair(BackgroundDrawLayer::B2, pb::UNDER_WATER_FLAT),
+		std::pair(BackgroundDrawLayer::B3, pb::SEABED_FLAT),
+	};
+	static const std::array layerToFlatGraphicsPoolIndex = {
+		std::pair(pb::BACKGROUND_FLAT, 0),
+		std::pair(pb::BEDROCK_FLAT, 1),
+		std::pair(pb::BEDROCK_UPRIGHT, -1),
+		std::pair(pb::SEABED_FLAT, 2),
+		std::pair(pb::SEABED_UPRIGHT, -1),
+		std::pair(pb::UNDER_WATER_FLAT, 3),
+		std::pair(pb::UNDER_WATER_UPRIGHT, -1),
+		std::pair(pb::SEA_LEVEL_FLAT, 4),
+		std::pair(pb::SEA_LEVEL_UPRIGHT, -1),
+		std::pair(pb::ABOVE_GROUND_FLAT, 5),
+		std::pair(pb::ABOVE_GROUND_UPRIGHT, -1),
+		std::pair(pb::AIRBORNE_FLAT, 6),
+		std::pair(pb::AIRBORNE_UPRIGHT, -1),
+		std::pair(pb::SPACE_FLAT, 7),
+		std::pair(pb::SPACE_UPRIGHT, -1),
+		std::pair(pb::FOREGROUND_FLAT, 8),
+	};
 	if (std::holds_alternative<BackgroundDrawLayer>(drawLayer)) {
 		const auto bgLayer = std::get<BackgroundDrawLayer>(drawLayer);
-		return std::pair<Pool<Graphic>&,DrawList*>{bgGraphics[I(bgLayer)], nullptr};
+		const auto layer = bgDrawLayerToLayerMap.at(I(bgLayer));
+		const auto layerPoolIndex = layerToFlatGraphicsPoolIndex.at(I(layer.second));
+		return std::pair<Pool<Graphic>&,DrawList*>{flatGraphics.at(layerPoolIndex.second), nullptr};
 	}
 	const auto fgLayer = std::get<ForegroundDrawLayer>(drawLayer);
 	return std::pair<Pool<Graphic>&,DrawList*>{fgGraphics, &fgDrawLists[I(fgLayer)]};

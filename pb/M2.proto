@@ -2,24 +2,29 @@ syntax = "proto3";
 package m2.pb;
 
 // The order also represents the draw order
-enum GraphicsLayer {
-  // Supports flat graphics only
-  BACKGROUND = 0;
+enum Layer {
+  BACKGROUND_FLAT = 0;
+
   BEDROCK_FLAT = 1;
   BEDROCK_UPRIGHT = 2;
-  BELOW_GROUND_FLAT = 3;
-  BELOW_GROUND_UPRIGHT = 4;
-  GROUND_FLAT = 5;
-  GROUND_UPRIGHT = 6;
-  ABOVE_GROUND_FLAT = 7;
-  ABOVE_GROUND_UPRIGHT = 8;
-  // Supports flat graphics only
-  FOREGROUND = 9;
-}
 
-enum PhysicsLayer {
-  BEDROCK = 0;
-  BELOW_GROUND = 1;
-  GROUND = 2;
-  ABOVE_GROUND = 3;
+  SEABED_FLAT = 3;
+  SEABED_UPRIGHT = 4;
+
+  UNDER_WATER_FLAT = 5;
+  UNDER_WATER_UPRIGHT = 6;
+
+  SEA_LEVEL_FLAT = 7;
+  SEA_LEVEL_UPRIGHT = 8;
+
+  ABOVE_GROUND_FLAT = 9;
+  ABOVE_GROUND_UPRIGHT = 10;
+
+  AIRBORNE_FLAT = 11;
+  AIRBORNE_UPRIGHT = 12;
+
+  SPACE_FLAT = 13;
+  SPACE_UPRIGHT = 14;
+
+  FOREGROUND_FLAT = 15;
 }

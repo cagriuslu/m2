@@ -15,20 +15,26 @@ namespace m2 {
 	constexpr auto TIME_BETWEEN_FPS_LOGS{std::chrono::duration_cast<Stopwatch::Duration>(std::chrono::seconds{10})};
 
 	constexpr auto FLAT_GRAPHICS_LAYERS = {
-		pb::GraphicsLayer::BACKGROUND,
-		pb::GraphicsLayer::BEDROCK_FLAT,
-		pb::GraphicsLayer::BELOW_GROUND_FLAT,
-		pb::GraphicsLayer::GROUND_FLAT,
-		pb::GraphicsLayer::ABOVE_GROUND_FLAT,
-		pb::GraphicsLayer::FOREGROUND,
+		pb::Layer::BACKGROUND_FLAT,
+		pb::Layer::BEDROCK_FLAT,
+		pb::Layer::SEABED_FLAT,
+		pb::Layer::UNDER_WATER_FLAT,
+		pb::Layer::SEA_LEVEL_FLAT,
+		pb::Layer::ABOVE_GROUND_FLAT,
+		pb::Layer::AIRBORNE_FLAT,
+		pb::Layer::SPACE_FLAT,
+		pb::Layer::FOREGROUND_FLAT,
 	};
 	constexpr int FLAT_GRAPHICS_LAYER_COUNT = FLAT_GRAPHICS_LAYERS.size();
 
 	constexpr auto UPRIGHT_GRAPHICS_LAYERS = {
-		pb::GraphicsLayer::BEDROCK_UPRIGHT,
-		pb::GraphicsLayer::BELOW_GROUND_UPRIGHT,
-		pb::GraphicsLayer::GROUND_UPRIGHT,
-		pb::GraphicsLayer::ABOVE_GROUND_UPRIGHT,
+		pb::Layer::BEDROCK_UPRIGHT,
+		pb::Layer::SEABED_UPRIGHT,
+		pb::Layer::UNDER_WATER_UPRIGHT,
+		pb::Layer::SEA_LEVEL_UPRIGHT,
+		pb::Layer::ABOVE_GROUND_UPRIGHT,
+		pb::Layer::AIRBORNE_UPRIGHT,
+		pb::Layer::SPACE_UPRIGHT,
 	};
 	constexpr int UPRIGHT_GRAPHICS_LAYER_COUNT = FLAT_GRAPHICS_LAYERS.size();
 
