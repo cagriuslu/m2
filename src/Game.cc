@@ -638,7 +638,7 @@ void m2::Game::ExecuteStep(const Stopwatch::Duration& delta) {
 		}
 	}
 	// Re-sort draw lists
-	for (auto& drawList : _level->fgDrawLists) {
+	for (auto& drawList : _level->uprightDrawLists) {
 		drawList.Update();
 	}
 	// If the world is NOT static, the pathfinder's cache should be cleared.
@@ -697,7 +697,7 @@ void m2::Game::UpdateSounds(const Stopwatch::Duration& delta) {
 }
 
 void m2::Game::ExecutePreDraw(const Stopwatch::Duration& delta) {
-	for (auto& gfx : _level->fgGraphics) {
+	for (auto& gfx : _level->uprightGraphics) {
 		if (gfx.enabled) {
 			IF(gfx.preDraw)(gfx, delta);
 		}
@@ -766,7 +766,7 @@ void m2::Game::Draw() {
 		} else {
 			// Draw foreground
 			for (const auto gfxId : *poolAndDrawList.second) {
-				if (auto& gfx = _level->fgGraphics[gfxId]; gfx.enabled && gfx.draw) {
+				if (auto& gfx = _level->uprightGraphics[gfxId]; gfx.enabled && gfx.draw) {
 					IF(gfx.onDraw)(gfx);
 				}
 			}
@@ -781,7 +781,7 @@ void m2::Game::DrawLights() {
 }
 
 void m2::Game::ExecutePostDraw(const Stopwatch::Duration& delta) {
-	for (auto& gfx : _level->fgGraphics) {
+	for (auto& gfx : _level->uprightGraphics) {
 		if (gfx.enabled) {
 			IF(gfx.postDraw)(gfx, delta);
 		}
@@ -850,7 +850,7 @@ void m2::Game::OnWindowResize() {
 		IF (_level->_semiBlockingUiPanel)->RecalculateRects();
 
 		// Clear text label rectangles so that they are regenerated with new size
-		for (auto& gfx : _level->fgGraphics) {
+		for (auto& gfx : _level->uprightGraphics) {
 			gfx.textLabelRect = {};
 		}
 		for (auto& terrainGraphics : std::ranges::reverse_view(_level->flatGraphics)) {
@@ -864,7 +864,7 @@ void m2::Game::SetScale(const float scale) {
 	_dimensions->SetScale(scale);
 	if (_level) {
 		// Clear text label rectangles so that they are regenerated with new size
-		for (auto& gfx : _level->fgGraphics) {
+		for (auto& gfx : _level->uprightGraphics) {
 			gfx.textLabelRect = {};
 		}
 		for (auto& terrainGraphics : std::ranges::reverse_view(_level->flatGraphics)) {
@@ -878,7 +878,7 @@ void m2::Game::SetGameHeightM(const float heightM) {
 	_dimensions->SetGameHeightM(heightM);
 	if (_level) {
 		// Clear text label rectangles so that they are regenerated with new size
-		for (auto& gfx : _level->fgGraphics) {
+		for (auto& gfx : _level->uprightGraphics) {
 			gfx.textLabelRect = {};
 		}
 		for (auto& terrainGraphics : std::ranges::reverse_view(_level->flatGraphics)) {

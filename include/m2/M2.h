@@ -36,7 +36,7 @@ namespace m2 {
 		pb::Layer::AIRBORNE_UPRIGHT,
 		pb::Layer::SPACE_UPRIGHT,
 	};
-	constexpr int UPRIGHT_GRAPHICS_LAYER_COUNT = FLAT_GRAPHICS_LAYERS.size();
+	constexpr int UPRIGHT_GRAPHICS_LAYER_COUNT = UPRIGHT_GRAPHICS_LAYERS.size();
 
 	/// Each physics layer designates a separate physical world. Objects in different layers cannot collide.
 	enum class PhysicsLayer {

@@ -19,6 +19,59 @@
 
 using namespace m2;
 
+namespace {
+	constexpr std::array bgDrawLayerToLayerMap = {
+		std::pair(BackgroundDrawLayer::B0, pb::ABOVE_GROUND_FLAT),
+		std::pair(BackgroundDrawLayer::B1, pb::SEA_LEVEL_FLAT),
+		std::pair(BackgroundDrawLayer::B2, pb::UNDER_WATER_FLAT),
+		std::pair(BackgroundDrawLayer::B3, pb::SEABED_FLAT),
+	};
+	constexpr std::array fgDrawLayerToLayerMap = {
+		std::pair(ForegroundDrawLayer::FM1_BOTTOM, pb::BEDROCK_UPRIGHT),
+		std::pair(ForegroundDrawLayer::FM1_TOP, pb::SEABED_UPRIGHT),
+		std::pair(ForegroundDrawLayer::F0_BOTTOM, pb::UNDER_WATER_UPRIGHT),
+		std::pair(ForegroundDrawLayer::F0_TOP, pb::SEA_LEVEL_UPRIGHT),
+		std::pair(ForegroundDrawLayer::F1_BOTTOM, pb::ABOVE_GROUND_UPRIGHT),
+		std::pair(ForegroundDrawLayer::F1_TOP, pb::AIRBORNE_UPRIGHT),
+	};
+	constexpr std::array layerToFlatGraphicsPoolIndex = {
+		std::pair(pb::BACKGROUND_FLAT, 0),
+		std::pair(pb::BEDROCK_FLAT, 1),
+		std::pair(pb::BEDROCK_UPRIGHT, -1),
+		std::pair(pb::SEABED_FLAT, 2),
+		std::pair(pb::SEABED_UPRIGHT, -1),
+		std::pair(pb::UNDER_WATER_FLAT, 3),
+		std::pair(pb::UNDER_WATER_UPRIGHT, -1),
+		std::pair(pb::SEA_LEVEL_FLAT, 4),
+		std::pair(pb::SEA_LEVEL_UPRIGHT, -1),
+		std::pair(pb::ABOVE_GROUND_FLAT, 5),
+		std::pair(pb::ABOVE_GROUND_UPRIGHT, -1),
+		std::pair(pb::AIRBORNE_FLAT, 6),
+		std::pair(pb::AIRBORNE_UPRIGHT, -1),
+		std::pair(pb::SPACE_FLAT, 7),
+		std::pair(pb::SPACE_UPRIGHT, -1),
+		std::pair(pb::FOREGROUND_FLAT, 8),
+	};
+	constexpr std::array layerToUprightGraphicsDrawListIndex = {
+		std::pair(pb::BACKGROUND_FLAT, -1),
+		std::pair(pb::BEDROCK_FLAT, -1),
+		std::pair(pb::BEDROCK_UPRIGHT, 0),
+		std::pair(pb::SEABED_FLAT, -1),
+		std::pair(pb::SEABED_UPRIGHT, 1),
+		std::pair(pb::UNDER_WATER_FLAT, -1),
+		std::pair(pb::UNDER_WATER_UPRIGHT, 2),
+		std::pair(pb::SEA_LEVEL_FLAT, -1),
+		std::pair(pb::SEA_LEVEL_UPRIGHT, 3),
+		std::pair(pb::ABOVE_GROUND_FLAT, -1),
+		std::pair(pb::ABOVE_GROUND_UPRIGHT, 4),
+		std::pair(pb::AIRBORNE_FLAT, -1),
+		std::pair(pb::AIRBORNE_UPRIGHT, 5),
+		std::pair(pb::SPACE_FLAT, -1),
+		std::pair(pb::SPACE_UPRIGHT, 6),
+		std::pair(pb::FOREGROUND_FLAT, -1),
+	};
+}
+
 Level::~Level() {
 	// Custom destructor is provided because the order is important
 
@@ -28,7 +81,6 @@ Level::~Level() {
 		g.Clear();
 	}
 	uprightGraphics.Clear();
-	fgGraphics.Clear();
 	physics.Clear();
 	lights.Clear();
 	soundEmitters.Clear();
@@ -188,10 +240,10 @@ DrawLayer Level::GetDrawLayer(const GraphicId gfxId) {
 			return static_cast<BackgroundDrawLayer>(i);
 		}
 	}
-	if (M2_LEVEL.fgGraphics.GetShiftedPoolId() == shiftedGfxPoolId) {
-		const auto& gfx = fgGraphics[gfxId];
-		for (auto i = 0; i < I(ForegroundDrawLayer::_n); ++i) {
-			if (M2_LEVEL.fgDrawLists[i].ContainsObject(gfx.OwnerId())) {
+	if (uprightGraphics.GetShiftedPoolId() == shiftedGfxPoolId) {
+		const auto& gfx = uprightGraphics[gfxId];
+		for (auto i = 0zu; i < uprightDrawLists.size(); ++i) {
+			if (uprightDrawLists[i].ContainsObject(gfx.OwnerId())) {
 				return static_cast<ForegroundDrawLayer>(i);
 			}
 		}
@@ -206,11 +258,11 @@ std::pair<Pool<Graphic>&, DrawList*> Level::GetGraphicPoolAndDrawList(const Grap
 			return std::pair<Pool<Graphic>&,DrawList*>{pool, nullptr};
 		}
 	}
-	if (fgGraphics.GetShiftedPoolId() == shiftedGfxPoolId) {
-		const auto& gfx = fgGraphics[gfxId];
-		for (auto i = 0; i < I(ForegroundDrawLayer::_n); ++i) {
-			if (fgDrawLists[i].ContainsObject(gfx.OwnerId())) {
-				return std::pair<Pool<Graphic>&,DrawList*>{fgGraphics, &fgDrawLists[i]};
+	if (uprightGraphics.GetShiftedPoolId() == shiftedGfxPoolId) {
+		const auto& gfx = uprightGraphics[gfxId];
+		for (auto i = 0zu; i < uprightDrawLists.size(); ++i) {
+			if (uprightDrawLists[i].ContainsObject(gfx.OwnerId())) {
+				return std::pair<Pool<Graphic>&,DrawList*>{uprightGraphics, &uprightDrawLists[i]};
 			}
 		}
 	}
@@ -218,30 +270,6 @@ std::pair<Pool<Graphic>&, DrawList*> Level::GetGraphicPoolAndDrawList(const Grap
 
 }
 std::pair<Pool<Graphic>&, DrawList*> Level::GetGraphicPoolAndDrawList(const DrawLayer drawLayer) {
-	static const std::array bgDrawLayerToLayerMap = {
-		std::pair(BackgroundDrawLayer::B0, pb::ABOVE_GROUND_FLAT),
-		std::pair(BackgroundDrawLayer::B1, pb::SEA_LEVEL_FLAT),
-		std::pair(BackgroundDrawLayer::B2, pb::UNDER_WATER_FLAT),
-		std::pair(BackgroundDrawLayer::B3, pb::SEABED_FLAT),
-	};
-	static const std::array layerToFlatGraphicsPoolIndex = {
-		std::pair(pb::BACKGROUND_FLAT, 0),
-		std::pair(pb::BEDROCK_FLAT, 1),
-		std::pair(pb::BEDROCK_UPRIGHT, -1),
-		std::pair(pb::SEABED_FLAT, 2),
-		std::pair(pb::SEABED_UPRIGHT, -1),
-		std::pair(pb::UNDER_WATER_FLAT, 3),
-		std::pair(pb::UNDER_WATER_UPRIGHT, -1),
-		std::pair(pb::SEA_LEVEL_FLAT, 4),
-		std::pair(pb::SEA_LEVEL_UPRIGHT, -1),
-		std::pair(pb::ABOVE_GROUND_FLAT, 5),
-		std::pair(pb::ABOVE_GROUND_UPRIGHT, -1),
-		std::pair(pb::AIRBORNE_FLAT, 6),
-		std::pair(pb::AIRBORNE_UPRIGHT, -1),
-		std::pair(pb::SPACE_FLAT, 7),
-		std::pair(pb::SPACE_UPRIGHT, -1),
-		std::pair(pb::FOREGROUND_FLAT, 8),
-	};
 	if (std::holds_alternative<BackgroundDrawLayer>(drawLayer)) {
 		const auto bgLayer = std::get<BackgroundDrawLayer>(drawLayer);
 		const auto layer = bgDrawLayerToLayerMap.at(I(bgLayer));
@@ -249,7 +277,9 @@ std::pair<Pool<Graphic>&, DrawList*> Level::GetGraphicPoolAndDrawList(const Draw
 		return std::pair<Pool<Graphic>&,DrawList*>{flatGraphics.at(layerPoolIndex.second), nullptr};
 	}
 	const auto fgLayer = std::get<ForegroundDrawLayer>(drawLayer);
-	return std::pair<Pool<Graphic>&,DrawList*>{fgGraphics, &fgDrawLists[I(fgLayer)]};
+	const auto layer = fgDrawLayerToLayerMap.at(I(fgLayer));
+	const auto drawListIndex = layerToUprightGraphicsDrawListIndex.at(I(layer.second)).second;
+	return std::pair<Pool<Graphic>&,DrawList*>{uprightGraphics, &uprightDrawLists.at(drawListIndex)};
 }
 pb::ProjectionType Level::GetProjectionType() const {
 	const auto isEditor = std::holds_alternative<level_editor::State>(stateVariant)
