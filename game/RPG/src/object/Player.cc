@@ -49,7 +49,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 
 	auto& gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, main_sprite_type);
 
-	auto& chr = obj.AddFullCharacter();
+	auto& chr = obj.AddFastCharacter();
 	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_DASH_2S));
 	if (M2_LEVEL.GetLevelIdentifier() != "MeleeTutorialClosed") {
 		// 4th level is melee tutorial

@@ -34,7 +34,7 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 
 	obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, DWARF_FULL);
 
-	auto& chr = obj.AddFullCharacter();
+	auto& chr = obj.AddFastCharacter();
 	chr.AddNamedItem(M2_GAME.GetNamedItem(ITEM_REUSABLE_JUMP));
 	chr.AddNamedItem(M2_GAME.GetNamedItem(ITEM_AUTOMATIC_JUMP_ENERGY));
 

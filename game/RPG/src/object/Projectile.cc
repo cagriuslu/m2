@@ -58,7 +58,7 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& intend
 	gfx.z = 0.5f;
 
 	// Add character
-	auto& chr = obj.AddTinyCharacter();
+	auto& chr = obj.AddCompactCharacter();
 	chr.AddNamedItem(M2_GAME.GetNamedItem(ITEM_AUTOMATIC_TTL));
 	chr.AddResource(RESOURCE_TTL, ttl);
 

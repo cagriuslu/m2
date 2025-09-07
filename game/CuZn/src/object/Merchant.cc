@@ -19,7 +19,7 @@ m2::Object* find_merchant_at_location(m2g::pb::SpriteType location) {
 }
 
 void init_merchant(m2::Object& obj) {
-	auto& chr = obj.AddFullCharacter();
+	auto& chr = obj.AddFastCharacter();
 	// Active merchants will be given a merchant license during setup. (ITEM_CATEGORY_MERCHANT_LICENSE)
 	// Passive merchants will simply exist without a license.
 

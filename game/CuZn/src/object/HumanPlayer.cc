@@ -24,7 +24,7 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj) {
 
 	obj.impl = std::make_unique<HumanPlayer>();
 
-	auto& chr = obj.AddFullCharacter();
+	auto& chr = obj.AddFastCharacter();
 	chr.SetResource(m2g::pb::MONEY, 17.0f);
 	chr.SetAttribute(m2g::pb::INCOME_POINTS, 0.0f);
 
@@ -173,7 +173,7 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj) {
 m2::void_expected PlayerInitOtherInstance(m2::Object& obj) {
 	DEBUG_FN();
 
-	auto& chr = obj.AddFullCharacter();
+	auto& chr = obj.AddFastCharacter();
 
 	// TODO check if the following is really necessary. If the TurnBasedServerUpdate is verified, it's necessary.
 	// TODO Otherwise, we don't need to fill the character with items and resources.

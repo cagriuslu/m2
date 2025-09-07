@@ -172,15 +172,15 @@ SoundEmitter& Object::AddSoundEmitter() {
 	_sound_emitter_id = sound.GetId();
 	return *sound;
 }
-Character& Object::AddTinyCharacter() {
-    auto character = M2_LEVEL.characters.Emplace(std::in_place_type<TinyCharacter>, GetId());
+Character& Object::AddCompactCharacter() {
+    auto character = M2_LEVEL.characters.Emplace(std::in_place_type<CompactCharacter>, GetId());
     _character_id = character.GetId();
-    return std::get<TinyCharacter>(*character);
+    return std::get<CompactCharacter>(*character);
 }
-Character& Object::AddFullCharacter() {
-    auto character = M2_LEVEL.characters.Emplace(std::in_place_type<FullCharacter>, GetId());
+Character& Object::AddFastCharacter() {
+    auto character = M2_LEVEL.characters.Emplace(std::in_place_type<FastCharacter>, GetId());
     _character_id = character.GetId();
-    return std::get<FullCharacter>(*character);
+    return std::get<FastCharacter>(*character);
 }
 
 void Object::MoveLayer(const std::optional<pb::PhysicsLayer> newPhysicsLayer, const std::optional<DrawLayer> newDrawLayer) {

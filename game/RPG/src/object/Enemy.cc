@@ -63,7 +63,7 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 	};
 	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
 
-	auto& chr = obj.AddFullCharacter();
+	auto& chr = obj.AddFastCharacter();
 	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_GUN));
 	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_ENEMY_SWORD));
 	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_AUTOMATIC_DAMAGE_EFFECT_TTL));

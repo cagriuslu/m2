@@ -133,7 +133,7 @@ m2::void_expected InitFactory(m2::Object& obj, City city, IndustryTile industry_
 	auto industry = industry_of_industry_tile(industry_tile);
 
 	// Add all available information to the factories: industry, city, industry tile
-	auto& chr = obj.AddFullCharacter();
+	auto& chr = obj.AddFastCharacter();
 	chr.AddNamedItem(M2_GAME.GetNamedItem(industry));
 	chr.AddNamedItem(M2_GAME.GetNamedItem(city));
 	chr.AddNamedItem(M2_GAME.GetNamedItem(industry_tile));

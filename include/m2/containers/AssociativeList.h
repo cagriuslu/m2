@@ -68,7 +68,7 @@ namespace m2 {
 		[[nodiscard]] const_iterator cend() const { return const_iterator{std::visit([](const auto& s) { return StorageConstIteratorType{s.cend()}; }, _storage)}; }
 		[[nodiscard]] const_iterator find(const KeyT& key) const {
 			return const_iterator{std::visit(overloaded{
-				[&](const PoolType& pool) { return StorageConstIteratorType{std::ranges::find_if(pool, [&key](const auto& kv) { return kv.first == key; })}; },
+				[&](const PoolType& pool) { return StorageConstIteratorType{std::ranges::find_if(pool.cbegin(), pool.cend(), [&key](const auto& kv) { return kv.first == key; })}; },
 				[&](const MapType& map) { return StorageConstIteratorType{map.find(key)}; },
 			}, _storage)};
 		}

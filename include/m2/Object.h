@@ -70,9 +70,8 @@ namespace m2 {
 		Graphic& AddGraphic(DrawLayer layer, m2g::pb::SpriteType);
 		Light& AddLight();
 		SoundEmitter& AddSoundEmitter();
-		Character& AddTinyCharacter();
-		// TODO mini(2),small(4),medium(8),large(16),huge(32)
-		Character& AddFullCharacter();
+		Character& AddCompactCharacter();
+		Character& AddFastCharacter();
 
 		/// This method may cause some of the components IDs to change. Must be called from a deferred action.
 		void MoveLayer(std::optional<pb::PhysicsLayer>, std::optional<DrawLayer>);

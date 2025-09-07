@@ -137,27 +137,27 @@ namespace {
 	}
 }
 
-m2::TinyCharacter::TinyCharacter(uint64_t object_id) : Character(object_id) {}
-void m2::TinyCharacter::AutomaticUpdate(const Stopwatch::Duration& delta) {
+m2::CompactCharacter::CompactCharacter(uint64_t object_id) : Character(object_id) {}
+void m2::CompactCharacter::AutomaticUpdate(const Stopwatch::Duration& delta) {
 	if (_item && _item->Usage() == pb::AUTOMATIC) {
 		UseItem(BeginItems(), ToDurationF(delta));
 	}
 }
-m2::Character::Iterator m2::TinyCharacter::FindItems(m2g::pb::ItemType item_type) const {
+m2::Character::Iterator m2::CompactCharacter::FindItems(m2g::pb::ItemType item_type) const {
 	return {*this, tiny_character_iterator_incrementor, item_type, 0,
 			_item && _item->Type() == item_type ? _item : nullptr};
 }
-m2::Character::Iterator m2::TinyCharacter::FindItems(m2g::pb::ItemCategory cat) const {
+m2::Character::Iterator m2::CompactCharacter::FindItems(m2g::pb::ItemCategory cat) const {
 	return {*this, tiny_character_iterator_incrementor, cat, 0,
 			_item && _item->Category() == cat ? _item : nullptr};
 }
-m2::Character::Iterator m2::TinyCharacter::BeginItems() const {
+m2::Character::Iterator m2::CompactCharacter::BeginItems() const {
 	return {*this, tiny_character_iterator_incrementor, {}, 0, _item};
 }
-m2::Character::Iterator m2::TinyCharacter::EndItems() const {
+m2::Character::Iterator m2::CompactCharacter::EndItems() const {
 	return {*this, tiny_character_iterator_incrementor, {}, 0, nullptr};
 }
-void m2::TinyCharacter::AddNamedItem(const Item& item) {
+void m2::CompactCharacter::AddNamedItem(const Item& item) {
 	_item = &item;
 	// Get acquire benefits
 	for (size_t i = 0; i < _item->GetAcquireBenefitCount(); ++i) {
@@ -168,27 +168,27 @@ void m2::TinyCharacter::AddNamedItem(const Item& item) {
 		UseItem(BeginItems());
 	}
 }
-void m2::TinyCharacter::AddNamedItemWithoutBenefits(const Item& item) {
+void m2::CompactCharacter::AddNamedItemWithoutBenefits(const Item& item) {
 	_item = &item;
 }
-void m2::TinyCharacter::RemoveItem(const Iterator& item) {
+void m2::CompactCharacter::RemoveItem(const Iterator& item) {
 	if (item != EndItems()) {
 		_item = {};
 	}
 }
-void m2::TinyCharacter::ClearItems() {
+void m2::CompactCharacter::ClearItems() {
 	_item = {};
 }
-bool m2::TinyCharacter::HasResource(m2g::pb::ResourceType resource_type) const {
+bool m2::CompactCharacter::HasResource(m2g::pb::ResourceType resource_type) const {
 	return _resource.first == resource_type && _resource.second.HasAmount();
 }
-float m2::TinyCharacter::GetResource(m2g::pb::ResourceType resource_type) const {
+float m2::CompactCharacter::GetResource(m2g::pb::ResourceType resource_type) const {
 	return (_resource.first == resource_type) ? _resource.second.Amount() : float{};
 }
-float m2::TinyCharacter::GetMaxResource(m2g::pb::ResourceType resource_type) const {
+float m2::CompactCharacter::GetMaxResource(m2g::pb::ResourceType resource_type) const {
 	return (_resource.first == resource_type) ? _resource.second.MaxAmount() : INFINITY;
 }
-void m2::TinyCharacter::SetMaxResource(m2g::pb::ResourceType resource_type, float max) {
+void m2::CompactCharacter::SetMaxResource(m2g::pb::ResourceType resource_type, float max) {
 	if (_resource.first == m2g::pb::NO_RESOURCE) {
 		SetResource(resource_type, 0.0f);
 	}
@@ -196,14 +196,14 @@ void m2::TinyCharacter::SetMaxResource(m2g::pb::ResourceType resource_type, floa
 	if (_resource.first == resource_type) {
 		_resource.second.SetMaxAmount(max);
 	} else {
-		LOG_WARN("Attempt to set max resource amount, but TinyCharacter doesn't carry that resource");
+		LOG_WARN("Attempt to set max resource amount, but CompactCharacter doesn't carry that resource");
 	}
 }
-float m2::TinyCharacter::SetResource(m2g::pb::ResourceType resource_type, float amount) {
+float m2::CompactCharacter::SetResource(m2g::pb::ResourceType resource_type, float amount) {
 	_resource = std::make_pair(resource_type, internal::ResourceAmount{amount});
 	return _resource.second.Amount();
 }
-float m2::TinyCharacter::AddResource(m2g::pb::ResourceType resource_type, float amount) {
+float m2::CompactCharacter::AddResource(m2g::pb::ResourceType resource_type, float amount) {
 	if (_resource.first == m2g::pb::NO_RESOURCE) {
 		SetResource(resource_type, 0.0f);
 	}
@@ -211,42 +211,42 @@ float m2::TinyCharacter::AddResource(m2g::pb::ResourceType resource_type, float 
 	if (_resource.first == resource_type) {
 		return _resource.second.AddAmount(amount);
 	} else {
-		LOG_WARN("Attempt to add/remove resource, but TinyCharacter doesn't carry that resource");
+		LOG_WARN("Attempt to add/remove resource, but CompactCharacter doesn't carry that resource");
 		return 0.0f;
 	}
 }
-float m2::TinyCharacter::RemoveResource(m2g::pb::ResourceType resource_type, float amount) {
+float m2::CompactCharacter::RemoveResource(m2g::pb::ResourceType resource_type, float amount) {
 	return AddResource(resource_type, -amount);
 }
-void m2::TinyCharacter::ClearResource(m2g::pb::ResourceType resource_type) {
+void m2::CompactCharacter::ClearResource(m2g::pb::ResourceType resource_type) {
 	if (_resource.first == resource_type) {
 		_resource.second.ClearAmount();
 	}
 }
-void m2::TinyCharacter::ClearResources() {
+void m2::CompactCharacter::ClearResources() {
 	_resource.second.ClearAmount();
 }
-bool m2::TinyCharacter::HasAttribute(m2g::pb::AttributeType attribute_type) const {
+bool m2::CompactCharacter::HasAttribute(m2g::pb::AttributeType attribute_type) const {
 	return _attribute.first == attribute_type && _attribute.second != 0.0f;
 }
-float m2::TinyCharacter::GetAttribute(m2g::pb::AttributeType attribute_type) const {
+float m2::CompactCharacter::GetAttribute(m2g::pb::AttributeType attribute_type) const {
 	return (_attribute.first == attribute_type) ? _attribute.second : float{};
 }
-float m2::TinyCharacter::SetAttribute(m2g::pb::AttributeType attribute_type, float value) {
+float m2::CompactCharacter::SetAttribute(m2g::pb::AttributeType attribute_type, float value) {
 	_attribute = std::make_pair(attribute_type, value);
 	return _attribute.second;
 }
-void m2::TinyCharacter::ClearAttribute(m2g::pb::AttributeType attribute_type) {
+void m2::CompactCharacter::ClearAttribute(m2g::pb::AttributeType attribute_type) {
 	if (_attribute.first == attribute_type) {
 		_attribute.second = 0;
 	}
 }
-void m2::TinyCharacter::ClearAttributes() {
+void m2::CompactCharacter::ClearAttributes() {
 	_attribute.second = 0;
 }
 
 void m2::FullCharacterIteratorIncrementor(m2::Character::Iterator& it) {
-	const auto& character = dynamic_cast<const m2::FullCharacter&>(it.GetCharacter());
+	const auto& character = dynamic_cast<const m2::FastCharacter&>(it.GetCharacter());
 	auto curr_index = it.GetIndex();
 	auto filter = it.GetFilter();
 	if (std::holds_alternative<std::monostate>(filter)) {
@@ -281,15 +281,15 @@ void m2::FullCharacterIteratorIncrementor(m2::Character::Iterator& it) {
 	it.Set(nullptr);
 }
 
-m2::FullCharacter::FullCharacter(uint64_t object_id) : Character(object_id) {}
-void m2::FullCharacter::AutomaticUpdate(const Stopwatch::Duration& delta) {
+m2::FastCharacter::FastCharacter(uint64_t object_id) : Character(object_id) {}
+void m2::FastCharacter::AutomaticUpdate(const Stopwatch::Duration& delta) {
 	for (auto it = BeginItems(); it != EndItems(); ++it) {
 		if (it->Usage() == pb::AUTOMATIC) {
 			UseItem(it, ToDurationF(delta));
 		}
 	}
 }
-m2::Character::Iterator m2::FullCharacter::FindItems(m2g::pb::ItemType item_type) const {
+m2::Character::Iterator m2::FastCharacter::FindItems(m2g::pb::ItemType item_type) const {
 	for (size_t i = 0; i < _items.size(); ++i) {
 		const auto& item = _items[i];
 		if (item->Type() == item_type) {
@@ -298,7 +298,7 @@ m2::Character::Iterator m2::FullCharacter::FindItems(m2g::pb::ItemType item_type
 	}
 	return EndItems();
 }
-m2::Character::Iterator m2::FullCharacter::FindItems(m2g::pb::ItemCategory cat) const {
+m2::Character::Iterator m2::FastCharacter::FindItems(m2g::pb::ItemCategory cat) const {
 	for (size_t i = 0; i < _items.size(); ++i) {
 		const auto& item = _items[i];
 		if (item->Category() == cat) {
@@ -307,16 +307,16 @@ m2::Character::Iterator m2::FullCharacter::FindItems(m2g::pb::ItemCategory cat) 
 	}
 	return EndItems();
 }
-m2::Character::Iterator m2::FullCharacter::BeginItems() const {
+m2::Character::Iterator m2::FastCharacter::BeginItems() const {
 	if (!_items.empty()) {
 		return {*this, FullCharacterIteratorIncrementor, {}, 0, _items.front()};
 	}
 	return EndItems();
 }
-m2::Character::Iterator m2::FullCharacter::EndItems() const {
+m2::Character::Iterator m2::FastCharacter::EndItems() const {
 	return {*this, FullCharacterIteratorIncrementor, {}, 0, nullptr};
 }
-void m2::FullCharacter::AddNamedItem(const Item& item) {
+void m2::FastCharacter::AddNamedItem(const Item& item) {
 	_items.emplace_back(&item);
 	// Get acquire benefits
 	for (size_t i = 0; i < _items.back()->GetAcquireBenefitCount(); ++i) {
@@ -327,68 +327,68 @@ void m2::FullCharacter::AddNamedItem(const Item& item) {
 		UseItem(Iterator{*this, FullCharacterIteratorIncrementor, {}, _items.size() - 1, _items.back()});
 	}
 }
-void m2::FullCharacter::AddNamedItemWithoutBenefits(const Item& item) {
+void m2::FastCharacter::AddNamedItemWithoutBenefits(const Item& item) {
 	_items.emplace_back(&item);
 }
-void m2::FullCharacter::RemoveItem(const Iterator& item) {
+void m2::FastCharacter::RemoveItem(const Iterator& item) {
 	if (item != EndItems()) {
 		auto it = _items.cbegin();
 		std::advance(it, item.GetIndex());
 		_items.erase(it);
 	}
 }
-void m2::FullCharacter::ClearItems() {
+void m2::FastCharacter::ClearItems() {
 	_items.clear();
 }
-bool m2::FullCharacter::HasResource(m2g::pb::ResourceType resource_type) const {
+bool m2::FastCharacter::HasResource(m2g::pb::ResourceType resource_type) const {
 	return _resources[ResourceTypeIndex(resource_type)].HasAmount();
 }
-float m2::FullCharacter::GetResource(m2g::pb::ResourceType resource_type) const {
+float m2::FastCharacter::GetResource(m2g::pb::ResourceType resource_type) const {
 	return _resources[ResourceTypeIndex(resource_type)].Amount();
 }
-float m2::FullCharacter::GetMaxResource(m2g::pb::ResourceType resource_type) const {
+float m2::FastCharacter::GetMaxResource(m2g::pb::ResourceType resource_type) const {
 	return _resources[ResourceTypeIndex(resource_type)].MaxAmount();
 }
-void m2::FullCharacter::SetMaxResource(m2g::pb::ResourceType resource_type, float max) {
+void m2::FastCharacter::SetMaxResource(m2g::pb::ResourceType resource_type, float max) {
 	_resources[ResourceTypeIndex(resource_type)].SetMaxAmount(max);
 }
-float m2::FullCharacter::SetResource(m2g::pb::ResourceType resource_type, float amount) {
+float m2::FastCharacter::SetResource(m2g::pb::ResourceType resource_type, float amount) {
 	return _resources[ResourceTypeIndex(resource_type)].SetAmount(amount);
 }
-float m2::FullCharacter::AddResource(m2g::pb::ResourceType resource_type, float amount) {
+float m2::FastCharacter::AddResource(m2g::pb::ResourceType resource_type, float amount) {
 	return _resources[ResourceTypeIndex(resource_type)].AddAmount(amount);
 }
-float m2::FullCharacter::RemoveResource(m2g::pb::ResourceType resource_type, float amount) {
+float m2::FastCharacter::RemoveResource(m2g::pb::ResourceType resource_type, float amount) {
 	return _resources[ResourceTypeIndex(resource_type)].RemoveAmount(amount);
 }
-void m2::FullCharacter::ClearResource(m2g::pb::ResourceType resource_type) {
+void m2::FastCharacter::ClearResource(m2g::pb::ResourceType resource_type) {
 	_resources[ResourceTypeIndex(resource_type)].ClearAmount();
 }
-void m2::FullCharacter::ClearResources() {
+void m2::FastCharacter::ClearResources() {
 	_resources.clear();
 	_resources.resize(pb::enum_value_count<m2g::pb::ResourceType>());
 }
-bool m2::FullCharacter::HasAttribute(m2g::pb::AttributeType attribute_type) const {
+bool m2::FastCharacter::HasAttribute(m2g::pb::AttributeType attribute_type) const {
 	return _attributes[AttributeTypeIndex(attribute_type)] != 0.0f;
 }
-float m2::FullCharacter::GetAttribute(m2g::pb::AttributeType attribute_type) const {
+float m2::FastCharacter::GetAttribute(m2g::pb::AttributeType attribute_type) const {
 	return _attributes[AttributeTypeIndex(attribute_type)];
 }
-float m2::FullCharacter::SetAttribute(m2g::pb::AttributeType attribute_type, float value) {
+float m2::FastCharacter::SetAttribute(m2g::pb::AttributeType attribute_type, float value) {
 	_attributes[AttributeTypeIndex(attribute_type)] = value;
 	return value;
 }
-void m2::FullCharacter::ClearAttribute(m2g::pb::AttributeType attribute_type) {
+void m2::FastCharacter::ClearAttribute(m2g::pb::AttributeType attribute_type) {
 	_attributes[AttributeTypeIndex(attribute_type)] = 0.0f;
 }
-void m2::FullCharacter::ClearAttributes() {
+void m2::FastCharacter::ClearAttributes() {
 	_attributes.clear();
 	_attributes.resize(pb::enum_value_count<m2g::pb::AttributeType>());
 }
-int m2::FullCharacter::ResourceTypeIndex(m2g::pb::ResourceType resource_type) {
+int m2::FastCharacter::ResourceTypeIndex(m2g::pb::ResourceType resource_type) {
 	return pb::enum_index<m2g::pb::ResourceType>(resource_type);
 }
-int m2::FullCharacter::AttributeTypeIndex(m2g::pb::AttributeType attribute_type) {
+int m2::FastCharacter::AttributeTypeIndex(m2g::pb::AttributeType attribute_type) {
 	return pb::enum_index<m2g::pb::AttributeType>(attribute_type);
 }
 

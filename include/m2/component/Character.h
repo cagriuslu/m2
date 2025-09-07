@@ -1,6 +1,7 @@
 #pragma once
 #include "../Component.h"
 #include "../Item.h"
+#include <m2/containers/AssociativeList.h>
 #include <m2g_Interaction.pb.h>
 #include <utility>
 #include <vector>
@@ -105,15 +106,14 @@ namespace m2 {
 		virtual void ClearAttributes() = 0;
 	};
 
-	/// TinyCharacter can hold only one unnamed item, one named item, and can have only one resource
-	class TinyCharacter : public Character {
+	class CompactCharacter final : public Character {
 		const Item* _item{};
 		std::pair<m2g::pb::ResourceType, internal::ResourceAmount> _resource;
 		std::pair<m2g::pb::AttributeType, float> _attribute;
 
 	public:
-		TinyCharacter() = default;
-		explicit TinyCharacter(uint64_t object_id);
+		CompactCharacter() = default;
+		explicit CompactCharacter(uint64_t object_id);
 
 		void AutomaticUpdate(const Stopwatch::Duration& delta) override;
 
@@ -143,15 +143,14 @@ namespace m2 {
 		void ClearAttributes() override;
 	};
 
-	/// FullCharacter can hold any number of items, and can have any Resource
-	class FullCharacter : public Character {
+	class FastCharacter final : public Character {
 		std::vector<const Item*> _items;
 		std::vector<internal::ResourceAmount> _resources = std::vector<internal::ResourceAmount>(pb::enum_value_count<m2g::pb::ResourceType>());
 		std::vector<float> _attributes = std::vector<float>(pb::enum_value_count<m2g::pb::AttributeType>());
 
 	public:
-		FullCharacter() = default;
-		explicit FullCharacter(uint64_t object_id);
+		FastCharacter() = default;
+		explicit FastCharacter(uint64_t object_id);
 
 		void AutomaticUpdate(const Stopwatch::Duration& delta) override;
 
@@ -186,7 +185,7 @@ namespace m2 {
 		friend void FullCharacterIteratorIncrementor(Character::Iterator& it);
 	};
 
-	using CharacterVariant = std::variant<TinyCharacter,FullCharacter>;
+	using CharacterVariant = std::variant<CompactCharacter,FastCharacter>;
 
 	// Filters
 	constexpr auto HasItemOfType(m2g::pb::ItemType it) { return [it](const Character& c) { return c.HasItem(it); }; }
