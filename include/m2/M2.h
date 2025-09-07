@@ -38,6 +38,18 @@ namespace m2 {
 	};
 	constexpr int UPRIGHT_GRAPHICS_LAYER_COUNT = UPRIGHT_GRAPHICS_LAYERS.size();
 
+	// Pairs belong to the same physical world
+	constexpr auto PHYSICS_LAYER_PAIRS = {
+		std::array{pb::Layer::BEDROCK_FLAT, pb::Layer::BEDROCK_UPRIGHT},
+		std::array{pb::Layer::SEABED_FLAT, pb::Layer::SEABED_UPRIGHT},
+		std::array{pb::Layer::UNDER_WATER_FLAT, pb::Layer::UNDER_WATER_UPRIGHT},
+		std::array{pb::Layer::SEA_LEVEL_FLAT, pb::Layer::SEA_LEVEL_UPRIGHT},
+		std::array{pb::Layer::ABOVE_GROUND_FLAT, pb::Layer::ABOVE_GROUND_UPRIGHT},
+		std::array{pb::Layer::AIRBORNE_FLAT, pb::Layer::AIRBORNE_UPRIGHT},
+		std::array{pb::Layer::SPACE_FLAT, pb::Layer::SPACE_UPRIGHT},
+	};
+	constexpr int PHYSICS_LAYER_COUNT = PHYSICS_LAYER_PAIRS.size();
+
 	/// Each physics layer designates a separate physical world. Objects in different layers cannot collide.
 	enum class PhysicsLayer {
 		PM1, // Underground in a top-down game
