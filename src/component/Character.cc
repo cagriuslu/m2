@@ -145,20 +145,20 @@ void m2::TinyCharacter::AutomaticUpdate(const Stopwatch::Duration& delta) {
 }
 m2::Character::Iterator m2::TinyCharacter::FindItems(m2g::pb::ItemType item_type) const {
 	return {*this, tiny_character_iterator_incrementor, item_type, 0,
-			_item && _item->Type() == item_type ? _item.get() : nullptr};
+			_item && _item->Type() == item_type ? _item : nullptr};
 }
 m2::Character::Iterator m2::TinyCharacter::FindItems(m2g::pb::ItemCategory cat) const {
 	return {*this, tiny_character_iterator_incrementor, cat, 0,
-			_item && _item->Category() == cat ? _item.get() : nullptr};
+			_item && _item->Category() == cat ? _item : nullptr};
 }
 m2::Character::Iterator m2::TinyCharacter::BeginItems() const {
-	return {*this, tiny_character_iterator_incrementor, {}, 0, _item ? _item.get() : nullptr};
+	return {*this, tiny_character_iterator_incrementor, {}, 0, _item};
 }
 m2::Character::Iterator m2::TinyCharacter::EndItems() const {
 	return {*this, tiny_character_iterator_incrementor, {}, 0, nullptr};
 }
 void m2::TinyCharacter::AddNamedItem(const Item& item) {
-	_item = SmartPointer<const Item>{&item};
+	_item = &item;
 	// Get acquire benefits
 	for (size_t i = 0; i < _item->GetAcquireBenefitCount(); ++i) {
 		const auto benefit = _item->GetAcquireBenefitByIndex(i);
@@ -169,7 +169,7 @@ void m2::TinyCharacter::AddNamedItem(const Item& item) {
 	}
 }
 void m2::TinyCharacter::AddNamedItemWithoutBenefits(const Item& item) {
-	_item = SmartPointer<const Item>{&item};
+	_item = &item;
 }
 void m2::TinyCharacter::RemoveItem(const Iterator& item) {
 	if (item != EndItems()) {
@@ -253,24 +253,24 @@ void m2::FullCharacterIteratorIncrementor(m2::Character::Iterator& it) {
 		if (curr_index + 1 < character._items.size()) {
 			// Next item
 			it.SetIndex(curr_index + 1);
-			it.Set(character._items[curr_index + 1].get());
+			it.Set(character._items[curr_index + 1]);
 			return;
 		}
 	} else if (std::holds_alternative<m2g::pb::ItemType>(filter)) {
 		for (size_t i = curr_index + 1; i < character._items.size(); ++i) {
-			if (character._items[i].get()->Type() == std::get<m2g::pb::ItemType>(filter)) {
+			if (character._items[i]->Type() == std::get<m2g::pb::ItemType>(filter)) {
 				// Found item
 				it.SetIndex(i);
-				it.Set(character._items[i].get());
+				it.Set(character._items[i]);
 				return;
 			}
 		}
 	} else if (std::holds_alternative<m2g::pb::ItemCategory>(filter)) {
 		for (size_t i = curr_index + 1; i < character._items.size(); ++i) {
-			if (character._items[i].get()->Category() == std::get<m2g::pb::ItemCategory>(filter)) {
+			if (character._items[i]->Category() == std::get<m2g::pb::ItemCategory>(filter)) {
 				// Found item
 				it.SetIndex(i);
-				it.Set(character._items[i].get());
+				it.Set(character._items[i]);
 				return;
 			}
 		}
@@ -292,8 +292,8 @@ void m2::FullCharacter::AutomaticUpdate(const Stopwatch::Duration& delta) {
 m2::Character::Iterator m2::FullCharacter::FindItems(m2g::pb::ItemType item_type) const {
 	for (size_t i = 0; i < _items.size(); ++i) {
 		const auto& item = _items[i];
-		if (item.get()->Type() == item_type) {
-			return {*this, FullCharacterIteratorIncrementor, item_type, i, item.get()};
+		if (item->Type() == item_type) {
+			return {*this, FullCharacterIteratorIncrementor, item_type, i, item};
 		}
 	}
 	return EndItems();
@@ -301,15 +301,15 @@ m2::Character::Iterator m2::FullCharacter::FindItems(m2g::pb::ItemType item_type
 m2::Character::Iterator m2::FullCharacter::FindItems(m2g::pb::ItemCategory cat) const {
 	for (size_t i = 0; i < _items.size(); ++i) {
 		const auto& item = _items[i];
-		if (item.get()->Category() == cat) {
-			return {*this, FullCharacterIteratorIncrementor, cat, i, item.get()};
+		if (item->Category() == cat) {
+			return {*this, FullCharacterIteratorIncrementor, cat, i, item};
 		}
 	}
 	return EndItems();
 }
 m2::Character::Iterator m2::FullCharacter::BeginItems() const {
 	if (!_items.empty()) {
-		return {*this, FullCharacterIteratorIncrementor, {}, 0, _items.front().get()};
+		return {*this, FullCharacterIteratorIncrementor, {}, 0, _items.front()};
 	}
 	return EndItems();
 }
@@ -324,7 +324,7 @@ void m2::FullCharacter::AddNamedItem(const Item& item) {
 		AddResource(benefit.first, benefit.second);
 	}
 	if (_items.back()->UseOnAcquire()) {
-		UseItem(Iterator{*this, FullCharacterIteratorIncrementor, {}, _items.size() - 1, _items.back().get()});
+		UseItem(Iterator{*this, FullCharacterIteratorIncrementor, {}, _items.size() - 1, _items.back()});
 	}
 }
 void m2::FullCharacter::AddNamedItemWithoutBenefits(const Item& item) {

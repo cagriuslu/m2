@@ -1,5 +1,4 @@
 #pragma once
-#include "../SmartPointer.h"
 #include "../Component.h"
 #include "../Item.h"
 #include <m2g_Interaction.pb.h>
@@ -108,7 +107,7 @@ namespace m2 {
 
 	/// TinyCharacter can hold only one unnamed item, one named item, and can have only one resource
 	class TinyCharacter : public Character {
-		SmartPointer<const Item> _item;
+		const Item* _item{};
 		std::pair<m2g::pb::ResourceType, internal::ResourceAmount> _resource;
 		std::pair<m2g::pb::AttributeType, float> _attribute;
 
@@ -146,7 +145,7 @@ namespace m2 {
 
 	/// FullCharacter can hold any number of items, and can have any Resource
 	class FullCharacter : public Character {
-		std::vector<SmartPointer<const Item>> _items;
+		std::vector<const Item*> _items;
 		std::vector<internal::ResourceAmount> _resources = std::vector<internal::ResourceAmount>(pb::enum_value_count<m2g::pb::ResourceType>());
 		std::vector<float> _attributes = std::vector<float>(pb::enum_value_count<m2g::pb::AttributeType>());
 
