@@ -32,7 +32,7 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 	};
 	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
 
-	obj.AddGraphic(m2::ForegroundDrawLayer::F0_BOTTOM, DWARF_FULL);
+	obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, DWARF_FULL);
 
 	auto& chr = obj.AddFullCharacter();
 	chr.AddNamedItem(M2_GAME.GetNamedItem(ITEM_REUSABLE_JUMP));

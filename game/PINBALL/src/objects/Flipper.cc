@@ -54,7 +54,7 @@ m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
 	};
 	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
 
-	MAYBE auto& gfx = obj.AddGraphic(m2::ForegroundDrawLayer::F0_BOTTOM, rightFlipper ? m2g::pb::SPRITE_BASIC_FLIPPER_RIGHT : m2g::pb::SPRITE_BASIC_FLIPPER_LEFT);
+	MAYBE auto& gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, rightFlipper ? m2g::pb::SPRITE_BASIC_FLIPPER_RIGHT : m2g::pb::SPRITE_BASIC_FLIPPER_LEFT);
 
 	if (rightFlipper) {
 		phy.preStep = [flipper](m2::Physique& phy_, const m2::Stopwatch::Duration&) {

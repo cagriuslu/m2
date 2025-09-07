@@ -19,17 +19,6 @@
 
 using namespace m2;
 
-namespace {
-	constexpr std::array fgDrawLayerToLayerMap = {
-		std::pair(ForegroundDrawLayer::FM1_BOTTOM, pb::BEDROCK_UPRIGHT),
-		std::pair(ForegroundDrawLayer::FM1_TOP, pb::SEABED_UPRIGHT),
-		std::pair(ForegroundDrawLayer::F0_BOTTOM, pb::UNDER_WATER_UPRIGHT),
-		std::pair(ForegroundDrawLayer::F0_TOP, pb::SEA_LEVEL_UPRIGHT),
-		std::pair(ForegroundDrawLayer::F1_BOTTOM, pb::ABOVE_GROUND_UPRIGHT),
-		std::pair(ForegroundDrawLayer::F1_TOP, pb::AIRBORNE_UPRIGHT),
-	};
-}
-
 Level::~Level() {
 	// Custom destructor is provided because the order is important
 
@@ -206,7 +195,7 @@ DrawLayer Level::GetDrawLayer(const GraphicId gfxId) {
 		const auto& gfx = uprightGraphics[gfxId];
 		for (auto i = 0zu; i < uprightDrawLists.size(); ++i) {
 			if (uprightDrawLists[i].ContainsObject(gfx.OwnerId())) {
-				return static_cast<ForegroundDrawLayer>(i);
+				return static_cast<pb::UprightGraphicsLayer>(i);
 			}
 		}
 	}
@@ -236,9 +225,8 @@ std::pair<Pool<Graphic>&, DrawList*> Level::GetGraphicPoolAndDrawList(const Draw
 		const auto bgLayer = std::get<pb::FlatGraphicsLayer>(drawLayer);
 		return std::pair<Pool<Graphic>&,DrawList*>{flatGraphics.at(I(bgLayer)), nullptr};
 	}
-	const auto fgLayer = std::get<ForegroundDrawLayer>(drawLayer);
-	const auto layer = fgDrawLayerToLayerMap.at(I(fgLayer));
-	return std::pair<Pool<Graphic>&,DrawList*>{uprightGraphics, &uprightDrawLists.at(I(layer.second))};
+	const auto fgLayer = std::get<pb::UprightGraphicsLayer>(drawLayer);
+	return std::pair<Pool<Graphic>&,DrawList*>{uprightGraphics, &uprightDrawLists.at(I(fgLayer))};
 }
 pb::ProjectionType Level::GetProjectionType() const {
 	const auto isEditor = std::holds_alternative<level_editor::State>(stateVariant)

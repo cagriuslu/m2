@@ -6,7 +6,7 @@
 m2::Id m2::obj::CreatePointer() {
     const auto it = CreateObject({});
 
-	it->AddGraphic(ForegroundDrawLayer::F0_BOTTOM).preDraw = [](const Graphic& gfx_, const Stopwatch::Duration&) {
+	it->AddGraphic(pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT).preDraw = [](const Graphic& gfx_, const Stopwatch::Duration&) {
 		gfx_.Owner().position = M2_GAME.MousePositionWorldM();
 	};
 

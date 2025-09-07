@@ -31,7 +31,7 @@ m2::void_expected LoadGenericBallSensor(m2::Object& obj, const m2::pb::PhysicsLa
 	phy.body[m2::I(physicsLayer)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef,
 		obj.GetPhysiqueId(), obj.position, obj.orientation, physicsLayer);
 
-	obj.AddGraphic(m2::ForegroundDrawLayer::F0_BOTTOM, spriteType);
+	obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, spriteType);
 
 	// The sensor collides with only the ball
 	phy.onCollision = [onCollisionWithBall](m2::Physique& self, m2::Physique& ball, const m2::box2d::Contact& contact) {

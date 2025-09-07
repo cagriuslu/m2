@@ -52,7 +52,7 @@ m2::void_expected LoadBall(m2::Object& obj) {
 	phy.body[m2::I(m2::pb::PhysicsLayer::ABOVE_GROUND)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::pb::PhysicsLayer::ABOVE_GROUND);
 	phy.body[m2::I(m2::pb::PhysicsLayer::ABOVE_GROUND)]->SetEnabled(false);
 
-	MAYBE auto& gfx = obj.AddGraphic(m2::ForegroundDrawLayer::F0_BOTTOM, m2g::pb::SPRITE_BASIC_BALL);
+	MAYBE auto& gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, m2g::pb::SPRITE_BASIC_BALL);
 
 	phy.preStep = [initialPos = obj.position](m2::Physique& phy_, const m2::Stopwatch::Duration&) {
 		if (M2_GAME.events.PopKeyRelease(m2g::pb::BALL_LAUNCHER) /*&& M2G_PROXY.isOnBallLauncher*/) {
@@ -66,7 +66,7 @@ m2::void_expected LoadBall(m2::Object& obj) {
 		if (M2_GAME.events.PopKeyPress(m2g::pb::RETURN)) {
 			phy_.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->SetPosition(initialPos);
 			phy_.body[m2::I(m2::pb::PhysicsLayer::ABOVE_GROUND)]->SetPosition(initialPos);
-			M2_DEFER(m2::CreateLayerMover(phy_.OwnerId(), m2::pb::PhysicsLayer::SEA_LEVEL, m2::ForegroundDrawLayer::F0_BOTTOM));
+			M2_DEFER(m2::CreateLayerMover(phy_.OwnerId(), m2::pb::PhysicsLayer::SEA_LEVEL, m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT));
 		}
 		if (M2_GAME.events.PopMouseButtonRelease(m2::MouseButton::PRIMARY)) {
 			const auto mousePosition = M2_GAME.MousePositionWorldM();
@@ -74,7 +74,7 @@ m2::void_expected LoadBall(m2::Object& obj) {
 			phy_.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->SetLinearVelocity({});
 			phy_.body[m2::I(m2::pb::PhysicsLayer::ABOVE_GROUND)]->SetPosition(mousePosition);
 			phy_.body[m2::I(m2::pb::PhysicsLayer::ABOVE_GROUND)]->SetLinearVelocity({});
-			M2_DEFER(m2::CreateLayerMover(phy_.OwnerId(), m2::pb::PhysicsLayer::SEA_LEVEL, m2::ForegroundDrawLayer::F0_BOTTOM));
+			M2_DEFER(m2::CreateLayerMover(phy_.OwnerId(), m2::pb::PhysicsLayer::SEA_LEVEL, m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT));
 		}
 	};
 	phy.onCollision = [&obj, ballImpl](m2::Physique& ball, const m2::Physique& other, const m2::box2d::Contact& contact) {

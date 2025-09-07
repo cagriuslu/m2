@@ -19,19 +19,8 @@ namespace m2 {
 	constexpr int UPRIGHT_GRAPHICS_LAYER_COUNT = pb::UprightGraphicsLayer_ARRAYSIZE;
 	constexpr int PHYSICS_LAYER_COUNT = pb::PhysicsLayer_ARRAYSIZE;
 
-	enum class ForegroundDrawLayer {
-		FM1_BOTTOM,
-		FM1_TOP,
-		F0_BOTTOM,
-		F0_TOP,
-		F1_BOTTOM,
-		F1_TOP,
-		_n, // End sentinel
-	};
-	constexpr int gForegroundDrawLayerCount = static_cast<int>(ForegroundDrawLayer::_n);
-
-	using DrawLayer = std::variant<pb::FlatGraphicsLayer, ForegroundDrawLayer>;
-	extern std::array<DrawLayer, 10> gDrawOrder;
+	using DrawLayer = std::variant<pb::FlatGraphicsLayer, pb::UprightGraphicsLayer>;
+	extern std::array<DrawLayer, 16> gDrawOrder;
 
 	/// Returns the number of codepoints in a UTF-8 string.
 	/// One codepoint does not always equate to one glyph, but it's a good estimation for most characters.

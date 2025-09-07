@@ -54,7 +54,7 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& intend
 	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->SetLinearVelocity(direction * linear_speed);
 
 	// Add graphics
-	auto& gfx = obj.AddGraphic(m2::ForegroundDrawLayer::F0_BOTTOM, ranged_weapon.GameSprite());
+	auto& gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, ranged_weapon.GameSprite());
 	gfx.z = 0.5f;
 
 	// Add character

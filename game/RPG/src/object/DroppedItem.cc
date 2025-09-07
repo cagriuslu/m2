@@ -20,7 +20,7 @@ m2::void_expected rpg::create_dropped_item(m2::Object &obj, m2g::pb::ItemType it
 	};
 	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
 
-	obj.AddGraphic(m2::ForegroundDrawLayer::F0_BOTTOM, M2_GAME.GetNamedItem(item_type).UiSprite());
+	obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, M2_GAME.GetNamedItem(item_type).UiSprite());
 
 	phy.onCollision = [item_type](m2::Physique& phy, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
 		if (auto* other_char = other.Owner().TryGetCharacter(); other_char) {

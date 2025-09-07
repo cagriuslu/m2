@@ -46,7 +46,7 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF &direction, 
 	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->SetAngularVelocity(-swing_speed);
 
 	// Add graphics
-	auto& gfx = obj.AddGraphic(m2::ForegroundDrawLayer::F0_BOTTOM, melee_weapon.GameSprite());
+	auto& gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, melee_weapon.GameSprite());
 	gfx.z = 0.5f;
 
 	// Add character

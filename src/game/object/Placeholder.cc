@@ -10,7 +10,7 @@ m2::Id m2::obj::CreateForegroundPlaceholder(const VecF& pos, float orientation, 
 	const auto it = CreateObject(pos);
 	it->orientation = orientation;
 	if (spriteType) {
-		it->AddGraphic(ForegroundDrawLayer::F0_BOTTOM, *spriteType);
+		it->AddGraphic(pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, *spriteType);
 	}
 	return it.GetId();
 }

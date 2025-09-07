@@ -14,17 +14,31 @@ namespace {
 
 const std::string m2::EMPTY_STRING;
 
-std::array<DrawLayer, 10> m2::gDrawOrder = {
+std::array<DrawLayer, 16> m2::gDrawOrder = {
 	pb::FlatGraphicsLayer::BACKGROUND_FLAT,
+
 	pb::FlatGraphicsLayer::BEDROCK_FLAT,
-	ForegroundDrawLayer::FM1_BOTTOM,
-	ForegroundDrawLayer::FM1_TOP,
+	pb::UprightGraphicsLayer::BEDROCK_UPRIGHT,
+
 	pb::FlatGraphicsLayer::SEABED_FLAT,
+	pb::UprightGraphicsLayer::SEABED_UPRIGHT,
+
 	pb::FlatGraphicsLayer::UNDER_WATER_FLAT,
-	ForegroundDrawLayer::F0_BOTTOM,
-	ForegroundDrawLayer::F0_TOP,
-	ForegroundDrawLayer::F1_BOTTOM,
-	ForegroundDrawLayer::F1_TOP,
+	pb::UprightGraphicsLayer::UNDER_WATER_UPRIGHT,
+
+	pb::FlatGraphicsLayer::SEA_LEVEL_FLAT,
+	pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT,
+
+	pb::FlatGraphicsLayer::ABOVE_GROUND_FLAT,
+	pb::UprightGraphicsLayer::ABOVE_GROUND_UPRIGHT,
+
+	pb::FlatGraphicsLayer::AIRBORNE_FLAT,
+	pb::UprightGraphicsLayer::AIRBORNE_UPRIGHT,
+
+	pb::FlatGraphicsLayer::SPACE_FLAT,
+	pb::UprightGraphicsLayer::SPACE_UPRIGHT,
+
+	pb::FlatGraphicsLayer::FOREGROUND_FLAT
 };
 
 size_t m2::Utf8CodepointCount(const char* s) {

@@ -139,7 +139,7 @@ m2::void_expected InitFactory(m2::Object& obj, City city, IndustryTile industry_
 	chr.AddNamedItem(M2_GAME.GetNamedItem(industry_tile));
 
 	auto color = M2G_PROXY.player_colors[parent_index];
-	auto& _gfx = obj.AddGraphic(m2::ForegroundDrawLayer::F0_BOTTOM, industry_sprite_of_industry(industry));
+	auto& _gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, industry_sprite_of_industry(industry));
 	_gfx.onDraw = [color](m2::Graphic& gfx) {
 		auto top_left_cell_pos = gfx.Owner().position;
 		auto cell_rect = m2::RectF{top_left_cell_pos - 0.5f, 2.0f, 2.0f};

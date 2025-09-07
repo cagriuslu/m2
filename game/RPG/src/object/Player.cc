@@ -47,7 +47,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 	};
 	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
 
-	auto& gfx = obj.AddGraphic(m2::ForegroundDrawLayer::F0_BOTTOM, main_sprite_type);
+	auto& gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, main_sprite_type);
 
 	auto& chr = obj.AddFullCharacter();
 	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_DASH_2S));

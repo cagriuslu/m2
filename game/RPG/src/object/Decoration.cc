@@ -8,7 +8,7 @@ m2::void_expected rpg::create_decoration(m2::Object& obj, m2g::pb::SpriteType sp
 	}
 
 	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(sprite_type));
-	[[maybe_unused]] auto& gfx = obj.AddGraphic(m2::ForegroundDrawLayer::F0_BOTTOM, sprite_type);
+	[[maybe_unused]] auto& gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, sprite_type);
 
 	m2::third_party::physics::RigidBodyDefinition rigidBodyDef{
 		.bodyType = m2::third_party::physics::RigidBodyType::STATIC,

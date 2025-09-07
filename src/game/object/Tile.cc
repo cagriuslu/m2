@@ -46,7 +46,7 @@ m2::Pool<m2::Object>::Iterator m2::obj::CreateTile(const pb::FlatGraphicsLayer l
 		if (sprite.HasForegroundCompanion()) {
 			const auto fg_it = CreateObject(position - sprite.CenterToOriginVecM()
 					+ sprite.ForegroundCompanionCenterToOriginVecM());
-			auto& gfx = fg_it->AddGraphic(ForegroundDrawLayer::F0_BOTTOM, spriteType);
+			auto& gfx = fg_it->AddGraphic(pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, spriteType);
 			gfx.drawForegroundCompanion = true;
 		}
 	}
