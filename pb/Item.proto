@@ -5,19 +5,27 @@ import "m2g_SpriteType.proto";
 import "m2g_ResourceType.proto";
 import "m2g_AttributeType.proto";
 import "m2g_ItemType.proto";
+import "GameTypes.proto";
 
 message Resource {
   m2g.pb.ResourceType type = 1;
   oneof value {
     float amount = 2;
-    bool p_inf = 3;
     bool n_inf = 4;
+  }
+  oneof value_type {
+    int32 int_value = 5;
+    FF ff_value = 6;
   }
 }
 
 message Attribute {
     m2g.pb.AttributeType type = 1;
     float amount = 2;
+    oneof value_type {
+      int32 int_value = 3;
+      FF ff_value = 4;
+    }
 }
 
 enum Usage {

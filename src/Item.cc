@@ -89,8 +89,6 @@ std::function<float(const m2::Item&)> m2::ToAttributeValue(m2g::pb::AttributeTyp
 float m2::GetResourceAmount(const m2::pb::Resource& resource) {
 	if (resource.has_amount()) {
 		return static_cast<float>(resource.amount());
-	} else if (resource.has_p_inf() && resource.p_inf()) {
-		return INFINITY;
 	} else if (resource.has_n_inf() && resource.n_inf()) {
 		return -INFINITY;
 	} else {
