@@ -11,6 +11,7 @@ Object::Object(const VecF &position, const m2g::pb::ObjectType type, const Objec
 		_object_type(type), _parent_id(parent_id) {}
 
 Object::Object(Object&& other) noexcept :
+		layer(other.layer),
 		position(other.position),
 		orientation(other.orientation),
 		impl(std::move(other.impl)),
@@ -34,6 +35,7 @@ Object::Object(Object&& other) noexcept :
     other._character_id = 0;
 }
 Object& Object::operator=(Object&& other) noexcept {
+	std::swap(layer, other.layer);
 	std::swap(position, other.position);
 	std::swap(orientation, other.orientation);
 	std::swap(impl, other.impl);

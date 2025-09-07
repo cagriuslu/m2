@@ -71,7 +71,17 @@ namespace m3 {
 }
 
 namespace m2 {
+	/// Each Graphic is either laying flat, or standing upright. Flat graphics are drawn before upright graphics of the
+	/// same object layer.
+	enum class GraphicsLayer {
+		FLAT,
+		UPRIGHT,
+		_n
+	};
+	constexpr auto GRAPHICS_LAYER_COUNT = static_cast<int>(GraphicsLayer::_n);
+
 	struct Graphic final : Component {
+		GraphicsLayer layer{};
 		bool enabled{true};
 		bool draw{true};
 

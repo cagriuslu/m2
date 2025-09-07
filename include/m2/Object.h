@@ -22,6 +22,7 @@ namespace m2 {
 	/// If the component is created and destroyed rapidly => Pool
 	/// Else => impl
 	struct Object final {
+		ObjectLayer layer{};
 		VecF position;
 		float orientation{}; /// In radians
 		std::unique_ptr<ObjectImpl> impl; /// Custom Data
