@@ -44,57 +44,6 @@ namespace m2 {
 		[[nodiscard]] virtual m2g::pb::SpriteType UiSprite() const = 0;
 	};
 
-	// Represents an item that doesn't have a protobuf correspondent.
-	class UnnamedItem : public Item {};
-
-	/// TinyItem can represent an item with only one cost, benefit, and attribute.
-	class TinyItem final : public UnnamedItem {
-		m2g::pb::ItemType _type{};
-		m2g::pb::ItemCategory _category{};
-		pb::Usage _usage{};
-		bool _use_on_acquire{};
-		std::pair<m2g::pb::ResourceType, float> _cost{};
-		std::pair<m2g::pb::ResourceType, float> _benefit{};
-		std::pair<m2g::pb::ResourceType, float> _acquire_benefit{};
-		std::pair<m2g::pb::AttributeType, float> _attribute{};
-		m2g::pb::SpriteType _game_sprite{};
-		m2g::pb::SpriteType _ui_sprite{};
-
-	public:
-		TinyItem() = default;
-		TinyItem(m2g::pb::ItemType type, m2g::pb::ItemCategory category, pb::Usage usage, bool use_on_acquire,
-				std::pair<m2g::pb::ResourceType, float> cost, std::pair<m2g::pb::ResourceType, float> benefit,
-				std::pair<m2g::pb::ResourceType, float> acquire_benefit, std::pair<m2g::pb::AttributeType, float> attribute,
-				m2g::pb::SpriteType game_sprite, m2g::pb::SpriteType ui_sprite);
-
-		[[nodiscard]] inline m2g::pb::ItemType Type() const override { return _type; }
-		[[nodiscard]] inline m2g::pb::ItemCategory Category() const override { return _category; }
-		[[nodiscard]] inline pb::Usage Usage() const override { return _usage; }
-		[[nodiscard]] inline bool UseOnAcquire() const override { return _use_on_acquire; }
-		[[nodiscard]] inline size_t GetCostCount() const override { return _cost.second != 0.0f ? 1 : 0; }
-		[[nodiscard]] std::pair<m2g::pb::ResourceType, float> GetCostByIndex(size_t i) const override;
-		[[nodiscard]] float GetCost(m2g::pb::ResourceType) const override;
-		[[nodiscard]] float TryGetCost(m2g::pb::ResourceType, float default_value) const override;
-		[[nodiscard]] bool HasCost(m2g::pb::ResourceType) const override;
-		[[nodiscard]] inline size_t GetBenefitCount() const override { return _benefit.second != 0.0f ? 1 : 0; }
-		[[nodiscard]] std::pair<m2g::pb::ResourceType, float> GetBenefitByIndex(size_t i) const override;
-		[[nodiscard]] float GetBenefit(m2g::pb::ResourceType) const override;
-		[[nodiscard]] float TryGetBenefit(m2g::pb::ResourceType, float default_value) const override;
-		[[nodiscard]] bool HasBenefit(m2g::pb::ResourceType) const override;
-		[[nodiscard]] size_t GetAcquireBenefitCount() const override { return _acquire_benefit.second != 0.0f ? 1 : 0; }
-		[[nodiscard]] std::pair<m2g::pb::ResourceType, float> GetAcquireBenefitByIndex(size_t i) const override;
-		[[nodiscard]] float GetAcquireBenefit(m2g::pb::ResourceType) const override;
-		[[nodiscard]] float TryGetAcquireBenefit(m2g::pb::ResourceType, float default_value) const override;
-		[[nodiscard]] bool HasAcquireBenefit(m2g::pb::ResourceType) const override;
-		[[nodiscard]] inline size_t GetAttributeCount() const override { return _attribute.second != 0.0f ? 1 : 0; }
-		[[nodiscard]] std::pair<m2g::pb::AttributeType, float> GetAttributeByIndex(size_t i) const override;
-		[[nodiscard]] float GetAttribute(m2g::pb::AttributeType) const override;
-		[[nodiscard]] float TryGetAttribute(m2g::pb::AttributeType, float default_value) const override;
-		[[nodiscard]] bool HasAttribute(m2g::pb::AttributeType) const override;
-		[[nodiscard]] inline m2g::pb::SpriteType GameSprite() const override { return _game_sprite; }
-		[[nodiscard]] inline m2g::pb::SpriteType UiSprite() const override { return _ui_sprite; }
-	};
-
 	/// Represents a protobuf-backed item. It can have as many costs, benefits, and attributes as possible.
 	/// This class uses high memory, and is slow to construct. It should only be used when fast resource/attribute lookup is necessary.
 	class NamedItem final : public Item {
