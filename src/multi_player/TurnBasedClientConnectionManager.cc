@@ -66,10 +66,10 @@ bool m2::network::TurnBasedClientConnectionManager::set_ready_token(const uint64
 }
 void m2::network::TurnBasedClientConnectionManager::honorably_disconnect() {
 	const auto ready_token = std::visit(overloaded{
-		[](Connected&) -> uint64_t { return 0; },
+		[](const Connected&) -> uint64_t { return 0; },
 		[](const Ready& s) -> uint64_t { return s.ready_token; },
 		[](const ReconnectedUntrusted& s) -> uint64_t { return s.expected_ready_token; },
-		[](auto&) -> uint64_t { throw M2_ERROR("Unexpected call"); },
+		[](auto&) -> uint64_t { return 0; },
 	}, _state);
 	_state = HonorablyDisconnected{ ready_token, sdl::get_ticks() };
 }

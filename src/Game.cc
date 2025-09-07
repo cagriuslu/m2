@@ -182,7 +182,7 @@ m2::void_expected m2::Game::HostTurnBasedGame(unsigned max_connection_count) {
 	// TODO prevent other clients from joining until the host client joins
 
 	LOG_INFO("Server is listening, joining the game as host client...");
-	std::get<TurnBasedServerComponents>(_multiPlayerComponents).hostClientThread.emplace();
+	std::get<TurnBasedServerComponents>(_multiPlayerComponents).hostClientThread.emplace(std::in_place);
 	LOG_DEBUG("Real TurnBasedHostClientThread created");
 
 	return {};
