@@ -237,7 +237,7 @@ m3::VecF Level::GetCameraOffset() const {
 		return {};
 	}
 	return m3::VecF{
-		GetProjectionType() == pb::PERSPECTIVE_XYZ ? _lb->camera_offset() : 0.0f,
+		0.0f,
 		_lb->camera_offset(),
 		_lb->camera_z_offset()};
 }

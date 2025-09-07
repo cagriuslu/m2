@@ -33,10 +33,10 @@ namespace {
 }
 
 bool m2::IsProjectionTypeParallel(const pb::ProjectionType pt) {
-	return pt == pb::PARALLEL || pt == pb::PARALLEL_ISOMETRIC;
+	return pt == pb::PARALLEL;
 }
 bool m2::IsProjectionTypePerspective(const pb::ProjectionType pt) {
-	return pt == pb::PERSPECTIVE_YZ || pt == pb::PERSPECTIVE_XYZ;
+	return pt == pb::PERSPECTIVE_YZ;
 }
 
 m2::VecF m2::CameraToPositionVecM(const VecF& position) {
@@ -141,12 +141,6 @@ std::optional<m2::VecF> m3::FocusToProjectionInCameraPlaneCoordinatesM(const Vec
 		const auto projection_y_length = projection_y.length();
 		const auto projection_y_sign = 0 <= projection_y.y ? 1.0f : -1.0f;
 		vertical_projection = projection_y_length * projection_y_sign;
-	} else if (M2_LEVEL.GetProjectionType() == m2::pb::PERSPECTIVE_XYZ) {
-		static const auto horizontal_unit_vector = VecF{m2::SQROOT_2, -m2::SQROOT_2, 0.0f};
-		horizontal_projection = focus_to_projection->dot(horizontal_unit_vector);
-
-		const auto vertical_unit_vector = VecF{camera_sin() / m2::SQROOT_2, camera_sin() / m2::SQROOT_2, -camera_cos()};
-		vertical_projection = focus_to_projection->dot(vertical_unit_vector);
 	} else {
 		throw M2_ERROR("Invalid ProjectionType");
 	}

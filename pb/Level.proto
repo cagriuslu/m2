@@ -33,16 +33,9 @@ enum ProjectionType {
   // Parallel lines stay parallel
   PARALLEL = 0;
 
-  PARALLEL_ISOMETRIC = 1;
-
   // Lines parallel to Y-axis intersect at -Y infinity.
   // Lines parallel to Z-axis intersect at -Z infinity. Example: Paper Mario
   PERSPECTIVE_YZ = 2;
-
-  // Lines parallel to X-axis intersect at -X infinity.
-  // Lines parallel to Y-axis intersect at -Y infinity.
-  // Lines parallel to Z-axis intersect at -Z infinity. Example: Half-life
-  PERSPECTIVE_XYZ = 3;
 }
 
 message Level {
