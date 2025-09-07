@@ -35,12 +35,6 @@
           "type": "RESOURCE_DASH_ENERGY",
           "amount": 2.0
         }
-      ],
-      "benefits": [
-        {
-          "type": "RESOURCE_DASH_ENERGY",
-          "nInf": true
-        }
       ]
     },
     {
@@ -51,12 +45,6 @@
         {
           "type": "RESOURCE_RANGED_ENERGY",
           "amount": 0.3
-        }
-      ],
-      "benefits": [
-        {
-          "type": "RESOURCE_RANGED_ENERGY",
-          "nInf": true
         }
       ],
       "attributes": [
@@ -99,12 +87,6 @@
         {
           "type": "RESOURCE_SPECIAL_RANGED_WEAPON_AMMO",
           "amount": 1.0
-        }
-      ],
-      "benefits": [
-        {
-          "type": "RESOURCE_RANGED_ENERGY",
-          "nInf": true
         }
       ],
       "acquireBenefits": [
@@ -156,12 +138,6 @@
           "amount": 1.0
         }
       ],
-      "benefits": [
-        {
-          "type": "RESOURCE_RANGED_ENERGY",
-          "nInf": true
-        }
-      ],
       "acquireBenefits": [
         {
           "type": "RESOURCE_SPECIAL_RANGED_WEAPON_AMMO",
@@ -211,12 +187,6 @@
           "amount": 0.4
         }
       ],
-      "benefits": [
-        {
-          "type": "RESOURCE_MELEE_ENERGY",
-          "nInf": true
-        }
-      ],
       "attributes": [
         {
           "type": "ATTRIBUTE_AVERAGE_DAMAGE",
@@ -241,12 +211,6 @@
         {
           "type": "RESOURCE_MELEE_ENERGY",
           "amount": 1
-        }
-      ],
-      "benefits": [
-        {
-          "type": "RESOURCE_MELEE_ENERGY",
-          "nInf": true
         }
       ],
       "attributes": [
@@ -275,12 +239,6 @@
           "amount": 1.0
         }
       ],
-      "benefits": [
-        {
-          "type": "RESOURCE_MELEE_ENERGY",
-          "nInf": true
-        }
-      ],
       "attributes": [
         {
           "type": "ATTRIBUTE_AVERAGE_DAMAGE",
@@ -306,12 +264,6 @@
         {
           "type": "RESOURCE_MELEE_ENERGY",
           "amount": 0.25
-        }
-      ],
-      "benefits": [
-        {
-          "type": "RESOURCE_MELEE_ENERGY",
-          "nInf": true
         }
       ],
       "attributes": [

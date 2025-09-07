@@ -56,6 +56,7 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 		// Jump
 		auto is_grounded = chr.GetResource(RESOURCE_IS_GROUNDED_X) != 0.0f && chr.GetResource(RESOURCE_IS_GROUNDED_Y) != 0.0f;
 		if (is_grounded && M2_GAME.events.IsKeyDown(JUMP) && chr.UseItem(chr.FindItems(ITEM_REUSABLE_JUMP))) {
+			chr.ClearResource(RESOURCE_JUMP_ENERGY);
 			auto linear_velocity = phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->GetLinearVelocity();
 			linear_velocity.y -= 7.0f;
 			phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->SetLinearVelocity(linear_velocity);

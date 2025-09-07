@@ -209,6 +209,7 @@ void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
 				case pb::CAPABILITY_RANGED: {
 					auto it = obj.GetCharacter().FindItems(m2g::pb::ITEM_CATEGORY_DEFAULT_RANGED_WEAPON);
 					if (it && obj.GetCharacter().UseItem(it)) {
+						obj.GetCharacter().ClearResource(RESOURCE_RANGED_ENERGY);
 						auto shoot_direction = M2_PLAYER.position - obj.position;
 						rpg::create_projectile(*m2::CreateObject(obj.position, {}, obj.GetId()),
 							shoot_direction, *it, false);
@@ -220,6 +221,7 @@ void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
 				case pb::CAPABILITY_MELEE: {
 					auto it = obj.GetCharacter().FindItems(m2g::pb::ITEM_CATEGORY_DEFAULT_MELEE_WEAPON);
 					if (it && obj.GetCharacter().UseItem(it)) {
+						obj.GetCharacter().ClearResource(RESOURCE_MELEE_ENERGY);
 						rpg::create_blade(*m2::CreateObject(obj.position, {}, obj.GetId()),
 							M2_PLAYER.position - obj.position, *it, false);
 					}

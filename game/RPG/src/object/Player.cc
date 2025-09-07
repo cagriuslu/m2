@@ -74,6 +74,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 		float move_force;
 		// Check if dash
 		if (direction_vector && M2_GAME.events.PopKeyPress(m2g::pb::DASH) && chr.UseItem(chr.FindItems(m2g::pb::ITEM_REUSABLE_DASH_2S))) {
+			chr.ClearResource(RESOURCE_DASH_ENERGY);
 			move_force = PLAYER_DASH_FORCE;
 		} else {
 			// Character movement
@@ -105,6 +106,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 				// Find default weapon and try to use it
 				auto default_it = chr.FindItems(m2g::pb::ITEM_CATEGORY_DEFAULT_RANGED_WEAPON);
 				if (default_it && chr.UseItem(default_it)) {
+					chr.ClearResource(RESOURCE_RANGED_ENERGY);
 					shoot(*default_it);
 				}
 			}
@@ -128,6 +130,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 				// Find default melee weapon and try to use it
 				auto default_it = chr.FindItems(m2g::pb::ITEM_CATEGORY_DEFAULT_MELEE_WEAPON);
 				if (default_it && chr.UseItem(default_it)) {
+					chr.ClearResource(RESOURCE_MELEE_ENERGY);
 					slash(*default_it);
 				}
 			}

@@ -11,12 +11,6 @@
           "type": "RESOURCE_JUMP_ENERGY",
           "amount": 0.2
         }
-      ],
-      "benefits": [
-        {
-          "type": "RESOURCE_JUMP_ENERGY",
-          "nInf": true
-        }
       ]
     },
     {

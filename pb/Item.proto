@@ -11,7 +11,6 @@ message Resource {
   m2g.pb.ResourceType type = 1;
   oneof value {
     float amount = 2;
-    bool n_inf = 4;
   }
   oneof value_type {
     int32 int_value = 5;
