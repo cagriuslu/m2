@@ -32,7 +32,7 @@ bool m2::level_editor::State::GetSnapToGridStatus() const {
 std::vector<m2::level_editor::State::ForegroundObjectPlaceholderMap::const_iterator> m2::level_editor::State::GetForegroundObjectsOfType(m2g::pb::ObjectType objType) const {
 	std::vector<ForegroundObjectPlaceholderMap::const_iterator> its;
 	for (auto it = _foregroundObjectPlaceholders.begin(); it != _foregroundObjectPlaceholders.end(); ++it) {
-		if (std::get<pb::LevelObject>(it->second).type() == objType) {
+		if (std::get<pb::Object>(it->second).type() == objType) {
 			its.emplace_back(it);
 		}
 	}
@@ -64,7 +64,7 @@ void m2::level_editor::State::LoadLevelBlueprint(const pb::Level& lb) {
 void m2::level_editor::State::HandleMousePrimaryButton(const VecF& position) {
 	if (M2_LEVEL.GetRightHud() && M2_LEVEL.GetRightHud()->Name() == "PlaceFgRightHud") {
 		if (const auto sampledObject = ApplySampling(position); sampledObject != _foregroundObjectPlaceholders.end()) {
-			if (not std::get<pb::LevelObject>(sampledObject->second).is_locked()) {
+			if (not std::get<pb::Object>(sampledObject->second).is_locked()) {
 				// Remove the original object
 				const auto id = std::get<Id>(sampledObject->second);
 				M2_DEFER(CreateObjectDeleter(id));
@@ -208,7 +208,7 @@ void m2::level_editor::State::RandomFillBackground(const RectI& area, const std:
 void m2::level_editor::State::RemoveForegroundObject() {
 	const auto selection = ForegroundSelectionArea();
 	for (auto it = _foregroundObjectPlaceholders.begin(); it != _foregroundObjectPlaceholders.end();) {
-		if (selection.DoesContain(it->first) && not std::get<pb::LevelObject>(it->second).is_locked()) {
+		if (selection.DoesContain(it->first) && not std::get<pb::Object>(it->second).is_locked()) {
 			const auto id = std::get<Id>(it->second);
 			M2_DEFER(CreateObjectDeleter(id));
 			it = _foregroundObjectPlaceholders.erase(it);
@@ -224,7 +224,7 @@ void m2::level_editor::State::CopyForeground() {
 	for (auto it = _foregroundObjectPlaceholders.begin(); it != _foregroundObjectPlaceholders.end(); ++it) {
 		if (selection.DoesContain(it->first)) {
 			const auto positionInClipboard = it->first - selection.GetTopLeftPoint();
-			auto levelObject = std::get<pb::LevelObject>(it->second);
+			auto levelObject = std::get<pb::Object>(it->second);
 			levelObject.mutable_position()->set_x(positionInClipboard.x);
 			levelObject.mutable_position()->set_y(positionInClipboard.y);
 			_foregroundObjectClipboard.emplace(positionInClipboard, levelObject);
@@ -470,7 +470,7 @@ m2::void_expected m2::level_editor::State::Save() {
 		}
 	}
 	for (const auto& [position, idAndlevelObject] : _foregroundObjectPlaceholders) {
-		level.add_objects()->CopyFrom(std::get<pb::LevelObject>(idAndlevelObject));
+		level.add_objects()->CopyFrom(std::get<pb::Object>(idAndlevelObject));
 	}
 
 	// Save level
@@ -491,7 +491,7 @@ void m2::level_editor::State::PaintBackground(const VecI& position, m2g::pb::Spr
 }
 void m2::level_editor::State::PlaceForeground(const VecF& position, float orientation, m2g::pb::ObjectType objectType, m2g::pb::GroupType groupType, unsigned groupInstance) {
 	const auto fgPlaceholderId = obj::CreateForegroundPlaceholder(position, orientation, M2_GAME.GetMainSpriteOfObject(objectType));
-	m2::pb::LevelObject levelObject;
+	m2::pb::Object levelObject;
 	levelObject.mutable_position()->set_x(position.x);
 	levelObject.mutable_position()->set_y(position.y);
 	levelObject.set_orientation(orientation);
@@ -519,12 +519,12 @@ m2::level_editor::State::ForegroundObjectPlaceholderMap::iterator m2::level_edit
 
 		// Find object properties and set it
 
-		const auto orientationDegreesUnbounded = RoundI(ToDegrees(std::get<pb::LevelObject>(foundIt->second).orientation()));
+		const auto orientationDegreesUnbounded = RoundI(ToDegrees(std::get<pb::Object>(foundIt->second).orientation()));
 		const auto orientationDegrees = ((orientationDegreesUnbounded % 360) + 360) % 360;
 		auto* orientationInput = M2_LEVEL.GetRightHud()->FindWidget<widget::IntegerSelection>("OrientationInput");
 		orientationInput->SetValue(orientationDegrees);
 
-		const auto objectType = std::get<pb::LevelObject>(foundIt->second).type();
+		const auto objectType = std::get<pb::Object>(foundIt->second).type();
 		auto* objectTypeSelection = M2_LEVEL.GetRightHud()->FindWidget<widget::TextSelection>("ObjectTypeSelection");
 		// Find the index of the option that corresponds to the object type
 		const auto& objectTypeOptions = objectTypeSelection->GetOptions();
@@ -535,7 +535,7 @@ m2::level_editor::State::ForegroundObjectPlaceholderMap::iterator m2::level_edit
 			}
 		}
 
-		const auto groupType = std::get<pb::LevelObject>(foundIt->second).group().type();
+		const auto groupType = std::get<pb::Object>(foundIt->second).group().type();
 		auto* groupTypeSelection = M2_LEVEL.GetRightHud()->FindWidget<widget::TextSelection>("GroupTypeSelection");
 		// Find the index of the option that corresponds to the group type
 		const auto& groupTypeOptions = groupTypeSelection->GetOptions();
@@ -546,7 +546,7 @@ m2::level_editor::State::ForegroundObjectPlaceholderMap::iterator m2::level_edit
 			}
 		}
 
-		const auto groupInstance = std::get<pb::LevelObject>(foundIt->second).group().instance();
+		const auto groupInstance = std::get<pb::Object>(foundIt->second).group().instance();
 		auto* groupInstanceSelection = M2_LEVEL.GetRightHud()->FindWidget<widget::IntegerSelection>("GroupInstanceSelection");
 		groupInstanceSelection->SetValue(groupInstance);
 	}
@@ -561,7 +561,7 @@ m2::RectF m2::level_editor::State::ForegroundSelectionArea() const {
 	}
 }
 int m2::level_editor::State::SpritePpm(ForegroundObjectPlaceholderMap::const_iterator fgObject) {
-	const auto objectType = std::get<pb::LevelObject>(fgObject->second).type();
+	const auto objectType = std::get<pb::Object>(fgObject->second).type();
 	const auto spriteType = *M2_GAME.GetMainSpriteOfObject(objectType);
 	const auto& sprite = std::get<Sprite>(M2_GAME.GetSpriteOrTextLabel(spriteType));
 	return sprite.Ppm();

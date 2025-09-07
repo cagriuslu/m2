@@ -5,18 +5,21 @@ import "m2g_GroupType.proto";
 import "m2g_ObjectType.proto";
 import "m2g_SpriteType.proto";
 import "VecF.proto";
+import "M2.proto";
 
 message Group {
   m2g.pb.GroupType type = 1;
   uint32 instance = 2;
 }
 
-message LevelObject {
+message Object {
   VecF position = 1;
   float orientation = 2; // In radians
   m2g.pb.ObjectType type = 3;
   Group group = 4;
-  bool is_locked = 5; // If locked, level editor isn't allowed to move or remove the object
+  GraphicsLayer graphics_layer = 5;
+  PhysicsLayer physics_layer = 6;
+  bool is_locked = 7; // If locked, level editor isn't allowed to move or remove the object
 }
 
 message SpriteTypeArray {
@@ -38,6 +41,15 @@ enum ProjectionType {
   PERSPECTIVE_YZ = 2;
 }
 
+// A layer that contains densely packed graphic objects. For each object, only the sprite type is described.
+message DenseGraphicsLayer {
+  GraphicsLayer graphics_layer = 1;
+  repeated SpriteTypeArray first_quadrant_rows = 2;
+  repeated SpriteTypeArray second_quadrant_rows = 3;
+  repeated SpriteTypeArray third_quadrant_rows = 4;
+  repeated SpriteTypeArray forth_quadrant_rows = 5;
+}
+
 message Level {
   string identifier = 1; // To recognize the level from the code
   ProjectionType projection_type = 2;
@@ -47,6 +59,7 @@ message Level {
   float horizontal_fov = 5; // Horizontal FOV of the camera in PERSPECTIVE projection in degrees
 
   // First layer is drawn the last, thus it's on the front.
-  repeated BackgroundLayer background_layers = 6;
-  repeated LevelObject objects = 7;
+  repeated BackgroundLayer background_layers = 6; // DEPRECATED
+  repeated Object objects = 7;
+  repeated DenseGraphicsLayer dense_graphic_layers = 8;
 }

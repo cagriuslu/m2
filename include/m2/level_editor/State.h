@@ -16,8 +16,8 @@ namespace m2::level_editor {
 	class State {
 		using BackgroundSpritePlaceholderMap = std::map<VecI, std::tuple<Id, m2g::pb::SpriteType>, VecICompareTopLeftToBottomRight>;
 		using BackgroundSpriteClipboardMap = std::map<VecI, m2g::pb::SpriteType, VecICompareTopLeftToBottomRight>;
-		using ForegroundObjectPlaceholderMap = std::multimap<VecF, std::tuple<Id, pb::LevelObject>, VecFCompareTopLeftToBottomRight>;
-		using ForegroundObjectClipboardMap = std::multimap<VecF, pb::LevelObject, VecFCompareTopLeftToBottomRight>;
+		using ForegroundObjectPlaceholderMap = std::multimap<VecF, std::tuple<Id, pb::Object>, VecFCompareTopLeftToBottomRight>;
+		using ForegroundObjectClipboardMap = std::multimap<VecF, pb::Object, VecFCompareTopLeftToBottomRight>;
 
 		std::array<BackgroundSpritePlaceholderMap, gBackgroundDrawLayerCount> _backgroundSpritePlaceholders;
 		ForegroundObjectPlaceholderMap _foregroundObjectPlaceholders;

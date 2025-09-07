@@ -2,6 +2,7 @@ syntax = "proto3";
 package m2.pb;
 
 enum GraphicsLayer {
+  // Supports flat graphics only
   BACKGROUND = 0;
   BEDROCK_FLAT = 1;
   BEDROCK_UPRIGHT = 2;
@@ -11,6 +12,7 @@ enum GraphicsLayer {
   GROUND_UPRIGHT = 6;
   ABOVE_GROUND_FLAT = 7;
   ABOVE_GROUND_UPRIGHT = 8;
+  // Supports flat graphics only
   FOREGROUND = 9;
 }
 
