@@ -56,9 +56,13 @@ Level::~Level() {
 	}
 	delete contactListener;
 	contactListener = nullptr;
-	delete world[I(PhysicsLayer::P1)];
-	delete world[I(PhysicsLayer::P0)];
-	delete world[I(PhysicsLayer::PM1)];
+	delete world[I(pb::PhysicsLayer::SPACE)];
+	delete world[I(pb::PhysicsLayer::AIRBORNE)];
+	delete world[I(pb::PhysicsLayer::ABOVE_GROUND)];
+	delete world[I(pb::PhysicsLayer::SEA_LEVEL)];
+	delete world[I(pb::PhysicsLayer::UNDER_WATER)];
+	delete world[I(pb::PhysicsLayer::SEABED)];
+	delete world[I(pb::PhysicsLayer::BEDROCK)];
 }
 
 void_expected Level::InitSinglePlayer(
@@ -377,20 +381,32 @@ void_expected Level::InitAnyPlayer(
 	}
 
 	if (physical_world) {
-		world[I(PhysicsLayer::PM1)] = new b2World(static_cast<b2Vec2>(M2G_PROXY.gravity));
-		world[I(PhysicsLayer::P0)] = new b2World(static_cast<b2Vec2>(M2G_PROXY.gravity));
-		world[I(PhysicsLayer::P1)] = new b2World(static_cast<b2Vec2>(M2G_PROXY.gravity));
+		world[I(pb::PhysicsLayer::BEDROCK)] = new b2World(static_cast<b2Vec2>(M2G_PROXY.gravity));
+		world[I(pb::PhysicsLayer::SEABED)] = new b2World(static_cast<b2Vec2>(M2G_PROXY.gravity));
+		world[I(pb::PhysicsLayer::UNDER_WATER)] = new b2World(static_cast<b2Vec2>(M2G_PROXY.gravity));
+		world[I(pb::PhysicsLayer::SEA_LEVEL)] = new b2World(static_cast<b2Vec2>(M2G_PROXY.gravity));
+		world[I(pb::PhysicsLayer::ABOVE_GROUND)] = new b2World(static_cast<b2Vec2>(M2G_PROXY.gravity));
+		world[I(pb::PhysicsLayer::AIRBORNE)] = new b2World(static_cast<b2Vec2>(M2G_PROXY.gravity));
+		world[I(pb::PhysicsLayer::SPACE)] = new b2World(static_cast<b2Vec2>(M2G_PROXY.gravity));
 		contactListener = new box2d::ContactListener(
 		    Physique::DefaultBeginContactCallback, Physique::DefaultEndContactCallback);
-		world[I(PhysicsLayer::PM1)]->SetContactListener(contactListener);
-		world[I(PhysicsLayer::P0)]->SetContactListener(contactListener);
-		world[I(PhysicsLayer::P1)]->SetContactListener(contactListener);
+		world[I(pb::PhysicsLayer::BEDROCK)]->SetContactListener(contactListener);
+		world[I(pb::PhysicsLayer::SEABED)]->SetContactListener(contactListener);
+		world[I(pb::PhysicsLayer::UNDER_WATER)]->SetContactListener(contactListener);
+		world[I(pb::PhysicsLayer::SEA_LEVEL)]->SetContactListener(contactListener);
+		world[I(pb::PhysicsLayer::ABOVE_GROUND)]->SetContactListener(contactListener);
+		world[I(pb::PhysicsLayer::AIRBORNE)]->SetContactListener(contactListener);
+		world[I(pb::PhysicsLayer::SPACE)]->SetContactListener(contactListener);
 #ifdef DEBUG
 		auto* debugDraw = new third_party::physics::box2d::DebugDraw{};
 		_debugDraw = debugDraw;
-		world[I(PhysicsLayer::PM1)]->SetDebugDraw(debugDraw);
-		world[I(PhysicsLayer::P0)]->SetDebugDraw(debugDraw);
-		world[I(PhysicsLayer::P1)]->SetDebugDraw(debugDraw);
+		world[I(pb::PhysicsLayer::BEDROCK)]->SetDebugDraw(debugDraw);
+		world[I(pb::PhysicsLayer::SEABED)]->SetDebugDraw(debugDraw);
+		world[I(pb::PhysicsLayer::UNDER_WATER)]->SetDebugDraw(debugDraw);
+		world[I(pb::PhysicsLayer::SEA_LEVEL)]->SetDebugDraw(debugDraw);
+		world[I(pb::PhysicsLayer::ABOVE_GROUND)]->SetDebugDraw(debugDraw);
+		world[I(pb::PhysicsLayer::AIRBORNE)]->SetDebugDraw(debugDraw);
+		world[I(pb::PhysicsLayer::SPACE)]->SetDebugDraw(debugDraw);
 #endif
 	}
 

@@ -22,7 +22,7 @@ m2::void_expected LoadDoor(m2::Object& obj) {
 			}
 		});
 	}
-	phy.body[m2::I(m2::PhysicsLayer::P0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::PhysicsLayer::P0);
+	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
 
 	obj.AddGraphic(m2::ForegroundDrawLayer::F0_BOTTOM, spriteType);
 

@@ -19,15 +19,6 @@ namespace m2 {
 	constexpr int UPRIGHT_GRAPHICS_LAYER_COUNT = pb::UprightGraphicsLayer_ARRAYSIZE;
 	constexpr int PHYSICS_LAYER_COUNT = pb::PhysicsLayer_ARRAYSIZE;
 
-	/// Each physics layer designates a separate physical world. Objects in different layers cannot collide.
-	enum class PhysicsLayer {
-		PM1, // Underground in a top-down game
-		P0, // Ground level in a top-down game
-		P1, // Above ground in a top-down game
-		_n // End sentinel
-	};
-	constexpr int gPhysicsLayerCount = static_cast<int>(PhysicsLayer::_n);
-
 	/// Background layers are graphics-only layers. An object can have a Graphic component in any of the background
 	/// layers. Background layers are drawn from back to front and B0 is drawn the last, thus it's on the front.
 	/// Background Graphic components are not ordered, thus they should not overlap.

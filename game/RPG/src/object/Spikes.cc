@@ -24,7 +24,7 @@ m2::void_expected rpg::create_spikes(m2::Object& obj) {
 		.initiallyAwake = false,
 		.isBullet = false
 	};
-	phy.body[I(m2::PhysicsLayer::P0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::PhysicsLayer::P0);
+	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
 
 	// Create graphic component
 	auto& gfx = obj.AddGraphic(m2::ForegroundDrawLayer::F0_BOTTOM, m2g::pb::SPIKES_IN);
@@ -40,7 +40,7 @@ m2::void_expected rpg::create_spikes(m2::Object& obj) {
 				std::get<const m2::Sprite*>(gfx.visual) = &spikes_out;
 				impl.trigger_timer = m2::Timer{};
 				// Recreate the body so that collision is reset, otherwise the Player standing on the spikes doesn't collide again
-				phy.body[I(m2::PhysicsLayer::P0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::PhysicsLayer::P0);
+				phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
 			}
 		} else if (std::get<const m2::Sprite*>(gfx.visual) == &spikes_out && impl.trigger_timer) {
 			// Spikes are out and triggered
@@ -48,7 +48,7 @@ m2::void_expected rpg::create_spikes(m2::Object& obj) {
 				std::get<const m2::Sprite*>(gfx.visual) = &spikes_in;
 				impl.trigger_timer.reset();
 				// Recreate the body so that collision is reset, otherwise the Player standing on the spikes doesn't collide again
-				phy.body[I(m2::PhysicsLayer::P0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::PhysicsLayer::P0);
+				phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
 			}
 		}
 	};

@@ -183,7 +183,7 @@ Character& Object::AddFullCharacter() {
     return std::get<FullCharacter>(*character);
 }
 
-void Object::MoveLayer(const std::optional<PhysicsLayer> newPhysicsLayer, const std::optional<DrawLayer> newDrawLayer) {
+void Object::MoveLayer(const std::optional<pb::PhysicsLayer> newPhysicsLayer, const std::optional<DrawLayer> newDrawLayer) {
 	if (newPhysicsLayer) {
 		auto* phy = TryGetPhysique();
 		if (not phy) {
@@ -309,7 +309,7 @@ std::function<void()> m2::CreateCharacterDeleter(ObjectId id) {
 		}
 	};
 }
-std::function<void()> m2::CreateLayerMover(ObjectId id, std::optional<PhysicsLayer> phyLayer, std::optional<DrawLayer> drawLayer) {
+std::function<void()> m2::CreateLayerMover(ObjectId id, std::optional<pb::PhysicsLayer> phyLayer, std::optional<DrawLayer> drawLayer) {
 	return [id, phyLayer, drawLayer]() {
 		if (auto* object = M2_LEVEL.objects.Get(id)) {
 			object->MoveLayer(phyLayer, drawLayer);

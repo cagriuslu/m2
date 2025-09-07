@@ -57,7 +57,7 @@ std::variant<PolygonShape,RectangleShape,CircleShape,ChainShape,EdgeShape> m2::t
 }
 
 RigidBody RigidBody::CreateFromDefinition(const RigidBodyDefinition& definition, PhysiqueId physiqueId,
-		const VecF& position, const float angleInRads, const PhysicsLayer pl) {
+		const VecF& position, const float angleInRads, const pb::PhysicsLayer pl) {
 	b2BodyDef box2dBodyDef = {};
 	box2dBodyDef.type = ToBox2dBodyType(definition.bodyType);
 	box2dBodyDef.position = static_cast<b2Vec2>(position);

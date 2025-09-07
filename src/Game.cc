@@ -790,7 +790,7 @@ void m2::Game::ExecutePostDraw(const Stopwatch::Duration& delta) {
 
 void m2::Game::DebugDraw() {
 #ifdef DEBUG
-	for (int i = 0; i < I(gPhysicsLayerCount); ++i) {
+	for (int i = 0; i < I(PHYSICS_LAYER_COUNT); ++i) {
 		if (_level->world[i]) {
 			_level->world[i]->DebugDraw();
 		}

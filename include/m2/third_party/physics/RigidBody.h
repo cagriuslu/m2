@@ -91,12 +91,12 @@ namespace m2::third_party::physics {
 
 	class RigidBody {
 		void* _ptr{};
-		PhysicsLayer _phyLayer;
+		pb::PhysicsLayer _phyLayer;
 
-		RigidBody(void* ptr, const PhysicsLayer pl) : _ptr(ptr), _phyLayer(pl) {}
+		RigidBody(void* ptr, const pb::PhysicsLayer pl) : _ptr(ptr), _phyLayer(pl) {}
 
 	public:
-		static RigidBody CreateFromDefinition(const RigidBodyDefinition&, Id physiqueId, const VecF& position, float angleInRads, PhysicsLayer pl);
+		static RigidBody CreateFromDefinition(const RigidBodyDefinition&, Id physiqueId, const VecF& position, float angleInRads, pb::PhysicsLayer pl);
 		// Copy not allowed
 		RigidBody(const RigidBody& other) = delete;
 		RigidBody& operator=(const RigidBody& other) = delete;

@@ -2,6 +2,7 @@
 #include <m2/Game.h>
 #include <m2/Object.h>
 #include <m2/third_party/physics/RigidBody.h>
+#include <M2.pb.h>
 
 using namespace google::protobuf;
 using namespace m2::third_party::physics;
@@ -38,7 +39,7 @@ m2::Pool<m2::Object>::Iterator m2::obj::CreateTile(const BackgroundDrawLayer lay
 				.initiallyEnabled = true
 			};
 			auto& phy = it->AddPhysique();
-			phy.body[I(PhysicsLayer::P0)] = third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, it->GetPhysiqueId(), it->position, 0.0f, PhysicsLayer::P0);
+			phy.body[I(pb::PhysicsLayer::SEA_LEVEL)] = third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, it->GetPhysiqueId(), it->position, 0.0f, pb::PhysicsLayer::SEA_LEVEL);
 		}
 
 		// Add foreground companion if necessary

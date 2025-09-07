@@ -36,6 +36,6 @@ void LoadEdge() {
 		},
 
 	};
-	phy.body[I(m2::PhysicsLayer::P0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, it->GetPhysiqueId(), {}, {}, m2::PhysicsLayer::P0);
-	phy.body[I(m2::PhysicsLayer::P1)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, it->GetPhysiqueId(), {}, {}, m2::PhysicsLayer::P1);
+	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, it->GetPhysiqueId(), {}, {}, m2::pb::PhysicsLayer::SEA_LEVEL);
+	phy.body[m2::I(m2::pb::PhysicsLayer::ABOVE_GROUND)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, it->GetPhysiqueId(), {}, {}, m2::pb::PhysicsLayer::ABOVE_GROUND);
 }

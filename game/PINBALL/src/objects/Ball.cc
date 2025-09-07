@@ -12,10 +12,10 @@ namespace {
 	};
 
 	m2::third_party::physics::RigidBody& GetActiveRigidBody(m2::Physique& phy) {
-		if (phy.body[m2::I(m2::PhysicsLayer::P0)]->IsEnabled()) {
-			return *phy.body[m2::I(m2::PhysicsLayer::P0)];
+		if (phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->IsEnabled()) {
+			return *phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)];
 		}
-		return *phy.body[m2::I(m2::PhysicsLayer::P1)];
+		return *phy.body[m2::I(m2::pb::PhysicsLayer::ABOVE_GROUND)];
 	}
 }
 
@@ -48,33 +48,33 @@ m2::void_expected LoadBall(m2::Object& obj) {
 		.isBullet = true,
 		.initiallyEnabled = true
 	};
-	phy.body[m2::I(m2::PhysicsLayer::P0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::PhysicsLayer::P0);
-	phy.body[m2::I(m2::PhysicsLayer::P1)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::PhysicsLayer::P1);
-	phy.body[m2::I(m2::PhysicsLayer::P1)]->SetEnabled(false);
+	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
+	phy.body[m2::I(m2::pb::PhysicsLayer::ABOVE_GROUND)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::pb::PhysicsLayer::ABOVE_GROUND);
+	phy.body[m2::I(m2::pb::PhysicsLayer::ABOVE_GROUND)]->SetEnabled(false);
 
 	MAYBE auto& gfx = obj.AddGraphic(m2::ForegroundDrawLayer::F0_BOTTOM, m2g::pb::SPRITE_BASIC_BALL);
 
 	phy.preStep = [initialPos = obj.position](m2::Physique& phy_, const m2::Stopwatch::Duration&) {
 		if (M2_GAME.events.PopKeyRelease(m2g::pb::BALL_LAUNCHER) /*&& M2G_PROXY.isOnBallLauncher*/) {
-			if (phy_.body[m2::I(m2::PhysicsLayer::P0)]->IsEnabled()) {
-				phy_.body[m2::I(m2::PhysicsLayer::P0)]->ApplyForceToCenter({0.0f, -7500.0f});
-			} else if (phy_.body[m2::I(m2::PhysicsLayer::P1)]->IsEnabled()) {
-				phy_.body[m2::I(m2::PhysicsLayer::P1)]->ApplyForceToCenter({0.0f, -7500.0f});
+			if (phy_.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->IsEnabled()) {
+				phy_.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->ApplyForceToCenter({0.0f, -7500.0f});
+			} else if (phy_.body[m2::I(m2::pb::PhysicsLayer::ABOVE_GROUND)]->IsEnabled()) {
+				phy_.body[m2::I(m2::pb::PhysicsLayer::ABOVE_GROUND)]->ApplyForceToCenter({0.0f, -7500.0f});
 			}
 			// TODO defer M2_GAME.audio_manager->Play(&M2_GAME.songs[m2g::pb::SONG_CIRCULAR_BUMPER_SOUND], m2::AudioManager::ONCE, 0.25f);
 		}
 		if (M2_GAME.events.PopKeyPress(m2g::pb::RETURN)) {
-			phy_.body[m2::I(m2::PhysicsLayer::P0)]->SetPosition(initialPos);
-			phy_.body[m2::I(m2::PhysicsLayer::P1)]->SetPosition(initialPos);
-			M2_DEFER(m2::CreateLayerMover(phy_.OwnerId(), m2::PhysicsLayer::P0, m2::ForegroundDrawLayer::F0_BOTTOM));
+			phy_.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->SetPosition(initialPos);
+			phy_.body[m2::I(m2::pb::PhysicsLayer::ABOVE_GROUND)]->SetPosition(initialPos);
+			M2_DEFER(m2::CreateLayerMover(phy_.OwnerId(), m2::pb::PhysicsLayer::SEA_LEVEL, m2::ForegroundDrawLayer::F0_BOTTOM));
 		}
 		if (M2_GAME.events.PopMouseButtonRelease(m2::MouseButton::PRIMARY)) {
 			const auto mousePosition = M2_GAME.MousePositionWorldM();
-			phy_.body[m2::I(m2::PhysicsLayer::P0)]->SetPosition(mousePosition);
-			phy_.body[m2::I(m2::PhysicsLayer::P0)]->SetLinearVelocity({});
-			phy_.body[m2::I(m2::PhysicsLayer::P1)]->SetPosition(mousePosition);
-			phy_.body[m2::I(m2::PhysicsLayer::P1)]->SetLinearVelocity({});
-			M2_DEFER(m2::CreateLayerMover(phy_.OwnerId(), m2::PhysicsLayer::P0, m2::ForegroundDrawLayer::F0_BOTTOM));
+			phy_.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->SetPosition(mousePosition);
+			phy_.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->SetLinearVelocity({});
+			phy_.body[m2::I(m2::pb::PhysicsLayer::ABOVE_GROUND)]->SetPosition(mousePosition);
+			phy_.body[m2::I(m2::pb::PhysicsLayer::ABOVE_GROUND)]->SetLinearVelocity({});
+			M2_DEFER(m2::CreateLayerMover(phy_.OwnerId(), m2::pb::PhysicsLayer::SEA_LEVEL, m2::ForegroundDrawLayer::F0_BOTTOM));
 		}
 	};
 	phy.onCollision = [&obj, ballImpl](m2::Physique& ball, const m2::Physique& other, const m2::box2d::Contact& contact) {

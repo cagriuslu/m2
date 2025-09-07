@@ -19,7 +19,7 @@ m2::void_expected rpg::init_finish_point(m2::Object& obj) {
 		.initiallyAwake = false,
 		.isBullet = false
 	};
-	phy.body[I(m2::PhysicsLayer::P0)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::PhysicsLayer::P0);
+	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
 
 	auto& gfx = obj.AddGraphic(m2::ForegroundDrawLayer::F0_BOTTOM, sprite_type);
 	gfx.visual = &std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(m2g::pb::CASTLE_FINISH_POINT_SPRITE_GRAYSCALE));
