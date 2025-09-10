@@ -15,6 +15,16 @@ float m2::internal::ResourceAmount::SetMaxAmount(float max_amount) {
 	return SetAmount(_amount);
 }
 
+m2::IFF::IFF(const pb::IFF& iff) {
+	if (iff.has_i()) {
+		_value = iff.i();
+	} else if (iff.has_ff()) {
+		_value = FF::FromProtobufRepresentation(iff.ff().value_e6());
+	} else {
+		_value = 0;
+	}
+}
+
 m2::Character::Character(uint64_t object_id) : Component(object_id) {}
 std::optional<m2g::pb::InteractionData> m2::Character::ExecuteInteraction(Character& initiator, const m2g::pb::InteractionData& data) {
 	if (this->on_interaction) {
@@ -385,11 +395,15 @@ void m2::FastCharacter::ClearAttributes() {
 	_attributes.clear();
 	_attributes.resize(pb::enum_value_count<m2g::pb::AttributeType>());
 }
+
 int m2::FastCharacter::ResourceTypeIndex(m2g::pb::ResourceType resource_type) {
 	return pb::enum_index<m2g::pb::ResourceType>(resource_type);
 }
 int m2::FastCharacter::AttributeTypeIndex(m2g::pb::AttributeType attribute_type) {
 	return pb::enum_index<m2g::pb::AttributeType>(attribute_type);
+}
+int m2::FastCharacter::PropertyTypeIndex(m2g::pb::PropertyType pt) {
+	return pb::enum_index<m2g::pb::PropertyType>(pt);
 }
 
 std::function<std::vector<m2g::pb::ItemType>(m2::Character&)> m2::GenerateNamedItemTypesFilter(m2g::pb::ItemCategory item_category) {
@@ -409,7 +423,17 @@ std::function<std::vector<m2g::pb::ItemType>(m2::Character&)> m2::GenerateNamedI
 }
 
 m2::Character& m2::ToCharacterBase(CharacterVariant& v) {
+	return std::visit([](auto& vv) -> Character& { return vv; }, v);
+}
+m2::FastCharacter& m2::ToFastCharacter(CharacterVariant& v) {
 	return std::visit(overloaded {
-			[](auto& vv) -> Character& { return vv; }
+		[](FastCharacter& vv) -> FastCharacter& { return vv; },
+		[](auto&) -> FastCharacter& { throw M2_ERROR("Unexpected character type"); }
+	}, v);
+}
+const m2::FastCharacter& m2::ToFastCharacter(const CharacterVariant& v) {
+	return std::visit(overloaded {
+		[](const FastCharacter& vv) -> const FastCharacter& { return vv; },
+		[](auto&) -> const FastCharacter& { throw M2_ERROR("Unexpected character type"); }
 	}, v);
 }

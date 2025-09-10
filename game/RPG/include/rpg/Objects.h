@@ -1,5 +1,5 @@
 #pragma once
-#include <Item.pb.h>
+#include <Character.pb.h>
 #include <m2g_ItemType.pb.h>
 #include <m2/Meta.h>
 #include <m2/Object.h>

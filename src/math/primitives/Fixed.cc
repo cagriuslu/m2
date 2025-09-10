@@ -4,36 +4,94 @@
 #include <ranges>
 #include <algorithm>
 
-static int PrecisionPointToDecimalLut[] = {
-	50000000, // 1 / (2^1)
-	25000000, // 1 / (2^2)
-	12500000, // 1 / (2^3)
-	 6250000, // 1 / (2^4)
-	 3125000, // 1 / (2^5)
-	 1562500, // 1 / (2^6)
-	  781250, // 1 / (2^7)
-	  390625, // 1 / (2^8)
-	  195312, // 1 / (2^9)
-	   97656, // 1 / (2^10)
-	   48828, // 1 / (2^11)
-	   24414, // 1 / (2^12)
-	   12207, // 1 / (2^13)
-		6104, // 1 / (2^14)
-		3052, // 1 / (2^15)
-		1526, // 1 / (2^16)
-		 763, // 1 / (2^17)
-		 381, // 1 / (2^18)
-		 191, // 1 / (2^19)
-		  95, // 1 / (2^20)
-		  48, // 1 / (2^21)
-		  24, // 1 / (2^22)
-	      12, // 1 / (2^23)
-	       6, // 1 / (2^24)
-	       3, // 1 / (2^25)
-};
+namespace {
+	// Look up table where i'th element corresponds to the value of 1/(2^i) multiplied by 10^8.
+	// This is used while converting a fixed point number to string.
+	const int PRECISION_POINT_TO_DECIMAL_8[] = {
+		50000000, // 1 / (2^1)
+		25000000, // 1 / (2^2)
+		12500000, // 1 / (2^3)
+		 6250000, // 1 / (2^4)
+		 3125000, // 1 / (2^5)
+		 1562500, // 1 / (2^6)
+		  781250, // 1 / (2^7)
+		  390625, // 1 / (2^8)
+		  195313, // 1 / (2^9)
+		   97656, // 1 / (2^10)
+		   48828, // 1 / (2^11)
+		   24414, // 1 / (2^12)
+		   12207, // 1 / (2^13)
+			6104, // 1 / (2^14)
+			3052, // 1 / (2^15)
+			1526, // 1 / (2^16)
+			 763, // 1 / (2^17)
+			 381, // 1 / (2^18)
+			 191, // 1 / (2^19)
+			  95, // 1 / (2^20)
+			  48, // 1 / (2^21)
+			  24, // 1 / (2^22)
+			  12, // 1 / (2^23)
+			   6, // 1 / (2^24)
+			   3, // 1 / (2^25)
+			   1, // 1 / (2^26)
+	};
+
+	const int PRECISION_POINT_TO_DECIMAL_6[] = {
+		500000, // 1 / (2^1)
+		250000, // 1 / (2^2)
+		125000, // 1 / (2^3)
+		 62500, // 1 / (2^4)
+		 31250, // 1 / (2^5)
+		 15625, // 1 / (2^6)
+		  7813, // 1 / (2^7)
+		  3906, // 1 / (2^8)
+		  1953, // 1 / (2^9)
+		   977, // 1 / (2^10)
+		   488, // 1 / (2^11)
+		   244, // 1 / (2^12)
+		   122, // 1 / (2^13)
+			61, // 1 / (2^14)
+			31, // 1 / (2^15)
+			15, // 1 / (2^16)
+			 8, // 1 / (2^17)
+			 4, // 1 / (2^18)
+			 2, // 1 / (2^19)
+			 1, // 1 / (2^20)
+	};
+}
+
+m2::Fixed m2::Fixed::FromProtobufRepresentation(const int64_t rawValueE6) {
+	if constexpr (std::size(PRECISION_POINT_TO_DECIMAL_6) < PRECISION) {
+		throw M2_ERROR("Implementation error, precision not supported");
+	}
+
+	const bool negative = rawValueE6 < 0;
+	const auto valueE6 = negative ? -rawValueE6 : rawValueE6;
+
+	const auto wholePart = valueE6 / 1000000l;
+	auto remainder = valueE6 % 1000000l;
+
+	int64_t value = wholePart;
+	for (int i = 0; i < PRECISION; ++i) {
+		if (PRECISION_POINT_TO_DECIMAL_6[i] <= remainder) {
+			// Insert a 1 from the right
+			value <<= 1;
+			value |= 1;
+			remainder -= PRECISION_POINT_TO_DECIMAL_6[i];
+		} else {
+			// Insert 0 from the right
+			value <<= 1;
+		}
+	}
+
+	if (static_cast<int64_t>(INT32_MAX) < value) {
+		throw M2_ERROR("Protobuf representation is more than what Fixed can hold");
+	}
+	return Fixed{std::in_place, I(negative ? -value : value)};
+}
 
 std::string m2::Fixed::ToString() const {
-	if constexpr (std::size(PrecisionPointToDecimalLut) < PRECISION) {
+	if constexpr (std::size(PRECISION_POINT_TO_DECIMAL_8) < PRECISION) {
 		throw M2_ERROR("Implementation error, precision not supported");
 	}
 
@@ -65,7 +123,7 @@ std::string m2::Fixed::ToString() const {
 	for (int i = 0; i < PRECISION; ++i) {
 		auto bit = fractional_part & (1 << (PRECISION - i - 1));
 		if (bit) {
-			fraction += PrecisionPointToDecimalLut[i];
+			fraction += PRECISION_POINT_TO_DECIMAL_8[i];
 		}
 	}
 	// Append the fraction to the buffer

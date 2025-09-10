@@ -1,5 +1,5 @@
 #include <rpg/Objects.h>
-#include <Item.pb.h>
+#include <Character.pb.h>
 #include <m2/Game.h>
 #include <m2/third_party/physics/ColliderCategory.h>
 

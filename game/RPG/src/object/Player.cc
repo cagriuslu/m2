@@ -8,7 +8,7 @@
 #include <m2/game/CharacterMovement.h>
 #include <rpg/Objects.h>
 #include <m2/M2.h>
-#include <Item.pb.h>
+#include <Character.pb.h>
 #include <rpg/Defs.h>
 #include <array>
 #include <m2/third_party/physics/ColliderCategory.h>

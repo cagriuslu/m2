@@ -33,6 +33,17 @@ TEST(Fixed, constructors) {
 	// Number bigger than this cannot be represented by double accurately
 	EXPECT_NO_THROW(Fixed{131071.99993896}); // This is the highest number that can be represented
 	EXPECT_NO_THROW(Fixed{-131072.0}); // This is the lowest number that can be represented
+
+	EXPECT_EQ(Fixed::FromProtobufRepresentation(0).ToString(), "+000000.00000000");
+	EXPECT_EQ(Fixed::FromProtobufRepresentation(1'000'000ll).ToString(), "+000001.00000000");
+	EXPECT_EQ(Fixed::FromProtobufRepresentation(-1'000'000ll).ToString(), "-000001.00000000");
+	EXPECT_EQ(Fixed::FromProtobufRepresentation(1'234'000'000ll).ToString(), "+001234.00000000");
+	EXPECT_EQ(Fixed::FromProtobufRepresentation(-1'234'000'000ll).ToString(), "-001234.00000000");
+	EXPECT_ANY_THROW(Fixed::FromProtobufRepresentation(132'000'000'000ll));
+	EXPECT_ANY_THROW(Fixed::FromProtobufRepresentation(-132'000'000'000ll));
+	EXPECT_EQ(Fixed::FromProtobufRepresentation(12'340'000ll).ToRawValue(), 0b00000000'00000011'00010101'11000010);
+	EXPECT_EQ(Fixed::FromProtobufRepresentation(1'234'567'800ll).ToString(), "+001234.56774902");
+	EXPECT_EQ(Fixed::FromProtobufRepresentation(-1'234'567'800ll).ToString(), "-001234.56774902");
 }
 
 TEST(Fixed, operators) {
@@ -46,13 +57,13 @@ TEST(Fixed, operators) {
 	std::cout << Fixed{2.6362}.ToString() << std::endl; // Closest number is 2.63623046
 	std::cout << Fixed{3.2993106463}.ToString() << std::endl; // Multiplication of the closest numbers
 	std::cout << (Fixed{1.2515} * Fixed{2.6362}).ToString() << std::endl; // Expectation: 3.2992043
-	EXPECT_EQ((Fixed{1.2515} * Fixed{2.6362}).ToString(), "+000003.29925537"); // Close enough
+	EXPECT_EQ((Fixed{1.2515} * Fixed{2.6362}).ToString(), "+000003.29925538"); // Close enough
 
 	std::cout << Fixed{10.1946}.ToString() << std::endl; // Closest number is 10.19458007
 	std::cout << Fixed{70.8069}.ToString() << std::endl; // Closest number is 70.80688476
 	std::cout << Fixed{721.8464561931}.ToString() << std::endl; // Multiplication of the closest numbers
 	std::cout << (Fixed{10.1946} * Fixed{70.8069}).ToString() << std::endl; // Expectation: 721.84802274
-	EXPECT_EQ((Fixed{10.1946} * Fixed{70.8069}).ToString(), "+000721.84643554"); // Close enough
+	EXPECT_EQ((Fixed{10.1946} * Fixed{70.8069}).ToString(), "+000721.84643555"); // Close enough
 }
 
 TEST(Fixed, attributes) {
@@ -111,9 +122,9 @@ TEST(Fixed, accessors) {
 
 	EXPECT_EQ((Fixed{std::in_place, 0x00000001}.ToString()), "+000000.00006104");
 	EXPECT_EQ((Fixed{-0.00006104}.ToString()), "-000000.00006104");
-	EXPECT_EQ((Fixed{std::in_place, 0x7FFFFFFF}.ToString()), "+131071.99993896");
+	EXPECT_EQ((Fixed{std::in_place, 0x7FFFFFFF}.ToString()), "+131071.99993897");
 	EXPECT_EQ((Fixed{std::in_place, static_cast<int>(0x80000000)}.ToString()), "-131072.00000000");
-	EXPECT_EQ((Fixed{std::in_place, static_cast<int>(0x80000001)}.ToString()), "-131071.99993896");
+	EXPECT_EQ((Fixed{std::in_place, static_cast<int>(0x80000001)}.ToString()), "-131071.99993897");
 
 	EXPECT_EQ((Fixed{std::in_place, 0x00000001}.ToFastString()), "+000000.00006104");
 	EXPECT_EQ((Fixed{-0.00006104}.ToFastString()), "-000000.00006104");

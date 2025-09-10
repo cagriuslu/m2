@@ -14,6 +14,7 @@ namespace m2 {
 		explicit Float(const    int i) : _value(static_cast<float>(i)) {}
 		explicit Float(const  float f) : _value(f) {}
 		explicit Float(const double d) : _value(static_cast<float>(d)) {}
+		static Float FromProtobufRepresentation(const double rawValueE6) { return Float{rawValueE6 / 1'000'000.0}; }
 
 		// Attributes
 

@@ -30,6 +30,7 @@ namespace m2 {
 		explicit Fixed(const    int i) { ThrowIfOutOfBounds(i); *this = UnsafeFromInt(i);    }
 		explicit Fixed(const  float f) { ThrowIfOutOfBounds(f); *this = UnsafeFromFloat(f);  }
 		explicit Fixed(const double d) { ThrowIfOutOfBounds(d); *this = UnsafeFromDouble(d); }
+		static Fixed FromProtobufRepresentation(int64_t rawValueE6);
 
 		// Attributes
 

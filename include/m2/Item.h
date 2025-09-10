@@ -1,6 +1,6 @@
 #pragma once
 #include "protobuf/Detail.h"
-#include <Item.pb.h>
+#include <Character.pb.h>
 #include <vector>
 #include <string>
 

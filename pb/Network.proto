@@ -4,7 +4,7 @@ package m2.pb;
 import "m2g_Network.proto";
 import "m2g_ObjectType.proto";
 import "m2g_ItemType.proto";
-import "Item.proto";
+import "Character.proto";
 import "VecF.proto";
 
 enum ServerThreadState {
