@@ -15,16 +15,6 @@ float m2::internal::ResourceAmount::SetMaxAmount(float max_amount) {
 	return SetAmount(_amount);
 }
 
-m2::IFF::IFF(const pb::IFF& iff) {
-	if (iff.has_i()) {
-		_value = iff.i();
-	} else if (iff.has_ff()) {
-		_value = FF::FromProtobufRepresentation(iff.ff().value_e6());
-	} else {
-		_value = 0;
-	}
-}
-
 m2::Character::Character(uint64_t object_id) : Component(object_id) {}
 std::optional<m2g::pb::InteractionData> m2::Character::ExecuteInteraction(Character& initiator, const m2g::pb::InteractionData& data) {
 	if (this->on_interaction) {

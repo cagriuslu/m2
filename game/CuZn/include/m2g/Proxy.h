@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cuzn/Detail.h>
 #include <m2/Proxy.h>
 #include <cuzn/journeys/BuildJourney.h>
 #include <cuzn/journeys/NetworkJourney.h>
@@ -9,6 +8,7 @@
 #include <cuzn/journeys/LiquidationJourney.h>
 #include <cuzn/journeys/subjourneys/POISelectionJourney.h>
 #include <m2/game/Graph.h>
+#include <list>
 
 namespace m2g {
 	class Proxy : public m2::Proxy {
