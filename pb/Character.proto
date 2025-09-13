@@ -9,21 +9,21 @@ import "m2g_SpriteType.proto";
 import "ProxyTypes.proto";
 
 // A type that either carries an integer, or the real number type selected by the game
-message IFF {
+message IFE {
   oneof value_variant {
     int32 i = 1;
-    FF ff = 2;
+    FE fe = 2;
   }
 }
 
 message Property {
   m2g.pb.PropertyType type = 1;
-  IFF iff = 2;
+  IFE ife = 2;
 }
 
 message Attribute2 {
   m2g.pb.AttributeType type = 1;
-  IFF iff = 2;
+  IFE ife = 2;
 }
 
 // DEPRECATED
@@ -40,7 +40,7 @@ message Attribute {
   float amount = 2;
   oneof value_type {
     int32 int_value = 3;
-    FF ff_value = 4;
+    FE ff_value = 4;
   }
 }
 

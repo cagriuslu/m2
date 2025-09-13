@@ -1,4 +1,4 @@
-#include <m2/math/primitives/Fixed.h>
+#include <m2/math/primitives/Exact.h>
 #include <cstdio>
 #include <array>
 #include <ranges>
@@ -60,7 +60,7 @@ namespace {
 	};
 }
 
-m2::Fixed m2::Fixed::FromProtobufRepresentation(const int64_t rawValueE6) {
+m2::Exact m2::Exact::FromProtobufRepresentation(const int64_t rawValueE6) {
 	if constexpr (std::size(PRECISION_POINT_TO_DECIMAL_6) < PRECISION) {
 		throw M2_ERROR("Implementation error, precision not supported");
 	}
@@ -85,12 +85,12 @@ m2::Fixed m2::Fixed::FromProtobufRepresentation(const int64_t rawValueE6) {
 	}
 
 	if (static_cast<int64_t>(INT32_MAX) < value) {
-		throw M2_ERROR("Protobuf representation is more than what Fixed can hold");
+		throw M2_ERROR("Protobuf representation is more than what Exact can hold");
 	}
-	return Fixed{std::in_place, I(negative ? -value : value)};
+	return Exact{std::in_place, I(negative ? -value : value)};
 }
 
-std::string m2::Fixed::ToString() const {
+std::string m2::Exact::ToString() const {
 	if constexpr (std::size(PRECISION_POINT_TO_DECIMAL_8) < PRECISION) {
 		throw M2_ERROR("Implementation error, precision not supported");
 	}
@@ -109,7 +109,7 @@ std::string m2::Fixed::ToString() const {
 	auto integer_part =
 		(_value == static_cast<int>(0x80000000))
 		? (1 << (SIGNIFICANT - 1)) // Special case where the negative number doesn't fit into SIGNIFICANT number of bits
-		: IsNegative() ? Fixed{std::in_place, -_value}.ToInteger() : ToInteger();
+		: IsNegative() ? Exact{std::in_place, -_value}.ToInteger() : ToInteger();
 	seek += snprintf(buffer.data() + seek, buffer.size() - seek, "%06d", integer_part);
 
 	// Then, print the radix point
@@ -131,44 +131,44 @@ std::string m2::Fixed::ToString() const {
 
 	return {buffer.data()};
 }
-std::string m2::Fixed::ToFastString() const {
+std::string m2::Exact::ToFastString() const {
 	std::array<char, 32> buffer{};
 	std::ranges::fill(buffer, 0);
 	snprintf(buffer.data(), buffer.size(), "%+016.8f", ToDouble());
 	return {buffer.data()};
 }
-std::string m2::Fixed::ToFastestString() const {
+std::string m2::Exact::ToFastestString() const {
 	std::array<char, 32> buffer{};
 	std::ranges::fill(buffer, 0);
 	snprintf(buffer.data(), buffer.size(), "%+016.08f", ToFloat());
 	return {buffer.data()};
 }
 
-void m2::Fixed::ThrowIfOutOfBounds(const int i) {
+void m2::Exact::ThrowIfOutOfBounds(const int i) {
 	if (Max().ToInteger() < i) {
-		throw M2_ERROR("Integer is more than what Fixed can hold");
+		throw M2_ERROR("Integer is more than what Exact can hold");
 	}
 	if (i < Min().ToInteger()) {
-		throw M2_ERROR("Integer is less than what Fixed can hold");
+		throw M2_ERROR("Integer is less than what Exact can hold");
 	}
 }
-void m2::Fixed::ThrowIfOutOfBounds(const float f) {
+void m2::Exact::ThrowIfOutOfBounds(const float f) {
 	if (Max().ToFloat() < f) {
-		throw M2_ERROR("Float is more than what Fixed can hold");
+		throw M2_ERROR("Float is more than what Exact can hold");
 	}
 	if (f < Min().ToFloat()) {
-		throw M2_ERROR("Float is less than what Fixed can hold");
+		throw M2_ERROR("Float is less than what Exact can hold");
 	}
 }
-void m2::Fixed::ThrowIfOutOfBounds(const double d) {
+void m2::Exact::ThrowIfOutOfBounds(const double d) {
 	if (Max().ToDouble() < d) {
-		throw M2_ERROR("Double is more than what Fixed can hold");
+		throw M2_ERROR("Double is more than what Exact can hold");
 	}
 	if (d < Min().ToDouble()) {
-		throw M2_ERROR("Double is less than what Fixed can hold");
+		throw M2_ERROR("Double is less than what Exact can hold");
 	}
 }
 
-std::string m2::ToString(const Fixed& f) {
+std::string m2::ToString(const Exact& f) {
 	return f.ToString();
 }

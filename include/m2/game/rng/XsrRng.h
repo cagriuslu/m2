@@ -11,6 +11,6 @@ namespace m2 {
 		~XsrRng() override = default;
 
 		uint64_t GenerateNextNumber64() override;
-		Fixed GenerateNextNumberFixed() override;
+		Exact GenerateNextNumberExact() override;
 	};
 }

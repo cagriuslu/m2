@@ -12,7 +12,7 @@ namespace m2 {
 		std::vector<float> _benefits = std::vector<float>(pb::enum_value_count<m2g::pb::ResourceType>());
 		std::vector<float> _acquire_benefits = std::vector<float>(pb::enum_value_count<m2g::pb::ResourceType>());
 		std::vector<float> _attributes = std::vector<float>(pb::enum_value_count<m2g::pb::AttributeType>());
-		std::vector<IFF> _attributes2 = std::vector<IFF>(pb::enum_value_count<m2g::pb::AttributeType>());
+		std::vector<IFE> _attributes2 = std::vector<IFE>(pb::enum_value_count<m2g::pb::AttributeType>());
 
 	public:
 		Item() = default;
@@ -48,8 +48,8 @@ namespace m2 {
 		[[nodiscard]] float GetAttribute(m2g::pb::AttributeType) const;
 		[[nodiscard]] float TryGetAttribute(m2g::pb::AttributeType, float default_value) const;
 		[[nodiscard]] bool HasAttribute(m2g::pb::AttributeType) const;
-		[[nodiscard]] IFF GetAttribute2(m2g::pb::AttributeType) const;
-		[[nodiscard]] IFF TryGetAttribute2(m2g::pb::AttributeType, const IFF& defaultValue) const;
+		[[nodiscard]] IFE GetAttribute2(m2g::pb::AttributeType) const;
+		[[nodiscard]] IFE TryGetAttribute2(m2g::pb::AttributeType, const IFE& defaultValue) const;
 		[[nodiscard]] bool HasAttribute2(m2g::pb::AttributeType) const;
 		[[nodiscard]] m2g::pb::SpriteType GameSprite() const { return _item.game_sprite(); }
 		[[nodiscard]] m2g::pb::SpriteType UiSprite() const { return _item.ui_sprite(); }

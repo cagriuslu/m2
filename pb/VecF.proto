@@ -9,6 +9,6 @@ message VecF {
 }
 
 message VecFF {
-  FF x = 1;
-  FF y = 2;
+  FE x = 1;
+  FE y = 2;
 }

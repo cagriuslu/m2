@@ -18,7 +18,7 @@ m2::Item::Item(pb::Item item) : _item(std::move(item)) {
 		_attributes[pb::enum_index(attribute.type())] = attribute.amount();
 	}
 	for (const auto& attribute2 : _item.attributes2()) {
-		_attributes2[pb::enum_index(attribute2.type())] = IFF{attribute2.iff()};
+		_attributes2[pb::enum_index(attribute2.type())] = IFE{attribute2.ife()};
 	}
 }
 
@@ -78,10 +78,10 @@ float m2::Item::TryGetAttribute(m2g::pb::AttributeType type, float default_value
 bool m2::Item::HasAttribute(m2g::pb::AttributeType type) const {
 	return GetAttribute(type) != 0.0f;
 }
-m2::IFF m2::Item::GetAttribute2(const m2g::pb::AttributeType type) const {
+m2::IFE m2::Item::GetAttribute2(const m2g::pb::AttributeType type) const {
 	return _attributes2[pb::enum_index(type)];
 }
-m2::IFF m2::Item::TryGetAttribute2(const m2g::pb::AttributeType type, const IFF& defaultValue) const {
+m2::IFE m2::Item::TryGetAttribute2(const m2g::pb::AttributeType type, const IFE& defaultValue) const {
 	const auto value = GetAttribute2(type);
 	return value ? value : defaultValue;
 }

@@ -1,7 +1,7 @@
 syntax = "proto3";
 package m2.pb;
 
-message FF {
+message FE {
   // Value is multiplied by 10^6 before storing it, and divided by 10^6 before reading and using it.
   int64 value_e6 = 1;
 }

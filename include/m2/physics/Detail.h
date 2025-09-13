@@ -1,9 +1,9 @@
 #pragma once
-// #include <m2/math/primitives/Fixed.h>
+// #include <m2/math/primitives/Exact.h>
 #include <m2/math/primitives/Float.h>
 
 namespace m2 {
-	// using PhysicsPrimitive = Fixed;
+	// using PhysicsPrimitive = Exact;
 	using PhysicsPrimitive = Float;
 
 	const auto physicsDeltaTime = PhysicsPrimitive{0.01f};

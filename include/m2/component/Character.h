@@ -148,7 +148,7 @@ namespace m2 {
 		std::vector<const Item*> _items;
 		std::vector<internal::ResourceAmount> _resources = std::vector<internal::ResourceAmount>(pb::enum_value_count<m2g::pb::ResourceType>()); // TODO deprecated
 		std::vector<float> _attributes = std::vector<float>(pb::enum_value_count<m2g::pb::AttributeType>()); // TODO deprecated
-		std::vector<IFF> _properties = std::vector<IFF>(pb::enum_value_count<m2g::pb::PropertyType>());
+		std::vector<IFE> _properties = std::vector<IFE>(pb::enum_value_count<m2g::pb::PropertyType>());
 
 	public:
 		FastCharacter() = default;
@@ -182,14 +182,14 @@ namespace m2 {
 		void ClearAttributes() override;
 
 		[[nodiscard]] bool HasProperty(const m2g::pb::PropertyType pt) const { return static_cast<bool>(_properties[PropertyTypeIndex(pt)]); }
-		[[nodiscard]] const IFF& GetProperty(const m2g::pb::PropertyType pt) const { return _properties[PropertyTypeIndex(pt)]; }
-		const IFF& SetProperty(const m2g::pb::PropertyType pt, const int32_t value) { return _properties[PropertyTypeIndex(pt)] = IFF{value}; }
-		const IFF& SetProperty(const m2g::pb::PropertyType pt, FF&& value) { return _properties[PropertyTypeIndex(pt)] = IFF{std::move(value)}; }
-		const IFF& SetProperty(const m2g::pb::PropertyType pt, const FF& value) { return _properties[PropertyTypeIndex(pt)] = IFF{value}; }
-		const IFF& SetProperty(const m2g::pb::PropertyType pt, IFF&& value) { return _properties[PropertyTypeIndex(pt)] = std::move(value); }
-		const IFF& SetProperty(const m2g::pb::PropertyType pt, const IFF& value) { return _properties[PropertyTypeIndex(pt)] = value; }
+		[[nodiscard]] const IFE& GetProperty(const m2g::pb::PropertyType pt) const { return _properties[PropertyTypeIndex(pt)]; }
+		const IFE& SetProperty(const m2g::pb::PropertyType pt, const int32_t value) { return _properties[PropertyTypeIndex(pt)] = IFE{value}; }
+		const IFE& SetProperty(const m2g::pb::PropertyType pt, FE&& value) { return _properties[PropertyTypeIndex(pt)] = IFE{std::move(value)}; }
+		const IFE& SetProperty(const m2g::pb::PropertyType pt, const FE& value) { return _properties[PropertyTypeIndex(pt)] = IFE{value}; }
+		const IFE& SetProperty(const m2g::pb::PropertyType pt, IFE&& value) { return _properties[PropertyTypeIndex(pt)] = std::move(value); }
+		const IFE& SetProperty(const m2g::pb::PropertyType pt, const IFE& value) { return _properties[PropertyTypeIndex(pt)] = value; }
 		void ClearProperty(const m2g::pb::PropertyType pt) { _properties[PropertyTypeIndex(pt)] = {}; }
-		void ClearProperties() { _properties = std::vector<IFF>(pb::enum_value_count<m2g::pb::PropertyType>()); }
+		void ClearProperties() { _properties = std::vector<IFE>(pb::enum_value_count<m2g::pb::PropertyType>()); }
 
 	private:
 		static int ResourceTypeIndex(m2g::pb::ResourceType);

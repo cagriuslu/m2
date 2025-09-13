@@ -24,10 +24,10 @@ uint64_t m2::XsrRng::GenerateNextNumber64() {
 	return result;
 }
 
-m2::Fixed m2::XsrRng::GenerateNextNumberFixed() {
+m2::Exact m2::XsrRng::GenerateNextNumberExact() {
 	// It's recommended that the upper 53 bits is used for fractional numbers
 	const auto nextNumber = GenerateNextNumber64();
 	const auto onlyHigherBits = nextNumber >> (64 - 53);
 	const auto int32 = static_cast<int32_t>(onlyHigherBits);
-	return Fixed{std::in_place, int32};
+	return Exact{std::in_place, int32};
 }

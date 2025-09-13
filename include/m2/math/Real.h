@@ -1,6 +1,6 @@
 #pragma once
-#include <m2/math/primitives/Fixed.h>
+#include <m2/math/primitives/Exact.h>
 
 namespace m2 {
-	using Real = Fixed;
+	using Real = Exact;
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include <m2/math/primitives/Fixed.h>
+#include <m2/math/primitives/Exact.h>
 #include <cstdint>
 
 namespace m2 {
@@ -8,6 +8,6 @@ namespace m2 {
 		virtual ~Rng() = default;
 
 		virtual uint64_t GenerateNextNumber64() = 0;
-		virtual Fixed GenerateNextNumberFixed() = 0;
+		virtual Exact GenerateNextNumberExact() = 0;
 	};
 }
