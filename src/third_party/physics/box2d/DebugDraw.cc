@@ -29,8 +29,8 @@ void DebugDraw::DrawCircle(const b2Vec2& center, const float radius, const b2Col
 		auto* texture = M2_GAME.GetShapeCache().Texture();
 		const auto screenOriginToSpriteCenter = ScreenOriginToPositionVecPx(VecF{center});
 		const auto dstRect = SDL_Rect{
-			RoundI(screenOriginToSpriteCenter.x) - srcRect.w / 2,
-			RoundI(screenOriginToSpriteCenter.y) - srcRect.h / 2,
+			RoundI(screenOriginToSpriteCenter.GetX()) - srcRect.w / 2,
+			RoundI(screenOriginToSpriteCenter.GetY()) - srcRect.h / 2,
 			srcRect.w,
 			srcRect.h};
 		const RGBA colorU8{color};
@@ -52,15 +52,15 @@ void DebugDraw::DrawCircle(const b2Vec2& center, const float radius, const b2Col
 			const RGBA colorU8{color};
 			SDL_SetRenderDrawColor(M2_GAME.renderer, colorU8.r, colorU8.g, colorU8.b, colorU8.a);
 			const std::array points = {
-				SDL_FPoint{pointTop->x, pointTop->y},
-				SDL_FPoint{pointTopRight->x, pointTopRight->y},
-				SDL_FPoint{pointRight->x, pointRight->y},
-				SDL_FPoint{pointBottomRight->x, pointBottomRight->y},
-				SDL_FPoint{pointBottom->x, pointBottom->y},
-				SDL_FPoint{pointBottomLeft->x, pointBottomLeft->y},
-				SDL_FPoint{pointLeft->x, pointLeft->y},
-				SDL_FPoint{pointTopLeft->x, pointTopLeft->y},
-				SDL_FPoint{pointTop->x, pointTop->y}
+				SDL_FPoint{pointTop->GetX(), pointTop->GetY()},
+				SDL_FPoint{pointTopRight->GetX(), pointTopRight->GetY()},
+				SDL_FPoint{pointRight->GetX(), pointRight->GetY()},
+				SDL_FPoint{pointBottomRight->GetX(), pointBottomRight->GetY()},
+				SDL_FPoint{pointBottom->GetX(), pointBottom->GetY()},
+				SDL_FPoint{pointBottomLeft->GetX(), pointBottomLeft->GetY()},
+				SDL_FPoint{pointLeft->GetX(), pointLeft->GetY()},
+				SDL_FPoint{pointTopLeft->GetX(), pointTopLeft->GetY()},
+				SDL_FPoint{pointTop->GetX(), pointTop->GetY()}
 			};
 			SDL_RenderDrawLinesF(M2_GAME.renderer, points.data(), I(points.size()));
 		}

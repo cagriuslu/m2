@@ -66,8 +66,8 @@ void State::SetSpriteOrigin(const VecF& origin) {
 	const auto rectCenter = RectF{rect}.Shift({-0.5f, -0.5f}).GetCenterPoint();
 	const auto centerToOrigin = origin - rectCenter;
 	ModifySelectedSprite([&](pb::Sprite& sprite) {
-		sprite.mutable_regular()->mutable_center_to_origin_vec_px()->set_x(centerToOrigin.x);
-		sprite.mutable_regular()->mutable_center_to_origin_vec_px()->set_y(centerToOrigin.y);
+		sprite.mutable_regular()->mutable_center_to_origin_vec_px()->set_x(centerToOrigin.GetX());
+		sprite.mutable_regular()->mutable_center_to_origin_vec_px()->set_y(centerToOrigin.GetY());
 	});
 }
 void State::ResetSpriteRectAndOrigin() {
@@ -90,8 +90,8 @@ void State::SetForegroundCompanionOrigin(const VecF& origin) {
 	const auto rectCenter = RectF{rect}.Shift({-0.5f, -0.5f}).GetCenterPoint();
 	const auto centerToOrigin = origin - rectCenter;
 	ModifySelectedSprite([&](pb::Sprite& sprite) {
-		sprite.mutable_regular()->mutable_foreground_companion()->mutable_center_to_origin_vec_px()->set_x(centerToOrigin.x);
-		sprite.mutable_regular()->mutable_foreground_companion()->mutable_center_to_origin_vec_px()->set_y(centerToOrigin.y);
+		sprite.mutable_regular()->mutable_foreground_companion()->mutable_center_to_origin_vec_px()->set_x(centerToOrigin.GetX());
+		sprite.mutable_regular()->mutable_foreground_companion()->mutable_center_to_origin_vec_px()->set_y(centerToOrigin.GetY());
 	});
 }
 void State::ResetForegroundCompanion() {
@@ -111,24 +111,24 @@ void State::StoreFixture(const int index, const RectF& rect, const VecF& point1,
 			const auto spriteOriginToRectCenter = rect.GetCenterPoint() - SelectedSpriteOrigin();
 			const auto dimensions = VecF{rect.w, rect.h};
 			auto* rectangle = fixture->mutable_rectangle();
-			rectangle->mutable_sprite_origin_to_fixture_center_vec_px()->set_x(spriteOriginToRectCenter.x);
-			rectangle->mutable_sprite_origin_to_fixture_center_vec_px()->set_y(spriteOriginToRectCenter.y);
-			rectangle->mutable_dims_px()->set_w(dimensions.x);
-			rectangle->mutable_dims_px()->set_h(dimensions.y);
+			rectangle->mutable_sprite_origin_to_fixture_center_vec_px()->set_x(spriteOriginToRectCenter.GetX());
+			rectangle->mutable_sprite_origin_to_fixture_center_vec_px()->set_y(spriteOriginToRectCenter.GetY());
+			rectangle->mutable_dims_px()->set_w(dimensions.GetX());
+			rectangle->mutable_dims_px()->set_h(dimensions.GetY());
 		} else if (fixture->has_circle()) {
 			const auto& center = point1;
 			const auto radius = (point2 - point1).GetLength();
 			const auto spriteOriginToRectCenter = center - SelectedSpriteOrigin();
 			auto* circle = fixture->mutable_circle();
-			circle->mutable_sprite_origin_to_fixture_center_vec_px()->set_x(spriteOriginToRectCenter.x);
-			circle->mutable_sprite_origin_to_fixture_center_vec_px()->set_y(spriteOriginToRectCenter.y);
+			circle->mutable_sprite_origin_to_fixture_center_vec_px()->set_x(spriteOriginToRectCenter.GetX());
+			circle->mutable_sprite_origin_to_fixture_center_vec_px()->set_y(spriteOriginToRectCenter.GetY());
 			circle->set_radius_px(radius);
 		} else if (fixture->has_chain()) {
 			const auto spriteOriginToPoint = point1 - SelectedSpriteOrigin();
 			auto* chain = fixture->mutable_chain();
 			auto* point = chain->add_points();
-			point->set_x(spriteOriginToPoint.x);
-			point->set_y(spriteOriginToPoint.y);
+			point->set_x(spriteOriginToPoint.GetX());
+			point->set_y(spriteOriginToPoint.GetY());
 		}
 	});
 }
@@ -154,9 +154,9 @@ void State::Draw() const {
 	const auto offset = VecF{-0.5f, -0.5f};
 	const auto textureTopLeftOutputPosition = ScreenOriginToPositionVecPx(offset);
 	const auto textureBottomRightOutputPosition = ScreenOriginToPositionVecPx(static_cast<VecF>(_textureDimensions) + offset);
-	const SDL_Rect dstRect = {RoundI(textureTopLeftOutputPosition.x), RoundI(textureTopLeftOutputPosition.y),
-			RoundI(textureBottomRightOutputPosition.x - textureTopLeftOutputPosition.x),
-			RoundI(textureBottomRightOutputPosition.y - textureTopLeftOutputPosition.y)};
+	const SDL_Rect dstRect = {RoundI(textureTopLeftOutputPosition.GetX()), RoundI(textureTopLeftOutputPosition.GetY()),
+			RoundI(textureBottomRightOutputPosition.GetX() - textureTopLeftOutputPosition.GetX()),
+			RoundI(textureBottomRightOutputPosition.GetY() - textureTopLeftOutputPosition.GetY())};
 	SDL_RenderCopy(M2_GAME.renderer, _texture.get(), nullptr, &dstRect);
 
 	const auto& sprite = SelectedSprite();

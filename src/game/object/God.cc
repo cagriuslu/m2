@@ -34,18 +34,18 @@ Id obj::CreateGod() {
 
 		VecF move_direction;
 		if (M2_GAME.events.IsKeyDown(m2g::pb::KeyType::MOVE_UP)) {
-			move_direction.y -= 1.0f;
+			move_direction = move_direction.WithY(move_direction.GetY() - 1.0f);
 		}
 		if (M2_GAME.events.IsKeyDown(m2g::pb::KeyType::MOVE_DOWN)) {
-			move_direction.y += 1.0f;
+			move_direction = move_direction.WithY(move_direction.GetY() + 1.0f);
 		}
 		if (M2_GAME.events.IsKeyDown(m2g::pb::KeyType::MOVE_LEFT)) {
-			move_direction.x -= 1.0f;
+			move_direction = {move_direction.GetX() - 1.0f, move_direction.GetY()};
 		}
 		if (M2_GAME.events.IsKeyDown(m2g::pb::KeyType::MOVE_RIGHT)) {
-			move_direction.x += 1.0f;
+			move_direction = {move_direction.GetX() + 1.0f, move_direction.GetY()};
 		}
-		obj.position += move_direction.Normalize() * (ToDurationF(delta) * M2_GAME.Dimensions().GameM().y);
+		obj.position += move_direction.Normalize() * (ToDurationF(delta) * M2_GAME.Dimensions().GameM().GetY());
 		// Prevent God from going into negative quadrants
 		obj.position = obj.position.Clamp(VecF{0.0f, 0.0f}, std::nullopt);
 

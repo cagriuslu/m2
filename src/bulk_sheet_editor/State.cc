@@ -106,9 +106,9 @@ void bulk_sheet_editor::State::Draw() const {
 	const auto textureTopLeftOutputPosition = ScreenOriginToPositionVecPx(offset);
 	const auto textureBottomRightOutputPosition = ScreenOriginToPositionVecPx(static_cast<VecF>(_textureDimensions) + offset);
 	const SDL_Rect dstRect = {
-			RoundI(textureTopLeftOutputPosition.x), RoundI(textureTopLeftOutputPosition.y),
-			RoundI(textureBottomRightOutputPosition.x - textureTopLeftOutputPosition.x),
-			RoundI(textureBottomRightOutputPosition.y - textureTopLeftOutputPosition.y)};
+			RoundI(textureTopLeftOutputPosition.GetX()), RoundI(textureTopLeftOutputPosition.GetY()),
+			RoundI(textureBottomRightOutputPosition.GetX() - textureTopLeftOutputPosition.GetX()),
+			RoundI(textureBottomRightOutputPosition.GetY() - textureTopLeftOutputPosition.GetY())};
 	SDL_RenderCopy(M2_GAME.renderer, _texture.get(), nullptr, &dstRect);
 	// Draw currectly selected sprite's rect
 	if (_savedSpriteRect) {

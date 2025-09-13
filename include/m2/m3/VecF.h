@@ -4,13 +4,14 @@
 #include <VecF.pb.h>
 
 namespace m3 {
-	struct VecF {
+	class VecF {
+	public:
 		float x{}, y{}, z{};
 
 		VecF() = default;
 		VecF(const float x, const float y, const float z) : x(x), y(y), z(z) {}
 		VecF(const int x, const int y, const int z) : x(static_cast<float>(x)), y(static_cast<float>(y)), z(static_cast<float>(z)) {}
-		explicit VecF(const m2::VecF& xy, const float z = 0.0f) : x(xy.x), y(xy.y), z(z) {}
+		explicit VecF(const m2::VecF& xy, const float z = 0.0f) : x(xy.GetX()), y(xy.GetY()), z(z) {}
 		explicit VecF(const m2::pb::VecF& xy, const float z = 0.0f) : x(xy.x()), y(xy.y()), z(z) {}
 
 		VecF operator+(const VecF& rhs) const { return {x + rhs.x, y + rhs.y, z + rhs.z}; }

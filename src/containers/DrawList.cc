@@ -2,7 +2,7 @@
 #include <m2/Game.h>
 
 bool m2::DrawList::VecFComparator::operator()(const VecF& lhs, const VecF& rhs) const {
-	return lhs.y < rhs.y;
+	return lhs.GetY() < rhs.GetY();
 }
 
 m2::DrawList::ConstIterator& m2::DrawList::ConstIterator::operator++() {

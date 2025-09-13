@@ -18,8 +18,8 @@ namespace m2 {
 		// Accessors
 
 		[[nodiscard]] const VecF& GetParallel() const { return _parallel; }
-		[[nodiscard]] VecF GetPerpendicular() const { return {-_parallel.y, _parallel.x}; }
-		[[nodiscard]] float GetSlope() const { return _parallel.y / _parallel.x; }
+		[[nodiscard]] VecF GetPerpendicular() const { return {-_parallel.GetY(), _parallel.GetX()}; }
+		[[nodiscard]] float GetSlope() const { return _parallel.GetY() / _parallel.GetX(); }
 		[[nodiscard]] float GetXIntersect() const;
 		[[nodiscard]] float GetYIntersect() const;
 		[[nodiscard]] std::optional<VecF> GetIntersectionPointWith(const Line& other) const;

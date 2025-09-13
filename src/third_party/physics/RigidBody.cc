@@ -90,7 +90,7 @@ RigidBody RigidBody::CreateFromDefinition(const RigidBodyDefinition& definition,
 		} else if (std::holds_alternative<RectangleShape>(fixture.shape)) {
 			const auto& rect = std::get<RectangleShape>(fixture.shape);
 			shape.emplace<b2PolygonShape>();
-			std::get<b2PolygonShape>(shape).SetAsBox(rect.dimensions.x / 2.0f, rect.dimensions.y / 2.0f,
+			std::get<b2PolygonShape>(shape).SetAsBox(rect.dimensions.GetX() / 2.0f, rect.dimensions.GetY() / 2.0f,
 					static_cast<b2Vec2>(rect.offset), rect.angleInRads);
 			box2dFixtureDef.shape = &std::get<b2PolygonShape>(shape);
 		} else if (std::holds_alternative<CircleShape>(fixture.shape)) {

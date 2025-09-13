@@ -8,7 +8,7 @@ m2::void_expected LoadPlayer(m2::Object& obj) {
 	// Put the player on the center
 	obj.position = gLevelCenter;
 	// Adjust game scale
-	M2_GAME.SetGameHeightM(gLevelDimensions.y);
+	M2_GAME.SetGameHeightM(gLevelDimensions.GetY());
 	// Load edges of the screen
 	LoadEdge();
 

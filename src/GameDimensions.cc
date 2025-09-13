@@ -77,7 +77,7 @@ void m2::GameDimensions::OnWindowResize() {
 
 	const auto windowDimensions = WindowDimensions();
 	// The unit is pixels, but in fractional form
-	const auto minimumGameAndHudDimensions = VecF{_gameAndHudM.x * ToFloat(_gamePpm), _gameAndHudM.y * ToFloat(_gamePpm)};
+	const auto minimumGameAndHudDimensions = VecF{_gameAndHudM.GetX() * ToFloat(_gamePpm), _gameAndHudM.GetY() * ToFloat(_gamePpm)};
 
 	const auto idealWidthForSelectedWindowHeight = windowDimensions.y * GAME_AND_HUD_ASPECT_RATIO_MUL
 		/ GAME_AND_HUD_ASPECT_RATIO_DIV;
@@ -88,7 +88,7 @@ void m2::GameDimensions::OnWindowResize() {
 		const int realWindowWidthRemainder = realWindowWidth % GAME_AND_HUD_ASPECT_RATIO_MUL;
 		const int windowWidthForCorrectAspectRation = realWindowWidth - realWindowWidthRemainder;
 		// Use the _gameAndHudM width for scale calculation
-		_scale = ToFloat(windowWidthForCorrectAspectRation) / minimumGameAndHudDimensions.x;
+		_scale = ToFloat(windowWidthForCorrectAspectRation) / minimumGameAndHudDimensions.GetX();
 	} else {
 		// Screen is exact or wider than expected, we might have left and right envelopes.
 		// Ensure that only the 16:9 part of the window is taken into scale calculation
@@ -96,10 +96,10 @@ void m2::GameDimensions::OnWindowResize() {
 		const int realWindowHeightRemainder = realWindowHeight % GAME_AND_HUD_ASPECT_RATIO_DIV;
 		const int windowHeightForCorrectAspectRation = realWindowHeight - realWindowHeightRemainder;
 		// Use the _gameAndHudM height for scale calculation
-		_scale = ToFloat(windowHeightForCorrectAspectRation) / minimumGameAndHudDimensions.y;
+		_scale = ToFloat(windowHeightForCorrectAspectRation) / minimumGameAndHudDimensions.GetY();
 	}
 
-	const int gameHeight = RoundI(minimumGameAndHudDimensions.y * _scale);
+	const int gameHeight = RoundI(minimumGameAndHudDimensions.GetY() * _scale);
 	const int gameWidth = gameHeight * _gameAspectRatioMul / _gameAspectRatioDiv;
 	const int hudHeight = gameHeight;
 	const int hudWidth = gameHeight * HudAspectRatioMul(_gameAspectRatioMul, _gameAspectRatioDiv)

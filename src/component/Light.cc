@@ -65,8 +65,8 @@ void m2::Light::DefaultDrawCallback(Light& lig) {
 	} else {
 		auto position_px = ScreenOriginToPositionVecPx(obj.position);
 		MAYBE auto dstrect = SDL_Rect{
-				(int)roundf(position_px.x - lig.radiusM * M2_GAME.Dimensions().OutputPixelsPerMeter()),
-				(int)roundf(position_px.y - lig.radiusM * M2_GAME.Dimensions().OutputPixelsPerMeter()),
+				(int)roundf(position_px.GetX() - lig.radiusM * M2_GAME.Dimensions().OutputPixelsPerMeter()),
+				(int)roundf(position_px.GetY() - lig.radiusM * M2_GAME.Dimensions().OutputPixelsPerMeter()),
 				(int)roundf((float)lig.radiusM * M2_GAME.Dimensions().OutputPixelsPerMeter() * 2.0f),
 				(int)roundf((float)lig.radiusM * M2_GAME.Dimensions().OutputPixelsPerMeter() * 2.0f)
 		};

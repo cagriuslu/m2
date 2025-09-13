@@ -8,16 +8,16 @@
 
 m2::RectF::RectF() : x(), y(), w(), h() {}
 m2::RectF::RectF(float x, float y, float w, float h) : x(x), y(y), w(w), h(h) {}
-m2::RectF::RectF(const VecF& xy, float w, float h) : x(xy.x), y(xy.y), w(w), h(h) {}
+m2::RectF::RectF(const VecF& xy, float w, float h) : x(xy.GetX()), y(xy.GetY()), w(w), h(h) {}
 m2::RectF::RectF(const RectI& r) : x(static_cast<float>(r.x)), y(static_cast<float>(r.y)), w(static_cast<float>(r.w)), h(static_cast<float>(r.h)) {}
 m2::RectF::RectF(const SDL_FRect& r) : x(r.x), y(r.y), w(r.w), h(r.h) {}
 m2::RectF::RectF(const SDL_Rect& r) : x(static_cast<float>(r.x)), y(static_cast<float>(r.y)), w(static_cast<float>(r.w)), h(static_cast<float>(r.h)) {}
 m2::RectF::RectF(const pb::RectI& r) : x(static_cast<float>(r.x())), y(static_cast<float>(r.y())), w(static_cast<float>(r.w())), h(static_cast<float>(r.h())) {}
 m2::RectF m2::RectF::CreateFromCorners(const m2::VecF &corner1, const m2::VecF &corner2) {
-	auto top_left_x = std::min(corner1.x, corner2.x);
-	auto top_left_y = std::min(corner1.y, corner2.y);
-	auto bottom_right_x = std::max(corner1.x, corner2.x);
-	auto bottom_right_y = std::max(corner1.y, corner2.y);
+	auto top_left_x = std::min(corner1.GetX(), corner2.GetX());
+	auto top_left_y = std::min(corner1.GetY(), corner2.GetY());
+	auto bottom_right_x = std::max(corner1.GetX(), corner2.GetX());
+	auto bottom_right_y = std::max(corner1.GetY(), corner2.GetY());
 	return {top_left_x, top_left_y, bottom_right_x - top_left_x, bottom_right_y - top_left_y};
 }
 
@@ -43,10 +43,10 @@ bool m2::RectF::IsEqual(const RectF& other, float tolerance) const {
 }
 
 bool m2::RectF::DoesContain(const VecF& point, float tolerance) const {
-	return IsLessOrEqual(x, point.x, tolerance)
-		&& IsLessOrEqual(point.x, x + w, tolerance)
-		&& IsLessOrEqual(y, point.y, tolerance)
-		&& IsLessOrEqual(point.y, y + h, tolerance);
+	return IsLessOrEqual(x, point.GetX(), tolerance)
+		&& IsLessOrEqual(point.GetX(), x + w, tolerance)
+		&& IsLessOrEqual(y, point.GetY(), tolerance)
+		&& IsLessOrEqual(point.GetY(), y + h, tolerance);
 }
 
 bool m2::RectF::DoesContain(const RectF& other, float tolerance) const {
@@ -57,10 +57,10 @@ bool m2::RectF::DoesContain(const RectF& other, float tolerance) const {
 }
 
 m2::RectF m2::RectF::Shift(const VecF& direction) const {
-	return {x + direction.x, y + direction.y, w, h};
+	return {x + direction.GetX(), y + direction.GetY(), w, h};
 }
 m2::RectF m2::RectF::ShiftCoordinateSystemOrigin(const VecF& direction) const {
-	return {x - direction.x, y - direction.y, w, h};
+	return {x - direction.GetX(), y - direction.GetY(), w, h};
 }
 m2::RectF m2::RectF::ExpandAllSides(float amount) const {
 	return {x - amount, y - amount, w + amount + amount, h + amount + amount};

@@ -82,8 +82,8 @@ float m2::perlin(const VecF& point, float depth) {
 	unsigned y_i = point_i.y & 0xFF;
 	unsigned z_i = depth_i & 0xFF;
 	// Calculate location of the point inside unit cube
-	float x_f = point.x - static_cast<float>(point_i.x);
-	float y_f = point.y - static_cast<float>(point_i.y);
+	float x_f = point.GetX() - static_cast<float>(point_i.x);
+	float y_f = point.GetY() - static_cast<float>(point_i.y);
 	float z_f = depth - static_cast<float>(depth_i);
 	// Find smoothing factors of the point
 	float u = fade(x_f);

@@ -10,7 +10,7 @@ void LoadEdge() {
 		.bodyType = m2::third_party::physics::RigidBodyType::STATIC,
 		.fixtures = {
 			m2::third_party::physics::FixtureDefinition{
-				.shape = m2::third_party::physics::EdgeShape{.pointA = {}, .pointB = {gLevelDimensions.x, 0.0f}},
+				.shape = m2::third_party::physics::EdgeShape{.pointA = {}, .pointB = {gLevelDimensions.GetX(), 0.0f}},
 				.restitution = 1.0f,
 				.colliderFilter = m2::third_party::physics::ColliderParams{
 					.belongsTo = 1,
@@ -18,7 +18,7 @@ void LoadEdge() {
 				}
 			},
 			m2::third_party::physics::FixtureDefinition{
-				.shape = m2::third_party::physics::EdgeShape{.pointA = {}, .pointB = {0.0f, gLevelDimensions.y}},
+				.shape = m2::third_party::physics::EdgeShape{.pointA = {}, .pointB = {0.0f, gLevelDimensions.GetY()}},
 				.restitution = 1.0f,
 				.colliderFilter = m2::third_party::physics::ColliderParams{
 					.belongsTo = 1,
@@ -26,7 +26,7 @@ void LoadEdge() {
 				}
 			},
 			m2::third_party::physics::FixtureDefinition{
-				.shape = m2::third_party::physics::EdgeShape{.pointA = {gLevelDimensions.x, 0.0f}, .pointB = {gLevelDimensions.x, gLevelDimensions.y}},
+				.shape = m2::third_party::physics::EdgeShape{.pointA = {gLevelDimensions.GetX(), 0.0f}, .pointB = {gLevelDimensions.GetX(), gLevelDimensions.GetY()}},
 				.restitution = 1.0f,
 				.colliderFilter = m2::third_party::physics::ColliderParams{
 					.belongsTo = 1,

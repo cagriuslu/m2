@@ -44,13 +44,13 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 		if (direction_enum == m2::CHARMOVEMENT_NONE) {
 			// Slow down character
 			auto linear_velocity = phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->GetLinearVelocity();
-			if (0.0f < abs(linear_velocity.x)) {
-				linear_velocity.x /= 1.25f;
+			if (0.0f < abs(linear_velocity.GetX())) {
+				linear_velocity = linear_velocity.WithX(linear_velocity.GetX() / 1.25f);
 				phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->SetLinearVelocity(linear_velocity);
 			}
 		} else {
 			// Accelerate character
-			auto force_multiplier = m2::CalculateLimitedForce(phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->GetLinearVelocity().x, 5.0f);
+			auto force_multiplier = m2::CalculateLimitedForce(phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->GetLinearVelocity().GetX(), 5.0f);
 			phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->ApplyForceToCenter(direction_vector * force_multiplier * 4000.0f);
 		}
 		// Jump
@@ -58,7 +58,7 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 		if (is_grounded && M2_GAME.events.IsKeyDown(JUMP) && chr.UseItem(chr.FindItems(ITEM_REUSABLE_JUMP))) {
 			chr.ClearResource(RESOURCE_JUMP_ENERGY);
 			auto linear_velocity = phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->GetLinearVelocity();
-			linear_velocity.y -= 7.0f;
+			linear_velocity = linear_velocity.WithY(linear_velocity.GetY() - 7.0f);
 			phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->SetLinearVelocity(linear_velocity);
 		}
 
@@ -93,9 +93,9 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 		// Check if in contact with obstacle
 		if (other.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] && other.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->GetAllLayersBelongingTo() & (COLLIDER_LAYER_BACKGROUND_OBSTACLE | COLLIDER_LAYER_FOREGROUND_OBSTACLE)) {
 			// Check is contact normal points upwards
-			if (abs(contact.normal.x) <= -contact.normal.y) {
-				chr.SetResource(RESOURCE_IS_GROUNDED_X, other.Owner().position.x);
-				chr.SetResource(RESOURCE_IS_GROUNDED_Y, other.Owner().position.y);
+			if (abs(contact.normal.GetX()) <= -contact.normal.GetY()) {
+				chr.SetResource(RESOURCE_IS_GROUNDED_X, other.Owner().position.GetX());
+				chr.SetResource(RESOURCE_IS_GROUNDED_Y, other.Owner().position.GetY());
 			}
 		}
 	};
@@ -103,7 +103,7 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 		// Check if in contact with obstacle
 		if (other.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] && other.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->GetAllLayersBelongingTo() & (COLLIDER_LAYER_BACKGROUND_OBSTACLE | COLLIDER_LAYER_FOREGROUND_OBSTACLE)) {
 			// Check if the other object is the grounding object
-			if (chr.GetResource(RESOURCE_IS_GROUNDED_X) == other.Owner().position.x && chr.GetResource(RESOURCE_IS_GROUNDED_Y) == other.Owner().position.y) {
+			if (chr.GetResource(RESOURCE_IS_GROUNDED_X) == other.Owner().position.GetX() && chr.GetResource(RESOURCE_IS_GROUNDED_Y) == other.Owner().position.GetY()) {
 				chr.SetResource(RESOURCE_IS_GROUNDED_X, 0.0f);
 				chr.SetResource(RESOURCE_IS_GROUNDED_Y, 0.0f);
 			}

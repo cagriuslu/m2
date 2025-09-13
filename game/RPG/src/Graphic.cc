@@ -9,15 +9,15 @@ void DrawAddons(const m2::Graphic& gfx, float health) {
 			const auto src_rect = static_cast<SDL_Rect>(sprite.GetRect());
 			const auto screen_origin_to_sprite_center_px_vec = sprite.ScreenOriginToCenterVecOutpx(gfx.Owner().position);
 			dst_rect = SDL_Rect{
-				m2::RoundI(screen_origin_to_sprite_center_px_vec.x - (m2::ToFloat(src_rect.w) * M2_GAME.Dimensions().OutputPixelsPerMeter() / m2::ToFloat(sprite.Ppm()) / 2.0f)),
-				m2::RoundI(screen_origin_to_sprite_center_px_vec.y + (m2::ToFloat(src_rect.h) * M2_GAME.Dimensions().OutputPixelsPerMeter() * 11.0f / m2::ToFloat(sprite.Ppm()) / 2.0f / 10.0f)), // Give an offset of 1.1
+				m2::RoundI(screen_origin_to_sprite_center_px_vec.GetX() - (m2::ToFloat(src_rect.w) * M2_GAME.Dimensions().OutputPixelsPerMeter() / m2::ToFloat(sprite.Ppm()) / 2.0f)),
+				m2::RoundI(screen_origin_to_sprite_center_px_vec.GetY() + (m2::ToFloat(src_rect.h) * M2_GAME.Dimensions().OutputPixelsPerMeter() * 11.0f / m2::ToFloat(sprite.Ppm()) / 2.0f / 10.0f)), // Give an offset of 1.1
 				m2::RoundI(M2_GAME.Dimensions().OutputPixelsPerMeter()),
 				m2::RoundI(M2_GAME.Dimensions().OutputPixelsPerMeter() * 12.0f / 100.0f) // 0.15 m height
 		};
 		} else {
 			const auto obj_position = gfx.Owner().position;
 			// Place add-on below the sprite
-			const auto addon_position = m3::VecF{obj_position.x, obj_position.y, -0.2f};
+			const auto addon_position = m3::VecF{obj_position.GetX(), obj_position.GetY(), -0.2f};
 			if (const auto projected_addon_position = ScreenOriginToProjectionAlongCameraPlaneDstpx(addon_position)) {
 				const auto rect = m2::RectI::CreateCenteredAround(m2::VecI{*projected_addon_position}, m2::RoundI(M2_GAME.Dimensions().OutputPixelsPerMeter()), m2::RoundI(M2_GAME.Dimensions().OutputPixelsPerMeter() * 12.0f / 100.0f));
 				dst_rect = static_cast<SDL_Rect>(rect);

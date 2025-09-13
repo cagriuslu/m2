@@ -7,7 +7,7 @@
 #include <string>
 
 namespace m2 {
-	struct VecF;
+	class VecF;
 
 	struct VecI {
 		int32_t x{}, y{};

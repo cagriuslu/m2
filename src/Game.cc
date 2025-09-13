@@ -802,7 +802,7 @@ void m2::Game::DebugDraw() {
 			for (int x = 0; x < 20; ++x) {
 				m3::VecF p = {x, y, 0};
 				if (const auto projected_p = ScreenOriginToProjectionAlongCameraPlaneDstpx(p); projected_p) {
-					SDL_RenderDrawPointF(M2_GAME.renderer, projected_p->x, projected_p->y);
+					SDL_RenderDrawPointF(M2_GAME.renderer, projected_p->GetX(), projected_p->GetY());
 				}
 			}
 		}

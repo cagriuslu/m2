@@ -21,7 +21,7 @@ m2::VecF m2::VecF::RoundHalfI() const {
 		return new_f;
 	};
 
-	return VecF{h(x), h(y)};
+	return VecF{h(_x), h(_y)};
 }
 
 float m2::VecF::GetDistanceToSquared(const VecI& other) const {
@@ -29,24 +29,24 @@ float m2::VecF::GetDistanceToSquared(const VecI& other) const {
 }
 
 m2::VecF m2::VecF::RoundToBin(const int binCount) const {
-	return {m2::RoundToBin(x, binCount), m2::RoundToBin(y, binCount)};
+	return {m2::RoundToBin(_x, binCount), m2::RoundToBin(_y, binCount)};
 }
 m2::VecF m2::VecF::Clamp(const std::optional<VecF>& min, const std::optional<VecF>& max) const {
 	auto cp = *this;
 	if (min) {
-		if (cp.x < min->x) {
-			cp.x = min->x;
+		if (cp.GetX() < min->_x) {
+			cp = {min->_x, cp.GetY()};
 		}
-		if (cp.y < min->y) {
-			cp.y = min->y;
+		if (cp.GetY() < min->GetY()) {
+			cp = cp.WithY(min->GetY());
 		}
 	}
 	if (max) {
-		if (max->x < cp.x) {
-			cp.x = max->x;
+		if (max->_x < cp.GetX()) {
+			cp = {max->_x, cp.GetY()};
 		}
-		if (max->y < cp.y) {
-			cp.y = max->y;
+		if (max->GetY() < cp.GetY()) {
+			cp = cp.WithY(max->GetY());
 		}
 	}
 	return cp;
@@ -57,26 +57,26 @@ m2::VecF m2::VecF::MoveTowards(const VecF& direction, float distance) const {
 }
 
 std::array<m2::VecF, 4> m2::VecF::GetAabbCorners(float aabb_radius) const {
-	return {VecF{x + aabb_radius, y + aabb_radius}, VecF{x - aabb_radius, y + aabb_radius}, VecF{x - aabb_radius, y - aabb_radius}, VecF{x + aabb_radius, y - aabb_radius}};
+	return {VecF{_x + aabb_radius, _y + aabb_radius}, VecF{_x - aabb_radius, _y + aabb_radius}, VecF{_x - aabb_radius, _y - aabb_radius}, VecF{_x + aabb_radius, _y - aabb_radius}};
 }
 
 m3::VecF m3::VecF::rotate_xy(float rads) const {
 	// Use m2::VecF to do the actual calculation
 	auto xy = m2::VecF{x, y};
 	auto xy_rotated = xy.Rotate(rads);
-	return {xy_rotated.x, xy_rotated.y, z};
+	return {xy_rotated.GetX(), xy_rotated.GetY(), z};
 }
 
 m3::VecF m3::VecF::rotate_xz(float rads) const {
 	// Use m2::VecF to do the actual calculation
 	auto xz = m2::VecF{x, z};
 	auto xz_rotated = xz.Rotate(rads);
-	return {xz_rotated.x, y, xz_rotated.y};
+	return {xz_rotated.GetX(), y, xz_rotated.GetY()};
 }
 
 std::string m2::ToString(const m2::VecF& v) {
 	std::stringstream ss;
-	ss << "{x:" << v.x << ",y:" << v.y << "}";
+	ss << "{x:" << v.GetX() << ",y:" << v.GetY() << "}";
 	return ss.str();
 }
 

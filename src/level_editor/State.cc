@@ -154,8 +154,8 @@ void m2::level_editor::State::HandleMousePrimarySelectionComplete(const VecF& fi
 						if (auto* fixture = sprite.mutable_regular()->mutable_fixtures(selectedIndex); fixture->has_chain()) {
 							auto* chain_ = fixture->mutable_chain();
 							if (auto* point = chain_->mutable_points(*closestPointIndex); point) {
-								point->set_x(pointOffset.x);
-								point->set_y(pointOffset.y);
+								point->set_x(pointOffset.GetX());
+								point->set_y(pointOffset.GetY());
 							}
 						}
 					});
@@ -225,8 +225,8 @@ void m2::level_editor::State::CopyForeground() {
 		if (selection.DoesContain(it->first)) {
 			const auto positionInClipboard = it->first - selection.GetTopLeftPoint();
 			auto levelObject = std::get<pb::Object>(it->second);
-			levelObject.mutable_position()->set_x(positionInClipboard.x);
-			levelObject.mutable_position()->set_y(positionInClipboard.y);
+			levelObject.mutable_position()->set_x(positionInClipboard.GetX());
+			levelObject.mutable_position()->set_y(positionInClipboard.GetY());
 			_foregroundObjectClipboard.emplace(positionInClipboard, levelObject);
 		}
 	}
@@ -492,8 +492,8 @@ void m2::level_editor::State::PaintBackground(const VecI& position, m2g::pb::Spr
 void m2::level_editor::State::PlaceForeground(const VecF& position, float orientation, m2g::pb::ObjectType objectType, m2g::pb::GroupType groupType, unsigned groupInstance) {
 	const auto fgPlaceholderId = obj::CreateForegroundPlaceholder(position, orientation, M2_GAME.GetMainSpriteOfObject(objectType));
 	m2::pb::Object levelObject;
-	levelObject.mutable_position()->set_x(position.x);
-	levelObject.mutable_position()->set_y(position.y);
+	levelObject.mutable_position()->set_x(position.GetX());
+	levelObject.mutable_position()->set_y(position.GetY());
 	levelObject.set_orientation(orientation);
 	levelObject.set_type(objectType);
 	levelObject.mutable_group()->set_type(groupType);
@@ -577,8 +577,8 @@ void m2::level_editor::State::StoreFixturePoint(const m2g::pb::SpriteType st, co
 		if (auto* fixture = sprite.mutable_regular()->mutable_fixtures(selectedIndex); fixture->has_chain()) {
 			auto* chain = fixture->mutable_chain();
 			auto* point = chain->add_points();
-			point->set_x(spriteOriginToPointVec.x);
-			point->set_y(spriteOriginToPointVec.y);
+			point->set_x(spriteOriginToPointVec.GetX());
+			point->set_y(spriteOriginToPointVec.GetY());
 		}
 	});
 }

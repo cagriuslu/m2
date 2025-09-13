@@ -4,7 +4,7 @@
 float m2::Line::GetXIntersect() const {
 	const auto slope = GetSlope();
 	if (isinf(slope)) {
-		return _point.x;
+		return _point.GetX();
 	}
 	// 0 = (slope)x + yintersect
 	return -GetYIntersect() / slope;
@@ -12,7 +12,7 @@ float m2::Line::GetXIntersect() const {
 float m2::Line::GetYIntersect() const {
 	// y = (slope)x + yintersect
 	// y - (slope)x = yintersect
-	return _point.y - GetSlope() * _point.x;
+	return _point.GetY() - GetSlope() * _point.GetX();
 }
 std::optional<m2::VecF> m2::Line::GetIntersectionPointWith(const Line& other) const {
 	// Check if the slopes are very close
@@ -28,11 +28,11 @@ std::optional<m2::VecF> m2::Line::GetIntersectionPointWith(const Line& other) co
 	float intersectionX, intersectionY;
 	if (isinf(thisSlope)) {
 		// This line is vertical
-		intersectionX = this->_point.x;
+		intersectionX = this->_point.GetX();
 		intersectionY = otherSlope * intersectionX + otherYIntersect;
 	} else if (isinf(otherSlope)) {
 		// Other line is vertical
-		intersectionX = other._point.x;
+		intersectionX = other._point.GetX();
 		intersectionY = thisSlope * intersectionX + thisYIntersect;
 	} else {
 		intersectionX = (otherYIntersect - thisYIntersect) / (thisSlope - otherSlope);

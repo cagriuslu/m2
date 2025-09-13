@@ -246,7 +246,7 @@ m3::VecF Level::GetCameraOffset() const {
 		_lb->camera_offset(),
 		_lb->camera_z_offset()};
 }
-float Level::GetHorizontalFov() const { return _lb ? _lb->horizontal_fov() : M2_GAME.Dimensions().GameM().x; }
+float Level::GetHorizontalFov() const { return _lb ? _lb->horizontal_fov() : M2_GAME.Dimensions().GameM().GetX(); }
 
 void Level::BeginGameLoop() {
 	if (_beganAt) {

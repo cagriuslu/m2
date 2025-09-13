@@ -151,7 +151,7 @@ m2::void_expected InitFactory(m2::Object& obj, City city, IndustryTile industry_
 
 		// If sold, draw the black bottom half
 		if (m2::IsOne(gfx.Owner().GetCharacter().GetResource(IS_SOLD), 0.005f)) {
-			const auto bottom_half_cell_rect = m2::RectF{top_left_cell_pos.x - 0.5f, top_left_cell_pos.y + 0.5f, 2.0f, 1.0f};
+			const auto bottom_half_cell_rect = m2::RectF{top_left_cell_pos.GetX() - 0.5f, top_left_cell_pos.GetY() + 0.5f, 2.0f, 1.0f};
 			m2::Graphic::ColorRect(bottom_half_cell_rect, m2::RGB{0, 0, 0});
 		}
 

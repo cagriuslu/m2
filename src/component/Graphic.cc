@@ -47,12 +47,12 @@ m2::RectF m2::ViewportM() {
 
 m3::VecF m3::CameraPositionM() {
 	const auto* camera = M2_LEVEL.objects.Get(M2_LEVEL.cameraId);
-	const auto raw_camera_position = VecF{camera->position.x, camera->position.y, 0.0f};
+	const auto raw_camera_position = VecF{camera->position.GetX(), camera->position.GetY(), 0.0f};
 	const auto camera_position = raw_camera_position + M2_LEVEL.GetCameraOffset();
 	return camera_position;
 }
 m3::VecF m3::FocusPositionM() {
-	return {M2_PLAYER.position.x, M2_PLAYER.position.y, M2G_PROXY.focus_point_height};
+	return {M2_PLAYER.position.GetX(), M2_PLAYER.position.GetY(), M2G_PROXY.focus_point_height};
 }
 float m3::VisibleWidthM() {
 	// Do not recalculate unless the distance or FOV has changed
@@ -202,8 +202,8 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 void m2::Graphic::ColorCell(const VecI& cell, const SDL_Color color) {
 	const auto screen_origin_to_cell_center_px = ScreenOriginToPositionVecPx(VecF{cell});
 	const auto rect = SDL_Rect{
-		RoundI(screen_origin_to_cell_center_px.x - (M2_GAME.Dimensions().OutputPixelsPerMeter() / 2.0f)),
-		RoundI(screen_origin_to_cell_center_px.y - (M2_GAME.Dimensions().OutputPixelsPerMeter() / 2.0f)),
+		RoundI(screen_origin_to_cell_center_px.GetX() - (M2_GAME.Dimensions().OutputPixelsPerMeter() / 2.0f)),
+		RoundI(screen_origin_to_cell_center_px.GetY() - (M2_GAME.Dimensions().OutputPixelsPerMeter() / 2.0f)),
 		RoundI(M2_GAME.Dimensions().OutputPixelsPerMeter()),
 		RoundI(M2_GAME.Dimensions().OutputPixelsPerMeter())
 	};
@@ -216,10 +216,10 @@ void m2::Graphic::ColorRect(const RectF& world_coordinates_m, const SDL_Color co
 	const auto screen_origin_to_top_left_px = ScreenOriginToPositionVecPx(world_coordinates_m.GetTopLeftPoint());
 	const auto screen_origin_to_bottom_right_px = ScreenOriginToPositionVecPx(world_coordinates_m.GetBottomRightPoint());
 	const auto rect = SDL_Rect{
-			I(screen_origin_to_top_left_px.x),
-			I(screen_origin_to_top_left_px.y),
-			CeilI(screen_origin_to_bottom_right_px.x - screen_origin_to_top_left_px.x),
-			CeilI(screen_origin_to_bottom_right_px.y - screen_origin_to_top_left_px.y)
+			I(screen_origin_to_top_left_px.GetX()),
+			I(screen_origin_to_top_left_px.GetY()),
+			CeilI(screen_origin_to_bottom_right_px.GetX() - screen_origin_to_top_left_px.GetX()),
+			CeilI(screen_origin_to_bottom_right_px.GetY() - screen_origin_to_top_left_px.GetY())
 			// TODO using I() and ceilf() here is quite problematic, but I couldn't find any other way of ensuring not
 			//  leaving any gaps between sprites
 			// TODO unfortunately, we can't draw pixel perfect sprites with floating point scaling. However, the game can
@@ -267,7 +267,7 @@ void m2::Graphic::DrawLine(const VecF& world_position_1, const VecF& world_posit
 		const auto p1 = m3::ScreenOriginToProjectionAlongCameraPlaneDstpx(m3::VecF{world_position_1});
 		const auto p2 = m3::ScreenOriginToProjectionAlongCameraPlaneDstpx(m3::VecF{world_position_2});
 		if (p1 && p2) {
-			SDL_RenderDrawLineF(M2_GAME.renderer, p1->x, p1->y, p2->x, p2->y);
+			SDL_RenderDrawLineF(M2_GAME.renderer, p1->GetX(), p1->GetY(), p2->GetX(), p2->GetY());
 		}
 	}
 }
@@ -275,12 +275,12 @@ void m2::Graphic::DrawLine(const VecF& worldPosition1M, const VecF& worldPositio
 	DrawLine(worldPosition1M, worldPosition2M, SDL_Color{color.r, color.g, color.b, color.a});
 }
 void m2::Graphic::DrawVerticalLine(float x, const RGBA& color) {
-	const auto x_px = static_cast<int>(roundf(ScreenOriginToPositionVecPx(VecF{x, 0.0f}).x));
+	const auto x_px = static_cast<int>(roundf(ScreenOriginToPositionVecPx(VecF{x, 0.0f}).GetX()));
 	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
 	SDL_RenderDrawLine(M2_GAME.renderer, x_px, M2_GAME.Dimensions().Game().y, x_px, M2_GAME.Dimensions().Game().y + M2_GAME.Dimensions().Game().h);
 }
 void m2::Graphic::DrawHorizontalLine(float y, const RGBA& color) {
-	const auto y_px = static_cast<int>(roundf(ScreenOriginToPositionVecPx(VecF{0.0f, y}).y));
+	const auto y_px = static_cast<int>(roundf(ScreenOriginToPositionVecPx(VecF{0.0f, y}).GetY()));
 	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
 	SDL_RenderDrawLine(M2_GAME.renderer, M2_GAME.Dimensions().Game().x, y_px, M2_GAME.Dimensions().Game().x + M2_GAME.Dimensions().Game().w, y_px);
 }
@@ -300,10 +300,10 @@ void m2::Graphic::DrawGridLines(const float startFrom, const float frequency, co
 	const auto viewportNoOffset = viewport.Shift({-startFrom, -startFrom});
 	// Divide by frequency
 	const auto multiple = VecF{std::ceil(viewportNoOffset.x / frequency), std::floor(viewportNoOffset.y / frequency)};
-	for (auto x = multiple.x * frequency + startFrom; x <= viewport.GetX2(); x += frequency) {
+	for (auto x = multiple.GetX() * frequency + startFrom; x <= viewport.GetX2(); x += frequency) {
 		DrawVerticalLine(x, color);
 	}
-	for (auto y = multiple.y * frequency + startFrom; y <= viewport.GetY2(); y += frequency) {
+	for (auto y = multiple.GetY() * frequency + startFrom; y <= viewport.GetY2(); y += frequency) {
 		DrawHorizontalLine(y, color);
 	}
 }
@@ -336,8 +336,8 @@ void m2::DrawTextureIn2dWorld(
 
 	// Calculate the destination
 	const auto dstRect = SDL_Rect{
-		I(screenOriginToTextureCenterVecInOutputPixels.x - ToFloat(sourceRect->w) * outputToSourcePpmRatio / 2.0f),
-		I(screenOriginToTextureCenterVecInOutputPixels.y - ToFloat(sourceRect->h) * outputToSourcePpmRatio / 2.0f),
+		I(screenOriginToTextureCenterVecInOutputPixels.GetX() - ToFloat(sourceRect->w) * outputToSourcePpmRatio / 2.0f),
+		I(screenOriginToTextureCenterVecInOutputPixels.GetY() - ToFloat(sourceRect->h) * outputToSourcePpmRatio / 2.0f),
 		CeilI(ToFloat(sourceRect->w) * outputToSourcePpmRatio),
 		CeilI(ToFloat(sourceRect->h) * outputToSourcePpmRatio)
 		// TODO using I() and ceilf() here is quite problematic, but I couldn't find any other way of ensuring not
@@ -348,8 +348,8 @@ void m2::DrawTextureIn2dWorld(
 
 	// Calculate the center point used for rotation origin
 	const auto centerPoint = SDL_Point{
-		RoundI(textureCenterToTextureOriginVecInOutputPixels.x) + dstRect.w / 2,
-		RoundI(textureCenterToTextureOriginVecInOutputPixels.y) + dstRect.h / 2
+		RoundI(textureCenterToTextureOriginVecInOutputPixels.GetX()) + dstRect.w / 2,
+		RoundI(textureCenterToTextureOriginVecInOutputPixels.GetY()) + dstRect.h / 2
 	};
 
 	// Render
@@ -379,28 +379,28 @@ void m2::DrawTextureIn3dWorld(
 	// **   *
 	// 2****3
 
-	auto position3 = m3::VecF{xyPositionInWorldM.x, xyPositionInWorldM.y, 0.0f};
+	auto position3 = m3::VecF{xyPositionInWorldM.GetX(), xyPositionInWorldM.GetY(), 0.0f};
 	m3::VecF point_0, point_1, point_2, point_3;
 	if (isForeground) {
-		auto sprite_x_offset_in_dest_px = sourceCenterToOriginVectorInOutputPixels.x;
+		auto sprite_x_offset_in_dest_px = sourceCenterToOriginVectorInOutputPixels.GetX();
 		auto point_0_not_rotated = m3::VecF{
-				xyPositionInWorldM.x - ToFloat(sourceRect->w) / sourcePpm / 2.0f - sprite_x_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter(),
-				xyPositionInWorldM.y,
+				xyPositionInWorldM.GetX() - ToFloat(sourceRect->w) / sourcePpm / 2.0f - sprite_x_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter(),
+				xyPositionInWorldM.GetY(),
 				ToFloat(sourceRect->h) / sourcePpm
 		};
 		auto point_1_not_rotated = m3::VecF{
-				xyPositionInWorldM.x + ((float)sourceRect->w / sourcePpm / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter()),
-				xyPositionInWorldM.y,
+				xyPositionInWorldM.GetX() + ((float)sourceRect->w / sourcePpm / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter()),
+				xyPositionInWorldM.GetY(),
 				(float)sourceRect->h / sourcePpm
 		};
 		auto point_2_not_rotated = m3::VecF{
-				xyPositionInWorldM.x - ((float)sourceRect->w / sourcePpm / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter()),
-				xyPositionInWorldM.y,
+				xyPositionInWorldM.GetX() - ((float)sourceRect->w / sourcePpm / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter()),
+				xyPositionInWorldM.GetY(),
 				0.0f
 		};
 		auto point_3_not_rotated = m3::VecF{
-				xyPositionInWorldM.x + ((float)sourceRect->w / sourcePpm / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter()),
-				xyPositionInWorldM.y,
+				xyPositionInWorldM.GetX() + ((float)sourceRect->w / sourcePpm / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter()),
+				xyPositionInWorldM.GetY(),
 				0.0f
 		};
 
@@ -423,26 +423,26 @@ void m2::DrawTextureIn3dWorld(
 		point_3 = (position_to_point_3 + position3).offset_z(zPositionInWorldM);
 	} else {
 		// Background sprite
-		auto sprite_x_offset_in_dest_px = sourceCenterToOriginVectorInOutputPixels.x;
-		auto sprite_y_offset_in_dest_px = sourceCenterToOriginVectorInOutputPixels.y;
+		auto sprite_x_offset_in_dest_px = sourceCenterToOriginVectorInOutputPixels.GetX();
+		auto sprite_y_offset_in_dest_px = sourceCenterToOriginVectorInOutputPixels.GetY();
 		auto point_0_not_rotated = m3::VecF{
-				xyPositionInWorldM.x - ((float)sourceRect->w / sourcePpm / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter()),
-				xyPositionInWorldM.y - ((float)sourceRect->h / sourcePpm / 2.0f) - (sprite_y_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter()),
+				xyPositionInWorldM.GetX() - ((float)sourceRect->w / sourcePpm / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter()),
+				xyPositionInWorldM.GetY() - ((float)sourceRect->h / sourcePpm / 2.0f) - (sprite_y_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter()),
 				0.0f
 		};
 		auto point_1_not_rotated = m3::VecF{
-				xyPositionInWorldM.x + ((float)sourceRect->w / sourcePpm / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter()),
-				xyPositionInWorldM.y - ((float)sourceRect->h / sourcePpm / 2.0f) - (sprite_y_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter()),
+				xyPositionInWorldM.GetX() + ((float)sourceRect->w / sourcePpm / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter()),
+				xyPositionInWorldM.GetY() - ((float)sourceRect->h / sourcePpm / 2.0f) - (sprite_y_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter()),
 				0.0f
 		};
 		auto point_2_not_rotated = m3::VecF{
-				xyPositionInWorldM.x - ((float)sourceRect->w / sourcePpm / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter()),
-				xyPositionInWorldM.y + ((float)sourceRect->h / sourcePpm / 2.0f) - (sprite_y_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter()),
+				xyPositionInWorldM.GetX() - ((float)sourceRect->w / sourcePpm / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter()),
+				xyPositionInWorldM.GetY() + ((float)sourceRect->h / sourcePpm / 2.0f) - (sprite_y_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter()),
 				0.0f
 		};
 		auto point_3_not_rotated = m3::VecF{
-				xyPositionInWorldM.x + ((float)sourceRect->w / sourcePpm / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter()),
-				xyPositionInWorldM.y + ((float)sourceRect->h / sourcePpm / 2.0f) - (sprite_y_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter()),
+				xyPositionInWorldM.GetX() + ((float)sourceRect->w / sourcePpm / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter()),
+				xyPositionInWorldM.GetY() + ((float)sourceRect->h / sourcePpm / 2.0f) - (sprite_y_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter()),
 				0.0f
 		};
 
@@ -474,29 +474,29 @@ void m2::DrawTextureIn3dWorld(
 		vertices[0].position = static_cast<SDL_FPoint>(*projected_point_0);
 		vertices[0].color = {255, 255, 255, 255};
 		vertices[0].tex_coord = SDL_FPoint{
-				ToFloat(sourceRect->x) / sourceTextureSheetDimensions.x,
-				ToFloat(sourceRect->y) / sourceTextureSheetDimensions.y,
+				ToFloat(sourceRect->x) / sourceTextureSheetDimensions.GetX(),
+				ToFloat(sourceRect->y) / sourceTextureSheetDimensions.GetY(),
 		};
 
 		vertices[1].position = static_cast<SDL_FPoint>(*projected_point_1);
 		vertices[1].color = {255, 255, 255, 255};
 		vertices[1].tex_coord = SDL_FPoint{
-				ToFloat(sourceRect->x + sourceRect->w) / sourceTextureSheetDimensions.x,
-				ToFloat(sourceRect->y) / sourceTextureSheetDimensions.y,
+				ToFloat(sourceRect->x + sourceRect->w) / sourceTextureSheetDimensions.GetX(),
+				ToFloat(sourceRect->y) / sourceTextureSheetDimensions.GetY(),
 		};
 
 		vertices[2].position = static_cast<SDL_FPoint>(*projected_point_2);
 		vertices[2].color = {255, 255, 255, 255};
 		vertices[2].tex_coord = SDL_FPoint{
-				ToFloat(sourceRect->x) / sourceTextureSheetDimensions.x,
-				ToFloat(sourceRect->y + sourceRect->h) / sourceTextureSheetDimensions.y,
+				ToFloat(sourceRect->x) / sourceTextureSheetDimensions.GetX(),
+				ToFloat(sourceRect->y + sourceRect->h) / sourceTextureSheetDimensions.GetY(),
 		};
 
 		vertices[3].position = static_cast<SDL_FPoint>(*projected_point_3);
 		vertices[3].color = {255, 255, 255, 255};
 		vertices[3].tex_coord = SDL_FPoint{
-				ToFloat(sourceRect->x + sourceRect->w) / sourceTextureSheetDimensions.x,
-				ToFloat(sourceRect->y + sourceRect->h) / sourceTextureSheetDimensions.y,
+				ToFloat(sourceRect->x + sourceRect->w) / sourceTextureSheetDimensions.GetX(),
+				ToFloat(sourceRect->y + sourceRect->h) / sourceTextureSheetDimensions.GetY(),
 		};
 
 		static const int indices[6] = {0, 1, 2, 2, 1, 3};

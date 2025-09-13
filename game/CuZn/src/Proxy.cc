@@ -415,7 +415,7 @@ void m2g::Proxy::bot_handle_server_command(MAYBE const m2g::pb::TurnBasedServerC
 void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_type) {
 	// Store the positions of the merchants
 	if (is_merchant_location(sprite_type)) {
-		auto merchant_cell_rect = m2::RectF{obj.position.x - 0.5f, obj.position.y - 0.5f, 2.0f, 2.0f};
+		auto merchant_cell_rect = m2::RectF{obj.position.GetX() - 0.5f, obj.position.GetY() - 0.5f, 2.0f, 2.0f};
 		merchant_positions[sprite_type] = std::make_tuple(obj.position, merchant_cell_rect, obj.GetId());
 		LOG_DEBUG("Merchant position", m2g::pb::SpriteType_Name(sprite_type), merchant_cell_rect);
 	}
@@ -426,13 +426,13 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 		if (sprite.Ppm() != sprite.Sheet().Pb().ppm()) {
 			throw M2_ERROR("Sprite ppm mismatch");
 		}
-		auto industry_cell_rect = m2::RectF{obj.position.x - 0.5f, obj.position.y - 0.5f, 2.0f, 2.0f};
+		auto industry_cell_rect = m2::RectF{obj.position.GetX() - 0.5f, obj.position.GetY() - 0.5f, 2.0f, 2.0f};
 		industry_positions[sprite_type] = std::make_tuple(obj.position, industry_cell_rect, obj.GetId());
 		LOG_DEBUG("Industry position", m2g::pb::SpriteType_Name(sprite_type), industry_cell_rect);
 	}
 	// Store the positions of the connection locations
 	else if (is_canal(sprite_type) || is_railroad(sprite_type)) {
-		m2::RectF connection_cell_rect = m2::RectF{obj.position.x - 0.5f, obj.position.y - 0.5f, 1.0f, 1.0f};
+		m2::RectF connection_cell_rect = m2::RectF{obj.position.GetX() - 0.5f, obj.position.GetY() - 0.5f, 1.0f, 1.0f};
 		// Different canal or railroad backgrounds have different offsets
 		const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(sprite_type));
 		auto original_type = sprite.OriginalType(); // Connection sprites are duplicate of another

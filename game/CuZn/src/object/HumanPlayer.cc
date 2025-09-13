@@ -66,11 +66,11 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj) {
 
 		constexpr float zoom_step = 1.2f;
 		if (auto scroll = M2_GAME.events.PopMouseWheelVerticalScroll(M2_GAME.Dimensions().Game()); 0 < scroll) {
-			if (20.0f < M2_GAME.Dimensions().GameM().y) {
+			if (20.0f < M2_GAME.Dimensions().GameM().GetY()) {
 				M2_GAME.SetScale(M2_GAME.Dimensions().Scale() * zoom_step);
 			}
 		} else if (scroll < 0) {
-			if (M2_GAME.Dimensions().GameM().y < 55.0f) {
+			if (M2_GAME.Dimensions().GameM().GetY() < 55.0f) {
 				M2_GAME.SetScale(M2_GAME.Dimensions().Scale() / zoom_step);
 			}
 		}
@@ -78,25 +78,25 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj) {
 		// Limit the player inside the level
 		const auto& dims = M2_GAME.Dimensions();
 		// If the map is zoomed out so much that the black space is showing on the left and the right
-		if (M2_LEVEL.GetBackgroundBoundary().w < dims.GameM().x) {
-			o.position.x = m2::ToFloat(M2_LEVEL.GetBackgroundBoundary().GetXCenter());
+		if (M2_LEVEL.GetBackgroundBoundary().w < dims.GameM().GetX()) {
+			o.position = o.position.WithX(m2::ToFloat(M2_LEVEL.GetBackgroundBoundary().GetXCenter()));
 		} else {
-			if (o.position.x < dims.GameM().x / 2.0f) {
-				o.position.x = dims.GameM().x / 2.0f; // Left
+			if (o.position.GetX() < dims.GameM().GetX() / 2.0f) {
+				o.position = o.position.WithX(dims.GameM().GetX() / 2.0f); // Left
 			}
-			if (M2_LEVEL.GetBackgroundBoundary().GetX2() < o.position.x + dims.GameM().x / 2.0f) {
-				o.position.x = M2_LEVEL.GetBackgroundBoundary().GetX2() - dims.GameM().x / 2.0f; // Right
+			if (M2_LEVEL.GetBackgroundBoundary().GetX2() < o.position.GetX() + dims.GameM().GetX() / 2.0f) {
+				o.position = o.position.WithX(M2_LEVEL.GetBackgroundBoundary().GetX2() - dims.GameM().GetX() / 2.0f); // Right
 			}
 		}
 		// If the map is zoomed out so much that the black space is showing on the top and the bottom
-		if (M2_LEVEL.GetBackgroundBoundary().h < dims.GameM().y) {
-			o.position.y = m2::ToFloat(M2_LEVEL.GetBackgroundBoundary().GetYCenter());
+		if (M2_LEVEL.GetBackgroundBoundary().h < dims.GameM().GetY()) {
+			o.position = o.position.WithY(m2::ToFloat(M2_LEVEL.GetBackgroundBoundary().GetYCenter()));
 		} else {
-			if (o.position.y < dims.GameM().y / 2.0f) {
-				o.position.y = dims.GameM().y / 2.0f; // Top
+			if (o.position.GetY() < dims.GameM().GetY() / 2.0f) {
+				o.position = o.position.WithY(dims.GameM().GetY() / 2.0f); // Top
 			}
-			if (M2_LEVEL.GetBackgroundBoundary().GetY2() < o.position.y + dims.GameM().y / 2.0f) {
-				o.position.y = M2_LEVEL.GetBackgroundBoundary().GetY2() - dims.GameM().y / 2.0f; // Bottom
+			if (M2_LEVEL.GetBackgroundBoundary().GetY2() < o.position.GetY() + dims.GameM().GetY() / 2.0f) {
+				o.position = o.position.WithY(M2_LEVEL.GetBackgroundBoundary().GetY2() - dims.GameM().GetY() / 2.0f); // Bottom
 			}
 		}
 

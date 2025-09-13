@@ -8,28 +8,28 @@ using namespace m2;
 
 TEST(VecF, basic) {
 	VecF v1;
-	EXPECT_FLOAT_EQ(v1.x, 0.0f);
-	EXPECT_FLOAT_EQ(v1.y, 0.0f);
+	EXPECT_FLOAT_EQ(v1.GetX(), 0.0f);
+	EXPECT_FLOAT_EQ(v1.GetY(), 0.0f);
 
 	VecF v2{1.0f, 2.0f};
-	EXPECT_FLOAT_EQ(v2.x, 1.0f);
-	EXPECT_FLOAT_EQ(v2.y, 2.0f);
+	EXPECT_FLOAT_EQ(v2.GetX(), 1.0f);
+	EXPECT_FLOAT_EQ(v2.GetY(), 2.0f);
 
 	VecF v3{4, 5};
-	EXPECT_FLOAT_EQ(v3.x, 4.0f);
-	EXPECT_FLOAT_EQ(v3.y, 5.0f);
+	EXPECT_FLOAT_EQ(v3.GetX(), 4.0f);
+	EXPECT_FLOAT_EQ(v3.GetY(), 5.0f);
 
 	VecF v4{7u, 8u};
-	EXPECT_FLOAT_EQ(v4.x, 7.0f);
-	EXPECT_FLOAT_EQ(v4.y, 8.0f);
+	EXPECT_FLOAT_EQ(v4.GetX(), 7.0f);
+	EXPECT_FLOAT_EQ(v4.GetY(), 8.0f);
 
 	VecF v5{VecI{-2, -5}};
-	EXPECT_FLOAT_EQ(v5.x, -2.0f);
-	EXPECT_FLOAT_EQ(v5.y, -5.0f);
+	EXPECT_FLOAT_EQ(v5.GetX(), -2.0f);
+	EXPECT_FLOAT_EQ(v5.GetY(), -5.0f);
 
 	VecF v6{b2Vec2{1.5f, -3.5f}};
-	EXPECT_FLOAT_EQ(v6.x, 1.5f);
-	EXPECT_FLOAT_EQ(v6.y, -3.5f);
+	EXPECT_FLOAT_EQ(v6.GetX(), 1.5f);
+	EXPECT_FLOAT_EQ(v6.GetY(), -3.5f);
 
 	VecF v7{2.0f, 4.0f};
 	VecF v8{3.0f, 5.0f};
@@ -95,24 +95,24 @@ TEST(VecF, basic) {
 
 	VecF v24{sqrtf(3), 1.0f};
 	VecF v25 = v24.WithLength(4.0f);
-	EXPECT_FLOAT_EQ(v25.x, 2.0f * sqrtf(3.0f));
-	EXPECT_FLOAT_EQ(v25.y, 2);
+	EXPECT_FLOAT_EQ(v25.GetX(), 2.0f * sqrtf(3.0f));
+	EXPECT_FLOAT_EQ(v25.GetY(), 2);
 
 	VecF v26{1.0f, 1.0f};
-	EXPECT_FLOAT_EQ(v26.CeilLength(1.0f).x, 1.0f / sqrtf(2.0f));
-	EXPECT_FLOAT_EQ(v26.CeilLength(2.0f).x, 1.0f);
+	EXPECT_FLOAT_EQ(v26.CeilLength(1.0f).GetX(), 1.0f / sqrtf(2.0f));
+	EXPECT_FLOAT_EQ(v26.CeilLength(2.0f).GetX(), 1.0f);
 
 	VecF v27;
 	VecF v28{1,1};
-	EXPECT_FLOAT_EQ(v27.Lerp(v28, 1.0f / 3.0f).x, 1.0f / 3.0f);
+	EXPECT_FLOAT_EQ(v27.Lerp(v28, 1.0f / 3.0f).GetX(), 1.0f / 3.0f);
 
 	auto v29 = VecF::Nan();
-	EXPECT_TRUE(isnan(v29.x));
-	EXPECT_TRUE(isnan(v29.y));
+	EXPECT_TRUE(isnan(v29.GetX()));
+	EXPECT_TRUE(isnan(v29.GetY()));
 
 	auto v30 = VecF::CreateUnitVectorWithAngle(PI / 4.0f);
 	EXPECT_FLOAT_EQ(v30.GetLength(), 1.0f);
-	EXPECT_FLOAT_EQ(v30.x, 1.0f / sqrtf(2.0f));
+	EXPECT_FLOAT_EQ(v30.GetX(), 1.0f / sqrtf(2.0f));
 
 	VecF v31{1.23f, 4.56f};
 	EXPECT_STREQ(ToString(v31).c_str(), "{x:1.23,y:4.56}");
@@ -121,16 +121,16 @@ TEST(VecF, basic) {
 TEST(VecF, hround) {
 	VecF v1;
 	VecF v2 = v1.RoundHalfI();
-	EXPECT_FLOAT_EQ(v2.x, 0.0f);
-	EXPECT_FLOAT_EQ(v2.y, 0.0f);
+	EXPECT_FLOAT_EQ(v2.GetX(), 0.0f);
+	EXPECT_FLOAT_EQ(v2.GetY(), 0.0f);
 
 	VecF v3{0.4f, -0.4f};
 	VecF v4 = v3.RoundHalfI();
-	EXPECT_FLOAT_EQ(v4.x, 0.5f);
-	EXPECT_FLOAT_EQ(v4.y, -0.5f);
+	EXPECT_FLOAT_EQ(v4.GetX(), 0.5f);
+	EXPECT_FLOAT_EQ(v4.GetY(), -0.5f);
 
 	VecF v5{0.8f, -0.8f};
 	VecF v6 = v5.RoundHalfI();
-	EXPECT_FLOAT_EQ(v6.x, 1.0f);
-	EXPECT_FLOAT_EQ(v6.y, -1.0f);
+	EXPECT_FLOAT_EQ(v6.GetX(), 1.0f);
+	EXPECT_FLOAT_EQ(v6.GetY(), -1.0f);
 }
