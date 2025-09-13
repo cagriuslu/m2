@@ -1,7 +1,7 @@
 syntax = "proto3";
 package m2.pb;
 
-import "GameTypes.proto";
+import "ProxyTypes.proto";
 
 message VecF {
   float x = 1;

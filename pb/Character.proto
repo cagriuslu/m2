@@ -6,7 +6,7 @@ import "m2g_ItemType.proto";
 import "m2g_PropertyType.proto";
 import "m2g_ResourceType.proto";
 import "m2g_SpriteType.proto";
-import "GameTypes.proto";
+import "ProxyTypes.proto";
 
 // A type that either carries an integer, or the real number type selected by the game
 message IFF {
