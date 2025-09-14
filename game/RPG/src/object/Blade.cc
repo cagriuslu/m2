@@ -31,7 +31,7 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF& position, c
 	// Add physics
 	auto& phy = obj.AddPhysique();
 	phy.position = position;
-	phy.orientation = start_angle;
+	phy.orientation = m2::FE{start_angle};
 
 	auto rigidBodyDef = BasicBulletRigidBodyDefinition();
 	rigidBodyDef.fixtures = {m2::third_party::physics::FixtureDefinition{

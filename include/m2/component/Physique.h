@@ -2,13 +2,14 @@
 #include "../Component.h"
 #include "../box2d/ContactListener.h"
 #include <m2/third_party/physics/RigidBody.h>
+#include <m2/ProxyTypes.h>
 #include <M2.pb.h>
 #include <functional>
 
 namespace m2 {
 	struct Physique final : Component {
 		VecF position;
-		float orientation{}; /// In radians
+		FE orientation{}; /// In radians
 
 		using Callback = std::function<void(Physique&, const Stopwatch::Duration&)>;
 		Callback preStep{};

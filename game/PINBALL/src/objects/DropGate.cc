@@ -32,7 +32,7 @@ m2::void_expected LoadDropGate(m2::Object& obj, const m2::VecF& position, float 
 
 	auto& phy = obj.AddPhysique();
 	phy.position = position;
-	phy.orientation = orientation;
+	phy.orientation = m2::FE{orientation};
 	m2::third_party::physics::RigidBodyDefinition rigidBodyDef{
 		.bodyType = m2::third_party::physics::RigidBodyType::STATIC,
 		.isBullet = true
