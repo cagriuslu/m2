@@ -7,6 +7,8 @@
 
 namespace m2 {
 	struct Physique final : Component {
+		VecF position;
+
 		using Callback = std::function<void(Physique&, const Stopwatch::Duration&)>;
 		Callback preStep{};
 		Callback postStep{};
@@ -19,7 +21,7 @@ namespace m2 {
 		std::function<void(Physique&, Physique&)> offCollision;
 
 		Physique() = default;
-		explicit Physique(Id object_id);
+		explicit Physique(Id ownerId, const VecF& position = {});
 		// Copy not allowed
 		Physique(const Physique& other) = delete;
 		Physique& operator=(const Physique& other) = delete;

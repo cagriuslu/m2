@@ -35,8 +35,7 @@ namespace m2g {
 		void bot_handle_server_update(const m2::pb::TurnBasedServerUpdate& server_update);
 		void bot_handle_server_command(const m2g::pb::TurnBasedServerCommand& server_command, int receiver_index);
 		void post_tile_create(m2::Object& obj, pb::SpriteType sprite_type);
-		m2::void_expected LoadForegroundObjectFromLevelBlueprint(m2::Object& obj);
-		m2::void_expected init_server_update_fg_object(m2::Object&, const std::vector<m2g::pb::ItemType>&, const std::vector<m2::pb::Resource>&);
+		m2::void_expected init_server_update_fg_object(m2::Object&, const m2::VecF& position, const std::vector<m2g::pb::ItemType>&, const std::vector<m2::pb::Resource>&);
 
 	private:
 		m2::Id _game_state_tracker_id{};

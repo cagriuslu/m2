@@ -21,8 +21,8 @@ namespace {
 }
 
 m2::Pool<m2::Object>::Iterator m2::obj::CreateTile(const pb::FlatGraphicsLayer layer, const VecF& position, const m2g::pb::SpriteType spriteType) {
-    const auto it = CreateObject(position);
-	it->AddGraphic(layer, spriteType);
+    const auto it = CreateObject();
+	it->AddGraphic(layer, spriteType, position);
 
 	if (const auto& spriteOrTextLabel = M2_GAME.GetSpriteOrTextLabel(spriteType);
 			std::holds_alternative<Sprite>(spriteOrTextLabel)) {
@@ -39,14 +39,14 @@ m2::Pool<m2::Object>::Iterator m2::obj::CreateTile(const pb::FlatGraphicsLayer l
 				.initiallyEnabled = true
 			};
 			auto& phy = it->AddPhysique();
-			phy.body[I(pb::PhysicsLayer::SEA_LEVEL)] = third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, it->GetPhysiqueId(), it->position, 0.0f, pb::PhysicsLayer::SEA_LEVEL);
+			phy.body[I(pb::PhysicsLayer::SEA_LEVEL)] = third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, it->GetPhysiqueId(), position, 0.0f, pb::PhysicsLayer::SEA_LEVEL);
 		}
 
 		// Add foreground companion if necessary
 		if (sprite.HasForegroundCompanion()) {
-			const auto fg_it = CreateObject(position - sprite.CenterToOriginVecM()
-					+ sprite.ForegroundCompanionCenterToOriginVecM());
-			auto& gfx = fg_it->AddGraphic(pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, spriteType);
+			const auto fg_it = CreateObject();
+			auto& gfx = fg_it->AddGraphic(pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, spriteType,
+				position - sprite.CenterToOriginVecM() + sprite.ForegroundCompanionCenterToOriginVecM());
 			gfx.drawForegroundCompanion = true;
 		}
 	}

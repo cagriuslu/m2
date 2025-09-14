@@ -7,11 +7,9 @@
 
 using namespace m2;
 
-Object::Object(const VecF &position, const m2g::pb::ObjectType type, const ObjectId parent_id) : position(position),
-		_object_type(type), _parent_id(parent_id) {}
+Object::Object(const m2g::pb::ObjectType type, const ObjectId parent_id) : _object_type(type), _parent_id(parent_id) {}
 
 Object::Object(Object&& other) noexcept :
-		position(other.position),
 		orientation(other.orientation),
 		impl(std::move(other.impl)),
 		_object_type(other._object_type),
@@ -34,7 +32,6 @@ Object::Object(Object&& other) noexcept :
     other._character_id = 0;
 }
 Object& Object::operator=(Object&& other) noexcept {
-	std::swap(position, other.position);
 	std::swap(orientation, other.orientation);
 	std::swap(impl, other.impl);
 	std::swap(_object_type, other._object_type);
@@ -89,13 +86,6 @@ CharacterId Object::GetCharacterId() const {
     return _character_id;
 }
 
-Character* Object::TryGetCharacter() const {
-	auto* character_variant = M2_LEVEL.characters.Get(_character_id);
-	if (not character_variant) {
-		return nullptr;
-	}
-	return &ToCharacterBase(*character_variant);
-}
 Object* Object::TryGetParent() const {
     return _parent_id ? M2_LEVEL.objects.Get(_parent_id) : nullptr;
 }
@@ -111,6 +101,19 @@ Graphic* Object::TryGetGraphic() const {
 	}
 	const auto poolAndDrawList = M2_LEVEL.GetGraphicPoolAndDrawList(_graphicId);
 	return poolAndDrawList.first.Get(_graphicId);
+}
+Light* Object::TryGetLight() const {
+	return _light_id ? M2_LEVEL.lights.Get(_light_id) : nullptr;
+}
+SoundEmitter* Object::TryGetSoundEmitter() const {
+	return _sound_emitter_id ? M2_LEVEL.soundEmitters.Get(_sound_emitter_id) : nullptr;
+}
+Character* Object::TryGetCharacter() const {
+	auto* character_variant = M2_LEVEL.characters.Get(_character_id);
+	if (not character_variant) {
+		return nullptr;
+	}
+	return &ToCharacterBase(*character_variant);
 }
 
 Physique& Object::GetPhysique() const {
@@ -134,31 +137,44 @@ Character& Object::GetCharacter() const {
     return ToCharacterBase(it);
 }
 
+VecF Object::InferPosition() const {
+	if (_physique_id) {
+		return GetPhysique().position;
+	} else if (_graphicId) {
+		return GetGraphic().position;
+	} else if (_light_id) {
+		return GetLight().position;
+	} else if (_sound_emitter_id) {
+		return GetSoundEmitter().position;
+	}
+	return {};
+}
+
 void Object::SetGroup(const GroupIdentifier& group_id, const IndexInGroup group_index) {
 	_group_id = group_id;
 	_index_in_group = group_index;
 }
 
-Physique& Object::AddPhysique() {
-	const auto phy = M2_LEVEL.physics.Emplace(GetId());
+Physique& Object::AddPhysique(const VecF& position) {
+	const auto phy = M2_LEVEL.physics.Emplace(GetId(), position);
 	_physique_id = phy.GetId();
 	return *phy;
 }
-Graphic& Object::AddGraphic(const DrawLayer layer) {
+Graphic& Object::AddGraphic(const DrawLayer layer, const VecF& position) {
 	const auto poolAndDrawList = M2_LEVEL.GetGraphicPoolAndDrawList(layer);
-	const auto it = poolAndDrawList.first.Emplace(GetId());
+	const auto it = poolAndDrawList.first.Emplace(GetId(), position);
 	_graphicId = it.GetId();
 	if (poolAndDrawList.second) {
-		poolAndDrawList.second->Insert(GetId());
+		poolAndDrawList.second->Insert(GetId(), _graphicId, position);
 	}
 	return *it.Data();
 }
-Graphic& Object::AddGraphic(const DrawLayer layer, const m2g::pb::SpriteType spriteType) {
+Graphic& Object::AddGraphic(const DrawLayer layer, const m2g::pb::SpriteType spriteType, const VecF& position) {
 	const auto poolAndDrawList = M2_LEVEL.GetGraphicPoolAndDrawList(layer);
-	const auto it = poolAndDrawList.first.Emplace(GetId(), M2_GAME.GetSpriteOrTextLabel(spriteType));
+	const auto it = poolAndDrawList.first.Emplace(GetId(), M2_GAME.GetSpriteOrTextLabel(spriteType), position);
 	_graphicId = it.GetId();
 	if (poolAndDrawList.second) {
-		poolAndDrawList.second->Insert(GetId());
+		poolAndDrawList.second->Insert(GetId(), _graphicId, position);
 	}
 	return *it.Data();
 }
@@ -216,6 +232,7 @@ void Object::MoveLayer(const std::optional<pb::PhysicsLayer> newPhysicsLayer, co
 		}
 
 		if (const auto currentLayer = M2_LEVEL.GetDrawLayer(_graphicId); currentLayer != *newDrawLayer) {
+			const auto position = gfx->position;
 			// Create new component
 			const auto newPoolAndDrawList = M2_LEVEL.GetGraphicPoolAndDrawList(*newDrawLayer);
 			const auto it = newPoolAndDrawList.first.Emplace(GetId());
@@ -225,7 +242,7 @@ void Object::MoveLayer(const std::optional<pb::PhysicsLayer> newPhysicsLayer, co
 			// Store new component
 			_graphicId = it.GetId();
 			if (newPoolAndDrawList.second) {
-				newPoolAndDrawList.second->Insert(GetId());
+				newPoolAndDrawList.second->Insert(GetId(), _graphicId, position);
 			}
 		}
 	}
@@ -266,8 +283,8 @@ void Object::RemoveCharacter() {
 	}
 }
 
-Pool<Object>::Iterator m2::CreateObject(const VecF &position, m2g::pb::ObjectType type, ObjectId parent_id) {
-    return M2_LEVEL.objects.Emplace(position, type, parent_id);
+Pool<Object>::Iterator m2::CreateObject(m2g::pb::ObjectType type, ObjectId parent_id) {
+    return M2_LEVEL.objects.Emplace(type, parent_id);
 }
 std::function<void()> m2::CreateObjectDeleter(ObjectId id) {
 	return [id]() {
@@ -319,7 +336,7 @@ std::function<void()> m2::CreateLayerMover(ObjectId id, std::optional<pb::Physic
 
 std::function<bool(Object&)> m2::is_object_in_area(const RectF& rect) {
 	return [rect](const Object& o) -> bool {
-		return rect.DoesContain(o.position);
+		return rect.DoesContain(o.InferPosition());
 	};
 }
 

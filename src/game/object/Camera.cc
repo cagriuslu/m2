@@ -9,18 +9,18 @@
 
 m2::Id m2::obj::CreateCamera() {
 	// Start at player's location
-	auto* player = M2_LEVEL.objects.Get(M2_LEVEL.playerId);
-	auto it = CreateObject(player ? player->position : VecF{});
+	auto* playerPtr = M2_LEVEL.objects.Get(M2_LEVEL.playerId);
+	auto it = CreateObject();
 
 	// Create implementation
 	auto& camera = *it;
 	camera.impl = std::make_unique<m2::obj::Camera>();
 
-	auto& phy = camera.AddPhysique();
+	auto& phy = camera.AddPhysique(playerPtr ? playerPtr->InferPosition() : VecF{});
 	phy.postStep = [&camera](MAYBE Physique& phy, const Stopwatch::Duration&) {
 		//		auto* camera_data = dynamic_cast<m2::obj::Camera*>(camera.impl.get());
-		auto& player = M2_LEVEL.objects[M2_LEVEL.playerId];
-		camera.position = player.position;
+		const auto& player = M2_LEVEL.objects[M2_LEVEL.playerId];
+		phy.position = player.InferPosition();
 
 		// Mouse lookahead disabled temporarily
 		//		if (M2_GAME.level->type() == Level::Type::SINGLE_PLAYER) {
@@ -33,16 +33,16 @@ m2::Id m2::obj::CreateCamera() {
 		//		}
 
 		if (M2G_PROXY.camera_is_listener) {
-			M2_LEVEL.leftListener->position = camera.position;
-			M2_LEVEL.rightListener->position = camera.position;
+			M2_LEVEL.leftListener->position = phy.position;
+			M2_LEVEL.rightListener->position = phy.position;
 		}
 	};
 
 	if (M2G_PROXY.camera_is_listener) {
 		M2_LEVEL.leftListener =
-		    SoundListener{.position = M2_PLAYER.position, .direction = PI, .listenAngle = PI_DIV2};
+		    SoundListener{.position = M2_PLAYER.InferPosition(), .direction = PI, .listenAngle = PI_DIV2};
 		M2_LEVEL.rightListener =
-		    SoundListener{.position = M2_PLAYER.position, .direction = 0.0f, .listenAngle = PI_DIV2};
+		    SoundListener{.position = M2_PLAYER.InferPosition(), .direction = 0.0f, .listenAngle = PI_DIV2};
 	}
 
 	return M2_LEVEL.cameraId = it.GetId();

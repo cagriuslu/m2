@@ -4,14 +4,13 @@
 #include "m2/Object.h"
 
 m2::Id m2::obj::CreatePointer() {
-    const auto it = CreateObject({});
+    const auto it = CreateObject();
 
-	it->AddGraphic(pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT).preDraw = [](const Graphic& gfx_, const Stopwatch::Duration&) {
-		gfx_.Owner().position = M2_GAME.MousePositionWorldM();
+	it->AddGraphic(pb::FlatGraphicsLayer::FOREGROUND_FLAT).preDraw = [](Graphic& gfx_, const Stopwatch::Duration&) {
+		gfx_.position = M2_GAME.MousePositionWorldM();
 	};
 
     auto& lig = it->AddLight();
-	//lig.dynamic_category_bits = FIXTURE_CATEGORY_OBSTACLE;
     lig.radiusM = 3.0f;
 
     return M2_LEVEL.pointer_id = it.GetId();

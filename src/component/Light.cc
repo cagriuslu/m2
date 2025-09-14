@@ -20,7 +20,7 @@ void m2::Light::DefaultDrawCallback(Light& lig) {
 	if (category_bits) {
 		// Check if the object is inside the object
 		bool inside_body = false;
-		box2d::Query(*M2_LEVEL.world[I(pb::PhysicsLayer::SEA_LEVEL)], AABB{obj.position, 0.005f}, [&inside_body, category_bits](b2Fixture& fixture) {
+		box2d::Query(*M2_LEVEL.world[I(pb::PhysicsLayer::SEA_LEVEL)], AABB{lig.position, 0.005f}, [&inside_body, category_bits](b2Fixture& fixture) {
 			if (fixture.GetFilterData().categoryBits & category_bits) {
 				inside_body = true;
 				return false;
@@ -29,7 +29,7 @@ void m2::Light::DefaultDrawCallback(Light& lig) {
 		});
 
 		if (not inside_body) {
-			auto position_px = ScreenOriginToPositionVecPx(obj.position);
+			auto position_px = ScreenOriginToPositionVecPx(lig.position);
 
 			std::vector<SDL_Vertex> vertices;
 			// The vector that'll be rotated for raycasting
@@ -41,7 +41,7 @@ void m2::Light::DefaultDrawCallback(Light& lig) {
 				vertices.push_back(SDL_Vertex{.position = static_cast<SDL_FPoint>(position_px), .color = {max_brightness, max_brightness, max_brightness, 0}});
 
 				// Ray cast towards full_span_m
-				auto distance = box2d::CheckDistance(*M2_LEVEL.world[I(pb::PhysicsLayer::SEA_LEVEL)], obj.position, obj.position + full_span_m, category_bits);
+				auto distance = box2d::CheckDistance(*M2_LEVEL.world[I(pb::PhysicsLayer::SEA_LEVEL)], lig.position, lig.position + full_span_m, category_bits);
 				// Calculate brightness based on collision distance
 				auto brightness = (uint8_t)roundf((float)max_brightness * (1.0f - distance / lig.radiusM));
 				// Cut-off vector
@@ -63,7 +63,7 @@ void m2::Light::DefaultDrawCallback(Light& lig) {
 			SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
 		}
 	} else {
-		auto position_px = ScreenOriginToPositionVecPx(obj.position);
+		auto position_px = ScreenOriginToPositionVecPx(lig.position);
 		MAYBE auto dstrect = SDL_Rect{
 				(int)roundf(position_px.GetX() - lig.radiusM * M2_GAME.Dimensions().OutputPixelsPerMeter()),
 				(int)roundf(position_px.GetY() - lig.radiusM * M2_GAME.Dimensions().OutputPixelsPerMeter()),

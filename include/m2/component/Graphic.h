@@ -73,6 +73,7 @@ namespace m3 {
 
 namespace m2 {
 	struct Graphic final : Component {
+		VecF position;
 		bool enabled{true};
 		bool draw{true};
 
@@ -88,8 +89,8 @@ namespace m2 {
 		float z{};
 
 		Graphic() = default;
-		explicit Graphic(uint64_t object_id);
-		explicit Graphic(uint64_t object_id, const std::variant<Sprite, pb::TextLabel>&);
+		explicit Graphic(uint64_t ownerId, const VecF& position = {});
+		explicit Graphic(uint64_t object_id, const std::variant<Sprite, pb::TextLabel>&, const VecF& position = {});
 
 		/// Default draw callback that's capable of drawing sprites, foreground components, sprite effects, and text
 		/// labels.

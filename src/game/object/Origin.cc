@@ -3,11 +3,11 @@
 #include "m2/Game.h"
 
 m2::Id m2::obj::CreateOrigin() {
-	const auto it = CreateObject({});
+	const auto it = CreateObject();
 
 	auto& gfx = it->AddGraphic(pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT);
 	gfx.onDraw = [](const Graphic &gfx_) {
-		Graphic::DrawCross(gfx_.Owner().position, SDL_Color{255, 0, 0, 255});
+		Graphic::DrawCross(gfx_.position, SDL_Color{255, 0, 0, 255});
 	};
 
 	return it.GetId();

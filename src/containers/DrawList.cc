@@ -23,10 +23,9 @@ m2::DrawList::ConstIterator m2::DrawList::end() const {
 	return {drawMap.end()};
 }
 
-void m2::DrawList::Insert(ObjectId id) {
-	auto& obj = M2_LEVEL.objects[id];
-	auto it = drawMap.insert({obj.position, {id, obj.GetGraphicId()}});
-	idLookup.insert({id, it});
+void m2::DrawList::Insert(ObjectId objId, GraphicId gfxId, const VecF& position) {
+	auto it = drawMap.insert({position, {objId, gfxId}});
+	idLookup.insert({objId, it});
 }
 void m2::DrawList::QueueUpdate(ObjectId id, const VecF& pos) {
 	updateQueue.emplace_back(id, pos);

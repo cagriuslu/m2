@@ -27,11 +27,9 @@ namespace {
 }  // namespace
 
 Id obj::CreateGod() {
-	const auto it = CreateObject({});
+	const auto it = CreateObject();
 
 	it->AddPhysique().preStep = [](MAYBE Physique& phy, const Stopwatch::Duration& delta) {
-		auto& obj = phy.Owner();
-
 		VecF move_direction;
 		if (M2_GAME.events.IsKeyDown(m2g::pb::KeyType::MOVE_UP)) {
 			move_direction = move_direction.WithY(move_direction.GetY() - 1.0f);
@@ -45,9 +43,9 @@ Id obj::CreateGod() {
 		if (M2_GAME.events.IsKeyDown(m2g::pb::KeyType::MOVE_RIGHT)) {
 			move_direction = {move_direction.GetX() + 1.0f, move_direction.GetY()};
 		}
-		obj.position += move_direction.Normalize() * (ToDurationF(delta) * M2_GAME.Dimensions().GameM().GetY());
+		phy.position += move_direction.Normalize() * (ToDurationF(delta) * M2_GAME.Dimensions().GameM().GetY());
 		// Prevent God from going into negative quadrants
-		obj.position = obj.position.Clamp(VecF{0.0f, 0.0f}, std::nullopt);
+		phy.position = phy.position.Clamp(VecF{0.0f, 0.0f}, std::nullopt);
 
 		// Adjust zoom
 		if (M2_GAME.events.PopKeyPress(m2g::pb::KeyType::ZOOM_OUT)) {

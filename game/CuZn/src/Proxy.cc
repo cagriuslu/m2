@@ -47,9 +47,9 @@ void m2g::Proxy::postTurnBasedLevelClientInit(MAYBE const std::string& name, MAY
 
 	// Add human players
 	for (auto i = 0; i < client_count; ++i) {
-		auto it = m2::CreateObject(m2::VecF{i, i}, m2g::pb::ObjectType::HUMAN_PLAYER);
+		auto it = m2::CreateObject(m2g::pb::ObjectType::HUMAN_PLAYER);
 		if (i == self_index) {
-			auto client_init_result = PlayerInitThisInstance(*it);
+			auto client_init_result = PlayerInitThisInstance(*it, m2::VecF{i, i});
 			m2SucceedOrThrowError(client_init_result);
 		} else {
 			auto client_init_result = PlayerInitOtherInstance(*it);
@@ -62,14 +62,14 @@ void m2g::Proxy::postTurnBasedLevelClientInit(MAYBE const std::string& name, MAY
 	// Add all merchants (without any license) since all merchants can deal in coal and iron
 	for (const auto& merchant_sprite : PossiblyActiveMerchantLocations()) {
 		// Create merchant object
-		auto it = m2::CreateObject(std::get<m2::VecF>(merchant_positions[merchant_sprite]), m2g::pb::ObjectType::MERCHANT);
-		init_merchant(*it);
+		auto it = m2::CreateObject(m2g::pb::ObjectType::MERCHANT);
+		init_merchant(*it, std::get<m2::VecF>(merchant_positions[merchant_sprite]));
 		// Store for later
 		merchant_object_ids[merchant_sprite] = it.GetId();
 	}
 
 	// Add Game State Tracker object
-	auto it = m2::CreateObject(m2::VecF{}, m2g::pb::ObjectType::GAME_STATE_TRACKER);
+	auto it = m2::CreateObject(m2g::pb::ObjectType::GAME_STATE_TRACKER);
 	InitGameStateTracker(*it);
 	_game_state_tracker_id = it.GetId();
 
@@ -413,10 +413,11 @@ void m2g::Proxy::bot_handle_server_command(MAYBE const m2g::pb::TurnBasedServerC
 }
 
 void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_type) {
+	const auto& objPosition = obj.InferPosition();
 	// Store the positions of the merchants
 	if (is_merchant_location(sprite_type)) {
-		auto merchant_cell_rect = m2::RectF{obj.position.GetX() - 0.5f, obj.position.GetY() - 0.5f, 2.0f, 2.0f};
-		merchant_positions[sprite_type] = std::make_tuple(obj.position, merchant_cell_rect, obj.GetId());
+		auto merchant_cell_rect = m2::RectF{objPosition.GetX() - 0.5f, objPosition.GetY() - 0.5f, 2.0f, 2.0f};
+		merchant_positions[sprite_type] = std::make_tuple(objPosition, merchant_cell_rect, obj.GetId());
 		LOG_DEBUG("Merchant position", m2g::pb::SpriteType_Name(sprite_type), merchant_cell_rect);
 	}
 	// Store the positions of the industries build locations
@@ -426,19 +427,19 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 		if (sprite.Ppm() != sprite.Sheet().Pb().ppm()) {
 			throw M2_ERROR("Sprite ppm mismatch");
 		}
-		auto industry_cell_rect = m2::RectF{obj.position.GetX() - 0.5f, obj.position.GetY() - 0.5f, 2.0f, 2.0f};
-		industry_positions[sprite_type] = std::make_tuple(obj.position, industry_cell_rect, obj.GetId());
+		auto industry_cell_rect = m2::RectF{objPosition.GetX() - 0.5f, objPosition.GetY() - 0.5f, 2.0f, 2.0f};
+		industry_positions[sprite_type] = std::make_tuple(objPosition, industry_cell_rect, obj.GetId());
 		LOG_DEBUG("Industry position", m2g::pb::SpriteType_Name(sprite_type), industry_cell_rect);
 	}
 	// Store the positions of the connection locations
 	else if (is_canal(sprite_type) || is_railroad(sprite_type)) {
-		m2::RectF connection_cell_rect = m2::RectF{obj.position.GetX() - 0.5f, obj.position.GetY() - 0.5f, 1.0f, 1.0f};
+		m2::RectF connection_cell_rect = m2::RectF{objPosition.GetX() - 0.5f, objPosition.GetY() - 0.5f, 1.0f, 1.0f};
 		// Different canal or railroad backgrounds have different offsets
 		const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(sprite_type));
 		auto original_type = sprite.OriginalType(); // Connection sprites are duplicate of another
 		auto offset = connection_sprite_world_offset(original_type);
 		connection_cell_rect = connection_cell_rect.Shift(offset);
-		connection_positions[sprite_type] = std::make_tuple(obj.position + offset, connection_cell_rect, obj.GetId());
+		connection_positions[sprite_type] = std::make_tuple(objPosition + offset, connection_cell_rect, obj.GetId());
 		LOG_DEBUG("Connection position", m2g::pb::SpriteType_Name(sprite_type), connection_cell_rect);
 		// Fill graph
 		auto cities = cities_from_connection(sprite_type);
@@ -458,25 +459,21 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 	}
 }
 
-m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(MAYBE m2::Object& obj) {
-	return m2::make_unexpected("Invalid object type");
-}
-
-m2::void_expected m2g::Proxy::init_server_update_fg_object(m2::Object& obj, const std::vector<m2g::pb::ItemType>& items,
-	MAYBE const std::vector<m2::pb::Resource>& resources) {
+m2::void_expected m2g::Proxy::init_server_update_fg_object(m2::Object& obj, const m2::VecF& position,
+	const std::vector<m2g::pb::ItemType>& items, MAYBE const std::vector<m2::pb::Resource>& resources) {
 	switch (obj.GetType()) {
 		case pb::FACTORY: {
 			auto city = std::ranges::find_if(items, is_city);
 			auto industry_tile = std::ranges::find_if(items, is_industry_tile);
 			if (city != items.end() && industry_tile != items.end()) {
-				return InitFactory(obj, *city, *industry_tile);
+				return InitFactory(obj, position, *city, *industry_tile);
 			} else {
 				return m2::make_unexpected("Unable to find city or industry tile of the object received from the server");
 			}
 		}
 		case pb::ROAD: {
-			if (auto connection = connection_on_position(obj.position)) {
-				return InitRoad(obj, *connection);
+			if (auto connection = connection_on_position(position)) {
+				return InitRoad(obj, position, *connection);
 			} else {
 				return m2::make_unexpected("Unable to find connection from object location");
 			}

@@ -3,11 +3,12 @@
 #include <m2/third_party/physics/ColliderCategory.h>
 #include <m2/Game.h>
 
-m2::void_expected rpg::init_finish_point(m2::Object& obj) {
+m2::void_expected rpg::init_finish_point(m2::Object& obj, const m2::VecF& position) {
 	auto sprite_type = *M2_GAME.GetMainSpriteOfObject(obj.GetType());
 	auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(sprite_type));
 
 	auto& phy = obj.AddPhysique();
+	phy.position = position;
 	m2::third_party::physics::RigidBodyDefinition rigidBodyDef{
 		.bodyType = m2::third_party::physics::RigidBodyType::STATIC,
 		.fixtures = {m2::third_party::physics::FixtureDefinition{
@@ -19,9 +20,10 @@ m2::void_expected rpg::init_finish_point(m2::Object& obj) {
 		.initiallyAwake = false,
 		.isBullet = false
 	};
-	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
+	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
 
 	auto& gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, sprite_type);
+	gfx.position = position;
 	gfx.visual = &std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(m2g::pb::CASTLE_FINISH_POINT_SPRITE_GRAYSCALE));
 
 	phy.onCollision = [](MAYBE m2::Physique& self, MAYBE m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {

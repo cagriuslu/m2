@@ -5,7 +5,7 @@
 #include <set>
 #include <cuzn/Detail.h>
 
-m2::void_expected PlayerInitThisInstance(m2::Object& obj);
+m2::void_expected PlayerInitThisInstance(m2::Object& obj, const m2::VecF& position);
 m2::void_expected PlayerInitOtherInstance(m2::Object& obj);
 
 // Card Accessors

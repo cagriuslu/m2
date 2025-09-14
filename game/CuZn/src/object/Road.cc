@@ -63,7 +63,7 @@ void RemoveAllRoads() {
 	});
 }
 
-m2::void_expected InitRoad(m2::Object& obj, const Connection connection) {
+m2::void_expected InitRoad(m2::Object& obj, const m2::VecF& position, const Connection connection) {
 	DEBUG_FN();
 
 	if (not is_connection(connection)) {
@@ -80,8 +80,9 @@ m2::void_expected InitRoad(m2::Object& obj, const Connection connection) {
 	const auto parent_index = M2G_PROXY.player_index(parent_id);
 	const auto color = M2G_PROXY.player_colors[parent_index];
 	auto& _gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, M2G_PROXY.is_canal_era() ? m2g::pb::SPRITE_CANAL : m2g::pb::SPRITE_RAILROAD);
+	_gfx.position = position;
 	_gfx.onDraw = [color](m2::Graphic& gfx) {
-		const auto connection_position = gfx.Owner().position;
+		const auto connection_position = gfx.position;
 		const auto cell_rect = m2::RectF{connection_position - 0.75f, 1.5f, 1.5f};
 
 		// Draw background with player's color

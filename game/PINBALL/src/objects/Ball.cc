@@ -19,13 +19,14 @@ namespace {
 	}
 }
 
-m2::void_expected LoadBall(m2::Object& obj) {
+m2::void_expected LoadBall(m2::Object& obj, const m2::VecF& position) {
 	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(m2g::pb::SPRITE_BASIC_BALL));
 
 	obj.impl = std::make_unique<BallImpl>();
 	auto* ballImpl = dynamic_cast<BallImpl*>(obj.impl.get());
 
 	auto& phy = obj.AddPhysique();
+	phy.position = position;
 	m2::third_party::physics::RigidBodyDefinition rigidBodyDef{
 		.bodyType = m2::third_party::physics::RigidBodyType::DYNAMIC,
 		.fixtures = {m2::third_party::physics::FixtureDefinition{
@@ -48,13 +49,14 @@ m2::void_expected LoadBall(m2::Object& obj) {
 		.isBullet = true,
 		.initiallyEnabled = true
 	};
-	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
-	phy.body[m2::I(m2::pb::PhysicsLayer::ABOVE_GROUND)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::pb::PhysicsLayer::ABOVE_GROUND);
+	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
+	phy.body[m2::I(m2::pb::PhysicsLayer::ABOVE_GROUND)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, obj.orientation, m2::pb::PhysicsLayer::ABOVE_GROUND);
 	phy.body[m2::I(m2::pb::PhysicsLayer::ABOVE_GROUND)]->SetEnabled(false);
 
 	MAYBE auto& gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, m2g::pb::SPRITE_BASIC_BALL);
+	gfx.position = position;
 
-	phy.preStep = [initialPos = obj.position](m2::Physique& phy_, const m2::Stopwatch::Duration&) {
+	phy.preStep = [initialPos = position](m2::Physique& phy_, const m2::Stopwatch::Duration&) {
 		if (M2_GAME.events.PopKeyRelease(m2g::pb::BALL_LAUNCHER) /*&& M2G_PROXY.isOnBallLauncher*/) {
 			if (phy_.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->IsEnabled()) {
 				phy_.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->ApplyForceToCenter({0.0f, -7500.0f});
@@ -79,7 +81,7 @@ m2::void_expected LoadBall(m2::Object& obj) {
 	};
 	phy.onCollision = [&obj, ballImpl](m2::Physique& ball, const m2::Physique& other, const m2::box2d::Contact& contact) {
 		if (other.Owner().GetType() == m2g::pb::WALLS && (not ballImpl->lastCollidedWallPosition
-				|| not ballImpl->lastCollidedWallPosition->IsNear(obj.position, 0.2f))) {
+				|| not ballImpl->lastCollidedWallPosition->IsNear(ball.position, 0.2f))) {
 			const auto velocity = GetActiveRigidBody(ball).GetLinearVelocity();
 			// Find the speed along the collision axis. Dot product with the unit vector is the projection.
 			if (const auto collisionSpeed = abs(velocity.DotProduct(contact.normal)); 5.0f < collisionSpeed) {
@@ -88,7 +90,7 @@ m2::void_expected LoadBall(m2::Object& obj) {
 					M2_GAME.audio_manager->Play(&M2_GAME.songs[m2g::pb::SONG_WALL_IMPACT], m2::AudioManager::ONCE, volume);
 				});
 			}
-			ballImpl->lastCollidedWallPosition = obj.position;
+			ballImpl->lastCollidedWallPosition = ball.position;
 		}
 	};
 

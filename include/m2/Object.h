@@ -23,12 +23,11 @@ namespace m2 {
 	/// If the component is created and destroyed rapidly => Pool
 	/// Else => impl
 	struct Object final {
-		VecF position;
 		float orientation{}; /// In radians
 		std::unique_ptr<ObjectImpl> impl; /// Custom Data
 
 		Object() = default;
-		explicit Object(const VecF& position, m2g::pb::ObjectType type = {}, ObjectId parent_id = 0);
+		explicit Object(m2g::pb::ObjectType type, ObjectId parent_id = 0);
 		// Copy not allowed
 		Object(const Object& other) = delete;
 		Object& operator=(const Object& other) = delete;
@@ -50,11 +49,13 @@ namespace m2 {
 		[[nodiscard]] SoundEmitterId GetSoundId() const;
 		[[nodiscard]] CharacterId GetCharacterId() const;
 
-		[[nodiscard]] Character* TryGetCharacter() const;
 		[[nodiscard]] Object* TryGetParent() const;
 		[[nodiscard]] Group* TryGetGroup() const;
 		[[nodiscard]] Physique* TryGetPhysique() const;
 		[[nodiscard]] Graphic* TryGetGraphic() const;
+		[[nodiscard]] Light* TryGetLight() const;
+		[[nodiscard]] SoundEmitter* TryGetSoundEmitter() const;
+		[[nodiscard]] Character* TryGetCharacter() const;
 
 		[[nodiscard]] Physique& GetPhysique() const;
 		[[nodiscard]] Graphic& GetGraphic() const;
@@ -62,12 +63,14 @@ namespace m2 {
 		[[nodiscard]] SoundEmitter& GetSoundEmitter() const;
 		[[nodiscard]] Character& GetCharacter() const;
 
+		[[nodiscard]] VecF InferPosition() const;
+
 		// Modifiers
 
 		void SetGroup(const GroupIdentifier& group_id, IndexInGroup group_index);
-		Physique& AddPhysique();
-		Graphic& AddGraphic(DrawLayer layer);
-		Graphic& AddGraphic(DrawLayer layer, m2g::pb::SpriteType);
+		Physique& AddPhysique(const VecF& position = {});
+		Graphic& AddGraphic(DrawLayer layer, const VecF& position = {});
+		Graphic& AddGraphic(DrawLayer layer, m2g::pb::SpriteType, const VecF& position = {});
 		Light& AddLight();
 		SoundEmitter& AddSoundEmitter();
 		Character& AddCompactCharacter();
@@ -98,7 +101,7 @@ namespace m2 {
 		CharacterId _character_id{};
 	};
 
-	Pool<Object>::Iterator CreateObject(const VecF& position, m2g::pb::ObjectType type = {}, ObjectId parent_id = 0); // TODO add orientation to the params
+	Pool<Object>::Iterator CreateObject(m2g::pb::ObjectType type = {}, ObjectId parent_id = 0); // TODO add orientation to the params
 	std::function<void()> CreateObjectDeleter(ObjectId id);
 	std::function<void()> CreatePhysiqueDeleter(ObjectId id);
 	std::function<void()> CreateGraphicDeleter(ObjectId id);

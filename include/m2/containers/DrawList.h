@@ -48,7 +48,7 @@ namespace m2 {
 		// Modifiers
 
 		/// Add new object to the DrawList
-		void Insert(ObjectId id);
+		void Insert(ObjectId objId, GraphicId gfxId, const VecF& position);
 		/// Queue a position update for an object for later
 		void QueueUpdate(ObjectId id, const VecF& pos);
 		/// Apply the queued updates

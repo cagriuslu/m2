@@ -27,4 +27,4 @@ constexpr auto ToCitiesOfRoadCharacter = [](const m2::Character& chr) -> std::se
 	return city_cards;
 };
 
-m2::void_expected InitRoad(m2::Object& obj, Connection connection);
+m2::void_expected InitRoad(m2::Object& obj, const m2::VecF& position, Connection connection);

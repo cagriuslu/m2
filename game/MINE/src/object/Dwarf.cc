@@ -9,10 +9,11 @@ using namespace m2g;
 using namespace m2g::pb;
 using namespace m2::third_party::physics;
 
-m2::void_expected create_dwarf(m2::Object& obj) {
+m2::void_expected create_dwarf(m2::Object& obj, const m2::VecF& position) {
 	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(DWARF_FULL));
 
 	auto& phy = obj.AddPhysique();
+	phy.position = position;
 	RigidBodyDefinition rigidBodyDef{
 		.bodyType = RigidBodyType::DYNAMIC,
 		.fixtures = {FixtureDefinition{
@@ -30,9 +31,9 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 		.isBullet = false,
 		.initiallyEnabled = true
 	};
-	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
+	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
 
-	obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, DWARF_FULL);
+	obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, DWARF_FULL).position = position;
 
 	auto& chr = obj.AddFastCharacter();
 	chr.AddNamedItem(M2_GAME.GetNamedItem(ITEM_REUSABLE_JUMP));
@@ -64,7 +65,7 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 
 		// Mouse button
 		if (M2_GAME.events.IsMouseButtonDown(m2::MouseButton::PRIMARY)) {
-			m2::box2d::FindObjectsNearPositionUnderMouse(obj.position, 2.0f, [&delta](m2::Physique& other_phy) -> bool {
+			m2::box2d::FindObjectsNearPositionUnderMouse(phy.position, 2.0f, [&delta](m2::Physique& other_phy) -> bool {
 				auto& obj_under_mouse = other_phy.Owner();
 				// If object under mouse has character
 				if (obj_under_mouse.GetCharacterId()) {
@@ -94,8 +95,8 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 		if (other.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] && other.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->GetAllLayersBelongingTo() & (COLLIDER_LAYER_BACKGROUND_OBSTACLE | COLLIDER_LAYER_FOREGROUND_OBSTACLE)) {
 			// Check is contact normal points upwards
 			if (abs(contact.normal.GetX()) <= -contact.normal.GetY()) {
-				chr.SetResource(RESOURCE_IS_GROUNDED_X, other.Owner().position.GetX());
-				chr.SetResource(RESOURCE_IS_GROUNDED_Y, other.Owner().position.GetY());
+				chr.SetResource(RESOURCE_IS_GROUNDED_X, other.position.GetX());
+				chr.SetResource(RESOURCE_IS_GROUNDED_Y, other.position.GetY());
 			}
 		}
 	};
@@ -103,7 +104,7 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 		// Check if in contact with obstacle
 		if (other.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] && other.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->GetAllLayersBelongingTo() & (COLLIDER_LAYER_BACKGROUND_OBSTACLE | COLLIDER_LAYER_FOREGROUND_OBSTACLE)) {
 			// Check if the other object is the grounding object
-			if (chr.GetResource(RESOURCE_IS_GROUNDED_X) == other.Owner().position.GetX() && chr.GetResource(RESOURCE_IS_GROUNDED_Y) == other.Owner().position.GetY()) {
+			if (chr.GetResource(RESOURCE_IS_GROUNDED_X) == other.position.GetX() && chr.GetResource(RESOURCE_IS_GROUNDED_Y) == other.position.GetY()) {
 				chr.SetResource(RESOURCE_IS_GROUNDED_X, 0.0f);
 				chr.SetResource(RESOURCE_IS_GROUNDED_Y, 0.0f);
 			}

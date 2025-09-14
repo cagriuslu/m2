@@ -50,25 +50,25 @@ m2::third_party::physics::FixtureDefinition m2g::Proxy::TileFixtureDefinition(MA
 	};
 }
 
-m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object& obj) {
+m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object& obj, const m2::VecF& position) {
 	using namespace rpg;
 	switch (obj.GetType()) {
 		case pb::ObjectType::PLAYER:
-			return Player::init(obj);
+			return Player::init(obj, position);
 		case pb::ObjectType::SKELETON:
-			return Enemy::init(obj);
+			return Enemy::init(obj, position);
 		case pb::ObjectType::CASTLE_FINISH_POINT:
-			return rpg::init_finish_point(obj);
+			return rpg::init_finish_point(obj, position);
 		case pb::ObjectType::CUTEOPUS:
-			return Enemy::init(obj);
+			return Enemy::init(obj, position);
 		case pb::ObjectType::MACHINE_GUN_ITEM_DROP:
-			return rpg::create_dropped_item(obj, m2g::pb::ITEM_REUSABLE_MACHINE_GUN);
+			return rpg::create_dropped_item(obj, position, m2g::pb::ITEM_REUSABLE_MACHINE_GUN);
 		case pb::ObjectType::EXPLOSIVE_ITEM_DROP:
-			return rpg::create_dropped_item(obj, m2g::pb::ITEM_REUSABLE_EXPLOSIVE);
+			return rpg::create_dropped_item(obj, position, m2g::pb::ITEM_REUSABLE_EXPLOSIVE);
 		case pb::ObjectType::LONG_SWORD_ITEM_DROP:
-			return rpg::create_dropped_item(obj, m2g::pb::ITEM_REUSABLE_LONG_SWORD);
+			return rpg::create_dropped_item(obj, position, m2g::pb::ITEM_REUSABLE_LONG_SWORD);
 		case pb::ObjectType::AXE_ITEM_DROP:
-			return rpg::create_dropped_item(obj, m2g::pb::ITEM_REUSABLE_AXE);
+			return rpg::create_dropped_item(obj, position, m2g::pb::ITEM_REUSABLE_AXE);
 		case pb::BUSH_01:
 		case pb::FLOWER_ORANGE_02:
 		case pb::FLOWER_PINK_03:
@@ -80,9 +80,9 @@ m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object&
 		case pb::TREE_DEAD_03:
 		case pb::FENCE_HORIZONTAL:
 		case pb::FENCE_VERTICAL:
-			return rpg::create_decoration(obj, *M2_GAME.GetMainSpriteOfObject(obj.GetType()));
+			return rpg::create_decoration(obj, position, *M2_GAME.GetMainSpriteOfObject(obj.GetType()));
 		case pb::SPIKES:
-			return rpg::create_spikes(obj);
+			return rpg::create_spikes(obj, position);
 		default:
 			return m2::make_unexpected("Unhandled object type");
 	}

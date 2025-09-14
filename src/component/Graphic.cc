@@ -14,7 +14,7 @@ bool m2::IsProjectionTypePerspective(const pb::ProjectionType pt) {
 
 m2::VecF m2::CameraToPositionVecM(const VecF& position) {
 	const auto* camera = M2_LEVEL.objects.Get(M2_LEVEL.cameraId);
-	return position - camera->position;
+	return position - camera->GetPhysique().position;
 }
 m2::VecF m2::CameraToPositionVecPx(const VecF& position) {
 	// Find the vector from camera to position and multiply with output PPM to convert into output pixels
@@ -33,7 +33,7 @@ m2::VecF m2::PixelToPositionVecM(const VecI& pixelPosition) {
 	const auto screenCenterToPixelPositionVectorInMeters =
 			VecF{ToFloat(screenCenterToPixelPositionVectorInPixels.x) / M2_GAME.Dimensions().OutputPixelsPerMeter(),
 				ToFloat(screenCenterToPixelPositionVectorInPixels.y) / M2_GAME.Dimensions().OutputPixelsPerMeter()};
-	const auto camera_position = M2_LEVEL.objects[M2_LEVEL.cameraId].position;
+	const auto camera_position = M2_LEVEL.objects[M2_LEVEL.cameraId].GetPhysique().position;
 	return screenCenterToPixelPositionVectorInMeters + camera_position;
 }
 m2::RectF m2::ViewportM() {
@@ -47,12 +47,14 @@ m2::RectF m2::ViewportM() {
 
 m3::VecF m3::CameraPositionM() {
 	const auto* camera = M2_LEVEL.objects.Get(M2_LEVEL.cameraId);
-	const auto raw_camera_position = VecF{camera->position.GetX(), camera->position.GetY(), 0.0f};
+	const auto& cameraPosition2d = camera->InferPosition();
+	const auto raw_camera_position = VecF{cameraPosition2d.GetX(), cameraPosition2d.GetY(), 0.0f};
 	const auto camera_position = raw_camera_position + M2_LEVEL.GetCameraOffset();
 	return camera_position;
 }
 m3::VecF m3::FocusPositionM() {
-	return {M2_PLAYER.position.GetX(), M2_PLAYER.position.GetY(), M2G_PROXY.focus_point_height};
+	const auto playerPosition = M2_PLAYER.InferPosition();
+	return {playerPosition.GetX(), playerPosition.GetY(), M2G_PROXY.focus_point_height};
 }
 float m3::VisibleWidthM() {
 	// Do not recalculate unless the distance or FOV has changed
@@ -135,9 +137,9 @@ std::optional<m2::VecF> m3::ScreenOriginToProjectionAlongCameraPlaneDstpx(const 
 	return *focus_to_projection_along_camera_plane_px + m2::VecF{M2_GAME.Dimensions().WindowDimensions().x / 2, M2_GAME.Dimensions().WindowDimensions().y / 2 };
 }
 
-m2::Graphic::Graphic(const Id object_id) : Component(object_id) {}
-m2::Graphic::Graphic(const uint64_t object_id, const std::variant<Sprite, pb::TextLabel>& spriteOrTextLabel)
-		: Component(object_id), onDraw(DefaultDrawCallback) {
+m2::Graphic::Graphic(const Id ownerId, const VecF& position) : Component(ownerId), position(position) {}
+m2::Graphic::Graphic(const uint64_t object_id, const std::variant<Sprite, pb::TextLabel>& spriteOrTextLabel, const VecF& position)
+		: Component(object_id), position(position), onDraw(DefaultDrawCallback) {
 	if (std::holds_alternative<Sprite>(spriteOrTextLabel)) {
 		visual = &std::get<Sprite>(spriteOrTextLabel);
 	} else {
@@ -155,7 +157,7 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 				? &Sprite::DrawIn3dWorld
 				: &Sprite::DrawIn2dWorld;
 		const auto spriteDrawer = [&](const bool foregroundCompanion) -> void {
-			(sprite.*projector)(gfx.Owner().position, foregroundCompanion, gfx.Owner().orientation, is_foreground, gfx.z);
+			(sprite.*projector)(gfx.position, foregroundCompanion, gfx.Owner().orientation, is_foreground, gfx.z);
 		};
 
 		// Dim the sprite if dimming mode is enabled. TODO Dimming is implemented only for default variant.
@@ -181,14 +183,14 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 
 		// Draw background
 		if (textLabel.background_color().a()) {
-			DrawTextLabelBackgroundIn2dWorld(textLabel, gfx.textLabelRect, gfx.Owner().position, dimmed);
+			DrawTextLabelBackgroundIn2dWorld(textLabel, gfx.textLabelRect, gfx.position, dimmed);
 		}
 		// Draw text label
 		const bool is_foreground = M2_LEVEL.uprightGraphics.GetId(&gfx);
 		const auto projector = IsProjectionTypePerspective(M2_LEVEL.GetProjectionType())
 				? &DrawTextLabelIn3dWorld
 				: &DrawTextLabelIn2dWorld;
-		projector(textLabel, gfx.textLabelRect, gfx.Owner().position, gfx.Owner().orientation, is_foreground, gfx.z);
+		projector(textLabel, gfx.textLabelRect, gfx.position, gfx.Owner().orientation, is_foreground, gfx.z);
 
 		// If dimming was active, we need to un-dim.
 		if (dimmed) {

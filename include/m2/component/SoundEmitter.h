@@ -8,6 +8,7 @@
 
 namespace m2 {
 	struct SoundEmitter : Component {
+		VecF position;
 		std::function<void(SoundEmitter&, const Stopwatch::Duration& delta)> update{};
 
 		std::list<PlaybackId> playbacks; // Playback should be queued to AudioManager, then the ID should be added here

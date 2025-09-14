@@ -5,14 +5,14 @@
 m2::void_expected LoadPlayer(m2::Object& obj) {
 	// Set player handle
 	M2_LEVEL.playerId = obj.GetId();
-	// Put the player on the center
-	obj.position = gLevelCenter;
 	// Adjust game scale
 	M2_GAME.SetGameHeightM(gLevelDimensions.GetY());
 	// Load edges of the screen
 	LoadEdge();
 
-	obj.AddPhysique().preStep = [](MAYBE m2::Physique& phy, const m2::Stopwatch::Duration&) {
+	auto& phy = obj.AddPhysique();
+	phy.position = gLevelCenter; // Put the player on the center
+	phy.preStep = [](MAYBE m2::Physique& phy, const m2::Stopwatch::Duration&) {
 		if (M2_GAME.events.PopKeyPress(m2g::pb::TOGGLE_LIGHT)) {
 			M2G_PROXY.MutableSimulationInputs().set_light(!M2G_PROXY.SimulationInputs().light());
 		}

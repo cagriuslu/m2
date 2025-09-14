@@ -11,7 +11,7 @@ using namespace m2g::pb;
 
 // TODO add other types of Ranged Weapons: Machine Gun, Shotgun, Bow
 
-m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& intended_direction, const m2::Item& ranged_weapon, bool is_friend) {
+m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& position, const m2::VecF& intended_direction, const m2::Item& ranged_weapon, bool is_friend) {
 	// Check if weapon has necessary attributes
 	if (!ranged_weapon.HasAttribute(ATTRIBUTE_LINEAR_SPEED)) {
 		throw M2_ERROR("Ranged weapon has no linear speed");
@@ -42,6 +42,7 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& intend
 
 	// Add physics
 	auto& phy = obj.AddPhysique();
+	phy.position = position;
 	auto rigidBodyDef = BasicBulletRigidBodyDefinition();
 	rigidBodyDef.fixtures = {m2::third_party::physics::FixtureDefinition{
 		.shape = m2::third_party::physics::CircleShape::FromSpriteCircleFixture(sprite.OriginalPb().regular().fixtures(0).circle(), sprite.Ppm()),
@@ -50,11 +51,12 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& intend
 				? m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_FRIENDLY_DAMAGE
 				: m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_HOSTILE_DAMAGE)]
 	}};
-	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
+	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
 	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->SetLinearVelocity(direction * linear_speed);
 
 	// Add graphics
 	auto& gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, ranged_weapon.GameSprite());
+	gfx.position = position;
 	gfx.z = 0.5f;
 
 	// Add character
@@ -72,7 +74,7 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& intend
 					.isSensor = true,
 					.colliderFilter = m2::third_party::physics::gColliderCategoryToParams[m2::I(m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_FRIENDLY_DAMAGE)]
 				}};
-				phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(explosionBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
+				phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(explosionBodyDef, obj.GetPhysiqueId(), obj.GetPhysique().position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
 				chr.AddNamedItem(M2_GAME.GetNamedItem(ITEM_AUTOMATIC_EXPLOSIVE_TTL));
 				// RESOURCE_EXPLOSION_TTL only means the object is currently exploding
 				chr.SetResource(RESOURCE_EXPLOSION_TTL, 1.0f); // 1.0f is just symbolic
@@ -91,7 +93,7 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& intend
 				InteractionData data;
 				if (is_explosive && chr.HasResource(RESOURCE_EXPLOSION_TTL)) {
 					LOG_DEBUG("Explosive damage");
-					auto distance = chr.Owner().position.GetDistanceTo(other.Owner().position);
+					auto distance = chr.Owner().GetPhysique().position.GetDistanceTo(other.position);
 					auto damage_ratio = distance / damage_radius;
 					if (damage_ratio < 1.1f) {
 						// Calculate damage

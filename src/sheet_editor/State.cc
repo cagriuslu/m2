@@ -49,7 +49,7 @@ void State::Select(const m2g::pb::SpriteType spriteType) {
 		_ppm = sheet->ppm();
 
 		// Move God to center if rect is already selected
-		M2_PLAYER.position = SelectedSpriteCenter();
+		M2_PLAYER.GetPhysique().position = SelectedSpriteCenter();
 	}
 }
 

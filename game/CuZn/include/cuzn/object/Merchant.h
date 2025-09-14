@@ -13,4 +13,4 @@ m2::Object* find_merchant_at_location(m2g::pb::SpriteType location);
 // Both licensed and unlicensed merchant locations contain a merchant object.
 // Licensed merchants can deal coal, and buy goods.
 // Unlicensed merchants can deal coal.
-void init_merchant(m2::Object& obj);
+void init_merchant(m2::Object& obj, const m2::VecF& position);

@@ -69,7 +69,7 @@ namespace m2::third_party::physics {
 	struct RigidBodyDefinition {
 		RigidBodyType bodyType;
 
-		std::vector<FixtureDefinition> fixtures;
+		std::vector<FixtureDefinition> fixtures{};
 
 		// Properties applicable only to dynamic objects
 
@@ -78,7 +78,7 @@ namespace m2::third_party::physics {
 		float angularDamping{};
 		float mass{};
 		float inertia{};
-		VecF offsetOfCenterOfMass; // Position of the center of mass with respect to the body origin
+		VecF offsetOfCenterOfMass{}; // Position of the center of mass with respect to the body origin
 		float gravityScale{1.0};
 
 		// Putting a body to sleep and waking it up is costly. Objects that are in constant movement shouldn't sleep.

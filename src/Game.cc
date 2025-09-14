@@ -622,15 +622,24 @@ void m2::Game::ExecuteStep(const Stopwatch::Duration& delta) {
 			for (const auto& body : phy.body) {
 				if (body && body->IsEnabled()) {
 					auto& obj = phy.Owner();
-					auto oldPosition = obj.position;
-					// Update object
-					obj.position = body->GetPosition();
 					obj.orientation = body->GetAngle();
-					// Update draw list if necessary
-					if (oldPosition != obj.position) {
-						const auto gfxId = obj.GetGraphicId();
-						const auto poolAndDrawList = _level->GetGraphicPoolAndDrawList(gfxId);
-						poolAndDrawList.second->QueueUpdate(phy.OwnerId(), obj.position);
+					phy.position = body->GetPosition();
+					// Update other components
+					if (auto* gfx = obj.TryGetGraphic()) {
+						const auto oldGfxPosition = gfx->position;
+						gfx->position = phy.position;
+						// Update draw list if necessary
+						if (oldGfxPosition != phy.position) {
+							const auto gfxId = obj.GetGraphicId();
+							const auto poolAndDrawList = _level->GetGraphicPoolAndDrawList(gfxId);
+							poolAndDrawList.second->QueueUpdate(phy.OwnerId(), phy.position);
+						}
+					}
+					if (auto* lig = obj.TryGetLight()) {
+						lig->position = phy.position;
+					}
+					if (auto* sou = obj.TryGetSoundEmitter()) {
+						sou->position = phy.position;
 					}
 					break;
 				}
@@ -940,8 +949,8 @@ const m2::VecF& m2::Game::ScreenCenterToMousePositionM() const {
 
 m2::sdl::TextureUniquePtr m2::Game::DrawGameToTexture(const VecF& camera_position) {
 	// Temporarily change camera position
-	const auto prev_camera_position = GetLevel().GetCamera()->position;
-	GetLevel().GetCamera()->position = camera_position;
+	const auto prev_camera_position = GetLevel().GetCamera()->GetPhysique().position;
+	GetLevel().GetCamera()->GetPhysique().position = camera_position;
 
 	// Create an empty render target
 	auto render_target = sdl::create_drawable_texture_of_screen_size();
@@ -959,7 +968,7 @@ m2::sdl::TextureUniquePtr m2::Game::DrawGameToTexture(const VecF& camera_positio
 	SDL_SetRenderTarget(renderer, prev_render_target);
 
 	// Reinstate old camera position
-	GetLevel().GetCamera()->position = prev_camera_position;
+	GetLevel().GetCamera()->GetPhysique().position = prev_camera_position;
 
 	return render_target;
 }
@@ -992,7 +1001,7 @@ void m2::Game::RecalculateDirectionalAudio() {
 	if (_level->leftListener || _level->rightListener) {
 		// Loop over sounds
 		for (auto& sound_emitter : _level->soundEmitters) {
-			const auto& sound_position = sound_emitter.Owner().position;
+			const auto& sound_position = sound_emitter.position;
 			// Loop over playbacks
 			for (const auto playback_id : sound_emitter.playbacks) {
 				if (!audio_manager->HasPlayback(playback_id)) {
@@ -1057,7 +1066,7 @@ void m2::Game::RecalculateMousePosition() const {
 			_mouse_position_world_m = VecF{-intersection_point.x, -10000.0f};  // Infinity is 10KM
 		}
 	} else {
-		const auto camera_position = _level->objects[_level->cameraId].position;
+		const auto camera_position = _level->objects[_level->cameraId].GetPhysique().position;
 		_mouse_position_world_m = *_screen_center_to_mouse_position_m + camera_position;
 	}
 }

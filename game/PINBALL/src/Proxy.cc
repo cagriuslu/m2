@@ -292,40 +292,40 @@ const m2::UiPanelBlueprint* m2g::Proxy::RightHudBlueprint() {
 	return &rightHudBlueprint;
 }
 
-m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object& obj) {
+m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object& obj, const m2::VecF& position) {
 	switch (obj.GetType()) {
 		case pb::ObjectType::PLAYER:
 			return LoadPlayer(obj);
 		case pb::ObjectType::BALL:
-			return LoadBall(obj);
+			return LoadBall(obj, position);
 		case pb::ObjectType::FLIPPER_LEFT:
-			return LoadFlipper(obj, false);
+			return LoadFlipper(obj, position, false);
 		case pb::ObjectType::FLIPPER_RIGHT:
-			return LoadFlipper(obj, true);
+			return LoadFlipper(obj, position, true);
 		case pb::ObjectType::WALLS:
-			return LoadWall(obj);
+			return LoadWall(obj, position);
 		case pb::ObjectType::PLATFORM:
-			return LoadPlatform(obj);
+			return LoadPlatform(obj, position);
 		case pb::ObjectType::BALL_LAUNCHER_SENSOR:
-			return LoadGenericBallSensor(obj, m2::pb::PhysicsLayer::SEA_LEVEL, BallLauncherSensorOnCollision, BallLauncherSensorOffCollision);
+			return LoadGenericBallSensor(obj, position, m2::pb::PhysicsLayer::SEA_LEVEL, BallLauncherSensorOnCollision, BallLauncherSensorOffCollision);
 		case pb::ObjectType::PLATFORM_ENTRY_SENSOR:
-			return LoadGenericBallSensor(obj, m2::pb::PhysicsLayer::SEA_LEVEL, PlatformEntrySensorOnCollision, {});
+			return LoadGenericBallSensor(obj, position, m2::pb::PhysicsLayer::SEA_LEVEL, PlatformEntrySensorOnCollision, {});
 		case pb::ObjectType::PLATFORM_EXIT_SENSOR:
-			return LoadGenericBallSensor(obj, m2::pb::PhysicsLayer::ABOVE_GROUND, PlatformExitSensorOnCollision, {});
+			return LoadGenericBallSensor(obj, position, m2::pb::PhysicsLayer::ABOVE_GROUND, PlatformExitSensorOnCollision, {});
 		case pb::ObjectType::LIGHT_SWITCH_SENSOR:
-			return LoadGenericBallSensor(obj, m2::pb::PhysicsLayer::SEA_LEVEL, LightSwitchSensorOnCollision, {});
+			return LoadGenericBallSensor(obj, position, m2::pb::PhysicsLayer::SEA_LEVEL, LightSwitchSensorOnCollision, {});
 		case pb::ObjectType::HEATER_SWITCH_SENSOR:
-			return LoadGenericBallSensor(obj, m2::pb::PhysicsLayer::SEA_LEVEL, HeaterSwitchSensorOnCollision, {});
+			return LoadGenericBallSensor(obj, position, m2::pb::PhysicsLayer::SEA_LEVEL, HeaterSwitchSensorOnCollision, {});
 		case pb::ObjectType::WATER_SPRINKLER_SENSOR:
-			return LoadGenericBallSensor(obj, m2::pb::PhysicsLayer::SEA_LEVEL, WaterSprinklerSensorOnCollision, {});
+			return LoadGenericBallSensor(obj, position, m2::pb::PhysicsLayer::SEA_LEVEL, WaterSprinklerSensorOnCollision, {});
 		case pb::ObjectType::BUMPER_SENSOR:
-			return LoadBumperSensor(obj);
+			return LoadBumperSensor(obj, position);
 		case pb::ObjectType::DROP_GATE:
-			return LoadDropGate(obj);
+			return LoadDropGate(obj, position);
 		case pb::ObjectType::CIRCULAR_BUMPER:
-			return LoadCircularBumperSensor(obj);
+			return LoadCircularBumperSensor(obj, position);
 		case pb::ObjectType::DOOR:
-			return LoadDoor(obj);
+			return LoadDoor(obj, position);
 		default:
 			throw M2_ERROR("Missing loader for type: " + m2::ToString(obj.GetType()));
 	}

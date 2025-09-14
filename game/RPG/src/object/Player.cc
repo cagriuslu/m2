@@ -20,7 +20,7 @@ using namespace m2g::pb;
 
 rpg::Player::Player(m2::Object& obj) : animation_fsm(m2g::pb::ANIMATION_TYPE_PLAYER_MOVEMENT, obj.GetGraphicId()) {}
 
-m2::void_expected rpg::Player::init(m2::Object& obj) {
+m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 	auto id = obj.GetId();
 	auto main_sprite_type = *M2_GAME.GetMainSpriteOfObject(m2g::pb::PLAYER);
 	const auto& mainSprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(main_sprite_type));
@@ -45,9 +45,11 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 		.initiallyAwake = true,
 		.isBullet = false
 	};
-	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
+	phy.position = position;
+	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
 
-	auto& gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, main_sprite_type);
+	auto& gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, main_sprite_type, position);
+	gfx.position = position;
 
 	auto& chr = obj.AddFastCharacter();
 	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_DASH_2S));
@@ -68,7 +70,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 
 	phy.preStep = [&, id=id](m2::Physique& phy, const m2::Stopwatch::Duration& delta) {
 		auto& chr = obj.GetCharacter();
-		auto vector_to_mouse = (M2_GAME.MousePositionWorldM() - obj.position).Normalize();
+		auto vector_to_mouse = (M2_GAME.MousePositionWorldM() - phy.position).Normalize();
 
 		auto [direction_enum, direction_vector] = m2::calculate_character_movement(m2g::pb::MOVE_LEFT, m2g::pb::MOVE_RIGHT, m2g::pb::MOVE_UP, m2g::pb::MOVE_DOWN);
 		float move_force;
@@ -90,8 +92,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 		// Primary weapon
 		if (M2_GAME.events.IsMouseButtonDown(m2::MouseButton::PRIMARY)) {
 			auto shoot = [&](const m2::Item& weapon) {
-				rpg::create_projectile(*m2::CreateObject(obj.position, {}, id),
-					vector_to_mouse, weapon, true);
+				rpg::create_projectile(*m2::CreateObject({}, id), phy.position, vector_to_mouse, weapon, true);
 				// Knock-back
 				phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->ApplyForceToCenter(m2::VecF::CreateUnitVectorWithAngle(vector_to_mouse.GetAngle() + m2::PI) * 50000.0f);
 			};
@@ -115,8 +116,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 		// Secondary weapon
 		if (M2_GAME.events.IsMouseButtonDown(m2::MouseButton::SECONDARY)) {
 			auto slash = [&](const m2::Item& weapon) {
-				rpg::create_blade(*m2::CreateObject(obj.position, {}, id),
-					vector_to_mouse, weapon, true);
+				rpg::create_blade(*m2::CreateObject({}, id), phy.position, vector_to_mouse, weapon, true);
 			};
 
 			// Check if there is a special melee weapon and try to use the item

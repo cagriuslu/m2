@@ -24,7 +24,7 @@ namespace {
 	};
 }
 
-m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
+m2::void_expected LoadFlipper(m2::Object& obj, const m2::VecF& position, const bool rightFlipper) {
 	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(rightFlipper
 			? m2g::pb::SPRITE_BASIC_FLIPPER_RIGHT : m2g::pb::SPRITE_BASIC_FLIPPER_LEFT));
 
@@ -32,6 +32,7 @@ m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
 	auto* flipper = dynamic_cast<FlipperImpl*>(obj.impl.get());
 
 	auto& phy = obj.AddPhysique();
+	phy.position = position;
 	const m2::third_party::physics::RigidBodyDefinition rigidBodyDef{
 		.bodyType = m2::third_party::physics::RigidBodyType::KINEMATIC,
 		.fixtures = m2::ToVector(
@@ -52,9 +53,10 @@ m2::void_expected LoadFlipper(m2::Object& obj, const bool rightFlipper) {
 		.isBullet = true,
 		.initiallyEnabled = true
 	};
-	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
+	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
 
 	MAYBE auto& gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, rightFlipper ? m2g::pb::SPRITE_BASIC_FLIPPER_RIGHT : m2g::pb::SPRITE_BASIC_FLIPPER_LEFT);
+	gfx.position = position;
 
 	if (rightFlipper) {
 		phy.preStep = [flipper](m2::Physique& phy_, const m2::Stopwatch::Duration&) {

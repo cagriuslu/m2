@@ -7,12 +7,13 @@ struct Spikes : public m2::ObjectImpl {
 	std::optional<m2::Timer> trigger_timer;
 };
 
-m2::void_expected rpg::create_spikes(m2::Object& obj) {
+m2::void_expected rpg::create_spikes(m2::Object& obj, const m2::VecF& position) {
 	const auto& spikes_in = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(m2g::pb::SPIKES_IN));
 	const auto& spikes_out = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(m2g::pb::SPIKES_OUT));
 
 	// Create physique component
 	auto& phy = obj.AddPhysique();
+	phy.position = position;
 	m2::third_party::physics::RigidBodyDefinition rigidBodyDef{
 		.bodyType = m2::third_party::physics::RigidBodyType::STATIC,
 		.fixtures = {m2::third_party::physics::FixtureDefinition{
@@ -24,10 +25,11 @@ m2::void_expected rpg::create_spikes(m2::Object& obj) {
 		.initiallyAwake = false,
 		.isBullet = false
 	};
-	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
+	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
 
 	// Create graphic component
 	auto& gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, m2g::pb::SPIKES_IN);
+	gfx.position = position;
 
 	// Create custom data
 	obj.impl = std::make_unique<Spikes>();
@@ -40,7 +42,7 @@ m2::void_expected rpg::create_spikes(m2::Object& obj) {
 				std::get<const m2::Sprite*>(gfx.visual) = &spikes_out;
 				impl.trigger_timer = m2::Timer{};
 				// Recreate the body so that collision is reset, otherwise the Player standing on the spikes doesn't collide again
-				phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
+				phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), self.position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
 			}
 		} else if (std::get<const m2::Sprite*>(gfx.visual) == &spikes_out && impl.trigger_timer) {
 			// Spikes are out and triggered
@@ -48,7 +50,7 @@ m2::void_expected rpg::create_spikes(m2::Object& obj) {
 				std::get<const m2::Sprite*>(gfx.visual) = &spikes_in;
 				impl.trigger_timer.reset();
 				// Recreate the body so that collision is reset, otherwise the Player standing on the spikes doesn't collide again
-				phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
+				phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), self.position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
 			}
 		}
 	};

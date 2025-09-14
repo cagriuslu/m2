@@ -420,7 +420,7 @@ void_expected Level::InitAnyPlayer(
 	for (const auto& fg_object : _lb->objects()) {
 		const auto objectPosition = VecF{fg_object.position()};
 		LOG_TRACE("Loading foreground object", fg_object.type(), objectPosition);
-		auto it = CreateObject(objectPosition, fg_object.type());
+		auto it = CreateObject(fg_object.type());
 		it->orientation = fg_object.orientation();
 
 		// Assign to group
@@ -437,7 +437,7 @@ void_expected Level::InitAnyPlayer(
 			it->SetGroup(group_id, group->AddMember(it.GetId()));
 		}
 
-		auto load_result = M2G_PROXY.LoadForegroundObjectFromLevelBlueprint(*it);
+		auto load_result = M2G_PROXY.LoadForegroundObjectFromLevelBlueprint(*it, objectPosition);
 		m2ReflectUnexpected(load_result);
 		LOG_TRACE("Created object", it.GetId());
 	}

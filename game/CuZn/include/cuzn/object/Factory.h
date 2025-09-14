@@ -26,4 +26,4 @@ Industry ToIndustryOfFactoryCharacter(const m2::Character& chr);
 IndustryTile ToIndustryTileOfFactoryCharacter(const m2::Character& chr);
 IndustryLocation ToIndustryLocationOfFactoryCharacter(m2::Character& chr);
 
-m2::void_expected InitFactory(m2::Object&, City, IndustryTile);
+m2::void_expected InitFactory(m2::Object&, const m2::VecF& position, City, IndustryTile);

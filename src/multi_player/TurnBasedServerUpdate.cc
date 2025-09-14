@@ -19,7 +19,7 @@ m2::pb::TurnBasedNetworkMessage m2::GenerateServerUpdate(int32_t& nextSequenceNo
 		std::visit(overloaded {
 			[object_descriptor](const auto& v) {
 				object_descriptor->set_object_id(v.Owner().GetId());
-				object_descriptor->mutable_position()->CopyFrom(static_cast<pb::VecF>(v.Owner().position));
+				object_descriptor->mutable_position()->CopyFrom(static_cast<pb::VecF>(v.Owner().InferPosition()));
 				object_descriptor->set_object_type(v.Owner().GetType());
 				object_descriptor->set_parent_id(v.Owner().GetParentId());
 				for (auto item_it = v.BeginItems(); item_it != v.EndItems(); ++item_it) {

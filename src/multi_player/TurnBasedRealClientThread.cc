@@ -111,7 +111,7 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::network::SequenceNo>>
 			auto server_character = server_update.objects_with_character(i);
 			auto success = std::visit(overloaded {
 				[this, &server_character](const auto& v) -> m2::void_expected {
-					if (v.Owner().position != VecF{server_character.position()}) {
+					if (v.Owner().InferPosition() != VecF{server_character.position()}) {
 						return make_unexpected("Server and local position mismatch");
 					}
 					if (v.Owner().GetType() != server_character.object_type()) {
@@ -212,8 +212,8 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::network::SequenceNo>>
 			if (it->server_object_parent_id == 0) {
 				// Simply, create the object
 				LOG_DEBUG("Server has created an object", it->server_object_id);
-				auto obj_it = m2::CreateObject(m2::VecF{it->position}, it->object_type, 0);
-				auto load_result = M2G_PROXY.init_server_update_fg_object(*obj_it, it->named_items, it->resources);
+				auto obj_it = m2::CreateObject(it->object_type, 0);
+				auto load_result = M2G_PROXY.init_server_update_fg_object(*obj_it, m2::VecF{it->position}, it->named_items, it->resources);
 				m2ReflectUnexpected(load_result);
 				// Update the character
 				auto* character = obj_it->TryGetCharacter();
@@ -225,8 +225,8 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::network::SequenceNo>>
 			} else if (auto parent_it = _server_to_local_map.find(it->server_object_parent_id); parent_it != _server_to_local_map.end()) {
 				// If the object has a parent that's already created, create the object by looking up the corresponding parent
 				LOG_DEBUG("Server has created an object", it->server_object_id);
-				auto obj_it = m2::CreateObject(m2::VecF{it->position}, it->object_type, parent_it->second.first);
-				auto load_result = M2G_PROXY.init_server_update_fg_object(*obj_it, it->named_items, it->resources);
+				auto obj_it = m2::CreateObject(it->object_type, parent_it->second.first);
+				auto load_result = M2G_PROXY.init_server_update_fg_object(*obj_it, m2::VecF{it->position}, it->named_items, it->resources);
 				m2ReflectUnexpected(load_result);
 				// Update the character
 				auto* character = obj_it->TryGetCharacter();

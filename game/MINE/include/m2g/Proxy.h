@@ -19,6 +19,6 @@ namespace m2g {
 
 		m2::third_party::physics::FixtureDefinition TileFixtureDefinition(pb::SpriteType spriteType);
 		void post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_type);
-		m2::void_expected LoadForegroundObjectFromLevelBlueprint(m2::Object& obj);
+		m2::void_expected LoadForegroundObjectFromLevelBlueprint(m2::Object& obj, const m2::VecF& position);
 	};
 }

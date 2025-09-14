@@ -144,7 +144,7 @@ UiPanelBlueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType
 std::optional<m2g::pb::ItemType> ask_for_card_selection(m2g::pb::ItemType exclude_card_1, m2g::pb::ItemType exclude_card_2) {
 	LOG_INFO("Asking player to select a card");
 	std::optional<m2g::pb::ItemType> selected_card;
-	auto background = M2_GAME.DrawGameToTexture(M2_LEVEL.GetCamera()->position);
+	auto background = M2_GAME.DrawGameToTexture(M2_LEVEL.GetCamera()->InferPosition());
 	UiPanel::create_and_run_blocking(std::make_unique<UiPanelBlueprint>(
 			generate_cards_window("Select card to discard", exclude_card_1, exclude_card_2, true)), cards_window_ratio(), std::move(background))
 			.IfQuit([] { M2_GAME.quit = true; })

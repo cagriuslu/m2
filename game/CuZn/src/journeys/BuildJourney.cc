@@ -662,9 +662,9 @@ std::pair<Card,int> ExecuteBuildAction(m2::Character& player, const m2g::pb::Tur
 		M2_DEFER(m2::CreateObjectDeleter(factory->GetId()));
 	}
 	// Create factory on the map
-	auto it = m2::CreateObject(position_of_industry_location(build_action.industry_location()), m2g::pb::FACTORY, player.OwnerId());
+	auto it = m2::CreateObject(m2g::pb::FACTORY, player.OwnerId());
 	auto city = city_of_location(build_action.industry_location());
-	InitFactory(*it, city, build_action.industry_tile());
+	InitFactory(*it, position_of_industry_location(build_action.industry_location()), city, build_action.industry_tile());
 	// Give resources to factory, sell to market at the same time
 	if (tile_category == ITEM_CATEGORY_COAL_MINE_TILE) {
 		// If there's a connection to coal market

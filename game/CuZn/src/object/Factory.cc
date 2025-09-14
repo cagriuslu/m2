@@ -115,10 +115,10 @@ IndustryLocation ToIndustryLocationOfFactoryCharacter(m2::Character& chr) {
 	if (not IsFactoryCharacter(chr)) {
 		throw M2_ERROR("Character doesn't belong to a factory");
 	}
-	return *industry_location_on_position(chr.Owner().position);
+	return *industry_location_on_position(chr.Owner().InferPosition());
 }
 
-m2::void_expected InitFactory(m2::Object& obj, City city, IndustryTile industry_tile) {
+m2::void_expected InitFactory(m2::Object& obj, const m2::VecF& position, City city, IndustryTile industry_tile) {
 	DEBUG_FN();
 
 	if (not is_city(city)) {
@@ -140,8 +140,9 @@ m2::void_expected InitFactory(m2::Object& obj, City city, IndustryTile industry_
 
 	auto color = M2G_PROXY.player_colors[parent_index];
 	auto& _gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, industry_sprite_of_industry(industry));
+	_gfx.position = position;
 	_gfx.onDraw = [color](m2::Graphic& gfx) {
-		auto top_left_cell_pos = gfx.Owner().position;
+		auto top_left_cell_pos = gfx.position;
 		auto cell_rect = m2::RectF{top_left_cell_pos - 0.5f, 2.0f, 2.0f};
 
 		// Draw background with player's color

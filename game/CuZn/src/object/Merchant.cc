@@ -18,12 +18,13 @@ m2::Object* find_merchant_at_location(m2g::pb::SpriteType location) {
 	return nullptr;
 }
 
-void init_merchant(m2::Object& obj) {
+void init_merchant(m2::Object& obj, const m2::VecF& position) {
 	auto& chr = obj.AddFastCharacter();
 	// Active merchants will be given a merchant license during setup. (ITEM_CATEGORY_MERCHANT_LICENSE)
 	// Passive merchants will simply exist without a license.
 
 	auto& gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT);
+	gfx.position = position;
 	gfx.preDraw = [&chr](m2::Graphic& g, const m2::Stopwatch::Duration&) {
 		// Set the sprite if license is added. Licenses are assigned after population, thus do it pre_draw.
 		auto it = chr.FindItems(m2g::pb::ITEM_CATEGORY_MERCHANT_LICENSE);

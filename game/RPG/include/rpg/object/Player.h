@@ -14,6 +14,6 @@ namespace rpg {
 
 		explicit Player(m2::Object& obj);
 
-		static m2::void_expected init(m2::Object& obj);
+		static m2::void_expected init(m2::Object& obj, const m2::VecF& position);
 	};
 }

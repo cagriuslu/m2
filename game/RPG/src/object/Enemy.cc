@@ -36,12 +36,14 @@ Enemy::Enemy(m2::Object& obj, const pb::Enemy* enemy) : animation_fsm(enemy->ani
 	}
 }
 
-m2::void_expected Enemy::init(m2::Object& obj) {
+m2::void_expected Enemy::init(m2::Object& obj, const m2::VecF& position) {
 	const auto main_sprite_type = *M2_GAME.GetMainSpriteOfObject(obj.GetType());
 	const auto& mainSprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(main_sprite_type));
 	auto& gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, main_sprite_type);
+	gfx.position = position;
 
 	auto& phy = obj.AddPhysique();
+	phy.position = position;
 	m2::third_party::physics::RigidBodyDefinition rigidBodyDef{
 		.bodyType = m2::third_party::physics::RigidBodyType::DYNAMIC,
 		.fixtures = {
@@ -61,7 +63,7 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 		.initiallyAwake = false,
 		.isBullet = false
 	};
-	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
+	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
 
 	auto& chr = obj.AddFastCharacter();
 	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_GUN));
@@ -113,7 +115,7 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 			// Check if we died
 			if (not self.HasResource(RESOURCE_HP)) {
 				// Drop item
-				auto drop_position = obj.position;
+				auto drop_position = self.Owner().GetPhysique().position;
 				if (m2::Group* group = obj.TryGetGroup()) {
 					// Check if the object belongs to item group
 					auto* item_group = dynamic_cast<ItemGroup*>(group);
@@ -121,7 +123,7 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 						auto optional_item = item_group->pop_item();
 						if (optional_item) {
 							M2_DEFER([=]() {
-								create_dropped_item(*m2::CreateObject(drop_position), *optional_item);
+								create_dropped_item(*m2::CreateObject(), drop_position, *optional_item);
 							});
 						}
 					}
@@ -133,12 +135,12 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 				M2_DEFER(m2::CreateObjectDeleter(self.OwnerId()));
 				// Create corpse
 				if (obj_type == ObjectType::SKELETON) {
-					M2_DEFER([pos = obj.position]() {
-						create_corpse(*m2::CreateObject(pos), m2g::pb::SKELETON_CORPSE);
+					M2_DEFER([pos = drop_position]() {
+						create_corpse(*m2::CreateObject(), pos, m2g::pb::SKELETON_CORPSE);
 					});
 				} else if (obj_type == ObjectType::CUTEOPUS) {
-					M2_DEFER([pos = obj.position]() {
-						create_corpse(*m2::CreateObject(pos), m2g::pb::CUTEOPUS_CORPSE);
+					M2_DEFER([pos = drop_position]() {
+						create_corpse(*m2::CreateObject(), pos, m2g::pb::CUTEOPUS_CORPSE);
 					});
 				}
 			} else {
@@ -199,10 +201,11 @@ void rpg::Enemy::move_towards(m2::Object& obj, m2::VecF direction, float force) 
 }
 
 void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
+	const auto& selfPosition = obj.GetPhysique().position;
 	// If not stunned
 	if (not obj.GetCharacter().HasResource(m2g::pb::RESOURCE_STUN_TTL)) {
 		// Attack if player is close
-		if (obj.position.IsNear(M2_PLAYER.position, ai.attack_distance())) {
+		if (selfPosition.IsNear(M2_PLAYER.GetPhysique().position, ai.attack_distance())) {
 			// Based on what the capability is
 			auto capability = ai.capabilities(0);
 			switch (capability) {
@@ -210,8 +213,8 @@ void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
 					auto it = obj.GetCharacter().FindItems(m2g::pb::ITEM_CATEGORY_DEFAULT_RANGED_WEAPON);
 					if (it && obj.GetCharacter().UseItem(it)) {
 						obj.GetCharacter().ClearResource(RESOURCE_RANGED_ENERGY);
-						auto shoot_direction = M2_PLAYER.position - obj.position;
-						rpg::create_projectile(*m2::CreateObject(obj.position, {}, obj.GetId()),
+						auto shoot_direction = M2_PLAYER.GetPhysique().position - selfPosition;
+						rpg::create_projectile(*m2::CreateObject({}, obj.GetId()), selfPosition,
 							shoot_direction, *it, false);
 						// Knock-back
 						obj.GetPhysique().body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->ApplyForceToCenter(m2::VecF::CreateUnitVectorWithAngle(shoot_direction.GetAngle() + m2::PI) * 5000.0f);
@@ -222,8 +225,8 @@ void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
 					auto it = obj.GetCharacter().FindItems(m2g::pb::ITEM_CATEGORY_DEFAULT_MELEE_WEAPON);
 					if (it && obj.GetCharacter().UseItem(it)) {
 						obj.GetCharacter().ClearResource(RESOURCE_MELEE_ENERGY);
-						rpg::create_blade(*m2::CreateObject(obj.position, {}, obj.GetId()),
-							M2_PLAYER.position - obj.position, *it, false);
+						rpg::create_blade(*m2::CreateObject({}, obj.GetId()), selfPosition,
+							M2_PLAYER.GetPhysique().position - selfPosition, *it, false);
 					}
 					break;
 				}

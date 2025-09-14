@@ -9,7 +9,7 @@
 using namespace m2g;
 using namespace m2g::pb;
 
-m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF &direction, const m2::Item &melee_weapon, bool is_friend) {
+m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF& position, const m2::VecF &direction, const m2::Item &melee_weapon, bool is_friend) {
 	// Check if weapon has necessary attributes
 	if (!melee_weapon.HasAttribute(ATTRIBUTE_AVERAGE_DAMAGE)) {
 		throw M2_ERROR("Melee weapon has no average damage");
@@ -32,6 +32,7 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF &direction, 
 
 	// Add physics
 	auto& phy = obj.AddPhysique();
+	phy.position = position;
 
 	auto rigidBodyDef = BasicBulletRigidBodyDefinition();
 	rigidBodyDef.fixtures = {m2::third_party::physics::FixtureDefinition{
@@ -42,11 +43,12 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF &direction, 
 			? m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_FRIENDLY_DAMAGE
 			: m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_HOSTILE_DAMAGE)]
 	}};
-	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), obj.position, start_angle, m2::pb::PhysicsLayer::SEA_LEVEL);
+	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, start_angle, m2::pb::PhysicsLayer::SEA_LEVEL);
 	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->SetAngularVelocity(-swing_speed);
 
 	// Add graphics
 	auto& gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, melee_weapon.GameSprite());
+	gfx.position = position;
 	gfx.z = 0.5f;
 
 	// Add character
@@ -69,7 +71,7 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF &direction, 
 	};
 	phy.postStep = [&](m2::Physique& phy, const m2::Stopwatch::Duration&) {
 		if (auto* originator = obj.TryGetParent()) {
-			phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->SetPosition(originator->position);
+			phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->SetPosition(originator->GetPhysique().position);
 		} else {
 			// Originator died
 			M2_DEFER(m2::CreateObjectDeleter(phy.OwnerId()));

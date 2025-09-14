@@ -19,7 +19,7 @@ struct HumanPlayer : public m2::ObjectImpl {
 	std::optional<Location> currentMouseHoverLocation;
 };
 
-m2::void_expected PlayerInitThisInstance(m2::Object& obj) {
+m2::void_expected PlayerInitThisInstance(m2::Object& obj, const m2::VecF& position) {
 	DEBUG_FN();
 
 	obj.impl = std::make_unique<HumanPlayer>();
@@ -44,7 +44,8 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj) {
 	m2Repeat(road_possession_limit) { chr.AddNamedItem(road_item); }
 
 	auto& phy = obj.AddPhysique();
-	phy.preStep = [&o = obj](m2::Physique&, const m2::Stopwatch::Duration&) {
+	phy.position = position;
+	phy.preStep = [&o = obj](m2::Physique& phy_, const m2::Stopwatch::Duration&) {
 		auto& impl = dynamic_cast<HumanPlayer&>(*o.impl);
 		// Start map movement with mouse
 		if (M2_GAME.events.PopMouseButtonPress(m2::MouseButton::PRIMARY, M2_GAME.Dimensions().Game())) {
@@ -60,7 +61,7 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj) {
 		if (impl.mouse_click_prev_position && impl.mouse_click_prev_position->first != M2_GAME.events.MousePosition()) {
 			auto diff = impl.mouse_click_prev_position->first - M2_GAME.events.MousePosition();
 			auto diff_m = m2::VecF{diff} / M2_GAME.Dimensions().OutputPixelsPerMeter();
-			o.position += diff_m;
+			phy_.position += diff_m;
 			impl.mouse_click_prev_position = std::make_pair(M2_GAME.events.MousePosition(), M2_GAME.MousePositionWorldM());
 		}
 
@@ -79,24 +80,24 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj) {
 		const auto& dims = M2_GAME.Dimensions();
 		// If the map is zoomed out so much that the black space is showing on the left and the right
 		if (M2_LEVEL.GetBackgroundBoundary().w < dims.GameM().GetX()) {
-			o.position = o.position.WithX(m2::ToFloat(M2_LEVEL.GetBackgroundBoundary().GetXCenter()));
+			phy_.position = phy_.position.WithX(m2::ToFloat(M2_LEVEL.GetBackgroundBoundary().GetXCenter()));
 		} else {
-			if (o.position.GetX() < dims.GameM().GetX() / 2.0f) {
-				o.position = o.position.WithX(dims.GameM().GetX() / 2.0f); // Left
+			if (phy_.position.GetX() < dims.GameM().GetX() / 2.0f) {
+				phy_.position = phy_.position.WithX(dims.GameM().GetX() / 2.0f); // Left
 			}
-			if (M2_LEVEL.GetBackgroundBoundary().GetX2() < o.position.GetX() + dims.GameM().GetX() / 2.0f) {
-				o.position = o.position.WithX(M2_LEVEL.GetBackgroundBoundary().GetX2() - dims.GameM().GetX() / 2.0f); // Right
+			if (M2_LEVEL.GetBackgroundBoundary().GetX2() < phy_.position.GetX() + dims.GameM().GetX() / 2.0f) {
+				phy_.position = phy_.position.WithX(M2_LEVEL.GetBackgroundBoundary().GetX2() - dims.GameM().GetX() / 2.0f); // Right
 			}
 		}
 		// If the map is zoomed out so much that the black space is showing on the top and the bottom
 		if (M2_LEVEL.GetBackgroundBoundary().h < dims.GameM().GetY()) {
-			o.position = o.position.WithY(m2::ToFloat(M2_LEVEL.GetBackgroundBoundary().GetYCenter()));
+			phy_.position = phy_.position.WithY(m2::ToFloat(M2_LEVEL.GetBackgroundBoundary().GetYCenter()));
 		} else {
-			if (o.position.GetY() < dims.GameM().GetY() / 2.0f) {
-				o.position = o.position.WithY(dims.GameM().GetY() / 2.0f); // Top
+			if (phy_.position.GetY() < dims.GameM().GetY() / 2.0f) {
+				phy_.position = phy_.position.WithY(dims.GameM().GetY() / 2.0f); // Top
 			}
-			if (M2_LEVEL.GetBackgroundBoundary().GetY2() < o.position.GetY() + dims.GameM().GetY() / 2.0f) {
-				o.position = o.position.WithY(M2_LEVEL.GetBackgroundBoundary().GetY2() - dims.GameM().GetY() / 2.0f); // Bottom
+			if (M2_LEVEL.GetBackgroundBoundary().GetY2() < phy_.position.GetY() + dims.GameM().GetY() / 2.0f) {
+				phy_.position = phy_.position.WithY(M2_LEVEL.GetBackgroundBoundary().GetY2() - dims.GameM().GetY() / 2.0f); // Bottom
 			}
 		}
 

@@ -34,12 +34,12 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 	}
 }
 
-m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object& obj) {
+m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object& obj, const m2::VecF& position) {
 	switch (obj.GetType()) {
 		case pb::ObjectType::DWARF:
-			return create_dwarf(obj);
+			return create_dwarf(obj, position);
 		case pb::ObjectType::BLACKSMITH:
-			return create_blacksmith(obj);
+			return create_blacksmith(obj, position);
 		default:
 			return m2::make_unexpected("Invalid object type");
 	}

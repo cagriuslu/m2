@@ -25,12 +25,13 @@ namespace {
 	}
 }
 
-m2::void_expected LoadDropGate(m2::Object& obj) {
+m2::void_expected LoadDropGate(m2::Object& obj, const m2::VecF& position) {
 	const auto type = obj.GetType();
 	const auto spriteType = *M2_GAME.GetMainSpriteOfObject(type);
 	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(spriteType));
 
 	auto& phy = obj.AddPhysique();
+	phy.position = position;
 	m2::third_party::physics::RigidBodyDefinition rigidBodyDef{
 		.bodyType = m2::third_party::physics::RigidBodyType::STATIC,
 		.isBullet = true
@@ -45,7 +46,7 @@ m2::void_expected LoadDropGate(m2::Object& obj) {
 		}
 	});
 	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef,
-		obj.GetPhysiqueId(), obj.position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
+		obj.GetPhysiqueId(), position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
 
 	auto& gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, spriteType);
 

@@ -2,7 +2,7 @@
 #include <m2/third_party/physics/ColliderCategory.h>
 #include <m2/Game.h>
 
-m2::void_expected LoadGenericBallSensor(m2::Object& obj, const m2::pb::PhysicsLayer physicsLayer,
+m2::void_expected LoadGenericBallSensor(m2::Object& obj, const m2::VecF& position, const m2::pb::PhysicsLayer physicsLayer,
 	const std::function<void(m2::Physique& sensor, m2::Physique& ball, const m2::box2d::Contact&)>& onCollisionWithBall,
 	const std::function<void(m2::Physique& sensor, m2::Physique& ball)>& offCollisionWithBall) {
 
@@ -11,6 +11,7 @@ m2::void_expected LoadGenericBallSensor(m2::Object& obj, const m2::pb::PhysicsLa
 	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(spriteType));
 
 	auto& phy = obj.AddPhysique();
+	phy.position = position;
 	m2::third_party::physics::RigidBodyDefinition rigidBodyDef{
 		.bodyType = m2::third_party::physics::RigidBodyType::DYNAMIC,
 		.fixedRotation = true,
@@ -29,7 +30,7 @@ m2::void_expected LoadGenericBallSensor(m2::Object& obj, const m2::pb::PhysicsLa
 		});
 	}
 	phy.body[m2::I(physicsLayer)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef,
-		obj.GetPhysiqueId(), obj.position, obj.orientation, physicsLayer);
+		obj.GetPhysiqueId(), position, obj.orientation, physicsLayer);
 
 	obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, spriteType);
 

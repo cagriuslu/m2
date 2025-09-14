@@ -23,7 +23,7 @@ namespace {
 	}
 }
 
-rpg::ChaserFsm::ChaserFsm(m2::Object* obj, const pb::Ai* ai) : FsmBase(), obj(obj), ai(ai), home_position(obj->position) {
+rpg::ChaserFsm::ChaserFsm(m2::Object* obj, const pb::Ai* ai) : FsmBase(), obj(obj), ai(ai), home_position(obj->InferPosition()) {
 	init(ChaserMode::Idle);
 }
 
@@ -70,9 +70,9 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::HandleSignal(const ChaserFsmSigna
 
 std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_alarm_while_idle() {
 	// Check if player is close
-	if (obj->position.IsNear(M2_PLAYER.position, ai->trigger_distance())) {
+	if (obj->GetPhysique().position.IsNear(M2_PLAYER.GetPhysique().position, ai->trigger_distance())) {
 		// Check if path exists
-		if (find_path(M2_PLAYER.position, ai->chaser().give_up_distance())) {
+		if (find_path(M2_PLAYER.GetPhysique().position, ai->chaser().give_up_distance())) {
 			return ChaserMode::Triggered;
 		}
 	}
@@ -82,7 +82,7 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_alarm_while_idle() {
 
 std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_hit_while_idle_or_given_up() {
 	// Check if path exists
-	if (find_path(M2_PLAYER.position, ai->hit_trigger_distance())) {
+	if (find_path(M2_PLAYER.GetPhysique().position, ai->hit_trigger_distance())) {
 		return ChaserMode::Triggered;
 	}
 	return {};
@@ -90,9 +90,9 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_hit_while_idle_or_given_up
 
 std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_alarm_while_triggered() {
 	// Check if player is still close
-	if (obj->position.IsNear(M2_PLAYER.position, ai->chaser().give_up_distance())) {
+	if (obj->GetPhysique().position.IsNear(M2_PLAYER.GetPhysique().position, ai->chaser().give_up_distance())) {
 		// Recalculate path to player
-		find_path(M2_PLAYER.position, ai->chaser().give_up_distance());
+		find_path(M2_PLAYER.GetPhysique().position, ai->chaser().give_up_distance());
 	} else {
 		// Check if path to home_position exists
 		if (find_path(home_position, INFINITY)) {
@@ -111,14 +111,14 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_physics_step_while_trigger
 
 std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_alarm_while_gave_up() {
 	// Check if player is close
-	if (obj->position.IsNear(M2_PLAYER.position, ai->trigger_distance())) {
+	if (obj->GetPhysique().position.IsNear(M2_PLAYER.GetPhysique().position, ai->trigger_distance())) {
 		// Check if path to player exists
-		if (find_path(M2_PLAYER.position, ai->chaser().give_up_distance())) {
+		if (find_path(M2_PLAYER.GetPhysique().position, ai->chaser().give_up_distance())) {
 			return ChaserMode::Triggered;
 		}
 	} else {
 		// Check if obj arrived to homePosition
-		if (obj->position.IsNear(home_position, 1.0f)) {
+		if (obj->GetPhysique().position.IsNear(home_position, 1.0f)) {
 			return ChaserMode::Idle;
 		} else {
 			// Recalculate path to homePosition
@@ -135,7 +135,7 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_physics_step_while_gave_up
 }
 
 bool rpg::ChaserFsm::find_path(const m2::VecF& target, float max_distance) {
-	auto smooth_path = M2_LEVEL.pathfinder->find_grid_path(obj->position, target, max_distance);
+	auto smooth_path = M2_LEVEL.pathfinder->find_grid_path(obj->GetPhysique().position, target, max_distance);
 	if (not smooth_path.empty()) {
 		_reverse_path = std::move(smooth_path);
 		return true;
@@ -144,11 +144,11 @@ bool rpg::ChaserFsm::find_path(const m2::VecF& target, float max_distance) {
 }
 
 void rpg::ChaserFsm::follow_waypoints() {
-	auto closest_waypoint_it = reverse_find_first_local_min(_reverse_path, obj->position);
+	auto closest_waypoint_it = reverse_find_first_local_min(_reverse_path, obj->GetPhysique().position);
 	auto next_waypoint_it = std::next(closest_waypoint_it);
 	if (next_waypoint_it != _reverse_path.crend()) {
 		auto target = m2::VecF{*next_waypoint_it};
-		Enemy::move_towards(*obj, target - obj->position, 30000.0f);
+		Enemy::move_towards(*obj, target - obj->GetPhysique().position, 30000.0f);
 	} else {
 		// Player is very close
 	}

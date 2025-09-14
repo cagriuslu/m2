@@ -3,7 +3,7 @@
 #include <pinball/Pinball.h>
 
 void LoadEdge() {
-	const auto it = m2::CreateObject({}, m2g::pb::NO_OBJECT);
+	const auto it = m2::CreateObject(m2g::pb::NO_OBJECT);
 
 	auto& phy = it->AddPhysique();
 	m2::third_party::physics::RigidBodyDefinition rigidBodyDef{
