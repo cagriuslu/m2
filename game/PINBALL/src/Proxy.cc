@@ -292,16 +292,16 @@ const m2::UiPanelBlueprint* m2g::Proxy::RightHudBlueprint() {
 	return &rightHudBlueprint;
 }
 
-m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object& obj, const m2::VecF& position) {
+m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object& obj, const m2::VecF& position, float orientation) {
 	switch (obj.GetType()) {
 		case pb::ObjectType::PLAYER:
 			return LoadPlayer(obj);
 		case pb::ObjectType::BALL:
 			return LoadBall(obj, position);
 		case pb::ObjectType::FLIPPER_LEFT:
-			return LoadFlipper(obj, position, false);
+			return LoadFlipper(obj, position, orientation, false);
 		case pb::ObjectType::FLIPPER_RIGHT:
-			return LoadFlipper(obj, position, true);
+			return LoadFlipper(obj, position, orientation, true);
 		case pb::ObjectType::WALLS:
 			return LoadWall(obj, position);
 		case pb::ObjectType::PLATFORM:
@@ -321,11 +321,11 @@ m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object&
 		case pb::ObjectType::BUMPER_SENSOR:
 			return LoadBumperSensor(obj, position);
 		case pb::ObjectType::DROP_GATE:
-			return LoadDropGate(obj, position);
+			return LoadDropGate(obj, position, orientation);
 		case pb::ObjectType::CIRCULAR_BUMPER:
 			return LoadCircularBumperSensor(obj, position);
 		case pb::ObjectType::DOOR:
-			return LoadDoor(obj, position);
+			return LoadDoor(obj, position, orientation);
 		default:
 			throw M2_ERROR("Missing loader for type: " + m2::ToString(obj.GetType()));
 	}

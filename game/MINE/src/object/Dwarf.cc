@@ -31,7 +31,7 @@ m2::void_expected create_dwarf(m2::Object& obj, const m2::VecF& position) {
 		.isBullet = false,
 		.initiallyEnabled = true
 	};
-	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
+	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2::pb::PhysicsLayer::SEA_LEVEL);
 
 	obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, DWARF_FULL).position = position;
 
@@ -39,7 +39,7 @@ m2::void_expected create_dwarf(m2::Object& obj, const m2::VecF& position) {
 	chr.AddNamedItem(M2_GAME.GetNamedItem(ITEM_REUSABLE_JUMP));
 	chr.AddNamedItem(M2_GAME.GetNamedItem(ITEM_AUTOMATIC_JUMP_ENERGY));
 
-	phy.preStep = [&obj, &chr](m2::Physique& phy, const m2::Stopwatch::Duration& delta) {
+	phy.preStep = [&chr](m2::Physique& phy, const m2::Stopwatch::Duration& delta) {
 		// Character movement
 		auto [direction_enum, direction_vector] = m2::calculate_character_movement(MOVE_LEFT, MOVE_RIGHT, NO_KEY, NO_KEY);
 		if (direction_enum == m2::CHARMOVEMENT_NONE) {

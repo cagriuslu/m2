@@ -36,13 +36,12 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& positi
 	auto direction = m2::VecF::CreateUnitVectorWithAngle(angle);
 	float ttl = m2::ApplyAccuracy(average_ttl, average_ttl, ttl_accuracy);
 
-	obj.orientation = angle;
-
 	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(ranged_weapon.GameSprite()));
 
 	// Add physics
 	auto& phy = obj.AddPhysique();
 	phy.position = position;
+	phy.orientation = angle;
 	auto rigidBodyDef = BasicBulletRigidBodyDefinition();
 	rigidBodyDef.fixtures = {m2::third_party::physics::FixtureDefinition{
 		.shape = m2::third_party::physics::CircleShape::FromSpriteCircleFixture(sprite.OriginalPb().regular().fixtures(0).circle(), sprite.Ppm()),
@@ -51,12 +50,13 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& positi
 				? m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_FRIENDLY_DAMAGE
 				: m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_HOSTILE_DAMAGE)]
 	}};
-	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
+	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, angle, m2::pb::PhysicsLayer::SEA_LEVEL);
 	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->SetLinearVelocity(direction * linear_speed);
 
 	// Add graphics
 	auto& gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, ranged_weapon.GameSprite());
 	gfx.position = position;
+	gfx.orientation = angle;
 	gfx.z = 0.5f;
 
 	// Add character
@@ -74,7 +74,7 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& positi
 					.isSensor = true,
 					.colliderFilter = m2::third_party::physics::gColliderCategoryToParams[m2::I(m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_FRIENDLY_DAMAGE)]
 				}};
-				phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(explosionBodyDef, obj.GetPhysiqueId(), obj.GetPhysique().position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
+				phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(explosionBodyDef, obj.GetPhysiqueId(), obj.GetPhysique().position, phy.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
 				chr.AddNamedItem(M2_GAME.GetNamedItem(ITEM_AUTOMATIC_EXPLOSIVE_TTL));
 				// RESOURCE_EXPLOSION_TTL only means the object is currently exploding
 				chr.SetResource(RESOURCE_EXPLOSION_TTL, 1.0f); // 1.0f is just symbolic

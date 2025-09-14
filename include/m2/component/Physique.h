@@ -8,6 +8,7 @@
 namespace m2 {
 	struct Physique final : Component {
 		VecF position;
+		float orientation{}; /// In radians
 
 		using Callback = std::function<void(Physique&, const Stopwatch::Duration&)>;
 		Callback preStep{};

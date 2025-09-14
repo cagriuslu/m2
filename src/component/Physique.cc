@@ -8,7 +8,8 @@
 m2::Physique::Physique(Id ownerId, const VecF& position) : Component(ownerId), position(position) {}
 
 m2::Physique::Physique(Physique&& other) noexcept
-		: Component(other._owner_id), position(std::move(other.position)), preStep(std::move(other.preStep)), postStep(std::move(other.postStep)),
+		: Component(other._owner_id), position(std::move(other.position)), orientation(other.orientation),
+		preStep(std::move(other.preStep)), postStep(std::move(other.postStep)),
 		body(std::move(other.body)), rigidBodyIndex(std::move(other.rigidBodyIndex)),
 		onCollision(std::move(other.onCollision)), offCollision(std::move(other.offCollision)) {
 	for (auto& b : body) {
@@ -20,6 +21,7 @@ m2::Physique::Physique(Physique&& other) noexcept
 m2::Physique& m2::Physique::operator=(Physique&& other) noexcept {
     std::swap(_owner_id, other._owner_id);
     std::swap(position, other.position);
+    std::swap(orientation, other.orientation);
     std::swap(preStep, other.preStep);
     std::swap(postStep, other.postStep);
     std::swap(body, other.body);

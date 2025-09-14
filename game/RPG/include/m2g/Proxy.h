@@ -40,7 +40,7 @@ namespace m2g {
 
 		void post_single_player_level_init(const std::string& name, const m2::pb::Level& level);
 		m2::third_party::physics::FixtureDefinition TileFixtureDefinition(MAYBE m2g::pb::SpriteType spriteType);
-		m2::void_expected LoadForegroundObjectFromLevelBlueprint(m2::Object& obj, const m2::VecF& position);
+		m2::void_expected LoadForegroundObjectFromLevelBlueprint(m2::Object& obj, const m2::VecF& position, float orientation);
 		m2::Group* create_group(m2g::pb::GroupType group_type);
 
 		// Game specific

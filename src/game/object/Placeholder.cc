@@ -8,9 +8,8 @@ m2::Id m2::obj::CreateBackgroundPlaceholder(const VecF& pos, m2g::pb::SpriteType
 
 m2::Id m2::obj::CreateForegroundPlaceholder(const VecF& pos, float orientation, const std::optional<m2g::pb::SpriteType>& spriteType) {
 	const auto it = CreateObject();
-	it->orientation = orientation;
 	if (spriteType) {
-		it->AddGraphic(pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, *spriteType, pos);
+		it->AddGraphic(pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, *spriteType, pos).orientation = orientation;
 	}
 	return it.GetId();
 }

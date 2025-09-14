@@ -30,7 +30,7 @@ m2::void_expected LoadGenericBallSensor(m2::Object& obj, const m2::VecF& positio
 		});
 	}
 	phy.body[m2::I(physicsLayer)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef,
-		obj.GetPhysiqueId(), position, obj.orientation, physicsLayer);
+		obj.GetPhysiqueId(), position, {}, physicsLayer);
 
 	obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, spriteType);
 

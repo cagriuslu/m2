@@ -26,13 +26,12 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF& position, c
 	const float start_angle = direction_angle + swing_angle / 2.0f;
 	const float swing_speed = swing_angle / average_ttl;
 
-	obj.orientation = start_angle;
-
 	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(melee_weapon.GameSprite()));
 
 	// Add physics
 	auto& phy = obj.AddPhysique();
 	phy.position = position;
+	phy.orientation = start_angle;
 
 	auto rigidBodyDef = BasicBulletRigidBodyDefinition();
 	rigidBodyDef.fixtures = {m2::third_party::physics::FixtureDefinition{
@@ -49,6 +48,7 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF& position, c
 	// Add graphics
 	auto& gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, melee_weapon.GameSprite());
 	gfx.position = position;
+	gfx.orientation = start_angle;
 	gfx.z = 0.5f;
 
 	// Add character

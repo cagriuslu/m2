@@ -10,7 +10,6 @@ using namespace m2;
 Object::Object(const m2g::pb::ObjectType type, const ObjectId parent_id) : _object_type(type), _parent_id(parent_id) {}
 
 Object::Object(Object&& other) noexcept :
-		orientation(other.orientation),
 		impl(std::move(other.impl)),
 		_object_type(other._object_type),
 		_parent_id(other._parent_id),
@@ -32,7 +31,6 @@ Object::Object(Object&& other) noexcept :
     other._character_id = 0;
 }
 Object& Object::operator=(Object&& other) noexcept {
-	std::swap(orientation, other.orientation);
 	std::swap(impl, other.impl);
 	std::swap(_object_type, other._object_type);
 	std::swap(_parent_id, other._parent_id);

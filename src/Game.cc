@@ -622,12 +622,13 @@ void m2::Game::ExecuteStep(const Stopwatch::Duration& delta) {
 			for (const auto& body : phy.body) {
 				if (body && body->IsEnabled()) {
 					auto& obj = phy.Owner();
-					obj.orientation = body->GetAngle();
 					phy.position = body->GetPosition();
+					phy.orientation = body->GetAngle();
 					// Update other components
 					if (auto* gfx = obj.TryGetGraphic()) {
 						const auto oldGfxPosition = gfx->position;
 						gfx->position = phy.position;
+						gfx->orientation = phy.orientation;
 						// Update draw list if necessary
 						if (oldGfxPosition != phy.position) {
 							const auto gfxId = obj.GetGraphicId();

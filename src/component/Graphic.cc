@@ -157,7 +157,7 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 				? &Sprite::DrawIn3dWorld
 				: &Sprite::DrawIn2dWorld;
 		const auto spriteDrawer = [&](const bool foregroundCompanion) -> void {
-			(sprite.*projector)(gfx.position, foregroundCompanion, gfx.Owner().orientation, is_foreground, gfx.z);
+			(sprite.*projector)(gfx.position, foregroundCompanion, gfx.orientation, is_foreground, gfx.z);
 		};
 
 		// Dim the sprite if dimming mode is enabled. TODO Dimming is implemented only for default variant.
@@ -190,7 +190,7 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 		const auto projector = IsProjectionTypePerspective(M2_LEVEL.GetProjectionType())
 				? &DrawTextLabelIn3dWorld
 				: &DrawTextLabelIn2dWorld;
-		projector(textLabel, gfx.textLabelRect, gfx.position, gfx.Owner().orientation, is_foreground, gfx.z);
+		projector(textLabel, gfx.textLabelRect, gfx.position, gfx.orientation, is_foreground, gfx.z);
 
 		// If dimming was active, we need to un-dim.
 		if (dimmed) {

@@ -49,8 +49,8 @@ m2::void_expected LoadBall(m2::Object& obj, const m2::VecF& position) {
 		.isBullet = true,
 		.initiallyEnabled = true
 	};
-	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
-	phy.body[m2::I(m2::pb::PhysicsLayer::ABOVE_GROUND)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, obj.orientation, m2::pb::PhysicsLayer::ABOVE_GROUND);
+	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2::pb::PhysicsLayer::SEA_LEVEL);
+	phy.body[m2::I(m2::pb::PhysicsLayer::ABOVE_GROUND)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2::pb::PhysicsLayer::ABOVE_GROUND);
 	phy.body[m2::I(m2::pb::PhysicsLayer::ABOVE_GROUND)]->SetEnabled(false);
 
 	MAYBE auto& gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, m2g::pb::SPRITE_BASIC_BALL);
@@ -79,7 +79,7 @@ m2::void_expected LoadBall(m2::Object& obj, const m2::VecF& position) {
 			M2_DEFER(m2::CreateLayerMover(phy_.OwnerId(), m2::pb::PhysicsLayer::SEA_LEVEL, m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT));
 		}
 	};
-	phy.onCollision = [&obj, ballImpl](m2::Physique& ball, const m2::Physique& other, const m2::box2d::Contact& contact) {
+	phy.onCollision = [ballImpl](m2::Physique& ball, const m2::Physique& other, const m2::box2d::Contact& contact) {
 		if (other.Owner().GetType() == m2g::pb::WALLS && (not ballImpl->lastCollidedWallPosition
 				|| not ballImpl->lastCollidedWallPosition->IsNear(ball.position, 0.2f))) {
 			const auto velocity = GetActiveRigidBody(ball).GetLinearVelocity();

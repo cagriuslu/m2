@@ -11,14 +11,14 @@ m2::Id m2::obj::CreateGhost(const m2g::pb::SpriteType spriteType, const int roun
 		gfx.preDraw = [roundToBin](Graphic& gfx, const Stopwatch::Duration&) {
 			gfx.position = M2_GAME.MousePositionWorldM().RoundToBin(roundToBin);
 			if (const auto* orientationInput = M2_LEVEL.GetRightHud()->FindWidget<widget::IntegerSelection>("OrientationInput")) {
-				gfx.Owner().orientation = ToRadians(orientationInput->value());
+				gfx.orientation = ToRadians(orientationInput->value());
 			}
 		};
 	} else {
 		gfx.preDraw = [](Graphic& gfx, const Stopwatch::Duration&) {
 			gfx.position = M2_GAME.MousePositionWorldM();
 			if (const auto* orientationInput = M2_LEVEL.GetRightHud()->FindWidget<widget::IntegerSelection>("OrientationInput")) {
-				gfx.Owner().orientation = ToRadians(orientationInput->value());
+				gfx.orientation = ToRadians(orientationInput->value());
 			}
 		};
 	}

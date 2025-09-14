@@ -74,6 +74,7 @@ namespace m3 {
 namespace m2 {
 	struct Graphic final : Component {
 		VecF position;
+		float orientation{}; /// In radians
 		bool enabled{true};
 		bool draw{true};
 

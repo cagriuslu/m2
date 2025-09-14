@@ -40,7 +40,7 @@ namespace m2g {
 		const m2::UiPanelBlueprint* LeftHudBlueprint();
 		const m2::UiPanelBlueprint* RightHudBlueprint();
 
-		m2::void_expected LoadForegroundObjectFromLevelBlueprint(m2::Object& obj, const m2::VecF& position);
+		m2::void_expected LoadForegroundObjectFromLevelBlueprint(m2::Object& obj, const m2::VecF& position, float orientation);
 
 		/// The default group object is sufficient, because we only need to access the other members
 		m2::Group* create_group(pb::GroupType) { return new m2::Group(); }

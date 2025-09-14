@@ -2,13 +2,14 @@
 #include <m2/third_party/physics/ColliderCategory.h>
 #include <m2/Game.h>
 
-m2::void_expected LoadDoor(m2::Object& obj, const m2::VecF& position) {
+m2::void_expected LoadDoor(m2::Object& obj, const m2::VecF& position, float orientation) {
 	const auto type = obj.GetType();
 	const auto spriteType = *M2_GAME.GetMainSpriteOfObject(type);
 	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(spriteType));
 
 	auto& phy = obj.AddPhysique();
 	phy.position = position;
+	phy.orientation = orientation;
 	m2::third_party::physics::RigidBodyDefinition rigidBodyDef{
 		.bodyType = m2::third_party::physics::RigidBodyType::STATIC,
 		.isBullet = false
@@ -23,9 +24,11 @@ m2::void_expected LoadDoor(m2::Object& obj, const m2::VecF& position) {
 			}
 		});
 	}
-	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, obj.orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
+	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
 
-	obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, spriteType);
+	auto& gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, spriteType);
+	gfx.position = position;
+	gfx.orientation = orientation;
 
 	M2G_PROXY.leftLauncherColumnDoorId = obj.GetId();
 
