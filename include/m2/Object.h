@@ -62,7 +62,7 @@ namespace m2 {
 		[[nodiscard]] SoundEmitter& GetSoundEmitter() const;
 		[[nodiscard]] Character& GetCharacter() const;
 
-		[[nodiscard]] VecF InferPosition() const;
+		[[nodiscard]] VecF InferPositionF() const;
 
 		// Modifiers
 

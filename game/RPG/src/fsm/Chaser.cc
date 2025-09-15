@@ -23,7 +23,7 @@ namespace {
 	}
 }
 
-rpg::ChaserFsm::ChaserFsm(m2::Object* obj, const pb::Ai* ai) : FsmBase(), obj(obj), ai(ai), home_position(obj->InferPosition()) {
+rpg::ChaserFsm::ChaserFsm(m2::Object* obj, const pb::Ai* ai) : FsmBase(), obj(obj), ai(ai), home_position(obj->InferPositionF()) {
 	init(ChaserMode::Idle);
 }
 

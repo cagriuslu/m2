@@ -413,7 +413,7 @@ void m2g::Proxy::bot_handle_server_command(MAYBE const m2g::pb::TurnBasedServerC
 }
 
 void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_type) {
-	const auto& objPosition = obj.InferPosition();
+	const auto& objPosition = obj.InferPositionF();
 	// Store the positions of the merchants
 	if (is_merchant_location(sprite_type)) {
 		auto merchant_cell_rect = m2::RectF{objPosition.GetX() - 0.5f, objPosition.GetY() - 0.5f, 2.0f, 2.0f};

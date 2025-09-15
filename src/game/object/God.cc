@@ -43,9 +43,11 @@ Id obj::CreateGod() {
 		if (M2_GAME.events.IsKeyDown(m2g::pb::KeyType::MOVE_RIGHT)) {
 			move_direction = {move_direction.GetX() + 1.0f, move_direction.GetY()};
 		}
-		phy.position += move_direction.Normalize() * (ToDurationF(delta) * M2_GAME.Dimensions().GameM().GetY());
+		const auto moveAmount = move_direction.Normalize() * (ToDurationF(delta) * M2_GAME.Dimensions().GameM().GetY());
+		const auto currentPosition = static_cast<VecF>(phy.position);
 		// Prevent God from going into negative quadrants
-		phy.position = phy.position.Clamp(VecF{0.0f, 0.0f}, std::nullopt);
+		const auto newPosition = (currentPosition + moveAmount).Clamp(VecF{0.0f, 0.0f}, std::nullopt);
+		phy.position = VecFE{newPosition};
 
 		// Adjust zoom
 		if (M2_GAME.events.PopKeyPress(m2g::pb::KeyType::ZOOM_OUT)) {

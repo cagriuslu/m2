@@ -111,7 +111,7 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::network::SequenceNo>>
 			auto server_character = server_update.objects_with_character(i);
 			auto success = std::visit(overloaded {
 				[this, &server_character](const auto& v) -> m2::void_expected {
-					if (v.Owner().InferPosition() != VecF{server_character.position()}) {
+					if (v.Owner().InferPositionF() != VecF{server_character.position()}) {
 						return make_unexpected("Server and local position mismatch");
 					}
 					if (v.Owner().GetType() != server_character.object_type()) {

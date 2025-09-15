@@ -115,7 +115,7 @@ IndustryLocation ToIndustryLocationOfFactoryCharacter(m2::Character& chr) {
 	if (not IsFactoryCharacter(chr)) {
 		throw M2_ERROR("Character doesn't belong to a factory");
 	}
-	return *industry_location_on_position(chr.Owner().InferPosition());
+	return *industry_location_on_position(chr.Owner().InferPositionF());
 }
 
 m2::void_expected InitFactory(m2::Object& obj, const m2::VecF& position, City city, IndustryTile industry_tile) {

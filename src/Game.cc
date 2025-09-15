@@ -622,25 +622,25 @@ void m2::Game::ExecuteStep(const Stopwatch::Duration& delta) {
 			for (const auto& body : phy.body) {
 				if (body && body->IsEnabled()) {
 					auto& obj = phy.Owner();
-					phy.position = body->GetPosition();
+					phy.position = VecFE{body->GetPosition()};
 					phy.orientation = FE{body->GetAngle()};
 					// Update other components
 					if (auto* gfx = obj.TryGetGraphic()) {
 						const auto oldGfxPosition = gfx->position;
-						gfx->position = phy.position;
+						gfx->position = body->GetPosition();
 						gfx->orientation = phy.orientation.ToFloat();
 						// Update draw list if necessary
-						if (oldGfxPosition != phy.position) {
+						if (oldGfxPosition != body->GetPosition()) {
 							const auto gfxId = obj.GetGraphicId();
 							const auto poolAndDrawList = _level->GetGraphicPoolAndDrawList(gfxId);
-							poolAndDrawList.second->QueueUpdate(phy.OwnerId(), phy.position);
+							poolAndDrawList.second->QueueUpdate(phy.OwnerId(), body->GetPosition());
 						}
 					}
 					if (auto* lig = obj.TryGetLight()) {
-						lig->position = phy.position;
+						lig->position = body->GetPosition();
 					}
 					if (auto* sou = obj.TryGetSoundEmitter()) {
-						sou->position = phy.position;
+						sou->position = body->GetPosition();
 					}
 					break;
 				}
@@ -951,7 +951,7 @@ const m2::VecF& m2::Game::ScreenCenterToMousePositionM() const {
 m2::sdl::TextureUniquePtr m2::Game::DrawGameToTexture(const VecF& camera_position) {
 	// Temporarily change camera position
 	const auto prev_camera_position = GetLevel().GetCamera()->GetPhysique().position;
-	GetLevel().GetCamera()->GetPhysique().position = camera_position;
+	GetLevel().GetCamera()->GetPhysique().position = VecFE{camera_position};
 
 	// Create an empty render target
 	auto render_target = sdl::create_drawable_texture_of_screen_size();
@@ -1068,6 +1068,6 @@ void m2::Game::RecalculateMousePosition() const {
 		}
 	} else {
 		const auto camera_position = _level->objects[_level->cameraId].GetPhysique().position;
-		_mouse_position_world_m = *_screen_center_to_mouse_position_m + camera_position;
+		_mouse_position_world_m = *_screen_center_to_mouse_position_m + static_cast<VecF>(camera_position);
 	}
 }

@@ -14,7 +14,7 @@ bool m2::IsProjectionTypePerspective(const pb::ProjectionType pt) {
 
 m2::VecF m2::CameraToPositionVecM(const VecF& position) {
 	const auto* camera = M2_LEVEL.objects.Get(M2_LEVEL.cameraId);
-	return position - camera->GetPhysique().position;
+	return position - static_cast<VecF>(camera->GetPhysique().position);
 }
 m2::VecF m2::CameraToPositionVecPx(const VecF& position) {
 	// Find the vector from camera to position and multiply with output PPM to convert into output pixels
@@ -34,7 +34,7 @@ m2::VecF m2::PixelToPositionVecM(const VecI& pixelPosition) {
 			VecF{ToFloat(screenCenterToPixelPositionVectorInPixels.x) / M2_GAME.Dimensions().OutputPixelsPerMeter(),
 				ToFloat(screenCenterToPixelPositionVectorInPixels.y) / M2_GAME.Dimensions().OutputPixelsPerMeter()};
 	const auto camera_position = M2_LEVEL.objects[M2_LEVEL.cameraId].GetPhysique().position;
-	return screenCenterToPixelPositionVectorInMeters + camera_position;
+	return screenCenterToPixelPositionVectorInMeters + static_cast<VecF>(camera_position);
 }
 m2::RectF m2::ViewportM() {
 	if (M2_LEVEL.GetProjectionType() != pb::PARALLEL) {
@@ -47,13 +47,13 @@ m2::RectF m2::ViewportM() {
 
 m3::VecF m3::CameraPositionM() {
 	const auto* camera = M2_LEVEL.objects.Get(M2_LEVEL.cameraId);
-	const auto& cameraPosition2d = camera->InferPosition();
+	const auto& cameraPosition2d = camera->InferPositionF();
 	const auto raw_camera_position = VecF{cameraPosition2d.GetX(), cameraPosition2d.GetY(), 0.0f};
 	const auto camera_position = raw_camera_position + M2_LEVEL.GetCameraOffset();
 	return camera_position;
 }
 m3::VecF m3::FocusPositionM() {
-	const auto playerPosition = M2_PLAYER.InferPosition();
+	const auto playerPosition = M2_PLAYER.InferPositionF();
 	return {playerPosition.GetX(), playerPosition.GetY(), M2G_PROXY.focus_point_height};
 }
 float m3::VisibleWidthM() {

@@ -58,7 +58,7 @@ void display_canal_era_result(const m2g::pb::TurnBasedServerCommand::CanalEraRes
 			});
 	}
 
-	auto background = M2_GAME.DrawGameToTexture(M2_LEVEL.GetCamera()->InferPosition());
+	auto background = M2_GAME.DrawGameToTexture(M2_LEVEL.GetCamera()->InferPositionF());
 	UiPanel::create_and_run_blocking(&blueprint, RectF{0.15f, 0.15f, 0.7f, 0.7f}, std::move(background))
 			.IfQuit([] { M2_GAME.quit = true; });
 }

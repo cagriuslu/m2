@@ -135,9 +135,9 @@ Character& Object::GetCharacter() const {
     return ToCharacterBase(it);
 }
 
-VecF Object::InferPosition() const {
+VecF Object::InferPositionF() const {
 	if (_physique_id) {
-		return GetPhysique().position;
+		return static_cast<VecF>(GetPhysique().position);
 	} else if (_graphicId) {
 		return GetGraphic().position;
 	} else if (_light_id) {
@@ -334,7 +334,7 @@ std::function<void()> m2::CreateLayerMover(ObjectId id, std::optional<pb::Physic
 
 std::function<bool(Object&)> m2::is_object_in_area(const RectF& rect) {
 	return [rect](const Object& o) -> bool {
-		return rect.DoesContain(o.InferPosition());
+		return rect.DoesContain(o.InferPositionF());
 	};
 }
 
