@@ -139,3 +139,20 @@ TEST(Exact, accessors) {
 	EXPECT_EQ((Exact{std::in_place, static_cast<int>(0x80000000)}.ToFastestString()), "-131072.00000000");
 	EXPECT_EQ((Exact{std::in_place, static_cast<int>(0x80000001)}.ToFastestString()), "-131072.00000000");
 }
+
+TEST(Exact, square_root) {
+	EXPECT_EQ(Exact{0.0}.SquareRoot().ToString(), "+000000.00000000");
+	EXPECT_EQ(Exact{2.0}.SquareRoot().ToString(), "+000001.41418457");
+	EXPECT_EQ(Exact{123.456}.SquareRoot().ToString(), "+000011.11108398");
+	EXPECT_EQ(Exact{12345.6789}.SquareRoot().ToString(), "+000111.11108398");
+	EXPECT_EQ(Exact{99999.9999}.SquareRoot().ToString(), "+000316.22778320");
+}
+
+TEST(Exact, round) {
+	EXPECT_EQ(Exact{3.4999}.Round(), Exact{3.0});
+	EXPECT_EQ(Exact{3.5}.Round(), Exact{4.0});
+	EXPECT_EQ(Exact{3.5001}.Round(), Exact{4.0});
+	EXPECT_EQ(Exact{3.9999}.Round(), Exact{4.0});
+	EXPECT_EQ(Exact{4.0}.Round(), Exact{4.0});
+	EXPECT_EQ(Exact{4.0001}.Round(), Exact{4.0});
+}

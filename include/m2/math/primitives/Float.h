@@ -3,6 +3,8 @@
 #include <string>
 #include <cfloat>
 
+#include "m2/Math.h"
+
 namespace m2 {
 	class Float {
 		float _value{};
@@ -20,6 +22,7 @@ namespace m2 {
 
 		static Float Zero() { return Float{}; }
 		static Float One() { return Float{1.0f}; }
+		static Float SquareRootOf2() { return Float{SQROOT_2}; }
 		static Float Max() { return Float{FLT_MAX}; }
 		static Float Min() { return Float{-FLT_MAX}; }
 

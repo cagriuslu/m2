@@ -58,6 +58,20 @@ namespace {
 			 2, // 1 / (2^19)
 			 1, // 1 / (2^20)
 	};
+
+	int FindMostSignificantSetBit(const uint64_t value) {
+		if (value == 0) {
+			throw M2_ERROR("Attempt to find the most significant bit of zero");
+		}
+		uint64_t search = 0x8000000000000000llu;
+		for (int i = 0; i < 64; ++i) {
+			if (value & search) {
+				return 64 - i - 1;
+			}
+			search >>= 1;
+		}
+		throw M2_ERROR("Implementation error in FindMostSignificantSetBit");
+	}
 }
 
 m2::Exact m2::Exact::FromProtobufRepresentation(const int64_t rawValueE6) {
@@ -142,6 +156,50 @@ std::string m2::Exact::ToFastestString() const {
 	std::ranges::fill(buffer, 0);
 	snprintf(buffer.data(), buffer.size(), "%+016.08f", ToFloat());
 	return {buffer.data()};
+}
+
+m2::Exact m2::Exact::SquareRoot() const {
+	if (IsNegative()) {
+		throw M2_ERROR("Attempt to find the square root of a negative number");
+	}
+	if (IsZero()) {
+		return *this;
+	}
+
+	// https://en.wikipedia.org/wiki/Square_root_algorithms#Binary_numeral_system_(base_2)
+
+	auto num = int64_t{_value} << PRECISION;
+	int64_t res = 0;
+
+	// Start building the result from the greates power of four that's less than the value
+	int64_t bit = 1ll << ((FindMostSignificantSetBit(_value) + PRECISION) / 2 * 2);
+	for (; bit != 0; bit >>= 2) {
+		const int64_t val = res + bit;
+		res >>= 1;
+		if (num >= val) {
+			num -= val;
+			res += bit;
+		}
+	}
+	// Round the last digit up if necessary
+	if (num > res) {
+		res++;
+	}
+	return Exact{std::in_place, static_cast<int32_t>(res)};
+}
+m2::Exact m2::Exact::Round() const {
+	// Make calculations in positive domain
+	const auto abs = AbsoluteValue();
+	const auto integerPart = abs._value & INTEGER_PART_MASK;
+	const auto fractionalPart = abs._value & FRACTION_PART_MASK;
+	constexpr auto fractionalHalfway = MOST_SIGNIFICANT_FRACTION_BIT_MASK;
+	int32_t rounded;
+	if (fractionalHalfway <= fractionalPart) {
+		rounded = integerPart + LEAST_SIGNIFICANT_INTEGER_BIT_MASK;
+	} else {
+		rounded = integerPart;
+	}
+	return IsNegative() ? Exact{std::in_place, -rounded} : Exact{std::in_place, rounded};
 }
 
 void m2::Exact::ThrowIfOutOfBounds(const int i) {
