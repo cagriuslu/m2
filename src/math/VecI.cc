@@ -6,7 +6,10 @@
 
 #include <unordered_map>
 
-m2::VecI::VecI(const m2::VecF& v) : VecI(v.GetX(), v.GetY()) {}
+#include "m2/math/VecE.h"
+
+m2::VecI::VecI(const VecF& v) : VecI(v.GetX(), v.GetY()) {}
+m2::VecI::VecI(const VecE& v) : x(v.GetX().Round().ToInteger()), y(v.GetY().Round().ToInteger()) {}
 
 m2::VecI m2::VecI::GetDimensionsInAspectRatio(int w, int h) const {
 	// Simplify the w_ to h_ ratio

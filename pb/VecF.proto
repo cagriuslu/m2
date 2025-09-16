@@ -8,7 +8,7 @@ message VecF {
   float y = 2;
 }
 
-message VecFF {
+message VecFE {
   FE x = 1;
   FE y = 2;
 }

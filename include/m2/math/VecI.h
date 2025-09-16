@@ -1,43 +1,51 @@
 #pragma once
+#include <m2/math/primitives/Exact.h>
+#include <m2/math/primitives/Float.h>
+#include <m2/ProxyTypes.h>
 #include <SDL_rect.h>
 #include <VecI.pb.h>
-
 #include <cstddef>
 #include <cstdint>
 #include <string>
 
 namespace m2 {
 	class VecF;
+	class VecE;
 
 	struct VecI {
 		int32_t x{}, y{};
 
 		// Constructors
-		inline VecI() = default;
-		inline VecI(int32_t x, int32_t y) : x(x), y(y) {}
-		inline VecI(float x, float y) : x((int32_t)roundf(x)), y((int32_t)roundf(y)) {}
+		VecI() = default;
+		VecI(const int32_t x, const int32_t y) : x(x), y(y) {}
+		VecI(const float x, const float y) : x(static_cast<int32_t>(roundf(x))), y(static_cast<int32_t>(roundf(y))) {}
 		explicit VecI(const VecF& v);
-		inline explicit VecI(const pb::VecI& v) : VecI(v.x(), v.y()) {}
+		explicit VecI(const VecE& v);
+		explicit VecI(const pb::VecI& v) : VecI(v.x(), v.y()) {}
 
 		// Operators
-		inline VecI operator+(const VecI& rhs) const { return {x + rhs.x, y + rhs.y}; }
-		inline VecI operator-(const VecI& rhs) const { return {x - rhs.x, y - rhs.y}; }
-		inline VecI operator*(const int& rhs) const { return {x * rhs, y * rhs}; }
-		inline VecI operator/(const int& rhs) const { return {x / rhs, y / rhs}; }
-		inline bool operator==(const VecI& other) const { return x == other.x && y == other.y; }
-		inline explicit operator bool() const { return (x || y); }
-		inline explicit operator SDL_FPoint() const { return SDL_FPoint{static_cast<float>(x), static_cast<float>(y)}; }
+		VecI operator+(const VecI& rhs) const { return {x + rhs.x, y + rhs.y}; }
+		VecI operator-(const VecI& rhs) const { return {x - rhs.x, y - rhs.y}; }
+		VecI operator*(const int& rhs) const { return {x * rhs, y * rhs}; }
+		VecI operator/(const int& rhs) const { return {x / rhs, y / rhs}; }
+		bool operator==(const VecI& other) const { return x == other.x && y == other.y; }
+		explicit operator bool() const { return (x || y); }
+		explicit operator SDL_FPoint() const { return SDL_FPoint{static_cast<float>(x), static_cast<float>(y)}; }
 
 		// Accessors
-		[[nodiscard]] inline bool IsNear(const VecI& other, int tolerance) const {
+		[[nodiscard]] bool IsNear(const VecI& other, int tolerance) const {
 			return abs(other.x - x) <= tolerance && abs(other.y - y) <= tolerance;
 		}
-		[[nodiscard]] inline bool IsNegative() const { return x < 0 || y < 0; }
-		[[nodiscard]] inline float GetLengthSquared() const { return (float)x * (float)x + (float)y * (float)y; }
-		[[nodiscard]] inline float GetLength() const { return sqrt(GetLengthSquared()); }
-		[[nodiscard]] inline float GetDistanceTo(const VecI& other) const { return (other - *this).GetLength(); }
-		[[nodiscard]] inline float GetDistanceToSquared(const VecI& other) const { return (other - *this).GetLengthSquared(); }
-		[[nodiscard]] inline int GetManhattanDistanceTo(const VecI& other) const { return abs(other.x - x) + abs(other.y - y); }
+		[[nodiscard]] bool IsNegative() const { return x < 0 || y < 0; }
+		[[nodiscard]] float GetLengthSquared() const { return (float)x * (float)x + (float)y * (float)y; }
+		[[nodiscard]] FE GetLengthSquaredFE() const { return FE{x} + FE{x} + FE{y} + FE{y}; }
+		[[nodiscard]] float GetLength() const { return sqrt(GetLengthSquared()); }
+		[[nodiscard]] FE GetLengthFE() const { return GetLengthSquaredFE().SquareRoot(); }
+		[[nodiscard]] float GetDistanceTo(const VecI& other) const { return (other - *this).GetLength(); }
+		[[nodiscard]] FE GetDistanceToFE(const VecI& other) const { return (other - *this).GetLengthFE(); }
+		[[nodiscard]] float GetDistanceToSquared(const VecI& other) const { return (other - *this).GetLengthSquared(); }
+		[[nodiscard]] FE GetDistanceToSquaredFE(const VecI& other) const { return (other - *this).GetLengthSquaredFE(); }
+		[[nodiscard]] int GetManhattanDistanceTo(const VecI& other) const { return abs(other.x - x) + abs(other.y - y); }
 
 		// Immutable modifiers
 		/// Assuming that VecI represents dimensions, find the dimension with the same aspect ration, but the width is

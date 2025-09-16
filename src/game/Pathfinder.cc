@@ -1,10 +1,4 @@
 #include "m2/game/Pathfinder.h"
-
-#include <cfloat>
-#include <list>
-#include <map>
-#include <unordered_map>
-
 #include "m2/Component.h"
 #include <m2/Log.h>
 #include <m2/third_party/physics/ColliderCategory.h>
@@ -12,6 +6,9 @@
 #include "m2/M2.h"
 #include "m2/math/VecI.h"
 #include "m2/box2d/RayCast.h"
+#include <list>
+#include <map>
+#include <unordered_map>
 
 m2::Pathfinder::Pathfinder(const pb::Level &lb) {
 	// Early out
@@ -34,14 +31,14 @@ m2::Pathfinder::Pathfinder(const pb::Level &lb) {
 	}
 }
 
-m2::Path m2::Pathfinder::find_smooth_path(const VecF& from_f, const VecF& to_f, float max_distance_m) {
-	auto from = m2::VecI{from_f};
-	auto to = m2::VecI{to_f};
+m2::Path m2::Pathfinder::find_smooth_path(const VecFE& from_f, const VecFE& to_f, FE max_distance_m) {
+	auto from = VecI{from_f};
+	auto to = VecI{to_f};
 	if (from == to) {
 		return {};
 	}
 
-	auto distance_sq = from_f.GetDistanceToSquared(to_f);
+	auto distance_sq = from_f.GetDistanceToSquaredFE(to_f);
 	auto max_distance_sq = max_distance_m * max_distance_m;
 	if (max_distance_sq < distance_sq) {
 		return {};
@@ -60,13 +57,13 @@ m2::Path m2::Pathfinder::find_smooth_path(const VecF& from_f, const VecF& to_f, 
 	return {};
 }
 
-m2::Path m2::Pathfinder::find_grid_path(const VecI& from, const VecI& to, float max_distance_m) {
+m2::Path m2::Pathfinder::find_grid_path(const VecI& from, const VecI& to, FE max_distance_m) {
 	if (from == to) {
 		return {};
 	}
 
 	// Check if the target is too far even from bird's eye
-	auto distance_sq = from.GetDistanceToSquared(to);
+	auto distance_sq = from.GetDistanceToSquaredFE(to);
 	auto max_distance_sq = max_distance_m * max_distance_m;
 	if (max_distance_sq < distance_sq) {
 		return {};
@@ -77,15 +74,15 @@ m2::Path m2::Pathfinder::find_grid_path(const VecI& from, const VecI& to, float 
 		return {to, from};
 	}
 
-	auto max_grid_distance_m = max_distance_m * SQROOT_2;
+	auto max_grid_distance_m = max_distance_m * FE::SquareRootOf2();
 
 	// Holds the positions which will be explored next. Key is the priority, value is the position.
-	std::multimap<float, VecI> frontiers{{0.0f, from}};
+	std::multimap<FE, VecI> frontiers{{FE::Zero(), from}};
 
 	auto& approach_map = _approach_from_cache[to];
 
 	// Holds accumulated cost of reaching a position. Key is the position, value is its cost.
-	std::unordered_map<VecI, float, VecIHash> provisional_cost{{from, 0.0f}};
+	std::unordered_map<VecI, FE, VecIHash> provisional_cost{{from, FE::Zero()}};
 
 	while (not frontiers.empty()) {
 		auto current_frontier_it = frontiers.begin();
@@ -117,17 +114,17 @@ m2::Path m2::Pathfinder::find_grid_path(const VecI& from, const VecI& to, float 
 			if (is_reachable) {
 				// Calculate the cost of traveling to neighbor from current location
 				// Use the cached value if cache was hit
-				auto new_cost = (cache_it != approach_map.end()) ? cache_it->second.second + 1.0f : provisional_cost[frontier] + 1.0f;
+				auto new_cost = (cache_it != approach_map.end()) ? cache_it->second.second + FE::One() : provisional_cost[frontier] + FE::One();
 				// Find the previous cost of traveling to neighbor
 				auto it = provisional_cost.find(neighbor);
-				auto old_cost = (it != provisional_cost.end()) ? it->second : FLT_MAX;
+				auto old_cost = (it != provisional_cost.end()) ? it->second : FE::Max();
 
 				// If new path to neighbor is cheaper than the old AND cheaper than max_grid_distance
 				if (new_cost < old_cost && new_cost < max_grid_distance_m) {
 					// Save new cost
 					provisional_cost[neighbor] = new_cost;
 					// Calculate priority of neighbor with heuristic parameter (which is Manhattan distance to `to`)
-					auto neighbor_priority = new_cost + (float)neighbor.GetManhattanDistanceTo(to);
+					auto neighbor_priority = new_cost + FE{neighbor.GetManhattanDistanceTo(to)};
 					// Insert into frontiers
 					frontiers.insert({neighbor_priority, neighbor});
 					// Set the previous position of neighbor as the current position
@@ -156,7 +153,7 @@ m2::Path m2::Pathfinder::find_grid_path(const VecI& from, const VecI& to, float 
 	}
 }
 
-m2::Path m2::Pathfinder::smoothen_path(const Path& reverse_path, float max_distance_m) {
+m2::Path m2::Pathfinder::smoothen_path(const Path& reverse_path, FE max_distance_m) {
 	if (reverse_path.size() < 2) {
 		throw M2_ERROR("Path contains less than two points");
 	}
@@ -165,10 +162,10 @@ m2::Path m2::Pathfinder::smoothen_path(const Path& reverse_path, float max_dista
 	const auto* point1 = &reverse_path[0];
 	const auto* prev_point2 = point1;
 
-	float cost = 0.0f;
+	FE cost = FE::Zero();
 	auto insert_point = [&](const VecI* point) {
 		if (point) {
-			auto cost_to_point = smooth_path.back().GetDistanceTo(*point);
+			auto cost_to_point = smooth_path.back().GetDistanceToFE(*point);
 			if (max_distance_m < cost + cost_to_point) {
 				return false;
 			}

@@ -2,6 +2,8 @@
 #include "../Component.h"
 #include "../box2d/ContactListener.h"
 #include <m2/third_party/physics/RigidBody.h>
+#include <m2/math/VecF.h>
+#include <m2/math/VecE.h>
 #include <m2/ProxyTypes.h>
 #include <M2.pb.h>
 #include <functional>

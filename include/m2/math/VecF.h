@@ -1,4 +1,7 @@
 #pragma once
+#include <m2/math/primitives/Exact.h>
+#include <m2/math/primitives/Float.h>
+#include <m2/ProxyTypes.h>
 #include <Dim2f.pb.h>
 #include <SDL_rect.h>
 #include <VecF.pb.h>
@@ -57,8 +60,10 @@ namespace m2 {
 		[[nodiscard]] bool IsNegative() const { return _x < 0.0f || _y < 0.0f; }
 		[[nodiscard]] bool IsSmall(float tolerance) const { return IsNear({}, tolerance); }
 		[[nodiscard]] float GetLengthSquared() const { return _x * _x + _y * _y; }
+		[[nodiscard]] Float GetLengthSquaredFE() const { return Float{_x} * Float{_x} + Float{_y} * Float{_y}; }
 		[[nodiscard]] float GetLength() const { return sqrtf(GetLengthSquared()); }
 		[[nodiscard]] float GetDistanceToSquared(const VecF& other) const { return (other - *this).GetLengthSquared(); }
+		[[nodiscard]] Float GetDistanceToSquaredFE(const VecF& other) const { return (other - *this).GetLengthSquaredFE(); }
 		[[nodiscard]] float GetDistanceToSquared(const VecI& other) const;
 		[[nodiscard]] float GetDistanceTo(const VecF& other) const { return (other - *this).GetLength(); }
 		/// Returns the angle in radians between this vector and the positive-x axis. [-PI, PI]
