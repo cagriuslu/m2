@@ -132,11 +132,6 @@ foreach(PROTO_DEFAULT_FILE ${PROTO_FILES_WITH_DEFAULT_FALLBACK})
     endif()
 endforeach()
 file(GLOB PROTO_FILES "pb/*.proto")
-if(GAME_IS_DETERMINISTIC)
-    list(APPEND PROTO_FILES "pb-deterministic/ProxyTypes.proto")
-else()
-    list(APPEND PROTO_FILES "pb-standard/ProxyTypes.proto")
-endif()
 protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS "${PROTO_FILES}" "${GAME_PROTO_FILES}")
 
 # Post-build actions

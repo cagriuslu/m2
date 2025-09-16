@@ -14,10 +14,12 @@ message Group {
 
 message Object {
   VecF position = 1;
-  float orientation = 2; // In radians
-  m2g.pb.ObjectType type = 3;
-  Group group = 4;
-  bool is_locked = 5; // If locked, level editor isn't allowed to move or remove the object
+  VecE exact_position = 2;
+  float orientation = 3; // In radians
+  int64 orientation6 = 4; // In radians
+  m2g.pb.ObjectType type = 5;
+  Group group = 6;
+  bool is_locked = 7; // If locked, level editor isn't allowed to move or remove the object
 }
 
 message SpriteTypeArray {
