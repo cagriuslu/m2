@@ -46,5 +46,11 @@ namespace m2 {
 				_writeHook(_obj);
 			}
 		}
+		/// Mutate the object and DON'T call the write-hook
+		void MutateNoSideEffect(const std::function<void(T&)>& mutator) {
+			if (mutator) {
+				mutator(_obj);
+			}
+		}
 	};
 }

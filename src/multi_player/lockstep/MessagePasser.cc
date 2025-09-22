@@ -14,7 +14,7 @@ void_expected MessagePasser::ReadMessages(std::queue<MessageAndSender>& out) {
 		m2SucceedOrThrowMessage(smallMsg.has_complete_message(), "Message doesn't have a complete message");
 		// Check if the sequence number is sequential
 		auto& peer = FindOrCreatePeerConnectionParameters(sender);
-		const auto msgSequenceNo = I(smallMsg.message_sequence_no());
+		const auto msgSequenceNo = smallMsg.message_sequence_no();
 		m2SucceedOrThrowMessage(msgSequenceNo == peer.lastReceivedSequenceNo + 1, "Received out of order message");
 		++peer.lastReceivedSequenceNo;
 		// Return message

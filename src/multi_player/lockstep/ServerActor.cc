@@ -3,8 +3,6 @@
 #include <m2/network/Select.h>
 #include <m2/Log.h>
 
-#include "m2/single_player/State.h"
-
 using namespace m2;
 using namespace m2::multiplayer;
 using namespace m2::multiplayer::lockstep;
@@ -102,6 +100,19 @@ bool ServerActor::operator()(MessageBox<ServerActorInput>& inbox, MessageBox<Ser
 						});
 					}
 				}
+			} else if (msg.message.has_player_inputs()) {
+				if (std::holds_alternative<LobbyFrozen>(_state->Get())) {
+					_state->Mutate([](State& state) {
+						state = LevelStarted{.clientList = std::move(std::get<LobbyFrozen>(state).clientList)};
+					});
+				}
+				// Calculate a running hash of each player's inputs
+				_state->MutateNoSideEffect([&](auto& state) {
+					auto& level = std::get<LevelStarted>(state);
+					if (auto* client = level.clientList.Find(msg.sender)) {
+						client->StoreRunningInputHash(msg.message.player_inputs());
+					}
+				});
 			}
 		}
 	}

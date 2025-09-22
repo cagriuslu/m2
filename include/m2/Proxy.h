@@ -88,7 +88,7 @@ namespace m2 {
 		void pre_single_player_level_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
 		void post_single_player_level_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
 
-		const std::chrono::milliseconds lockstepGameTickPeriod{250};
+		static constexpr std::chrono::milliseconds lockstepGameTickPeriod{250};
 		/// This function must be identical in the host and the client, because the levels are expected to be identical
 		/// after they are initialized.
 		void postTurnBasedLevelClientInit(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}

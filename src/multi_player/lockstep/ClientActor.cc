@@ -50,7 +50,7 @@ bool ClientActor::operator()(MessageBox<ClientActorInput>& inbox, MessageBox<Cli
 	const auto firstPlayerInputAvailable = not _unsentPlayerInputs.empty() && not _lastPlayerInputsSentAt;
 	const auto timeToSendPlayerInputs = IsAllPlayerInputsReceived() && _lastPlayerInputsSentAt && _lastPlayerInputsSentAt->HasTimePassed(M2G_PROXY.lockstepGameTickPeriod);
 	if (firstPlayerInputAvailable || timeToSendPlayerInputs) {
-		_serverConnection->QueueOutgoingMessages(&_unsentPlayerInputs);
+		_serverConnection->QueueOutgoingMessages(_nextTimecode++, &_unsentPlayerInputs);
 		// TODO send also to other peers
 
 		// If all player inputs are received, and game tick period has passed since the last time the inputs were sent
@@ -69,7 +69,7 @@ bool ClientActor::operator()(MessageBox<ClientActorInput>& inbox, MessageBox<Cli
 		_unsentPlayerInputs.clear();
 		_lastPlayerInputsSentAt = Stopwatch{};
 	} else {
-		_serverConnection->QueueOutgoingMessages(nullptr);
+		_serverConnection->QueueOutgoingMessages(std::nullopt, nullptr);
 		// TODO send also to other peers
 	}
 

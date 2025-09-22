@@ -1,7 +1,7 @@
 #include <m2/multi_player/TurnBasedServerUpdate.h>
 #include <m2/Game.h>
 
-m2::pb::TurnBasedNetworkMessage m2::GenerateServerUpdate(int32_t& nextSequenceNo, const int turnHolderIndex, const bool shutdown) {
+m2::pb::TurnBasedNetworkMessage m2::GenerateServerUpdate(uint32_t& nextSequenceNo, const int turnHolderIndex, const bool shutdown) {
 	// Prepare the TurnBasedServerUpdate except the receiver_index field
 	pb::TurnBasedNetworkMessage message;
 	message.set_game_hash(M2_GAME.Hash());

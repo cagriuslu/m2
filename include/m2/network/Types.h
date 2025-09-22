@@ -2,8 +2,9 @@
 #include <cstdint>
 
 namespace m2::network {
-	using OrderNo = int32_t;
-	using SequenceNo = int32_t;
+	using OrderNo = uint32_t;
+	using SequenceNo = uint32_t;
+	using Timecode = uint32_t;
 
 	/// Class representing an IPv4 address
 	class IpAddress final {

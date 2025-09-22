@@ -46,7 +46,7 @@ namespace m2::multiplayer::lockstep {
 			[[nodiscard]] const network::IpAddressAndPort& GetPeerAddress() const { return peerAddress; }
 			[[nodiscard]] const ConnectionStatistics& GetConnectionStatistics() const;
 			[[nodiscard]] bool IsDirty() const { return dirtyOutgoing || dirtyAck; }
-			[[nodiscard]] int32_t GetMostRecentAck() const;
+			[[nodiscard]] network::OrderNo GetMostRecentAck() const;
 			[[nodiscard]] int32_t GetAckHistoryBits() const;
 			[[nodiscard]] int32_t GetOldestNack() const;
 			[[nodiscard]] const Stopwatch& GetTimeSinceAnySentMessage() const { return lastAnyMessageSentAt; }

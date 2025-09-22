@@ -17,6 +17,7 @@ namespace m2::multiplayer::lockstep {
 		std::deque<m2g::pb::LockstepPlayerInput> _unsentPlayerInputs;
 		// Last timepoint where the previous player inputs are sent to peers.
 		std::optional<Stopwatch> _lastPlayerInputsSentAt;
+		network::Timecode _nextTimecode{};
 		// Player inputs from this instance that are already sent to peers are stored here until inputs from all other
 		// peers are received.
 		std::optional<std::deque<m2g::pb::LockstepPlayerInput>> _nextSelfPlayerInputs;

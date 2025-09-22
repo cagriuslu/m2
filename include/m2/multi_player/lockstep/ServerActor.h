@@ -5,7 +5,6 @@
 #include <m2/multi_player/lockstep/MessagePasser.h>
 #include <m2/ManagedObject.h>
 #include <vector>
-#include <memory>
 #include <optional>
 
 namespace m2::multiplayer::lockstep {
@@ -35,7 +34,10 @@ namespace m2::multiplayer::lockstep {
 		struct LobbyFrozen {
 			ClientList clientList;
 		};
-		using State = std::variant<std::monostate, LobbyOpen, LobbyFrozen>;
+		struct LevelStarted {
+			ClientList clientList;
+		};
+		using State = std::variant<std::monostate, LobbyOpen, LobbyFrozen, LevelStarted>;
 
 	private:
 		const int _maxClientCount;

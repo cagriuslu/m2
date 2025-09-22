@@ -16,9 +16,9 @@ namespace {
 const ConnectionStatistics& SmallMessagePasser::PeerConnectionParameters::GetConnectionStatistics() const {
 	return connectionStatistics;
 }
-int32_t SmallMessagePasser::PeerConnectionParameters::GetMostRecentAck() const {
+network::OrderNo SmallMessagePasser::PeerConnectionParameters::GetMostRecentAck() const {
 	if (not messagesSinceGap.empty()) {
-		return I(messagesSinceGap.rbegin()->second.order_no());
+		return messagesSinceGap.rbegin()->second.order_no();
 	}
 	return lastOrderlyReceivedOrderNo;
 }
@@ -192,7 +192,7 @@ void SmallMessagePasser::PeerConnectionParameters::ProcessReceivedMessages(googl
 
 	// Move all messages to messagesSinceGap
 	for (auto& msg : *smallMessages) {
-		if (const auto msgOrderNo = I(msg.order_no()); lastOrderlyReceivedOrderNo < msgOrderNo) {
+		if (const auto msgOrderNo = msg.order_no(); lastOrderlyReceivedOrderNo < msgOrderNo) {
 			if (const auto [_, inserted] = messagesSinceGap.emplace(msgOrderNo, std::move(msg)); inserted) {
 				LOG_DEBUG("Received new small message from peer, with order number", peerAddress, msgOrderNo);
 			}

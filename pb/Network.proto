@@ -86,7 +86,7 @@ message TurnBasedNetworkMessage {
   // different clients might expect a sequence number that's different from other clients. Server updates are global, so
   // every client should follow the same sequence number, but even then, this sequence number is different from the
   // sequence number of the server command. Similar logic applies to client commands and updates. They are distinct.
-  int32 sequence_no = 2;
+  fixed32 sequence_no = 2;
   oneof type {
     // Sent by the server game code explicitly to trigger an action.
     m2g.pb.TurnBasedServerCommand server_command = 3;

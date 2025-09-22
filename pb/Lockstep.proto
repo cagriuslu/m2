@@ -3,12 +3,13 @@ package m2.pb;
 
 import "m2g_Lockstep.proto";
 
+message LockstepPlayerInputs {
+  fixed32 timecode = 1;
+  repeated m2g.pb.LockstepPlayerInput player_inputs = 2;
+}
+
 // Each LockstepMessage has a different SequenceNo starting from 1.
 message LockstepMessage {
-  message PlayerInputs {
-    repeated m2g.pb.LockstepPlayerInput player_inputs = 1;
-  }
-
   oneof type {
     // When a client is ready, this option is used to signal this to the server.
     bool set_ready_state = 1;
@@ -16,7 +17,7 @@ message LockstepMessage {
     m2g.pb.LockstepGameInitParams freeze_lobby_with_init_params = 2;
     // Once the game begins, this option is filled and sent to other peers periodically by the clients, even if the
     // player hasn't taken any action.
-    PlayerInputs player_inputs = 3;
+    LockstepPlayerInputs player_inputs = 3;
   }
 }
 
@@ -42,7 +43,7 @@ message LockstepSmallMessage {
 // This message is serialized to the body of a UDP packet without any headers or footers.
 message LockstepUdpPacket {
   // UDP is connectionless, each packet needs to prove that it is ours.
-  fixed32 game_hash = 1;
+  sfixed32 game_hash = 1;
 
   // Highest 8 bits: Major version. Middle 16 bits: Minor version. Lowest 8 bits: Patch version.
   fixed32 version = 2;
@@ -61,4 +62,11 @@ message LockstepUdpPacket {
 
   // Messages doesn't need to be incremental, but it needs to be in order.
   repeated LockstepSmallMessage small_messages = 6;
+}
+
+message LockstepPlayerInputHashHelper {
+  int32 prev_hash = 1;
+  fixed32 ip = 2;
+  fixed32 port = 3;
+  LockstepPlayerInputs player_inputs = 4;
 }
