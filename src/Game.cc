@@ -407,6 +407,7 @@ m2::void_expected m2::Game::LoadLockstep(const std::variant<std::filesystem::pat
 	if (not GetLockstepHostClientActor().IsLobbyFrozen()) {
 		throw M2_ERROR("Unexpected lockstep client actor state");
 	}
+	LOG_INFO("Loading lockstep level...");
 
 	auto success = _level->InitLockstepMultiPlayer(levelPathOrBlueprint, levelName, gameInitParams);
 	m2ReflectUnexpected(success);
@@ -607,6 +608,16 @@ void m2::Game::ExecuteStep(const Stopwatch::Duration& delta) {
 					}
 					break;
 				}
+			}
+		}
+	} else {
+		if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)) {
+			auto& clientInterface = std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).hostClientActorInterface;
+			std::optional<std::deque<m2g::pb::LockstepPlayerInput>> playerInputs;
+			clientInterface->PopReadyToSimulatePlayerInputs(playerInputs);
+			if (playerInputs) {
+				LOG_DEBUG("Handling inputs from player with index", 0);
+				_proxy.lockstepHandlePlayerInputs(0, *playerInputs);
 			}
 		}
 	}

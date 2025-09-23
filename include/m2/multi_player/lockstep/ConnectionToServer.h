@@ -38,6 +38,7 @@ namespace m2::multiplayer::lockstep {
 		// Modifiers
 
 		void SetReadyState(bool state);
+		void MarkGameAsStarted();
 		void QueueOutgoingMessages(std::optional<network::Timecode> timecode, const std::deque<m2g::pb::LockstepPlayerInput>*);
 		void DeliverIncomingMessage(pb::LockstepMessage&& msg);
 

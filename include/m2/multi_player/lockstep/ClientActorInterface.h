@@ -8,6 +8,7 @@ namespace m2::multiplayer::lockstep {
 		ClientActorOutput::ConnectionToServerStateUpdate _connectionToServerState{};
 		std::optional<m2g::pb::LockstepGameInitParams> _gameInitParams;
 		std::optional<std::deque<m2g::pb::LockstepPlayerInput>> _readyToSimulatePlayersInputs;
+		int32_t _physicsSimulationsCounter{};
 
 	public:
 		explicit ClientActorInterface(network::IpAddressAndPort serverAddress) : ActorInterfaceBase(std::move(serverAddress)) {}
@@ -21,6 +22,7 @@ namespace m2::multiplayer::lockstep {
 		/// \brief Returns true if the lobby is frozen and the level must be built.
 		/// \details GetGameInitParams can be used to build the level.
 		bool IsLobbyFrozen();
+		bool IsGameStarted();
 		/// Returns the game initialization parameters, if it's received from the server. Game init params are received
 		/// first when the lobby is frozen.
 		const m2g::pb::LockstepGameInitParams* GetGameInitParams();

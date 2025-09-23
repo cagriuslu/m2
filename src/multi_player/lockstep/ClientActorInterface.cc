@@ -1,5 +1,6 @@
 #include <m2/multi_player/lockstep/ClientActorInterface.h>
 #include <m2/multi_player/lockstep/ConnectionToServer.h>
+#include <m2/ProxyHelper.h>
 #include <m2/Meta.h>
 
 using namespace m2;
@@ -17,6 +18,10 @@ bool ClientActorInterface::IsWaitingInLobby() {
 bool ClientActorInterface::IsLobbyFrozen() {
 	ProcessOutbox();
 	return _connectionToServerState.stateIndex == GetIndexInVariant<ConnectionToServer::LobbyFrozen, ConnectionToServer::State>::value;
+}
+bool ClientActorInterface::IsGameStarted() {
+	ProcessOutbox();
+	return _connectionToServerState.stateIndex == GetIndexInVariant<ConnectionToServer::GameStarted, ConnectionToServer::State>::value;
 }
 const m2g::pb::LockstepGameInitParams* ClientActorInterface::GetGameInitParams() {
 	ProcessOutbox();
@@ -41,12 +46,19 @@ void ClientActorInterface::QueuePlayerInput(m2g::pb::LockstepPlayerInput&& playe
 	});
 }
 void ClientActorInterface::PopReadyToSimulatePlayerInputs(std::optional<std::deque<m2g::pb::LockstepPlayerInput>>& out) {
-	if (_readyToSimulatePlayersInputs) {
-		out = std::move(_readyToSimulatePlayersInputs);
-		_readyToSimulatePlayersInputs.reset();
-	} else {
-		out.reset();
+	if (IsGameStarted()) {
+		_physicsSimulationsCounter = (_physicsSimulationsCounter + 1) % m2g::LockstepPhysicsSimulationCountPerGameTick;
+		if (_physicsSimulationsCounter == 0) {
+			while (not _readyToSimulatePlayersInputs) {
+				ProcessOutbox();
+				std::this_thread::sleep_for(std::chrono::milliseconds{5});
+			}
+			out = std::move(_readyToSimulatePlayersInputs);
+			_readyToSimulatePlayersInputs.reset();
+			return;
+		}
 	}
+	out.reset();
 }
 
 void ClientActorInterface::ProcessOutbox() {

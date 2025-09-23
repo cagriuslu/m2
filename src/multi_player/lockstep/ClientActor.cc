@@ -50,22 +50,34 @@ bool ClientActor::operator()(MessageBox<ClientActorInput>& inbox, MessageBox<Cli
 	const auto firstPlayerInputAvailable = not _unsentPlayerInputs.empty() && not _lastPlayerInputsSentAt;
 	const auto timeToSendPlayerInputs = IsAllPlayerInputsReceived() && _lastPlayerInputsSentAt && _lastPlayerInputsSentAt->HasTimePassed(M2G_PROXY.lockstepGameTickPeriod);
 	if (firstPlayerInputAvailable || timeToSendPlayerInputs) {
-		_serverConnection->QueueOutgoingMessages(_nextTimecode++, &_unsentPlayerInputs);
+		const auto timecode = _nextTimecode++;
+		if (firstPlayerInputAvailable) {
+			LOG_DEBUG("First player inputs are available with timecode, sending to peers...", timecode);
+		} else {
+			LOG_DEBUG("It is time to send inputs to peers with timecode", timecode);
+		}
+		_serverConnection->QueueOutgoingMessages(timecode, &_unsentPlayerInputs);
 		// TODO send also to other peers
+
+		if (firstPlayerInputAvailable) {
+			LOG_DEBUG("Waiting after first player inputs for main thread to catch up...");
+			std::this_thread::sleep_for(std::chrono::seconds{1});
+		}
 
 		// If all player inputs are received, and game tick period has passed since the last time the inputs were sent
 		// to other peers, we can return the inputs to the client interface for them to be simulated.
 		if (timeToSendPlayerInputs && _nextSelfPlayerInputs) {
+			LOG_DEBUG("It is time to simulate player inputs with timecode", _nextSelfPlayerInputs->first);
 			// TODO gather inputs from peers
 			outbox.PushMessage(ClientActorOutput{
 				.variant = ClientActorOutput::PlayerInputsToSimulate{
-					.selfPlayerInputs = std::move(*_nextSelfPlayerInputs)
+					.selfPlayerInputs = std::move(_nextSelfPlayerInputs->second)
 				}
 			});
 			// TODO clear peer inputs
 			_nextSelfPlayerInputs.reset();
 		}
-		_nextSelfPlayerInputs = std::move(_unsentPlayerInputs);
+		_nextSelfPlayerInputs = std::make_pair(timecode, std::move(_unsentPlayerInputs));
 		_unsentPlayerInputs.clear();
 		_lastPlayerInputsSentAt = Stopwatch{};
 	} else {
@@ -94,6 +106,7 @@ void ClientActor::ProcessOneMessageFromInbox(MessageBox<ClientActorInput>& inbox
 			const auto& readyState = std::get<ClientActorInput::SetReadyState>(msg.variant).state;
 			_serverConnection->SetReadyState(readyState);
 		} else if (std::holds_alternative<ClientActorInput::QueuePlayerInput>(msg.variant)) {
+			_serverConnection->MarkGameAsStarted(); // Mark game as started on this client
 			auto& playerInput = std::get<ClientActorInput::QueuePlayerInput>(msg.variant);
 			_unsentPlayerInputs.emplace_back(std::move(playerInput.playerInput));
 		}

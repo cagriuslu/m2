@@ -37,6 +37,16 @@ void ConnectionToServer::SetReadyState(const bool readyState) {
 		throw M2_ERROR("Attempt to set ready state outside of the lobby");
 	}
 }
+void ConnectionToServer::MarkGameAsStarted() {
+	if (std::holds_alternative<GameStarted>(_state.Get())) {
+		// Already started
+	} else if (std::holds_alternative<LobbyFrozen>(_state.Get())) {
+		LOG_INFO("Marking game as started...");
+		_state.Emplace(GameStarted{});
+	} else {
+		throw M2_ERROR("Attempt to mark game as started outside of frozen lobby state");
+	}
+}
 void ConnectionToServer::QueueOutgoingMessages(const std::optional<network::Timecode> timecode, const std::deque<m2g::pb::LockstepPlayerInput>* unsentPlayerInputs) {
 	const auto queuePlayerInputs = [this](const network::Timecode timecode_, const std::deque<m2g::pb::LockstepPlayerInput>& playerInputs) {
 		pb::LockstepMessage msg;
