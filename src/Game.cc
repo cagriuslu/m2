@@ -233,7 +233,7 @@ void m2::Game::LeaveGame() {
 }
 
 bool m2::Game::AddBot() {
-	if (not IsServer()) {
+	if (not IsTurnBasedServer()) {
 		throw M2_ERROR("Only server can add bots");
 	}
 
@@ -258,7 +258,7 @@ bool m2::Game::AddBot() {
 }
 
 m2::network::TurnBasedBotClientThread& m2::Game::FindBot(const int receiver_index) {
-	if (not IsServer()) {
+	if (not IsTurnBasedServer()) {
 		throw M2_ERROR("Only server may hold bots");
 	}
 
@@ -271,40 +271,40 @@ m2::network::TurnBasedBotClientThread& m2::Game::FindBot(const int receiver_inde
 }
 
 int m2::Game::TotalPlayerCount() {
-	if (IsServer()) {
+	if (IsTurnBasedServer()) {
 		return ServerThread().GetClientCount();
 	}
-	if (IsRealClient()) {
+	if (IsRealTurnBasedClient()) {
 		return TurnBasedRealClientThread().total_player_count();
 	}
 	throw M2_ERROR("Not a multiplayer game");
 }
 
 int m2::Game::SelfIndex() {
-	if (IsServer()) {
+	if (IsTurnBasedServer()) {
 		return 0;
 	}
-	if (IsRealClient()) {
+	if (IsRealTurnBasedClient()) {
 		return TurnBasedRealClientThread().self_index();
 	}
 	throw M2_ERROR("Not a multiplayer game");
 }
 
 int m2::Game::TurnHolderIndex() {
-	if (IsServer()) {
+	if (IsTurnBasedServer()) {
 		return ServerThread().GetTurnHolderIndex();
 	}
-	if (IsRealClient()) {
+	if (IsRealTurnBasedClient()) {
 		return TurnBasedRealClientThread().turn_holder_index();
 	}
 	throw M2_ERROR("Not a multiplayer game");
 }
 
 bool m2::Game::IsOurTurn() {
-	if (IsServer()) {
+	if (IsTurnBasedServer()) {
 		return ServerThread().IsOurTurn();
 	}
-	if (IsRealClient()) {
+	if (IsRealTurnBasedClient()) {
 		if (TurnBasedRealClientThread().is_started()) {
 			return TurnBasedRealClientThread().is_our_turn();
 		}
@@ -314,9 +314,9 @@ bool m2::Game::IsOurTurn() {
 }
 
 void m2::Game::QueueClientCommand(const m2g::pb::TurnBasedClientCommand& cmd) {
-	if (IsServer()) {
+	if (IsTurnBasedServer()) {
 		TurnBasedHostClientThread().queue_client_command(cmd);
-	} else if (IsRealClient()) {
+	} else if (IsRealTurnBasedClient()) {
 		TurnBasedRealClientThread().queue_client_command(cmd);
 	} else {
 		throw M2_ERROR("Not a multiplayer game");
@@ -519,7 +519,7 @@ void m2::Game::HandleHudEvents() {
 
 void m2::Game::HandleNetworkEvents() {
 	// Check if the game ended
-	if ((IsServer() && ServerThread().HasBeenShutdown()) || (IsRealClient() && TurnBasedRealClientThread().is_shutdown())) {
+	if ((IsTurnBasedServer() && ServerThread().HasBeenShutdown()) || (IsRealTurnBasedClient() && TurnBasedRealClientThread().is_shutdown())) {
 		_level.reset();
 		ResetState();
 		_multiPlayerComponents = std::monostate{};
@@ -527,11 +527,11 @@ void m2::Game::HandleNetworkEvents() {
 		if (UiPanel::create_and_run_blocking(_proxy.MainMenuBlueprint()).IsQuit()) {
 			quit = true;
 		}
-	} else if (IsServer()) {
+	} else if (IsTurnBasedServer()) {
 		if (const auto disconnectedClientIndex = ServerThread().PopDisconnectedClientEvent()) {
 			// TODO handle
 		}
-	} else if (IsRealClient()) {
+	} else if (IsRealTurnBasedClient()) {
 		// Check if the client has reconnected and needs to be set as ready
 		if (TurnBasedRealClientThread().is_reconnected()) {
 			// Set as ready using the same ready_token
@@ -558,43 +558,6 @@ void m2::Game::ExecutePreStep(const Stopwatch::Duration& delta) {
 	ExecuteDeferredActions();
 	for (auto& phy : _level->physics) {
 		IF(phy.preStep)(phy, delta);
-	}
-	if (IsServer()) {
-		// Check if any of the bots need to handle the TurnBasedServerUpdate
-		for (auto& bot : std::get<TurnBasedServerComponents>(_multiPlayerComponents).botClientThreads) {
-			if (auto server_update = bot.pop_server_update()) {
-				_proxy.bot_handle_server_update(*server_update);
-			}
-		}
-
-		// Handle client command
-		if (const auto client_command = ServerThread().PopCommandFromTurnHolderEvent()) {
-			if (const auto new_turn_holder = _proxy.handle_client_command(ServerThread().GetTurnHolderIndex(), client_command->client_command())) {
-				if (*new_turn_holder < 0) {
-					_server_update_necessary = true;
-					_server_update_with_shutdown = true;
-				} else {
-					ServerThread().SetTurnHolder(*new_turn_holder);
-					_server_update_necessary = true;
-				}
-			}
-		}
-
-		// Handle server command
-		if (const auto server_command = TurnBasedHostClientThread().pop_server_command()) {
-			_proxy.handle_server_command(*server_command);
-		}
-		// Check if any of the bots need to handle the TurnBasedServerCommand
-		for (auto& bot : std::get<TurnBasedServerComponents>(_multiPlayerComponents).botClientThreads) {
-			if (auto server_command = bot.pop_server_command()) {
-				_proxy.bot_handle_server_command(*server_command, *bot.GetReceiverIndex());
-			}
-		}
-	} else if (IsRealClient()) {
-		// Handle server command
-		if (const auto server_command = TurnBasedRealClientThread().pop_server_command()) {
-			_proxy.handle_server_command(*server_command);
-		}
 	}
 }
 
@@ -647,6 +610,43 @@ void m2::Game::ExecuteStep(const Stopwatch::Duration& delta) {
 			}
 		}
 	}
+	if (IsTurnBasedServer()) {
+		// Check if any of the bots need to handle the TurnBasedServerUpdate
+		for (auto& bot : std::get<TurnBasedServerComponents>(_multiPlayerComponents).botClientThreads) {
+			if (auto server_update = bot.pop_server_update()) {
+				_proxy.bot_handle_server_update(*server_update);
+			}
+		}
+
+		// Handle client command
+		if (const auto client_command = ServerThread().PopCommandFromTurnHolderEvent()) {
+			if (const auto new_turn_holder = _proxy.handle_client_command(ServerThread().GetTurnHolderIndex(), client_command->client_command())) {
+				if (*new_turn_holder < 0) {
+					_server_update_necessary = true;
+					_server_update_with_shutdown = true;
+				} else {
+					ServerThread().SetTurnHolder(*new_turn_holder);
+					_server_update_necessary = true;
+				}
+			}
+		}
+
+		// Handle server command
+		if (const auto server_command = TurnBasedHostClientThread().pop_server_command()) {
+			_proxy.handle_server_command(*server_command);
+		}
+		// Check if any of the bots need to handle the TurnBasedServerCommand
+		for (auto& bot : std::get<TurnBasedServerComponents>(_multiPlayerComponents).botClientThreads) {
+			if (auto server_command = bot.pop_server_command()) {
+				_proxy.bot_handle_server_command(*server_command, *bot.GetReceiverIndex());
+			}
+		}
+	} else if (IsRealTurnBasedClient()) {
+		// Handle server command
+		if (const auto server_command = TurnBasedRealClientThread().pop_server_command()) {
+			_proxy.handle_server_command(*server_command);
+		}
+	}
 	// Re-sort draw lists
 	for (auto& drawList : _level->uprightDrawLists) {
 		drawList.Update();
@@ -658,7 +658,7 @@ void m2::Game::ExecuteStep(const Stopwatch::Duration& delta) {
 }
 
 void m2::Game::ExecutePostStep(const Stopwatch::Duration& delta) {
-	if (IsServer()) {
+	if (IsTurnBasedServer()) {
 		if (_server_update_necessary) {
 			LOG_DEBUG("Server update is necessary, sending TurnBasedServerUpdate...");
 			_lastSentOrReceivedServerUpdateSequenceNo = ServerThread().SendServerUpdate(_server_update_with_shutdown);
@@ -674,7 +674,7 @@ void m2::Game::ExecutePostStep(const Stopwatch::Duration& delta) {
 				// Game will be restarted in handle_network_events
 			}
 		}
-	} else if (IsRealClient()) {
+	} else if (IsRealTurnBasedClient()) {
 		// Handle TurnBasedServerUpdate
 		auto status = TurnBasedRealClientThread().process_server_update();
 		m2SucceedOrThrowError(status);

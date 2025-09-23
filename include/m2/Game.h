@@ -131,8 +131,8 @@ namespace m2 {
 		bool AddBot();
 		/// For server
 		network::TurnBasedBotClientThread& FindBot(int receiver_index);
-		bool IsServer() const { return std::holds_alternative<TurnBasedServerComponents>(_multiPlayerComponents); }
-		bool IsRealClient() const { return std::holds_alternative<network::TurnBasedRealClientThread>(_multiPlayerComponents); }
+		bool IsTurnBasedServer() const { return std::holds_alternative<TurnBasedServerComponents>(_multiPlayerComponents); }
+		bool IsRealTurnBasedClient() const { return std::holds_alternative<network::TurnBasedRealClientThread>(_multiPlayerComponents); }
 		TurnBasedServerActorInterface& ServerThread() { return *std::get<TurnBasedServerComponents>(_multiPlayerComponents).serverActorInterface; }
 		network::TurnBasedHostClientThread& TurnBasedHostClientThread() { return *std::get<TurnBasedServerComponents>(_multiPlayerComponents).hostClientThread; }
 		network::TurnBasedRealClientThread& TurnBasedRealClientThread() { return std::get<network::TurnBasedRealClientThread>(_multiPlayerComponents); }
