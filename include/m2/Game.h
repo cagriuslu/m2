@@ -210,7 +210,7 @@ namespace m2 {
 		void SetScale(float scale);
 		/// Game height in meters can be used to adjust the zoom
 		void SetGameHeightM(float heightM);
-		void ResetMousePosition() { _mouse_position_world_m = std::nullopt; _screen_center_to_mouse_position_m = std::nullopt; }
+		void ResetMousePosition();
 		void RecalculateDirectionalAudio();
 
 		void AddDeferredAction(const std::function<void()>& action);

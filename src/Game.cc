@@ -574,53 +574,6 @@ void m2::Game::UpdateCharacters(const Stopwatch::Duration& delta) {
 }
 
 void m2::Game::ExecuteStep(const Stopwatch::Duration& delta) {
-	if constexpr (not GAME_IS_DETERMINISTIC) {
-		// Integrate physics
-		for (auto* world : _level->world) {
-			if (world) {
-				world->Step(ToDurationF(delta), velocity_iterations, position_iterations);
-			}
-		}
-		// Update positions
-		for (auto& phy : _level->physics) {
-			for (const auto& body : phy.body) {
-				if (body && body->IsEnabled()) {
-					auto& obj = phy.Owner();
-					phy.position = VecFE{body->GetPosition()};
-					phy.orientation = FE{body->GetAngle()};
-					// Update other components
-					if (auto* gfx = obj.TryGetGraphic()) {
-						const auto oldGfxPosition = gfx->position;
-						gfx->position = body->GetPosition();
-						gfx->orientation = phy.orientation.ToFloat();
-						// Update draw list if necessary
-						if (oldGfxPosition != body->GetPosition()) {
-							const auto gfxId = obj.GetGraphicId();
-							const auto poolAndDrawList = _level->GetGraphicPoolAndDrawList(gfxId);
-							poolAndDrawList.second->QueueUpdate(phy.OwnerId(), body->GetPosition());
-						}
-					}
-					if (auto* lig = obj.TryGetLight()) {
-						lig->position = body->GetPosition();
-					}
-					if (auto* sou = obj.TryGetSoundEmitter()) {
-						sou->position = body->GetPosition();
-					}
-					break;
-				}
-			}
-		}
-	} else {
-		if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)) {
-			auto& clientInterface = std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).hostClientActorInterface;
-			std::optional<std::deque<m2g::pb::LockstepPlayerInput>> playerInputs;
-			clientInterface->PopReadyToSimulatePlayerInputs(playerInputs);
-			if (playerInputs) {
-				LOG_DEBUG("Handling inputs from player with index", 0);
-				_proxy.lockstepHandlePlayerInputs(0, *playerInputs);
-			}
-		}
-	}
 	if (IsTurnBasedServer()) {
 		// Check if any of the bots need to handle the TurnBasedServerUpdate
 		for (auto& bot : std::get<TurnBasedServerComponents>(_multiPlayerComponents).botClientThreads) {
@@ -656,6 +609,50 @@ void m2::Game::ExecuteStep(const Stopwatch::Duration& delta) {
 		// Handle server command
 		if (const auto server_command = TurnBasedRealClientThread().pop_server_command()) {
 			_proxy.handle_server_command(*server_command);
+		}
+	} else if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)) {
+		auto& clientInterface = std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).hostClientActorInterface;
+		std::optional<std::deque<m2g::pb::LockstepPlayerInput>> playerInputs;
+		clientInterface->PopReadyToSimulatePlayerInputs(playerInputs);
+		if (playerInputs) {
+			LOG_DEBUG("Handling inputs from player with index", 0);
+			_proxy.lockstepHandlePlayerInputs(0, *playerInputs);
+		}
+	} else if constexpr (not GAME_IS_DETERMINISTIC) {
+		// Integrate physics
+		for (auto* world : _level->world) {
+			if (world) {
+				world->Step(ToDurationF(delta), velocity_iterations, position_iterations);
+			}
+		}
+		// Update positions
+		for (auto& phy : _level->physics) {
+			for (const auto& body : phy.body) {
+				if (body && body->IsEnabled()) {
+					auto& obj = phy.Owner();
+					phy.position = VecFE{body->GetPosition()};
+					phy.orientation = FE{body->GetAngle()};
+					// Update other components
+					if (auto* gfx = obj.TryGetGraphic()) {
+						const auto oldGfxPosition = gfx->position;
+						gfx->position = body->GetPosition();
+						gfx->orientation = phy.orientation.ToFloat();
+						// Update draw list if necessary
+						if (oldGfxPosition != body->GetPosition()) {
+							const auto gfxId = obj.GetGraphicId();
+							const auto poolAndDrawList = _level->GetGraphicPoolAndDrawList(gfxId);
+							poolAndDrawList.second->QueueUpdate(phy.OwnerId(), body->GetPosition());
+						}
+					}
+					if (auto* lig = obj.TryGetLight()) {
+						lig->position = body->GetPosition();
+					}
+					if (auto* snd = obj.TryGetSoundEmitter()) {
+						snd->position = body->GetPosition();
+					}
+					break;
+				}
+			}
 		}
 	}
 	// Re-sort draw lists
@@ -908,6 +905,9 @@ void m2::Game::SetGameHeightM(const float heightM) {
 			}
 		}
 	}
+}
+void m2::Game::ResetMousePosition() {
+	_mouse_position_world_m = std::nullopt; _screen_center_to_mouse_position_m = std::nullopt;
 }
 
 void m2::Game::ForEachSprite(const std::function<bool(m2g::pb::SpriteType, const Sprite&)>& op) const {
