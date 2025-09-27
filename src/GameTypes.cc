@@ -18,3 +18,21 @@ m2::IFE::IFE(const pb::IFE& ife) {
 		_value = 0;
 	}
 }
+
+m2::IFE::operator bool() const {
+	return std::holds_alternative<std::monostate>(_value)
+		? false
+		: std::holds_alternative<int32_t>(_value) ? std::get<int32_t>(_value) : static_cast<bool>(std::get<FE>(_value));
+}
+bool m2::IFE::IsInt() const {
+	return std::holds_alternative<int32_t>(_value);
+}
+bool m2::IFE::IsFF() const {
+	return std::holds_alternative<FE>(_value);
+}
+int32_t m2::IFE::GetInt() const {
+	return std::holds_alternative<std::monostate>(_value) ? 0 : std::get<int32_t>(_value);
+}
+m2::FE m2::IFE::GetFF() const {
+	return std::holds_alternative<std::monostate>(_value) ? FE::Zero() : std::get<FE>(_value);
+}

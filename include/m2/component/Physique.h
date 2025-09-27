@@ -25,7 +25,7 @@ namespace m2 {
 		std::function<void(Physique&, Physique&)> offCollision;
 
 		Physique() = default;
-		explicit Physique(Id ownerId, const VecF& position = {});
+		explicit Physique(Id ownerId, const VecFE& position = {});
 		// Copy not allowed
 		Physique(const Physique& other) = delete;
 		Physique& operator=(const Physique& other) = delete;

@@ -16,7 +16,8 @@ m2::Id m2::obj::CreateCamera() {
 	auto& camera = *it;
 	camera.impl = std::make_unique<m2::obj::Camera>();
 
-	auto& phy = camera.AddPhysique(playerPtr ? playerPtr->InferPositionF() : VecF{});
+	// Position of the camera isn't actually deterministic
+	auto& phy = camera.AddPhysique(VecFE{playerPtr ? playerPtr->InferPositionF() : VecF{}});
 	phy.postStep = [](MAYBE Physique& phy, const Stopwatch::Duration&) {
 		//		auto* camera_data = dynamic_cast<m2::obj::Camera*>(camera.impl.get());
 		const auto& player = M2_LEVEL.objects[M2_LEVEL.playerId];

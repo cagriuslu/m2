@@ -5,7 +5,7 @@
 #include <m2/box2d/Shape.h>
 #include <m2/third_party/physics/ColliderCategory.h>
 
-m2::Physique::Physique(Id ownerId, const VecF& position) : Component(ownerId), position(position) {}
+m2::Physique::Physique(const Id ownerId, const VecFE& position) : Component(ownerId), position(position) {}
 
 m2::Physique::Physique(Physique&& other) noexcept
 		: Component(other._owner_id), position(std::move(other.position)), orientation(other.orientation),

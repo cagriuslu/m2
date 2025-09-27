@@ -153,7 +153,7 @@ void Object::SetGroup(const GroupIdentifier& group_id, const IndexInGroup group_
 	_index_in_group = group_index;
 }
 
-Physique& Object::AddPhysique(const VecF& position) {
+Physique& Object::AddPhysique(const VecFE& position) {
 	const auto phy = M2_LEVEL.physics.Emplace(GetId(), position);
 	_physique_id = phy.GetId();
 	return *phy;
