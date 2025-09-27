@@ -15,7 +15,7 @@ m2::Graph::Graph(const std::function<std::optional<std::pair<Node, Edge>>()>& ge
 }
 
 void m2::Graph::AddEdge(const Node from, const Edge edge) {
-	if (from == edge.node) {
+	if (from == edge.toNode) {
 		throw M2_ERROR("Source and destination nodes are the same");
 	}
 	if (IsLess(edge.cost, 0.0f, _tolerance)) {
@@ -24,8 +24,8 @@ void m2::Graph::AddEdge(const Node from, const Edge edge) {
 	// Check if the node already exists
 	if (const auto src_node_it = _edges.find(from); src_node_it != _edges.end()) {
 		// Check if the edge already exists
-		const auto dst_node_it = std::ranges::find_if(src_node_it->second, [dst_node = edge.node](const auto& e) {
-			return e.node == dst_node;
+		const auto dst_node_it = std::ranges::find_if(src_node_it->second, [dst_node = edge.toNode](const auto& e) {
+			return e.toNode == dst_node;
 		});
 		if (dst_node_it != src_node_it->second.end()) {
 			throw M2_ERROR("Edge already exists");
@@ -48,7 +48,7 @@ m2::Graph::ReachableNodesAndCosts m2::Graph::FindNodesReachableFrom(Node source,
 	std::deque<std::pair<Node, float>> nodes_to_visit;
 	for (const auto& edge : source_it->second) {
 		if (IsLessOrEqual(edge.cost, inclusive_cost, _tolerance)) {
-			nodes_to_visit.emplace_back(edge.node, edge.cost);
+			nodes_to_visit.emplace_back(edge.toNode, edge.cost);
 		}
 	}
 
@@ -80,20 +80,20 @@ m2::Graph::ReachableNodesAndCosts m2::Graph::FindNodesReachableFrom(Node source,
 		// Add the next edges to nodes_to_visit
 		if (auto next_step_it = _edges.find(visit.first); next_step_it != _edges.end()) {
 			for (const auto& edge : next_step_it->second) {
-				if (edge.node != source) {
-					if (auto already_was_gonna_visit = std::ranges::find_if(nodes_to_visit, IsFirstEquals<Node, float>(edge.node));
+				if (edge.toNode != source) {
+					if (auto already_was_gonna_visit = std::ranges::find_if(nodes_to_visit, IsFirstEquals<Node, float>(edge.toNode));
 						already_was_gonna_visit != nodes_to_visit.end()) {
 						// If the node was already going to be visited, update its cost
 						already_was_gonna_visit->second = std::min(already_was_gonna_visit->second, lowest_cost + edge.cost);
 					} else if (IsLessOrEqual(lowest_cost + edge.cost, inclusive_cost, _tolerance)) {
 						// Check if this next node was already reachable with a lower cost of reaching
-						if (auto edge_node_it = reachable_nodes.find(edge.node); edge_node_it != reachable_nodes.end()) {
+						if (auto edge_node_it = reachable_nodes.find(edge.toNode); edge_node_it != reachable_nodes.end()) {
 							if (lowest_cost + edge.cost < edge_node_it->second) {
-								nodes_to_visit.emplace_back(edge.node, lowest_cost + edge.cost);
+								nodes_to_visit.emplace_back(edge.toNode, lowest_cost + edge.cost);
 							}
 						} else {
 							// Otherwise, add node to nodes_to_visit
-							nodes_to_visit.emplace_back(edge.node, lowest_cost + edge.cost);
+							nodes_to_visit.emplace_back(edge.toNode, lowest_cost + edge.cost);
 						}
 					}
 				}

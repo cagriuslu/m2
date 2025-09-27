@@ -13,7 +13,7 @@ namespace m2 {
 	public:
 		using Node = long long;
 		struct Edge {
-			Node node;
+			Node toNode;
 			float cost;
 		};
 
