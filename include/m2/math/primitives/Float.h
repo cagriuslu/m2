@@ -48,8 +48,14 @@ namespace m2 {
 		[[nodiscard]] bool IsZero() const { return _value == 0.0f; }
 		[[nodiscard]] bool IsPositive() const { return 0.0f < _value; }
 		[[nodiscard]] bool IsNegative() const { return _value < 0.0f; }
-		/// Check if the given number is equal enough to this number. Tolerance is assumed to be positive.
+		/// Tolerance is assumed to be positive
 		[[nodiscard]] bool IsEqual(const Float& other, const Float& tolerance) const { return (*this - other).AbsoluteValue() <= tolerance; }
+		/// Tolerance is assumed to be positive
+		[[nodiscard]] bool IsNotEqual(const Float& other, const Float& tolerance) const { return tolerance < (*this - other).AbsoluteValue(); }
+		/// Tolerance is assumed to be positive
+		[[nodiscard]] bool IsLess(const Float& other, const Float& tolerance) const { return tolerance < (other - *this); }
+		/// Tolerance is assumed to be positive
+		[[nodiscard]] bool IsLessOrEqual(const Float& other, const Float& tolerance) const { return IsLess(other, tolerance) || IsEqual(other, tolerance); }
 		[[nodiscard]] int32_t ToInteger() const { return static_cast<int>(_value); }
 		[[nodiscard]] float ToFloat() const { return _value; }
 		[[nodiscard]] double ToDouble() const { return _value; }

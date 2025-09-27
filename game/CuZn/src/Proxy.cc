@@ -444,15 +444,15 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 		// Fill graph
 		auto cities = cities_from_connection(sprite_type);
 		if (cities.size() == 2) {
-			available_connections_graph.AddEdge(cities[0], {cities[1], 1.0f});
-			available_connections_graph.AddEdge(cities[1], {cities[0], 1.0f});
+			available_connections_graph.AddEdge(cities[0], {cities[1], m2::Float::One()});
+			available_connections_graph.AddEdge(cities[1], {cities[0], m2::Float::One()});
 		} else if (cities.size() == 3) {
-			available_connections_graph.AddEdge(cities[0], {cities[1], 1.0f});
-			available_connections_graph.AddEdge(cities[1], {cities[0], 1.0f});
-			available_connections_graph.AddEdge(cities[0], {cities[2], 1.0f});
-			available_connections_graph.AddEdge(cities[2], {cities[0], 1.0f});
-			available_connections_graph.AddEdge(cities[1], {cities[2], 1.0f});
-			available_connections_graph.AddEdge(cities[2], {cities[1], 1.0f});
+			available_connections_graph.AddEdge(cities[0], {cities[1], m2::Float::One()});
+			available_connections_graph.AddEdge(cities[1], {cities[0], m2::Float::One()});
+			available_connections_graph.AddEdge(cities[0], {cities[2], m2::Float::One()});
+			available_connections_graph.AddEdge(cities[2], {cities[0], m2::Float::One()});
+			available_connections_graph.AddEdge(cities[1], {cities[2], m2::Float::One()});
+			available_connections_graph.AddEdge(cities[2], {cities[1], m2::Float::One()});
 		} else {
 			throw M2_ERROR("Invalid connection");
 		}

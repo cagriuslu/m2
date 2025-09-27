@@ -4,7 +4,7 @@
 #include <deque>
 #include <m2/Math.h>
 
-m2::Graph::Graph(const std::function<std::optional<std::pair<Node, Edge>>()>& generator, const float tolerance) : _tolerance(tolerance) {
+m2::Graph::Graph(const std::function<std::optional<std::pair<Node, Edge>>()>& generator, const FE tolerance) : _tolerance(tolerance) {
 	while (true) {
 		const auto optional_node_edge = generator();
 		if (not optional_node_edge) {
@@ -18,7 +18,7 @@ void m2::Graph::AddEdge(const Node from, const Edge edge) {
 	if (from == edge.toNode) {
 		throw M2_ERROR("Source and destination nodes are the same");
 	}
-	if (IsLess(edge.cost, 0.0f, _tolerance)) {
+	if (edge.cost.IsLess(FE::Zero(), _tolerance)) {
 		throw M2_ERROR("Negative edge cost");
 	}
 	// Check if the node already exists
@@ -36,32 +36,32 @@ void m2::Graph::AddEdge(const Node from, const Edge edge) {
 	}
 }
 
-m2::Graph::ReachableNodesAndCosts m2::Graph::FindNodesReachableFrom(Node source, const float inclusive_cost) const {
+m2::Graph::ReachableNodesAndCosts m2::Graph::FindNodesReachableFrom(Node source, const FE inclusive_cost) const {
 	// Check if there are any edges from the source
 	const auto source_it = _edges.find(source);
 	if (source_it == _edges.end()) {
 		// Only return the source city
-		return {{source, 0.0f}};
+		return {{source, FE::Zero()}};
 	}
 
 	// Add the first set of edges from the source into the nodes_to_visit list
-	std::deque<std::pair<Node, float>> nodes_to_visit;
+	std::deque<std::pair<Node, FE>> nodes_to_visit;
 	for (const auto& edge : source_it->second) {
-		if (IsLessOrEqual(edge.cost, inclusive_cost, _tolerance)) {
+		if (edge.cost.IsLessOrEqual(inclusive_cost, _tolerance)) {
 			nodes_to_visit.emplace_back(edge.toNode, edge.cost);
 		}
 	}
 
 	// Visit each node in nodes_to_visit, accumulate all reachable nodes into reachable_nodes map
 	ReachableNodesAndCosts reachable_nodes;
-	reachable_nodes[source] = 0.0f; // Add the source node as reachable with no cost
+	reachable_nodes[source] = FE::Zero(); // Add the source node as reachable with no cost
 	while (not nodes_to_visit.empty()) {
 		// Visit node
 		auto visit = nodes_to_visit.front();
 		nodes_to_visit.pop_front();
 
 		// Check if the node can be reached
-		float lowest_cost = INFINITY;
+		FE lowest_cost = FE::Max();
 		if (auto was_already_reachable = reachable_nodes.find(visit.first);
 			was_already_reachable != reachable_nodes.end()) {
 			// If the node was already reachable, pick the least-cost path
@@ -81,11 +81,11 @@ m2::Graph::ReachableNodesAndCosts m2::Graph::FindNodesReachableFrom(Node source,
 		if (auto next_step_it = _edges.find(visit.first); next_step_it != _edges.end()) {
 			for (const auto& edge : next_step_it->second) {
 				if (edge.toNode != source) {
-					if (auto already_was_gonna_visit = std::ranges::find_if(nodes_to_visit, IsFirstEquals<Node, float>(edge.toNode));
+					if (auto already_was_gonna_visit = std::ranges::find_if(nodes_to_visit, IsFirstEquals<Node, FE>(edge.toNode));
 						already_was_gonna_visit != nodes_to_visit.end()) {
 						// If the node was already going to be visited, update its cost
 						already_was_gonna_visit->second = std::min(already_was_gonna_visit->second, lowest_cost + edge.cost);
-					} else if (IsLessOrEqual(lowest_cost + edge.cost, inclusive_cost, _tolerance)) {
+					} else if ((lowest_cost + edge.cost).IsLessOrEqual(inclusive_cost, _tolerance)) {
 						// Check if this next node was already reachable with a lower cost of reaching
 						if (auto edge_node_it = reachable_nodes.find(edge.toNode); edge_node_it != reachable_nodes.end()) {
 							if (lowest_cost + edge.cost < edge_node_it->second) {
@@ -103,8 +103,8 @@ m2::Graph::ReachableNodesAndCosts m2::Graph::FindNodesReachableFrom(Node source,
 	return reachable_nodes;
 }
 
-std::multimap<float, m2::Graph::Node> m2::Graph::order_by_cost(const ReachableNodesAndCosts& nodes) {
-	std::multimap<float, Node> ordered_map;
+std::multimap<m2::FE, m2::Graph::Node> m2::Graph::order_by_cost(const ReachableNodesAndCosts& nodes) {
+	std::multimap<FE, Node> ordered_map;
 	for (const auto& [node, cost] : nodes) {
 		ordered_map.emplace(cost, node);
 	}

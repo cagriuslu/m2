@@ -60,7 +60,7 @@ float m2::ApplyAccuracy(float value, float max_swing, float accuracy) {
 }
 
 bool m2::IsEqual(float a, float b, float tolerance) {
-	return fabsf(b - a) < fabsf(tolerance);
+	return fabsf(b - a) <= fabsf(tolerance);
 }
 bool m2::IsNotEqual(float a, float b, float tolerance) {
 	return fabsf(tolerance) < fabsf(b - a);
