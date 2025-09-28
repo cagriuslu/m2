@@ -62,10 +62,12 @@ namespace m2 {
 		[[nodiscard]] float GetLengthSquared() const { return _x * _x + _y * _y; }
 		[[nodiscard]] Float GetLengthSquaredFE() const { return Float{_x} * Float{_x} + Float{_y} * Float{_y}; }
 		[[nodiscard]] float GetLength() const { return sqrtf(GetLengthSquared()); }
+		[[nodiscard]] Float GetLengthFE() const { return GetLengthSquaredFE().SquareRoot(); }
 		[[nodiscard]] float GetDistanceToSquared(const VecF& other) const { return (other - *this).GetLengthSquared(); }
 		[[nodiscard]] Float GetDistanceToSquaredFE(const VecF& other) const { return (other - *this).GetLengthSquaredFE(); }
 		[[nodiscard]] float GetDistanceToSquared(const VecI& other) const;
 		[[nodiscard]] float GetDistanceTo(const VecF& other) const { return (other - *this).GetLength(); }
+		[[nodiscard]] Float GetDistanceToFE(const VecF& other) const { return (other - *this).GetLengthFE(); }
 		/// Returns the angle in radians between this vector and the positive-x axis. [-PI, PI]
 		[[nodiscard]] float GetAngle() const { return atan2f(_y, _x); }
 		[[nodiscard]] VecF GetCenterBetween(const VecF& other) const { return {(_x + other.GetX()) / 2.0f, (_y + other.GetY()) / 2.0f}; }

@@ -2,15 +2,14 @@
 #include <m2/Error.h>
 #include <m2/M2.h>
 #include <deque>
-#include <m2/Math.h>
 
 m2::Graph::Graph(const std::function<std::optional<std::pair<Node, Edge>>()>& generator, const FE tolerance) : _tolerance(tolerance) {
 	while (true) {
-		const auto optional_node_edge = generator();
-		if (not optional_node_edge) {
+		const auto nodeNEdge = generator();
+		if (not nodeNEdge) {
 			break;
 		}
-		AddEdge(optional_node_edge->first, optional_node_edge->second);
+		AddEdge(nodeNEdge->first, nodeNEdge->second);
 	}
 }
 
@@ -35,8 +34,11 @@ void m2::Graph::AddEdge(const Node from, const Edge edge) {
 		_edges[from] = std::vector{edge}; // Insert to map
 	}
 }
+void m2::Graph::SetNodePosition(const Node node, const VecFE& position) {
+	_nodePositions[node] = position;
+}
 
-m2::Graph::ReachableNodesAndCosts m2::Graph::FindNodesReachableFrom(Node source, const FE inclusive_cost) const {
+m2::Graph::ReachableNodesAndCosts m2::Graph::FindNodesReachableFrom(Node source, const FE maxCost) const {
 	// Check if there are any edges from the source
 	const auto source_it = _edges.find(source);
 	if (source_it == _edges.end()) {
@@ -47,7 +49,7 @@ m2::Graph::ReachableNodesAndCosts m2::Graph::FindNodesReachableFrom(Node source,
 	// Add the first set of edges from the source into the nodes_to_visit list
 	std::deque<std::pair<Node, FE>> nodes_to_visit;
 	for (const auto& edge : source_it->second) {
-		if (edge.cost.IsLessOrEqual(inclusive_cost, _tolerance)) {
+		if (edge.cost.IsLessOrEqual(maxCost, _tolerance)) {
 			nodes_to_visit.emplace_back(edge.toNode, edge.cost);
 		}
 	}
@@ -85,7 +87,7 @@ m2::Graph::ReachableNodesAndCosts m2::Graph::FindNodesReachableFrom(Node source,
 						already_was_gonna_visit != nodes_to_visit.end()) {
 						// If the node was already going to be visited, update its cost
 						already_was_gonna_visit->second = std::min(already_was_gonna_visit->second, lowest_cost + edge.cost);
-					} else if ((lowest_cost + edge.cost).IsLessOrEqual(inclusive_cost, _tolerance)) {
+					} else if ((lowest_cost + edge.cost).IsLessOrEqual(maxCost, _tolerance)) {
 						// Check if this next node was already reachable with a lower cost of reaching
 						if (auto edge_node_it = reachable_nodes.find(edge.toNode); edge_node_it != reachable_nodes.end()) {
 							if (lowest_cost + edge.cost < edge_node_it->second) {
@@ -101,6 +103,85 @@ m2::Graph::ReachableNodesAndCosts m2::Graph::FindNodesReachableFrom(Node source,
 		}
 	}
 	return reachable_nodes;
+}
+
+m2::Graph::ReversePath m2::Graph::FindPathTo(Node from, Node to) const {
+	if (from == to) {
+		return ReversePath{to};
+	}
+
+	const auto destinationPositionIt = _nodePositions.find(to);
+	if (destinationPositionIt == _nodePositions.end()) {
+		throw M2_ERROR("Node has no position: " + ToString(to));
+	}
+	const auto destinationPosition = destinationPositionIt->second;
+
+	// Holds the nodes which will be explored next. Key is the exploration priority, value is the Node to explore.
+	std::multimap<FE, Node> frontiers{{FE::Zero(), from}};
+
+	// The key Node should be approached from the value Node, with the stored cost.
+	std::unordered_map<Node, std::pair<Node,FE>> approachFrom;
+
+	// Holds accumulated cost of reaching a node. Key is the node, value is its accumulated cost.
+	std::unordered_map<Node, FE> provisionalCost{{from, FE::Zero()}};
+
+	// While there are frontiers to explore
+	while (not frontiers.empty()) {
+		auto frontier = frontiers.begin()->second;
+
+		// If next location to process is the destination, a path is found. Stop.
+		if (frontier == to) {
+			break;
+		}
+
+		// Check if the frontier has outgoing edges
+		if (const auto edgesIt = _edges.find(frontier); edgesIt != _edges.end()) {
+			// Iterate over edges from the frontier
+			for (const auto& edge : edgesIt->second) {
+				auto neighbor = edge.toNode;
+
+				// Previous accumulative cost of travelling to the neighbor
+				const auto prevCostIt = provisionalCost.find(neighbor);
+				const auto prevCost = (prevCostIt != provisionalCost.end()) ? prevCostIt->second : FE::Max();
+				// Accumulative cost of travelling to the neighbor from **current frontier**
+				auto newCost = provisionalCost[frontier] + edge.cost;
+
+				// If new path to neighbor is cheaper than the old path
+				if (newCost < prevCost) {
+					// Save new cost
+					provisionalCost[neighbor] = newCost;
+					// Calculate priority of neighbor with heuristic parameter
+					const auto neighborPositionIt = _nodePositions.find(neighbor);
+					if (neighborPositionIt == _nodePositions.end()) {
+						throw M2_ERROR("Node has no position: " + ToString(neighbor));
+					}
+					const auto neighborPosition = neighborPositionIt->second;
+					auto neighborPriority = newCost * newCost + neighborPosition.GetDistanceToSquaredFE(destinationPosition);
+					// Insert neighbor into frontiers
+					frontiers.insert({neighborPriority, neighbor});
+					// Set the previous position of neighbor as the current position
+					approachFrom[neighbor] = {frontier, newCost};
+				}
+			}
+		}
+
+		// Remove the current frontier as we have processed it
+		frontiers.erase(frontiers.begin());
+	}
+
+	// Check if there is a path
+	auto it = approachFrom.find(to);
+	if (it == approachFrom.end()) {
+		return {}; // Path not found
+	}
+	ReversePath path{to};
+	// Built reverse list of positions
+	while (it != approachFrom.end() && from != it->second.first) {
+		path.emplace_back(it->second.first);
+		it = approachFrom.find(it->second.first);
+	}
+	path.emplace_back(from);
+	return path;
 }
 
 std::multimap<m2::FE, m2::Graph::Node> m2::Graph::order_by_cost(const ReachableNodesAndCosts& nodes) {

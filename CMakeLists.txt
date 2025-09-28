@@ -248,6 +248,7 @@ if(GTest_FOUND)
             "src/math/Rational.cc"
             "src/math/RectF.cc"
             "src/math/RectI.cc"
+            "src/math/VecE.cc"
             "src/math/VecF.cc"
             "src/math/VecI.cc"
             "src/math/primitives/Exact.cc"

@@ -30,6 +30,8 @@ namespace m2 {
 		// Modifiers
 
 		[[nodiscard]] Exact GetLengthSquaredFE() const;
+		[[nodiscard]] Exact GetLengthFE() const { return GetLengthSquaredFE().SquareRoot(); }
 		[[nodiscard]] Exact GetDistanceToSquaredFE(const VecE& other) const;
+		[[nodiscard]] Exact GetDistanceToFE(const VecE& other) const { return (other - *this).GetLengthFE(); }
 	};
 }
