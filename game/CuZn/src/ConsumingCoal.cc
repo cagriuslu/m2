@@ -16,11 +16,11 @@ std::set<IndustryLocation> find_closest_connected_coal_mines_with_coal(City city
 	auto reachable_cities = active_connections.FindNodesReachableFrom(city, m2::Float{100.0f});
 	if (city_2) {
 		auto reachable_cities_2 = active_connections.FindNodesReachableFrom(city_2, m2::Float{100.0f});
-		reachable_cities = m2::Graph::merge_reachable_nodes(reachable_cities, reachable_cities_2);
+		reachable_cities = m2::Graph<City>::merge_reachable_nodes(reachable_cities, reachable_cities_2);
 	}
 
 	// Order cities by cost
-	auto cities_ordered_by_cost = m2::Graph::order_by_cost(reachable_cities);
+	auto cities_ordered_by_cost = m2::Graph<City>::order_by_cost(reachable_cities);
 	// Find the closest coal mines with the same lowest cost
 	std::set<IndustryLocation> industry_locations;
 	m2::Float closest_coal_mine_cost{};

@@ -23,6 +23,7 @@ namespace m2 {
 
 		VecF() = default;
 		VecF(float x, float y) : _x(x), _y(y) {}
+		VecF(const Float& x, const Float& y) : _x(x.ToFloat()), _y(y.ToFloat()) {}
 		VecF(int x, int y) : _x((float)x), _y((float)y) {}
 		VecF(unsigned x, unsigned y) : _x((float)x), _y((float)y) {}
 		explicit VecF(const VecI& v);

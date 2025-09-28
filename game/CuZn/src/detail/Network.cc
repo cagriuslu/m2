@@ -51,8 +51,8 @@ bool IsIndustryCityConnectedToLocation(IndustryCity city, Location location) {
 	return network.contains(location);
 }
 
-m2::Graph CreateActiveConnectionsGraph() {
-	m2::Graph active_connections;
+m2::Graph<City> CreateActiveConnectionsGraph() {
+	m2::Graph<City> active_connections;
 	for (const auto& road_chr : M2_LEVEL.characters | std::views::transform(m2::ToCharacterBase) | std::views::filter(IsRoadCharacter)) {
 		// Get the cities connected by the road
 		std::vector<City> cities;

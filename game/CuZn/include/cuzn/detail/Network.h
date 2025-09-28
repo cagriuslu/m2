@@ -15,4 +15,4 @@ bool IsIndustryCityConnectedToLocation(IndustryCity city, Location location);
 
 /// Create a graph of currently built connections where nodes are of type `City`.
 /// Useful for finding the closest cities/industries.
-m2::Graph CreateActiveConnectionsGraph();
+m2::Graph<City> CreateActiveConnectionsGraph();
