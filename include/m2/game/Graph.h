@@ -12,17 +12,17 @@
 
 namespace m2 {
 	// A data structure containing nodes and edges, for finding paths between nodes. All edges have an associated cost.
-	// For NodeT and EdgeT, simple types such as Id or int should be used, because the node or edge values are copied
-	// around internally, instead of using iterators or points.
-	template <typename NodeT, typename EdgeT = void> class Graph {
+	// For NodeT and EdgeT, integral types should be used, because they are copied around internally.
+	template <typename NodeT, typename EdgeT = Void> class Graph {
 	public:
 		struct Edge {
-			NodeT toNode;
+			NodeT from, to;
 			FE cost;
+			EdgeT edge{};
 		};
 
 	private:
-		// 2D position of nodes, helps with A* path finding.
+		/// 2D position of nodes, helps with A* path finding.
 		std::unordered_map<NodeT, VecFE> _nodePositions;
 		std::unordered_map<NodeT, std::vector<Edge>> _edges;
 		FE _tolerance;
@@ -31,28 +31,28 @@ namespace m2 {
 		/// Create empty graph
 		explicit Graph(const FE tolerance = FE{0.001f}) : _tolerance(tolerance) {}
 		/// Create graph by repeatedly calling a generator
-		explicit Graph(const std::function<std::optional<std::pair<NodeT, Edge>>()>& generator, const FE tolerance = FE{0.001f}) : _tolerance(tolerance) {
+		explicit Graph(const std::function<std::optional<Edge>()>& generator, const FE tolerance = FE{0.001f}) : _tolerance(tolerance) {
 			while (true) {
-				const auto nodeNEdge = generator();
-				if (not nodeNEdge) { break; } // Escape
-				AddEdge(nodeNEdge->first, nodeNEdge->second);
+				const auto edge = generator();
+				if (not edge) { break; } // Escape
+				AddEdge(*edge);
 			}
 		}
 
 		/// Add a new edge between two nodes in the graph
-		void AddEdge(NodeT from, Edge edge) {
-			if (from == edge.toNode) { throw M2_ERROR("Source and destination nodes are the same"); }
+		void AddEdge(Edge edge) {
+			if (edge.from == edge.to) { throw M2_ERROR("Source and destination nodes are the same"); }
 			if (edge.cost.IsLess(FE::Zero(), _tolerance)) { throw M2_ERROR("Negative edge cost"); }
 			// Check if node already exists
-			if (const auto src_node_it = _edges.find(from); src_node_it != _edges.end()) {
+			if (const auto src_node_it = _edges.find(edge.from); src_node_it != _edges.end()) {
 				// Check if edge already exists
-				const auto dst_node_it = std::ranges::find_if(src_node_it->second, [dst_node = edge.toNode](const auto& e) {
-					return e.toNode == dst_node;
+				const auto dst_node_it = std::ranges::find_if(src_node_it->second, [dst_node = edge.to](const auto& e) {
+					return e.to == dst_node;
 				});
 				if (dst_node_it != src_node_it->second.end()) { throw M2_ERROR("Edge already exists"); }
 				src_node_it->second.emplace_back(edge); // Add to edges
 			} else {
-				_edges[from] = std::vector{edge}; // Insert to map
+				_edges[edge.from] = std::vector{edge}; // Insert to map
 			}
 		}
 		/// This operation is optional because the position information is not used for every functionality.
@@ -72,7 +72,7 @@ namespace m2 {
 			std::deque<std::pair<NodeT, FE>> nodes_to_visit;
 			for (const auto& edge : source_it->second) {
 				if (edge.cost.IsLessOrEqual(maxCost, _tolerance)) {
-					nodes_to_visit.emplace_back(edge.toNode, edge.cost);
+					nodes_to_visit.emplace_back(edge.to, edge.cost);
 				}
 			}
 
@@ -104,20 +104,20 @@ namespace m2 {
 				// Add the next edges to nodes_to_visit
 				if (auto next_step_it = _edges.find(visit.first); next_step_it != _edges.end()) {
 					for (const auto& edge : next_step_it->second) {
-						if (edge.toNode != source) {
-							if (auto already_was_gonna_visit = std::ranges::find_if(nodes_to_visit, IsFirstEquals<NodeT, FE>(edge.toNode));
+						if (edge.to != source) {
+							if (auto already_was_gonna_visit = std::ranges::find_if(nodes_to_visit, IsFirstEquals<NodeT, FE>(edge.to));
 								already_was_gonna_visit != nodes_to_visit.end()) {
 								// If the node was already going to be visited, update its cost
 								already_was_gonna_visit->second = std::min(already_was_gonna_visit->second, lowest_cost + edge.cost);
 							} else if ((lowest_cost + edge.cost).IsLessOrEqual(maxCost, _tolerance)) {
 								// Check if this next node was already reachable with a lower cost of reaching
-								if (auto edge_node_it = reachable_nodes.find(edge.toNode); edge_node_it != reachable_nodes.end()) {
+								if (auto edge_node_it = reachable_nodes.find(edge.to); edge_node_it != reachable_nodes.end()) {
 									if (lowest_cost + edge.cost < edge_node_it->second) {
-										nodes_to_visit.emplace_back(edge.toNode, lowest_cost + edge.cost);
+										nodes_to_visit.emplace_back(edge.to, lowest_cost + edge.cost);
 									}
 								} else {
 									// Otherwise, add node to nodes_to_visit
-									nodes_to_visit.emplace_back(edge.toNode, lowest_cost + edge.cost);
+									nodes_to_visit.emplace_back(edge.to, lowest_cost + edge.cost);
 								}
 							}
 						}
@@ -127,12 +127,11 @@ namespace m2 {
 			return reachable_nodes;
 		}
 
-		/// Returns the reversed path between two nodes. [to, to - 1, ..., from + 1, from].
-		/// Returns [to] if `from` equals to `to`.
-		/// Returns empty vector if path not found.
-		using ReversePath = std::vector<NodeT>;
+		/// Returns the reversed path between two nodes.
+		/// Returns empty vector if path not found, or `from` is equal to `to`.
+		using ReversePath = std::vector<Edge>;
 		ReversePath FindPathTo(NodeT from, NodeT to) const {
-			if (from == to) { return ReversePath{to}; }
+			if (from == to) { return {}; }
 
 			const auto destinationPositionIt = _nodePositions.find(to);
 			if (destinationPositionIt == _nodePositions.end()) { throw M2_ERROR("Node has no position: " + ToString(to)); }
@@ -140,8 +139,8 @@ namespace m2 {
 
 			// Holds the nodes which will be explored next. Key is the exploration priority, value is the Node to explore.
 			std::multimap<FE, NodeT> frontiers{{FE::Zero(), from}};
-			// The key Node should be approached from the value Node, with the stored cost.
-			std::unordered_map<NodeT, std::pair<NodeT,FE>> approachFrom;
+			// The key Node should be approached via the value Edge.
+			std::unordered_map<NodeT, Edge> approachVia;
 			// Holds accumulated cost of reaching a node. Key is the node, value is its accumulated cost.
 			std::unordered_map<NodeT, FE> provisionalCost{{from, FE::Zero()}};
 
@@ -155,7 +154,7 @@ namespace m2 {
 				if (const auto edgesIt = _edges.find(frontier); edgesIt != _edges.end()) {
 					// Iterate over edges from the frontier
 					for (const auto& edge : edgesIt->second) {
-						auto neighbor = edge.toNode;
+						auto neighbor = edge.to;
 						// Previous accumulative cost of travelling to the neighbor
 						const auto prevCostIt = provisionalCost.find(neighbor);
 						const auto prevCost = (prevCostIt != provisionalCost.end()) ? prevCostIt->second : FE::Max();
@@ -174,7 +173,7 @@ namespace m2 {
 							// Insert neighbor into frontiers
 							frontiers.insert({neighborPriority, neighbor});
 							// Set the previous position of neighbor as the current position
-							approachFrom[neighbor] = {frontier, newCost};
+							approachVia[neighbor] = edge;
 						}
 					}
 				}
@@ -182,17 +181,17 @@ namespace m2 {
 				frontiers.erase(frontiers.begin());
 			}
 
-			// Check if there is a path
-			auto it = approachFrom.find(to);
-			if (it == approachFrom.end()) { return {}; } // Path not found
-			ReversePath path{to};
-			// Built reverse list of positions
-			while (it != approachFrom.end() && from != it->second.first) {
-				path.emplace_back(it->second.first);
-				it = approachFrom.find(it->second.first);
+			auto it = approachVia.find(to); // Check if there is a path
+			if (it == approachVia.end()) { return {}; } // Path not found
+			ReversePath path; // Built reverse list of edges
+			while (it != approachVia.end()) {
+				path.emplace_back(it->second);
+				if (it->second.from == from) {
+					return path;
+				}
+				it = approachVia.find(it->second.from);
 			}
-			path.emplace_back(from);
-			return path;
+			throw M2_ERROR("Implementation error, approach map doesn't contain the source");
 		}
 
 		// Utilities
