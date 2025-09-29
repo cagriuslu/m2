@@ -24,6 +24,9 @@ m2::IFE::operator bool() const {
 		? false
 		: std::holds_alternative<int32_t>(_value) ? std::get<int32_t>(_value) : static_cast<bool>(std::get<FE>(_value));
 }
+bool m2::IFE::IsZero() const {
+	return !static_cast<bool>(*this);
+}
 bool m2::IFE::IsInt() const {
 	return std::holds_alternative<int32_t>(_value);
 }
