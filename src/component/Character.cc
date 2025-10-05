@@ -387,7 +387,7 @@ void m2::FastCharacter::ClearAttributes() {
 }
 
 void m2::FastCharacter::AddPropertyMax(const m2g::pb::PropertyType pt, const FE& add, const FE& maxValue) {
-	const auto currentValue = _properties[PropertyTypeIndex(pt)].GetFF();
+	const auto currentValue = _properties[PropertyTypeIndex(pt)].GetFE();
 	const auto addition = currentValue + add;
 	const auto newValue = maxValue < addition ? maxValue : addition;
 	_properties[PropertyTypeIndex(pt)] = IFE{newValue};

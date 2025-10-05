@@ -17,8 +17,8 @@ namespace m2 {
 		explicit operator bool() const;
 		[[nodiscard]] bool IsZero() const;
 		[[nodiscard]] bool IsInt() const;
-		[[nodiscard]] bool IsFF() const;
+		[[nodiscard]] bool IsFE() const;
 		int32_t GetInt() const;
-		FE GetFF() const;
+		FE GetFE() const;
 	};
 }

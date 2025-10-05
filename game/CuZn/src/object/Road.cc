@@ -29,7 +29,7 @@ m2::Object* FindRoadAtLocation(const m2g::pb::SpriteType location) {
 				 | std::views::transform(m2::ToCharacterBase)
 				 | std::views::filter(IsRoadCharacter)
 				 | std::views::transform(m2::ToOwner)
-				 | std::views::filter(m2::is_object_in_area(std::get<m2::RectF>( M2G_PROXY.connection_positions[location])));
+				 | std::views::filter(m2::IsObjectInArea(std::get<m2::RectF>( M2G_PROXY.connection_positions[location])));
 	if (auto road_it = roads.begin(); road_it != roads.end()) {
 		return &*road_it;
 	}

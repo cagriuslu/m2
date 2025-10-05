@@ -12,7 +12,7 @@ m2::Object* FindFactoryAtLocation(Location location) {
 		| std::views::transform(m2::ToCharacterBase)
 		| std::views::filter(IsFactoryCharacter)
 		| std::views::transform(m2::ToOwner)
-		| std::views::filter(m2::is_object_in_area(std::get<m2::RectF>(M2G_PROXY.industry_positions[location])));
+		| std::views::filter(m2::IsObjectInArea(std::get<m2::RectF>(M2G_PROXY.industry_positions[location])));
 	if (auto factory_it = factories.begin(); factory_it != factories.end()) {
 		return &*factory_it;
 	}

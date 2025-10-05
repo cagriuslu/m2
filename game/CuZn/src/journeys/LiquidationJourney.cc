@@ -30,7 +30,7 @@ namespace {
 	int sell_return_of_factories(const std::vector<IndustryLocation>& locations) {
 		auto half_costs = locations
 			| std::views::transform(FindFactoryAtLocation)
-			| std::views::transform(m2::to_character_of_object_unsafe)
+			| std::views::transform(m2::UnsafeObjectToCharacter)
 			| std::views::transform(LiquidationReturnOfFactoryCharacter);
 		return std::accumulate(half_costs.begin(), half_costs.end(), 0);
 	}

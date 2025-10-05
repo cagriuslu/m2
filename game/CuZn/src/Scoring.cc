@@ -11,8 +11,8 @@ using namespace m2g;
 void score_links_and_remove_roads() {
 	std::ranges::for_each(
 			M2G_PROXY.multiPlayerObjectIds
-			| std::views::transform(m2::to_object_of_id)
-			| std::views::transform(m2::to_character_of_object),
+			| std::views::transform(m2::ObjectIdToObject)
+			| std::views::transform(m2::ObjectToCharacter),
 			[](m2::Character& player) {
 				const auto linkCount = PlayerLinkCount(player);
 				LOG_INFO("Player link count", linkCount);

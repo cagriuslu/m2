@@ -332,12 +332,15 @@ std::function<void()> m2::CreateLayerMover(ObjectId id, std::optional<pb::Physic
 	};
 }
 
-std::function<bool(Object&)> m2::is_object_in_area(const RectF& rect) {
+std::function<bool(Object&)> m2::IsObjectInArea(const RectF& rect) {
 	return [rect](const Object& o) -> bool {
 		return rect.DoesContain(o.InferPositionF());
 	};
 }
 
-Object& m2::to_object_of_id(ObjectId id) {
+Object& m2::ObjectIdToObject(const ObjectId id) {
+	return M2_LEVEL.objects[id];
+}
+const Object& m2::ObjectIdToConstObject(const ObjectId id) {
 	return M2_LEVEL.objects[id];
 }

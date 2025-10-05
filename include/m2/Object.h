@@ -111,11 +111,12 @@ namespace m2 {
 
 	// Filter Generators
 
-	std::function<bool(Object&)> is_object_in_area(const RectF& rect);
+	std::function<bool(Object&)> IsObjectInArea(const RectF& rect);
 
 	// Transformers
 
-	Object& to_object_of_id(ObjectId id);
-	inline Character& to_character_of_object_unsafe(Object* o) { return o->GetCharacter(); }
-	inline Character& to_character_of_object(Object& o) { return o.GetCharacter(); }
+	Object& ObjectIdToObject(ObjectId id);
+	const Object& ObjectIdToConstObject(ObjectId id);
+	inline Character& UnsafeObjectToCharacter(Object* o) { return o->GetCharacter(); }
+	inline Character& ObjectToCharacter(Object& o) { return o.GetCharacter(); }
 }

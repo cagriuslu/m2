@@ -26,7 +26,7 @@ std::set<Location> find_breweries_with_beer(m2::Character& player, City city, st
 		| std::views::filter(is_industry_location)
 		| std::views::filter(FindFactoryAtLocation)
 		| std::views::transform(FindFactoryAtLocation)
-		| std::views::transform(m2::to_character_of_object_unsafe)
+		| std::views::transform(m2::UnsafeObjectToCharacter)
 		| std::views::filter([](m2::Character& chr) { return chr.HasResource(m2g::pb::BEER_BARREL_COUNT); })
 		| std::views::transform(ToIndustryLocationOfFactoryCharacter);
 	locations.insert(reachable_breweries_with_beer.begin(), reachable_breweries_with_beer.end());

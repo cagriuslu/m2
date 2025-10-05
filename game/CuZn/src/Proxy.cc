@@ -505,8 +505,8 @@ m2::Character& m2g::Proxy::game_state_tracker() const {
 }
 int m2g::Proxy::total_card_count() const {
 	const auto player_card_lists = M2G_PROXY.multiPlayerObjectIds
-		| std::views::transform(m2::to_object_of_id)
-		| std::views::transform(m2::to_character_of_object)
+		| std::views::transform(m2::ObjectIdToObject)
+		| std::views::transform(m2::ObjectToCharacter)
 		| std::views::transform(m2::GenerateNamedItemTypesFilter({pb::ITEM_CATEGORY_CITY_CARD, pb::ITEM_CATEGORY_INDUSTRY_CARD, pb::ITEM_CATEGORY_WILD_CARD}));
 	const auto card_count = std::accumulate(player_card_lists.begin(), player_card_lists.end(), 0, [](const int sum, const std::vector<Card>& card_list) { return sum + I(card_list.size()); });
 	return card_count + m2::RoundI(game_state_tracker().GetResource(pb::DRAW_DECK_SIZE));
@@ -670,8 +670,8 @@ m2g::Proxy::LiquidationDetails m2g::Proxy::prepare_railroad_era() {
 	// Send canal era results
 	pb::TurnBasedServerCommand canal_era_result_command;
 	std::ranges::for_each(M2G_PROXY.multiPlayerObjectIds
-		| std::views::transform(m2::to_object_of_id)
-		| std::views::transform(m2::to_character_of_object),
+		| std::views::transform(m2::ObjectIdToObject)
+		| std::views::transform(m2::ObjectToCharacter),
 		[&](const m2::Character& human_player) {
 			canal_era_result_command.mutable_canal_era_result()->add_victory_points(
 				m2::RoundI(human_player.GetResource(pb::VICTORY_POINTS)));
@@ -697,8 +697,8 @@ m2g::Proxy::LiquidationDetails m2g::Proxy::prepare_railroad_era() {
 	const auto& road_item = M2_GAME.GetNamedItem(pb::ROAD_TILE);
 	auto road_possession_limit = m2::RoundZ(road_item.GetAttribute(pb::POSSESSION_LIMIT));
 	std::ranges::for_each(M2G_PROXY.multiPlayerObjectIds
-		| std::views::transform(m2::to_object_of_id)
-		| std::views::transform(m2::to_character_of_object),
+		| std::views::transform(m2::ObjectIdToObject)
+		| std::views::transform(m2::ObjectToCharacter),
 		[&](m2::Character& human_player) {
 			while (human_player.CountItem(pb::ROAD_TILE) < road_possession_limit) {
 				human_player.AddNamedItem(road_item);
