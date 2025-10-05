@@ -386,6 +386,13 @@ void m2::FastCharacter::ClearAttributes() {
 	_attributes.resize(pb::enum_value_count<m2g::pb::AttributeType>());
 }
 
+void m2::FastCharacter::AddPropertyMax(const m2g::pb::PropertyType pt, const FE& add, const FE& maxValue) {
+	const auto currentValue = _properties[PropertyTypeIndex(pt)].GetFF();
+	const auto addition = currentValue + add;
+	const auto newValue = maxValue < addition ? maxValue : addition;
+	_properties[PropertyTypeIndex(pt)] = IFE{newValue};
+}
+
 int m2::FastCharacter::ResourceTypeIndex(m2g::pb::ResourceType resource_type) {
 	return pb::enum_index<m2g::pb::ResourceType>(resource_type);
 }

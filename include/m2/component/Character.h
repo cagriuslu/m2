@@ -105,6 +105,9 @@ namespace m2 {
 		virtual float SetAttribute(m2g::pb::AttributeType attribute_type, float value) = 0;
 		virtual void ClearAttribute(m2g::pb::AttributeType attribute_type) = 0;
 		virtual void ClearAttributes() = 0;
+
+		[[nodiscard]] virtual IFE GetProperty(m2g::pb::PropertyType) const = 0;
+		virtual void SetProperty(m2g::pb::PropertyType, FE) = 0;
 	};
 
 	class CompactCharacter final : public Character {
@@ -142,6 +145,9 @@ namespace m2 {
 		float SetAttribute(m2g::pb::AttributeType attribute_type, float value) override;
 		void ClearAttribute(m2g::pb::AttributeType attribute_type) override;
 		void ClearAttributes() override;
+
+		[[nodiscard]] IFE GetProperty(m2g::pb::PropertyType) const override { throw M2_ERROR("CompactCharacter doesn't support properties"); }
+		void SetProperty(m2g::pb::PropertyType, FE) override { throw M2_ERROR("CompactCharacter doesn't support properties"); }
 	};
 
 	class FastCharacter final : public Character {
@@ -182,12 +188,11 @@ namespace m2 {
 		void ClearAttributes() override;
 
 		[[nodiscard]] bool HasProperty(const m2g::pb::PropertyType pt) const { return static_cast<bool>(_properties[PropertyTypeIndex(pt)]); }
-		[[nodiscard]] const IFE& GetProperty(const m2g::pb::PropertyType pt) const { return _properties[PropertyTypeIndex(pt)]; }
-		const IFE& SetProperty(const m2g::pb::PropertyType pt, const int32_t value) { return _properties[PropertyTypeIndex(pt)] = IFE{value}; }
-		const IFE& SetProperty(const m2g::pb::PropertyType pt, FE&& value) { return _properties[PropertyTypeIndex(pt)] = IFE{std::move(value)}; }
-		const IFE& SetProperty(const m2g::pb::PropertyType pt, const FE& value) { return _properties[PropertyTypeIndex(pt)] = IFE{value}; }
-		const IFE& SetProperty(const m2g::pb::PropertyType pt, IFE&& value) { return _properties[PropertyTypeIndex(pt)] = std::move(value); }
-		const IFE& SetProperty(const m2g::pb::PropertyType pt, const IFE& value) { return _properties[PropertyTypeIndex(pt)] = value; }
+		[[nodiscard]] IFE GetProperty(const m2g::pb::PropertyType pt) const override { return _properties[PropertyTypeIndex(pt)]; }
+		void SetProperty(const m2g::pb::PropertyType pt, const int32_t value) { _properties[PropertyTypeIndex(pt)] = IFE{value}; }
+		void SetProperty(const m2g::pb::PropertyType pt, FE value) override { _properties[PropertyTypeIndex(pt)] = IFE{std::move(value)}; }
+		void SetProperty(const m2g::pb::PropertyType pt, IFE value) { _properties[PropertyTypeIndex(pt)] = std::move(value); }
+		void AddPropertyMax(m2g::pb::PropertyType pt, const FE& add, const FE& maxValue);
 		void ClearProperty(const m2g::pb::PropertyType pt) { _properties[PropertyTypeIndex(pt)] = {}; }
 		void ClearProperties() { _properties = std::vector<IFE>(pb::enum_value_count<m2g::pb::PropertyType>()); }
 
@@ -195,7 +200,7 @@ namespace m2 {
 		static int ResourceTypeIndex(m2g::pb::ResourceType);
 		static int AttributeTypeIndex(m2g::pb::AttributeType);
 		static int PropertyTypeIndex(m2g::pb::PropertyType);
-		friend void FullCharacterIteratorIncrementor(Character::Iterator&);
+		friend void FullCharacterIteratorIncrementor(Iterator&);
 	};
 
 	using CharacterVariant = std::variant<CompactCharacter,FastCharacter>;
