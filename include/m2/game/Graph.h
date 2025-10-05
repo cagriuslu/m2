@@ -64,6 +64,7 @@ namespace m2 {
 		/// If there are multiple paths, the shortest one's cost is returned.
 		using ReachableNodesAndCosts = std::unordered_map<NodeT, FE>;
 		[[nodiscard]] ReachableNodesAndCosts FindNodesReachableFrom(NodeT source, FE maxCost) const {
+			// TODO add cache
 			// Check if there are any edges from the source
 			const auto source_it = _edges.find(source);
 			if (source_it == _edges.end()) { return {{source, FE::Zero()}}; } // Only return the source city
@@ -196,7 +197,7 @@ namespace m2 {
 
 		// Utilities
 
-		static std::multimap<FE, NodeT> order_by_cost(const ReachableNodesAndCosts& nodes) {
+		static std::multimap<FE, NodeT> OrderByBestCost(const ReachableNodesAndCosts& nodes) {
 			std::multimap<FE, NodeT> ordered_map;
 			for (const auto& [node, cost] : nodes) {
 				ordered_map.emplace(cost, node);

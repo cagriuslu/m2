@@ -20,7 +20,7 @@ namespace m2 {
         [[nodiscard]] Object& Owner() const;
 	};
 
-	// Filter Generators
+	// Filters
 
 	/// Generates a filter that receives a Component, and returns true if the component belongs to object_id.
 	constexpr auto IsComponentOfObject(Id object_id) { return [object_id](const Component& c) { return c.OwnerId() == object_id; }; }
@@ -28,6 +28,7 @@ namespace m2 {
 	std::function<bool(const Component&)> IsComponentOfAnyDescendant(Id parent_id);
 
 	// Transformers
+
 	constexpr Id ToOwnerId(const Component& cmp) { return cmp.OwnerId(); }
 	inline Object& ToOwner(const Component& cmp) { return cmp.Owner(); }
 }

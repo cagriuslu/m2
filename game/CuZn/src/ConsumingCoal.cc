@@ -20,7 +20,7 @@ std::set<IndustryLocation> find_closest_connected_coal_mines_with_coal(City city
 	}
 
 	// Order cities by cost
-	auto cities_ordered_by_cost = m2::Graph<City>::order_by_cost(reachable_cities);
+	auto cities_ordered_by_cost = m2::Graph<City>::OrderByBestCost(reachable_cities);
 	// Find the closest coal mines with the same lowest cost
 	std::set<IndustryLocation> industry_locations;
 	m2::Float closest_coal_mine_cost{};

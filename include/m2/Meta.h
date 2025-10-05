@@ -64,10 +64,8 @@ namespace m2 {
 
 	// Range utilities
 
-	template <typename FirstT, typename SecondT>
-	constexpr auto ToFirst(const std::pair<FirstT,SecondT>& p) { return p.first; }
-	template <typename FirstT, typename SecondT>
-	constexpr auto ToSecond(const std::pair<FirstT,SecondT>& p) { return p.second; }
+	constexpr auto ToFirst = [](const auto& pair) { return pair.first; };
+	constexpr auto ToSecond = [](const auto& pair) { return pair.second; };
 
 	template <typename FirstT, typename SecondT>
 	constexpr std::function<bool(const std::pair<FirstT,SecondT>&)> IsFirstEquals(const FirstT& f) {
@@ -92,6 +90,15 @@ namespace m2 {
 		return [&s](const std::pair<FirstT,SecondT>& p) -> bool {
 			return p.second != s;
 		};
+	}
+
+	// Map utilities
+
+	template <typename ValueT>
+	constexpr std::vector<ValueT> ToValues(const auto& map) {
+		std::vector<ValueT> values;
+		std::transform(map.begin(), map.end(), std::back_inserter(values), [](const auto& pair) -> ValueT { return pair.second; });
+		return values;
 	}
 
 	// Converts a range into std::vector
