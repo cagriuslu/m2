@@ -37,6 +37,18 @@ ConnectionToClient* ServerActor::ClientList::Find(const network::IpAddressAndPor
 }
 ConnectionToClient* ServerActor::ClientList::Add(const network::IpAddressAndPort& address, MessagePasser& msgPasser) {
 	_clients.emplace_back(address, msgPasser);
+	// Prepare peer details
+	pb::LockstepPeerDetails peerDetails;
+	for (const auto& client : _clients) {
+		auto* peer = peerDetails.add_peers();
+		peer->set_ip(client.GetAddressAndPort().ipAddress.GetInNetworkOrder());
+		peer->set_port(client.GetAddressAndPort().port.GetInNetworkOrder());
+	}
+	// Publish details
+	for (int i = 0; i < I(_clients.size()); ++i) {
+		peerDetails.set_receiver_index(i);
+		_clients[i].PublishPeerDetails(peerDetails);
+	}
 	return &_clients.back();
 }
 
@@ -75,7 +87,7 @@ bool ServerActor::operator()(MessageBox<ServerActorInput>& inbox, MessageBox<Ser
 			LOG_ERROR("Unrecoverable error while reading", success.error());
 			return false;
 		}
-		// Process messages
+		// Process all messages
 		while (not messages.empty()) {
 			const auto msg = std::move(messages.front()); messages.pop();
 			if (msg.message.type_case() == pb::LockstepMessage::TYPE_NOT_SET) {
@@ -118,6 +130,7 @@ bool ServerActor::operator()(MessageBox<ServerActorInput>& inbox, MessageBox<Ser
 	}
 
 	// TODO gather and queue outgoing messages
+
 	if (not writeableSockets.empty()) {
 		if (const auto success = _messagePasser->SendOutgoingPackets(); not success) {
 			LOG_ERROR("Unrecoverable error while sending", success.error());

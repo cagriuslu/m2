@@ -49,7 +49,7 @@ namespace m2 {
 		mutable std::optional<VecF> _mouse_position_world_m;
 		mutable std::optional<VecF> _screen_center_to_mouse_position_m;  // Doesn't mean much in 2.5D mode
 
-		std::variant<std::monostate, TurnBasedServerComponents, network::TurnBasedRealClientThread, multiplayer::lockstep::ServerComponents> _multiPlayerComponents;
+		std::variant<std::monostate, TurnBasedServerComponents, network::TurnBasedRealClientThread, multiplayer::lockstep::ServerComponents, multiplayer::lockstep::ClientActorInterface> _multiPlayerComponents;
 		bool _server_update_necessary{}, _server_update_with_shutdown{};
 		std::optional<network::SequenceNo> _lastSentOrReceivedServerUpdateSequenceNo;
 
@@ -125,6 +125,7 @@ namespace m2 {
 		void_expected HostLockstepGame(unsigned max_connection_count);
 		/// For client
 		void_expected JoinTurnBasedGame(const std::string& addr);
+		void_expected JoinLockstepGame(const std::string& addr);
 		/// For client
 		void LeaveGame();
 		/// For server
@@ -138,6 +139,7 @@ namespace m2 {
 		network::TurnBasedRealClientThread& TurnBasedRealClientThread() { return std::get<network::TurnBasedRealClientThread>(_multiPlayerComponents); }
 		multiplayer::lockstep::ServerActorInterface& GetLockstepServerActor() { return *std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).serverActorInterface; }
 		multiplayer::lockstep::ClientActorInterface& GetLockstepHostClientActor() { return *std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).hostClientActorInterface; }
+		multiplayer::lockstep::ClientActorInterface& GetLockstepGuestClientActor() { return std::get<multiplayer::lockstep::ClientActorInterface>(_multiPlayerComponents); }
 		std::optional<network::SequenceNo> LastServerUpdateSequenceNo() const { return _lastSentOrReceivedServerUpdateSequenceNo; }
 		int TotalPlayerCount();
 		int SelfIndex();

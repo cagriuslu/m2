@@ -3,6 +3,16 @@ package m2.pb;
 
 import "m2g_Lockstep.proto";
 
+message LockstepPeer {
+  fixed32 ip = 1; // Network order
+  fixed32 port = 2; // Network order
+}
+message LockstepPeerDetails {
+  // Index of the receiver in the peer details array
+  int32 receiver_index = 1;
+  repeated LockstepPeer peers = 2;
+}
+
 message LockstepPlayerInputs {
   fixed32 timecode = 1;
   repeated m2g.pb.LockstepPlayerInput player_inputs = 2;
@@ -11,13 +21,15 @@ message LockstepPlayerInputs {
 // Each LockstepMessage has a different SequenceNo starting from 1.
 message LockstepMessage {
   oneof type {
-    // When a client is ready, this option is used to signal this to the server.
-    bool set_ready_state = 1;
-    // When all clients are ready, this option is used by the server to share the game init parameters with the clients.
-    m2g.pb.LockstepGameInitParams freeze_lobby_with_init_params = 2;
-    // Once the game begins, this option is filled and sent to other peers periodically by the clients, even if the
-    // player hasn't taken any action.
-    LockstepPlayerInputs player_inputs = 3;
+    LockstepPeerDetails peer_details = 2;
+    // A message type sent to the server from clients. It is used to signal readiness to the server.
+    bool set_ready_state = 3;
+    // A message type sent to the clients from the server. When all clients are ready and the host starts the game, this
+    // message is used to share the game init parameters with the clients, effectively starting the game for them.
+    m2g.pb.LockstepGameInitParams freeze_lobby_with_init_params = 4;
+    // A message type send to the everyone by the clients. Once the game begins, this message is sent to every other peer
+    // periodically, even if the player hasn't taken any action.
+    LockstepPlayerInputs player_inputs = 5;
   }
 }
 
@@ -66,7 +78,7 @@ message LockstepUdpPacket {
 
 message LockstepPlayerInputHashHelper {
   int32 prev_hash = 1;
-  fixed32 ip = 2;
-  fixed32 port = 3;
+  fixed32 ip = 2; // Network order
+  fixed32 port = 3; // Network order
   LockstepPlayerInputs player_inputs = 4;
 }

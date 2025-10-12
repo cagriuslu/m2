@@ -72,6 +72,8 @@ namespace m2::multiplayer::lockstep {
 		// Accessors
 
 		[[nodiscard]] network::UdpSocket& GetSocket() { return _socket; }
+		/// Returns the connection statistics with the peer whose address is given. Returns null if no messages have
+		/// been sent to or received from the peer.
 		[[nodiscard]] const ConnectionStatistics* GetConnectionStatistics(const network::IpAddressAndPort& address) const;
 
 		// Modifiers

@@ -23,6 +23,8 @@ namespace m2::multiplayer::lockstep {
 		// Accessors
 
 		network::UdpSocket& GetSocket() { return _smallMessagePasser.GetSocket(); }
+		/// Returns the connection statistics with the peer whose address is given. Returns null if no messages have
+		/// been sent to or received from the peer.
 		const ConnectionStatistics* GetConnectionStatistics(const network::IpAddressAndPort& address) const { return _smallMessagePasser.GetConnectionStatistics(address); }
 
 		// Modifiers

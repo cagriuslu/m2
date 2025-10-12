@@ -30,6 +30,7 @@ namespace m2::multiplayer::lockstep {
 
 		// Modifiers
 
+		void PublishPeerDetails(const pb::LockstepPeerDetails&);
 		void SetReadyState(const bool state) { _readyState = state; }
 		void SetLobbyAsFrozen(const m2g::pb::LockstepGameInitParams&);
 		void StoreRunningInputHash(const pb::LockstepPlayerInputs&);

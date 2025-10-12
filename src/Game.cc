@@ -228,6 +228,17 @@ m2::void_expected m2::Game::JoinTurnBasedGame(const std::string& addr) {
 	_multiPlayerComponents.emplace<network::TurnBasedRealClientThread>(addr);
 	return {};
 }
+m2::void_expected m2::Game::JoinLockstepGame(const std::string& addr) {
+	if (not std::holds_alternative<std::monostate>(_multiPlayerComponents)) {
+		throw M2_ERROR("Joining game requires no other multiplayer threads to exist");
+	}
+
+	_multiPlayerComponents.emplace<multiplayer::lockstep::ClientActorInterface>(network::IpAddressAndPort{
+		network::IpAddress::CreateFromString(addr),
+		network::Port::CreateFromHostOrder(1162)
+	});
+	return {};
+}
 void m2::Game::LeaveGame() {
 	_multiPlayerComponents = std::monostate{};
 }
@@ -392,8 +403,7 @@ m2::void_expected m2::Game::LoadTurnBasedMultiPlayerAsGuest(
 	auto expect_server_update = M2_GAME.TurnBasedRealClientThread().process_server_update();
 	m2ReflectUnexpected(expect_server_update);
 	_lastSentOrReceivedServerUpdateSequenceNo = expect_server_update->second;
-	m2ReturnUnexpectedUnless(expect_server_update->first == network::ServerUpdateStatus::PROCESSED,
-			"Unexpected TurnBasedServerUpdate status");
+	m2ReturnUnexpectedUnless(expect_server_update->first == network::ServerUpdateStatus::PROCESSED, "Unexpected TurnBasedServerUpdate status");
 	return {};
 }
 m2::void_expected m2::Game::LoadLockstep(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& levelName, const m2g::pb::LockstepGameInitParams& gameInitParams) {

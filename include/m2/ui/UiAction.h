@@ -130,4 +130,7 @@ namespace m2 {
 	inline UiAction MakeClearStackAction() { return UiAction{ClearStack{}}; }
 
 	inline UiAction MakeQuitAction() { return UiAction{Quit{}}; }
+
+	/// Converts ReturnAction to ContinueAction. Other return types are passed on unmodified.
+	inline UiAction ConvertReturnActionToContinue(UiAction&& value) { return value.IsReturn() ? MakeContinueAction() : std::move(value); }
 }  // namespace m2

@@ -29,6 +29,7 @@ const m2g::pb::LockstepGameInitParams* ClientActorInterface::GetGameInitParams()
 }
 
 void ClientActorInterface::SetReadyState(const bool state) {
+	_lastSetReadyState = state;
 	GetActorInbox().PushMessage(ClientActorInput{
 		.variant = ClientActorInput::SetReadyState{
 			.state = state

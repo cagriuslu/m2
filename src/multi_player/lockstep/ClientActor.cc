@@ -47,11 +47,11 @@ bool ClientActor::operator()(MessageBox<ClientActorInput>& inbox, MessageBox<Cli
 	}
 
 	// Gather outgoing messages from connection managers
-	const auto firstPlayerInputAvailable = not _unsentPlayerInputs.empty() && not _lastPlayerInputsSentAt;
+	const auto firstEverPlayerInputAvailable = not _unsentPlayerInputs.empty() && not _lastPlayerInputsSentAt;
 	const auto timeToSendPlayerInputs = IsAllPlayerInputsReceived() && _lastPlayerInputsSentAt && _lastPlayerInputsSentAt->HasTimePassed(M2G_PROXY.lockstepGameTickPeriod);
-	if (firstPlayerInputAvailable || timeToSendPlayerInputs) {
+	if (firstEverPlayerInputAvailable || timeToSendPlayerInputs) {
 		const auto timecode = _nextTimecode++;
-		if (firstPlayerInputAvailable) {
+		if (firstEverPlayerInputAvailable) {
 			LOG_DEBUG("First player inputs are available with timecode, sending to peers...", timecode);
 		} else {
 			LOG_DEBUG("It is time to send inputs to peers with timecode", timecode);
@@ -59,7 +59,7 @@ bool ClientActor::operator()(MessageBox<ClientActorInput>& inbox, MessageBox<Cli
 		_serverConnection->QueueOutgoingMessages(timecode, &_unsentPlayerInputs);
 		// TODO send also to other peers
 
-		if (firstPlayerInputAvailable) {
+		if (firstEverPlayerInputAvailable) {
 			LOG_DEBUG("Waiting after first player inputs for main thread to catch up...");
 			std::this_thread::sleep_for(std::chrono::seconds{1});
 		}
@@ -106,6 +106,7 @@ void ClientActor::ProcessOneMessageFromInbox(MessageBox<ClientActorInput>& inbox
 			const auto& readyState = std::get<ClientActorInput::SetReadyState>(msg.variant).state;
 			_serverConnection->SetReadyState(readyState);
 		} else if (std::holds_alternative<ClientActorInput::QueuePlayerInput>(msg.variant)) {
+			// TODO verify that the server connection state is appropriate
 			_serverConnection->MarkGameAsStarted(); // Mark game as started on this client
 			auto& playerInput = std::get<ClientActorInput::QueuePlayerInput>(msg.variant);
 			_unsentPlayerInputs.emplace_back(std::move(playerInput.playerInput));

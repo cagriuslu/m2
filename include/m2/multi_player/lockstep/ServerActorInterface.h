@@ -13,6 +13,7 @@ namespace m2::multiplayer::lockstep {
 
 		// Accessors
 
+		/// Returns true if the server lobby is open.
 		bool IsLobbyOpen();
 		/// Checks if lobby freeze message is delivered to all clients. Blocks until the server actor responds.
 		bool IsLobbyFrozenForEveryone();

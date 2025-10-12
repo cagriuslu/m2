@@ -7,6 +7,37 @@ using namespace m2::multiplayer::lockstep;
 
 namespace {
 	constexpr int N_RESPONSES_TO_ASSUME_CONNECTION = 3;
+
+	/// A concept that requires a state to have a peerList of type PeerList
+	template <typename StateT>
+	concept StateWithPeerList = std::same_as<decltype(std::declval<StateT>().peerList), ConnectionToServer::PeerList>;
+}
+
+void ConnectionToServer::PeerList::Update(const pb::LockstepPeerDetails& details, MessagePasser& messagePasser) {
+	_peers.resize(details.peers_size());
+	for (int i = 0; i < details.peers_size(); ++i) {
+		if (i == details.receiver_index()) {
+			if (_peers[i]) {
+				throw M2_ERROR("Replacing peers is not yet supported");
+			}
+			LOG_INFO("Self index is received", i);
+			_peers[i] = std::nullopt; // Self
+		} else {
+			const auto& newPeer = details.peers(i);
+			const auto newPeerIpPort = network::IpAddressAndPort{
+				.ipAddress = network::IpAddress::CreateFromNetworkOrder(newPeer.ip()),
+				.port = network::Port::CreateFromNetworkOrder(newPeer.port())
+			};
+			if (_peers[i]) {
+				if (_peers[i]->GetAddressAndPort() != newPeerIpPort) {
+					throw M2_ERROR("Replacing peers is not yet supported");
+				}
+			} else {
+				LOG_INFO("Adding a new peer with index", newPeerIpPort, i);
+				_peers[i].emplace(ConnectionToPeer{newPeerIpPort, messagePasser});
+			}
+		}
+	}
 }
 
 ConnectionToServer::ConnectionToServer(network::IpAddressAndPort serverAddress, MessagePasser& messagePasser, MessageBox<ClientActorOutput>& clientOutbox)
@@ -42,7 +73,11 @@ void ConnectionToServer::MarkGameAsStarted() {
 		// Already started
 	} else if (std::holds_alternative<LobbyFrozen>(_state.Get())) {
 		LOG_INFO("Marking game as started...");
-		_state.Emplace(GameStarted{});
+		_state.Mutate([](auto& state) {
+			state.template emplace<GameStarted>(GameStarted{
+				.peerList = std::move(std::get<LobbyFrozen>(state).peerList)
+			});
+		});
 	} else {
 		throw M2_ERROR("Attempt to mark game as started outside of frozen lobby state");
 	}
@@ -57,21 +92,23 @@ void ConnectionToServer::QueueOutgoingMessages(const std::optional<network::Time
 		QueueOutgoingMessage(std::move(msg));
 	};
 
-	const ConnectionStatistics* connStats = _messagePasser.GetConnectionStatistics(_serverAddressAndPort);
-
 	if (std::holds_alternative<SearchForServer>(_state.Get())) {
-		if (not connStats) {
+		if (const auto* connStats = _messagePasser.GetConnectionStatistics(_serverAddressAndPort); not connStats) {
 			LOG_DEBUG("Queueing first ping toward server");
 			QueueOutgoingMessage({});
 		} else if (const auto nAckedMsgs = connStats->GetTotalAckedOutgoingSmallMessages(); nAckedMsgs < N_RESPONSES_TO_ASSUME_CONNECTION) {
-			// Check if previous ping have been ACKed
+			// Not enough ping-pongs have been made with the server. Ping the server if all previous pings have been ACKed.
 			if (connStats->GetTotalQueuedOutgoingSmallMessages() == nAckedMsgs) {
 				LOG_DEBUG("Queueing another ping toward server");
 				QueueOutgoingMessage({});
 			}
 		} else { // nAckedMsgs == N_RESPONSES_TO_ASSUME_CONNECTION
-			// Enough pings have been made
-			_state.Emplace(WaitingInLobby{});
+			// Enough ping-pongs have been made with the server. Assume that we're placed in the server's lobby.
+			_state.Mutate([&](auto& state) {
+				state.template emplace<WaitingInLobby>(WaitingInLobby{
+					.peerList = std::move(std::get<SearchForServer>(state).peerList)
+				});
+			});
 		}
 	} else if (std::holds_alternative<LobbyFrozen>(_state.Get()) && timecode && unsentPlayerInputs) {
 		queuePlayerInputs(*timecode, *unsentPlayerInputs);
@@ -80,13 +117,23 @@ void ConnectionToServer::QueueOutgoingMessages(const std::optional<network::Time
 	}
 }
 void ConnectionToServer::DeliverIncomingMessage(pb::LockstepMessage&& msg) {
-	if (msg.has_set_ready_state()) {
-		LOG_WARN("Server sent readiness message");
+	if (msg.has_peer_details()) {
+		_state.Mutate([this, &msg](auto& state) {
+			std::visit(overloaded{
+				[this, &msg](StateWithPeerList auto& s) { s.peerList.Update(msg.peer_details(), _messagePasser); },
+				[](const auto&) { throw M2_ERROR("Received peer details during an invalid state"); }
+			}, state);
+		});
+	} else if (msg.has_set_ready_state()) {
+		LOG_WARN("Server sent unexpected message: Ready state");
 	} else if (msg.has_freeze_lobby_with_init_params()) {
 		if (std::holds_alternative<WaitingInLobby>(_state.Get())) {
 			LOG_INFO("Received lobby freeze message, closing lobby");
-			_state.Emplace(LobbyFrozen{
-				.gameInitParams = msg.freeze_lobby_with_init_params()
+			_state.Mutate([&](auto& state) {
+				state.template emplace<LobbyFrozen>(LobbyFrozen{
+					.gameInitParams = msg.freeze_lobby_with_init_params(),
+					.peerList = std::move(std::get<WaitingInLobby>(state).peerList)
+				});
 			});
 		} else {
 			LOG_WARN("Received lobby freeze message when the lobby isn't open");

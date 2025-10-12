@@ -1,6 +1,7 @@
 #pragma once
 #include "ClientActorInputOutput.h"
 #include "ConnectionStatistics.h"
+#include "ConnectionToPeer.h"
 #include "MessagePasser.h"
 #include <m2/network/IpAddressAndPort.h>
 #include <m2/mt/actor/MessageBox.h>
@@ -13,14 +14,28 @@
 namespace m2::multiplayer::lockstep {
 	class ConnectionToServer final {
 	public:
-		struct SearchForServer {};
+		class PeerList {
+			std::vector<std::optional<ConnectionToPeer>> _peers;
+		public:
+			// Modifiers
+
+			void Update(const pb::LockstepPeerDetails&, MessagePasser& messagePasser);
+		};
+
+		struct SearchForServer {
+			PeerList peerList;
+		};
 		struct WaitingInLobby {
 			bool readyState{};
+			PeerList peerList;
 		};
 		struct LobbyFrozen {
 			m2g::pb::LockstepGameInitParams gameInitParams;
+			PeerList peerList;
 		};
-		struct GameStarted {};
+		struct GameStarted {
+			PeerList peerList;
+		};
 		using State = std::variant<SearchForServer,WaitingInLobby,LobbyFrozen,GameStarted>;
 
 	private:
@@ -37,7 +52,7 @@ namespace m2::multiplayer::lockstep {
 
 		// Modifiers
 
-		void SetReadyState(bool state);
+		void SetReadyState(bool readyState);
 		void MarkGameAsStarted();
 		void QueueOutgoingMessages(std::optional<network::Timecode> timecode, const std::deque<m2g::pb::LockstepPlayerInput>*);
 		void DeliverIncomingMessage(pb::LockstepMessage&& msg);
