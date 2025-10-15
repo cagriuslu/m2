@@ -20,6 +20,9 @@
 // TODO example, by putting those calls inside if blocks.
 
 #define LOG_TRACE(msg, ...) ::m2::detail::Log(::m2::pb::LogLevel::TRC, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
+#define LOG_GRAPHICS(msg, ...) ::m2::detail::Log(::m2::pb::LogLevel::GFX, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
+#define LOG_PHYSICS(msg, ...) ::m2::detail::Log(::m2::pb::LogLevel::PHY, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
+#define LOG_NETWORK(msg, ...) ::m2::detail::Log(::m2::pb::LogLevel::NET, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
 #define LOG_DEBUG(msg, ...) ::m2::detail::Log(::m2::pb::LogLevel::DBG, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
 #define LOG_INFO(msg, ...) ::m2::detail::Log(::m2::pb::LogLevel::INF, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
 #define LOG_WARN(msg, ...) ::m2::detail::Log(::m2::pb::LogLevel::WRN, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
@@ -27,6 +30,9 @@
 #define LOG_FATAL(msg, ...) ::m2::detail::Log(::m2::pb::LogLevel::FTL, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
 
 #define LOGF_TRACE(fmt, ...) ::m2::detail::LogF(::m2::pb::LogLevel::TRC, __FILE__, __LINE__, (fmt), ##__VA_ARGS__)
+#define LOGF_GRAPHICS(fmt, ...) ::m2::detail::LogF(::m2::pb::LogLevel::GFX, __FILE__, __LINE__, (fmt), ##__VA_ARGS__)
+#define LOGF_PHYSICS(fmt, ...) ::m2::detail::LogF(::m2::pb::LogLevel::PHY, __FILE__, __LINE__, (fmt), ##__VA_ARGS__)
+#define LOGF_NETWORK(fmt, ...) ::m2::detail::LogF(::m2::pb::LogLevel::NET, __FILE__, __LINE__, (fmt), ##__VA_ARGS__)
 #define LOGF_DEBUG(fmt, ...) ::m2::detail::LogF(::m2::pb::LogLevel::DBG, __FILE__, __LINE__, (fmt), ##__VA_ARGS__)
 #define LOGF_INFO(fmt, ...) ::m2::detail::LogF(::m2::pb::LogLevel::INF, __FILE__, __LINE__, (fmt), ##__VA_ARGS__)
 #define LOGF_WARN(fmt, ...) ::m2::detail::LogF(::m2::pb::LogLevel::WRN, __FILE__, __LINE__, (fmt), ##__VA_ARGS__)
