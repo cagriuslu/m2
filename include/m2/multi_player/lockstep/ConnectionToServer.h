@@ -17,6 +17,13 @@ namespace m2::multiplayer::lockstep {
 		class PeerList {
 			std::vector<std::optional<ConnectionToPeer>> _peers;
 		public:
+			// Accessors
+
+			auto begin() { return _peers.begin(); }
+			auto end() { return _peers.end(); }
+			auto cbegin() const { return _peers.cbegin(); }
+			auto cend() const { return _peers.cend(); }
+
 			// Modifiers
 
 			void Update(const pb::LockstepPeerDetails&, MessagePasser& messagePasser);

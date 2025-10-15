@@ -14,6 +14,7 @@ namespace m2::multiplayer::lockstep {
 			std::vector<ConnectionToClient> _clients;
 		public:
 			// Accessors
+
 			auto begin() { return _clients.begin(); }
 			auto end() { return _clients.end(); }
 			auto cbegin() const { return _clients.cbegin(); }

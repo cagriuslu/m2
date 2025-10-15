@@ -110,6 +110,12 @@ void ConnectionToServer::QueueOutgoingMessages(const std::optional<network::Time
 				});
 			});
 		}
+	} else if (std::holds_alternative<WaitingInLobby>(_state.Get())) {
+		_state.MutateNoSideEffect([](auto& state) {
+			for (auto& peer : std::get<WaitingInLobby>(state).peerList) {
+				if (peer) { peer->QueueOutgoingMessages(); }
+			}
+		});
 	} else if (std::holds_alternative<LobbyFrozen>(_state.Get()) && timecode && unsentPlayerInputs) {
 		queuePlayerInputs(*timecode, *unsentPlayerInputs);
 	} else if (std::holds_alternative<GameStarted>(_state.Get()) && timecode && unsentPlayerInputs) {
