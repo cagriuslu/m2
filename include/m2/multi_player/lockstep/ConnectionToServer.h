@@ -16,6 +16,7 @@ namespace m2::multiplayer::lockstep {
 	public:
 		class PeerList {
 			std::vector<std::optional<ConnectionToPeer>> _peers;
+			bool _connectionStateRequiresReporting{true};
 		public:
 			// Accessors
 
@@ -27,6 +28,7 @@ namespace m2::multiplayer::lockstep {
 			// Modifiers
 
 			void Update(const pb::LockstepPeerDetails&, MessagePasser& messagePasser);
+			void ReportIfAllPeersConnected(MessagePasser& messagePasser, const network::IpAddressAndPort& serverAddressAndPort);
 		};
 
 		struct SearchForServer {

@@ -112,6 +112,17 @@ bool ServerActor::operator()(MessageBox<ServerActorInput>& inbox, MessageBox<Ser
 						});
 					}
 				}
+			} else if (msg.message.all_peers_reachable()) {
+				// Peer reachability received, only allowed for known clients when the lobby is open
+				if (std::holds_alternative<LobbyOpen>(_state->Get())) {
+					const auto& lobby = std::get<LobbyOpen>(_state->Get());
+					if (lobby.clientList.Find(msg.sender)) {
+						LOG_INFO("Marking peer as reachable to every other peer", msg.sender);
+						_state->Mutate([&msg](State& state) {
+							std::get<LobbyOpen>(state).clientList.Find(msg.sender)->MarkAsReachableToAllPeers();
+						});
+					}
+				}
 			} else if (msg.message.has_player_inputs()) {
 				if (std::holds_alternative<LobbyFrozen>(_state->Get())) {
 					_state->Mutate([](State& state) {
@@ -148,7 +159,7 @@ void ServerActor::ProcessOneMessageFromInbox(MessageBox<ServerActorInput>& inbox
 			if (std::holds_alternative<LobbyOpen>(_state->Get())) {
 				const auto& lobby = std::get<LobbyOpen>(_state->Get());
 				if (std::ranges::all_of(lobby.clientList.cbegin(), lobby.clientList.cend(), [](const ConnectionToClient& client) {
-					return client.GetReadyState();
+					return client.GetReadyState() && client.GetIfAllPeersReachable();
 				})) {
 					LOG_INFO("Freezing lobby");
 					_state->Mutate([&lobbyFreezeMsg](State& state) {
@@ -158,7 +169,7 @@ void ServerActor::ProcessOneMessageFromInbox(MessageBox<ServerActorInput>& inbox
 						}
 					});
 				} else {
-					LOG_INFO("Lobby closure requested but not every client is ready");
+					LOG_INFO("Lobby closure requested but not every client is ready or connected to each other");
 				}
 			} else {
 				throw M2_ERROR("Lobby closure requested while lobby isn't open");

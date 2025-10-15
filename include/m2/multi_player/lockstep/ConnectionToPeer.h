@@ -18,6 +18,7 @@ namespace m2::multiplayer::lockstep {
 		// Accessors
 
 		[[nodiscard]] const network::IpAddressAndPort& GetAddressAndPort() const { return _addressAndPort; }
+		[[nodiscard]] bool IsConnected() const { return std::holds_alternative<ConnectedToPeer>(_state); }
 
 		// Modifiers
 

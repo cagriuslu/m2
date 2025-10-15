@@ -38,6 +38,28 @@ void ConnectionToServer::PeerList::Update(const pb::LockstepPeerDetails& details
 			}
 		}
 	}
+	_connectionStateRequiresReporting = true;
+}
+void ConnectionToServer::PeerList::ReportIfAllPeersConnected(MessagePasser& messagePasser, const network::IpAddressAndPort& serverAddressAndPort) {
+	if (_connectionStateRequiresReporting) {
+		bool isAllConnected = true;
+		for (const auto& peer : _peers) {
+			if (peer && peer->IsConnected() == false) {
+				isAllConnected = false;
+				break;
+			}
+		}
+		if (isAllConnected) {
+			pb::LockstepMessage msg;
+			msg.set_all_peers_reachable(true);
+			LOG_INFO("Reporting all peers as reachable");
+			messagePasser.QueueMessage(MessageAndReceiver{
+				.message = std::move(msg),
+				.receiver = serverAddressAndPort
+			});
+			_connectionStateRequiresReporting = false;
+		}
+	}
 }
 
 ConnectionToServer::ConnectionToServer(network::IpAddressAndPort serverAddress, MessagePasser& messagePasser, MessageBox<ClientActorOutput>& clientOutbox)
@@ -111,8 +133,10 @@ void ConnectionToServer::QueueOutgoingMessages(const std::optional<network::Time
 			});
 		}
 	} else if (std::holds_alternative<WaitingInLobby>(_state.Get())) {
-		_state.MutateNoSideEffect([](auto& state) {
-			for (auto& peer : std::get<WaitingInLobby>(state).peerList) {
+		_state.MutateNoSideEffect([this](auto& state) {
+			auto& peerList = std::get<WaitingInLobby>(state).peerList;
+			peerList.ReportIfAllPeersConnected(_messagePasser, _serverAddressAndPort);
+			for (auto& peer : peerList) {
 				if (peer) { peer->QueueOutgoingMessages(); }
 			}
 		});

@@ -15,6 +15,8 @@ void ConnectionToClient::PublishPeerDetails(const pb::LockstepPeerDetails& detai
 	msg.mutable_peer_details()->CopyFrom(details);
 	LOG_INFO("Queueing peer details to client", _addressAndPort);
 	QueueOutgoingMessage(std::move(msg));
+	// Clear peer reachability state
+	_allPeersReachable = false;
 }
 void ConnectionToClient::SetLobbyAsFrozen(const m2g::pb::LockstepGameInitParams& gameInitParams) {
 	pb::LockstepMessage msg;

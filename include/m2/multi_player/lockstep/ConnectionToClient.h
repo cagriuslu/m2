@@ -13,7 +13,7 @@ namespace m2::multiplayer::lockstep {
 
 		const network::IpAddressAndPort _addressAndPort;
 		MessagePasser& _messagePasser;
-		bool _readyState{};
+		bool _readyState{}, _allPeersReachable{};
 		std::list<Hash> _runningInputHash;
 
 	public:
@@ -27,11 +27,13 @@ namespace m2::multiplayer::lockstep {
 		[[nodiscard]] const network::IpAddressAndPort& GetAddressAndPort() const { return _addressAndPort; }
 		[[nodiscard]] bool IsAllOutgoingMessagesDelivered() const { return _messagePasser.GetConnectionStatistics(_addressAndPort)->IsAllOutgoingSmallMessagesDelivered(); }
 		[[nodiscard]] bool GetReadyState() const { return _readyState; }
+		[[nodiscard]] bool GetIfAllPeersReachable() const { return _allPeersReachable; }
 
 		// Modifiers
 
 		void PublishPeerDetails(const pb::LockstepPeerDetails&);
 		void SetReadyState(const bool state) { _readyState = state; }
+		void MarkAsReachableToAllPeers() { _allPeersReachable = true; }
 		void SetLobbyAsFrozen(const m2g::pb::LockstepGameInitParams&);
 		void StoreRunningInputHash(const pb::LockstepPlayerInputs&);
 
