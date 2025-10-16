@@ -140,6 +140,7 @@ namespace m2 {
 		multiplayer::lockstep::ServerActorInterface& GetLockstepServerActor() { return *std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).serverActorInterface; }
 		multiplayer::lockstep::ClientActorInterface& GetLockstepHostClientActor() { return *std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).hostClientActorInterface; }
 		multiplayer::lockstep::ClientActorInterface& GetLockstepGuestClientActor() { return std::get<multiplayer::lockstep::ClientActorInterface>(_multiPlayerComponents); }
+		multiplayer::lockstep::ClientActorInterface& GetLockstepClientActor();
 		std::optional<network::SequenceNo> LastServerUpdateSequenceNo() const { return _lastSentOrReceivedServerUpdateSequenceNo; }
 		int GetTotalPlayerCount();
 		int GetSelfIndex();

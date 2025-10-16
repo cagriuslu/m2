@@ -281,6 +281,15 @@ m2::network::TurnBasedBotClientThread& m2::Game::FindBot(const int receiver_inde
 	return *it;
 }
 
+m2::multiplayer::lockstep::ClientActorInterface& m2::Game::GetLockstepClientActor() {
+	if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)) {
+		return *std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).hostClientActorInterface;
+	}
+	if (std::holds_alternative<multiplayer::lockstep::ClientActorInterface>(_multiPlayerComponents)) {
+		return std::get<multiplayer::lockstep::ClientActorInterface>(_multiPlayerComponents);
+	}
+	throw M2_ERROR("Not a lockstep multiplayer game");
+}
 int m2::Game::GetTotalPlayerCount() {
 	if (IsTurnBasedServer()) {
 		return ServerThread().GetClientCount();
@@ -436,7 +445,7 @@ m2::void_expected m2::Game::LoadLockstep(const std::variant<std::filesystem::pat
 	_level.emplace();
 
 	// Make sure the client state is proper. Game should only be loaded when the lobby is frozen.
-	if (not GetLockstepHostClientActor().IsLobbyFrozen()) {
+	if (not GetLockstepClientActor().IsLobbyFrozen()) {
 		throw M2_ERROR("Unexpected lockstep client actor state");
 	}
 	LOG_INFO("Loading lockstep level...");
@@ -445,7 +454,7 @@ m2::void_expected m2::Game::LoadLockstep(const std::variant<std::filesystem::pat
 	m2ReflectUnexpected(success);
 
 	// Queue an empty player input to start the game
-	GetLockstepHostClientActor().QueuePlayerInput({});
+	GetLockstepClientActor().QueuePlayerInput({});
 
 	return {};
 }
