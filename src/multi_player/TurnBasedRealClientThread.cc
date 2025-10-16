@@ -94,11 +94,11 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::network::SequenceNo>>
 		// Only do verification as level initialization should have initialized the same exact game state
 		const auto& server_update = _last_processed_server_update->second;
 
-		if (M2G_PROXY.multiPlayerObjectIds.size() != Z(server_update.player_object_ids_size())) {
+		if (M2_LEVEL.multiPlayerObjectIds.size() != Z(server_update.player_object_ids_size())) {
 			return make_unexpected("Server and local player count doesn't match");
 		}
 
-		if (M2_LEVEL.playerId != M2G_PROXY.multiPlayerObjectIds[server_update.receiver_index()]) {
+		if (M2_LEVEL.playerId != M2_LEVEL.multiPlayerObjectIds[server_update.receiver_index()]) {
 			return make_unexpected("Player ID doesn't match the ID found in local player list");
 		}
 

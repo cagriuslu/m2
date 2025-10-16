@@ -281,7 +281,7 @@ m2::network::TurnBasedBotClientThread& m2::Game::FindBot(const int receiver_inde
 	return *it;
 }
 
-int m2::Game::TotalPlayerCount() {
+int m2::Game::GetTotalPlayerCount() {
 	if (IsTurnBasedServer()) {
 		return ServerThread().GetClientCount();
 	}
@@ -291,7 +291,7 @@ int m2::Game::TotalPlayerCount() {
 	throw M2_ERROR("Not a multiplayer game");
 }
 
-int m2::Game::SelfIndex() {
+int m2::Game::GetSelfIndex() {
 	if (IsTurnBasedServer()) {
 		return 0;
 	}
@@ -301,7 +301,7 @@ int m2::Game::SelfIndex() {
 	throw M2_ERROR("Not a multiplayer game");
 }
 
-int m2::Game::TurnHolderIndex() {
+int m2::Game::GetTurnBasedTurnHolderIndex() {
 	if (IsTurnBasedServer()) {
 		return ServerThread().GetTurnHolderIndex();
 	}

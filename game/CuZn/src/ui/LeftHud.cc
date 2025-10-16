@@ -128,9 +128,9 @@ const UiPanelBlueprint left_hud_blueprint = {
 			.variant = TextBlueprint{
 				.wrapped_font_size_in_units = 2.5f,
 				.onCreate = [](MAYBE Text& self) {
-					auto text = generate_player_name(M2_GAME.SelfIndex());
+					auto text = generate_player_name(M2_GAME.GetSelfIndex());
 					self.set_text(text);
-					self.set_color(generate_player_color(M2_GAME.SelfIndex()));
+					self.set_color(generate_player_color(M2_GAME.GetSelfIndex()));
 					return MakeContinueAction();
 				}
 			}

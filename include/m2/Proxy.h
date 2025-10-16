@@ -99,14 +99,6 @@ namespace m2 {
 		void PostLockstepLevelInit(MAYBE const std::string& name, MAYBE const m2::pb::Level& level, MAYBE const m2g::pb::LockstepGameInitParams& gameInitParams) {}
 		void lockstepHandlePlayerInputs(MAYBE int playerIndex, MAYBE const std::deque<m2g::pb::LockstepPlayerInput>& inputs) {}
 
-		/// Maps 0-based client indexes to the IDs of the objects that represent a client in this game instance.
-		/// While loading the level, this vector should be filled with IDs of identical player objects.
-		/// Then in postTurnBasedLevelClientInit, M2_GAME.client_thread().receiver_index() can be queried to
-		/// learn the 0-based index of this game instance, and the corresponding object can be assigned to M2_PLAYER.
-		/// For the server, the first item would contain the ObjectId of the player.
-		/// For the client with index 1, the second item would contain the ObjectId of the player.
-		std::vector<m2::ObjectId> multiPlayerObjectIds;
-
 		/// Should be implemented from the perspective of a server. Implementation should return the new turn holder
 		/// index if the command is accepted and a TurnBasedServerUpdate is necessary. Implementation should return std::nullopt
 		/// if the command should be ignored and no TurnBasedServerUpdate is necessary. Implementation should return -1 if the

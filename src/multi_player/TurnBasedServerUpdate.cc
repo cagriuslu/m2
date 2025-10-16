@@ -8,7 +8,7 @@ m2::pb::TurnBasedNetworkMessage m2::GenerateServerUpdate(uint32_t& nextSequenceN
 	message.set_sequence_no(nextSequenceNo++);
 	message.mutable_server_update()->set_turn_holder_index(turnHolderIndex);
 
-	for (const auto playerId : M2G_PROXY.multiPlayerObjectIds) {
+	for (const auto playerId : M2_LEVEL.multiPlayerObjectIds) {
 		message.mutable_server_update()->add_player_object_ids(playerId);
 	}
 

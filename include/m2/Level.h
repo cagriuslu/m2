@@ -82,6 +82,19 @@ namespace m2 {
 		std::optional<SoundListener> leftListener, rightListener;
 		std::optional<Pathfinder> pathfinder; // Pathfinder works only on ForegroundLayer::F0 and background layers.
 
+		/// This vectors maps the index of a client (in a multiplayer game), to the ID of the object that represents a
+		/// parent for all the objects that belong to that client during the game. While loading the level, this vector
+		/// should be filled by the game code. This usually happens during postTurnBasedLevelClientInit or
+		/// PostLockstepLevelInit. Then, during the game, M2_GAME.GetSelfIndex() can be used to learn the index of this
+		/// particular game instance.
+		/// If this instance is the game server, the first element would contain the ID of the object corresponding to
+		/// the player on this game instance. The second element (index: 1) would contain the ID of the object
+		/// corresponding to the next player.
+		/// If this instance is the second player, the first element would contain the ID of the object corresponding to
+		/// the player on the game server. The second element would contain the ID of the object corresponding to the
+		/// player on this game instance.
+		std::vector<ObjectId> multiPlayerObjectIds;
+
 		std::queue<std::function<void()>> deferredActions;
 		std::variant<
 			std::monostate,

@@ -42,8 +42,8 @@ const m2::UiPanelBlueprint* m2g::Proxy::RightHudBlueprint() { return &right_hud_
 void m2g::Proxy::postTurnBasedLevelClientInit(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {
 	DEBUG_FN();
 
-	auto client_count = M2_GAME.TotalPlayerCount();
-	auto self_index = M2_GAME.SelfIndex();
+	auto client_count = M2_GAME.GetTotalPlayerCount();
+	auto self_index = M2_GAME.GetSelfIndex();
 
 	// Add human players
 	for (auto i = 0; i < client_count; ++i) {
@@ -55,7 +55,7 @@ void m2g::Proxy::postTurnBasedLevelClientInit(MAYBE const std::string& name, MAY
 			auto client_init_result = PlayerInitOtherInstance(*it);
 			m2SucceedOrThrowError(client_init_result);
 		}
-		multiPlayerObjectIds.emplace_back(it.GetId());
+		M2_LEVEL.multiPlayerObjectIds.emplace_back(it.GetId());
 		player_colors.emplace_back(generate_player_color(i));
 	}
 
@@ -135,7 +135,7 @@ void m2g::Proxy::turnBasedServerPopulate(MAYBE const std::string& name, MAYBE co
 
 std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYBE const m2g::pb::TurnBasedClientCommand& client_command) {
 	LOG_INFO("Received command from client", turn_holder_index);
-	auto turn_holder_object_id = M2G_PROXY.multiPlayerObjectIds[turn_holder_index];
+	auto turn_holder_object_id = M2_LEVEL.multiPlayerObjectIds[turn_holder_index];
 	auto& turn_holder_character = M2_LEVEL.objects[turn_holder_object_id].GetCharacter();
 
 	if (_is_liquidating) {
@@ -180,7 +180,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		}
 
 		// Save spent money to game state tracker so that it's shared among clients
-		for (int i = 0; i < M2_GAME.TotalPlayerCount(); ++i) {
+		for (int i = 0; i < M2_GAME.GetTotalPlayerCount(); ++i) {
 			auto money_spent_by_player_enum = static_cast<pb::ResourceType>(pb::MONEY_SPENT_BY_PLAYER_0 + i);
 			game_state_tracker().SetResource(money_spent_by_player_enum, 0.0f);
 		}
@@ -492,9 +492,9 @@ void m2g::Proxy::main_journey_deleter() {
 }
 
 unsigned m2g::Proxy::player_index(m2::Id id) const {
-	auto it = std::find(multiPlayerObjectIds.begin(), multiPlayerObjectIds.end(), id);
-	if (it != multiPlayerObjectIds.end()) {
-		return U(std::distance(multiPlayerObjectIds.begin(), it));
+	auto it = std::find(M2_LEVEL.multiPlayerObjectIds.begin(), M2_LEVEL.multiPlayerObjectIds.end(), id);
+	if (it != M2_LEVEL.multiPlayerObjectIds.end()) {
+		return U(std::distance(M2_LEVEL.multiPlayerObjectIds.begin(), it));
 	} else {
 		throw M2_ERROR("Invalid player ID");
 	}
@@ -504,7 +504,7 @@ m2::Character& m2g::Proxy::game_state_tracker() const {
 	return M2_LEVEL.objects[_game_state_tracker_id].GetCharacter();
 }
 int m2g::Proxy::total_card_count() const {
-	const auto player_card_lists = M2G_PROXY.multiPlayerObjectIds
+	const auto player_card_lists = M2_LEVEL.multiPlayerObjectIds
 		| std::views::transform(m2::ObjectIdToObject)
 		| std::views::transform(m2::ObjectToCharacter)
 		| std::views::transform(m2::GenerateNamedItemTypesFilter({pb::ITEM_CATEGORY_CITY_CARD, pb::ITEM_CATEGORY_INDUSTRY_CARD, pb::ITEM_CATEGORY_WILD_CARD}));
@@ -614,7 +614,7 @@ std::optional<std::pair<m2g::Proxy::PlayerIndex, m2g::pb::TurnBasedServerCommand
 	}
 
 	// Gain incomes
-	for (const auto playerId : M2G_PROXY.multiPlayerObjectIds) {
+	for (const auto playerId : M2_LEVEL.multiPlayerObjectIds) {
 		// Lookup player
 		auto& player_character = M2_LEVEL.objects[playerId].GetCharacter();
 		const auto incomePoints = m2::RoundI(player_character.GetAttribute(pb::INCOME_POINTS));
@@ -669,7 +669,7 @@ m2g::Proxy::LiquidationDetails m2g::Proxy::prepare_railroad_era() {
 
 	// Send canal era results
 	pb::TurnBasedServerCommand canal_era_result_command;
-	std::ranges::for_each(M2G_PROXY.multiPlayerObjectIds
+	std::ranges::for_each(M2_LEVEL.multiPlayerObjectIds
 		| std::views::transform(m2::ObjectIdToObject)
 		| std::views::transform(m2::ObjectToCharacter),
 		[&](const m2::Character& human_player) {
@@ -696,7 +696,7 @@ m2g::Proxy::LiquidationDetails m2g::Proxy::prepare_railroad_era() {
 	// Give roads to players
 	const auto& road_item = M2_GAME.GetNamedItem(pb::ROAD_TILE);
 	auto road_possession_limit = m2::RoundZ(road_item.GetAttribute(pb::POSSESSION_LIMIT));
-	std::ranges::for_each(M2G_PROXY.multiPlayerObjectIds
+	std::ranges::for_each(M2_LEVEL.multiPlayerObjectIds
 		| std::views::transform(m2::ObjectIdToObject)
 		| std::views::transform(m2::ObjectToCharacter),
 		[&](m2::Character& human_player) {

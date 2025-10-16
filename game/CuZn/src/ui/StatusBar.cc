@@ -16,7 +16,7 @@ RectF status_bar_window_ratio() {
 }
 
 UiPanelBlueprint generate_status_bar_blueprint() {
-	const auto turn_holder_index = M2_GAME.TurnHolderIndex();
+	const auto turn_holder_index = M2_GAME.GetTurnBasedTurnHolderIndex();
 
 	// Add player names
 	auto bp = UiPanelBlueprint{
@@ -74,7 +74,7 @@ UiPanelBlueprint generate_status_bar_blueprint() {
 		if (const auto playerIndexOfOrder = RoundI(M2G_PROXY.game_state_tracker().GetAttribute(order)); -1 < playerIndexOfOrder) {
 				bp.widgets.emplace_back(UiWidgetBlueprint{
 			// For deciding on the position, do not use the player index, use 0-based i
-			.x = 30 + (4 - M2_GAME.TotalPlayerCount()) * 10 + i * 10, .y = 0, .w = 10, .h = 5,
+			.x = 30 + (4 - M2_GAME.GetTotalPlayerCount()) * 10 + i * 10, .y = 0, .w = 10, .h = 5,
 			.border_width = 0.0f,
 			.variant = TextBlueprint{
 				.text = (playerIndexOfOrder == turn_holder_index)

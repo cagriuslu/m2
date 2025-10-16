@@ -91,8 +91,8 @@ std::vector<m2g::pb::ItemType> PrepareDrawDeck(int client_count) {
 }
 
 void Give8CardsToEachPlayer(std::vector<ItemType>& deck) {
-	for (size_t i = 0; i < M2G_PROXY.multiPlayerObjectIds.size(); ++i) {
-		const auto playerObjectId = M2G_PROXY.multiPlayerObjectIds[i];
+	for (size_t i = 0; i < M2_LEVEL.multiPlayerObjectIds.size(); ++i) {
+		const auto playerObjectId = M2_LEVEL.multiPlayerObjectIds[i];
 		m2Repeat(8) {
 			// Draw card
 			const auto cardType = deck.back();

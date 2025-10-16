@@ -14,7 +14,7 @@ RectF custom_hud_window_ratio() {
 }
 
 UiPanelBlueprint generate_custom_hud_blueprint() {
-	auto turn_holder_index = M2_GAME.TurnHolderIndex();
+	auto turn_holder_index = M2_GAME.GetTurnBasedTurnHolderIndex();
 
 	// Add player names
 	auto bp = UiPanelBlueprint{
@@ -116,7 +116,7 @@ UiPanelBlueprint generate_custom_hud_blueprint() {
 			order <= m2g::pb::FORTH_PLAYER_INDEX;
 			order = static_cast<m2g::pb::AttributeType>(I(order) + 1), ++i) {
 		if (const auto playerIndexOfOrder = RoundI(M2G_PROXY.game_state_tracker().GetAttribute(order)); -1 < playerIndexOfOrder) {
-			const auto x = 3 + (4 - M2_GAME.TotalPlayerCount()) + i;
+			const auto x = 3 + (4 - M2_GAME.GetTotalPlayerCount()) + i;
 
 			// Add player names
 			bp.widgets.emplace_back(UiWidgetBlueprint{
@@ -132,7 +132,7 @@ UiPanelBlueprint generate_custom_hud_blueprint() {
 				}
 			});
 
-			auto& chr = M2_LEVEL.objects[M2G_PROXY.multiPlayerObjectIds[playerIndexOfOrder]].GetCharacter();
+			auto& chr = M2_LEVEL.objects[M2_LEVEL.multiPlayerObjectIds[playerIndexOfOrder]].GetCharacter();
 			// Victory points
 			bp.widgets.emplace_back(UiWidgetBlueprint{
 				.x = x, .y = 1, .w = 1, .h = 1,
