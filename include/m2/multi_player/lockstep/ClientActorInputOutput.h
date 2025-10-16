@@ -17,6 +17,8 @@ namespace m2::multiplayer::lockstep {
 	struct ClientActorOutput {
 		struct ConnectionToServerStateUpdate {
 			size_t stateIndex{};
+			std::optional<int> selfIndex;
+			int totalPlayerCount{};
 		};
 		struct PlayerInputsToSimulate {
 			std::deque<m2g::pb::LockstepPlayerInput> selfPlayerInputs;

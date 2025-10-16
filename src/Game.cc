@@ -288,6 +288,15 @@ int m2::Game::GetTotalPlayerCount() {
 	if (IsRealTurnBasedClient()) {
 		return TurnBasedRealClientThread().total_player_count();
 	}
+	if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)) {
+		if (const auto& hostClientActor = std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).hostClientActorInterface) {
+			return hostClientActor->GetTotalPlayerCount();
+		}
+	}
+	if (std::holds_alternative<multiplayer::lockstep::ClientActorInterface>(_multiPlayerComponents)) {
+		const auto& guestClientActor = std::get<multiplayer::lockstep::ClientActorInterface>(_multiPlayerComponents);
+		return guestClientActor.GetTotalPlayerCount();
+	}
 	throw M2_ERROR("Not a multiplayer game");
 }
 
@@ -298,7 +307,20 @@ int m2::Game::GetSelfIndex() {
 	if (IsRealTurnBasedClient()) {
 		return TurnBasedRealClientThread().self_index();
 	}
-	throw M2_ERROR("Not a multiplayer game");
+	if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)) {
+		if (const auto& hostClientActor = std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).hostClientActorInterface) {
+			if (const auto selfIndex = hostClientActor->GetSelfIndex()) {
+				return *selfIndex;
+			}
+		}
+	}
+	if (std::holds_alternative<multiplayer::lockstep::ClientActorInterface>(_multiPlayerComponents)) {
+		const auto& guestClientActor = std::get<multiplayer::lockstep::ClientActorInterface>(_multiPlayerComponents);
+		if (const auto selfIndex = guestClientActor.GetSelfIndex()) {
+			return *selfIndex;
+		}
+	}
+	throw M2_ERROR("Not a multiplayer game or index isn't known yet");
 }
 
 int m2::Game::GetTurnBasedTurnHolderIndex() {

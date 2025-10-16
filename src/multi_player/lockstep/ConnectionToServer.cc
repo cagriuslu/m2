@@ -13,6 +13,15 @@ namespace {
 	concept StateWithPeerList = std::same_as<decltype(std::declval<StateT>().peerList), ConnectionToServer::PeerList>;
 }
 
+std::optional<int> ConnectionToServer::PeerList::GetSelfIndex() const {
+	for (int i = 0; i < I(_peers.size()); ++i) {
+		if (not _peers[i]) {
+			return i;
+		}
+	}
+	return std::nullopt;
+}
+
 void ConnectionToServer::PeerList::Update(const pb::LockstepPeerDetails& details, MessagePasser& messagePasser) {
 	_peers.resize(details.peers_size());
 	for (int i = 0; i < details.peers_size(); ++i) {
@@ -67,7 +76,15 @@ ConnectionToServer::ConnectionToServer(network::IpAddressAndPort serverAddress, 
 	_state([&clientOutbox](const State& newState) {
 		clientOutbox.PushMessage(ClientActorOutput{
 			.variant = ClientActorOutput::ConnectionToServerStateUpdate{
-				.stateIndex = newState.index()
+				.stateIndex = newState.index(),
+				.selfIndex = std::visit(overloaded{
+					[](const StateWithPeerList auto& s) { return s.peerList.GetSelfIndex(); },
+					[](const auto&) { return std::nullopt; }
+				}, newState),
+				.totalPlayerCount = std::visit(overloaded{
+					[](const StateWithPeerList auto& s) { return s.peerList.GetSize(); },
+					[](const auto&) { return 0; }
+				}, newState)
 			},
 			.gameInitParams = std::holds_alternative<LobbyFrozen>(newState)
 				? std::optional{std::get<LobbyFrozen>(newState).gameInitParams}

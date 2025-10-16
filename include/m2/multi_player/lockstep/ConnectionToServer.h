@@ -24,6 +24,8 @@ namespace m2::multiplayer::lockstep {
 			auto end() { return _peers.end(); }
 			auto cbegin() const { return _peers.cbegin(); }
 			auto cend() const { return _peers.cend(); }
+			std::optional<int> GetSelfIndex() const;
+			int GetSize() const { return I(_peers.size()); }
 
 			// Modifiers
 

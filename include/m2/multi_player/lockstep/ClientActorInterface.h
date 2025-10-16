@@ -20,6 +20,8 @@ namespace m2::multiplayer::lockstep {
 		/// \brief Returns true if the client is waiting in the game lobby.
 		/// \details Readiness must be set to allow the server to close the lobby and start the game.
 		bool IsWaitingInLobby();
+		std::optional<int> GetSelfIndex() const { return _connectionToServerState.selfIndex; }
+		int GetTotalPlayerCount() const { return _connectionToServerState.totalPlayerCount; }
 		bool GetLastSetReadyState() const { return _lastSetReadyState; }
 		/// \brief Returns true if the lobby is frozen and the level must be built.
 		/// \details GetGameInitParams can be used to fetch the parameters to build the level.
