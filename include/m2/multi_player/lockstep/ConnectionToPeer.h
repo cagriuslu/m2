@@ -5,9 +5,14 @@
 
 namespace m2::multiplayer::lockstep {
 	class ConnectionToPeer final {
+		struct PlayerInputsAndHash {
+			pb::LockstepPlayerInputs playerInputs;
+			int32_t hash{};
+		};
+
 		struct SearchForPeer {};
 		struct ConnectedToPeer {
-			std::map<network::Timecode, pb::LockstepPlayerInputs> _inputs;
+			std::map<network::Timecode, PlayerInputsAndHash> _inputs;
 		};
 		using State = std::variant<SearchForPeer,ConnectedToPeer>;
 
