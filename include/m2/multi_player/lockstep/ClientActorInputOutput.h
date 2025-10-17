@@ -21,7 +21,7 @@ namespace m2::multiplayer::lockstep {
 			int totalPlayerCount{};
 		};
 		struct PlayerInputsToSimulate {
-			std::deque<m2g::pb::LockstepPlayerInput> selfPlayerInputs;
+			std::vector<std::deque<m2g::pb::LockstepPlayerInput>> playerInputs;
 		};
 		std::variant<ConnectionToServerStateUpdate,PlayerInputsToSimulate> variant;
 		std::optional<m2g::pb::LockstepGameInitParams> gameInitParams{};

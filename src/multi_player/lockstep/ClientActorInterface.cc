@@ -46,10 +46,11 @@ void ClientActorInterface::QueuePlayerInput(m2g::pb::LockstepPlayerInput&& playe
 		}
 	});
 }
-void ClientActorInterface::PopReadyToSimulatePlayerInputs(std::optional<std::deque<m2g::pb::LockstepPlayerInput>>& out) {
+void ClientActorInterface::PopReadyToSimulatePlayerInputs(std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>>& out) {
 	if (IsGameStarted()) {
 		_physicsSimulationsCounter = (_physicsSimulationsCounter + 1) % m2g::LockstepPhysicsSimulationCountPerGameTick;
 		if (_physicsSimulationsCounter == 0) {
+			// This loop hangs until all inputs are received
 			while (not _readyToSimulatePlayersInputs) {
 				ProcessOutbox();
 				std::this_thread::sleep_for(std::chrono::milliseconds{5});
@@ -70,7 +71,7 @@ void ClientActorInterface::ProcessOutbox() {
 			if (_readyToSimulatePlayersInputs) {
 				throw M2_ERROR("Next player inputs are received before the previous inputs are simulated");
 			}
-			_readyToSimulatePlayersInputs = std::move(std::get<ClientActorOutput::PlayerInputsToSimulate>(msg.variant).selfPlayerInputs);
+			_readyToSimulatePlayersInputs = std::move(std::get<ClientActorOutput::PlayerInputsToSimulate>(msg.variant).playerInputs);
 		}
 		if (msg.gameInitParams) {
 			_gameInitParams = std::move(msg.gameInitParams);

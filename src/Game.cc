@@ -653,11 +653,11 @@ void m2::Game::ExecuteStep(const Stopwatch::Duration& delta) {
 		}
 	} else if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)) {
 		auto& clientInterface = std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).hostClientActorInterface;
-		std::optional<std::deque<m2g::pb::LockstepPlayerInput>> playerInputs;
+		std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>> playerInputs;
 		clientInterface->PopReadyToSimulatePlayerInputs(playerInputs);
 		if (playerInputs) {
 			LOG_DEBUG("Handling inputs from player with index", 0);
-			_proxy.lockstepHandlePlayerInputs(0, *playerInputs);
+			_proxy.lockstepHandlePlayerInputs(*playerInputs);
 		}
 	} else if constexpr (not GAME_IS_DETERMINISTIC) {
 		// Integrate physics

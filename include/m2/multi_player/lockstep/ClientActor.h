@@ -20,7 +20,7 @@ namespace m2::multiplayer::lockstep {
 		network::Timecode _nextTimecode{};
 		// Player inputs from this instance that are already sent to peers are stored here until inputs from all other
 		// peers are received.
-		std::optional<std::pair<network::Timecode,std::deque<m2g::pb::LockstepPlayerInput>>> _nextSelfPlayerInputs;
+		std::optional<std::pair<network::Timecode,std::deque<m2g::pb::LockstepPlayerInput>>> _nextSelfPlayerInputsToSimulate;
 
 	public:
 		explicit ClientActor(network::IpAddressAndPort serverAddress) : ActorBase(), _serverAddressAndPort(std::move(serverAddress)) {}
@@ -35,7 +35,7 @@ namespace m2::multiplayer::lockstep {
 		void Deinitialize(MessageBox<ClientActorInput>&, MessageBox<ClientActorOutput>&) override {}
 
 	private:
-		bool IsAllPlayerInputsReceived() const;
+		std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>> GetNextPlayerInputsToSimulate() const;
 
 		void ProcessOneMessageFromInbox(MessageBox<ClientActorInput>&);
 	};

@@ -8,7 +8,7 @@ namespace m2::multiplayer::lockstep {
 		ClientActorOutput::ConnectionToServerStateUpdate _connectionToServerState{};
 		bool _lastSetReadyState{};
 		std::optional<m2g::pb::LockstepGameInitParams> _gameInitParams;
-		std::optional<std::deque<m2g::pb::LockstepPlayerInput>> _readyToSimulatePlayersInputs;
+		std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>> _readyToSimulatePlayersInputs;
 		int32_t _physicsSimulationsCounter{};
 
 	public:
@@ -35,7 +35,7 @@ namespace m2::multiplayer::lockstep {
 
 		void SetReadyState(bool state);
 		void QueuePlayerInput(m2g::pb::LockstepPlayerInput&&);
-		void PopReadyToSimulatePlayerInputs(std::optional<std::deque<m2g::pb::LockstepPlayerInput>>& out);
+		void PopReadyToSimulatePlayerInputs(std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>>& out);
 
 	private:
 		void ProcessOutbox();

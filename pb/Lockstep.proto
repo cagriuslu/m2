@@ -21,6 +21,7 @@ message LockstepPlayerInputs {
 // Each LockstepMessage has a different SequenceNo starting from 1.
 message LockstepMessage {
   oneof type {
+    // A message type sent to the clients from the server.
     LockstepPeerDetails peer_details = 2;
     // A message type sent to the server from clients. It is used to signal readiness to the server.
     bool set_ready_state = 3;

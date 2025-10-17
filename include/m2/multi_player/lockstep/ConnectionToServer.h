@@ -1,14 +1,11 @@
 #pragma once
 #include "ClientActorInputOutput.h"
-#include "ConnectionStatistics.h"
 #include "ConnectionToPeer.h"
 #include "MessagePasser.h"
 #include <m2/network/IpAddressAndPort.h>
 #include <m2/mt/actor/MessageBox.h>
-#include <m2/Chrono.h>
 #include <m2/ManagedObject.h>
 #include <m2g_Lockstep.pb.h>
-#include <queue>
 #include <optional>
 
 namespace m2::multiplayer::lockstep {
@@ -26,9 +23,11 @@ namespace m2::multiplayer::lockstep {
 			auto cend() const { return _peers.cend(); }
 			std::optional<int> GetSelfIndex() const;
 			int GetSize() const { return I(_peers.size()); }
+			[[nodiscard]] std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>> GetPeerPlayerInputsForTimecode(network::Timecode) const;
 
 			// Modifiers
 
+			ConnectionToPeer* Find(const network::IpAddressAndPort&);
 			void Update(const pb::LockstepPeerDetails&, MessagePasser& messagePasser);
 			void ReportIfAllPeersConnected(MessagePasser& messagePasser, const network::IpAddressAndPort& serverAddressAndPort);
 		};
@@ -59,7 +58,12 @@ namespace m2::multiplayer::lockstep {
 
 		// Accessors
 
-		const network::IpAddressAndPort& GetAddressAndPort() const { return _serverAddressAndPort; }
+		[[nodiscard]] const network::IpAddressAndPort& GetAddressAndPort() const { return _serverAddressAndPort; }
+		[[nodiscard]] bool IsLobbyFrozen() const { return std::holds_alternative<LobbyFrozen>(_state.Get()); }
+		[[nodiscard]] bool IsGameStarted() const { return std::holds_alternative<GameStarted>(_state.Get()); }
+		[[nodiscard]] std::optional<int> GetSelfIndex() const;
+		[[nodiscard]] int GetTotalPlayerCount() const;
+		[[nodiscard]] std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>> GetPeerPlayerInputsForTimecode(network::Timecode) const;
 
 		// Modifiers
 
@@ -67,8 +71,11 @@ namespace m2::multiplayer::lockstep {
 		void MarkGameAsStarted();
 		void QueueOutgoingMessages(std::optional<network::Timecode> timecode, const std::deque<m2g::pb::LockstepPlayerInput>*);
 		void DeliverIncomingMessage(pb::LockstepMessage&& msg);
+		void DeliverIncomingMessageToPeer(MessageAndSender&& msg);
 
 	private:
 		void QueueOutgoingMessage(pb::LockstepMessage&& msg);
+		void QueueOutgoingMessage(const pb::LockstepMessage& msg);
+		void QueueOutgoingMessageToPeers(const pb::LockstepMessage& msg);
 	};
 }

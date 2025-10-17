@@ -15,13 +15,35 @@ namespace {
 
 std::optional<int> ConnectionToServer::PeerList::GetSelfIndex() const {
 	for (int i = 0; i < I(_peers.size()); ++i) {
-		if (not _peers[i]) {
-			return i;
-		}
+		if (not _peers[i]) { return i; }
 	}
 	return std::nullopt;
 }
+std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>> ConnectionToServer::PeerList::GetPeerPlayerInputsForTimecode(const network::Timecode tc) const {
+	// Check if peers have the inputs before building the containers
+	for (const auto& peer : _peers) {
+		if (peer && not peer->DoPlayerInputsForTimecodeExist(tc)) {
+			return std::nullopt;
+		}
+	}
 
+	std::vector<std::deque<m2g::pb::LockstepPlayerInput>> peersInputs{_peers.size()};
+	for (int i = 0; i < I(_peers.size()); ++i) {
+		if (_peers[i]) {
+			peersInputs[i] = std::move(*_peers[i]->GetPlayerInputsForTimecode(tc));
+		}
+	}
+	return peersInputs;
+}
+
+ConnectionToPeer* ConnectionToServer::PeerList::Find(const network::IpAddressAndPort& address) {
+	for (auto& peer : _peers) {
+		if (peer && peer->GetAddressAndPort() == address) {
+			return &*peer;
+		}
+	}
+	return nullptr;
+}
 void ConnectionToServer::PeerList::Update(const pb::LockstepPeerDetails& details, MessagePasser& messagePasser) {
 	_peers.resize(details.peers_size());
 	for (int i = 0; i < details.peers_size(); ++i) {
@@ -92,6 +114,25 @@ ConnectionToServer::ConnectionToServer(network::IpAddressAndPort serverAddress, 
 		});
 	}, State{}) {}
 
+std::optional<int> ConnectionToServer::GetSelfIndex() const {
+	return std::visit(overloaded{
+		[](const StateWithPeerList auto& s) { return s.peerList.GetSelfIndex(); },
+		[](const auto&) { return std::nullopt; }
+	}, _state.Get());
+}
+int ConnectionToServer::GetTotalPlayerCount() const {
+	return std::visit(overloaded{
+		[](const StateWithPeerList auto& s) { return s.peerList.GetSize(); },
+		[](const auto&) { return 0; }
+	}, _state.Get());
+}
+std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>> ConnectionToServer::GetPeerPlayerInputsForTimecode(const network::Timecode tc) const {
+	return std::visit(overloaded{
+		[tc](const StateWithPeerList auto& s) { return s.peerList.GetPeerPlayerInputsForTimecode(tc); },
+		[](const auto&) -> std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>> { return std::nullopt; }
+	}, _state.Get());
+}
+
 void ConnectionToServer::SetReadyState(const bool readyState) {
 	if (std::holds_alternative<WaitingInLobby>(_state.Get())) {
 		if (std::get<WaitingInLobby>(_state.Get()).readyState != readyState) {
@@ -128,7 +169,8 @@ void ConnectionToServer::QueueOutgoingMessages(const std::optional<network::Time
 		for (const auto& playerInput : playerInputs) {
 			msg.mutable_player_inputs()->add_player_inputs()->CopyFrom(playerInput);
 		}
-		QueueOutgoingMessage(std::move(msg));
+		QueueOutgoingMessage(msg);
+		QueueOutgoingMessageToPeers(msg);
 	};
 
 	if (std::holds_alternative<SearchForServer>(_state.Get())) {
@@ -187,10 +229,42 @@ void ConnectionToServer::DeliverIncomingMessage(pb::LockstepMessage&& msg) {
 		}
 	}
 }
+void ConnectionToServer::DeliverIncomingMessageToPeer(MessageAndSender&& msg) {
+	if (not msg.message.has_player_inputs()) {
+		return; // Peers are only interested in player inputs
+	}
+	_state.MutateNoSideEffect([&msg](auto& state) {
+		std::visit(overloaded{
+			[&msg](StateWithPeerList auto& s) {
+				if (auto* peer = s.peerList.Find(msg.sender)) {
+					peer->StorePlayerInputsReceivedFrom(msg.message.player_inputs());
+				}
+			},
+			[](const auto&) {} // Do nothing
+		}, state);
+	});
+}
 
 void ConnectionToServer::QueueOutgoingMessage(pb::LockstepMessage&& msg) {
 	_messagePasser.QueueMessage(MessageAndReceiver{
 		.message = std::move(msg),
 		.receiver = _serverAddressAndPort
+	});
+}
+void ConnectionToServer::QueueOutgoingMessage(const pb::LockstepMessage& msg) {
+	QueueOutgoingMessage(pb::LockstepMessage{msg});
+}
+void ConnectionToServer::QueueOutgoingMessageToPeers(const pb::LockstepMessage& msg) {
+	_state.MutateNoSideEffect([&msg](auto& state) {
+		std::visit(overloaded{
+			[&msg](StateWithPeerList auto& s) {
+				for (auto& peer : s.peerList) {
+					if (peer) { peer->QueueOutgoingMessage(pb::LockstepMessage{msg}); }
+				}
+			},
+			[](const auto&) {
+				throw M2_ERROR("Attempt to queue outgoing message during an invalid state");
+			}
+		}, state);
 	});
 }
