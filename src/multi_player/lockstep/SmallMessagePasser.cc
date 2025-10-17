@@ -242,10 +242,10 @@ void_expected SmallMessagePasser::ReadSmallMessages(std::queue<SmallMessageAndSe
 		PeerConnectionParameters* peer;
 		if (peer = FindPeerConnectionParameters(recvResult->second); not peer) {
 			if (_blockUnknownConnections) {
-				LOG_DEBUG("Dropping packet from unknown source", recvResult->second);
+				LOG_NETWORK("Dropping packet from unknown source", recvResult->second);
 				continue;
 			}
-			LOG_INFO("Accepting packet from unknown source, of size", recvResult->second, recvResult->first);
+			LOG_NETWORK("Accepting packet from unknown source, of size", recvResult->second, recvResult->first);
 			peer = &FindOrCreatePeerConnectionParameters(recvResult->second);
 		} else {
 			LOG_NETWORK("Received packet from peer, of size", recvResult->second, recvResult->first);
@@ -298,7 +298,7 @@ void_expected SmallMessagePasser::SendOutgoingPackets() {
 				const auto bytes = packet.SerializeAsString();
 				const auto success = _socket.Send(peer.GetPeerAddress(), bytes.data(), bytes.size());
 				m2ReflectUnexpected(success);
-				LOG_DEBUG("Sent retransmission packet to peer, of size, with small message count", peer.GetPeerAddress(), bytes.size(), packet.small_messages());
+				LOG_NETWORK("Sent retransmission packet to peer, of size, with small message count", peer.GetPeerAddress(), bytes.size(), packet.small_messages());
 				peer.MarkAnyMessageSent();
 			}
 		}

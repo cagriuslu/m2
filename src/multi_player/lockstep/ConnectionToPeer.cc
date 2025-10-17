@@ -37,12 +37,12 @@ void ConnectionToPeer::QueueOutgoingMessages() {
 
 	if (std::holds_alternative<SearchForPeer>(_state)) {
 		if (const auto* connStats = _messagePasser.GetConnectionStatistics(_addressAndPort); not connStats) {
-			LOG_DEBUG("Queueing first ping toward peer", _addressAndPort);
+			LOG_NETWORK("Queueing first ping toward peer", _addressAndPort);
 			queuePing();
 		} else if (const auto nAckedMsgs = connStats->GetTotalAckedOutgoingSmallMessages(); nAckedMsgs < N_RESPONSES_TO_ASSUME_CONNECTION) {
 			// Not enough ping-pongs have been made with the peer. Ping the peer if all previous pings have been ACKed.
 			if (connStats->GetTotalQueuedOutgoingSmallMessages() == nAckedMsgs) {
-				LOG_DEBUG("Queueing another ping toward peer", _addressAndPort);
+				LOG_NETWORK("Queueing another ping toward peer", _addressAndPort);
 				queuePing();
 			}
 		} else { // nAckedMsgs == N_RESPONSES_TO_ASSUME_CONNECTION

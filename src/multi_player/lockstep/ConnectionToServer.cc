@@ -83,7 +83,7 @@ void ConnectionToServer::PeerList::ReportIfAllPeersConnected(MessagePasser& mess
 		if (isAllConnected) {
 			pb::LockstepMessage msg;
 			msg.set_all_peers_reachable(true);
-			LOG_INFO("Reporting all peers as reachable");
+			LOG_NETWORK("Reporting all peers as reachable");
 			messagePasser.QueueMessage(MessageAndReceiver{
 				.message = std::move(msg),
 				.receiver = serverAddressAndPort
@@ -138,7 +138,7 @@ void ConnectionToServer::SetReadyState(const bool readyState) {
 		if (std::get<WaitingInLobby>(_state.Get()).readyState != readyState) {
 			pb::LockstepMessage msg;
 			msg.set_set_ready_state(readyState);
-			LOG_INFO("Queueing readiness message", readyState);
+			LOG_NETWORK("Queueing readiness message", readyState);
 			QueueOutgoingMessage(std::move(msg));
 			_state.Mutate([&](State& state) {
 				std::get<WaitingInLobby>(state).readyState = readyState;
@@ -175,12 +175,12 @@ void ConnectionToServer::QueueOutgoingMessages(const std::optional<network::Time
 
 	if (std::holds_alternative<SearchForServer>(_state.Get())) {
 		if (const auto* connStats = _messagePasser.GetConnectionStatistics(_serverAddressAndPort); not connStats) {
-			LOG_DEBUG("Queueing first ping toward server");
+			LOG_NETWORK("Queueing first ping toward server");
 			QueueOutgoingMessage({});
 		} else if (const auto nAckedMsgs = connStats->GetTotalAckedOutgoingSmallMessages(); nAckedMsgs < N_RESPONSES_TO_ASSUME_CONNECTION) {
 			// Not enough ping-pongs have been made with the server. Ping the server if all previous pings have been ACKed.
 			if (connStats->GetTotalQueuedOutgoingSmallMessages() == nAckedMsgs) {
-				LOG_DEBUG("Queueing another ping toward server");
+				LOG_NETWORK("Queueing another ping toward server");
 				QueueOutgoingMessage({});
 			}
 		} else { // nAckedMsgs == N_RESPONSES_TO_ASSUME_CONNECTION

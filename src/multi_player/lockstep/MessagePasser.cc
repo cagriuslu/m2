@@ -22,7 +22,7 @@ void_expected MessagePasser::ReadMessages(std::queue<MessageAndSender>& out) {
 			.message = std::move(*smallMsg.mutable_complete_message()),
 			.sender = sender
 		});
-		LOG_DEBUG("Returning message from peer, with sequence number", sender, msgSequenceNo);
+		LOG_NETWORK("Returning message from peer, with sequence number", sender, msgSequenceNo);
 		// Pop from queue
 		_receivedSmallMessages.pop();
 	}
@@ -40,7 +40,7 @@ void_expected MessagePasser::QueueMessage(MessageAndReceiver&& in) {
 	pb::LockstepSmallMessage smallMsg;
 	smallMsg.set_message_sequence_no(msgSequenceNo);
 	smallMsg.mutable_complete_message()->Swap(&in.message);
-	LOG_DEBUG("Queueing outgoing message for peer, with sequence number", in.receiver, msgSequenceNo);
+	LOG_NETWORK("Queueing outgoing message for peer, with sequence number", in.receiver, msgSequenceNo);
 	_smallMessagePasser.QueueSmallMessage(SmallMessageAndReceiver{
 		.smallMessage = std::move(smallMsg),
 		.receiver = in.receiver
