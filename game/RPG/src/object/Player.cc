@@ -18,7 +18,7 @@ using namespace rpg;
 using namespace m2g;
 using namespace m2g::pb;
 
-rpg::Player::Player(m2::Object& obj) : animation_fsm(m2g::pb::ANIMATION_TYPE_PLAYER_MOVEMENT, obj.GetGraphicId()) {}
+rpg::Player::Player(m2::Object& obj) : ObjectImpl(obj), animation_fsm(m2g::pb::ANIMATION_TYPE_PLAYER_MOVEMENT, obj.GetGraphicId()) {}
 
 m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 	auto id = obj.GetId();

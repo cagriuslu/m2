@@ -50,7 +50,7 @@ m2::third_party::physics::FixtureDefinition m2g::Proxy::TileFixtureDefinition(MA
 	};
 }
 
-m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object& obj, const m2::VecF& position, float orientation) {
+m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object& obj, const m2::VecF& position, float) {
 	using namespace rpg;
 	switch (obj.GetType()) {
 		case pb::ObjectType::PLAYER:

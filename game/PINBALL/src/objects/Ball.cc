@@ -9,6 +9,8 @@
 namespace {
 	struct BallImpl final : m2::ObjectImpl {
 		std::optional<m2::VecF> lastCollidedWallPosition;
+
+		explicit BallImpl(m2::Object& object) : ObjectImpl(object) {}
 	};
 
 	m2::third_party::physics::RigidBody& GetActiveRigidBody(m2::Physique& phy) {
@@ -22,7 +24,7 @@ namespace {
 m2::void_expected LoadBall(m2::Object& obj, const m2::VecF& position) {
 	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(m2g::pb::SPRITE_BASIC_BALL));
 
-	obj.impl = std::make_unique<BallImpl>();
+	obj.impl = std::make_unique<BallImpl>(obj);
 	auto* ballImpl = dynamic_cast<BallImpl*>(obj.impl.get());
 
 	auto& phy = obj.AddPhysique();

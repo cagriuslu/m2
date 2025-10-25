@@ -21,7 +21,7 @@ using namespace rpg;
 using namespace m2g;
 using namespace m2g::pb;
 
-Enemy::Enemy(m2::Object& obj, const pb::Enemy* enemy) : animation_fsm(enemy->animation_type(), obj.GetGraphicId()) {
+Enemy::Enemy(m2::Object& obj, const pb::Enemy* enemy) : ObjectImpl(obj), animation_fsm(enemy->animation_type(), obj.GetGraphicId()) {
 	switch (enemy->ai().variant_case()) {
 		case pb::Ai::kChaser:
 			ai_fsm = ChaserFsm{&obj, &enemy->ai()};

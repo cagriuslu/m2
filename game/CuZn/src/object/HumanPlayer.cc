@@ -17,12 +17,14 @@
 struct HumanPlayer : public m2::ObjectImpl {
 	std::optional<std::pair<m2::VecI, m2::VecF>> mouse_click_prev_position;
 	std::optional<Location> currentMouseHoverLocation;
+
+	explicit HumanPlayer(m2::Object& object) : ObjectImpl(object) {}
 };
 
 m2::void_expected PlayerInitThisInstance(m2::Object& obj, const m2::VecF& position) {
 	DEBUG_FN();
 
-	obj.impl = std::make_unique<HumanPlayer>();
+	obj.impl = std::make_unique<HumanPlayer>(obj);
 
 	auto& chr = obj.AddFastCharacter();
 	chr.SetResource(m2g::pb::MONEY, 17.0f);

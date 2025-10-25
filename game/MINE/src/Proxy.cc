@@ -34,7 +34,7 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 	}
 }
 
-m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object& obj, const m2::VecF& position, float orientation) {
+m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object& obj, const m2::VecF& position, float) {
 	switch (obj.GetType()) {
 		case pb::ObjectType::DWARF:
 			return create_dwarf(obj, position);
