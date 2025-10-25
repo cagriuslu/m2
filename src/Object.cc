@@ -148,6 +148,9 @@ VecF Object::InferPositionF() const {
 	return {};
 }
 
+void Object::SetParent(const ObjectId parentId) {
+	_parent_id = parentId;
+}
 void Object::SetGroup(const GroupIdentifier& group_id, const IndexInGroup group_index) {
 	_group_id = group_id;
 	_index_in_group = group_index;

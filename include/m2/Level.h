@@ -98,7 +98,8 @@ namespace m2 {
 		std::queue<std::function<void()>> deferredActions;
 		std::variant<
 			std::monostate,
-			splayer::State,
+			splayer::State, // TODO replace with proxy level
+			m2g::Proxy::LevelState,
 			multiplayer::lockstep::State,
 			multiplayer::turnbased::State,
 			level_editor::State,
@@ -129,6 +130,8 @@ namespace m2 {
 		/// Inclusive rectangle that contains all terrain graphics inside. The unit is meters.
 		[[nodiscard]] const RectI& GetBackgroundBoundary() const { return _backgroundBoundary; }
 		const std::string& GetLevelIdentifier() const { return _lb ? _lb->identifier() : EMPTY_STRING; }
+		const m2g::Proxy::LevelState& GetProxyLevelState() const;
+		m2g::Proxy::LevelState& GetProxyLevelState();
 		pb::ProjectionType GetProjectionType() const;
 		m3::VecF GetCameraOffset() const;
 		float GetHorizontalFov() const;

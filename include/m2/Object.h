@@ -66,6 +66,7 @@ namespace m2 {
 
 		// Modifiers
 
+		void SetParent(ObjectId parentId);
 		void SetGroup(const GroupIdentifier& group_id, IndexInGroup group_index);
 		Physique& AddPhysique(const VecFE& position = {});
 		Graphic& AddGraphic(DrawLayer layer, const VecF& position = {});

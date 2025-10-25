@@ -73,7 +73,7 @@ void_expected Level::InitTurnBasedMultiPlayerAsGuest(
 }
 void_expected Level::InitLockstepMultiPlayer(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name, const m2g::pb::LockstepGameInitParams& gameInitParams) {
 	INFO_FN();
-	stateVariant.emplace<multiplayer::lockstep::State>();
+	stateVariant.emplace<m2g::Proxy::LevelState>();
 	return InitAnyPlayer(levelPathOrBlueprint, name, false,
 		[](const std::string&, const pb::Level&) {},
 		[&gameInitParams](const std::string& name_, const pb::Level& lb) { M2G_PROXY.PostLockstepLevelInit(name_, lb, gameInitParams); });
@@ -227,6 +227,12 @@ std::pair<Pool<Graphic>&, DrawList*> Level::GetGraphicPoolAndDrawList(const Draw
 	}
 	const auto fgLayer = std::get<pb::UprightGraphicsLayer>(drawLayer);
 	return std::pair<Pool<Graphic>&,DrawList*>{uprightGraphics, &uprightDrawLists.at(I(fgLayer))};
+}
+const m2g::Proxy::LevelState& Level::GetProxyLevelState() const {
+	return std::get<m2g::Proxy::LevelState>(stateVariant);
+}
+m2g::Proxy::LevelState& Level::GetProxyLevelState() {
+	return std::get<m2g::Proxy::LevelState>(stateVariant);
 }
 pb::ProjectionType Level::GetProjectionType() const {
 	const auto isEditor = std::holds_alternative<level_editor::State>(stateVariant)

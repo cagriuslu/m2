@@ -153,5 +153,12 @@ namespace m2 {
 		void OnPreStep(MAYBE const Stopwatch::Duration& delta) {}
 		/// A callback that's called every pre-step.
 		void OnPostStep(MAYBE const Stopwatch::Duration& delta) {}
+
+		class LevelState {
+		public:
+			// TODO make these private, give access to Game, implement getters
+			LevelState() = default;
+			virtual ~LevelState() = default;
+		};
 	};
 }
