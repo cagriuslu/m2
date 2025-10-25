@@ -1,8 +1,22 @@
 #pragma once
 
 namespace m2 {
-    struct ObjectImpl {
-        ObjectImpl() = default;
+    // Forward declaration
+    struct Object;
+
+    class ObjectImpl {
+        Object& _object;
+
+    public:
+        explicit ObjectImpl(Object& object) : _object(object) {}
         virtual ~ObjectImpl() = default;
+
+        // Accessors
+
+        const Object& GetObject() const { return _object; }
+
+        // Modifiers
+
+        Object& GetObject() { return _object; }
     };
 }

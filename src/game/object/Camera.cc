@@ -14,7 +14,7 @@ m2::Id m2::obj::CreateCamera() {
 
 	// Create implementation
 	auto& camera = *it;
-	camera.impl = std::make_unique<m2::obj::Camera>();
+	camera.impl = std::make_unique<m2::obj::Camera>(*it);
 
 	// Position of the camera isn't actually deterministic
 	auto& phy = camera.AddPhysique(VecFE{playerPtr ? playerPtr->InferPositionF() : VecF{}});
