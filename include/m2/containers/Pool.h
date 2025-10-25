@@ -4,9 +4,11 @@
 #include <cstdint>
 
 namespace m2 {
-	using PoolId = uint16_t; // Each Pool has a unique Id, which later becomes part of each object's Id.
+	// Each Pool has a unique Id, which later becomes part of each object's Id.
+	using PoolId = uint16_t;
 	constexpr int gPoolIdShiftCount = 48;
-	using ShiftedPoolId = uint64_t; // PoolId is shifted to left gPoolIdShiftCount times to form ShiftedPoolId
+	// PoolId is shifted to left gPoolIdShiftCount times to form ShiftedPoolId
+	using ShiftedPoolId = uint64_t;
 	constexpr ShiftedPoolId gShiftedPoolIdMask = (0xFFFFFFFFFFFFFFFFull >> gPoolIdShiftCount) << gPoolIdShiftCount;
 	ShiftedPoolId NextShiftedPoolId();
 
@@ -14,7 +16,8 @@ namespace m2 {
 	// increasing number. If an object is reallocated in-place, it'll have a different key, thus a different Id. Index
 	// is the location of the object in the Pool's array.
 	using Id = uint64_t;
-	using PoolItemId = Id; // Another name for Id
+	// Another name for Id
+	using PoolItemId = Id;
 
 	// Transformers
 
@@ -27,9 +30,7 @@ namespace m2 {
 	template <typename T, uint64_t Capacity = 65536>
 	class Pool {
 		static_assert(Capacity <= 16777216, "Max Pool capacity is 16777216 because the index is limited to 24 bits");
-
 	public:
-		//<editor-fold desc="Iterator">
 		class Iterator {
 			Pool* _pool{};
 			T* _data{};
@@ -70,16 +71,13 @@ namespace m2 {
 				return temp;
 			}
 		};
-		//</editor-fold>
 
-		//<editor-fold desc="Item">
 		struct Item {
 			T data;
 			// If allocated: 16 bit ShiftedPoolId | 24 bit Key | 24 bit Index
 			// If available: 16 bit zeros | 24 bit zeros | 24 bit NextFreeIndex
 			Id id;
 		};
-		//</editor-fold>
 
 	private:
 		std::array<Item,Capacity> _array;
@@ -94,13 +92,9 @@ namespace m2 {
 		// Constructors
 
 		Pool() {
-			if (_shiftedPoolId == 0) {
-				throw M2_ERROR("PoolId overflow");
-			}
-			for (uint64_t i = 0; i < Capacity; ++i) {
-				// Each item points to the next item as next free index.
-				_array[i].id = IdToIndex(i + 1);
-			}
+			if (_shiftedPoolId == 0) { throw M2_ERROR("PoolId overflow"); }
+			// Each item points to the next item as next free index
+			for (uint64_t i = 0; i < Capacity; ++i) { _array[i].id = IdToIndex(i + 1); }
 		}
 
 		// Accessors
@@ -110,28 +104,29 @@ namespace m2 {
 		[[nodiscard]] bool Empty() const { return !_size; }
 		[[nodiscard]] bool Contains(const Id id) const { return Get(id); }
 		[[nodiscard]] bool Contains(const T* data) const { return GetId(data); }
+		[[nodiscard]] bool ContainsIndex(const uint64_t index) const { return GetIndex(index); }
 		T* Get(const Id id) {
-			if (auto* item = GetArrayItem(id)) {
-				return &item->data;
-			}
+			if (auto* item = GetArrayItem(id)) { return &item->data; }
 			return nullptr;
 		}
 		const T* Get(const Id id) const {
-			if (const auto* item = GetArrayItem(id)) {
-				return &item->data;
-			}
+			if (const auto* item = GetArrayItem(id)) { return &item->data; }
+			return nullptr;
+		}
+		T* GetIndex(const uint64_t index) {
+			if (auto& item = _array[index]; IdToKey(item.id)) { return &item.data; }
+			return nullptr;
+		}
+		const T* GetIndex(const uint64_t index) const {
+			if (const auto& item = _array[index]; IdToKey(item.id)) { return &item.data; }
 			return nullptr;
 		}
 		T& operator[](const Id id) {
-			if (auto* t = Get(id)) {
-				return *t;
-			}
+			if (auto* t = Get(id)) { return *t; }
 			throw M2_ERROR("Out of bounds");
 		}
 		const T& operator[](const Id id) const {
-			if (const auto* t = Get(id)) {
-				return *t;
-			}
+			if (const auto* t = Get(id)) { return *t; }
 			throw M2_ERROR("Out of bounds");
 		}
 		Id GetId(const T* data) const {
@@ -149,6 +144,10 @@ namespace m2 {
 			}
 			return 0;
 		}
+		Id GetId(const uint64_t index) const {
+			if (const auto& item = _array[index]; IdToKey(item.id)) { return item.id; }
+			return 0;
+		}
 
 		// Iterators
 
@@ -156,9 +155,8 @@ namespace m2 {
 			if (_size) {
 				Item& item = _array[_lowestAllocatedIndex];
 				return {this, &item.data, item.id};
-			} else {
-				return end();
 			}
+			return end();
 		}
 		Iterator end() { return {this, nullptr, 0}; }
 
@@ -234,10 +232,7 @@ namespace m2 {
 			Free(GetId(data));
 		}
 		void FreeIndex(const uint64_t idx) {
-			auto& item = _array[idx];
-			if (IdToKey(item.id)) {
-				Free(GetId(&item.data));
-			}
+			if (auto& item = _array[idx]; IdToKey(item.id)) { Free(GetId(&item.data)); }
 		}
 		void Clear() {
 			while (_size) {
