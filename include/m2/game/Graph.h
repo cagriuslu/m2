@@ -13,7 +13,7 @@
 namespace m2 {
 	// A data structure containing nodes and edges, for finding paths between nodes. All edges have an associated cost.
 	// For NodeT and EdgeT, integral types should be used, because they are copied around internally.
-	template <typename NodeT, typename EdgeT = Void> class Graph {
+	template <typename NodeT, typename EdgeT = Void, typename NodeHash = std::hash<NodeT>, typename NodeEqualityComparator = std::equal_to<NodeT>> class Graph {
 	public:
 		struct Edge {
 			NodeT from, to;
@@ -23,8 +23,8 @@ namespace m2 {
 
 	private:
 		/// 2D position of nodes, helps with A* path finding.
-		std::unordered_map<NodeT, VecFE> _nodePositions;
-		std::unordered_map<NodeT, std::vector<Edge>> _edges;
+		std::unordered_map<NodeT, VecFE, NodeHash, NodeEqualityComparator> _nodePositions;
+		std::unordered_map<NodeT, std::vector<Edge>, NodeHash, NodeEqualityComparator> _edges;
 		FE _tolerance;
 
 	public:
@@ -62,7 +62,7 @@ namespace m2 {
 
 		/// Returns the nodes that can be reached from the `source` while spending at most `maxCost`.
 		/// If there are multiple paths, the shortest one's cost is returned.
-		using ReachableNodesAndCosts = std::unordered_map<NodeT, FE>;
+		using ReachableNodesAndCosts = std::unordered_map<NodeT, FE, NodeHash, NodeEqualityComparator>;
 		[[nodiscard]] ReachableNodesAndCosts FindNodesReachableFrom(NodeT source, FE maxCost) const {
 			// TODO add cache
 			// Check if there are any edges from the source
@@ -135,15 +135,15 @@ namespace m2 {
 			if (from == to) { return {}; }
 
 			const auto destinationPositionIt = _nodePositions.find(to);
-			if (destinationPositionIt == _nodePositions.end()) { throw M2_ERROR("Node has no position: " + ToString(to)); }
+			if (destinationPositionIt == _nodePositions.end()) { throw M2_ERROR("Destination node has no position"); }
 			const auto destinationPosition = destinationPositionIt->second;
 
 			// Holds the nodes which will be explored next. Key is the exploration priority, value is the Node to explore.
 			std::multimap<FE, NodeT> frontiers{{FE::Zero(), from}};
 			// The key Node should be approached via the value Edge.
-			std::unordered_map<NodeT, Edge> approachVia;
+			std::unordered_map<NodeT, Edge, NodeHash, NodeEqualityComparator> approachVia;
 			// Holds accumulated cost of reaching a node. Key is the node, value is its accumulated cost.
-			std::unordered_map<NodeT, FE> provisionalCost{{from, FE::Zero()}};
+			std::unordered_map<NodeT, FE, NodeHash, NodeEqualityComparator> provisionalCost{{from, FE::Zero()}};
 
 			// While there are frontiers to explore
 			while (not frontiers.empty()) {
@@ -168,7 +168,7 @@ namespace m2 {
 							provisionalCost[neighbor] = newCost;
 							// Calculate priority of neighbor with heuristic parameter
 							const auto neighborPositionIt = _nodePositions.find(neighbor);
-							if (neighborPositionIt == _nodePositions.end()) { throw M2_ERROR("Node has no position: " + ToString(neighbor)); }
+							if (neighborPositionIt == _nodePositions.end()) { throw M2_ERROR("Neighbor node has no position"); }
 							const auto neighborPosition = neighborPositionIt->second;
 							auto neighborPriority = newCost * newCost + neighborPosition.GetDistanceToSquaredFE(destinationPosition);
 							// Insert neighbor into frontiers
