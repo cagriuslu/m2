@@ -96,6 +96,7 @@ namespace m2 {
 		void turnBasedServerPopulate(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
 
 		static constexpr std::chrono::milliseconds lockstepGameTickPeriod{250};
+		void PreLockstepLevelInit(MAYBE const std::string& name, MAYBE const m2::pb::Level& level, MAYBE const m2g::pb::LockstepGameInitParams& gameInitParams) {}
 		void PostLockstepLevelInit(MAYBE const std::string& name, MAYBE const m2::pb::Level& level, MAYBE const m2g::pb::LockstepGameInitParams& gameInitParams) {}
 		void lockstepHandlePlayerInputs(MAYBE const std::vector<std::deque<m2g::pb::LockstepPlayerInput>>& inputs) {}
 

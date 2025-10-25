@@ -75,7 +75,7 @@ void_expected Level::InitLockstepMultiPlayer(const std::variant<std::filesystem:
 	INFO_FN();
 	stateVariant.emplace<m2g::Proxy::LevelState>();
 	return InitAnyPlayer(levelPathOrBlueprint, name, false,
-		[](const std::string&, const pb::Level&) {},
+		[&gameInitParams](const std::string& name_, const pb::Level& lb) { M2G_PROXY.PreLockstepLevelInit(name_, lb, gameInitParams); },
 		[&gameInitParams](const std::string& name_, const pb::Level& lb) { M2G_PROXY.PostLockstepLevelInit(name_, lb, gameInitParams); });
 }
 void_expected Level::InitLevelEditor(const std::filesystem::path& lb_path) {
