@@ -24,17 +24,28 @@ namespace m2::pb {
 		}
 
 		template <typename EnvelopeT>
-		static expected<std::vector<ProtoItemT>> LoadProtoItems(const std::filesystem::path& envelope_path,
+		static expected<std::vector<ProtoItemT>> LoadProtoItems(
+				const EnvelopeT* inMemoryEnvelope, const std::filesystem::path& overrideEnvelopePath,
 				const ::google::protobuf::RepeatedPtrField<ProtoItemT>& (EnvelopeT::*list_accessor)() const) {
-			// Load the envelope from the file
-			auto envelope = pb::json_file_to_message<EnvelopeT>(envelope_path);
-			m2ReflectUnexpected(envelope);
+			const EnvelopeT* envelopeToUse{};
+
+			// Try to load the envelope from the file, as it overrides the in-memory one
+			auto envelopeFromFile = pb::json_file_to_message<EnvelopeT>(overrideEnvelopePath);
+			if (envelopeFromFile) {
+				envelopeToUse = &*envelopeFromFile;
+			} else {
+				if (inMemoryEnvelope) {
+					envelopeToUse = inMemoryEnvelope;
+				} else {
+					m2ReflectUnexpected(envelopeFromFile);
+				}
+			}
 
 			using KeyT = decltype(std::declval<ProtoItemT>().type());
 			std::vector<ProtoItemT> protoItems(pb::enum_value_count<KeyT>());
 			std::vector<bool> isLoaded(pb::enum_value_count<KeyT>());
 
-			for (const auto& protoItem : ((*envelope).*list_accessor)()) {
+			for (const auto& protoItem : ((*envelopeToUse).*list_accessor)()) {
 				const auto key = protoItem.type(); // Enum value
 				const auto keyIndex = pb::enum_index(key); // Index of the enum value
 
@@ -59,10 +70,10 @@ namespace m2::pb {
 		}
 
 		template <typename EnvelopeT, typename... LoadedItemArgs>
-		static LUT load(const std::filesystem::path& envelopePath,
+		static LUT load(const EnvelopeT* inMemoryEnvelope, const std::filesystem::path& overrideEnvelopePath,
 				const ::google::protobuf::RepeatedPtrField<ProtoItemT>& (EnvelopeT::*listAccessor)() const,
 				LoadedItemArgs... args) {
-			const auto protoItems = LoadProtoItems(envelopePath, listAccessor);
+			const auto protoItems = LoadProtoItems(inMemoryEnvelope, overrideEnvelopePath, listAccessor);
 			if (not protoItems) {
 				throw M2_ERROR(protoItems.error());
 			}

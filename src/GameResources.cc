@@ -50,9 +50,6 @@ m2::GameResources::GameResources(const std::string& gameIdentifier, const std::s
 	}
 
 	_items = _gameResourceDir / "Items.json";
-	if (not std::filesystem::exists(_items)) {
-		_items = _defaultResourceDir / "Items.json";
-	}
 
 	_animations = _gameResourceDir / "Animations.json";
 	if (not std::filesystem::exists(_animations)) {

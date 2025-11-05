@@ -3,7 +3,7 @@
 #include <Key.pb.h>
 
 std::multimap<m2g::pb::KeyType, SDL_Scancode> m2::GenerateKeyToScancodeMap(const std::filesystem::path& keysPath) {
-	const auto keys = pb::LUT<pb::Key>::LoadProtoItems(keysPath, &pb::Keys::keys);
+	const auto keys = pb::LUT<pb::Key>::LoadProtoItems(static_cast<pb::Keys*>(nullptr), keysPath, &pb::Keys::keys);
 	if (not keys) {
 		throw M2_ERROR(keys.error());
 	}
@@ -18,7 +18,7 @@ std::multimap<m2g::pb::KeyType, SDL_Scancode> m2::GenerateKeyToScancodeMap(const
 }
 
 std::map<SDL_Scancode, m2g::pb::KeyType> m2::GenerateScancodeToKeyMap(const std::filesystem::path& keysPath) {
-	const auto keys = pb::LUT<pb::Key>::LoadProtoItems(keysPath, &pb::Keys::keys);
+	const auto keys = pb::LUT<pb::Key>::LoadProtoItems(static_cast<pb::Keys*>(nullptr), keysPath, &pb::Keys::keys);
 	if (not keys) {
 		throw M2_ERROR(keys.error());
 	}

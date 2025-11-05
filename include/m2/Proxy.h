@@ -73,6 +73,8 @@ namespace m2 {
 		/// Describes the details of the objects
 		const std::vector<ObjectBlueprint> objectBlueprints;
 
+		const std::optional<pb::Items> items = GenerateDefaultItems();
+
 		void load_resources() {}
 
 		// UI
@@ -161,5 +163,8 @@ namespace m2 {
 			LevelState() = default;
 			virtual ~LevelState() = default;
 		};
+
+	private:
+		static pb::Items GenerateDefaultItems();
 	};
 }
