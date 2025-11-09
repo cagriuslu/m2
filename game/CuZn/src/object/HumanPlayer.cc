@@ -15,7 +15,6 @@
 #include <cuzn/ConsumingIron.h>
 
 struct HumanPlayer : public m2::ObjectImpl {
-	std::optional<std::pair<m2::VecI, m2::VecF>> mouse_click_prev_position;
 	std::optional<Location> currentMouseHoverLocation;
 
 	explicit HumanPlayer(m2::Object& object) : ObjectImpl(object) {}
@@ -52,19 +51,17 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj, const m2::VecF& positi
 		// Start map movement with mouse
 		if (M2_GAME.events.PopMouseButtonPress(m2::MouseButton::PRIMARY, M2_GAME.Dimensions().Game())) {
 			LOG_TRACE("Begin panning");
-			impl.mouse_click_prev_position = std::make_pair(M2_GAME.events.MousePosition(), M2_GAME.MousePositionWorldM());
-			M2_LEVEL.isPanning = true;
-		} else if (impl.mouse_click_prev_position && not M2_GAME.events.IsMouseButtonDown(m2::MouseButton::PRIMARY)) {
+			M2_LEVEL.BeginPanning();
+		} else if (M2_LEVEL.IsPanning() && not M2_GAME.events.IsMouseButtonDown(m2::MouseButton::PRIMARY)) {
 			LOG_TRACE("End panning");
-			impl.mouse_click_prev_position.reset();
-			M2_LEVEL.isPanning = false;
+			M2_LEVEL.EndPanning();
 		}
 		// Map movement is enabled
-		if (impl.mouse_click_prev_position && impl.mouse_click_prev_position->first != M2_GAME.events.MousePosition()) {
-			auto diff = impl.mouse_click_prev_position->first - M2_GAME.events.MousePosition();
+		if (const auto panBeginPosition = M2_LEVEL.GetPanBeginPosition(); panBeginPosition && panBeginPosition->first != M2_GAME.events.MousePosition()) {
+			auto diff = panBeginPosition->first - M2_GAME.events.MousePosition();
 			auto diff_m = m2::VecF{diff} / M2_GAME.Dimensions().OutputPixelsPerMeter();
 			phy_.position += diff_m;
-			impl.mouse_click_prev_position = std::make_pair(M2_GAME.events.MousePosition(), M2_GAME.MousePositionWorldM());
+			M2_LEVEL.BeginPanning();
 		}
 
 		constexpr float zoom_step = 1.2f;

@@ -287,6 +287,19 @@ void Level::DisableDimmingWithExceptions() {
 	_dimmingExceptions.reset();
 }
 
+void Level::BeginPanning() {
+	_panBeginPosition = std::make_pair(M2_GAME.events.MousePosition(), M2_GAME.MousePositionWorldM());
+}
+bool Level::IsPanning() const {
+	return static_cast<bool>(_panBeginPosition);
+}
+std::optional<std::pair<VecI,VecF>> Level::GetPanBeginPosition() const {
+	return _panBeginPosition;
+}
+void Level::EndPanning() {
+	_panBeginPosition.reset();
+}
+
 void Level::EnableHud() {
 	LOG_DEBUG("Enabling HUD");
 	_leftHudUiPanel->enabled = true;

@@ -19,7 +19,9 @@ namespace m2 {
 
 		// Operators
 
-		VecE operator-(const VecE& rhs) const { return {_x - rhs.GetX(), _y - rhs.GetY()}; }
+		VecE operator+(const VecE& rhs) const { return {_x + rhs._x, _y + rhs._y}; }
+		VecE& operator+=(const VecE& rhs) { _x += rhs._x; _y += rhs._y; return *this; }
+		VecE operator-(const VecE& rhs) const { return {_x - rhs._x, _y - rhs._y}; }
 		explicit operator VecF() const;
 
 		// Accessors

@@ -42,6 +42,11 @@ namespace m2 {
 
 		std::optional<std::set<ObjectId>> _dimmingExceptions;
 		std::optional<Selection> _primarySelection, _secondarySelection;
+		/// If set, the map is being panned by the player. VecI contains the position of the mouse in screen coordinates
+		/// when the panning began. VecF contains the position of the mouse in world coordinates when the panning began.
+		/// In panning mode, mouse states are not cleared by UI elements so that panning the map is possible even
+		/// thought the mouse spills into UI elements.
+		std::optional<std::pair<VecI, VecF>> _panBeginPosition;
 
 		// UI panels (the order is significant)
 
@@ -106,10 +111,6 @@ namespace m2 {
 			sheet_editor::State,
 			bulk_sheet_editor::State> stateVariant;
 
-		/// In panning mode, mouse states are not cleared by UI elements so that panning the map is possible even
-		/// thought the mouse spills into UI elements.
-		bool isPanning{};
-
 		// Accessors
 
 		[[nodiscard]] bool IsEditor() const;
@@ -160,6 +161,15 @@ namespace m2 {
 		Selection* GetSecondarySelection() { return _secondarySelection ? &*_secondarySelection : nullptr; }
 		void DisablePrimarySelection() { _primarySelection.reset(); }
 		void DisableSecondarySelection() { _secondarySelection.reset(); }
+
+		// Pan control
+
+		void BeginPanning();
+		bool IsPanning() const;
+		/// If set, the map is being panned by the player. VecI contains the position of the mouse in screen coordinates
+		/// when the panning began. VecF contains the position of the mouse in world coordinates when the panning began.
+		std::optional<std::pair<VecI,VecF>> GetPanBeginPosition() const;
+		void EndPanning();
 
 		// UI control
 
