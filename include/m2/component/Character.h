@@ -108,6 +108,7 @@ namespace m2 {
 
 		[[nodiscard]] virtual IFE GetProperty(m2g::pb::PropertyType) const = 0;
 		virtual void SetProperty(m2g::pb::PropertyType, FE) = 0;
+		virtual void AddPropertyMax(m2g::pb::PropertyType, const FE& add, const FE& maxValue) = 0;
 	};
 
 	class CompactCharacter final : public Character {
@@ -148,6 +149,7 @@ namespace m2 {
 
 		[[nodiscard]] IFE GetProperty(m2g::pb::PropertyType) const override { throw M2_ERROR("CompactCharacter doesn't support properties"); }
 		void SetProperty(m2g::pb::PropertyType, FE) override { throw M2_ERROR("CompactCharacter doesn't support properties"); }
+		void AddPropertyMax(m2g::pb::PropertyType, const FE&, const FE&) override { throw M2_ERROR("CompactCharacter doesn't support properties"); }
 	};
 
 	class FastCharacter final : public Character {
@@ -192,7 +194,7 @@ namespace m2 {
 		void SetProperty(const m2g::pb::PropertyType pt, const int32_t value) { _properties[PropertyTypeIndex(pt)] = IFE{value}; }
 		void SetProperty(const m2g::pb::PropertyType pt, FE value) override { _properties[PropertyTypeIndex(pt)] = IFE{std::move(value)}; }
 		void SetProperty(const m2g::pb::PropertyType pt, IFE value) { _properties[PropertyTypeIndex(pt)] = std::move(value); }
-		void AddPropertyMax(m2g::pb::PropertyType pt, const FE& add, const FE& maxValue);
+		void AddPropertyMax(m2g::pb::PropertyType pt, const FE& add, const FE& maxValue) override;
 		void ClearProperty(const m2g::pb::PropertyType pt) { _properties[PropertyTypeIndex(pt)] = {}; }
 		void ClearProperties() { _properties = std::vector<IFE>(pb::enum_value_count<m2g::pb::PropertyType>()); }
 
