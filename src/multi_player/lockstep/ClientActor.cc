@@ -53,14 +53,14 @@ bool ClientActor::operator()(MessageBox<ClientActorInput>& inbox, MessageBox<Cli
 	if (firstEverPlayerInputAvailable || timeToSendPlayerInputs) {
 		const auto timecode = _nextTimecode++;
 		if (firstEverPlayerInputAvailable) {
-			LOG_DEBUG("First player inputs are available with timecode, sending to peers...", timecode);
+			LOG_NETWORK("First player inputs are available with timecode, sending to peers...", timecode);
 		} else {
-			LOG_DEBUG("It is time to send inputs to peers with timecode", timecode);
+			LOG_NETWORK("It is time to send inputs to peers with timecode", timecode);
 		}
 		_serverConnection->QueueOutgoingMessages(timecode, &_unsentPlayerInputs); // Sends to peers as well
 
 		if (firstEverPlayerInputAvailable) {
-			LOG_DEBUG("Waiting after first player inputs for main thread to catch up...");
+			LOG_NETWORK("Waiting after first player inputs for main thread to catch up...");
 			std::this_thread::sleep_for(std::chrono::seconds{1});
 		}
 
@@ -68,7 +68,7 @@ bool ClientActor::operator()(MessageBox<ClientActorInput>& inbox, MessageBox<Cli
 		// to other peers, we can return the inputs to the client interface for them to be simulated.
 		if (timeToSendPlayerInputs) {
 			const auto timecodeToSimulate = _nextSelfPlayerInputsToSimulate->first;
-			LOG_DEBUG("It is time to simulate player inputs with timecode", timecodeToSimulate);
+			LOG_NETWORK("It is time to simulate player inputs with timecode", timecodeToSimulate);
 			outbox.PushMessage(ClientActorOutput{
 				.variant = ClientActorOutput::PlayerInputsToSimulate{
 					.playerInputs = std::move(*nextPlayerInputsToSimulate)

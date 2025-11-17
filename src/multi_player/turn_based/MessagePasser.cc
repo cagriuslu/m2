@@ -21,7 +21,7 @@ m2::expected<MessagePasser::ReadResult> MessagePasser::read_incoming_data(std::q
 		// Assuming the socket is blocking and no receive timeout is set
 		throw M2_ERROR("EAGAIN occurred on a blocking socket with no receive timeout");
 	}
-	LOG_DEBUG("Received data from peer", _index, *received_byte_count);
+	LOG_NETWORK("Received data from peer", _index, *received_byte_count);
 
 	// Advance the pointer to the next available position
 	_incoming_buffer_next_available_position += *received_byte_count;
@@ -112,7 +112,7 @@ m2::expected<MessagePasser::SendResult> MessagePasser::send_outgoing_data(std::q
 		// EAGAIN occurred or no bytes were sent, try again later
 		return SendResult::OK;
 	}
-	LOG_DEBUG("Sent data to peer", _index, *sent_byte_count);
+	LOG_NETWORK("Sent data to peer", _index, *sent_byte_count);
 	// Move position pointers further
 	_outgoing_buffer_start_position += *sent_byte_count;
 	_outgoing_buffer_bytes_left -= *sent_byte_count;
@@ -137,8 +137,8 @@ void MessagePasser::flush(std::queue<pb::TurnBasedNetworkMessage>& read_from, co
 		}
 	}
 	if (read_from.empty()) {
-		LOG_DEBUG("Outgoing data has drained");
+		LOG_NETWORK("Outgoing data has drained");
 	} else {
-		LOG_DEBUG("Timeout occurred while flushing");
+		LOG_NETWORK("Timeout occurred while flushing");
 	}
 }

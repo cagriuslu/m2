@@ -13,7 +13,7 @@ std::optional<m2::pb::TurnBasedNetworkMessage> m2::TurnBasedServerActorInterface
 		_clientEvent.reset();
 
 		const auto json = pb::message_to_json_string(tmp);
-		LOG_DEBUG("Popping client command", _turnHolderIndex, json->c_str());
+		LOG_NETWORK("Popping client command", _turnHolderIndex, json->c_str());
 
 		return std::move(tmp);
 	}

@@ -657,7 +657,6 @@ void m2::Game::ExecuteStep(const Stopwatch::Duration& delta) {
 		std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>> playerInputs;
 		clientInterface->PopReadyToSimulatePlayerInputs(playerInputs);
 		if (playerInputs) {
-			LOG_DEBUG("Handling inputs from player with index", 0);
 			_proxy.lockstepHandlePlayerInputs(*playerInputs);
 		}
 	} else if constexpr (not GAME_IS_DETERMINISTIC) {

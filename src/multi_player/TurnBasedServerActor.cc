@@ -40,7 +40,7 @@ void m2::TurnBasedServerActor::CreateSocket() {
 	if (not _connectionListeningSocket) {
 		throw M2_ERROR("TcpSocket creation failed: " + _connectionListeningSocket.error());
 	}
-	LOG_DEBUG("TcpSocket created");
+	LOG_NETWORK("TcpSocket created");
 }
 void m2::TurnBasedServerActor::BindSocket() {
 	// The previous socket may linger up to 30 seconds
@@ -49,7 +49,7 @@ void m2::TurnBasedServerActor::BindSocket() {
 			throw M2_ERROR("Bind failed: " + bindResult.error());
 		} else {
 			if (bindResult.value()) {
-				LOG_DEBUG("TcpSocket bound");
+				LOG_NETWORK("TcpSocket bound");
 				return;
 			}
 			LOG_INFO("TcpSocket is busy, waiting 1s before retrying binding");
@@ -101,7 +101,7 @@ void m2::TurnBasedServerActor::ProcessInbox(MessageBox<TurnBasedServerActorInput
 			auto serverUpdateCopy = std::get<TurnBasedServerActorInput::SendServerUpdate>(msg->variant).serverUpdate;
 			for (auto i = 1; i < I(_clients.size()); ++i) { // TurnBasedServerUpdate is not sent to self
 				if (_clients[i].is_ready()) {
-					LOG_DEBUG("Queueing TurnBasedServerUpdate to client", i);
+					LOG_NETWORK("Queueing TurnBasedServerUpdate to client", i);
 					serverUpdateCopy.mutable_server_update()->set_receiver_index(i);
 					_clients[i].queue_outgoing_message(serverUpdateCopy);
 				}
@@ -127,7 +127,7 @@ void m2::TurnBasedServerActor::ProcessInbox(MessageBox<TurnBasedServerActorInput
 				message.mutable_server_command()->CopyFrom(serverCommand);
 				if (_clients[receiverIndex].is_ready()) {
 					message.set_sequence_no(_clients[receiverIndex].ReturnAndIncrementServerCommandSequenceNo());
-					LOG_DEBUG("Queueing TurnBasedServerCommand to client", receiverIndex);
+					LOG_NETWORK("Queueing TurnBasedServerCommand to client", receiverIndex);
 					_clients[receiverIndex].queue_outgoing_message(std::move(message));
 				} else {
 					LOG_WARN("Attempted to queue TurnBasedServerCommand but client is disconnected");

@@ -7,7 +7,7 @@ m2::network::TurnBasedBotClientThread::TurnBasedBotClientThread(std::in_place_t)
 
 	// Wait until the bot is connected. The Bot thread waits 100 millisecond to ensure that the connection to host is not
 	// closed from the host side. Let's wait a bit longer than that.
-	LOG_DEBUG("Waiting 150ms until the bot is connected");
+	LOG_NETWORK("Waiting 150ms until the bot is connected");
 	std::this_thread::sleep_for(std::chrono::milliseconds(150));
 
 	if (locked_get_client_state() == pb::CLIENT_CONNECTED) {

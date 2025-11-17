@@ -21,7 +21,7 @@ void ConnectionToClient::PublishPeerDetails(const pb::LockstepPeerDetails& detai
 void ConnectionToClient::SetLobbyAsFrozen(const m2g::pb::LockstepGameInitParams& gameInitParams) {
 	pb::LockstepMessage msg;
 	msg.mutable_freeze_lobby_with_init_params()->CopyFrom(gameInitParams);
-	LOG_DEBUG("Queueing lobby freeze message to client", _addressAndPort);
+	LOG_NETWORK("Queueing lobby freeze message to client", _addressAndPort);
 	QueueOutgoingMessage(std::move(msg));
 }
 void ConnectionToClient::StoreRunningInputHash(const pb::LockstepPlayerInputs& playerInputs) {

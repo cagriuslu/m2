@@ -82,14 +82,14 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::network::SequenceNo>>
 		return std::make_pair(ServerUpdateStatus::NOT_FOUND, -1);
 	}
 
-	LOG_DEBUG("Shifting server update: prev << last << unprocessed << null");
+	LOG_NETWORK("Shifting server update: prev << last << unprocessed << null");
 	if (_last_processed_server_update) {
 		_prev_processed_server_update = std::move(_last_processed_server_update);
 	}
 	_last_processed_server_update = std::move(unprocessed_server_update);
 
 	if (not _prev_processed_server_update) {
-		LOG_DEBUG("Processing first TurnBasedServerUpdate");
+		LOG_NETWORK("Processing first TurnBasedServerUpdate");
 		// This will be the first TurnBasedServerUpdate, that started the game.
 		// Only do verification as level initialization should have initialized the same exact game state
 		const auto& server_update = _last_processed_server_update->second;
@@ -145,7 +145,7 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::network::SequenceNo>>
 		return std::make_pair(ServerUpdateStatus::PROCESSED, _last_processed_server_update->first); // Successfully processed the first TurnBasedServerUpdate
 	}
 
-	LOG_DEBUG("Processing TurnBasedServerUpdate");
+	LOG_NETWORK("Processing TurnBasedServerUpdate");
 	const auto& server_update = _last_processed_server_update->second;
 	{
 		const auto& prev_server_update = _prev_processed_server_update->second;
@@ -211,7 +211,7 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::network::SequenceNo>>
 			// If the new object has no parent
 			if (it->server_object_parent_id == 0) {
 				// Simply, create the object
-				LOG_DEBUG("Server has created an object", it->server_object_id);
+				LOG_NETWORK("Server has created an object", it->server_object_id);
 				auto obj_it = m2::CreateObject(it->object_type, 0);
 				auto load_result = M2G_PROXY.init_server_update_fg_object(*obj_it, m2::VecF{it->position}, it->named_items, it->resources);
 				m2ReflectUnexpected(load_result);
@@ -224,7 +224,7 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::network::SequenceNo>>
 				it = objects_to_be_created.erase(it);
 			} else if (auto parent_it = _server_to_local_map.find(it->server_object_parent_id); parent_it != _server_to_local_map.end()) {
 				// If the object has a parent that's already created, create the object by looking up the corresponding parent
-				LOG_DEBUG("Server has created an object", it->server_object_id);
+				LOG_NETWORK("Server has created an object", it->server_object_id);
 				auto obj_it = m2::CreateObject(it->object_type, parent_it->second.first);
 				auto load_result = M2G_PROXY.init_server_update_fg_object(*obj_it, m2::VecF{it->position}, it->named_items, it->resources);
 				m2ReflectUnexpected(load_result);
@@ -246,7 +246,7 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::network::SequenceNo>>
 	for (auto it = _server_to_local_map.cbegin(); it != _server_to_local_map.cend(); /* no increment */) {
 		if (!it->second.second) {
 			auto object_to_delete = it->second.first;
-			LOG_DEBUG("Local object hasn't been visited by TurnBasedServerUpdate, scheduling for deletion", it->second.first);
+			LOG_NETWORK("Local object hasn't been visited by TurnBasedServerUpdate, scheduling for deletion", it->second.first);
 			M2_DEFER(CreateObjectDeleter(object_to_delete));
 			it = _server_to_local_map.erase(it); // Erase from map
 		} else {

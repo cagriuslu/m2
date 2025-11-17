@@ -81,7 +81,7 @@ void ConnectionToPeer::StorePlayerInputsReceivedFrom(const pb::LockstepPlayerInp
 		.playerInputs = input,
 		.hash = hash
 	});
-	LOG_DEBUG("Storing inputs from peer with timecode and hash", _addressAndPort, input.timecode(), hash);
+	LOG_NETWORK("Storing inputs from peer with timecode and hash", _addressAndPort, input.timecode(), hash);
 	// Keep the list limited to a capacity
 	while (InputCapacity < I(inputs.size())) {
 		inputs.erase(inputs.begin());

@@ -81,7 +81,7 @@ void m2::network::detail::TurnBasedClientThreadBase::locked_set_ready(bool ready
 		msg.set_game_hash(M2_GAME.Hash());
 		msg.mutable_client_update()->set_ready_token(ready ? _ready_token : 0);
 		_outgoing_queue.push(std::move(msg));
-		LOG_DEBUG("Readiness message queued");
+		LOG_NETWORK("Readiness message queued");
 	}
 
 	auto locked_has_outgoing_message = [this]() {
@@ -91,7 +91,7 @@ void m2::network::detail::TurnBasedClientThreadBase::locked_set_ready(bool ready
 
 	do {
 		// Wait until output queue is empty
-		LOG_DEBUG("Waiting 100ms until outgoing message queue is empty");
+		LOG_NETWORK("Waiting 100ms until outgoing message queue is empty");
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	} while (locked_has_outgoing_message());
 	locked_set_state(state ? pb::CLIENT_READY : pb::CLIENT_CONNECTED);
@@ -119,7 +119,7 @@ void m2::network::detail::TurnBasedClientThreadBase::locked_shutdown() {
 }
 
 void m2::network::detail::TurnBasedClientThreadBase::unlocked_set_state(pb::ClientThreadState state) {
-	LOG_DEBUG("Setting ClientThread state", pb::enum_name(state));
+	LOG_NETWORK("Setting ClientThread state", pb::enum_name(state));
 	_state = state;
 }
 
@@ -186,7 +186,7 @@ void m2::network::detail::TurnBasedClientThreadBase::base_client_thread_func(Tur
 			if (thread_manager->_ping_broadcast && not ping_broadcast_thread) {
 				ping_broadcast_thread.emplace();
 				// Wait some time before attempting to connect
-				LOG_DEBUG("Waiting 1s for ping broadcasts");
+				LOG_NETWORK("Waiting 1s for ping broadcasts");
 				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 			}
 #endif
@@ -243,7 +243,7 @@ void m2::network::detail::TurnBasedClientThreadBase::base_client_thread_func(Tur
 
 			// Wait until the previous TurnBasedServerUpdate & TurnBasedServerCommand is processed
 			while (locked_has_unprocessed_server_update_or_command(thread_manager)) {
-				LOG_DEBUG("Waiting 250ms until unprocessed server updates or commands to be processed");
+				LOG_NETWORK("Waiting 250ms until unprocessed server updates or commands to be processed");
 				std::this_thread::sleep_for(std::chrono::milliseconds(250));
 			}
 

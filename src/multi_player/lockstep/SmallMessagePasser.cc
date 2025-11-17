@@ -253,7 +253,7 @@ void_expected SmallMessagePasser::ReadSmallMessages(std::queue<SmallMessageAndSe
 
 		if (pb::LockstepUdpPacket packet; packet.ParseFromArray(_recvBuffer, recvResult->first)) {
 			if (I(packet.game_hash()) != M2_GAME.Hash()) {
-				LOG_DEBUG("Game hash mismatch");
+				LOG_NETWORK("Game hash mismatch");
 				continue;
 			}
 			// TODO check version
