@@ -60,6 +60,7 @@ namespace m2 {
 
 		/// Opaque pointer to box2d::DebugDraw
 		void* _debugDraw{};
+		std::array<ObjectId, 8> _debugEnabledObjects{};
 
 	public:
 		~Level();
@@ -215,6 +216,10 @@ namespace m2 {
 		UiPanel* GetSemiBlockingUiPanel() { return _semiBlockingUiPanel ? &*_semiBlockingUiPanel : nullptr; }
 		void DismissSemiBlockingUiPanel(); // Should not be called from the custom UI itself
 		void DismissSemiBlockingUiPanelDeferred(); // Can be called from the custom UI itself
+
+		bool IsDebugEnabledForObject(ObjectId) const;
+		void EnableDebugForObject(ObjectId);
+		void DisableDebugForObject(ObjectId);
 
 	   private:
 		void_expected InitAnyPlayer(

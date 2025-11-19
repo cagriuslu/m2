@@ -1,9 +1,11 @@
 #pragma once
 #include "Options.h"
+#include "ObjectId.h"
 #include "M2.h"
 #include "protobuf/Detail.h"
 #include <mutex>
 #include <string>
+#include <utility>
 #if _MSC_VER > 1400
 #include <sal.h>
 #endif
@@ -39,6 +41,8 @@
 #define LOGF_ERROR(fmt, ...) ::m2::detail::LogF(::m2::pb::LogLevel::ERR, __FILE__, __LINE__, (fmt), ##__VA_ARGS__)
 #define LOGF_FATAL(fmt, ...) ::m2::detail::LogF(::m2::pb::LogLevel::FTL, __FILE__, __LINE__, (fmt), ##__VA_ARGS__)
 
+#define LOG_OBJECT_DEBUG(id, msg, ...) ::m2::detail::LogObject(__FILE__, __LINE__, (id), (msg), ##__VA_ARGS__)
+
 // TODO get rid of these, they are not descriptive enough
 #define TRACE_FN() LOG_TRACE("f", __FUNCTION__)
 #define DEBUG_FN() LOG_DEBUG("f", __FUNCTION__)
@@ -73,5 +77,15 @@ namespace m2 {
 #else
 		void LogF(pb::LogLevel lvl, const char* file, int line, const char* fmt, ...) __attribute__ ((format (printf, 4, 5)));
 #endif
+
+		bool IsDebugEnabledForObject(ObjectId);
+
+		template <typename ...Ts>
+		void LogObject(const char* file, const int line, const ObjectId id, const char* msg, const Ts& ...ts) {
+			if (pb::LogLevel::DBG < current_log_level || not IsDebugEnabledForObject(id)) {
+				return;
+			}
+			Log(pb::LogLevel::DBG, file, line, msg, std::forward<const Ts>(ts)...);
+		}
 	}
 }

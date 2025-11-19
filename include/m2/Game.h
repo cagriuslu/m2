@@ -66,6 +66,7 @@ namespace m2 {
 		std::optional<Level> _level;
 
 		static void CreateInstance();
+		static bool HasInstance() { return _instance; }
 		static Game& Instance() { return *_instance; }
 		static void DestroyInstance();
 

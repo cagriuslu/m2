@@ -356,6 +356,25 @@ void Level::DismissSemiBlockingUiPanelDeferred() {
 	M2_DEFER([this] { this->DismissSemiBlockingUiPanel(); });
 }
 
+bool Level::IsDebugEnabledForObject(const ObjectId id) const {
+	return std::ranges::find(_debugEnabledObjects, id) != _debugEnabledObjects.end();
+}
+void Level::EnableDebugForObject(const ObjectId id) {
+	if (std::ranges::find(_debugEnabledObjects, id) != _debugEnabledObjects.end()) {
+		return;
+	}
+	if (const auto it = std::ranges::find(_debugEnabledObjects, 0); it != _debugEnabledObjects.end()) {
+		*it = id;
+	} else {
+		LOG_WARN("No space left for another debug enabled object");
+	}
+}
+void Level::DisableDebugForObject(const ObjectId id) {
+	if (const auto it = std::ranges::find(_debugEnabledObjects, id); it != _debugEnabledObjects.end()) {
+		*it = 0;
+	}
+}
+
 void_expected Level::InitAnyPlayer(
 	    const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name,
 	    bool physical_world, const std::function<void(const std::string&, const pb::Level&)>& preLevelInit,

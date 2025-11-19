@@ -59,11 +59,14 @@ namespace m2 {
 		return "(" + ToString(pair.first) + "," + ToString(pair.second) + ")";
 	}
 
+	// std::visit utilities
+
 	template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
 	template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 
 	// Range utilities
 
+	constexpr auto IsTrue = [](const auto& x) { return static_cast<bool>(x); };
 	constexpr auto ToFirst = [](const auto& pair) { return pair.first; };
 	constexpr auto ToSecond = [](const auto& pair) { return pair.second; };
 
