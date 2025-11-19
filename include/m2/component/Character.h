@@ -52,7 +52,7 @@ namespace m2 {
 			using reference = const Item&;
 			using iterator_category = std::forward_iterator_tag;
 
-			Iterator(const Character& character, Incrementor incrementor, Filter filter, size_t index, const Item* ptr) : _character(character), _incrementor(std::move(incrementor)), _filter(filter), _index(index), _item_ptr(ptr) {}
+			Iterator(const Character& character, Incrementor incrementor, const Filter filter, const size_t index, const Item* ptr) : _character(character), _incrementor(std::move(incrementor)), _filter(filter), _index(index), _item_ptr(ptr) {}
 			Iterator& operator++() { _incrementor(*this); return *this; }
 			bool operator==(const Iterator& other) const { return _item_ptr == other._item_ptr; }
 			explicit operator bool() const { return _item_ptr; }
@@ -107,6 +107,7 @@ namespace m2 {
 		virtual void ClearAttributes() = 0;
 
 		[[nodiscard]] virtual IFE GetProperty(m2g::pb::PropertyType) const = 0;
+		virtual void SetProperty(m2g::pb::PropertyType, int32_t) = 0;
 		virtual void SetProperty(m2g::pb::PropertyType, FE) = 0;
 		virtual void AddPropertyMax(m2g::pb::PropertyType, const FE& add, const FE& maxValue) = 0;
 	};
@@ -148,6 +149,7 @@ namespace m2 {
 		void ClearAttributes() override;
 
 		[[nodiscard]] IFE GetProperty(m2g::pb::PropertyType) const override { throw M2_ERROR("CompactCharacter doesn't support properties"); }
+		void SetProperty(m2g::pb::PropertyType, int32_t) override { throw M2_ERROR("CompactCharacter doesn't support properties"); }
 		void SetProperty(m2g::pb::PropertyType, FE) override { throw M2_ERROR("CompactCharacter doesn't support properties"); }
 		void AddPropertyMax(m2g::pb::PropertyType, const FE&, const FE&) override { throw M2_ERROR("CompactCharacter doesn't support properties"); }
 	};
@@ -191,7 +193,7 @@ namespace m2 {
 
 		[[nodiscard]] bool HasProperty(const m2g::pb::PropertyType pt) const { return static_cast<bool>(_properties[PropertyTypeIndex(pt)]); }
 		[[nodiscard]] IFE GetProperty(const m2g::pb::PropertyType pt) const override { return _properties[PropertyTypeIndex(pt)]; }
-		void SetProperty(const m2g::pb::PropertyType pt, const int32_t value) { _properties[PropertyTypeIndex(pt)] = IFE{value}; }
+		void SetProperty(const m2g::pb::PropertyType pt, const int32_t value) override { _properties[PropertyTypeIndex(pt)] = IFE{value}; }
 		void SetProperty(const m2g::pb::PropertyType pt, FE value) override { _properties[PropertyTypeIndex(pt)] = IFE{std::move(value)}; }
 		void SetProperty(const m2g::pb::PropertyType pt, IFE value) { _properties[PropertyTypeIndex(pt)] = std::move(value); }
 		void AddPropertyMax(m2g::pb::PropertyType pt, const FE& add, const FE& maxValue) override;
