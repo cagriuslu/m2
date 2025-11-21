@@ -13,6 +13,7 @@ namespace m2 {
 	extern const std::string EMPTY_STRING;
 
 	constexpr auto TIME_BETWEEN_PHYSICS_SIMULATIONS{std::chrono::duration_cast<Stopwatch::Duration>(std::chrono::milliseconds{10})};
+	constexpr auto PHYSICS_SIMULATION_COUNT_PER_SECOND = I(std::chrono::duration_cast<Stopwatch::Duration>(std::chrono::seconds{1}).count() / TIME_BETWEEN_PHYSICS_SIMULATIONS.count());
 	constexpr auto TIME_BETWEEN_FPS_LOGS{std::chrono::duration_cast<Stopwatch::Duration>(std::chrono::seconds{10})};
 
 	constexpr int FLAT_GRAPHICS_LAYER_COUNT = pb::FlatGraphicsLayer_ARRAYSIZE;

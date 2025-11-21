@@ -14,6 +14,9 @@ namespace {
 
 const std::string m2::EMPTY_STRING;
 
+static_assert((std::chrono::duration_cast<Stopwatch::Duration>(std::chrono::seconds{1}).count() % TIME_BETWEEN_PHYSICS_SIMULATIONS.count()) == 0,
+		"Physics simulation frequency isn't a whole integer");
+
 std::array<DrawLayer, 16> m2::gDrawOrder = {
 	pb::FlatGraphicsLayer::BACKGROUND_FLAT,
 
