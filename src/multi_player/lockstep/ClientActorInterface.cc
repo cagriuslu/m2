@@ -20,7 +20,7 @@ bool ClientActorInterface::IsLobbyFrozen() {
 	return _connectionToServerState.stateIndex == GetIndexInVariant<ConnectionToServer::LobbyFrozen, ConnectionToServer::State>::value;
 }
 bool ClientActorInterface::IsGameStarted() {
-	ProcessOutbox();
+	ProcessOutbox(false); // Don't pop player inputs after the game is started
 	return _connectionToServerState.stateIndex == GetIndexInVariant<ConnectionToServer::GameStarted, ConnectionToServer::State>::value;
 }
 const m2g::pb::LockstepGameInitParams* ClientActorInterface::GetGameInitParams() {
@@ -63,8 +63,9 @@ void ClientActorInterface::PopReadyToSimulatePlayerInputs(std::optional<std::vec
 	out.reset();
 }
 
-void ClientActorInterface::ProcessOutbox() {
-	GetActorOutbox().PopMessages([this](const ClientActorOutput& msg) {
+void ClientActorInterface::ProcessOutbox(const bool checkPlayerInputs) {
+	// Message handler can handle any message
+	const auto messageHandler = [this](const ClientActorOutput& msg) {
 		if (std::holds_alternative<ClientActorOutput::ConnectionToServerStateUpdate>(msg.variant)) {
 			_connectionToServerState = std::get<ClientActorOutput::ConnectionToServerStateUpdate>(msg.variant);
 		} else if (std::holds_alternative<ClientActorOutput::PlayerInputsToSimulate>(msg.variant)) {
@@ -72,10 +73,19 @@ void ClientActorInterface::ProcessOutbox() {
 				throw M2_ERROR("Next player inputs are received before the previous inputs are simulated");
 			}
 			_readyToSimulatePlayersInputs = std::move(std::get<ClientActorOutput::PlayerInputsToSimulate>(msg.variant).playerInputs);
+			return false; // There could be multiple player inputs in the queue. Pop only one of them.
 		}
 		if (msg.gameInitParams) {
 			_gameInitParams = std::move(msg.gameInitParams);
 		}
 		return true;
-	}, 10);
+	};
+
+	GetActorOutbox().PopMessagesIf([checkPlayerInputs](const ClientActorOutput& msg) {
+		if (checkPlayerInputs) {
+			return true;
+		}
+		// If checkPlayerInputs is false, don't find PlayerInputsToSimulate interesting.
+		return not std::holds_alternative<ClientActorOutput::PlayerInputsToSimulate>(msg.variant);
+	}, messageHandler, 10);
 }

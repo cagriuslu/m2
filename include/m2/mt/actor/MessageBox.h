@@ -85,6 +85,34 @@ namespace m2 {
                 }
             }
         }
+        /// Keeps popping messages as long as isMessageInteresting and handler return true
+        void PopMessagesIf(const std::function<bool(const T&)>& isMessageInteresting, const std::function<bool(const T&)>& handler, const int nMaxMessages = -1) {
+            if (nMaxMessages < 0) {
+                while (const auto* msg = PeekMessage()) {
+                    if (isMessageInteresting(*msg)) {
+                        std::optional<T> tmp;
+                        PopMessage(tmp);
+                        if (not handler(*tmp)) {
+                            return;
+                        }
+                    } else {
+                        return;
+                    }
+                }
+            } else {
+                m2Repeat(nMaxMessages) {
+                    if (const auto* msg = PeekMessage(); msg && isMessageInteresting(*msg)) {
+                        std::optional<T> tmp;
+                        PopMessage(tmp);
+                        if (not handler(*tmp)) {
+                            return;
+                        }
+                    } else {
+                        return;
+                    }
+                }
+            }
+        }
     };
 
     /// Synchronously send a question, and wait for an answer

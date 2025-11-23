@@ -38,6 +38,6 @@ namespace m2::multiplayer::lockstep {
 		void PopReadyToSimulatePlayerInputs(std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>>& out);
 
 	private:
-		void ProcessOutbox();
+		void ProcessOutbox(bool checkPlayerInputs = true);
 	};
 }
