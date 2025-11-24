@@ -23,6 +23,7 @@ namespace m2::multiplayer::lockstep {
 			auto cend() const { return _peers.cend(); }
 			std::optional<int> GetSelfIndex() const;
 			int GetSize() const { return I(_peers.size()); }
+			[[nodiscard]] bool HasAllPeerInputsForTimecode(network::Timecode) const;
 			[[nodiscard]] std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>> GetPeerPlayerInputsForTimecode(network::Timecode) const;
 
 			// Modifiers
@@ -63,6 +64,7 @@ namespace m2::multiplayer::lockstep {
 		[[nodiscard]] bool IsGameStarted() const { return std::holds_alternative<GameStarted>(_state.Get()); }
 		[[nodiscard]] std::optional<int> GetSelfIndex() const;
 		[[nodiscard]] int GetTotalPlayerCount() const;
+		[[nodiscard]] bool HasAllPeerInputsForTimecode(network::Timecode) const;
 		[[nodiscard]] std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>> GetPeerPlayerInputsForTimecode(network::Timecode) const;
 
 		// Modifiers

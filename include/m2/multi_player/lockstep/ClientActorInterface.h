@@ -9,6 +9,7 @@ namespace m2::multiplayer::lockstep {
 		bool _lastSetReadyState{};
 		std::optional<m2g::pb::LockstepGameInitParams> _gameInitParams;
 		std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>> _readyToSimulatePlayersInputs;
+		std::deque<m2g::pb::LockstepPlayerInput> _thisPlayerInputBuffer;
 		int32_t _physicsSimulationsCounter{};
 
 	public:
@@ -34,8 +35,9 @@ namespace m2::multiplayer::lockstep {
 		// Modifiers
 
 		void SetReadyState(bool state);
-		void QueuePlayerInput(m2g::pb::LockstepPlayerInput&&);
-		void PopReadyToSimulatePlayerInputs(std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>>& out);
+		void CommitEmptyInputsToStartTheGame();
+		void QueueThisPlayerInput(m2g::pb::LockstepPlayerInput&&);
+		void CommitThisPlayerInputsAndPopReadyToSimulateInputsIfNecessary(std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>>& out);
 
 	private:
 		void ProcessOutbox(bool checkPlayerInputs = true);

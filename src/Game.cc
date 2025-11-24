@@ -454,8 +454,7 @@ m2::void_expected m2::Game::LoadLockstep(const std::variant<std::filesystem::pat
 	auto success = _level->InitLockstepMultiPlayer(levelPathOrBlueprint, levelName, gameInitParams);
 	m2ReflectUnexpected(success);
 
-	// Queue an empty player input to start the game
-	GetLockstepClientActor().QueuePlayerInput({});
+	GetLockstepClientActor().CommitEmptyInputsToStartTheGame();
 
 	return {};
 }
@@ -652,12 +651,19 @@ void m2::Game::ExecuteStep(const Stopwatch::Duration& delta) {
 		if (const auto server_command = TurnBasedRealClientThread().pop_server_command()) {
 			_proxy.handle_server_command(*server_command);
 		}
-	} else if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)) {
-		auto& clientInterface = std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).hostClientActorInterface;
-		std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>> playerInputs;
-		clientInterface->PopReadyToSimulatePlayerInputs(playerInputs);
-		if (playerInputs) {
-			_proxy.lockstepHandlePlayerInputs(*playerInputs);
+	} else if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents) || std::holds_alternative<multiplayer::lockstep::ClientActorInterface>(_multiPlayerComponents)) {
+		auto& clientInterface = [this]() -> multiplayer::lockstep::ClientActorInterface& {
+			if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)) {
+				return *std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).hostClientActorInterface;
+			} else {
+				return std::get<multiplayer::lockstep::ClientActorInterface>(_multiPlayerComponents);
+			}
+		}();
+
+		std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>> inputsToSimulate;
+		if (clientInterface.CommitThisPlayerInputsAndPopReadyToSimulateInputsIfNecessary(inputsToSimulate); inputsToSimulate) {
+			LOG_NETWORK("Simulating inputs from all players");
+			_proxy.lockstepHandlePlayerInputs(*inputsToSimulate);
 		}
 	} else if constexpr (not GAME_IS_DETERMINISTIC) {
 		// Integrate physics

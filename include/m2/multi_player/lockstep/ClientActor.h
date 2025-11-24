@@ -14,7 +14,7 @@ namespace m2::multiplayer::lockstep {
 
 		std::optional<ConnectionToServer> _serverConnection;
 		// Player inputs from this instance are collected here, to be sent to every peer each tick.
-		std::deque<m2g::pb::LockstepPlayerInput> _unsentPlayerInputs;
+		std::optional<std::deque<m2g::pb::LockstepPlayerInput>> _unsentThisPlayerInputs;
 		// Last timepoint where the previous player inputs are sent to peers.
 		std::optional<Stopwatch> _lastPlayerInputsSentAt;
 		network::Timecode _nextTimecode{};
@@ -35,6 +35,7 @@ namespace m2::multiplayer::lockstep {
 		void Deinitialize(MessageBox<ClientActorInput>&, MessageBox<ClientActorOutput>&) override {}
 
 	private:
+		bool HasNextPlayerInputsToSimulate() const;
 		std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>> GetNextPlayerInputsToSimulate() const;
 
 		void ProcessOneMessageFromInbox(MessageBox<ClientActorInput>&);

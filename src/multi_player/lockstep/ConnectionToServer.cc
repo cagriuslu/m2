@@ -19,6 +19,11 @@ std::optional<int> ConnectionToServer::PeerList::GetSelfIndex() const {
 	}
 	return std::nullopt;
 }
+bool ConnectionToServer::PeerList::HasAllPeerInputsForTimecode(const network::Timecode tc) const {
+	return std::ranges::all_of(_peers, [tc](const auto& peer) {
+		return not peer || peer->DoPlayerInputsForTimecodeExist(tc);
+	});
+}
 std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>> ConnectionToServer::PeerList::GetPeerPlayerInputsForTimecode(const network::Timecode tc) const {
 	// Check if peers have the inputs before building the containers
 	for (const auto& peer : _peers) {
@@ -124,6 +129,12 @@ int ConnectionToServer::GetTotalPlayerCount() const {
 	return std::visit(overloaded{
 		[](const StateWithPeerList auto& s) { return s.peerList.GetSize(); },
 		[](const auto&) { return 0; }
+	}, _state.Get());
+}
+bool ConnectionToServer::HasAllPeerInputsForTimecode(const network::Timecode tc) const {
+	return std::visit(overloaded{
+		[tc](const StateWithPeerList auto& s) { return s.peerList.HasAllPeerInputsForTimecode(tc); },
+		[](const auto&) { return false; }
 	}, _state.Get());
 }
 std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>> ConnectionToServer::GetPeerPlayerInputsForTimecode(const network::Timecode tc) const {

@@ -8,10 +8,10 @@ namespace m2::multiplayer::lockstep {
 		struct SetReadyState {
 			bool state;
 		};
-		struct QueuePlayerInput {
-			m2g::pb::LockstepPlayerInput playerInput;
+		struct QueueThisPlayerInput {
+			std::deque<m2g::pb::LockstepPlayerInput> inputs;
 		};
-		std::variant<SetReadyState,QueuePlayerInput> variant;
+		std::variant<SetReadyState,QueueThisPlayerInput> variant;
 	};
 
 	struct ClientActorOutput {

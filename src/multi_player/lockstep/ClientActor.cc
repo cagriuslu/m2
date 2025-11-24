@@ -46,41 +46,43 @@ bool ClientActor::operator()(MessageBox<ClientActorInput>& inbox, MessageBox<Cli
 		}
 	}
 
-	// Gather outgoing messages from connection managers
-	const auto firstEverPlayerInputAvailable = not _unsentPlayerInputs.empty() && not _lastPlayerInputsSentAt;
-	auto nextPlayerInputsToSimulate = GetNextPlayerInputsToSimulate();
-	const auto timeToSendPlayerInputs = nextPlayerInputsToSimulate && _lastPlayerInputsSentAt && _lastPlayerInputsSentAt->HasTimePassed(M2G_PROXY.lockstepGameTickPeriod);
-	if (firstEverPlayerInputAvailable || timeToSendPlayerInputs) {
+	if (not _lastPlayerInputsSentAt && _unsentThisPlayerInputs) {
+		// If input streaming hasn't yet started and inputs from this player have been committed, mark game as started
+		// on this client.
+		_serverConnection->MarkGameAsStarted();
 		const auto timecode = _nextTimecode++;
-		if (firstEverPlayerInputAvailable) {
-			LOG_NETWORK("First player inputs are available with timecode, sending to peers...", timecode);
-		} else {
-			LOG_NETWORK("It is time to send inputs to peers with timecode", timecode);
-		}
-		_serverConnection->QueueOutgoingMessages(timecode, &_unsentPlayerInputs); // Sends to peers as well
+		LOG_NETWORK("First player inputs are available with timecode, sending to peers...", timecode);
+		_serverConnection->QueueOutgoingMessages(timecode, &*_unsentThisPlayerInputs);
 
-		if (firstEverPlayerInputAvailable) {
-			LOG_NETWORK("Waiting after first player inputs for main thread to catch up...");
-			std::this_thread::sleep_for(std::chrono::seconds{1});
-		}
+		LOG_NETWORK("Waiting after first player inputs for main thread to catch up...");
+		std::this_thread::sleep_for(std::chrono::seconds{1});
 
-		// If all player inputs are received, and game tick period has passed since the last time the inputs were sent
-		// to other peers, we can return the inputs to the client interface for them to be simulated.
-		if (timeToSendPlayerInputs) {
-			const auto timecodeToSimulate = _nextSelfPlayerInputsToSimulate->first;
-			LOG_NETWORK("It is time to simulate player inputs with timecode", timecodeToSimulate);
-			outbox.PushMessage(ClientActorOutput{
-				.variant = ClientActorOutput::PlayerInputsToSimulate{
-					.playerInputs = std::move(*nextPlayerInputsToSimulate)
-				}
-			});
-			_nextSelfPlayerInputsToSimulate.reset();
-		}
-		_nextSelfPlayerInputsToSimulate = std::make_pair(timecode, std::move(_unsentPlayerInputs));
-		_unsentPlayerInputs.clear();
+		// Store this player inputs until the next tick
+		_nextSelfPlayerInputsToSimulate = std::make_pair(timecode, std::move(*_unsentThisPlayerInputs));
+		_unsentThisPlayerInputs.reset();
+		_lastPlayerInputsSentAt = Stopwatch{};
+	} else if (HasNextPlayerInputsToSimulate() && _unsentThisPlayerInputs) {
+		// Input streaming has started, inputs from all peers have been received, and inputs from this player has been
+		// committed. This signifies that previous inputs have been simulated by the game loop completely.
+		const auto timecode = _nextTimecode++; // 1
+		LOG_NETWORK("It is time to send inputs to peers with timecode", timecode);
+		_serverConnection->QueueOutgoingMessages(timecode, &*_unsentThisPlayerInputs);
+
+		auto nextPlayerInputsToSimulate = GetNextPlayerInputsToSimulate(); // Available only if the inputs from every player, including the self, is available
+		const auto timecodeToSimulate = _nextSelfPlayerInputsToSimulate->first;
+		LOG_NETWORK("It is time to simulate player inputs with timecode", timecodeToSimulate);
+		outbox.PushMessage(ClientActorOutput{
+			.variant = ClientActorOutput::PlayerInputsToSimulate{
+				.playerInputs = std::move(*nextPlayerInputsToSimulate)
+			}
+		});
+
+		// Store this player inputs until the next tick
+		_nextSelfPlayerInputsToSimulate = std::make_pair(timecode, std::move(*_unsentThisPlayerInputs));
+		_unsentThisPlayerInputs.reset();
 		_lastPlayerInputsSentAt = Stopwatch{};
 	} else {
-		_serverConnection->QueueOutgoingMessages(std::nullopt, nullptr); // Handles messages that needs to be sent to peers as well
+		_serverConnection->QueueOutgoingMessages(std::nullopt, nullptr); // Do regular housekeeping
 	}
 
 	if (not writeableSockets.empty()) {
@@ -93,6 +95,13 @@ bool ClientActor::operator()(MessageBox<ClientActorInput>& inbox, MessageBox<Cli
 	return true;
 }
 
+bool ClientActor::HasNextPlayerInputsToSimulate() const {
+	if (_serverConnection && _nextSelfPlayerInputsToSimulate) {
+		const auto nextTimecodeToSimulate = _nextSelfPlayerInputsToSimulate->first;
+		return _serverConnection->HasAllPeerInputsForTimecode(nextTimecodeToSimulate);
+	}
+	return false;
+}
 std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>> ClientActor::GetNextPlayerInputsToSimulate() const {
 	if (_serverConnection && _nextSelfPlayerInputsToSimulate) {
 		const auto nextTimecodeToSimulate = _nextSelfPlayerInputsToSimulate->first;
@@ -112,16 +121,19 @@ void ClientActor::ProcessOneMessageFromInbox(MessageBox<ClientActorInput>& inbox
 		if (std::holds_alternative<ClientActorInput::SetReadyState>(msg.variant)) {
 			const auto& readyState = std::get<ClientActorInput::SetReadyState>(msg.variant).state;
 			_serverConnection->SetReadyState(readyState);
-		} else if (std::holds_alternative<ClientActorInput::QueuePlayerInput>(msg.variant)) {
+		} else if (std::holds_alternative<ClientActorInput::QueueThisPlayerInput>(msg.variant)) {
 			if (not _serverConnection) {
 				throw M2_ERROR("Player inputs are received before server connection is established");
 			}
 			if (not _serverConnection->IsLobbyFrozen() && not _serverConnection->IsGameStarted()) {
 				throw M2_ERROR("Player inputs are received in an invalid server connection state");
 			}
-			_serverConnection->MarkGameAsStarted(); // Mark game as started on this client
-			auto& playerInput = std::get<ClientActorInput::QueuePlayerInput>(msg.variant);
-			_unsentPlayerInputs.emplace_back(std::move(playerInput.playerInput));
+			if (_unsentThisPlayerInputs) {
+				throw M2_ERROR("Inputs from this player from previous tick are not sent yet");
+			}
+			LOG_NETWORK("Received committed inputs from the game loop");
+			auto& playerInput = std::get<ClientActorInput::QueueThisPlayerInput>(msg.variant);
+			_unsentThisPlayerInputs = std::move(playerInput.inputs);
 		}
 		return true;
 	}, 1);
