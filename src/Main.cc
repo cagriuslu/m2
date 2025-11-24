@@ -98,17 +98,19 @@ int main(const int argc, char **argv) {
 			}
 			prevPhyUpdateAt->AdvanceStartingPoint(TIME_BETWEEN_PHYSICS_SIMULATIONS);
 
-			M2_GAME.ExecutePreStep(TIME_BETWEEN_PHYSICS_SIMULATIONS);
-			M2_GAME.ExecuteDeferredActions();
-			M2_GAME.UpdateCharacters(TIME_BETWEEN_PHYSICS_SIMULATIONS);
-			M2_GAME.ExecuteDeferredActions();
-			M2_GAME.ExecuteStep(TIME_BETWEEN_PHYSICS_SIMULATIONS);
-			M2_GAME.ExecuteDeferredActions();
-			M2_GAME.ExecutePostStep(TIME_BETWEEN_PHYSICS_SIMULATIONS);
-			M2_GAME.ExecuteDeferredActions();
-			M2_GAME.UpdateSounds(TIME_BETWEEN_PHYSICS_SIMULATIONS);
-			M2_GAME.ExecuteDeferredActions();
-			M2_GAME.RecalculateDirectionalAudio();
+			if (M2_GAME.ShouldSimulatePhysics()) {
+				M2_GAME.ExecutePreStep(TIME_BETWEEN_PHYSICS_SIMULATIONS);
+				M2_GAME.ExecuteDeferredActions();
+				M2_GAME.UpdateCharacters(TIME_BETWEEN_PHYSICS_SIMULATIONS);
+				M2_GAME.ExecuteDeferredActions();
+				M2_GAME.ExecuteStep(TIME_BETWEEN_PHYSICS_SIMULATIONS);
+				M2_GAME.ExecuteDeferredActions();
+				M2_GAME.ExecutePostStep(TIME_BETWEEN_PHYSICS_SIMULATIONS);
+				M2_GAME.ExecuteDeferredActions();
+				M2_GAME.UpdateSounds(TIME_BETWEEN_PHYSICS_SIMULATIONS);
+				M2_GAME.ExecuteDeferredActions();
+				M2_GAME.RecalculateDirectionalAudio();
+			}
 
 			// Increment phy counters, subtract period from stopwatch
 			++prevPhySimulationCount;

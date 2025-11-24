@@ -191,6 +191,7 @@ namespace m2 {
 		void HandlePauseEvent();
 		void HandleHudEvents();
 		void HandleNetworkEvents();
+		bool ShouldSimulatePhysics();
 		void ExecutePreStep(const Stopwatch::Duration& delta);
 		void UpdateCharacters(const Stopwatch::Duration& delta);
 		void ExecuteStep(const Stopwatch::Duration& delta);

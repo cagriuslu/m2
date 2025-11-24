@@ -490,13 +490,11 @@ void m2::Game::HandleQuitEvent() {
 		quit = true;
 	}
 }
-
 void m2::Game::HandleWindowResizeEvent() {
 	if (events.PopWindowResize()) {
 		OnWindowResize();
 	}
 }
-
 void m2::Game::HandleConsoleEvent() {
 	if (events.PopKeyPress(m2g::pb::KeyType::CONSOLE)) {
 		if (UiPanel::create_and_run_blocking(&console_ui).IsQuit()) {
@@ -504,7 +502,6 @@ void m2::Game::HandleConsoleEvent() {
 		}
 	}
 }
-
 void m2::Game::HandlePauseEvent() {
 	if (events.PopKeyPress(m2g::pb::KeyType::PAUSE)) {
 		// Select the correct pause menu
@@ -524,7 +521,6 @@ void m2::Game::HandlePauseEvent() {
 		}
 	}
 }
-
 void m2::Game::HandleHudEvents() {
 	if (_level->_semiBlockingUiPanel) {
 		_level->_semiBlockingUiPanel->HandleEvents(events, _level->IsPanning())
@@ -558,7 +554,6 @@ void m2::Game::HandleHudEvents() {
 		IF(_level->_leftHudUiPanel)->HandleEvents(events, _level->IsPanning());
 	}
 }
-
 void m2::Game::HandleNetworkEvents() {
 	// Check if the game ended
 	if ((IsTurnBasedServer() && ServerThread().HasBeenShutdown()) || (IsRealTurnBasedClient() && TurnBasedRealClientThread().is_shutdown())) {
@@ -594,7 +589,9 @@ void m2::Game::HandleNetworkEvents() {
 		}
 	}
 }
-
+bool m2::Game::ShouldSimulatePhysics() {
+	return true;
+}
 void m2::Game::ExecutePreStep(const Stopwatch::Duration& delta) {
 	_proxy.OnPreStep(delta);
 	ExecuteDeferredActions();
@@ -602,7 +599,6 @@ void m2::Game::ExecutePreStep(const Stopwatch::Duration& delta) {
 		IF(phy.preStep)(phy, delta);
 	}
 }
-
 void m2::Game::UpdateCharacters(const Stopwatch::Duration& delta) {
 	for (auto& character : _level->characters) {
 		auto& chr = ToCharacterBase(character);
@@ -613,7 +609,6 @@ void m2::Game::UpdateCharacters(const Stopwatch::Duration& delta) {
 		IF(chr.update)(chr, delta);
 	}
 }
-
 void m2::Game::ExecuteStep(const Stopwatch::Duration& delta) {
 	if (IsTurnBasedServer()) {
 		// Check if any of the bots need to handle the TurnBasedServerUpdate
@@ -711,7 +706,6 @@ void m2::Game::ExecuteStep(const Stopwatch::Duration& delta) {
 		_level->pathfinder->clear_cache();
 	}
 }
-
 void m2::Game::ExecutePostStep(const Stopwatch::Duration& delta) {
 	if (IsTurnBasedServer()) {
 		if (_server_update_necessary) {
@@ -754,13 +748,11 @@ void m2::Game::ExecutePostStep(const Stopwatch::Duration& delta) {
 		IF(phy.postStep)(phy, delta);
 	}
 }
-
 void m2::Game::UpdateSounds(const Stopwatch::Duration& delta) {
 	for (auto& sound_emitter : _level->soundEmitters) {
 		IF(sound_emitter.update)(sound_emitter, delta);
 	}
 }
-
 void m2::Game::ExecutePreDraw(const Stopwatch::Duration& delta) {
 	for (auto& gfx : _level->uprightGraphics) {
 		if (gfx.enabled) {
@@ -768,7 +760,6 @@ void m2::Game::ExecutePreDraw(const Stopwatch::Duration& delta) {
 		}
 	}
 }
-
 void m2::Game::UpdateHudContents(const Stopwatch::Duration& delta) {
 	const auto deltaF = ToDurationF(delta);
 	// TODO handle returned actions
@@ -796,12 +787,10 @@ void m2::Game::UpdateHudContents(const Stopwatch::Duration& delta) {
 				});
 	}
 }
-
 void m2::Game::ClearBackBuffer() const {
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 	SDL_RenderClear(renderer);
 }
-
 void m2::Game::Draw() {
 	// Check if only one background layer needs to be drawn
 	const auto onlyBackgroundLayerToDraw = [&]() -> std::optional<pb::FlatGraphicsLayer> {
@@ -838,13 +827,11 @@ void m2::Game::Draw() {
 		}
 	}
 }
-
 void m2::Game::DrawLights() {
 	for (auto& light : _level->lights) {
 		IF(light.onDraw)(light);
 	}
 }
-
 void m2::Game::ExecutePostDraw(const Stopwatch::Duration& delta) {
 	for (auto& gfx : _level->uprightGraphics) {
 		if (gfx.enabled) {
@@ -852,7 +839,6 @@ void m2::Game::ExecutePostDraw(const Stopwatch::Duration& delta) {
 		}
 	}
 }
-
 void m2::Game::DebugDraw() {
 #ifdef DEBUG
 	for (int i = 0; i < I(PHYSICS_LAYER_COUNT); ++i) {
@@ -874,7 +860,6 @@ void m2::Game::DebugDraw() {
 	}
 #endif
 }
-
 void m2::Game::DrawHud() {
 	IF(_level->_leftHudUiPanel)->Draw();
 	IF(_level->_rightHudUiPanel)->Draw();
@@ -885,7 +870,6 @@ void m2::Game::DrawHud() {
 	IF(_level->_mouseHoverUiPanel)->Draw();
 	IF(_level->_semiBlockingUiPanel)->Draw();
 }
-
 void m2::Game::DrawEnvelopes() const {
 	SDL_Rect sdl_rect{};
 
@@ -899,7 +883,6 @@ void m2::Game::DrawEnvelopes() const {
 	sdl_rect = static_cast<SDL_Rect>(_dimensions->RightEnvelope());
 	SDL_RenderFillRect(renderer, &sdl_rect);
 }
-
 void m2::Game::FlipBuffers() const { SDL_RenderPresent(renderer); }
 
 void m2::Game::OnWindowResize() {
