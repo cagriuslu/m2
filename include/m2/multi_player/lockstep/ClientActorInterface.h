@@ -6,11 +6,25 @@
 namespace m2::multiplayer::lockstep {
 	class ClientActorInterface final : public ActorInterfaceBase<ClientActor, ClientActorInput, ClientActorOutput> {
 		ClientActorOutput::ConnectionToServerStateUpdate _connectionToServerState{};
-		bool _lastSetReadyState{};
 		std::optional<m2g::pb::LockstepGameInitParams> _gameInitParams;
-		std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>> _readyToSimulatePlayersInputs;
-		std::deque<m2g::pb::LockstepPlayerInput> _thisPlayerInputBuffer;
-		int32_t _physicsSimulationsCounter{};
+
+		struct GameNotStarted {
+			bool lastSetReadyState{};
+		};
+		/// Simulating previously received inputs, the player can queue new inputs to be commited later.
+		struct SimulatingInputs {
+			int32_t physicsSimulationsCounter{};
+			std::deque<m2g::pb::LockstepPlayerInput> selfInputs;
+		};
+		/// Inputs previously queued by player have been commited, but inputs to simulate haven't been received yet.
+		/// It's not possible to queue further inputs. Only graphics and non-impactful events can be handled.
+		struct Lagging {};
+		/// Inputs previously queued by the player have been commited, and next inputs to simulate have been received
+		/// and should be handled right away. This is a transitional state and the interface never settles on it.
+		struct ReadyToSimulate {
+			std::vector<std::deque<m2g::pb::LockstepPlayerInput>> allInputs;
+		};
+		std::variant<GameNotStarted, SimulatingInputs, Lagging, ReadyToSimulate> _state;
 
 	public:
 		explicit ClientActorInterface(network::IpAddressAndPort serverAddress) : ActorInterfaceBase(std::move(serverAddress)) {}
@@ -21,13 +35,13 @@ namespace m2::multiplayer::lockstep {
 		/// \brief Returns true if the client is waiting in the game lobby.
 		/// \details Readiness must be set to allow the server to close the lobby and start the game.
 		bool IsWaitingInLobby();
-		std::optional<int> GetSelfIndex() const { return _connectionToServerState.selfIndex; }
-		int GetTotalPlayerCount() const { return _connectionToServerState.totalPlayerCount; }
-		bool GetLastSetReadyState() const { return _lastSetReadyState; }
 		/// \brief Returns true if the lobby is frozen and the level must be built.
 		/// \details GetGameInitParams can be used to fetch the parameters to build the level.
 		bool IsLobbyFrozen();
 		bool IsGameStarted();
+		std::optional<int> GetSelfIndex() const { return _connectionToServerState.selfIndex; }
+		int GetTotalPlayerCount() const { return _connectionToServerState.totalPlayerCount; }
+		bool GetLastSetReadyState() const;
 		/// Returns the game initialization parameters, if it's received from the server. Game init params are received
 		/// first when the lobby is frozen.
 		const m2g::pb::LockstepGameInitParams* GetGameInitParams();
@@ -35,11 +49,20 @@ namespace m2::multiplayer::lockstep {
 		// Modifiers
 
 		void SetReadyState(bool state);
-		void CommitEmptyInputsToStartTheGame();
-		void QueueThisPlayerInput(m2g::pb::LockstepPlayerInput&&);
-		void CommitThisPlayerInputsAndPopReadyToSimulateInputsIfNecessary(std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>>& out);
+		/// Starts the game for this instance
+		void StartInputStreaming();
+		/// Tries to queueu an input to be commited later. Depending on the state of the connection, the interface may
+		/// not be willing to accept new input. The return value reflects whether the input was accepted.
+		bool TryQueueInput(m2g::pb::LockstepPlayerInput&&);
+		struct SkipPhysics {};
+		struct SimulatePhysics {};
+		using SwapResult = std::variant<SkipPhysics, SimulatePhysics>;
+		/// Commit the inputs queued previously from this player to be sent to peers, and fetches the inputs previously
+		/// received from peers for simulation.
+		SwapResult SwapInputs();
+		std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>> PopSimulationInputs();
 
 	private:
-		void ProcessOutbox(bool checkPlayerInputs = true);
+		void ProcessOutbox();
 	};
 }

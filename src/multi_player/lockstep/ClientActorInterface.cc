@@ -21,8 +21,14 @@ bool ClientActorInterface::IsLobbyFrozen() {
 	return _connectionToServerState.stateIndex == GetIndexInVariant<ConnectionToServer::LobbyFrozen, ConnectionToServer::State>::value;
 }
 bool ClientActorInterface::IsGameStarted() {
-	ProcessOutbox(false); // Don't pop player inputs after the game is started
+	ProcessOutbox();
 	return _connectionToServerState.stateIndex == GetIndexInVariant<ConnectionToServer::GameStarted, ConnectionToServer::State>::value;
+}
+bool ClientActorInterface::GetLastSetReadyState() const {
+	if (not std::holds_alternative<GameNotStarted>(_state)) {
+		throw M2_ERROR("Last set ready state was queried after the game has started");
+	}
+	return std::get<GameNotStarted>(_state).lastSetReadyState;
 }
 const m2g::pb::LockstepGameInitParams* ClientActorInterface::GetGameInitParams() {
 	ProcessOutbox();
@@ -30,78 +36,115 @@ const m2g::pb::LockstepGameInitParams* ClientActorInterface::GetGameInitParams()
 }
 
 void ClientActorInterface::SetReadyState(const bool state) {
-	_lastSetReadyState = state;
+	if (not std::holds_alternative<GameNotStarted>(_state)) {
+		throw M2_ERROR("Ready state was set after the game has started");
+	}
+	std::get<GameNotStarted>(_state).lastSetReadyState = state;
 	GetActorInbox().PushMessage(ClientActorInput{
 		.variant = ClientActorInput::SetReadyState{
 			.state = state
 		}
 	});
 }
-void ClientActorInterface::CommitEmptyInputsToStartTheGame() {
-	if (not IsGameStarted()) {
-		LOG_NETWORK("Commiting empty inputs to signify start of game");
-		GetActorInbox().PushMessage(ClientActorInput{
-			.variant = ClientActorInput::QueueThisPlayerInput{}
-		});
-		return;
+void ClientActorInterface::StartInputStreaming() {
+	if (not IsLobbyFrozen()) {
+		throw M2_ERROR("Attempt to start the game outside of lobby frozen state");
 	}
-	throw M2_ERROR("Game can be started only once");
+	if (not std::holds_alternative<GameNotStarted>(_state)) {
+		throw M2_ERROR("Game can be started only once");
+	}
+	LOG_NETWORK("Commiting empty inputs to start of game");
+	GetActorInbox().PushMessage(ClientActorInput{
+		.variant = ClientActorInput::QueueThisPlayerInput{}
+	});
+	_state.emplace<SimulatingInputs>();
 }
-void ClientActorInterface::QueueThisPlayerInput(m2g::pb::LockstepPlayerInput&& input) {
-	LOG_NETWORK("Queueing inputs from this player for later");
-	_thisPlayerInputBuffer.emplace_back(input);
+bool ClientActorInterface::TryQueueInput(m2g::pb::LockstepPlayerInput&& input) {
+	if (std::holds_alternative<GameNotStarted>(_state)) {
+		throw M2_ERROR("Attempt to queue input while the game hasn't started");
+	}
+	if (std::holds_alternative<SimulatingInputs>(_state)) {
+		LOG_NETWORK("Queueing input from player");
+		std::get<SimulatingInputs>(_state).selfInputs.emplace_back(input);
+		return true;
+	}
+	LOG_NETWORK("Unable to queue input from player");
+	return false;
 }
-void ClientActorInterface::CommitThisPlayerInputsAndPopReadyToSimulateInputsIfNecessary(std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>>& out) {
-	out.reset();
-	if (IsGameStarted()) {
-		_physicsSimulationsCounter = (_physicsSimulationsCounter + 1) % m2g::LockstepPhysicsSimulationCountPerGameTick;
-		if (_physicsSimulationsCounter == 0) {
+ClientActorInterface::SwapResult ClientActorInterface::SwapInputs() {
+	if (std::holds_alternative<GameNotStarted>(_state)) {
+		throw M2_ERROR("Attempt to swap inputs while the game hasn't started");
+	}
+	if (std::holds_alternative<ReadyToSimulate>(_state)) {
+		throw M2_ERROR("Attempt to swap input while there are inputs to simulate");
+	}
+	if (std::holds_alternative<SimulatingInputs>(_state)) {
+		auto& simulatingInputs = std::get<SimulatingInputs>(_state);
+		if (simulatingInputs.physicsSimulationsCounter == m2g::LockstepPhysicsSimulationCountPerGameTick) {
 			LOG_NETWORK("Commiting inputs from this player");
-			// Commit inputs from this player
 			GetActorInbox().PushMessage(ClientActorInput{
 				.variant = ClientActorInput::QueueThisPlayerInput{
-					.inputs = std::move(_thisPlayerInputBuffer)
+					.inputs = std::move(simulatingInputs.selfInputs)
 				}
 			});
-			_thisPlayerInputBuffer.clear();
-
-			// This loop hangs until all inputs are received
-			LOG_NETWORK("Waiting for inputs to simulate");
-			while (not _readyToSimulatePlayersInputs) {
-				ProcessOutbox();
-				std::this_thread::sleep_for(std::chrono::milliseconds{5});
-			}
-			LOG_NETWORK("Returning inputs to simulate to the game loop");
-			out = std::move(_readyToSimulatePlayersInputs);
-			_readyToSimulatePlayersInputs.reset();
+			// Switch to lagging state and check inputs to simulate
+			_state.emplace<Lagging>();
+			// Give some time for client actor to publish the inputs to simulate
+			std::this_thread::sleep_for(std::chrono::milliseconds{5});
+		} else {
+			++simulatingInputs.physicsSimulationsCounter;
+			return SimulatePhysics{};
+		}
+		// Intentional fallthrough
+	}
+	if (std::holds_alternative<Lagging>(_state)) {
+		ProcessOutbox();
+		if (std::holds_alternative<Lagging>(_state)) {
+			LOG_NETWORK("Simulation inputs haven't arrived yet");
+			return SkipPhysics{};
+		}
+		if (std::holds_alternative<ReadyToSimulate>(_state)) {
+			LOG_NETWORK("Simulation inputs have arrived");
+			return SimulatePhysics{};
 		}
 	}
+	throw M2_ERROR("Implementation error");
+}
+std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>> ClientActorInterface::PopSimulationInputs() {
+	if (std::holds_alternative<ReadyToSimulate>(_state)) {
+		LOG_NETWORK("Simulation inputs are popped");
+		std::vector<std::deque<m2g::pb::LockstepPlayerInput>> retval = std::move(std::get<ReadyToSimulate>(_state).allInputs);
+		// Return to simulating state
+		_state.emplace<SimulatingInputs>();
+		return retval;
+	}
+	return std::nullopt;
 }
 
-void ClientActorInterface::ProcessOutbox(const bool checkPlayerInputs) {
-	// Message handler can handle any message
-	const auto messageHandler = [this](const ClientActorOutput& msg) {
+void ClientActorInterface::ProcessOutbox() {
+	GetActorOutbox().PopMessages([this](const ClientActorOutput& msg) {
 		if (std::holds_alternative<ClientActorOutput::ConnectionToServerStateUpdate>(msg.variant)) {
 			_connectionToServerState = std::get<ClientActorOutput::ConnectionToServerStateUpdate>(msg.variant);
 		} else if (std::holds_alternative<ClientActorOutput::PlayerInputsToSimulate>(msg.variant)) {
-			if (_readyToSimulatePlayersInputs) {
-				throw M2_ERROR("Next player inputs are received before the previous inputs are simulated");
+			auto& playerInputsToSimulate = std::get<ClientActorOutput::PlayerInputsToSimulate>(msg.variant);
+			if (std::holds_alternative<GameNotStarted>(_state)) {
+				throw M2_ERROR("Received inputs to simulate before the game has started");
 			}
-			LOG_NETWORK("Received inputs to simulate");
-			_readyToSimulatePlayersInputs = std::move(std::get<ClientActorOutput::PlayerInputsToSimulate>(msg.variant).playerInputs);
-			return false; // There could be multiple player inputs in the queue. Pop only one of them.
+			if (std::holds_alternative<SimulatingInputs>(_state)) {
+				throw M2_ERROR("Received inputs to simulate before commiting next inputs");
+			}
+			if (std::holds_alternative<Lagging>(_state)) {
+				LOG_NETWORK("Received inputs to simulate");
+				_state.emplace<ReadyToSimulate>(std::move(playerInputsToSimulate.playerInputs));
+				return false; // There could be multiple player inputs in the queue. Pop only one of them.
+			}
+			if (std::holds_alternative<ReadyToSimulate>(_state)) {
+				throw M2_ERROR("Received inputs to simulate before simulating previous inputs");
+			}
 		}
 		if (msg.gameInitParams) {
 			_gameInitParams = std::move(msg.gameInitParams);
 		}
 		return true;
-	};
-
-	GetActorOutbox().PopMessagesIf([checkPlayerInputs](const ClientActorOutput& msg) {
-		if (checkPlayerInputs) {
-			return true;
-		}
-		// If checkPlayerInputs is false, don't find PlayerInputsToSimulate interesting.
-		return not std::holds_alternative<ClientActorOutput::PlayerInputsToSimulate>(msg.variant);
-	}, messageHandler, 10);
+	}, 10);
 }

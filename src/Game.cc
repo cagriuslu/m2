@@ -445,7 +445,8 @@ m2::void_expected m2::Game::LoadLockstep(const std::variant<std::filesystem::pat
 	_dimensions->SetGameAspectRatio(_proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
 	_level.emplace();
 
-	// Make sure the client state is proper. Game should only be loaded when the lobby is frozen.
+	// Make sure the client state is proper. Game should only be loaded when the lobby is frozen. This is a concern only
+	// for the host since the client won't even have access to game init parameters unless the lobby is frozen.
 	if (not GetLockstepClientActor().IsLobbyFrozen()) {
 		throw M2_ERROR("Unexpected lockstep client actor state");
 	}
@@ -454,7 +455,7 @@ m2::void_expected m2::Game::LoadLockstep(const std::variant<std::filesystem::pat
 	auto success = _level->InitLockstepMultiPlayer(levelPathOrBlueprint, levelName, gameInitParams);
 	m2ReflectUnexpected(success);
 
-	GetLockstepClientActor().CommitEmptyInputsToStartTheGame();
+	GetLockstepClientActor().StartInputStreaming();
 
 	return {};
 }
@@ -590,6 +591,10 @@ void m2::Game::HandleNetworkEvents() {
 	}
 }
 bool m2::Game::ShouldSimulatePhysics() {
+	if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)
+			|| std::holds_alternative<multiplayer::lockstep::ClientActorInterface>(_multiPlayerComponents)) {
+		return std::holds_alternative<m2::multiplayer::lockstep::ClientActorInterface::SimulatePhysics>(GetLockstepClientActor().SwapInputs());
+	}
 	return true;
 }
 void m2::Game::ExecutePreStep(const Stopwatch::Duration& delta) {
@@ -646,19 +651,11 @@ void m2::Game::ExecuteStep(const Stopwatch::Duration& delta) {
 		if (const auto server_command = TurnBasedRealClientThread().pop_server_command()) {
 			_proxy.handle_server_command(*server_command);
 		}
-	} else if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents) || std::holds_alternative<multiplayer::lockstep::ClientActorInterface>(_multiPlayerComponents)) {
-		auto& clientInterface = [this]() -> multiplayer::lockstep::ClientActorInterface& {
-			if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)) {
-				return *std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).hostClientActorInterface;
-			} else {
-				return std::get<multiplayer::lockstep::ClientActorInterface>(_multiPlayerComponents);
-			}
-		}();
-
-		std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>> inputsToSimulate;
-		if (clientInterface.CommitThisPlayerInputsAndPopReadyToSimulateInputsIfNecessary(inputsToSimulate); inputsToSimulate) {
+	} else if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)
+			|| std::holds_alternative<multiplayer::lockstep::ClientActorInterface>(_multiPlayerComponents)) {
+		if (const auto simulationInputs = GetLockstepClientActor().PopSimulationInputs()) {
 			LOG_NETWORK("Simulating inputs from all players");
-			_proxy.lockstepHandlePlayerInputs(*inputsToSimulate);
+			_proxy.lockstepHandlePlayerInputs(*simulationInputs);
 		}
 	} else if constexpr (not GAME_IS_DETERMINISTIC) {
 		// Integrate physics
