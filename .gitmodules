@@ -4,3 +4,9 @@
 [submodule "resource/game/WAR"]
 	path = resource/game/WAR
 	url = https://github.com/cagriuslu/WAR-resource.git
+[submodule "game/SUB"]
+	path = game/SUB
+	url = https://github.com/cagriuslu/SUB
+[submodule "resource/game/SUB"]
+	path = resource/game/SUB
+	url = https://github.com/cagriuslu/SUB-resource
