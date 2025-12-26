@@ -188,15 +188,16 @@ int32_t Level::CalculateGameStateHash() {
 		// ReSharper disable once CppDFAUnreachableCode
 		throw M2_ERROR("Game is not deterministic");
 	}
+	// ReSharper disable once CppDFAUnreachableCode
 	if (not _nextGameStateHashTimecode) {
 		// Timecode is not necessary for the calculation, but the hash must be calculated only if there is one.
 		throw M2_ERROR("Unable to find next game state hash timecode");
 	}
 	int32_t hash = 0;
 	for (const auto& phy : physics) {
-		hash = HashI(phy.position.GetX().ToRawValue(), hash);
-		hash = HashI(phy.position.GetY().ToRawValue(), hash);
-		hash = HashI(phy.orientation.ToRawValue(), hash);
+		hash = HashI(ToRawValue(phy.position.GetX()), hash);
+		hash = HashI(ToRawValue(phy.position.GetY()), hash);
+		hash = HashI(ToRawValue(phy.orientation), hash);
 	}
 	for (const auto& chr : characters) {
 		hash = std::visit([hash](const auto& c) -> int32_t { return c.Hash(hash); }, chr);

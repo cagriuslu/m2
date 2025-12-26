@@ -303,6 +303,11 @@ void m2::FastCharacter::AutomaticUpdate(const Stopwatch::Duration& delta) {
 	}
 }
 int32_t m2::FastCharacter::Hash(const int32_t initialValue) const {
+	if constexpr (not GAME_IS_DETERMINISTIC) {
+		// ReSharper disable once CppDFAUnreachableCode
+		throw M2_ERROR("Game is not deterministic");
+	}
+	// ReSharper disable once CppDFAUnreachableCode
 	auto hash = initialValue;
 	for (const auto* item : _items) {
 		if (item) {
@@ -313,7 +318,7 @@ int32_t m2::FastCharacter::Hash(const int32_t initialValue) const {
 		if (property && property.IsInt()) {
 			hash = HashI(property.GetInt(), hash);
 		} else if (property && property.IsFE()) {
-			hash = HashI(property.GetFE().ToRawValue(), hash);
+			hash = HashI(ToRawValue(property.GetFE()), hash);
 		}
 	}
 	return hash;

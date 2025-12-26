@@ -98,7 +98,12 @@ namespace m2 {
 		static void ThrowIfOutOfBounds(int i);
 		static void ThrowIfOutOfBounds(float f);
 		static void ThrowIfOutOfBounds(double d);
+
+		friend int32_t ToRawValue(const Exact&);
 	};
 
 	std::string ToString(const Exact&);
+	inline int32_t ToRawValue(const Exact& e) { return e._value; }
+	/// Provided for API compatibility. Throws when called.
+	inline int32_t ToRawValue(const float) { throw M2_ERROR("Forbidden raw value conversion on float"); }
 }

@@ -70,4 +70,6 @@ namespace m2 {
 	};
 
 	std::string ToString(const Float&);
+	/// Provided for API compatibility. Throws when called.
+	inline int32_t ToRawValue(const Float&) { throw M2_ERROR("Forbidden raw value conversion on Float"); }
 }
