@@ -8,7 +8,11 @@ namespace m2::multiplayer::lockstep {
 			m2g::pb::LockstepGameInitParams gameInitParams;
 		};
 		struct IsAllOutgoingMessagesDelivered {};
-		std::variant<FreezeLobby, IsAllOutgoingMessagesDelivered> variant;
+		struct GameStateHash {
+			network::Timecode timecode;
+			int32_t hash;
+		};
+		std::variant<FreezeLobby, IsAllOutgoingMessagesDelivered, GameStateHash> variant;
 	};
 
 	struct ServerActorOutput {

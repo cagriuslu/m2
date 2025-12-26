@@ -44,7 +44,7 @@ namespace m2 {
             return out.has_value();
         }
         /// Pops up to nMaxMessages messages.
-        void PopMessages(const std::function<void(const T&)>& handler, const int nMaxMessages = -1) {
+        void PopMessages(const std::function<void(T&)>& handler, const int nMaxMessages = -1) {
             std::optional<T> msg;
             if (nMaxMessages < 0) {
                 while (PopMessage(msg)) {
@@ -63,7 +63,7 @@ namespace m2 {
             }
         }
         /// Pops up to nMaxMessages messages as long as the handler returns true.
-        void PopMessagesUntil(const std::function<bool(const T&)>& handler, const int nMaxMessages = -1) {
+        void PopMessagesUntil(const std::function<bool(T&)>& handler, const int nMaxMessages = -1) {
             std::optional<T> msg;
             if (nMaxMessages < 0) {
                 while (PopMessage(msg)) {
@@ -86,7 +86,7 @@ namespace m2 {
             }
         }
         /// Keeps popping messages as long as isMessageInteresting and handler return true
-        void PopMessagesIf(const std::function<bool(const T&)>& isMessageInteresting, const std::function<bool(const T&)>& handler, const int nMaxMessages = -1) {
+        void PopMessagesIf(const std::function<bool(const T&)>& isMessageInteresting, const std::function<bool(T&)>& handler, const int nMaxMessages = -1) {
             if (nMaxMessages < 0) {
                 while (const auto* msg = PeekMessage()) {
                     if (isMessageInteresting(*msg)) {
@@ -122,7 +122,7 @@ namespace m2 {
             const std::function<void(const TRecv&)>& interestingResponseHandler,
             const std::function<void(const TRecv&)>& uninterestingResponseHandler) {
         // Send question
-        sendBox.PushMessage(std::move(msgToSend));
+        sendBox.PushMessage(std::forward<TSend>(msgToSend));
         // Wait for answer that we're interested in
         recvBox.WaitMessage(isResponseInteresting);
         // Fetch returning messages

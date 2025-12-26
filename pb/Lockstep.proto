@@ -18,22 +18,38 @@ message LockstepPlayerInputs {
   repeated m2g.pb.LockstepPlayerInput player_inputs = 2;
 }
 
+message LockstepStateReport {
+  fixed32 timecode = 1;
+  int32 game_state_hash = 2;
+  repeated int32 player_input_hashes = 3;
+}
+
+message LockstepGameEndReport {
+  repeated bool faulty_or_cheater_player = 1;
+  // TODO GameEndParams
+}
+
 // Each LockstepMessage has a different SequenceNo starting from 1.
 message LockstepMessage {
   oneof type {
     // A message type sent to the clients from the server.
-    LockstepPeerDetails peer_details = 2;
+    LockstepPeerDetails peer_details = 1;
     // A message type sent to the server from clients. It is used to signal readiness to the server.
-    bool set_ready_state = 3;
+    bool set_ready_state = 2;
     // A message type sent to the server from clients. It is used to notify that all peers are reachable. Each peer_details
     // message requires a confirmation with this message type.
-    bool all_peers_reachable = 4;
+    bool all_peers_reachable = 3;
     // A message type sent to the clients from the server. When all clients are ready and the host starts the game, this
     // message is used to share the game init parameters with the clients, effectively starting the game for them.
-    m2g.pb.LockstepGameInitParams freeze_lobby_with_init_params = 5;
+    m2g.pb.LockstepGameInitParams freeze_lobby_with_init_params = 4;
     // A message type send to the everyone by the clients. Once the game begins, this message is sent to every other peer
     // periodically, even if the player hasn't taken any action.
-    LockstepPlayerInputs player_inputs = 6;
+    LockstepPlayerInputs player_inputs = 5;
+    // A message type sent to the server by the clients. It is used to report various aspects of the game to help prevent
+    // malicious players and determinism faults.
+    LockstepStateReport state_report = 6;
+    // A message type sent to the clients by the server to signal the end of the game.
+    LockstepGameEndReport game_end_report = 7;
   }
 }
 

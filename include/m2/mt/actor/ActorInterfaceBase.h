@@ -33,11 +33,11 @@ namespace m2 {
             }
         }
 
+        [[nodiscard]] bool IsActorRunning() const { return IsRunning(); }
+
     protected:
         MessageBox<ActorInputType>& GetActorInbox() { return _actorInbox; }
         MessageBox<ActorOutputType>& GetActorOutbox() { return _actorOutbox; }
-
-        // TODO we need a getter for the lifecycle manager
 
     private:
         static void ActorFunc(ActorInterfaceBase* baseActor) {

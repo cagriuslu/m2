@@ -1,4 +1,5 @@
 #pragma once
+#include <m2/network/Types.h>
 #include <m2g_Lockstep.pb.h>
 #include <deque>
 #include <variant>
@@ -11,7 +12,11 @@ namespace m2::multiplayer::lockstep {
 		struct QueueThisPlayerInput {
 			std::deque<m2g::pb::LockstepPlayerInput> inputs;
 		};
-		std::variant<SetReadyState,QueueThisPlayerInput> variant;
+		struct GameStateHash {
+			network::Timecode timecode;
+			int32_t hash;
+		};
+		std::variant<SetReadyState,QueueThisPlayerInput, GameStateHash> variant;
 	};
 
 	struct ClientActorOutput {
@@ -21,6 +26,7 @@ namespace m2::multiplayer::lockstep {
 			int totalPlayerCount{};
 		};
 		struct PlayerInputsToSimulate {
+			network::Timecode timecode;
 			std::vector<std::deque<m2g::pb::LockstepPlayerInput>> playerInputs;
 		};
 		std::variant<ConnectionToServerStateUpdate,PlayerInputsToSimulate> variant;

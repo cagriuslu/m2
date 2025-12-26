@@ -27,6 +27,17 @@ std::optional<std::deque<m2g::pb::LockstepPlayerInput>> ConnectionToPeer::GetPla
 		[](const auto&) -> std::optional<std::deque<m2g::pb::LockstepPlayerInput>> { return std::nullopt; }
 	}, _state);
 }
+std::optional<int32_t> ConnectionToPeer::GetPlayerInputHashForTimecode(const network::Timecode tc) const {
+	return std::visit(overloaded{
+		[tc](const ConnectedToPeer& connection) -> std::optional<int32_t> {
+			if (const auto it = connection._inputs.find(tc); it != connection._inputs.end()) {
+				return it->second.hash;
+			}
+			return std::nullopt;
+		},
+		[](const auto&) -> std::optional<int32_t> { return std::nullopt; }
+	}, _state);
+}
 
 void ConnectionToPeer::QueueOutgoingMessages() {
 	const auto queuePing = [this] {

@@ -1,6 +1,7 @@
 #pragma once
 #include "Error.h"
 #include <tl/expected.hpp>
+#include <sstream>
 #include <string>
 #include <vector>
 #include <variant>
@@ -59,6 +60,10 @@ namespace m2 {
 	template <typename T, typename U> std::string ToString(const std::pair<T,U>& pair) {
 		return "(" + ToString(pair.first) + "," + ToString(pair.second) + ")";
 	}
+	template <typename T> std::string ToString(const std::vector<T>& vector) {
+		std::stringstream ss; ss << '['; for (const auto& item : vector) { ss << ToString(item) << ','; } ss << ']';
+		return ss.str();
+	}
 
 	// std::visit utilities
 
@@ -67,6 +72,7 @@ namespace m2 {
 
 	// Range utilities
 
+	constexpr auto Is(const auto& value) { return [&value](const auto& v) { return v == value; }; }
 	constexpr auto IsTrue = [](const auto& x) { return static_cast<bool>(x); };
 	constexpr auto ToFirst = [](const auto& pair) { return pair.first; };
 	constexpr auto ToSecond = [](const auto& pair) { return pair.second; };

@@ -98,8 +98,8 @@ void ConnectionToServer::PeerList::ReportIfAllPeersConnected(MessagePasser& mess
 	}
 }
 
-ConnectionToServer::ConnectionToServer(network::IpAddressAndPort serverAddress, MessagePasser& messagePasser, MessageBox<ClientActorOutput>& clientOutbox)
-	: _serverAddressAndPort(std::move(serverAddress)), _messagePasser(messagePasser),
+ConnectionToServer::ConnectionToServer(const network::IpAddressAndPort serverAddress, MessagePasser& messagePasser, MessageBox<ClientActorOutput>& clientOutbox)
+	: _serverAddressAndPort(serverAddress), _messagePasser(messagePasser),
 	_state([&clientOutbox](const State& newState) {
 		clientOutbox.PushMessage(ClientActorOutput{
 			.variant = ClientActorOutput::ConnectionToServerStateUpdate{
@@ -173,15 +173,15 @@ void ConnectionToServer::MarkGameAsStarted() {
 		throw M2_ERROR("Attempt to mark game as started outside of frozen lobby state");
 	}
 }
-void ConnectionToServer::QueueOutgoingMessages(const std::optional<network::Timecode> timecode, const std::deque<m2g::pb::LockstepPlayerInput>* unsentPlayerInputs) {
+void ConnectionToServer::QueueOutgoingMessages(const std::optional<network::Timecode> timecode, const std::deque<m2g::pb::LockstepPlayerInput>* unsentPlayerInputs, std::optional<ClientActorInput::GameStateHash>& lastCalculatedGameStateHash) {
 	const auto queuePlayerInputs = [this](const network::Timecode timecode_, const std::deque<m2g::pb::LockstepPlayerInput>& playerInputs) {
 		pb::LockstepMessage msg;
 		msg.mutable_player_inputs()->set_timecode(timecode_); // Set this option even if there are no inputs
 		for (const auto& playerInput : playerInputs) {
 			msg.mutable_player_inputs()->add_player_inputs()->CopyFrom(playerInput);
 		}
-		QueueOutgoingMessage(msg);
-		QueueOutgoingMessageToPeers(msg);
+		QueueOutgoingMessage(msg); // To server
+		QueueOutgoingMessageToPeers(msg); // To peers
 	};
 
 	if (std::holds_alternative<SearchForServer>(_state.Get())) {
@@ -214,9 +214,43 @@ void ConnectionToServer::QueueOutgoingMessages(const std::optional<network::Time
 		queuePlayerInputs(*timecode, *unsentPlayerInputs);
 	} else if (std::holds_alternative<GameStarted>(_state.Get()) && timecode && unsentPlayerInputs) {
 		queuePlayerInputs(*timecode, *unsentPlayerInputs);
+
+		// If timecode is multiple of report period, publish the hashes from (timecode - report period).
+		if (GAME_STATE_REPORT_PERIOD_IN_TICKS < *timecode && (*timecode % GAME_STATE_REPORT_PERIOD_IN_TICKS == 0)) {
+			const auto& gameStarted = std::get<GameStarted>(_state.Get());
+
+			const auto reportTimecode = *timecode - GAME_STATE_REPORT_PERIOD_IN_TICKS;
+			if (not lastCalculatedGameStateHash) {
+				throw M2_ERROR("Unable to find the last calculated game state hash");
+			}
+			if (lastCalculatedGameStateHash->timecode != reportTimecode) {
+				throw M2_ERROR("Last calculated game state hash belongs to an incorrect timecode");
+			}
+			pb::LockstepMessage msg;
+			auto* report = msg.mutable_state_report();
+			report->set_timecode(reportTimecode);
+			report->set_game_state_hash(lastCalculatedGameStateHash->hash);
+			std::vector<int32_t> playerInputHashes;
+			for (const auto& peer : gameStarted.peerList) {
+				if (peer) {
+					const auto playerInputHash = peer->GetPlayerInputHashForTimecode(reportTimecode);
+					if (not playerInputHash) {
+						throw M2_ERROR("Unable to find the player input hash for report timecode");
+					}
+					report->add_player_input_hashes(*playerInputHash);
+					playerInputHashes.emplace_back(*playerInputHash);
+				} else {
+					report->add_player_input_hashes(0);
+					playerInputHashes.emplace_back(0);
+				}
+			}
+			LOG_NETWORK("Queueing state report for timecode", reportTimecode, lastCalculatedGameStateHash->hash, playerInputHashes);
+			QueueOutgoingMessage(std::move(msg));
+			lastCalculatedGameStateHash.reset();
+		}
 	}
 }
-void ConnectionToServer::DeliverIncomingMessage(pb::LockstepMessage&& msg) {
+ConnectionToServer::Status ConnectionToServer::DeliverIncomingMessage(pb::LockstepMessage&& msg) {
 	if (msg.has_peer_details()) {
 		_state.Mutate([this, &msg](auto& state) {
 			std::visit(overloaded{
@@ -238,7 +272,11 @@ void ConnectionToServer::DeliverIncomingMessage(pb::LockstepMessage&& msg) {
 		} else {
 			LOG_WARN("Received lobby freeze message when the lobby isn't open");
 		}
+	} else if (msg.has_game_end_report()) {
+		LOG_INFO("Game ended by the server");
+		return Status::STOP;
 	}
+	return Status::CONTINUE;
 }
 void ConnectionToServer::DeliverIncomingMessageToPeer(MessageAndSender&& msg) {
 	if (not msg.message.has_player_inputs()) {

@@ -19,10 +19,10 @@ namespace m2::multiplayer::lockstep {
 
 			auto begin() { return _peers.begin(); }
 			auto end() { return _peers.end(); }
-			auto cbegin() const { return _peers.cbegin(); }
-			auto cend() const { return _peers.cend(); }
-			std::optional<int> GetSelfIndex() const;
-			int GetSize() const { return I(_peers.size()); }
+			[[nodiscard]] auto begin() const { return _peers.cbegin(); }
+			[[nodiscard]] auto end() const { return _peers.cend(); }
+			[[nodiscard]] std::optional<int> GetSelfIndex() const;
+			[[nodiscard]] int GetSize() const { return I(_peers.size()); }
 			[[nodiscard]] bool HasAllPeerInputsForTimecode(network::Timecode) const;
 			[[nodiscard]] std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>> GetPeerPlayerInputsForTimecode(network::Timecode) const;
 
@@ -57,6 +57,10 @@ namespace m2::multiplayer::lockstep {
 	public:
 		ConnectionToServer(network::IpAddressAndPort serverAddress, MessagePasser& messagePasser, MessageBox<ClientActorOutput>& clientOutbox);
 
+		static constexpr auto GAME_STATE_REPORT_PERIOD_IN_SECONDS = 3;
+		/// A game state report should be submitted every certain number of ticks
+		static constexpr auto GAME_STATE_REPORT_PERIOD_IN_TICKS = GAME_STATE_REPORT_PERIOD_IN_SECONDS * m2g::LOCKSTEP_GAME_TICK_FREQUENCY;
+
 		// Accessors
 
 		[[nodiscard]] const network::IpAddressAndPort& GetAddressAndPort() const { return _serverAddressAndPort; }
@@ -71,8 +75,9 @@ namespace m2::multiplayer::lockstep {
 
 		void SetReadyState(bool readyState);
 		void MarkGameAsStarted();
-		void QueueOutgoingMessages(std::optional<network::Timecode> timecode, const std::deque<m2g::pb::LockstepPlayerInput>*);
-		void DeliverIncomingMessage(pb::LockstepMessage&& msg);
+		void QueueOutgoingMessages(std::optional<network::Timecode> timecode, const std::deque<m2g::pb::LockstepPlayerInput>*, std::optional<ClientActorInput::GameStateHash>&);
+		enum class Status { CONTINUE, STOP };
+		[[nodiscard]] Status DeliverIncomingMessage(pb::LockstepMessage&& msg);
 		void DeliverIncomingMessageToPeer(MessageAndSender&& msg);
 
 	private:

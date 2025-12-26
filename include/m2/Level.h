@@ -37,6 +37,7 @@ namespace m2 {
 		std::optional<Stopwatch> _beganAt; /// A stopwatch that began when the level started
 		Stopwatch::Duration _totalPauseDuration; /// Total duration spent while the level was paused
 		std::optional<Stopwatch> _pausedAt; //// A stopwatch that is initialized only when the level is first paused
+		std::optional<network::Timecode> _nextGameStateHashTimecode;
 
 		// Special properties effecting the simulation
 
@@ -122,6 +123,8 @@ namespace m2 {
 		bool IsPaused() const { return static_cast<bool>(_pausedAt); }
 		Stopwatch::Duration GetTotalSimulatedDuration() const;
 		Stopwatch::Duration GetTotalPauseDuration() const { return _totalPauseDuration; }
+		std::optional<network::Timecode> GetNextGameStateHashTimecode() const { return _nextGameStateHashTimecode; }
+		int32_t CalculateGameStateHash();
 		/// Returns the drawable layer that a graphics component belongs to.
 		DrawLayer GetDrawLayer(GraphicId);
 		/// Returns the pool (and optionally, the draw list) that a graphics component belongs to.
@@ -145,6 +148,7 @@ namespace m2 {
 		void BeginGameLoop();
 		void Pause();
 		void Unpause();
+		void SetNextGameStateHashTimecode(const network::Timecode tc) { _nextGameStateHashTimecode = tc; }
 		void MarkForDeletion() { _markedForDeletion = true; }
 
 		// Dimming control

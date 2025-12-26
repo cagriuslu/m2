@@ -10,6 +10,16 @@ using namespace m2::multiplayer::lockstep;
 ConnectionToClient::ConnectionToClient(network::IpAddressAndPort address, MessagePasser& messagePasser)
 	: _addressAndPort(std::move(address)), _messagePasser(messagePasser) {}
 
+std::optional<int32_t> ConnectionToClient::GetInputHash(const network::Timecode tc) const {
+	const auto it = std::ranges::find_if(_runningInputHash, [tc](const auto& hash) {
+		return hash.timecode == tc;
+	});
+	if (it == _runningInputHash.end()) {
+		return std::nullopt;
+	}
+	return it->hash;
+}
+
 void ConnectionToClient::PublishPeerDetails(const pb::LockstepPeerDetails& details) {
 	pb::LockstepMessage msg;
 	msg.mutable_peer_details()->CopyFrom(details);
@@ -42,6 +52,16 @@ void ConnectionToClient::StoreRunningInputHash(const pb::LockstepPlayerInputs& p
 	while (RunningInputHashCapacity < I(_runningInputHash.size())) {
 		_runningInputHash.pop_front();
 	}
+}
+void ConnectionToClient::SetFaultOrCheatDetected() {
+	LOG_WARN("Client experienced fault or cheated", _addressAndPort);
+	_faultOrCheatDetected = true;
+}
+void ConnectionToClient::EndGame(const pb::LockstepGameEndReport& ger) {
+	pb::LockstepMessage msg;
+	msg.mutable_game_end_report()->CopyFrom(ger);
+	LOG_NETWORK("Queueing game end report to client", _addressAndPort);
+	QueueOutgoingMessage(std::move(msg));
 }
 
 void ConnectionToClient::QueueOutgoingMessage(pb::LockstepMessage&& msg) {

@@ -123,6 +123,8 @@ namespace m2 {
 
 		void AutomaticUpdate(const Stopwatch::Duration& delta) override;
 
+		[[nodiscard]] int32_t Hash(int32_t initialValue) const;
+
 		[[nodiscard]] Iterator FindItems(m2g::pb::ItemType item_type) const override;
 		[[nodiscard]] Iterator FindItems(m2g::pb::ItemCategory item_cat) const override;
 		[[nodiscard]] Iterator BeginItems() const override;
@@ -165,6 +167,8 @@ namespace m2 {
 		explicit FastCharacter(uint64_t object_id);
 
 		void AutomaticUpdate(const Stopwatch::Duration& delta) override;
+
+		[[nodiscard]] int32_t Hash(int32_t initialValue) const;
 
 		[[nodiscard]] Iterator FindItems(m2g::pb::ItemType item_type) const override;
 		[[nodiscard]] Iterator FindItems(m2g::pb::ItemCategory item_cat) const override;

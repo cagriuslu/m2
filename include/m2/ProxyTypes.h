@@ -1,5 +1,6 @@
 #pragma once
 #include <m2/BuildOptions.h>
+#include <type_traits>
 
 namespace m2 {
 	class Exact;

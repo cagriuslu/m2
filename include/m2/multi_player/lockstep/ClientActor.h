@@ -21,9 +21,10 @@ namespace m2::multiplayer::lockstep {
 		// Player inputs from this instance that are already sent to peers are stored here until inputs from all other
 		// peers are received.
 		std::optional<std::pair<network::Timecode,std::deque<m2g::pb::LockstepPlayerInput>>> _nextSelfPlayerInputsToSimulate;
+		std::optional<ClientActorInput::GameStateHash> _lastReceivedGameStateHash;
 
 	public:
-		explicit ClientActor(network::IpAddressAndPort serverAddress) : ActorBase(), _serverAddressAndPort(std::move(serverAddress)) {}
+		explicit ClientActor(const network::IpAddressAndPort serverAddress) : ActorBase(), _serverAddressAndPort(serverAddress) {}
 		~ClientActor() override = default;
 
 		[[nodiscard]] const char* ThreadNameForLogging() const override { return "CL"; }

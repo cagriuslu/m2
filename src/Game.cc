@@ -1,6 +1,5 @@
 #include <m2/Game.h>
 #include <m2/Log.h>
-
 #include <Level.pb.h>
 #include <SDL2/SDL_image.h>
 #include <m2/Error.h>
@@ -70,9 +69,12 @@ m2::Game::Game() {
 		throw M2_ERROR("SDL error: " + std::string{SDL_GetError()});
 	}
 
+	// ReSharper disable once CppDFAConstantConditions
 	if (_proxy.areGraphicsPixelated) {
+		// ReSharper disable once CppDFAUnreachableCode
 		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
 	} else {
+		// ReSharper disable once CppDFAUnreachableCode
 		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
 	}
 
@@ -557,7 +559,13 @@ void m2::Game::HandleHudEvents() {
 }
 void m2::Game::HandleNetworkEvents() {
 	// Check if the game ended
-	if ((IsTurnBasedServer() && ServerThread().HasBeenShutdown()) || (IsRealTurnBasedClient() && TurnBasedRealClientThread().is_shutdown())) {
+	if ((IsTurnBasedServer() && ServerThread().HasBeenShutdown())
+			|| (IsRealTurnBasedClient() && TurnBasedRealClientThread().is_shutdown())
+			|| (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)
+				&& not std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).serverActorInterface->IsActorRunning()
+				&& not std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).hostClientActorInterface->IsActorRunning())
+			|| (std::holds_alternative<multiplayer::lockstep::ClientActorInterface>(_multiPlayerComponents)
+				&& not std::get<multiplayer::lockstep::ClientActorInterface>(_multiPlayerComponents).IsActorRunning())) {
 		_level.reset();
 		ResetState();
 		_multiPlayerComponents = std::monostate{};
@@ -655,9 +663,11 @@ void m2::Game::ExecuteStep(const Stopwatch::Duration& delta) {
 			|| std::holds_alternative<multiplayer::lockstep::ClientActorInterface>(_multiPlayerComponents)) {
 		if (const auto simulationInputs = GetLockstepClientActor().PopSimulationInputs()) {
 			LOG_NETWORK("Simulating inputs from all players");
-			_proxy.lockstepHandlePlayerInputs(*simulationInputs);
+			_level->SetNextGameStateHashTimecode(simulationInputs->timecode);
+			_proxy.lockstepHandlePlayerInputs(simulationInputs->allInputs);
 		}
 	} else if constexpr (not GAME_IS_DETERMINISTIC) {
+		// ReSharper disable once CppDFAUnreachableCode
 		// Integrate physics
 		for (auto* world : _level->world) {
 			if (world) {
@@ -700,6 +710,7 @@ void m2::Game::ExecuteStep(const Stopwatch::Duration& delta) {
 	}
 	// If the world is NOT static, the pathfinder's cache should be cleared.
 	if constexpr (not ::m2g::Proxy::worldIsStatic) {
+		// ReSharper disable once CppDFAUnreachableCode
 		_level->pathfinder->clear_cache();
 	}
 }
@@ -743,6 +754,22 @@ void m2::Game::ExecutePostStep(const Stopwatch::Duration& delta) {
 
 	for (auto& phy : _level->physics) {
 		IF(phy.postStep)(phy, delta);
+	}
+}
+void m2::Game::CalculateGameStateHash() {
+	if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)
+			|| std::holds_alternative<multiplayer::lockstep::ClientActorInterface>(_multiPlayerComponents)) {
+		if (const auto gameStateHashTimecode = _level->GetNextGameStateHashTimecode(); gameStateHashTimecode
+				&& 0 < *gameStateHashTimecode && (*gameStateHashTimecode % multiplayer::lockstep::ConnectionToServer::GAME_STATE_REPORT_PERIOD_IN_TICKS) == 0) {
+			const auto gameStateHash = _level->CalculateGameStateHash();
+			LOG_NETWORK("Game state hash for timecode is calculated", *gameStateHashTimecode, gameStateHash);
+			// This hash will be used during the next report. Thus, there's enough time for actors to receive and retain them.
+			GetLockstepClientActor().StoreGameStateHash(*gameStateHashTimecode, gameStateHash);
+			// Report the game state hash to server as well
+			if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)) {
+				std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).serverActorInterface->StoreGameStateHash(*gameStateHashTimecode, gameStateHash);
+			}
+		}
 	}
 }
 void m2::Game::UpdateSounds(const Stopwatch::Duration& delta) {

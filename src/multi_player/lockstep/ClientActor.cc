@@ -40,9 +40,13 @@ bool ClientActor::operator()(MessageBox<ClientActorInput>& inbox, MessageBox<Cli
 		while (not messages.empty()) {
 			auto msg = std::move(messages.front()); messages.pop();
 			if (msg.sender == _serverConnection->GetAddressAndPort()) {
-				_serverConnection->DeliverIncomingMessage(std::move(msg.message));
+				const auto status = _serverConnection->DeliverIncomingMessage(std::move(msg.message));
+				if (status == ConnectionToServer::Status::STOP) {
+					return false;
+				}
+			} else {
+				_serverConnection->DeliverIncomingMessageToPeer(std::move(msg));
 			}
-			_serverConnection->DeliverIncomingMessageToPeer(std::move(msg));
 		}
 	}
 
@@ -52,7 +56,7 @@ bool ClientActor::operator()(MessageBox<ClientActorInput>& inbox, MessageBox<Cli
 		_serverConnection->MarkGameAsStarted();
 		const auto timecode = _nextTimecode++;
 		LOG_NETWORK("First player inputs are available with timecode, sending to peers...", timecode);
-		_serverConnection->QueueOutgoingMessages(timecode, &*_unsentThisPlayerInputs);
+		_serverConnection->QueueOutgoingMessages(timecode, &*_unsentThisPlayerInputs, _lastReceivedGameStateHash);
 
 		LOG_NETWORK("Waiting after first player inputs for main thread to catch up...");
 		std::this_thread::sleep_for(std::chrono::seconds{1});
@@ -64,15 +68,16 @@ bool ClientActor::operator()(MessageBox<ClientActorInput>& inbox, MessageBox<Cli
 	} else if (HasNextPlayerInputsToSimulate() && _unsentThisPlayerInputs) {
 		// Input streaming has started, inputs from all peers have been received, and inputs from this player has been
 		// committed. This signifies that previous inputs have been simulated by the game loop completely.
-		const auto timecode = _nextTimecode++; // 1
+		const auto timecode = _nextTimecode++;
 		LOG_NETWORK("It is time to send inputs to peers with timecode", timecode);
-		_serverConnection->QueueOutgoingMessages(timecode, &*_unsentThisPlayerInputs);
+		_serverConnection->QueueOutgoingMessages(timecode, &*_unsentThisPlayerInputs, _lastReceivedGameStateHash);
 
 		auto nextPlayerInputsToSimulate = GetNextPlayerInputsToSimulate(); // Available only if the inputs from every player, including the self, is available
 		const auto timecodeToSimulate = _nextSelfPlayerInputsToSimulate->first;
 		LOG_NETWORK("It is time to simulate player inputs with timecode", timecodeToSimulate);
 		outbox.PushMessage(ClientActorOutput{
 			.variant = ClientActorOutput::PlayerInputsToSimulate{
+				.timecode = timecodeToSimulate,
 				.playerInputs = std::move(*nextPlayerInputsToSimulate)
 			}
 		});
@@ -82,7 +87,7 @@ bool ClientActor::operator()(MessageBox<ClientActorInput>& inbox, MessageBox<Cli
 		_unsentThisPlayerInputs.reset();
 		_lastPlayerInputsSentAt = Stopwatch{};
 	} else {
-		_serverConnection->QueueOutgoingMessages(std::nullopt, nullptr); // Do regular housekeeping
+		_serverConnection->QueueOutgoingMessages(std::nullopt, nullptr, _lastReceivedGameStateHash); // Do regular housekeeping
 	}
 
 	if (not writeableSockets.empty()) {
@@ -117,7 +122,7 @@ std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>> ClientActor
 }
 
 void ClientActor::ProcessOneMessageFromInbox(MessageBox<ClientActorInput>& inbox) {
-	inbox.PopMessages([this](const ClientActorInput& msg) {
+	inbox.PopMessages([this](ClientActorInput& msg) {
 		if (std::holds_alternative<ClientActorInput::SetReadyState>(msg.variant)) {
 			const auto& readyState = std::get<ClientActorInput::SetReadyState>(msg.variant).state;
 			_serverConnection->SetReadyState(readyState);
@@ -134,6 +139,11 @@ void ClientActor::ProcessOneMessageFromInbox(MessageBox<ClientActorInput>& inbox
 			LOG_NETWORK("Received committed inputs from the game loop");
 			auto& playerInput = std::get<ClientActorInput::QueueThisPlayerInput>(msg.variant);
 			_unsentThisPlayerInputs = std::move(playerInput.inputs);
+		} else if (std::holds_alternative<ClientActorInput::GameStateHash>(msg.variant)) {
+			if (_lastReceivedGameStateHash) {
+				throw M2_ERROR("Previously received game state hash wasn't used");
+			}
+			_lastReceivedGameStateHash = std::get<ClientActorInput::GameStateHash>(msg.variant);
 		}
 		return true;
 	}, 1);

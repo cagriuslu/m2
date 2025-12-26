@@ -19,15 +19,18 @@ namespace m2::multiplayer::lockstep {
 		/// Inputs previously queued by player have been commited, but inputs to simulate haven't been received yet.
 		/// It's not possible to queue further inputs. Only graphics and non-impactful events can be handled.
 		struct Lagging {};
+	public:
 		/// Inputs previously queued by the player have been commited, and next inputs to simulate have been received
 		/// and should be handled right away. This is a transitional state and the interface never settles on it.
 		struct ReadyToSimulate {
+			network::Timecode timecode;
 			std::vector<std::deque<m2g::pb::LockstepPlayerInput>> allInputs;
 		};
+	private:
 		std::variant<GameNotStarted, SimulatingInputs, Lagging, ReadyToSimulate> _state;
 
 	public:
-		explicit ClientActorInterface(network::IpAddressAndPort serverAddress) : ActorInterfaceBase(std::move(serverAddress)) {}
+		explicit ClientActorInterface(const network::IpAddressAndPort serverAddress) : ActorInterfaceBase(serverAddress) {}
 
 		// Accessors
 
@@ -60,7 +63,8 @@ namespace m2::multiplayer::lockstep {
 		/// Commit the inputs queued previously from this player to be sent to peers, and fetches the inputs previously
 		/// received from peers for simulation.
 		SwapResult SwapInputs();
-		std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>> PopSimulationInputs();
+		std::optional<ReadyToSimulate> PopSimulationInputs();
+		void StoreGameStateHash(network::Timecode, int32_t);
 
 	private:
 		void ProcessOutbox();

@@ -1,4 +1,3 @@
-#include <SDL2/SDL_image.h>
 #include <m2/Game.h>
 #include <m2/Level.h>
 #include <m2/Meta.h>
@@ -16,6 +15,7 @@
 #include <m2/ui/widget/Text.h>
 #include <m2/Log.h>
 #include <filesystem>
+#include <utility>
 
 using namespace m2;
 
@@ -182,6 +182,27 @@ Stopwatch::Duration Level::GetTotalSimulatedDuration() const {
 	const auto durationSinceLevelBegan = _beganAt->GetDurationSince();
 	const auto unsimulatedDuration = _totalPauseDuration + (_pausedAt ? _pausedAt->GetDurationSince() : Stopwatch::Duration{});
 	return durationSinceLevelBegan - unsimulatedDuration;
+}
+int32_t Level::CalculateGameStateHash() {
+	if constexpr (not GAME_IS_DETERMINISTIC) {
+		// ReSharper disable once CppDFAUnreachableCode
+		throw M2_ERROR("Game is not deterministic");
+	}
+	if (not _nextGameStateHashTimecode) {
+		// Timecode is not necessary for the calculation, but the hash must be calculated only if there is one.
+		throw M2_ERROR("Unable to find next game state hash timecode");
+	}
+	int32_t hash = 0;
+	for (const auto& phy : physics) {
+		hash = HashI(phy.position.GetX().ToRawValue(), hash);
+		hash = HashI(phy.position.GetY().ToRawValue(), hash);
+		hash = HashI(phy.orientation.ToRawValue(), hash);
+	}
+	for (const auto& chr : characters) {
+		hash = std::visit([hash](const auto& c) -> int32_t { return c.Hash(hash); }, chr);
+	}
+	_nextGameStateHashTimecode.reset();
+	return hash;
 }
 DrawLayer Level::GetDrawLayer(const GraphicId gfxId) {
 	const auto shiftedGfxPoolId = ToShiftedPoolId(gfxId);

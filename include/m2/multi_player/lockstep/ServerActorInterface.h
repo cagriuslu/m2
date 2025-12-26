@@ -21,5 +21,7 @@ namespace m2::multiplayer::lockstep {
 		// Modifiers
 
 		void TryFreezeLobby(const m2g::pb::LockstepGameInitParams&);
+		/// Store game state hash in ServerActor for verification later
+		void StoreGameStateHash(network::Timecode, int32_t);
 	};
 }

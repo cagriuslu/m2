@@ -39,3 +39,11 @@ void ServerActorInterface::TryFreezeLobby(const m2g::pb::LockstepGameInitParams&
 		.gameInitParams = gameInitParams
 	}});
 }
+void ServerActorInterface::StoreGameStateHash(const network::Timecode tc, const int32_t hash) {
+	GetActorInbox().PushMessage(ServerActorInput{
+		.variant = ServerActorInput::GameStateHash{
+			.timecode = tc,
+			.hash = hash
+		}
+	});
+}

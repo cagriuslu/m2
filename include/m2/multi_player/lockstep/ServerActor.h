@@ -17,16 +17,33 @@ namespace m2::multiplayer::lockstep {
 
 			auto begin() { return _clients.begin(); }
 			auto end() { return _clients.end(); }
-			auto cbegin() const { return _clients.cbegin(); }
-			auto cend() const { return _clients.cend(); }
-			bool Contains(const network::IpAddressAndPort&) const;
-			int Size() const { return I(_clients.size()); }
-			const ConnectionToClient* Find(const network::IpAddressAndPort&) const;
+			[[nodiscard]] auto begin() const { return _clients.cbegin(); }
+			[[nodiscard]] auto end() const { return _clients.cend(); }
+			[[nodiscard]] bool Contains(const network::IpAddressAndPort&) const;
+			[[nodiscard]] int Size() const { return I(_clients.size()); }
+			[[nodiscard]] const ConnectionToClient* Find(const network::IpAddressAndPort&) const;
+			[[nodiscard]] std::optional<int> FindIndexOf(const network::IpAddressAndPort&) const;
+			[[nodiscard]] const ConnectionToClient* At(int index) const;
 
 			// Modifiers
 
 			ConnectionToClient* Find(const network::IpAddressAndPort&);
+			ConnectionToClient* At(int index);
 			ConnectionToClient* Add(const network::IpAddressAndPort&, MessagePasser&);
+		};
+
+		struct StateValidationState {
+			enum class ValidationResult {
+				NOT_YET_RECEIVED = 0,
+				SUCCESS,
+			};
+
+			ServerActorInput::GameStateHash expectedGameStateHash;
+			std::vector<ValidationResult> validationResults;
+
+			StateValidationState(ServerActorInput::GameStateHash&& nextExpected, const int clientCount) : expectedGameStateHash(nextExpected), validationResults(clientCount) {}
+			[[nodiscard]] bool IsAllSucceeded() const;
+			[[nodiscard]] bool IsClientSucceeded(int index) const;
 		};
 
 		struct LobbyOpen {
@@ -37,6 +54,8 @@ namespace m2::multiplayer::lockstep {
 		};
 		struct LevelStarted {
 			ClientList clientList;
+			std::optional<StateValidationState> currentStateValidation{};
+			std::optional<ServerActorInput::GameStateHash> nextStateValidation{};
 		};
 		using State = std::variant<std::monostate, LobbyOpen, LobbyFrozen, LevelStarted>;
 

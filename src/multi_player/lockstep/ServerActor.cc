@@ -1,7 +1,9 @@
 #include <unistd.h>
 #include <m2/multi_player/lockstep/ServerActor.h>
+#include <m2/multi_player/lockstep/ConnectionToServer.h>
 #include <m2/network/Select.h>
 #include <m2/Log.h>
+#include <thread>
 
 using namespace m2;
 using namespace m2::multiplayer;
@@ -26,12 +28,32 @@ const ConnectionToClient* ServerActor::ClientList::Find(const network::IpAddress
 	}
 	return nullptr;
 }
+std::optional<int> ServerActor::ClientList::FindIndexOf(const network::IpAddressAndPort& address) const {
+	for (int i = 0; i < I(_clients.size()); ++i) {
+		if (_clients[i].GetAddressAndPort() == address) {
+			return i;
+		}
+	}
+	return std::nullopt;
+}
+const ConnectionToClient* ServerActor::ClientList::At(const int index) const {
+	if (index < Size()) {
+		return &_clients[index];
+	}
+	return nullptr;
+}
 
 ConnectionToClient* ServerActor::ClientList::Find(const network::IpAddressAndPort& address) {
 	for (auto& client : _clients) {
 		if (client.GetAddressAndPort() == address) {
 			return &client;
 		}
+	}
+	return nullptr;
+}
+ConnectionToClient* ServerActor::ClientList::At(const int index) {
+	if (index < Size()) {
+		return &_clients[index];
 	}
 	return nullptr;
 }
@@ -50,6 +72,16 @@ ConnectionToClient* ServerActor::ClientList::Add(const network::IpAddressAndPort
 		_clients[i].PublishPeerDetails(peerDetails);
 	}
 	return &_clients.back();
+}
+
+bool ServerActor::StateValidationState::IsAllSucceeded() const {
+	return std::ranges::all_of(validationResults, Is(ValidationResult::SUCCESS));
+}
+bool ServerActor::StateValidationState::IsClientSucceeded(const int index) const {
+	if (index < I(validationResults.size())) {
+		return validationResults[index] == ValidationResult::SUCCESS;
+	}
+	throw M2_ERROR("Client index out of bounds");
 }
 
 bool ServerActor::Initialize(MessageBox<ServerActorInput>&, MessageBox<ServerActorOutput>& outbox) {
@@ -125,22 +157,129 @@ bool ServerActor::operator()(MessageBox<ServerActorInput>& inbox, MessageBox<Ser
 				}
 			} else if (msg.message.has_player_inputs()) {
 				if (std::holds_alternative<LobbyFrozen>(_state->Get())) {
-					_state->Mutate([](State& state) {
-						state = LevelStarted{.clientList = std::move(std::get<LobbyFrozen>(state).clientList)};
+					_state->Mutate([&](State& state) {
+						// Only if the message is received from a known client
+						if (const auto& lobby = std::get<LobbyFrozen>(state); lobby.clientList.Find(msg.sender)) {
+							state = LevelStarted{.clientList = std::move(std::get<LobbyFrozen>(state).clientList)};
+						}
 					});
 				}
-				// Calculate a running hash of each player's inputs
-				_state->MutateNoSideEffect([&](auto& state) {
-					auto& level = std::get<LevelStarted>(state);
-					if (auto* client = level.clientList.Find(msg.sender)) {
-						client->StoreRunningInputHash(msg.message.player_inputs());
-					}
-				});
+				if (std::holds_alternative<LevelStarted>(_state->Get())) {
+					_state->MutateNoSideEffect([&](auto& state) {
+						auto& levelStarted = std::get<LevelStarted>(state);
+						// Only if the message is received from a known client
+						if (auto* client = levelStarted.clientList.Find(msg.sender)) {
+							// Calculate a running hash of each player's inputs
+							client->StoreRunningInputHash(msg.message.player_inputs());
+
+							// The timecode of the received message
+							if (const auto timecode = msg.message.player_inputs().timecode(); levelStarted.currentStateValidation) {
+								// The server is expecting state reports for the following timecode
+								const auto currentValidationTimecode = levelStarted.currentStateValidation->expectedGameStateHash.timecode;
+								// The following is the timecode of the next validation
+								const auto nextValidationTimecode = currentValidationTimecode + ConnectionToServer::GAME_STATE_REPORT_PERIOD_IN_TICKS;
+								// State reports are submitted with one "cycle" delay. That means, the state report for
+								// `currentValidationTimecode` should be sent between the messages with timecode
+								// `nextValidationTimecode` and `nextValidationTimecode + 1`. Thus, if a message with
+								// timecode `nextValidationTimecode + 1` is received from a client, the state report of
+								// that client for `currentValidationTimecode` should have been submitted already.
+								if (nextValidationTimecode < timecode
+										&& not levelStarted.currentStateValidation->IsClientSucceeded(*levelStarted.clientList.FindIndexOf(msg.sender))) {
+									// This client has failed to fullfil the state validateion
+									levelStarted.clientList.Find(msg.sender)->SetFaultOrCheatDetected();
+								}
+							}
+						}
+					});
+				}
+			} else if (msg.message.has_state_report()) {
+				if (std::holds_alternative<LevelStarted>(_state->Get())) {
+					_state->MutateNoSideEffect([&](auto& state) {
+						auto& levelStarted = std::get<LevelStarted>(state);
+						// Only if the message is received from a known client
+						if (auto* client = levelStarted.clientList.Find(msg.sender)) {
+							LOG_INFO("Received state report from client for timecode with game state hash and input hashes",
+								msg.sender, msg.message.state_report().timecode(), msg.message.state_report().game_state_hash(),
+								std::vector<int32_t>{msg.message.state_report().player_input_hashes().begin(),
+									msg.message.state_report().player_input_hashes().end()});
+							if (not levelStarted.currentStateValidation) {
+								throw M2_ERROR("Unable to find state validation details in time");
+							}
+							const auto& stateReport = msg.message.state_report();
+							auto& currentStateValidation = *levelStarted.currentStateValidation;
+							if (stateReport.timecode() != currentStateValidation.expectedGameStateHash.timecode) {
+								client->SetFaultOrCheatDetected();
+								return;
+							}
+							if (stateReport.game_state_hash() != currentStateValidation.expectedGameStateHash.hash) {
+								client->SetFaultOrCheatDetected();
+								return;
+							}
+							if (stateReport.player_input_hashes_size() != levelStarted.clientList.Size()) {
+								client->SetFaultOrCheatDetected();
+								return;
+							}
+							const auto senderIndex = *levelStarted.clientList.FindIndexOf(msg.sender);
+							for (int i = 0; i < stateReport.player_input_hashes_size(); ++i) {
+								if (i == senderIndex) {
+									if (stateReport.player_input_hashes(i) != 0) {
+										client->SetFaultOrCheatDetected();
+										return;
+									}
+								} else {
+									const auto expectedInputHash = levelStarted.clientList.At(i)->GetInputHash(stateReport.timecode());
+									if (not expectedInputHash) {
+										throw M2_ERROR("Unable to find the input hash of client during validation");
+									}
+									if (stateReport.player_input_hashes(i) != *expectedInputHash) {
+										levelStarted.clientList.At(i)->SetFaultOrCheatDetected();
+									}
+								}
+							}
+							currentStateValidation.validationResults[senderIndex] = StateValidationState::ValidationResult::SUCCESS;
+							LOG_NETWORK("State validation is successful for client", msg.sender);
+						}
+					});
+				}
 			}
 		}
 	}
 
-	// TODO gather and queue outgoing messages
+	// Retire the current state validation is necessary
+	if (const auto* levelStarted = std::get_if<LevelStarted>(&_state->Get()); levelStarted
+			&& levelStarted->currentStateValidation && levelStarted->currentStateValidation->IsAllSucceeded()
+			&& levelStarted->nextStateValidation) {
+		_state->MutateNoSideEffect([&](auto& state) {
+			auto& mutLevelStarted = std::get<LevelStarted>(state);
+			LOG_NETWORK("Validation of timecode is completed successfully", mutLevelStarted.currentStateValidation->expectedGameStateHash.timecode);
+			mutLevelStarted.currentStateValidation = StateValidationState{std::move(*mutLevelStarted.nextStateValidation), mutLevelStarted.clientList.Size()};
+			mutLevelStarted.nextStateValidation.reset();
+		});
+	}
+
+	// Check faulty clients
+	const auto gameEndReport = [&]() -> std::optional<pb::LockstepGameEndReport> {
+		if (std::holds_alternative<LevelStarted>(_state->Get())) {
+			const auto& levelStarted = std::get<LevelStarted>(_state->Get());
+			pb::LockstepGameEndReport ger;
+			for (const auto& client : levelStarted.clientList) {
+				ger.add_faulty_or_cheater_player(client.IsFaultOrCheatDetected());
+			}
+			if (std::ranges::any_of(ger.faulty_or_cheater_player(), [](const auto& b) { return b; })) {
+				return ger;
+			}
+		}
+		return std::nullopt;
+	}();
+	if (gameEndReport) {
+		LOG_INFO("Queueing game end report to clients");
+		_state->MutateNoSideEffect([&](auto& state) {
+			for (auto& client : std::get<LevelStarted>(state).clientList) {
+				client.EndGame(*gameEndReport);
+			}
+		});
+		return false;
+	}
 
 	if (not writeableSockets.empty()) {
 		if (const auto success = _messagePasser->SendOutgoingPackets(); not success) {
@@ -158,7 +297,7 @@ void ServerActor::ProcessOneMessageFromInbox(MessageBox<ServerActorInput>& inbox
 			const auto& lobbyFreezeMsg = std::get<ServerActorInput::FreezeLobby>(msg.variant);
 			if (std::holds_alternative<LobbyOpen>(_state->Get())) {
 				const auto& lobby = std::get<LobbyOpen>(_state->Get());
-				if (std::ranges::all_of(lobby.clientList.cbegin(), lobby.clientList.cend(), [](const ConnectionToClient& client) {
+				if (std::ranges::all_of(lobby.clientList.begin(), lobby.clientList.end(), [](const ConnectionToClient& client) {
 					return client.GetReadyState() && client.GetIfAllPeersReachable();
 				})) {
 					LOG_INFO("Freezing lobby");
@@ -177,7 +316,7 @@ void ServerActor::ProcessOneMessageFromInbox(MessageBox<ServerActorInput>& inbox
 		} else if (std::holds_alternative<ServerActorInput::IsAllOutgoingMessagesDelivered>(msg.variant)) {
 			const bool answer = std::visit(overloaded {
 				[](const StateWithClientList auto& s) {
-					return std::all_of(s.clientList.cbegin(), s.clientList.cend(), [](const auto& client) -> bool {
+					return std::all_of(s.clientList.begin(), s.clientList.end(), [](const auto& client) -> bool {
 						return client.IsAllOutgoingMessagesDelivered();
 					});
 				},
@@ -186,6 +325,26 @@ void ServerActor::ProcessOneMessageFromInbox(MessageBox<ServerActorInput>& inbox
 			outbox.PushMessage(ServerActorOutput{
 				.variant = ServerActorOutput::IsAllOutgoingMessagesDelivered{.answer = answer}
 			});
+		} else if (std::holds_alternative<ServerActorInput::GameStateHash>(msg.variant)) {
+			if (std::holds_alternative<LevelStarted>(_state->Get())) {
+				_state->MutateNoSideEffect([&](State& state) {
+					auto& levelStarted = std::get<LevelStarted>(state);
+					if (levelStarted.nextStateValidation) {
+						throw M2_ERROR("A new game state hash is received before the previous one is consumed");
+					}
+					levelStarted.nextStateValidation = std::get<ServerActorInput::GameStateHash>(msg.variant);
+					LOG_NETWORK("Storing game state hash for future verification", levelStarted.nextStateValidation->timecode, levelStarted.nextStateValidation->hash);
+					if (not levelStarted.currentStateValidation) {
+						// If this is the first state validation
+						levelStarted.currentStateValidation = StateValidationState{
+							ServerActorInput::GameStateHash{*levelStarted.nextStateValidation},
+							levelStarted.clientList.Size()};
+						levelStarted.nextStateValidation.reset();
+					}
+				});
+			} else {
+				throw M2_ERROR("Game state hash is received while the level isn't started");
+			}
 		}
 		return true;
 	}, 1);

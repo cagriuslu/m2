@@ -13,12 +13,12 @@ namespace m2::multiplayer::lockstep {
 
 		const network::IpAddressAndPort _addressAndPort;
 		MessagePasser& _messagePasser;
-		bool _readyState{}, _allPeersReachable{};
+		bool _readyState{}, _allPeersReachable{}, _faultOrCheatDetected{};
 		std::list<Hash> _runningInputHash;
 
 	public:
 		static constexpr auto RunningInputHashCapacityInSeconds = 10;
-		static inline auto RunningInputHashCapacity = I(std::ceilf(m2g::LockstepGameTickFrequencyF)) * RunningInputHashCapacityInSeconds;
+		static inline auto RunningInputHashCapacity = m2g::LOCKSTEP_GAME_TICK_FREQUENCY * RunningInputHashCapacityInSeconds;
 
 		ConnectionToClient(network::IpAddressAndPort address, MessagePasser& messagePasser);
 
@@ -28,6 +28,8 @@ namespace m2::multiplayer::lockstep {
 		[[nodiscard]] bool IsAllOutgoingMessagesDelivered() const { return _messagePasser.GetConnectionStatistics(_addressAndPort)->IsAllOutgoingSmallMessagesDelivered(); }
 		[[nodiscard]] bool GetReadyState() const { return _readyState; }
 		[[nodiscard]] bool GetIfAllPeersReachable() const { return _allPeersReachable; }
+		[[nodiscard]] std::optional<int32_t> GetInputHash(network::Timecode) const;
+		[[nodiscard]] bool IsFaultOrCheatDetected() const { return _faultOrCheatDetected; }
 
 		// Modifiers
 
@@ -36,6 +38,8 @@ namespace m2::multiplayer::lockstep {
 		void MarkAsReachableToAllPeers() { _allPeersReachable = true; }
 		void SetLobbyAsFrozen(const m2g::pb::LockstepGameInitParams&);
 		void StoreRunningInputHash(const pb::LockstepPlayerInputs&);
+		void SetFaultOrCheatDetected();
+		void EndGame(const pb::LockstepGameEndReport&);
 
 	private:
 		void QueueOutgoingMessage(pb::LockstepMessage&& msg);

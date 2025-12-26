@@ -143,6 +143,19 @@ void m2::CompactCharacter::AutomaticUpdate(const Stopwatch::Duration& delta) {
 		UseItem(BeginItems(), ToDurationF(delta));
 	}
 }
+int32_t m2::CompactCharacter::Hash(const int32_t initialValue) const {
+	auto hash = initialValue;
+	if (_item) {
+		hash = HashI(_item->Type(), hash);
+	}
+	if (_resource.first) {
+		throw M2_ERROR("CompactCharacter doesn't support hashing of resources");
+	}
+	if (_attribute.first) {
+		throw M2_ERROR("CompactCharacter doesn't support hashing of attributes");
+	}
+	return hash;
+}
 m2::Character::Iterator m2::CompactCharacter::FindItems(m2g::pb::ItemType item_type) const {
 	return {*this, tiny_character_iterator_incrementor, item_type, 0,
 			_item && _item->Type() == item_type ? _item : nullptr};
@@ -288,6 +301,22 @@ void m2::FastCharacter::AutomaticUpdate(const Stopwatch::Duration& delta) {
 			UseItem(it, ToDurationF(delta));
 		}
 	}
+}
+int32_t m2::FastCharacter::Hash(const int32_t initialValue) const {
+	auto hash = initialValue;
+	for (const auto* item : _items) {
+		if (item) {
+			hash = HashI(item->Type(), hash);
+		}
+	}
+	for (const auto& property : _properties) {
+		if (property && property.IsInt()) {
+			hash = HashI(property.GetInt(), hash);
+		} else if (property && property.IsFE()) {
+			hash = HashI(property.GetFE().ToRawValue(), hash);
+		}
+	}
+	return hash;
 }
 m2::Character::Iterator m2::FastCharacter::FindItems(m2g::pb::ItemType item_type) const {
 	for (size_t i = 0; i < _items.size(); ++i) {

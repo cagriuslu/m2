@@ -80,7 +80,7 @@ ClientActorInterface::SwapResult ClientActorInterface::SwapInputs() {
 	}
 	if (std::holds_alternative<SimulatingInputs>(_state)) {
 		auto& simulatingInputs = std::get<SimulatingInputs>(_state);
-		if (simulatingInputs.physicsSimulationsCounter == m2g::LockstepPhysicsSimulationCountPerGameTick) {
+		if (simulatingInputs.physicsSimulationsCounter == m2g::LOCKSTEP_PHYSICS_SIMULATION_COUNT_PER_GAME_TICK) {
 			LOG_NETWORK("Commiting inputs from this player");
 			GetActorInbox().PushMessage(ClientActorInput{
 				.variant = ClientActorInput::QueueThisPlayerInput{
@@ -110,19 +110,27 @@ ClientActorInterface::SwapResult ClientActorInterface::SwapInputs() {
 	}
 	throw M2_ERROR("Implementation error");
 }
-std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>> ClientActorInterface::PopSimulationInputs() {
+std::optional<ClientActorInterface::ReadyToSimulate> ClientActorInterface::PopSimulationInputs() {
 	if (std::holds_alternative<ReadyToSimulate>(_state)) {
 		LOG_NETWORK("Simulation inputs are popped");
-		std::vector<std::deque<m2g::pb::LockstepPlayerInput>> retval = std::move(std::get<ReadyToSimulate>(_state).allInputs);
+		auto retval = std::move(std::get<ReadyToSimulate>(_state));
 		// Return to simulating state
 		_state.emplace<SimulatingInputs>();
-		return retval;
+		return std::move(retval);
 	}
 	return std::nullopt;
 }
+void ClientActorInterface::StoreGameStateHash(const network::Timecode tc, const int32_t hash) {
+	GetActorInbox().PushMessage(ClientActorInput{
+		.variant = ClientActorInput::GameStateHash{
+			.timecode = tc,
+			.hash = hash
+		}
+	});
+}
 
 void ClientActorInterface::ProcessOutbox() {
-	GetActorOutbox().PopMessages([this](const ClientActorOutput& msg) {
+	GetActorOutbox().PopMessages([this](ClientActorOutput& msg) {
 		if (std::holds_alternative<ClientActorOutput::ConnectionToServerStateUpdate>(msg.variant)) {
 			_connectionToServerState = std::get<ClientActorOutput::ConnectionToServerStateUpdate>(msg.variant);
 		} else if (std::holds_alternative<ClientActorOutput::PlayerInputsToSimulate>(msg.variant)) {
@@ -135,7 +143,7 @@ void ClientActorInterface::ProcessOutbox() {
 			}
 			if (std::holds_alternative<Lagging>(_state)) {
 				LOG_NETWORK("Received inputs to simulate");
-				_state.emplace<ReadyToSimulate>(std::move(playerInputsToSimulate.playerInputs));
+				_state.emplace<ReadyToSimulate>(playerInputsToSimulate.timecode, std::move(playerInputsToSimulate.playerInputs));
 				return false; // There could be multiple player inputs in the queue. Pop only one of them.
 			}
 			if (std::holds_alternative<ReadyToSimulate>(_state)) {

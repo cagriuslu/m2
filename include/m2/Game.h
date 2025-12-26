@@ -196,6 +196,7 @@ namespace m2 {
 		void UpdateCharacters(const Stopwatch::Duration& delta);
 		void ExecuteStep(const Stopwatch::Duration& delta);
 		void ExecutePostStep(const Stopwatch::Duration& delta);
+		void CalculateGameStateHash();
 		void UpdateSounds(const Stopwatch::Duration& delta);
 		void ExecutePreDraw(const Stopwatch::Duration& delta);
 		void UpdateHudContents(const Stopwatch::Duration& delta);
