@@ -198,7 +198,7 @@ bool ServerActor::operator()(MessageBox<ServerActorInput>& inbox, MessageBox<Ser
 						auto& levelStarted = std::get<LevelStarted>(state);
 						// Only if the message is received from a known client
 						if (auto* client = levelStarted.clientList.Find(msg.sender)) {
-							LOG_INFO("Received state report from client for timecode with game state hash and input hashes",
+							LOG_NETWORK("Received state report from client for timecode with game state hash and input hashes",
 								msg.sender, msg.message.state_report().timecode(), msg.message.state_report().game_state_hash(),
 								std::vector<int32_t>{msg.message.state_report().player_input_hashes().begin(),
 									msg.message.state_report().player_input_hashes().end()});
