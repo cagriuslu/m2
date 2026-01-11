@@ -1,5 +1,4 @@
 #include <m2/Log.h>
-#include <m2/Game.h>
 #include <m2/LogHelpers.h>
 #include <m2/M2.h>
 #include <cstdarg>
@@ -105,8 +104,4 @@ void m2::detail::LogF(const pb::LogLevel lvl, const char* file, const int line, 
 	vfprintf(stderr, fmt, args);
 	va_end(args);
 	fprintf(stderr, "\n");
-}
-
-bool m2::detail::IsDebugEnabledForObject(const ObjectId id) {
-	return Game::HasInstance() && Game::Instance().HasLevel() && Game::Instance().GetLevel().IsDebugEnabledForObject(id);
 }

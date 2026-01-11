@@ -51,6 +51,18 @@ namespace {
 	}
 }
 
+m2::Exact m2::Exact::Compose(const int32_t wholePart, const int32_t fractionalPart) {
+	// PRECISION number of bits from the left of wholePart are gonna be thrown away
+	if (wholePart != ((wholePart << PRECISION) >> PRECISION)) {
+		throw M2_ERROR("Whole part contains an integer larger than Exact can accomadate");
+	}
+	// 32 - PRECISION number of bits from the left of fractionalPart are gonna be thrown away
+	if (U(fractionalPart) != (U(fractionalPart) << (32 - PRECISION)) >> (32 - PRECISION)) {
+		throw M2_ERROR("Fractional part has unexpected bits set");
+	}
+	return Exact{std::in_place, (wholePart << PRECISION) | fractionalPart};
+}
+
 std::string m2::Exact::ToString() const {
 	if constexpr (std::size(PRECISION_POINT_TO_DECIMAL_8) < PRECISION) {
 		throw M2_ERROR("Implementation error, precision not supported");

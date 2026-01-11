@@ -14,6 +14,7 @@
 #include <m2/single_player/State.h>
 #include <m2/multi_player/lockstep/State.h>
 #include <m2/multi_player/turn_based/State.h>
+#include "network/Types.h"
 #include <m2/ui/UiPanel.h>
 #include <Level.pb.h>
 #include <box2d/b2_world.h>

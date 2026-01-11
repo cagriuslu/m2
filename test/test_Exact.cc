@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 #include <m2/math/primitives/Exact.h>
-#include <bitset>
 
 using namespace m2;
 
@@ -34,16 +33,15 @@ TEST(Exact, constructors) {
 	EXPECT_NO_THROW(Exact{131071.99993896}); // This is the highest number that can be represented
 	EXPECT_NO_THROW(Exact{-131072.0}); // This is the lowest number that can be represented
 
-	EXPECT_EQ(Exact::FromProtobufRepresentation(0).ToString(), "+000000.00000000");
-	EXPECT_EQ(Exact::FromProtobufRepresentation(1'000'000ll).ToString(), "+000001.00000000");
-	EXPECT_EQ(Exact::FromProtobufRepresentation(-1'000'000ll).ToString(), "-000001.00000000");
-	EXPECT_EQ(Exact::FromProtobufRepresentation(1'234'000'000ll).ToString(), "+001234.00000000");
-	EXPECT_EQ(Exact::FromProtobufRepresentation(-1'234'000'000ll).ToString(), "-001234.00000000");
-	EXPECT_ANY_THROW(Exact::FromProtobufRepresentation(132'000'000'000ll));
-	EXPECT_ANY_THROW(Exact::FromProtobufRepresentation(-132'000'000'000ll));
-	EXPECT_EQ(Exact::FromProtobufRepresentation(12'340'000ll).ToRawValue(), 0b00000000'00000011'00010101'11000010);
-	EXPECT_EQ(Exact::FromProtobufRepresentation(1'234'567'800ll).ToString(), "+001234.56774902");
-	EXPECT_EQ(Exact::FromProtobufRepresentation(-1'234'567'800ll).ToString(), "-001234.56774902");
+	EXPECT_EQ(Exact::Compose(0, 0).ToRawValue(), 0b00000000'00000000'00000000'00000000);
+	EXPECT_EQ(Exact::Compose(1, 0).ToRawValue(), 0b00000000'00000000'01000000'00000000);
+	EXPECT_EQ(Exact::Compose(1, Exact::RAW_0P5).ToRawValue(), 0b00000000'00000000'01100000'00000000);
+	EXPECT_EQ(Exact::Compose(1024, Exact::RAW_1DIV1024).ToRawValue(), 0b00000001'00000000'00000000'00010000);
+	EXPECT_EQ(Exact::Compose(65536, 0).ToRawValue(), 0b01000000'00000000'00000000'00000000);
+	EXPECT_EQ(Exact::Compose(131071, 0).ToRawValue(), 0b01111111'11111111'11000000'00000000);
+	EXPECT_EQ(Exact::Compose(-131072, 0).ToRawValue(), 0b10000000'00000000'00000000'00000000);
+	EXPECT_ANY_THROW(Exact::Compose(131072, 0));
+	EXPECT_ANY_THROW(Exact::Compose(-131073, 0));
 }
 
 TEST(Exact, operators) {

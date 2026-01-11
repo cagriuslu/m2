@@ -1,7 +1,6 @@
 #pragma once
 #include <m2/M2.h>
 #include <string>
-#include <cstdint>
 
 namespace m2 {
 	class Exact final {
@@ -40,6 +39,29 @@ namespace m2 {
 		static Exact Min() { return Exact{std::in_place, static_cast<int32_t>(0x80000000)}; }
 		static Exact MaxInteger() { return Exact{std::in_place, (0xFFFFFFFFu << PRECISION) & 0x7FFFFFFF}; }
 		static Exact MinInteger() { return Min(); }
+		static Exact Compose(int32_t wholePart, int32_t fractionalPart);
+
+		static constexpr int32_t RAW_1DIV2 = 1 << (PRECISION - 1);
+		static constexpr int32_t RAW_1DIV4 = 1 << (PRECISION - 2);
+		static constexpr int32_t RAW_1DIV8 = 1 << (PRECISION - 3);
+		static constexpr int32_t RAW_1DIV16 = 1 << (PRECISION - 4);
+		static constexpr int32_t RAW_1DIV32 = 1 << (PRECISION - 5);
+		static constexpr int32_t RAW_1DIV64 = 1 << (PRECISION - 6);
+		static constexpr int32_t RAW_1DIV128 = 1 << (PRECISION - 7);
+		static constexpr int32_t RAW_1DIV256 = 1 << (PRECISION - 8);
+		static constexpr int32_t RAW_1DIV512 = 1 << (PRECISION - 9);
+		static constexpr int32_t RAW_1DIV1024 = 1 << (PRECISION - 10);
+
+		static constexpr int32_t RAW_0P5 = RAW_1DIV2;
+		static constexpr int32_t RAW_0P25 = RAW_1DIV4;
+		static constexpr int32_t RAW_0P125 = RAW_1DIV8;
+		static constexpr int32_t RAW_0P0625 = RAW_1DIV16;
+		static constexpr int32_t RAW_0P03125 = RAW_1DIV32;
+		static constexpr int32_t RAW_0P015625 = RAW_1DIV64;
+		static constexpr int32_t RAW_0P0078125 = RAW_1DIV128;
+		static constexpr int32_t RAW_0P00390625 = RAW_1DIV256;
+		static constexpr int32_t RAW_0P001953125 = RAW_1DIV512;
+		static constexpr int32_t RAW_0P0009765625 = RAW_1DIV1024;
 
 		// Operators
 
