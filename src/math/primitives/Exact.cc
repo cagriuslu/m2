@@ -36,29 +36,6 @@ namespace {
 			   1, // 1 / (2^26)
 	};
 
-	const int PRECISION_POINT_TO_DECIMAL_6[] = {
-		500000, // 1 / (2^1)
-		250000, // 1 / (2^2)
-		125000, // 1 / (2^3)
-		 62500, // 1 / (2^4)
-		 31250, // 1 / (2^5)
-		 15625, // 1 / (2^6)
-		  7813, // 1 / (2^7)
-		  3906, // 1 / (2^8)
-		  1953, // 1 / (2^9)
-		   977, // 1 / (2^10)
-		   488, // 1 / (2^11)
-		   244, // 1 / (2^12)
-		   122, // 1 / (2^13)
-			61, // 1 / (2^14)
-			31, // 1 / (2^15)
-			15, // 1 / (2^16)
-			 8, // 1 / (2^17)
-			 4, // 1 / (2^18)
-			 2, // 1 / (2^19)
-			 1, // 1 / (2^20)
-	};
-
 	int FindMostSignificantSetBit(const uint64_t value) {
 		if (value == 0) {
 			throw M2_ERROR("Attempt to find the most significant bit of zero");
@@ -72,36 +49,6 @@ namespace {
 		}
 		throw M2_ERROR("Implementation error in FindMostSignificantSetBit");
 	}
-}
-
-m2::Exact m2::Exact::FromProtobufRepresentation(const int64_t rawValueE6) {
-	if constexpr (std::size(PRECISION_POINT_TO_DECIMAL_6) < PRECISION) {
-		throw M2_ERROR("Implementation error, precision not supported");
-	}
-
-	const bool negative = rawValueE6 < 0;
-	const auto valueE6 = negative ? -rawValueE6 : rawValueE6;
-
-	const auto wholePart = valueE6 / 1000000l;
-	auto remainder = valueE6 % 1000000l;
-
-	int64_t value = wholePart;
-	for (int i = 0; i < PRECISION; ++i) {
-		if (PRECISION_POINT_TO_DECIMAL_6[i] <= remainder) {
-			// Insert a 1 from the right
-			value <<= 1;
-			value |= 1;
-			remainder -= PRECISION_POINT_TO_DECIMAL_6[i];
-		} else {
-			// Insert 0 from the right
-			value <<= 1;
-		}
-	}
-
-	if (static_cast<int64_t>(INT32_MAX) < value) {
-		throw M2_ERROR("Protobuf representation is more than what Exact can hold");
-	}
-	return Exact{std::in_place, I(negative ? -value : value)};
 }
 
 std::string m2::Exact::ToString() const {

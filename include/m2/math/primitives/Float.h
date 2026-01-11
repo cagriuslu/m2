@@ -16,7 +16,6 @@ namespace m2 {
 		explicit Float(const    int i) : _value(static_cast<float>(i)) {}
 		explicit Float(const  float f) : _value(f) {}
 		explicit Float(const double d) : _value(static_cast<float>(d)) {}
-		static Float FromProtobufRepresentation(const double rawValueE6) { return Float{rawValueE6 / 1'000'000.0}; }
 
 		// Attributes
 
@@ -59,6 +58,7 @@ namespace m2 {
 		[[nodiscard]] int32_t ToInteger() const { return static_cast<int>(_value); }
 		[[nodiscard]] float ToFloat() const { return _value; }
 		[[nodiscard]] double ToDouble() const { return _value; }
+		[[nodiscard]] float ToRawValue() const { return _value; }
 		[[nodiscard]] std::string ToString() const;
 
 		// Modifiers

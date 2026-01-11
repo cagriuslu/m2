@@ -132,6 +132,15 @@ foreach(PROTO_DEFAULT_FILE ${PROTO_FILES_WITH_DEFAULT_FALLBACK})
     endif()
 endforeach()
 file(GLOB PROTO_FILES "pb/*.proto")
+if(GAME_IS_DETERMINISTIC)
+    # Gather names of the deterministic proto files
+    file(GLOB DETERMINISTIC_PROTO_FILES "pb-deterministic/*.proto")
+    list(APPEND PROTO_FILES ${DETERMINISTIC_PROTO_FILES})
+else()
+    # Gather names of the undeterministic proto files
+    file(GLOB UNDETERMINISTIC_PROTO_FILES "pb-undeterministic/*.proto")
+    list(APPEND PROTO_FILES ${UNDETERMINISTIC_PROTO_FILES})
+endif()
 protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS "${PROTO_FILES}" "${GAME_PROTO_FILES}")
 
 # Post-build actions

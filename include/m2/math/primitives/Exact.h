@@ -30,7 +30,6 @@ namespace m2 {
 		explicit Exact(const    int i) { ThrowIfOutOfBounds(i); *this = UnsafeFromInt(i);    }
 		explicit Exact(const  float f) { ThrowIfOutOfBounds(f); *this = UnsafeFromFloat(f);  }
 		explicit Exact(const double d) { ThrowIfOutOfBounds(d); *this = UnsafeFromDouble(d); }
-		static Exact FromProtobufRepresentation(int64_t rawValueE6);
 
 		// Attributes
 

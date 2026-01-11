@@ -2,6 +2,7 @@
 #include <m2/math/primitives/Exact.h>
 #include <m2/math/primitives/Float.h>
 #include <m2/ProxyTypes.h>
+#include <IFE.pb.h>
 
 namespace m2 {
 	class IFE {
@@ -15,10 +16,11 @@ namespace m2 {
 		explicit IFE(const pb::IFE&);
 
 		explicit operator bool() const;
+		explicit operator pb::IFE() const;
 		[[nodiscard]] bool IsZero() const;
 		[[nodiscard]] bool IsInt() const;
 		[[nodiscard]] bool IsFE() const;
-		int32_t GetInt() const;
-		FE GetFE() const;
+		[[nodiscard]] int32_t GetInt() const;
+		[[nodiscard]] FE GetFE() const;
 	};
 }

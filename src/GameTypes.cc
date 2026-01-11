@@ -4,18 +4,8 @@
 m2::IFE::IFE(const pb::IFE& ife) {
 	if (ife.has_i()) {
 		_value = ife.i();
-	} else if (ife.has_f()) {
-		if constexpr (GAME_IS_DETERMINISTIC) {
-			throw M2_ERROR("Deterministic game shouldn't contain an IFE of type float");
-		}
-		_value = FE{ife.f()};
-	} else if (ife.has_e6()) {
-		if constexpr (not GAME_IS_DETERMINISTIC) {
-			throw M2_ERROR("Non-deterministic game shouldn't contain an IFE of type exact");
-		}
-		_value = FE::FromProtobufRepresentation(ife.e6());
-	} else {
-		_value = 0;
+	} else if (ife.has_fe()) {
+		_value = FE{ife.fe()};
 	}
 }
 
@@ -23,6 +13,15 @@ m2::IFE::operator bool() const {
 	return std::holds_alternative<std::monostate>(_value)
 		? false
 		: std::holds_alternative<int32_t>(_value) ? std::get<int32_t>(_value) : static_cast<bool>(std::get<FE>(_value));
+}
+m2::IFE::operator pb::IFE() const {
+	pb::IFE pbIfe;
+	if (IsInt()) {
+		pbIfe.set_i(std::get<int32_t>(_value));
+	} else if (IsFE()) {
+		pbIfe.set_fe(std::get<FE>(_value).ToRawValue());
+	}
+	return pbIfe;
 }
 bool m2::IFE::IsZero() const {
 	return !static_cast<bool>(*this);

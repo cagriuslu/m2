@@ -1,0 +1,9 @@
+syntax = "proto3";
+package m2.pb;
+
+message IFE {
+  oneof value_variant {
+    int32 i = 1;
+    int32 fe = 2;
+  }
+}

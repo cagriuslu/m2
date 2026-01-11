@@ -22,7 +22,6 @@ namespace m2 {
 	constexpr size_t Z(const auto t) { return static_cast<size_t>(t); }
 	constexpr float ToFloat(const auto t) { return static_cast<float>(t); }
 	constexpr double D(const auto t) { return static_cast<double>(t); }
-	constexpr int64_t ToE6L(const double d) { return static_cast<int64_t>(round(d * 1000000.0)); }
 	std::string S(const auto& s) { return std::string(s); }
 	inline int RoundI(const float t) { return static_cast<int>(roundf(t)); }
 	inline int RoundI(const double t) { return static_cast<int>(round(t)); }
@@ -167,13 +166,25 @@ namespace m2 {
 
 	template <typename InputIt, typename Operation>
 	void ForEachAdjacentPair(InputIt first, InputIt last, Operation operation) {
-		if(first == last) {
+		if (first == last) {
 			return;
 		}
 		InputIt next = first;
-		for(++next; next != last; ++first, ++next) {
+		for (++next; next != last; ++first, ++next) {
 			operation(*first, *next);
 		}
+	}
+
+	template <typename RetType, typename InputItA, typename InputItB, typename Operation>
+	std::optional<RetType> ForEachZip(InputItA& firstA, const InputItA& lastA, InputItB& firstB, const InputItB& lastB, Operation operation) {
+		while (firstA != lastA && firstB != lastB) {
+			if (std::optional<RetType> retval = operation(*firstA, *firstB); retval) {
+				return std::move(*retval);
+			}
+			++firstA;
+			++firstB;
+		}
+		return std::nullopt;
 	}
 
 	struct Void {};
