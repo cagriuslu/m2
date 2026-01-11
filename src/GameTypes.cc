@@ -5,7 +5,7 @@ m2::IFE::IFE(const pb::IFE& ife) {
 	if (ife.has_i()) {
 		_value = ife.i();
 	} else if (ife.has_fe()) {
-		_value = FE{ife.fe()};
+		_value = FE{std::in_place, ife.fe()};
 	}
 }
 
