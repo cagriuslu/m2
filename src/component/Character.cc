@@ -7,14 +7,6 @@
 
 static_assert(std::forward_iterator<m2::Pool<m2::CharacterVariant>::Iterator>);
 
-float m2::internal::ResourceAmount::SetMaxAmount(float max_amount) {
-	if (max_amount < 0.0f) {
-		throw M2_ERROR("Negative max resource");
-	}
-	_maxAmount = max_amount;
-	return SetAmount(_amount);
-}
-
 m2::Character::Character(uint64_t object_id) : Component(object_id) {}
 std::optional<m2g::pb::InteractionData> m2::Character::ExecuteInteraction(Character& initiator, const m2g::pb::InteractionData& data) {
 	if (this->on_interaction) {
@@ -125,9 +117,6 @@ bool m2::Character::UseItem(const Iterator& item_it, float resource_multiplier) 
 		const auto benefit = item_it->GetBenefitByIndex(i);
 		AddResource(benefit.first, benefit.second * resource_multiplier);
 	}
-	if (item_it->Usage() == pb::CONSUMABLE) {
-		RemoveItem(item_it);
-	}
 	return true;
 }
 
@@ -197,20 +186,6 @@ bool m2::CompactCharacter::HasResource(m2g::pb::ResourceType resource_type) cons
 }
 float m2::CompactCharacter::GetResource(m2g::pb::ResourceType resource_type) const {
 	return (_resource.first == resource_type) ? _resource.second.Amount() : float{};
-}
-float m2::CompactCharacter::GetMaxResource(m2g::pb::ResourceType resource_type) const {
-	return (_resource.first == resource_type) ? _resource.second.MaxAmount() : INFINITY;
-}
-void m2::CompactCharacter::SetMaxResource(m2g::pb::ResourceType resource_type, float max) {
-	if (_resource.first == m2g::pb::NO_RESOURCE) {
-		SetResource(resource_type, 0.0f);
-	}
-
-	if (_resource.first == resource_type) {
-		_resource.second.SetMaxAmount(max);
-	} else {
-		LOG_WARN("Attempt to set max resource amount, but CompactCharacter doesn't carry that resource");
-	}
 }
 float m2::CompactCharacter::SetResource(m2g::pb::ResourceType resource_type, float amount) {
 	_resource = std::make_pair(resource_type, internal::ResourceAmount{amount});
@@ -379,12 +354,6 @@ bool m2::FastCharacter::HasResource(m2g::pb::ResourceType resource_type) const {
 }
 float m2::FastCharacter::GetResource(m2g::pb::ResourceType resource_type) const {
 	return _resources[ResourceTypeIndex(resource_type)].Amount();
-}
-float m2::FastCharacter::GetMaxResource(m2g::pb::ResourceType resource_type) const {
-	return _resources[ResourceTypeIndex(resource_type)].MaxAmount();
-}
-void m2::FastCharacter::SetMaxResource(m2g::pb::ResourceType resource_type, float max) {
-	_resources[ResourceTypeIndex(resource_type)].SetMaxAmount(max);
 }
 float m2::FastCharacter::SetResource(m2g::pb::ResourceType resource_type, float amount) {
 	return _resources[ResourceTypeIndex(resource_type)].SetAmount(amount);

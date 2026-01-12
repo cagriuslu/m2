@@ -62,5 +62,7 @@ namespace m2g {
 
 		m2::UiPanelBlueprint _you_died_menu;
 		const m2::UiPanelBlueprint* you_died_menu();
+
+		static const std::unordered_map<pb::ItemType, std::pair<pb::ResourceType, float>> CONSUMABLE_BENEFITS;
 	};
 }

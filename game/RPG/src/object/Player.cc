@@ -62,7 +62,6 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_AUTOMATIC_RANGED_ENERGY));
 	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY));
 	chr.AddResource(m2g::pb::RESOURCE_HP, 1.0f);
-	chr.SetMaxResource(m2g::pb::RESOURCE_HP, 1.0f);
 	chr.AddResource(m2g::pb::RESOURCE_DASH_ENERGY, 2.0f);
 
 	obj.impl = std::make_unique<rpg::Player>(obj);
@@ -166,20 +165,29 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 			self.RemoveResource(m2g::pb::RESOURCE_HP, data.hit_damage());
 		} else if (data.has_item_type()) {
 			const auto& item = M2_GAME.GetNamedItem(data.item_type());
-			// Player can hold only one special weapon of certain type, get rid of the previous one
-			constexpr std::array<ItemCategory, 2> special_categories = {ITEM_CATEGORY_SPECIAL_RANGED_WEAPON, ITEM_CATEGORY_SPECIAL_MELEE_WEAPON};
-			constexpr std::array<ResourceType, 2> special_ammo_type = {RESOURCE_SPECIAL_RANGED_WEAPON_AMMO, NO_RESOURCE};
-			for (size_t i = 0; i < special_categories.size(); ++i) {
-				if (auto sp = special_categories[i]; sp == item.Category()) {
-					if (auto it = self.FindItems(sp); it) {
-						self.RemoveItem(it); // Remove weapon
-						self.ClearResource(special_ammo_type[i]); // Also remove any ammo
-					}
-					break;
+			// If the item in a consumable
+			if (const auto consumableIt = M2G_PROXY.CONSUMABLE_BENEFITS.find(item.Type()); consumableIt != M2G_PROXY.CONSUMABLE_BENEFITS.end()) {
+				// Gain the benefits
+				if (consumableIt->second.first == RESOURCE_HP) {
+					const auto current = self.GetResource(consumableIt->second.first);
+					self.SetResource(consumableIt->second.first, std::min(current + consumableIt->second.second, 1.0f));
 				}
+			} else {
+				// Player can hold only one special weapon of certain type, get rid of the previous one
+				constexpr std::array<ItemCategory, 2> special_categories = {ITEM_CATEGORY_SPECIAL_RANGED_WEAPON, ITEM_CATEGORY_SPECIAL_MELEE_WEAPON};
+				constexpr std::array<ResourceType, 2> special_ammo_type = {RESOURCE_SPECIAL_RANGED_WEAPON_AMMO, NO_RESOURCE};
+				for (size_t i = 0; i < special_categories.size(); ++i) {
+					if (auto sp = special_categories[i]; sp == item.Category()) {
+						if (auto it = self.FindItems(sp); it) {
+							self.RemoveItem(it); // Remove weapon
+							self.ClearResource(special_ammo_type[i]); // Also remove any ammo
+						}
+						break;
+					}
+				}
+				// Add item
+				self.AddNamedItem(item);
 			}
-			// Add item
-			self.AddNamedItem(item);
 		}
 		return std::nullopt;
 	};

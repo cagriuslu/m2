@@ -13,20 +13,16 @@ namespace m2 {
 	namespace internal {
 		class ResourceAmount {
 			float _amount{};
-			float _maxAmount{INFINITY};
 		public:
-			explicit ResourceAmount(const float amount = 0.0f, const float max_amount = INFINITY) { SetMaxAmount(max_amount); SetAmount(amount); }
+			explicit ResourceAmount(const float amount = 0.0f) { SetAmount(amount); }
 
 			[[nodiscard]] float Amount() const { return _amount; }
 			[[nodiscard]] bool HasAmount() const { return 0.0f < _amount; }
 
-			float SetAmount(const float amount) { return _amount = std::clamp(amount, 0.0f, _maxAmount); }
+			float SetAmount(const float amount) { return _amount = amount; }
 			float AddAmount(const float amount) { return SetAmount(_amount + amount); }
 			float RemoveAmount(const float amount) { return SetAmount(_amount - amount); }
 			void ClearAmount() { _amount = 0.0f; }
-
-			[[nodiscard]] float MaxAmount() const { return _maxAmount; }
-			float SetMaxAmount(float max_amount);
 		};
 	}
 
@@ -92,8 +88,6 @@ namespace m2 {
 
 		[[nodiscard]] virtual bool HasResource(m2g::pb::ResourceType resource_type) const = 0;
 		[[nodiscard]] virtual float GetResource(m2g::pb::ResourceType resource_type) const = 0;
-		[[nodiscard]] virtual float GetMaxResource(m2g::pb::ResourceType resource_type) const = 0;
-		virtual void SetMaxResource(m2g::pb::ResourceType resource_type, float max) = 0;
 		virtual float SetResource(m2g::pb::ResourceType resource_type, float amount) = 0;
 		virtual float AddResource(m2g::pb::ResourceType resource_type, float amount) = 0;
 		virtual float RemoveResource(m2g::pb::ResourceType resource_type, float amount) = 0;
@@ -136,8 +130,6 @@ namespace m2 {
 
 		[[nodiscard]] bool HasResource(m2g::pb::ResourceType resource_type) const override;
 		[[nodiscard]] float GetResource(m2g::pb::ResourceType resource_type) const override;
-		[[nodiscard]] float GetMaxResource(m2g::pb::ResourceType resource_type) const override;
-		void SetMaxResource(m2g::pb::ResourceType resource_type, float max) override;
 		float SetResource(m2g::pb::ResourceType resource_type, float amount) override;
 		float AddResource(m2g::pb::ResourceType resource_type, float amount) override;
 		float RemoveResource(m2g::pb::ResourceType resource_type, float amount) override;
@@ -181,8 +173,6 @@ namespace m2 {
 
 		[[nodiscard]] bool HasResource(m2g::pb::ResourceType resource_type) const override;
 		[[nodiscard]] float GetResource(m2g::pb::ResourceType resource_type) const override;
-		[[nodiscard]] float GetMaxResource(m2g::pb::ResourceType resource_type) const override;
-		void SetMaxResource(m2g::pb::ResourceType resource_type, float max) override;
 		float SetResource(m2g::pb::ResourceType resource_type, float amount) override;
 		float AddResource(m2g::pb::ResourceType resource_type, float amount) override;
 		float RemoveResource(m2g::pb::ResourceType resource_type, float amount) override;

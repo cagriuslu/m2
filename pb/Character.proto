@@ -44,10 +44,6 @@ enum Usage {
   // Item must be used manually and once at a time. The costs are deducted and benefits are applied by the engine. The
   // item doesn't disappear after use.
   REUSABLE = 2;
-
-  // Item must be used manually and only once. The costs are deducted and benefits are applied by the engine. The item
-  // disappears after one use.
-  CONSUMABLE = 3;
 }
 
 /// An item also represents a capability

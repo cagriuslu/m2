@@ -5,26 +5,10 @@
     },
     {
       "type": "ITEM_CONSUMABLE_HP_POTION_20",
-      "usage": "CONSUMABLE",
-      "useOnAcquire": true,
-      "benefits": [
-        {
-          "type": "RESOURCE_HP",
-          "amount": 0.2
-        }
-      ],
       "uiSprite": "SPRITE_HP_POTION_20"
     },
     {
       "type": "ITEM_CONSUMABLE_HP_POTION_80",
-      "usage": "CONSUMABLE",
-      "useOnAcquire": true,
-      "benefits": [
-        {
-          "type": "RESOURCE_HP",
-          "amount": 0.8
-        }
-      ],
       "uiSprite": "SPRITE_HP_POTION_80"
     },
     {

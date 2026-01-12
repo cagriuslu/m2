@@ -10,6 +10,13 @@
 #include <m2/ui/widget/ProgressBar.h>
 #include <rpg/Defs.h>
 
+using namespace m2g;
+
+const std::unordered_map<pb::ItemType, std::pair<pb::ResourceType, float>> m2g::Proxy::CONSUMABLE_BENEFITS = {
+	{pb::ITEM_CONSUMABLE_HP_POTION_20, {pb::RESOURCE_HP, 0.2f}},
+	{pb::ITEM_CONSUMABLE_HP_POTION_80, {pb::RESOURCE_HP, 0.8f}},
+};
+
 void m2g::Proxy::load_resources() {
 	// Load enemies
 	enemies = m2MoveOrThrowError(m2::pb::json_file_to_message<rpg::pb::Enemies>(M2_GAME.GetResources().GetGameResourceDir() / "Enemies.json"));
