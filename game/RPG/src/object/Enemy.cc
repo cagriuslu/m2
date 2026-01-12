@@ -8,13 +8,12 @@
 #include <rpg/Detail.h>
 #include <rpg/Objects.h>
 #include <rpg/object/Enemy.h>
-
 #include <deque>
 #include <m2/third_party/physics/ColliderCategory.h>
-
 #include "m2/Game.h"
 #include "m2/game/Pathfinder.h"
 #include <rpg/Graphic.h>
+#include "rpg/UseItem.h"
 #include "rpg/group/ItemGroup.h"
 
 using namespace rpg;
@@ -213,7 +212,7 @@ void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
 			switch (capability) {
 				case pb::CAPABILITY_RANGED: {
 					auto it = obj.GetCharacter().FindItems(m2g::pb::ITEM_CATEGORY_DEFAULT_RANGED_WEAPON);
-					if (it && obj.GetCharacter().UseItem(it)) {
+					if (it && UseItem(obj.GetCharacter(), *it)) {
 						obj.GetCharacter().ClearResource(RESOURCE_RANGED_ENERGY);
 						auto shoot_direction = M2_PLAYER.GetPhysique().position - selfPosition;
 						rpg::create_projectile(*m2::CreateObject({}, obj.GetId()), selfPosition,
@@ -225,7 +224,7 @@ void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
 				}
 				case pb::CAPABILITY_MELEE: {
 					auto it = obj.GetCharacter().FindItems(m2g::pb::ITEM_CATEGORY_DEFAULT_MELEE_WEAPON);
-					if (it && obj.GetCharacter().UseItem(it)) {
+					if (it && UseItem(obj.GetCharacter(), *it)) {
 						obj.GetCharacter().ClearResource(RESOURCE_MELEE_ENERGY);
 						rpg::create_blade(*m2::CreateObject({}, obj.GetId()), selfPosition,
 							M2_PLAYER.GetPhysique().position - selfPosition, *it, false);

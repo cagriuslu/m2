@@ -74,47 +74,6 @@ std::vector<m2g::pb::ItemType> m2::Character::NamedItemTypes(const m2g::pb::Item
 	}
 	return types;
 }
-bool m2::Character::UseItem(const Iterator& item_it, float resource_multiplier) {
-	if (item_it == EndItems()) {
-		return false;
-	}
-
-	// Check if costs can be paid
-	if (item_it->GetCostCount() == 1) {
-		const auto cost = item_it->GetCostByIndex(0);
-		const auto adjusted_cost_amount = cost.second * resource_multiplier;
-		if (0.0f < adjusted_cost_amount && GetResource(cost.first) < adjusted_cost_amount) {
-			return false;
-		}
-	} else if (1 < item_it->GetCostCount()) {
-		// Merge costs
-		auto resource_count = pb::enum_value_count<m2g::pb::ResourceType>();
-		auto* merged_costs = (float*) alloca(resource_count * sizeof(float));
-		memset(merged_costs, 0, resource_count * sizeof(float));
-		for (size_t i = 0; i < item_it->GetCostCount(); ++i) {
-			const auto cost = item_it->GetCostByIndex(i);
-			merged_costs[pb::enum_index(cost.first)] += cost.second * resource_multiplier;
-		}
-		// Check if all costs are covered
-		for (int i = 0; i < resource_count; ++i) {
-			if (0.0f < merged_costs[i] && GetResource(pb::enum_value<m2g::pb::ResourceType>(i)) < merged_costs[i]) {
-				return false;
-			}
-		}
-	}
-
-	// Pay the costs
-	for (size_t i = 0; i < item_it->GetCostCount(); ++i) {
-		const auto cost = item_it->GetCostByIndex(i);
-		RemoveResource(cost.first, cost.second * resource_multiplier);
-	}
-	// Get the benefits
-	for (size_t i = 0; i < item_it->GetBenefitCount(); ++i) {
-		const auto benefit = item_it->GetBenefitByIndex(i);
-		AddResource(benefit.first, benefit.second * resource_multiplier);
-	}
-	return true;
-}
 
 namespace {
 	void tiny_character_iterator_incrementor(m2::Character::Iterator& it) {
@@ -156,9 +115,6 @@ void m2::CompactCharacter::AddNamedItem(const Item& item) {
 	for (size_t i = 0; i < _item->GetAcquireBenefitCount(); ++i) {
 		const auto benefit = _item->GetAcquireBenefitByIndex(i);
 		AddResource(benefit.first, benefit.second);
-	}
-	if (_item->UseOnAcquire()) {
-		UseItem(BeginItems());
 	}
 }
 void m2::CompactCharacter::AddNamedItemWithoutBenefits(const Item& item) {
@@ -316,9 +272,6 @@ void m2::FastCharacter::AddNamedItem(const Item& item) {
 	for (size_t i = 0; i < _items.back()->GetAcquireBenefitCount(); ++i) {
 		const auto benefit = _items.back()->GetAcquireBenefitByIndex(i);
 		AddResource(benefit.first, benefit.second);
-	}
-	if (_items.back()->UseOnAcquire()) {
-		UseItem(Iterator{*this, FullCharacterIteratorIncrementor, {}, _items.size() - 1, _items.back()});
 	}
 }
 void m2::FastCharacter::AddNamedItemWithoutBenefits(const Item& item) {

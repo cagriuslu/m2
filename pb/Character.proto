@@ -36,10 +36,9 @@ message Attribute {
 message Item {
   m2g.pb.ItemType type = 1;
   m2g.pb.ItemCategory category = 2;
-  bool use_on_acquire = 4; // DEPRECATED
   repeated Resource costs = 5; // DEPRECATED
   repeated Resource benefits = 6; // DEPRECATED
-  repeated Resource acquire_benefits = 7; // Gained regardless use_on_acquire or not. Gained before benefits. DEPRECATED
+  repeated Resource acquire_benefits = 7; // Gained before benefits. DEPRECATED
   repeated Attribute attributes = 8; // DEPRECATED
   repeated Attribute2 attributes2 = 9;
   m2g.pb.SpriteType game_sprite = 10;

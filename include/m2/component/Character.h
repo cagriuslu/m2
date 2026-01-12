@@ -65,7 +65,6 @@ namespace m2 {
 		[[nodiscard]] std::vector<m2g::pb::ItemType> NamedItemTypes(m2g::pb::ItemCategory item_cat) const;
 		virtual void AddNamedItem(const Item& item) = 0;
 		virtual void AddNamedItemWithoutBenefits(const Item& item) = 0;
-		bool UseItem(const Iterator& item_it, float resource_multiplier = 1.0f);
 		virtual void RemoveItem(const Iterator& item) = 0;
 		virtual void ClearItems() = 0;
 

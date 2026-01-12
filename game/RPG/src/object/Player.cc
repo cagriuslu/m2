@@ -12,7 +12,7 @@
 #include <rpg/Defs.h>
 #include <array>
 #include <m2/third_party/physics/ColliderCategory.h>
-
+#include "rpg/UseItem.h"
 
 using namespace rpg;
 using namespace m2g;
@@ -71,7 +71,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 		auto [direction_enum, direction_vector] = m2::calculate_character_movement(m2g::pb::MOVE_LEFT, m2g::pb::MOVE_RIGHT, m2g::pb::MOVE_UP, m2g::pb::MOVE_DOWN);
 		float move_force;
 		// Check if dash
-		if (direction_vector && M2_GAME.events.PopKeyPress(m2g::pb::DASH) && chr.UseItem(chr.FindItems(m2g::pb::ITEM_REUSABLE_DASH_2S))) {
+		if (direction_vector && M2_GAME.events.PopKeyPress(m2g::pb::DASH) && UseItem(chr, *chr.FindItems(m2g::pb::ITEM_REUSABLE_DASH_2S))) {
 			chr.ClearResource(RESOURCE_DASH_ENERGY);
 			move_force = PLAYER_DASH_FORCE;
 		} else {
@@ -96,13 +96,13 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 			// Check if there is a special ranged weapon and try to use the item
 			auto special_it = chr.FindItems(m2g::pb::ITEM_CATEGORY_SPECIAL_RANGED_WEAPON);
 			if (special_it) {
-				if (chr.UseItem(special_it)) {
+				if (UseItem(chr, *special_it)) {
 					shoot(*special_it);
 				}
 			} else {
 				// Find default weapon and try to use it
 				auto default_it = chr.FindItems(m2g::pb::ITEM_CATEGORY_DEFAULT_RANGED_WEAPON);
-				if (default_it && chr.UseItem(default_it)) {
+				if (default_it && UseItem(chr, *default_it)) {
 					chr.ClearResource(RESOURCE_RANGED_ENERGY);
 					shoot(*default_it);
 				}
@@ -119,13 +119,13 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 			auto special_it = chr.FindItems(m2g::pb::ITEM_CATEGORY_SPECIAL_MELEE_WEAPON);
 			if (special_it) {
 				// Try to use the weapon
-				if (chr.UseItem(special_it)) {
+				if (UseItem(chr, *special_it)) {
 					slash(*special_it);
 				}
 			} else {
 				// Find default melee weapon and try to use it
 				auto default_it = chr.FindItems(m2g::pb::ITEM_CATEGORY_DEFAULT_MELEE_WEAPON);
-				if (default_it && chr.UseItem(default_it)) {
+				if (default_it && UseItem(chr, *default_it)) {
 					chr.ClearResource(RESOURCE_MELEE_ENERGY);
 					slash(*default_it);
 				}
