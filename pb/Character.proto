@@ -32,21 +32,10 @@ message Attribute {
   float amount = 2;
 }
 
-// DEPRECATED
-enum Usage {
-  // Item cannot be used, only held.
-  STATIC = 0;
-
-  // Item must be used manually and once at a time. The costs are deducted and benefits are applied by the engine. The
-  // item doesn't disappear after use.
-  REUSABLE = 2;
-}
-
 /// An item also represents a capability
 message Item {
   m2g.pb.ItemType type = 1;
   m2g.pb.ItemCategory category = 2;
-  Usage usage = 3; // DEPRECATED
   bool use_on_acquire = 4; // DEPRECATED
   repeated Resource costs = 5; // DEPRECATED
   repeated Resource benefits = 6; // DEPRECATED

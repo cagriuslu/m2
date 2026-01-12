@@ -26,7 +26,6 @@ namespace m2 {
 
 		[[nodiscard]] m2g::pb::ItemType Type() const { return _item.type(); }
 		[[nodiscard]] m2g::pb::ItemCategory Category() const { return _item.category(); }
-		[[nodiscard]] pb::Usage Usage() const { return _item.usage(); }
 		[[nodiscard]] bool UseOnAcquire() const { return _item.use_on_acquire(); }
 		[[nodiscard]] size_t GetCostCount() const { return _item.costs_size(); }
 		[[nodiscard]] std::pair<m2g::pb::ResourceType, float> GetCostByIndex(size_t i) const;

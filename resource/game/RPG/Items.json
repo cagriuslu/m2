@@ -13,7 +13,6 @@
     },
     {
       "type": "ITEM_REUSABLE_DASH_2S",
-      "usage": "REUSABLE",
       "costs": [
         {
           "type": "RESOURCE_DASH_ENERGY",
@@ -24,7 +23,6 @@
     {
       "type": "ITEM_REUSABLE_GUN",
       "category": "ITEM_CATEGORY_DEFAULT_RANGED_WEAPON",
-      "usage": "REUSABLE",
       "costs": [
         {
           "type": "RESOURCE_RANGED_ENERGY",
@@ -62,7 +60,6 @@
     {
       "type": "ITEM_REUSABLE_MACHINE_GUN",
       "category": "ITEM_CATEGORY_SPECIAL_RANGED_WEAPON",
-      "usage": "REUSABLE",
       "costs": [
         {
           "type": "RESOURCE_RANGED_ENERGY",
@@ -111,7 +108,6 @@
     {
       "type": "ITEM_REUSABLE_EXPLOSIVE",
       "category": "ITEM_CATEGORY_SPECIAL_RANGED_WEAPON",
-      "usage": "REUSABLE",
       "costs": [
         {
           "type": "RESOURCE_RANGED_ENERGY",
@@ -164,7 +160,6 @@
     {
       "type": "ITEM_REUSABLE_SWORD",
       "category": "ITEM_CATEGORY_DEFAULT_MELEE_WEAPON",
-      "usage": "REUSABLE",
       "costs": [
         {
           "type": "RESOURCE_MELEE_ENERGY",
@@ -190,7 +185,6 @@
     {
       "type": "ITEM_REUSABLE_ENEMY_SWORD",
       "category": "ITEM_CATEGORY_DEFAULT_MELEE_WEAPON",
-      "usage": "REUSABLE",
       "costs": [
         {
           "type": "RESOURCE_MELEE_ENERGY",
@@ -216,7 +210,6 @@
     {
       "type": "ITEM_REUSABLE_LONG_SWORD",
       "category": "ITEM_CATEGORY_SPECIAL_MELEE_WEAPON",
-      "usage": "REUSABLE",
       "costs": [
         {
           "type": "RESOURCE_MELEE_ENERGY",
@@ -243,7 +236,6 @@
     {
       "type": "ITEM_REUSABLE_AXE",
       "category": "ITEM_CATEGORY_SPECIAL_MELEE_WEAPON",
-      "usage": "REUSABLE",
       "costs": [
         {
           "type": "RESOURCE_MELEE_ENERGY",
