@@ -36,7 +36,6 @@ m2::void_expected create_dwarf(m2::Object& obj, const m2::VecF& position) {
 	obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, DWARF_FULL).position = position;
 
 	auto& chr = obj.AddFastCharacter();
-	chr.AddNamedItem(M2_GAME.GetNamedItem(ITEM_REUSABLE_JUMP));
 
 	phy.preStep = [&chr](m2::Physique& phy, const m2::Stopwatch::Duration& delta) {
 		// Character movement
@@ -55,7 +54,7 @@ m2::void_expected create_dwarf(m2::Object& obj, const m2::VecF& position) {
 		}
 		// Jump
 		auto is_grounded = chr.GetResource(RESOURCE_IS_GROUNDED_X) != 0.0f && chr.GetResource(RESOURCE_IS_GROUNDED_Y) != 0.0f;
-		if (is_grounded && M2_GAME.events.IsKeyDown(JUMP) && chr.UseItem(chr.FindItems(ITEM_REUSABLE_JUMP))) {
+		if (is_grounded && M2_GAME.events.IsKeyDown(JUMP)) {
 			chr.ClearResource(RESOURCE_JUMP_ENERGY);
 			auto linear_velocity = phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->GetLinearVelocity();
 			linear_velocity = linear_velocity.WithY(linear_velocity.GetY() - 7.0f);
