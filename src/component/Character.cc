@@ -182,25 +182,26 @@ void m2::CompactCharacter::ClearItems() {
 	_item = {};
 }
 bool m2::CompactCharacter::HasResource(m2g::pb::ResourceType resource_type) const {
-	return _resource.first == resource_type && _resource.second.HasAmount();
+	return _resource.first == resource_type && _resource.second != 0.0f;
 }
 float m2::CompactCharacter::GetResource(m2g::pb::ResourceType resource_type) const {
-	return (_resource.first == resource_type) ? _resource.second.Amount() : float{};
+	return (_resource.first == resource_type) ? _resource.second : float{};
 }
 float m2::CompactCharacter::SetResource(m2g::pb::ResourceType resource_type, float amount) {
-	_resource = std::make_pair(resource_type, internal::ResourceAmount{amount});
-	return _resource.second.Amount();
+	_resource = std::make_pair(resource_type, amount);
+	return _resource.second;
 }
 float m2::CompactCharacter::AddResource(m2g::pb::ResourceType resource_type, float amount) {
 	if (_resource.first == m2g::pb::NO_RESOURCE) {
 		SetResource(resource_type, 0.0f);
 	}
-
 	if (_resource.first == resource_type) {
-		return _resource.second.AddAmount(amount);
+		const auto currValue = _resource.second;
+		const auto newValue = std::max(currValue + amount, 0.0f);
+		_resource.second = newValue;
+		return newValue;
 	} else {
-		LOG_WARN("Attempt to add/remove resource, but CompactCharacter doesn't carry that resource");
-		return 0.0f;
+		throw M2_ERROR("Attempt to add/remove resource, but CompactCharacter doesn't carry that resource");
 	}
 }
 float m2::CompactCharacter::RemoveResource(m2g::pb::ResourceType resource_type, float amount) {
@@ -208,11 +209,11 @@ float m2::CompactCharacter::RemoveResource(m2g::pb::ResourceType resource_type, 
 }
 void m2::CompactCharacter::ClearResource(m2g::pb::ResourceType resource_type) {
 	if (_resource.first == resource_type) {
-		_resource.second.ClearAmount();
+		_resource.second = 0.0f;
 	}
 }
 void m2::CompactCharacter::ClearResources() {
-	_resource.second.ClearAmount();
+	_resource.second = 0.0f;
 }
 bool m2::CompactCharacter::HasAttribute(m2g::pb::AttributeType attribute_type) const {
 	return _attribute.first == attribute_type && _attribute.second != 0.0f;
@@ -350,22 +351,26 @@ void m2::FastCharacter::ClearItems() {
 	_items.clear();
 }
 bool m2::FastCharacter::HasResource(m2g::pb::ResourceType resource_type) const {
-	return _resources[ResourceTypeIndex(resource_type)].HasAmount();
+	return _resources[ResourceTypeIndex(resource_type)] != 0.0f;
 }
 float m2::FastCharacter::GetResource(m2g::pb::ResourceType resource_type) const {
-	return _resources[ResourceTypeIndex(resource_type)].Amount();
+	return _resources[ResourceTypeIndex(resource_type)];
 }
 float m2::FastCharacter::SetResource(m2g::pb::ResourceType resource_type, float amount) {
-	return _resources[ResourceTypeIndex(resource_type)].SetAmount(amount);
+	_resources[ResourceTypeIndex(resource_type)] = amount;
+	return amount;
 }
 float m2::FastCharacter::AddResource(m2g::pb::ResourceType resource_type, float amount) {
-	return _resources[ResourceTypeIndex(resource_type)].AddAmount(amount);
+	const auto currValue = _resources[ResourceTypeIndex(resource_type)];
+	const auto newValue = std::max(currValue + amount, 0.0f);
+	_resources[ResourceTypeIndex(resource_type)] = newValue;
+	return newValue;
 }
 float m2::FastCharacter::RemoveResource(m2g::pb::ResourceType resource_type, float amount) {
-	return _resources[ResourceTypeIndex(resource_type)].RemoveAmount(amount);
+	return AddResource(resource_type, -amount);
 }
 void m2::FastCharacter::ClearResource(m2g::pb::ResourceType resource_type) {
-	_resources[ResourceTypeIndex(resource_type)].ClearAmount();
+	_resources[ResourceTypeIndex(resource_type)] = 0.0f;
 }
 void m2::FastCharacter::ClearResources() {
 	_resources.clear();

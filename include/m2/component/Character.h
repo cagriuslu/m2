@@ -10,22 +10,6 @@
 #include <variant>
 
 namespace m2 {
-	namespace internal {
-		class ResourceAmount {
-			float _amount{};
-		public:
-			explicit ResourceAmount(const float amount = 0.0f) { SetAmount(amount); }
-
-			[[nodiscard]] float Amount() const { return _amount; }
-			[[nodiscard]] bool HasAmount() const { return 0.0f < _amount; }
-
-			float SetAmount(const float amount) { return _amount = amount; }
-			float AddAmount(const float amount) { return SetAmount(_amount + amount); }
-			float RemoveAmount(const float amount) { return SetAmount(_amount - amount); }
-			void ClearAmount() { _amount = 0.0f; }
-		};
-	}
-
 	class Character : public Component {
 	public:
 		std::function<void(Character& self, const Stopwatch::Duration& delta)> update;
@@ -108,7 +92,7 @@ namespace m2 {
 
 	class CompactCharacter final : public Character {
 		const Item* _item{};
-		std::pair<m2g::pb::ResourceType, internal::ResourceAmount> _resource;
+		std::pair<m2g::pb::ResourceType, float> _resource;
 		std::pair<m2g::pb::AttributeType, float> _attribute;
 
 	public:
@@ -150,7 +134,7 @@ namespace m2 {
 
 	class FastCharacter final : public Character {
 		std::vector<const Item*> _items;
-		std::vector<internal::ResourceAmount> _resources = std::vector<internal::ResourceAmount>(pb::enum_value_count<m2g::pb::ResourceType>()); // TODO deprecated
+		std::vector<float> _resources = std::vector<float>(pb::enum_value_count<m2g::pb::ResourceType>()); // TODO deprecated
 		std::vector<float> _attributes = std::vector<float>(pb::enum_value_count<m2g::pb::AttributeType>()); // TODO deprecated
 		std::vector<IFE> _properties = std::vector<IFE>(pb::enum_value_count<m2g::pb::PropertyType>());
 

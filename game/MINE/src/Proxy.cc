@@ -18,7 +18,6 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 			// Add HP to destroyable tiles
 			auto& chr = obj.AddCompactCharacter();
 			chr.AddResource(m2g::pb::RESOURCE_HP, 2.0f);
-			chr.SetMaxResource(m2g::pb::RESOURCE_HP, 2.0f);
 			break;
 		}
 		case pb::SpriteType::GRASSLAND_DIRT_1:
@@ -26,7 +25,6 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 			// Add HP to destroyable tiles
 			auto& chr = obj.AddCompactCharacter();
 			chr.AddResource(m2g::pb::RESOURCE_HP, 1.0f);
-			chr.SetMaxResource(m2g::pb::RESOURCE_HP, 1.0f);
 			break;
 		}
 		default:
