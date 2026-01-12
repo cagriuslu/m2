@@ -61,10 +61,12 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& positi
 
 	// Add character
 	auto& chr = obj.AddCompactCharacter();
-	chr.AddNamedItem(M2_GAME.GetNamedItem(ITEM_AUTOMATIC_TTL));
 	chr.AddResource(RESOURCE_TTL, ttl);
 
-	chr.update = [=, &phy, &obj](m2::Character& chr, const m2::Stopwatch::Duration&) {
+	chr.update = [=, &phy, &obj](m2::Character& chr, const m2::Stopwatch::Duration& delta) {
+		chr.RemoveResource(RESOURCE_TTL, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
+
+
 		if (!chr.HasResource(RESOURCE_TTL)) {
 			if (is_explosive) {
 				LOG_DEBUG("Exploding...");
@@ -75,7 +77,6 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& positi
 					.colliderFilter = m2::third_party::physics::gColliderCategoryToParams[m2::I(m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_FRIENDLY_DAMAGE)]
 				}};
 				phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(explosionBodyDef, obj.GetPhysiqueId(), obj.GetPhysique().position, phy.orientation.ToFloat(), m2::pb::PhysicsLayer::SEA_LEVEL);
-				chr.AddNamedItem(M2_GAME.GetNamedItem(ITEM_AUTOMATIC_EXPLOSIVE_TTL));
 				// RESOURCE_EXPLOSION_TTL only means the object is currently exploding
 				chr.SetResource(RESOURCE_EXPLOSION_TTL, 1.0f); // 1.0f is just symbolic
 			} else {

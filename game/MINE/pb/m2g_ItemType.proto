@@ -5,8 +5,6 @@ enum ItemType {
     NO_ITEM = 0;
 
     ITEM_REUSABLE_JUMP = 1001;
-
-    ITEM_AUTOMATIC_JUMP_ENERGY = 2001;
 }
 
 enum ItemCategory {

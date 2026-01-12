@@ -68,10 +68,6 @@ m2::void_expected Enemy::init(m2::Object& obj, const m2::VecF& position) {
 	auto& chr = obj.AddFastCharacter();
 	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_GUN));
 	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_ENEMY_SWORD));
-	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_AUTOMATIC_DAMAGE_EFFECT_TTL));
-	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_AUTOMATIC_RANGED_ENERGY));
-	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY));
-	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_AUTOMATIC_STUN_TTL));
 	chr.AddResource(m2g::pb::RESOURCE_HP, 1.0f);
 
     obj.impl = std::make_unique<Enemy>(obj, M2G_PROXY.get_enemy(obj.GetType()));
@@ -90,6 +86,12 @@ m2::void_expected Enemy::init(m2::Object& obj, const m2::VecF& position) {
 			[](EscaperFsm& v) { v.signal(EscaperFsmSignal{}); },
 			[](MAYBE auto& v) { }
 		}, impl.ai_fsm);
+	};
+	chr.update = [](m2::Character& chr, const m2::Stopwatch::Duration& delta) {
+		chr.RemoveResource(RESOURCE_STUN_TTL, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
+		chr.RemoveResource(RESOURCE_DAMAGE_EFFECT_TTL, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
+		chr.AddResource(RESOURCE_RANGED_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
+		chr.AddResource(RESOURCE_MELEE_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
 	};
 	chr.on_interaction = [&, obj_type = obj.GetType()](m2::Character& self, MAYBE m2::Character* other, const InteractionData& data) -> std::optional<m2g::pb::InteractionData> {
 		if (data.has_hit_damage()) {

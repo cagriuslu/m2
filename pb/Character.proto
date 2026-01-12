@@ -37,10 +37,6 @@ enum Usage {
   // Item cannot be used, only held.
   STATIC = 0;
 
-  // Item is constantly "in-use". The costs are deducted and benefits are applied automatically by the engine. When this
-  // option is selected, the costs are benefits are pre-second values.
-  AUTOMATIC = 1;
-
   // Item must be used manually and once at a time. The costs are deducted and benefits are applied by the engine. The
   // item doesn't disappear after use.
   REUSABLE = 2;

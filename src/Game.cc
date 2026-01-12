@@ -615,10 +615,6 @@ void m2::Game::ExecutePreStep(const Stopwatch::Duration& delta) {
 void m2::Game::UpdateCharacters(const Stopwatch::Duration& delta) {
 	for (auto& character : _level->characters) {
 		auto& chr = ToCharacterBase(character);
-		chr.AutomaticUpdate(delta);
-	}
-	for (auto& character : _level->characters) {
-		auto& chr = ToCharacterBase(character);
 		IF(chr.update)(chr, delta);
 	}
 }

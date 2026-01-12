@@ -58,9 +58,6 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 		chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_GUN));
 	}
 	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_SWORD));
-	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_AUTOMATIC_DASH_ENERGY));
-	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_AUTOMATIC_RANGED_ENERGY));
-	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY));
 	chr.AddResource(m2g::pb::RESOURCE_HP, 1.0f);
 	chr.AddResource(m2g::pb::RESOURCE_DASH_ENERGY, 2.0f);
 
@@ -135,7 +132,11 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 			}
 		}
 	};
-	chr.update = [](MAYBE m2::Character& chr, const m2::Stopwatch::Duration&) {
+	chr.update = [](MAYBE m2::Character& chr, const m2::Stopwatch::Duration& delta) {
+		chr.AddResource(RESOURCE_DASH_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
+		chr.AddResource(RESOURCE_RANGED_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
+		chr.AddResource(RESOURCE_MELEE_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
+
 		// Check if died
 		if (not chr.HasResource(m2g::pb::RESOURCE_HP)) {
 			LOG_INFO("You died");

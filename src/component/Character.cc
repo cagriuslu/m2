@@ -127,11 +127,6 @@ namespace {
 }
 
 m2::CompactCharacter::CompactCharacter(uint64_t object_id) : Character(object_id) {}
-void m2::CompactCharacter::AutomaticUpdate(const Stopwatch::Duration& delta) {
-	if (_item && _item->Usage() == pb::AUTOMATIC) {
-		UseItem(BeginItems(), ToDurationF(delta));
-	}
-}
 int32_t m2::CompactCharacter::Hash(const int32_t initialValue) const {
 	auto hash = initialValue;
 	if (_item) {
@@ -271,13 +266,6 @@ void m2::FullCharacterIteratorIncrementor(m2::Character::Iterator& it) {
 }
 
 m2::FastCharacter::FastCharacter(uint64_t object_id) : Character(object_id) {}
-void m2::FastCharacter::AutomaticUpdate(const Stopwatch::Duration& delta) {
-	for (auto it = BeginItems(); it != EndItems(); ++it) {
-		if (it->Usage() == pb::AUTOMATIC) {
-			UseItem(it, ToDurationF(delta));
-		}
-	}
-}
 int32_t m2::FastCharacter::Hash(const int32_t initialValue) const {
 	if constexpr (not GAME_IS_DETERMINISTIC) {
 		// ReSharper disable once CppDFAUnreachableCode

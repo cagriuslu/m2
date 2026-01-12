@@ -53,10 +53,10 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF& position, c
 
 	// Add character
 	auto& chr = obj.AddCompactCharacter();
-	chr.AddNamedItem(M2_GAME.GetNamedItem(ITEM_AUTOMATIC_TTL));
 	chr.AddResource(RESOURCE_TTL, average_ttl);
 
-	chr.update = [](m2::Character& chr, const m2::Stopwatch::Duration&) {
+	chr.update = [](m2::Character& chr, const m2::Stopwatch::Duration& delta) {
+		chr.RemoveResource(RESOURCE_TTL, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
 		if (!chr.HasResource(RESOURCE_TTL)) {
 			M2_DEFER(m2::CreateObjectDeleter(chr.OwnerId()));
 		}

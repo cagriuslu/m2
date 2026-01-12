@@ -37,7 +37,6 @@ m2::void_expected create_dwarf(m2::Object& obj, const m2::VecF& position) {
 
 	auto& chr = obj.AddFastCharacter();
 	chr.AddNamedItem(M2_GAME.GetNamedItem(ITEM_REUSABLE_JUMP));
-	chr.AddNamedItem(M2_GAME.GetNamedItem(ITEM_AUTOMATIC_JUMP_ENERGY));
 
 	phy.preStep = [&chr](m2::Physique& phy, const m2::Stopwatch::Duration& delta) {
 		// Character movement
@@ -89,6 +88,9 @@ m2::void_expected create_dwarf(m2::Object& obj, const m2::VecF& position) {
 				return true;
 			});
 		}
+	};
+	chr.update = [](m2::Character& chr, const m2::Stopwatch::Duration& delta) {
+		chr.AddResource(RESOURCE_JUMP_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
 	};
 	phy.onCollision = [&chr](MAYBE m2::Physique& phy, m2::Physique& other, const m2::box2d::Contact& contact) {
 		// Check if in contact with obstacle

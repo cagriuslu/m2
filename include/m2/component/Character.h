@@ -50,7 +50,6 @@ namespace m2 {
 		Character() = default;
 		explicit Character(uint64_t object_id);
 
-		virtual void AutomaticUpdate(const Stopwatch::Duration& delta) = 0;
 		std::optional<m2g::pb::InteractionData> ExecuteInteraction(Character& initiator, const m2g::pb::InteractionData& data);
 		std::optional<m2g::pb::InteractionData> ExecuteInteraction(const m2g::pb::InteractionData& data);
 
@@ -99,8 +98,6 @@ namespace m2 {
 		CompactCharacter() = default;
 		explicit CompactCharacter(uint64_t object_id);
 
-		void AutomaticUpdate(const Stopwatch::Duration& delta) override;
-
 		[[nodiscard]] int32_t Hash(int32_t initialValue) const;
 
 		[[nodiscard]] Iterator FindItems(m2g::pb::ItemType item_type) const override;
@@ -141,8 +138,6 @@ namespace m2 {
 	public:
 		FastCharacter() = default;
 		explicit FastCharacter(uint64_t object_id);
-
-		void AutomaticUpdate(const Stopwatch::Duration& delta) override;
 
 		[[nodiscard]] int32_t Hash(int32_t initialValue) const;
 
