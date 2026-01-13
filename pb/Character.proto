@@ -2,6 +2,8 @@ syntax = "proto3";
 package m2.pb;
 
 import "m2g_AttributeType.proto";
+import "m2g_ConstantType.proto";
+import "m2g_VariableType.proto";
 import "m2g_ItemType.proto";
 import "m2g_PropertyType.proto";
 import "m2g_ResourceType.proto";
@@ -32,6 +34,16 @@ message Attribute {
   float amount = 2;
 }
 
+message Constant {
+  m2g.pb.ConstantType type = 1;
+  IFE ife = 2;
+}
+
+message Variable {
+  m2g.pb.VariableType type = 1;
+  IFE ife = 2;
+}
+
 /// An item also represents a capability
 message Item {
   m2g.pb.ItemType type = 1;
@@ -41,6 +53,7 @@ message Item {
   repeated Resource acquire_benefits = 7; // Gained before benefits. DEPRECATED
   repeated Attribute attributes = 8; // DEPRECATED
   repeated Attribute2 attributes2 = 9;
+  repeated Constant constants = 13;
   m2g.pb.SpriteType game_sprite = 10;
   m2g.pb.SpriteType ui_sprite = 11;
   string in_game_name = 12;

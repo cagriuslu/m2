@@ -20,10 +20,13 @@ m2::Item::Item(pb::Item item) : _item(std::move(item)) {
 	for (const auto& attribute2 : _item.attributes2()) {
 		_attributes2[pb::enum_index(attribute2.type())] = IFE{attribute2.ife()};
 	}
+	for (const auto& constant : _item.constants()) {
+		_constants[pb::enum_index(constant.type())] = IFE{constant.ife()};
+	}
 }
 
 std::pair<m2g::pb::ResourceType, float> m2::Item::GetCostByIndex(size_t i) const {
-	const auto& cost = _item.costs((int) i);
+	const auto& cost = _item.costs(static_cast<int>(i));
 	return std::make_pair(cost.type(), GetResourceAmount(cost));
 }
 float m2::Item::GetCost(m2g::pb::ResourceType type) const {

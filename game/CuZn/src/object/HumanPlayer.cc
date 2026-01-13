@@ -26,8 +26,8 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj, const m2::VecF& positi
 	obj.impl = std::make_unique<HumanPlayer>(obj);
 
 	auto& chr = obj.AddFastCharacter();
-	chr.SetResource(m2g::pb::MONEY, 17.0f);
-	chr.SetAttribute(m2g::pb::INCOME_POINTS, 0.0f);
+	chr.SetVariable(m2g::pb::MONEY, m2::IFE{17});
+	chr.SetVariable(m2g::pb::INCOME_POINTS, m2::IFE{0});
 
 	// Add industry tiles
 	for (auto industry_tile = m2g::pb::COTTON_MILL_TILE_I;
@@ -35,13 +35,13 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj, const m2::VecF& positi
 	     industry_tile = static_cast<m2g::pb::ItemType>(m2::I(industry_tile) + 1)) {
 		// Lookup possession count
 		const auto& item = M2_GAME.GetNamedItem(industry_tile);
-		auto possession_limit = m2::I(item.GetAttribute(m2g::pb::POSSESSION_LIMIT));
+		auto possession_limit = item.GetConstant(m2g::pb::POSSESSION_LIMIT).GetIntOrZero();
 		m2Repeat(possession_limit) { chr.AddNamedItem(item); }
 	}
 
 	// Add connection tiles
 	const auto& road_item = M2_GAME.GetNamedItem(m2g::pb::ROAD_TILE);
-	auto road_possession_limit = m2::I(road_item.GetAttribute(m2g::pb::POSSESSION_LIMIT));
+	auto road_possession_limit = road_item.GetConstant(m2g::pb::POSSESSION_LIMIT).GetIntOrZero();
 	m2Repeat(road_possession_limit) { chr.AddNamedItem(road_item); }
 
 	auto& phy = obj.AddPhysique();
@@ -178,8 +178,8 @@ m2::void_expected PlayerInitOtherInstance(m2::Object& obj) {
 	// TODO check if the following is really necessary. If the TurnBasedServerUpdate is verified, it's necessary.
 	// TODO Otherwise, we don't need to fill the character with items and resources.
 
-	chr.SetResource(m2g::pb::MONEY, 17.0f);
-	chr.SetAttribute(m2g::pb::INCOME_POINTS, 0.0f);
+	chr.SetVariable(m2g::pb::MONEY, m2::IFE{17});
+	chr.SetVariable(m2g::pb::INCOME_POINTS, m2::IFE{0});
 
 	// Add industry tiles
 	for (auto industry_tile = m2g::pb::COTTON_MILL_TILE_I;
@@ -187,13 +187,13 @@ m2::void_expected PlayerInitOtherInstance(m2::Object& obj) {
 		 industry_tile = static_cast<m2g::pb::ItemType>(m2::I(industry_tile) + 1)) {
 		// Lookup possession count
 		const auto& item = M2_GAME.GetNamedItem(industry_tile);
-		auto possession_limit = m2::I(item.GetAttribute(m2g::pb::POSSESSION_LIMIT));
+		auto possession_limit = item.GetConstant(m2g::pb::POSSESSION_LIMIT).GetIntOrZero();
 		m2Repeat(possession_limit) { chr.AddNamedItem(item); }
 		 }
 
 	// Add connection tiles
 	const auto& road_item = M2_GAME.GetNamedItem(m2g::pb::ROAD_TILE);
-	auto road_possession_limit = m2::I(road_item.GetAttribute(m2g::pb::POSSESSION_LIMIT));
+	auto road_possession_limit = road_item.GetConstant(m2g::pb::POSSESSION_LIMIT).GetIntOrZero();
 	m2Repeat(road_possession_limit) { chr.AddNamedItem(road_item); }
 
 	return {};
@@ -233,17 +233,17 @@ int PlayerEstimatedVictoryPoints(const m2::Character& player) {
 			| std::views::filter(IsFactorySold);
 	return std::accumulate(soldFactories.begin(), soldFactories.end(), 0, [](int acc, m2::Character& factoryCharacter) -> int {
 		const auto& industryTileItem = M2_GAME.GetNamedItem(ToIndustryTileOfFactoryCharacter(factoryCharacter));
-		return acc + m2::RoundI(industryTileItem.GetAttribute(m2g::pb::VICTORY_POINTS_BONUS));
+		return acc + industryTileItem.GetConstant(m2g::pb::VICTORY_POINTS_BONUS).GetIntOrZero();
 	});
 }
 int PlayerVictoryPoints(const m2::Character& player) {
-	return m2::RoundI(player.GetResource(m2g::pb::VICTORY_POINTS));
+	return player.GetVariable(m2g::pb::VICTORY_POINTS).GetIntOrZero();
 }
 int PlayerIncomePoints(const m2::Character& player) {
-	return m2::RoundI(player.GetAttribute(m2g::pb::INCOME_POINTS));
+	return player.GetVariable(m2g::pb::INCOME_POINTS).GetIntOrZero();
 }
 int PlayerMoney(const m2::Character& player) {
-	return m2::RoundI(player.GetResource(m2g::pb::MONEY));
+	return player.GetVariable(m2g::pb::MONEY).GetIntOrZero();
 }
 
 size_t PlayerIndustryTileCount(const m2::Character& player) {

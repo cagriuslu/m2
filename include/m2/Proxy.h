@@ -146,7 +146,7 @@ namespace m2 {
 		m2::void_expected LoadForegroundObjectFromLevelBlueprint(MAYBE m2::Object& obj, MAYBE const VecF& position, MAYBE float orientation) { throw M2_ERROR("Proxy is missing an object loader"); }
 		/// Load foreground object from a TurnBasedServerUpdate. The item and resources should NOT be added to the character,
 		/// because those will be added automatically after the initialization.
-		m2::void_expected init_server_update_fg_object(MAYBE m2::Object& obj, MAYBE const VecF& position, MAYBE const std::vector<m2g::pb::ItemType>& named_item_types, MAYBE const std::vector<m2::pb::Resource>& resources) { return {}; }
+		m2::void_expected init_server_update_fg_object(MAYBE m2::Object& obj, MAYBE const VecF& position, MAYBE const std::vector<m2g::pb::ItemType>& named_item_types) { return {}; }
 
 		/// Create Group for the given type
 		m2::Group* create_group(MAYBE m2g::pb::GroupType group_type) { throw M2_ERROR("Proxy is missing a group factory"); }

@@ -39,7 +39,7 @@ void display_game_result() {
 		auto id = M2_LEVEL.multiPlayerObjectIds[i];
 		auto& player_obj = M2_LEVEL.objects[id];
 		auto& player_chr = player_obj.GetCharacter();
-		auto victory_points = RoundI(player_chr.GetResource(m2g::pb::VICTORY_POINTS));
+		auto victory_points = player_chr.GetVariable(m2g::pb::VICTORY_POINTS).GetIntOrZero();
 
 		blueprint.widgets.emplace_back(
 			UiWidgetBlueprint{

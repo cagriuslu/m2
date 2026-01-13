@@ -24,7 +24,7 @@ enum class NetworkJourneyStep {
 class NetworkJourney : public m2::FsmBase<NetworkJourneyStep, POIOrCancelSignal> {
 	struct ResourceSource {
 		Connection connection{};
-		m2g::pb::ResourceType resource_type{};
+		m2g::pb::VariableType resource_type{};
 		Location source{};
 		m2::Object* reserved_object{};
 	};

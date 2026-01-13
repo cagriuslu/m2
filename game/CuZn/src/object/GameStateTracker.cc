@@ -5,10 +5,10 @@
 void InitGameStateTracker(m2::Object& obj) {
 	auto& chr = obj.AddFastCharacter();
 	// Hold the resources belonging to the market
-	chr.SetResource(m2g::pb::COAL_CUBE_COUNT, COAL_MARKET_INITIAL_COUNT);
-	chr.SetResource(m2g::pb::IRON_CUBE_COUNT, IRON_MARKET_INITIAL_COUNT);
+	chr.SetVariable(m2g::pb::COAL_CUBE_COUNT, m2::IFE{COAL_MARKET_INITIAL_COUNT});
+	chr.SetVariable(m2g::pb::IRON_CUBE_COUNT, m2::IFE{IRON_MARKET_INITIAL_COUNT});
 	// Era
-	chr.ClearResource(m2g::pb::IS_RAILROAD_ERA);
+	chr.ClearVariable(m2g::pb::IS_RAILROAD_ERA);
 	// Turn
-	chr.SetResource(m2g::pb::IS_LAST_ACTION_OF_PLAYER, 1.0f);
+	chr.SetVariable(m2g::pb::IS_LAST_ACTION_OF_PLAYER, m2::IFE{1});
 }

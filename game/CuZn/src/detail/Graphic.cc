@@ -5,9 +5,9 @@
 #include <m2/Game.h>
 
 void DrawResources(m2::Character& chr) {
-	auto coal_count = m2::RoundI(chr.GetResource(m2g::pb::COAL_CUBE_COUNT));
-	auto iron_count = m2::RoundI(chr.GetResource(m2g::pb::IRON_CUBE_COUNT));
-	auto beer_count = m2::RoundI(chr.GetResource(m2g::pb::BEER_BARREL_COUNT));
+	auto coal_count = chr.GetVariable(m2g::pb::COAL_CUBE_COUNT).GetIntOrZero();
+	auto iron_count = chr.GetVariable(m2g::pb::IRON_CUBE_COUNT).GetIntOrZero();
+	auto beer_count = chr.GetVariable(m2g::pb::BEER_BARREL_COUNT).GetIntOrZero();
 
 	auto nonzero_resource_type_count = (coal_count ? 1 : 0) + (iron_count ? 1 : 0) + (beer_count ? 1 : 0);
 	if (nonzero_resource_type_count == 0) {

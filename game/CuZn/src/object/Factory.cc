@@ -24,7 +24,7 @@ int RequiredBeerCountToSell(IndustryLocation location) {
 		throw M2_ERROR("Invalid factory location");
 	} else {
 		auto industry_tile = ToIndustryTileOfFactoryCharacter(factory->GetCharacter());
-		return m2::RoundI(M2_GAME.GetNamedItem(industry_tile).GetAttribute(BEER_COST));
+		return M2_GAME.GetNamedItem(industry_tile).GetConstant(BEER_COST).GetIntOrZero();
 	}
 }
 
@@ -53,11 +53,11 @@ void FlipExhaustedFactories() {
 			| std::views::filter(IsFactoryNotSold),
 		[](m2::Character& chr) {
 			const auto is_coal_mine_exhausted = ToIndustryOfFactoryCharacter(chr) == COAL_MINE_CARD
-				&& m2::IsEqual(chr.GetResource(COAL_CUBE_COUNT), 0.0f, 0.001f);
+				&& chr.GetVariable(COAL_CUBE_COUNT).GetIntOrZero() == 0;
 			const auto is_iron_works_exhausted = ToIndustryOfFactoryCharacter(chr) == IRON_WORKS_CARD
-				&& m2::IsEqual(chr.GetResource(IRON_CUBE_COUNT), 0.0f, 0.001f);
+				&& chr.GetVariable(IRON_CUBE_COUNT).GetIntOrZero() == 0;
 			const auto is_brewery_exhausted = ToIndustryOfFactoryCharacter(chr) == BREWERY_CARD
-				&& m2::IsEqual(chr.GetResource(BEER_BARREL_COUNT), 0.0f, 0.001f);
+				&& chr.GetVariable(BEER_BARREL_COUNT).GetIntOrZero() == 0;
 			if (is_coal_mine_exhausted || is_iron_works_exhausted || is_brewery_exhausted) {
 				SellFactory(chr);
 			}
@@ -68,18 +68,18 @@ void SellFactory(m2::Character& factory_chr) {
 	const auto tileType = ToIndustryTileOfFactoryCharacter(factory_chr);
 	const auto& tileTtem = M2_GAME.GetNamedItem(tileType);
 	// Earn income points
-	const auto incomeBonus = m2::RoundI(tileTtem.GetAttribute(INCOME_POINTS_BONUS));
-	const auto currIncomePoints = m2::RoundI(factory_chr.Owner().TryGetParent()->GetCharacter().GetAttribute(INCOME_POINTS));
-	factory_chr.Owner().TryGetParent()->GetCharacter().SetAttribute(INCOME_POINTS, m2::ToFloat(ClampIncomePoints(currIncomePoints + incomeBonus)));
+	const auto incomeBonus = tileTtem.GetConstant(INCOME_POINTS_BONUS).GetIntOrZero();
+	const auto currIncomePoints = factory_chr.Owner().TryGetParent()->GetCharacter().GetVariable(INCOME_POINTS).GetIntOrZero();
+	factory_chr.Owner().TryGetParent()->GetCharacter().SetVariable(INCOME_POINTS, m2::IFE{ClampIncomePoints(currIncomePoints + incomeBonus)});
 	// Flip the tile
-	factory_chr.SetResource(IS_SOLD, 1.0f);
+	factory_chr.SetVariable(IS_SOLD, m2::IFE{1});
 }
 
 bool IsFactorySold(m2::Character& chr) {
 	if (not IsFactoryCharacter(chr)) {
 		throw M2_ERROR("Character doesn't belong to a factory");
 	}
-	return m2::IsEqual(chr.GetResource(m2g::pb::IS_SOLD), 1.0f, 0.001f);
+	return chr.GetVariable(m2g::pb::IS_SOLD).GetIntOrZero() == 1;
 }
 
 bool IsFactoryLevel1(m2::Character& chr) {
@@ -151,7 +151,7 @@ m2::void_expected InitFactory(m2::Object& obj, const m2::VecF& position, City ci
 		m2::Graphic::ColorRect(cell_rect, background_color);
 
 		// If sold, draw the black bottom half
-		if (m2::IsOne(gfx.Owner().GetCharacter().GetResource(IS_SOLD), 0.005f)) {
+		if (gfx.Owner().GetCharacter().GetVariable(IS_SOLD).GetIntOrZero() == 1) {
 			const auto bottom_half_cell_rect = m2::RectF{top_left_cell_pos.GetX() - 0.5f, top_left_cell_pos.GetY() + 0.5f, 2.0f, 1.0f};
 			m2::Graphic::ColorRect(bottom_half_cell_rect, m2::RGB{0, 0, 0});
 		}

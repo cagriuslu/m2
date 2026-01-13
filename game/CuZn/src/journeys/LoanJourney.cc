@@ -6,7 +6,9 @@
 #include <m2/Game.h>
 #include <cuzn/object/HumanPlayer.h>
 #include <cuzn/detail/Income.h>
+#include <m2g_Network.pb.h>
 
+using namespace m2;
 using namespace m2::widget;
 using namespace m2g;
 using namespace m2g::pb;
@@ -31,7 +33,7 @@ void ExecuteLoanJourney() {
 		if (ask_for_confirmation("Take a loan using ", card_name + " card?", "OK", "Cancel")) {
 			LOG_INFO("Loan action confirmed");
 
-			pb::TurnBasedClientCommand cc;
+			TurnBasedClientCommand cc;
 			cc.mutable_loan_action()->set_card(*selected_card);
 			M2G_PROXY.SendClientCommandAndWaitForServerUpdate(cc);
 
@@ -60,7 +62,7 @@ Card ExecuteLoanAction(m2::Character& player, const TurnBasedClientCommand_LoanA
 	const auto currIncomeLevel = IncomeLevelFromIncomePoints(currIncomePoints);
 	const auto newIncomeLevel = ClampIncomeLevel(currIncomeLevel - 3);
 	const auto newIncomePoints = HighestIncomePointsOfLevel(newIncomeLevel);
-	player.SetAttribute(INCOME_POINTS, m2::ToFloat(ClampIncomePoints(newIncomePoints)));
-	player.AddResource(MONEY, 30.0f);
+	player.SetVariable(INCOME_POINTS, IFE{ClampIncomePoints(newIncomePoints)});
+	player.SetVariable(MONEY, IFE{player.GetVariable(MONEY).GetIntOrZero() + 30});
 	return loan_action.card();
 }

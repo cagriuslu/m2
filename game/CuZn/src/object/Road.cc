@@ -17,7 +17,7 @@ namespace {
 					// Check if there's a built factory
 					if (const auto* factory = FindFactoryAtLocation(location); factory && IsFactorySold(factory->GetCharacter())) {
 						const auto industry_tile = ToIndustryTileOfFactoryCharacter(factory->GetCharacter());
-						return acc2 + m2::RoundI(M2_GAME.GetNamedItem(industry_tile).GetAttribute(m2g::pb::LINK_BONUS));
+						return acc2 + M2_GAME.GetNamedItem(industry_tile).GetConstant(m2g::pb::LINK_BONUS).GetIntOrZero();
 					}
 					return acc2;
 				}); });

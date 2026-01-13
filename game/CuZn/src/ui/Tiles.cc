@@ -295,11 +295,11 @@ std::optional<m2g::pb::ItemType> ask_for_tile_selection(m2g::pb::ItemType exclud
 
 std::string GetIndustryTileBuildRequirementsString(const IndustryTile industryTileType) {
 	const auto& industryTile = M2_GAME.GetNamedItem(industryTileType);
-	std::string build_requirements = "£" + m2::ToString(RoundI(industryTile.GetAttribute(m2g::pb::MONEY_COST)));
-	if (const auto coal_cost = RoundI(industryTile.GetAttribute(m2g::pb::COAL_COST))) {
+	std::string build_requirements = "£" + m2::ToString(industryTile.GetConstant(m2g::pb::MONEY_COST).GetIntOrZero());
+	if (const auto coal_cost = industryTile.GetConstant(m2g::pb::COAL_COST).GetIntOrZero()) {
 		build_requirements += ", " + m2::ToString(coal_cost) + " Coal";
 	}
-	if (const auto iron_cost = RoundI(industryTile.GetAttribute(m2g::pb::IRON_COST))) {
+	if (const auto iron_cost = industryTile.GetConstant(m2g::pb::IRON_COST).GetIntOrZero()) {
 		build_requirements += ", " + m2::ToString(iron_cost) + " Iron";
 	}
 	return build_requirements;
@@ -307,13 +307,13 @@ std::string GetIndustryTileBuildRequirementsString(const IndustryTile industryTi
 std::string GetIndustryTileResourceGainString(const IndustryTile industryTileType) {
 	const auto& industryTile = M2_GAME.GetNamedItem(industryTileType);
 	std::string resource_gain;
-	if (const auto coal_gain = RoundI(industryTile.GetAttribute(m2g::pb::COAL_BONUS))) {
+	if (const auto coal_gain = industryTile.GetConstant(m2g::pb::COAL_BONUS).GetIntOrZero()) {
 		resource_gain = m2::ToString(coal_gain) + " Coal";
-	} else if (const auto iron_gain = RoundI(industryTile.GetAttribute(m2g::pb::IRON_BONUS))) {
+	} else if (const auto iron_gain = industryTile.GetConstant(m2g::pb::IRON_BONUS).GetIntOrZero()) {
 		resource_gain = m2::ToString(iron_gain) + " Iron";
-	} else if (const auto canal_era_beer_gain = RoundI(industryTile.GetAttribute(m2g::pb::BEER_BONUS_FIRST_ERA))) {
+	} else if (const auto canal_era_beer_gain = industryTile.GetConstant(m2g::pb::BEER_BONUS_FIRST_ERA).GetIntOrZero()) {
 		resource_gain = m2::ToString(canal_era_beer_gain);
-		const auto railroad_era_beer_gain = RoundI(industryTile.GetAttribute(m2g::pb::BEER_BONUS_SECOND_ERA));
+		const auto railroad_era_beer_gain = industryTile.GetConstant(m2g::pb::BEER_BONUS_SECOND_ERA).GetIntOrZero();
 		if (railroad_era_beer_gain != canal_era_beer_gain) {
 			resource_gain += "/" + m2::ToString(railroad_era_beer_gain);
 		}
@@ -323,15 +323,15 @@ std::string GetIndustryTileResourceGainString(const IndustryTile industryTileTyp
 }
 std::string GetIndustryTileSellRequirementsString(const IndustryTile industryTileType) {
 	const auto& industryTile = M2_GAME.GetNamedItem(industryTileType);
-	if (auto sell_beer_cost = RoundI(industryTile.GetAttribute(m2g::pb::BEER_COST))) {
+	if (auto sell_beer_cost = industryTile.GetConstant(m2g::pb::BEER_COST).GetIntOrZero()) {
 		return m2::ToString(sell_beer_cost) + " Beer";
 	}
 	return {};
 }
 std::string GetIndustryTileSellBenefitsString(const IndustryTile industryTileType) {
 	const auto& industryTile = M2_GAME.GetNamedItem(industryTileType);
-	std::string sell_benefits = m2::ToString(RoundI(industryTile.GetAttribute(m2g::pb::VICTORY_POINTS_BONUS))) + " Points, ";
-	sell_benefits += m2::ToString(RoundI(industryTile.GetAttribute(m2g::pb::INCOME_POINTS_BONUS))) + " Income, ";
-	sell_benefits += m2::ToString(RoundI(industryTile.GetAttribute(m2g::pb::LINK_BONUS))) + " Link";
+	std::string sell_benefits = m2::ToString(industryTile.GetConstant(m2g::pb::VICTORY_POINTS_BONUS).GetIntOrZero()) + " Points, ";
+	sell_benefits += m2::ToString(industryTile.GetConstant(m2g::pb::INCOME_POINTS_BONUS).GetIntOrZero()) + " Income, ";
+	sell_benefits += m2::ToString(industryTile.GetConstant(m2g::pb::LINK_BONUS).GetIntOrZero()) + " Link";
 	return sell_benefits;
 }

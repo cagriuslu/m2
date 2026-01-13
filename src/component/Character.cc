@@ -159,26 +159,11 @@ void m2::CompactCharacter::ClearResource(m2g::pb::ResourceType resource_type) {
 		_resource.second = 0.0f;
 	}
 }
-void m2::CompactCharacter::ClearResources() {
-	_resource.second = 0.0f;
-}
 bool m2::CompactCharacter::HasAttribute(m2g::pb::AttributeType attribute_type) const {
 	return _attribute.first == attribute_type && _attribute.second != 0.0f;
 }
 float m2::CompactCharacter::GetAttribute(m2g::pb::AttributeType attribute_type) const {
 	return (_attribute.first == attribute_type) ? _attribute.second : float{};
-}
-float m2::CompactCharacter::SetAttribute(m2g::pb::AttributeType attribute_type, float value) {
-	_attribute = std::make_pair(attribute_type, value);
-	return _attribute.second;
-}
-void m2::CompactCharacter::ClearAttribute(m2g::pb::AttributeType attribute_type) {
-	if (_attribute.first == attribute_type) {
-		_attribute.second = 0;
-	}
-}
-void m2::CompactCharacter::ClearAttributes() {
-	_attribute.second = 0;
 }
 
 m2::IFE m2::CompactCharacter::GetVariable(const m2g::pb::VariableType v) const {
@@ -254,9 +239,9 @@ int32_t m2::FastCharacter::Hash(const int32_t initialValue) const {
 	}
 	for (const auto& property : _properties) {
 		if (property && property.IsInt()) {
-			hash = HashI(property.GetInt(), hash);
+			hash = HashI(property.UnsafeGetInt(), hash);
 		} else if (property && property.IsFE()) {
-			hash = HashI(ToRawValue(property.GetFE()), hash);
+			hash = HashI(ToRawValue(property.UnsafeGetFE()), hash);
 		}
 	}
 	return hash;
@@ -331,43 +316,21 @@ float m2::FastCharacter::RemoveResource(m2g::pb::ResourceType resource_type, flo
 void m2::FastCharacter::ClearResource(m2g::pb::ResourceType resource_type) {
 	_resources[ResourceTypeIndex(resource_type)] = 0.0f;
 }
-void m2::FastCharacter::ClearResources() {
-	_resources.clear();
-	_resources.resize(pb::enum_value_count<m2g::pb::ResourceType>());
-}
 bool m2::FastCharacter::HasAttribute(m2g::pb::AttributeType attribute_type) const {
 	return _attributes[AttributeTypeIndex(attribute_type)] != 0.0f;
 }
 float m2::FastCharacter::GetAttribute(m2g::pb::AttributeType attribute_type) const {
 	return _attributes[AttributeTypeIndex(attribute_type)];
 }
-float m2::FastCharacter::SetAttribute(m2g::pb::AttributeType attribute_type, float value) {
-	_attributes[AttributeTypeIndex(attribute_type)] = value;
-	return value;
-}
-void m2::FastCharacter::ClearAttribute(m2g::pb::AttributeType attribute_type) {
-	_attributes[AttributeTypeIndex(attribute_type)] = 0.0f;
-}
-void m2::FastCharacter::ClearAttributes() {
-	_attributes.clear();
-	_attributes.resize(pb::enum_value_count<m2g::pb::AttributeType>());
-}
-
-void m2::FastCharacter::AddPropertyMax(const m2g::pb::PropertyType pt, const FE& add, const FE& maxValue) {
-	const auto currentValue = _properties[PropertyTypeIndex(pt)].GetFE();
-	const auto addition = currentValue + add;
-	const auto newValue = maxValue < addition ? maxValue : addition;
-	_properties[PropertyTypeIndex(pt)] = IFE{newValue};
-}
 
 int m2::FastCharacter::ResourceTypeIndex(m2g::pb::ResourceType resource_type) {
-	return pb::enum_index<m2g::pb::ResourceType>(resource_type);
+	return pb::enum_index(resource_type);
 }
 int m2::FastCharacter::AttributeTypeIndex(m2g::pb::AttributeType attribute_type) {
-	return pb::enum_index<m2g::pb::AttributeType>(attribute_type);
+	return pb::enum_index(attribute_type);
 }
 int m2::FastCharacter::PropertyTypeIndex(m2g::pb::PropertyType pt) {
-	return pb::enum_index<m2g::pb::PropertyType>(pt);
+	return pb::enum_index(pt);
 }
 
 std::function<std::vector<m2g::pb::ItemType>(m2::Character&)> m2::GenerateNamedItemTypesFilter(m2g::pb::ItemCategory item_category) {

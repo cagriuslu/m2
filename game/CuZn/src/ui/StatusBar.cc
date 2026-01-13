@@ -70,8 +70,8 @@ UiPanelBlueprint generate_status_bar_blueprint() {
 	int i = 0;
 	for (auto order = m2g::pb::FIRST_PLAYER_INDEX;
 			order <= m2g::pb::FORTH_PLAYER_INDEX;
-			order = static_cast<m2g::pb::AttributeType>(I(order) + 1), ++i) {
-		if (const auto playerIndexOfOrder = RoundI(M2G_PROXY.game_state_tracker().GetAttribute(order)); -1 < playerIndexOfOrder) {
+			order = static_cast<m2g::pb::VariableType>(I(order) + 1), ++i) {
+		if (const auto playerIndexOfOrder = M2G_PROXY.game_state_tracker().GetVariable(order).GetIntOrZero(); -1 < playerIndexOfOrder) {
 				bp.widgets.emplace_back(UiWidgetBlueprint{
 			// For deciding on the position, do not use the player index, use 0-based i
 			.x = 30 + (4 - M2_GAME.GetTotalPlayerCount()) * 10 + i * 10, .y = 0, .w = 10, .h = 5,

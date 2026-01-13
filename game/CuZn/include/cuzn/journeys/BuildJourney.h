@@ -23,8 +23,8 @@ class BuildJourney : public m2::FsmBase<BuildJourneyStep, POIOrCancelSignal> {
 	IndustryLocation _selected_location{};
 	Industry _selected_industry{};
 	IndustryTile _industry_tile{};
-	std::vector<std::pair<m2g::pb::ResourceType, Location>> _resource_sources;
-	std::vector<std::pair<m2::Object*, m2g::pb::ResourceType>> _reserved_resources;
+	std::vector<std::pair<m2g::pb::VariableType, Location>> _resource_sources;
+	std::vector<std::pair<m2::Object*, m2g::pb::VariableType>> _reserved_resources;
 
 public:
 	BuildJourney();

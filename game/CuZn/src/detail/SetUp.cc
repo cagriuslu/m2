@@ -26,16 +26,12 @@ std::vector<m2g::pb::SpriteType> PossiblyActiveMerchantLocations(int client_coun
 
 std::vector<m2g::pb::ItemType> PrepareMerchantLicenseList(int client_count) {
 	// Figure out the attribute to use for card selection
-	m2g::pb::AttributeType count_attr = [=]() {
+	m2g::pb::ConstantType count_attr = [=]() {
 		switch (client_count) {
-			case 2:
-				return m2g::pb::MERCHANT_COUNT_IN_2_PLAYER_GAME;
-			case 3:
-				return m2g::pb::MERCHANT_COUNT_IN_3_PLAYER_GAME;
-			case 4:
-				return m2g::pb::MERCHANT_COUNT_IN_4_PLAYER_GAME;
-			default:
-				throw M2_ERROR("Invalid client count");
+			case 2: return m2g::pb::MERCHANT_COUNT_IN_2_PLAYER_GAME;
+			case 3: return m2g::pb::MERCHANT_COUNT_IN_3_PLAYER_GAME;
+			case 4: return m2g::pb::MERCHANT_COUNT_IN_4_PLAYER_GAME;
+			default: throw M2_ERROR("Invalid client count");
 		}
 	}();
 
@@ -43,7 +39,7 @@ std::vector<m2g::pb::ItemType> PrepareMerchantLicenseList(int client_count) {
 	std::vector<m2g::pb::ItemType> merchant_licenses;
 	M2_GAME.ForEachNamedItem([&merchant_licenses, count_attr](MAYBE m2g::pb::ItemType item_type, const m2::Item& item) {
 		if (item.Category() == pb::ITEM_CATEGORY_MERCHANT_LICENSE) {
-			auto license_count = m2::RoundI(item.GetAttribute(count_attr));
+			auto license_count = item.GetConstant(count_attr).GetIntOrZero();
 			merchant_licenses.insert(merchant_licenses.end(), license_count, item.Type());
 		}
 		return true;
@@ -59,16 +55,12 @@ std::vector<m2g::pb::ItemType> PrepareMerchantLicenseList(int client_count) {
 
 std::vector<m2g::pb::ItemType> PrepareDrawDeck(int client_count) {
 	// Figure out the attribute to use for card selection
-	m2g::pb::AttributeType count_attr = [=]() {
+	m2g::pb::ConstantType count_attr = [=]() {
 		switch (client_count) {
-			case 2:
-				return m2g::pb::COUNT_IN_2_PLAYER_GAME;
-			case 3:
-				return m2g::pb::COUNT_IN_3_PLAYER_GAME;
-			case 4:
-				return m2g::pb::COUNT_IN_4_PLAYER_GAME;
-			default:
-				throw M2_ERROR("Invalid client count");
+			case 2: return m2g::pb::COUNT_IN_2_PLAYER_GAME;
+			case 3: return m2g::pb::COUNT_IN_3_PLAYER_GAME;
+			case 4: return m2g::pb::COUNT_IN_4_PLAYER_GAME;
+			default: throw M2_ERROR("Invalid client count");
 		}
 	}();
 
@@ -76,7 +68,7 @@ std::vector<m2g::pb::ItemType> PrepareDrawDeck(int client_count) {
 	std::vector<m2g::pb::ItemType> draw_deck;
 	M2_GAME.ForEachNamedItem([&draw_deck, count_attr](MAYBE m2g::pb::ItemType item_type, const m2::Item& item) {
 		if (item.Category() == pb::ITEM_CATEGORY_INDUSTRY_CARD || item.Category() == pb::ITEM_CATEGORY_CITY_CARD) {
-			auto card_count = static_cast<int>(item.GetAttribute(count_attr));
+			auto card_count = item.GetConstant(count_attr).GetIntOrZero();
 			draw_deck.insert(draw_deck.end(), card_count, item.Type());
 		}
 		return true;

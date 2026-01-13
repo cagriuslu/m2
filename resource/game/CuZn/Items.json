@@ -6,18 +6,18 @@
     {
       "type": "WILD_LOCATION_CARD",
       "category": "ITEM_CATEGORY_WILD_CARD",
-      "attributes": [
+      "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "amount": 3.0
+          "ife": { "i": 3 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "amount": 4.0
+          "ife": { "i": 4 }
         }
       ],
       "inGameName": "Wild Location"
@@ -25,18 +25,18 @@
     {
       "type": "WILD_INDUSTRY_CARD",
       "category": "ITEM_CATEGORY_WILD_CARD",
-      "attributes": [
+      "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "amount": 3.0
+          "ife": { "i": 3 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "amount": 4.0
+          "ife": { "i": 4 }
         }
       ],
       "inGameName": "Wild Industry"
@@ -44,18 +44,18 @@
     {
       "type": "COTTON_MILL_CARD",
       "category": "ITEM_CATEGORY_INDUSTRY_CARD",
-      "attributes": [
+      "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "amount": 0.0
+          "ife": { "i": 0 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "amount": 6.0
+          "ife": { "i": 6 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "amount": 8.0
+          "ife": { "i": 8 }
         }
       ],
       "uiSprite": "SPRITE_COTTON_MILL",
@@ -64,18 +64,18 @@
     {
       "type": "IRON_WORKS_CARD",
       "category": "ITEM_CATEGORY_INDUSTRY_CARD",
-      "attributes": [
+      "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "amount": 4.0
+          "ife": { "i": 4 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "amount": 4.0
+          "ife": { "i": 4 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "amount": 4.0
+          "ife": { "i": 4 }
         }
       ],
       "uiSprite": "SPRITE_IRON_WORKS",
@@ -84,18 +84,18 @@
     {
       "type": "BREWERY_CARD",
       "category": "ITEM_CATEGORY_INDUSTRY_CARD",
-      "attributes": [
+      "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "amount": 5.0
+          "ife": { "i": 5 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "amount": 5.0
+          "ife": { "i": 5 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "amount": 5.0
+          "ife": { "i": 5 }
         }
       ],
       "uiSprite": "SPRITE_BREWERY",
@@ -104,18 +104,18 @@
     {
       "type": "COAL_MINE_CARD",
       "category": "ITEM_CATEGORY_INDUSTRY_CARD",
-      "attributes": [
+      "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "amount": 3.0
+          "ife": { "i": 3 }
         }
       ],
       "uiSprite": "SPRITE_COAL_MINE",
@@ -124,18 +124,18 @@
     {
       "type": "POTTERY_CARD",
       "category": "ITEM_CATEGORY_INDUSTRY_CARD",
-      "attributes": [
+      "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "amount": 3.0
+          "ife": { "i": 3 }
         }
       ],
       "uiSprite": "SPRITE_POTTERY",
@@ -144,18 +144,18 @@
     {
       "type": "MANUFACTURED_GOODS_CARD",
       "category": "ITEM_CATEGORY_INDUSTRY_CARD",
-      "attributes": [
+      "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "amount": 0.0
+          "ife": { "i": 0 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "amount": 6.0
+          "ife": { "i": 6 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "amount": 8.0
+          "ife": { "i": 8 }
         }
       ],
       "uiSprite": "SPRITE_MANUFACTURED_GOODS",
@@ -164,18 +164,18 @@
     {
       "type": "BELPER_CARD",
       "category": "ITEM_CATEGORY_CITY_CARD",
-      "attributes": [
+      "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "amount": 0.0
+          "ife": { "i": 0 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "amount": 0.0
+          "ife": { "i": 0 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         }
       ],
       "inGameName": "Belper"
@@ -183,18 +183,18 @@
     {
       "type": "DERBY_CARD",
       "category": "ITEM_CATEGORY_CITY_CARD",
-      "attributes": [
+      "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "amount": 0.0
+          "ife": { "i": 0 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "amount": 0.0
+          "ife": { "i": 0 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "amount": 3.0
+          "ife": { "i": 3 }
         }
       ],
       "inGameName": "Derby"
@@ -202,18 +202,18 @@
     {
       "type": "LEEK_CARD",
       "category": "ITEM_CATEGORY_CITY_CARD",
-      "attributes": [
+      "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "amount": 0.0
+          "ife": { "i": 0 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         }
       ],
       "inGameName": "Leek"
@@ -221,18 +221,18 @@
     {
       "type": "STOKE_ON_TRENT_CARD",
       "category": "ITEM_CATEGORY_CITY_CARD",
-      "attributes": [
+      "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "amount": 0.0
+          "ife": { "i": 0 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "amount": 3.0
+          "ife": { "i": 3 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "amount": 3.0
+          "ife": { "i": 3 }
         }
       ],
       "inGameName": "Stoke-on-Trent"
@@ -240,18 +240,18 @@
     {
       "type": "STONE_CARD",
       "category": "ITEM_CATEGORY_CITY_CARD",
-      "attributes": [
+      "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "amount": 0.0
+          "ife": { "i": 0 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         }
       ],
       "inGameName": "Stone"
@@ -259,18 +259,18 @@
     {
       "type": "UTTOXETER_CARD",
       "category": "ITEM_CATEGORY_CITY_CARD",
-      "attributes": [
+      "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "amount": 0.0
+          "ife": { "i": 0 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         }
       ],
       "inGameName": "Uttoxeter"
@@ -278,18 +278,18 @@
     {
       "type": "STAFFORD_CARD",
       "category": "ITEM_CATEGORY_CITY_CARD",
-      "attributes": [
+      "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         }
       ],
       "inGameName": "Stafford"
@@ -297,18 +297,18 @@
     {
       "type": "BURTON_UPON_TRENT_CARD",
       "category": "ITEM_CATEGORY_CITY_CARD",
-      "attributes": [
+      "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         }
       ],
       "inGameName": "Burton-upon-Trent"
@@ -316,18 +316,18 @@
     {
       "type": "CANNOCK_CARD",
       "category": "ITEM_CATEGORY_CITY_CARD",
-      "attributes": [
+      "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         }
       ],
       "inGameName": "Cannock"
@@ -335,18 +335,18 @@
     {
       "type": "TAMWORTH_CARD",
       "category": "ITEM_CATEGORY_CITY_CARD",
-      "attributes": [
+      "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "amount": 1.0
+          "ife": { "i": 1 }
         }
       ],
       "inGameName": "Tamworth"
@@ -354,18 +354,18 @@
     {
       "type": "WALSALL_CARD",
       "category": "ITEM_CATEGORY_CITY_CARD",
-      "attributes": [
+      "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "amount": 1.0
+          "ife": { "i": 1 }
         }
       ],
       "inGameName": "Walsall"
@@ -373,18 +373,18 @@
     {
       "type": "COALBROOKEDALE_CARD",
       "category": "ITEM_CATEGORY_CITY_CARD",
-      "attributes": [
+      "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "amount": 3.0
+          "ife": { "i": 3 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "amount": 3.0
+          "ife": { "i": 3 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "amount": 3.0
+          "ife": { "i": 3 }
         }
       ],
       "inGameName": "Coalbrookedale"
@@ -392,18 +392,18 @@
     {
       "type": "DUDLEY_CARD",
       "category": "ITEM_CATEGORY_CITY_CARD",
-      "attributes": [
+      "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         }
       ],
       "inGameName": "Dudley"
@@ -411,18 +411,18 @@
     {
       "type": "KIDDERMINSTER_CARD",
       "category": "ITEM_CATEGORY_CITY_CARD",
-      "attributes": [
+      "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         }
       ],
       "inGameName": "Kidderminster"
@@ -430,18 +430,18 @@
     {
       "type": "WOLFERHAMPTON_CARD",
       "category": "ITEM_CATEGORY_CITY_CARD",
-      "attributes": [
+      "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         }
       ],
       "inGameName": "Wolferhampton"
@@ -449,18 +449,18 @@
     {
       "type": "WORCESTER_CARD",
       "category": "ITEM_CATEGORY_CITY_CARD",
-      "attributes": [
+      "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         }
       ],
       "inGameName": "Worcester"
@@ -468,18 +468,18 @@
     {
       "type": "BIRMINGHAM_CARD",
       "category": "ITEM_CATEGORY_CITY_CARD",
-      "attributes": [
+      "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "amount": 3.0
+          "ife": { "i": 3 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "amount": 3.0
+          "ife": { "i": 3 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "amount": 3.0
+          "ife": { "i": 3 }
         }
       ],
       "inGameName": "Birmingham"
@@ -487,18 +487,18 @@
     {
       "type": "COVENTRY_CARD",
       "category": "ITEM_CATEGORY_CITY_CARD",
-      "attributes": [
+      "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "amount": 3.0
+          "ife": { "i": 3 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "amount": 3.0
+          "ife": { "i": 3 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "amount": 3.0
+          "ife": { "i": 3 }
         }
       ],
       "inGameName": "Coventry"
@@ -506,18 +506,18 @@
     {
       "type": "NUNEATON_CARD",
       "category": "ITEM_CATEGORY_CITY_CARD",
-      "attributes": [
+      "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "amount": 1.0
+          "ife": { "i": 1 }
         }
       ],
       "inGameName": "Nuneaton"
@@ -525,18 +525,18 @@
     {
       "type": "REDDITCH_CARD",
       "category": "ITEM_CATEGORY_CITY_CARD",
-      "attributes": [
+      "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "amount": 1.0
+          "ife": { "i": 1 }
         }
       ],
       "inGameName": "Redditch"
@@ -554,10 +554,10 @@
     {
       "type": "GLOUCESTER_CARD",
       "category": "ITEM_CATEGORY_CITY_CARD",
-      "attributes": [
+      "constants": [
         {
           "type": "MERCHANT_BONUS_DEVELOP",
-          "amount": 1.0
+          "ife": { "i": 1 }
         }
       ],
       "inGameName": "Gloucester"
@@ -565,10 +565,10 @@
     {
       "type": "SHREWSBURY_CARD",
       "category": "ITEM_CATEGORY_CITY_CARD",
-      "attributes": [
+      "constants": [
         {
           "type": "MERCHANT_BONUS_VICTORY_POINTS",
-          "amount": 4.0
+          "ife": { "i": 4 }
         }
       ],
       "inGameName": "Shrewsbury"
@@ -576,10 +576,10 @@
     {
       "type": "OXFORD_CARD",
       "category": "ITEM_CATEGORY_CITY_CARD",
-      "attributes": [
+      "constants": [
         {
           "type": "MERCHANT_BONUS_INCOME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         }
       ],
       "inGameName": "Oxford"
@@ -587,10 +587,10 @@
     {
       "type": "NOTTINGHAM_CARD",
       "category": "ITEM_CATEGORY_CITY_CARD",
-      "attributes": [
+      "constants": [
         {
           "type": "MERCHANT_BONUS_VICTORY_POINTS",
-          "amount": 3.0
+          "ife": { "i": 3 }
         }
       ],
       "inGameName": "Nottingham"
@@ -598,10 +598,10 @@
     {
       "type": "WARRINGTON_CARD",
       "category": "ITEM_CATEGORY_CITY_CARD",
-      "attributes": [
+      "constants": [
         {
           "type": "MERCHANT_BONUS_MONEY",
-          "amount": 5.0
+          "ife": { "i": 5 }
         }
       ],
       "inGameName": "Warrington"
@@ -609,26 +609,26 @@
     {
       "type": "COTTON_MILL_MERCHANT_LICENSE",
       "category": "ITEM_CATEGORY_MERCHANT_LICENSE",
-      "attributes": [
+      "constants": [
         {
           "type": "BEER_BONUS_FIRST_ERA",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "BEER_BONUS_SECOND_ERA",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "MERCHANT_COUNT_IN_2_PLAYER_GAME",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "MERCHANT_COUNT_IN_3_PLAYER_GAME",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "MERCHANT_COUNT_IN_4_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         }
       ],
       "gameSprite": "COTTON_MILL"
@@ -636,26 +636,26 @@
     {
       "type": "POTTERY_MERCHANT_LICENSE",
       "category": "ITEM_CATEGORY_MERCHANT_LICENSE",
-      "attributes": [
+      "constants": [
         {
           "type": "BEER_BONUS_FIRST_ERA",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "BEER_BONUS_SECOND_ERA",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "MERCHANT_COUNT_IN_2_PLAYER_GAME",
-          "amount": 0.0
+          "ife": { "i": 0 }
         },
         {
           "type": "MERCHANT_COUNT_IN_3_PLAYER_GAME",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "MERCHANT_COUNT_IN_4_PLAYER_GAME",
-          "amount": 1.0
+          "ife": { "i": 1 }
         }
       ],
       "gameSprite": "POTTERY"
@@ -663,26 +663,26 @@
     {
       "type": "MANUFACTURED_GOODS_MERCHANT_LICENSE",
       "category": "ITEM_CATEGORY_MERCHANT_LICENSE",
-      "attributes": [
+      "constants": [
         {
           "type": "BEER_BONUS_FIRST_ERA",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "BEER_BONUS_SECOND_ERA",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "MERCHANT_COUNT_IN_2_PLAYER_GAME",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "MERCHANT_COUNT_IN_3_PLAYER_GAME",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "MERCHANT_COUNT_IN_4_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         }
       ],
       "gameSprite": "MANUFACTURED_GOODS"
@@ -690,26 +690,26 @@
     {
       "type": "WILD_MERCHANT_LICENSE",
       "category": "ITEM_CATEGORY_MERCHANT_LICENSE",
-      "attributes": [
+      "constants": [
         {
           "type": "BEER_BONUS_FIRST_ERA",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "BEER_BONUS_SECOND_ERA",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "MERCHANT_COUNT_IN_2_PLAYER_GAME",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "MERCHANT_COUNT_IN_3_PLAYER_GAME",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "MERCHANT_COUNT_IN_4_PLAYER_GAME",
-          "amount": 1.0
+          "ife": { "i": 1 }
         }
       ],
       "gameSprite": "COTTON_MILL_POTTERY_MANUFACTURED_GOODS"
@@ -717,18 +717,18 @@
     {
       "type": "NO_MERCHANT_LICENSE",
       "category": "ITEM_CATEGORY_MERCHANT_LICENSE",
-      "attributes": [
+      "constants": [
         {
           "type": "MERCHANT_COUNT_IN_2_PLAYER_GAME",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "MERCHANT_COUNT_IN_3_PLAYER_GAME",
-          "amount": 3.0
+          "ife": { "i": 3 }
         },
         {
           "type": "MERCHANT_COUNT_IN_4_PLAYER_GAME",
-          "amount": 3.0
+          "ife": { "i": 3 }
         }
       ],
       "gameSprite": "NO_SPRITE"
@@ -736,38 +736,38 @@
     {
       "type": "COTTON_MILL_TILE_I",
       "category": "ITEM_CATEGORY_COTTON_MILL_TILE",
-      "attributes": [
+      "constants": [
         {
           "type": "TILE_LEVEL",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "amount": 5.0
+          "ife": { "i": 5 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "amount": 5.0
+          "ife": { "i": 5 }
         },
         {
           "type": "LINK_BONUS",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "amount": 12.0
+          "ife": { "i": 12 }
         },
         {
           "type": "BEER_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "FORBIDDEN_ERA",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "amount": 3.0
+          "ife": { "i": 3 }
         }
       ],
       "inGameName": "I (CO)"
@@ -775,38 +775,38 @@
     {
       "type": "COTTON_MILL_TILE_II",
       "category": "ITEM_CATEGORY_COTTON_MILL_TILE",
-      "attributes": [
+      "constants": [
         {
           "type": "TILE_LEVEL",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "amount": 5.0
+          "ife": { "i": 5 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "amount": 4.0
+          "ife": { "i": 4 }
         },
         {
           "type": "LINK_BONUS",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "MONEY_COST",
-          "amount": 14.0
+          "ife": { "i": 14 }
         },
         {
           "type": "COAL_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "BEER_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "amount": 2.0
+          "ife": { "i": 2 }
         }
       ],
       "inGameName": "II"
@@ -814,42 +814,42 @@
     {
       "type": "COTTON_MILL_TILE_III",
       "category": "ITEM_CATEGORY_COTTON_MILL_TILE",
-      "attributes": [
+      "constants": [
         {
           "type": "TILE_LEVEL",
-          "amount": 3.0
+          "ife": { "i": 3 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "amount": 9.0
+          "ife": { "i": 9 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "amount": 3.0
+          "ife": { "i": 3 }
         },
         {
           "type": "LINK_BONUS",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "amount": 16.0
+          "ife": { "i": 16 }
         },
         {
           "type": "COAL_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "IRON_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "BEER_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "amount": 3.0
+          "ife": { "i": 3 }
         }
       ],
       "inGameName": "III"
@@ -857,42 +857,42 @@
     {
       "type": "COTTON_MILL_TILE_IV",
       "category": "ITEM_CATEGORY_COTTON_MILL_TILE",
-      "attributes": [
+      "constants": [
         {
           "type": "TILE_LEVEL",
-          "amount": 4.0
+          "ife": { "i": 4 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "amount": 12.0
+          "ife": { "i": 12 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "LINK_BONUS",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "amount": 18.0
+          "ife": { "i": 18 }
         },
         {
           "type": "COAL_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "IRON_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "BEER_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "amount": 3.0
+          "ife": { "i": 3 }
         }
       ],
       "inGameName": "IV"
@@ -900,42 +900,42 @@
     {
       "type": "IRON_WORKS_TILE_I",
       "category": "ITEM_CATEGORY_IRON_WORKS_TILE",
-      "attributes": [
+      "constants": [
         {
           "type": "TILE_LEVEL",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "amount": 3.0
+          "ife": { "i": 3 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "amount": 3.0
+          "ife": { "i": 3 }
         },
         {
           "type": "LINK_BONUS",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "amount": 5.0
+          "ife": { "i": 5 }
         },
         {
           "type": "COAL_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "FORBIDDEN_ERA",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "IRON_BONUS",
-          "amount": 4.0
+          "ife": { "i": 4 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "amount": 1.0
+          "ife": { "i": 1 }
         }
       ],
       "inGameName": "I (CO)"
@@ -943,38 +943,38 @@
     {
       "type": "IRON_WORKS_TILE_II",
       "category": "ITEM_CATEGORY_IRON_WORKS_TILE",
-      "attributes": [
+      "constants": [
         {
           "type": "TILE_LEVEL",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "amount": 5.0
+          "ife": { "i": 5 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "amount": 3.0
+          "ife": { "i": 3 }
         },
         {
           "type": "LINK_BONUS",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "amount": 7.0
+          "ife": { "i": 7 }
         },
         {
           "type": "COAL_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "IRON_BONUS",
-          "amount": 4.0
+          "ife": { "i": 4 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "amount": 1.0
+          "ife": { "i": 1 }
         }
       ],
       "inGameName": "II"
@@ -982,38 +982,38 @@
     {
       "type": "IRON_WORKS_TILE_III",
       "category": "ITEM_CATEGORY_IRON_WORKS_TILE",
-      "attributes": [
+      "constants": [
         {
           "type": "TILE_LEVEL",
-          "amount": 3.0
+          "ife": { "i": 3 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "amount": 7.0
+          "ife": { "i": 7 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "LINK_BONUS",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "amount": 9.0
+          "ife": { "i": 9 }
         },
         {
           "type": "COAL_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "IRON_BONUS",
-          "amount": 5.0
+          "ife": { "i": 5 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "amount": 1.0
+          "ife": { "i": 1 }
         }
       ],
       "inGameName": "III"
@@ -1021,38 +1021,38 @@
     {
       "type": "IRON_WORKS_TILE_IV",
       "category": "ITEM_CATEGORY_IRON_WORKS_TILE",
-      "attributes": [
+      "constants": [
         {
           "type": "TILE_LEVEL",
-          "amount": 4.0
+          "ife": { "i": 4 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "amount": 9.0
+          "ife": { "i": 9 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "LINK_BONUS",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "amount": 12.0
+          "ife": { "i": 12 }
         },
         {
           "type": "COAL_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "IRON_BONUS",
-          "amount": 6.0
+          "ife": { "i": 6 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "amount": 1.0
+          "ife": { "i": 1 }
         }
       ],
       "inGameName": "IV"
@@ -1060,46 +1060,46 @@
     {
       "type": "BREWERY_TILE_I",
       "category": "ITEM_CATEGORY_BREWERY_TILE",
-      "attributes": [
+      "constants": [
         {
           "type": "TILE_LEVEL",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "amount": 4.0
+          "ife": { "i": 4 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "amount": 4.0
+          "ife": { "i": 4 }
         },
         {
           "type": "LINK_BONUS",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "MONEY_COST",
-          "amount": 5.0
+          "ife": { "i": 5 }
         },
         {
           "type": "IRON_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "FORBIDDEN_ERA",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "BEER_BONUS_FIRST_ERA",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "BEER_BONUS_SECOND_ERA",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "amount": 2.0
+          "ife": { "i": 2 }
         }
       ],
       "inGameName": "I (CO)"
@@ -1107,42 +1107,42 @@
     {
       "type": "BREWERY_TILE_II",
       "category": "ITEM_CATEGORY_BREWERY_TILE",
-      "attributes": [
+      "constants": [
         {
           "type": "TILE_LEVEL",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "amount": 5.0
+          "ife": { "i": 5 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "amount": 5.0
+          "ife": { "i": 5 }
         },
         {
           "type": "LINK_BONUS",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "MONEY_COST",
-          "amount": 7.0
+          "ife": { "i": 7 }
         },
         {
           "type": "IRON_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "BEER_BONUS_FIRST_ERA",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "BEER_BONUS_SECOND_ERA",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "amount": 2.0
+          "ife": { "i": 2 }
         }
       ],
       "inGameName": "II"
@@ -1150,42 +1150,42 @@
     {
       "type": "BREWERY_TILE_III",
       "category": "ITEM_CATEGORY_BREWERY_TILE",
-      "attributes": [
+      "constants": [
         {
           "type": "TILE_LEVEL",
-          "amount": 3.0
+          "ife": { "i": 3 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "amount": 7.0
+          "ife": { "i": 7 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "amount": 5.0
+          "ife": { "i": 5 }
         },
         {
           "type": "LINK_BONUS",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "MONEY_COST",
-          "amount": 9.0
+          "ife": { "i": 9 }
         },
         {
           "type": "IRON_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "BEER_BONUS_FIRST_ERA",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "BEER_BONUS_SECOND_ERA",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "amount": 2.0
+          "ife": { "i": 2 }
         }
       ],
       "inGameName": "III"
@@ -1193,46 +1193,46 @@
     {
       "type": "BREWERY_TILE_IV",
       "category": "ITEM_CATEGORY_BREWERY_TILE",
-      "attributes": [
+      "constants": [
         {
           "type": "TILE_LEVEL",
-          "amount": 4.0
+          "ife": { "i": 4 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "amount": 10.0
+          "ife": { "i": 10 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "amount": 5.0
+          "ife": { "i": 5 }
         },
         {
           "type": "LINK_BONUS",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "MONEY_COST",
-          "amount": 9.0
+          "ife": { "i": 9 }
         },
         {
           "type": "IRON_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "FORBIDDEN_ERA",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "BEER_BONUS_FIRST_ERA",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "BEER_BONUS_SECOND_ERA",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "amount": 1.0
+          "ife": { "i": 1 }
         }
       ],
       "inGameName": "IV (RRO)"
@@ -1240,38 +1240,38 @@
     {
       "type": "COAL_MINE_TILE_I",
       "category": "ITEM_CATEGORY_COAL_MINE_TILE",
-      "attributes": [
+      "constants": [
         {
           "type": "TILE_LEVEL",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "amount": 4.0
+          "ife": { "i": 4 }
         },
         {
           "type": "LINK_BONUS",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "MONEY_COST",
-          "amount": 5.0
+          "ife": { "i": 5 }
         },
         {
           "type": "FORBIDDEN_ERA",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "COAL_BONUS",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "amount": 1.0
+          "ife": { "i": 1 }
         }
       ],
       "inGameName": "I (CO)"
@@ -1279,34 +1279,34 @@
     {
       "type": "COAL_MINE_TILE_II",
       "category": "ITEM_CATEGORY_COAL_MINE_TILE",
-      "attributes": [
+      "constants": [
         {
           "type": "TILE_LEVEL",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "amount": 7.0
+          "ife": { "i": 7 }
         },
         {
           "type": "LINK_BONUS",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "amount": 7.0
+          "ife": { "i": 7 }
         },
         {
           "type": "COAL_BONUS",
-          "amount": 3.0
+          "ife": { "i": 3 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "amount": 2.0
+          "ife": { "i": 2 }
         }
       ],
       "inGameName": "II"
@@ -1314,38 +1314,38 @@
     {
       "type": "COAL_MINE_TILE_III",
       "category": "ITEM_CATEGORY_COAL_MINE_TILE",
-      "attributes": [
+      "constants": [
         {
           "type": "TILE_LEVEL",
-          "amount": 3.0
+          "ife": { "i": 3 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "amount": 3.0
+          "ife": { "i": 3 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "amount": 6.0
+          "ife": { "i": 6 }
         },
         {
           "type": "LINK_BONUS",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "amount": 8.0
+          "ife": { "i": 8 }
         },
         {
           "type": "IRON_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "COAL_BONUS",
-          "amount": 4.0
+          "ife": { "i": 4 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "amount": 2.0
+          "ife": { "i": 2 }
         }
       ],
       "inGameName": "III"
@@ -1353,38 +1353,38 @@
     {
       "type": "COAL_MINE_TILE_IV",
       "category": "ITEM_CATEGORY_COAL_MINE_TILE",
-      "attributes": [
+      "constants": [
         {
           "type": "TILE_LEVEL",
-          "amount": 4.0
+          "ife": { "i": 4 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "amount": 4.0
+          "ife": { "i": 4 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "amount": 5.0
+          "ife": { "i": 5 }
         },
         {
           "type": "LINK_BONUS",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "amount": 10.0
+          "ife": { "i": 10 }
         },
         {
           "type": "IRON_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "COAL_BONUS",
-          "amount": 5.0
+          "ife": { "i": 5 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "amount": 2.0
+          "ife": { "i": 2 }
         }
       ],
       "inGameName": "IV"
@@ -1392,42 +1392,42 @@
     {
       "type": "POTTERY_TILE_I",
       "category": "ITEM_CATEGORY_POTTERY_TILE",
-      "attributes": [
+      "constants": [
         {
           "type": "TILE_LEVEL",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "amount": 10.0
+          "ife": { "i": 10 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "amount": 5.0
+          "ife": { "i": 5 }
         },
         {
           "type": "LINK_BONUS",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "amount": 17.0
+          "ife": { "i": 17 }
         },
         {
           "type": "IRON_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "BEER_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "DEVELOPMENT_BAN",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "amount": 1.0
+          "ife": { "i": 1 }
         }
       ],
       "inGameName": "I (ND)"
@@ -1435,38 +1435,38 @@
     {
       "type": "POTTERY_TILE_II",
       "category": "ITEM_CATEGORY_POTTERY_TILE",
-      "attributes": [
+      "constants": [
         {
           "type": "TILE_LEVEL",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "LINK_BONUS",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "amount": 0.0
+          "ife": { "i": 0 }
         },
         {
           "type": "COAL_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "BEER_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "amount": 1.0
+          "ife": { "i": 1 }
         }
       ],
       "inGameName": "II"
@@ -1474,42 +1474,42 @@
     {
       "type": "POTTERY_TILE_III",
       "category": "ITEM_CATEGORY_POTTERY_TILE",
-      "attributes": [
+      "constants": [
         {
           "type": "TILE_LEVEL",
-          "amount": 3.0
+          "ife": { "i": 3 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "amount": 11.0
+          "ife": { "i": 11 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "amount": 5.0
+          "ife": { "i": 5 }
         },
         {
           "type": "LINK_BONUS",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "amount": 22.0
+          "ife": { "i": 22 }
         },
         {
           "type": "COAL_COST",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "BEER_COST",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "DEVELOPMENT_BAN",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "amount": 1.0
+          "ife": { "i": 1 }
         }
       ],
       "inGameName": "III (ND)"
@@ -1517,38 +1517,38 @@
     {
       "type": "POTTERY_TILE_IV",
       "category": "ITEM_CATEGORY_POTTERY_TILE",
-      "attributes": [
+      "constants": [
         {
           "type": "TILE_LEVEL",
-          "amount": 4.0
+          "ife": { "i": 4 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "LINK_BONUS",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "amount": 0.0
+          "ife": { "i": 0 }
         },
         {
           "type": "COAL_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "BEER_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "amount": 1.0
+          "ife": { "i": 1 }
         }
       ],
       "inGameName": "IV"
@@ -1556,42 +1556,42 @@
     {
       "type": "POTTERY_TILE_V",
       "category": "ITEM_CATEGORY_POTTERY_TILE",
-      "attributes": [
+      "constants": [
         {
           "type": "TILE_LEVEL",
-          "amount": 5.0
+          "ife": { "i": 5 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "amount": 20.0
+          "ife": { "i": 20 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "amount": 5.0
+          "ife": { "i": 5 }
         },
         {
           "type": "LINK_BONUS",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "amount": 24.0
+          "ife": { "i": 24 }
         },
         {
           "type": "COAL_COST",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "BEER_COST",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "FORBIDDEN_ERA",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "amount": 1.0
+          "ife": { "i": 1 }
         }
       ],
       "inGameName": "V (RRO)"
@@ -1599,42 +1599,42 @@
     {
       "type": "MANUFACTURED_GOODS_TILE_I",
       "category": "ITEM_CATEGORY_MANUFACTURED_GOODS_TILE",
-      "attributes": [
+      "constants": [
         {
           "type": "TILE_LEVEL",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "amount": 3.0
+          "ife": { "i": 3 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "amount": 5.0
+          "ife": { "i": 5 }
         },
         {
           "type": "LINK_BONUS",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "MONEY_COST",
-          "amount": 8.0
+          "ife": { "i": 8 }
         },
         {
           "type": "COAL_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "BEER_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "FORBIDDEN_ERA",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "amount": 1.0
+          "ife": { "i": 1 }
         }
       ],
       "inGameName": "I (CO)"
@@ -1642,38 +1642,38 @@
     {
       "type": "MANUFACTURED_GOODS_TILE_II",
       "category": "ITEM_CATEGORY_MANUFACTURED_GOODS_TILE",
-      "attributes": [
+      "constants": [
         {
           "type": "TILE_LEVEL",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "amount": 5.0
+          "ife": { "i": 5 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "LINK_BONUS",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "amount": 10.0
+          "ife": { "i": 10 }
         },
         {
           "type": "IRON_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "BEER_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "amount": 2.0
+          "ife": { "i": 2 }
         }
       ],
       "inGameName": "II"
@@ -1681,34 +1681,34 @@
     {
       "type": "MANUFACTURED_GOODS_TILE_III",
       "category": "ITEM_CATEGORY_MANUFACTURED_GOODS_TILE",
-      "attributes": [
+      "constants": [
         {
           "type": "TILE_LEVEL",
-          "amount": 3.0
+          "ife": { "i": 3 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "amount": 4.0
+          "ife": { "i": 4 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "amount": 4.0
+          "ife": { "i": 4 }
         },
         {
           "type": "LINK_BONUS",
-          "amount": 0.0
+          "ife": { "i": 0 }
         },
         {
           "type": "MONEY_COST",
-          "amount": 12.0
+          "ife": { "i": 12 }
         },
         {
           "type": "COAL_COST",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "amount": 1.0
+          "ife": { "i": 1 }
         }
       ],
       "inGameName": "III"
@@ -1716,38 +1716,38 @@
     {
       "type": "MANUFACTURED_GOODS_TILE_IV",
       "category": "ITEM_CATEGORY_MANUFACTURED_GOODS_TILE",
-      "attributes": [
+      "constants": [
         {
           "type": "TILE_LEVEL",
-          "amount": 4.0
+          "ife": { "i": 4 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "amount": 3.0
+          "ife": { "i": 3 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "amount": 6.0
+          "ife": { "i": 6 }
         },
         {
           "type": "LINK_BONUS",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "amount": 8.0
+          "ife": { "i": 8 }
         },
         {
           "type": "IRON_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "BEER_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "amount": 1.0
+          "ife": { "i": 1 }
         }
       ],
       "inGameName": "IV"
@@ -1755,38 +1755,38 @@
     {
       "type": "MANUFACTURED_GOODS_TILE_V",
       "category": "ITEM_CATEGORY_MANUFACTURED_GOODS_TILE",
-      "attributes": [
+      "constants": [
         {
           "type": "TILE_LEVEL",
-          "amount": 5.0
+          "ife": { "i": 5 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "amount": 8.0
+          "ife": { "i": 8 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "LINK_BONUS",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "MONEY_COST",
-          "amount": 16.0
+          "ife": { "i": 16 }
         },
         {
           "type": "COAL_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "BEER_COST",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "amount": 2.0
+          "ife": { "i": 2 }
         }
       ],
       "inGameName": "V"
@@ -1794,34 +1794,34 @@
     {
       "type": "MANUFACTURED_GOODS_TILE_VI",
       "category": "ITEM_CATEGORY_MANUFACTURED_GOODS_TILE",
-      "attributes": [
+      "constants": [
         {
           "type": "TILE_LEVEL",
-          "amount": 6.0
+          "ife": { "i": 6 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "amount": 7.0
+          "ife": { "i": 7 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "amount": 6.0
+          "ife": { "i": 6 }
         },
         {
           "type": "LINK_BONUS",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "amount": 20.0
+          "ife": { "i": 20 }
         },
         {
           "type": "BEER_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "amount": 1.0
+          "ife": { "i": 1 }
         }
       ],
       "inGameName": "VI"
@@ -1829,38 +1829,38 @@
     {
       "type": "MANUFACTURED_GOODS_TILE_VII",
       "category": "ITEM_CATEGORY_MANUFACTURED_GOODS_TILE",
-      "attributes": [
+      "constants": [
         {
           "type": "TILE_LEVEL",
-          "amount": 7.0
+          "ife": { "i": 7 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "amount": 9.0
+          "ife": { "i": 9 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "amount": 4.0
+          "ife": { "i": 4 }
         },
         {
           "type": "LINK_BONUS",
-          "amount": 0.0
+          "ife": { "i": 0 }
         },
         {
           "type": "MONEY_COST",
-          "amount": 16.0
+          "ife": { "i": 16 }
         },
         {
           "type": "COAL_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "IRON_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "amount": 1.0
+          "ife": { "i": 1 }
         }
       ],
       "inGameName": "VII"
@@ -1868,38 +1868,38 @@
     {
       "type": "MANUFACTURED_GOODS_TILE_VIII",
       "category": "ITEM_CATEGORY_MANUFACTURED_GOODS_TILE",
-      "attributes": [
+      "constants": [
         {
           "type": "TILE_LEVEL",
-          "amount": 8.0
+          "ife": { "i": 8 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "amount": 11.0
+          "ife": { "i": 11 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "LINK_BONUS",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "amount": 20.0
+          "ife": { "i": 20 }
         },
         {
           "type": "IRON_COST",
-          "amount": 2.0
+          "ife": { "i": 2 }
         },
         {
           "type": "BEER_COST",
-          "amount": 1.0
+          "ife": { "i": 1 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "amount": 2.0
+          "ife": { "i": 2 }
         }
       ],
       "inGameName": "VIII"
@@ -1912,10 +1912,10 @@
     },
     {
       "type": "ROAD_TILE",
-      "attributes": [
+      "constants": [
         {
           "type": "POSSESSION_LIMIT",
-          "amount": 14.0
+          "ife": { "i": 14 }
         }
       ]
     }

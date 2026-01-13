@@ -35,11 +35,11 @@ DevelopJourney::~DevelopJourney() {
 	deinit();
 	// Return the reserved resources
 	if (_reserved_source_1) {
-		_reserved_source_1->GetCharacter().AddResource(IRON_CUBE_COUNT, 1.0f);
+		_reserved_source_1->GetCharacter().SetVariable(IRON_CUBE_COUNT, IFE{_reserved_source_1->GetCharacter().GetVariable(IRON_CUBE_COUNT).GetIntOrZero() + 1});
 		_reserved_source_1 = nullptr;
 	}
 	if (_reserved_source_2) {
-		_reserved_source_2->GetCharacter().AddResource(IRON_CUBE_COUNT, 1.0f);
+		_reserved_source_2->GetCharacter().SetVariable(IRON_CUBE_COUNT, IFE{_reserved_source_2->GetCharacter().GetVariable(IRON_CUBE_COUNT).GetIntOrZero() + 1});
 		_reserved_source_2 = nullptr;
 	}
 }
@@ -131,7 +131,7 @@ std::optional<DevelopJourneyStep> DevelopJourney::HandleResourceEnterSignal() {
 				LOG_DEBUG("Player agreed");
 				// Reserve resource
 				auto* factory = FindFactoryAtLocation(*iron_industries.begin());
-				factory->GetCharacter().RemoveResource(IRON_CUBE_COUNT, 1.0f);
+				factory->GetCharacter().SetVariable(IRON_CUBE_COUNT, IFE{std::max(factory->GetCharacter().GetVariable(IRON_CUBE_COUNT).GetIntOrZero() - 1, 0)});
 				((_iron_source_1 == 0) ? _reserved_source_1 : _reserved_source_2) = factory;
 				// Specify resource source
 				((_iron_source_1 == 0) ? _iron_source_1 : _iron_source_2) = *iron_industries.begin();
@@ -159,7 +159,7 @@ std::optional<DevelopJourneyStep> DevelopJourney::HandleResourceMouseClickSignal
 			// Check if the location is one of the dimming exceptions
 			if (M2_LEVEL.GetDimmingExceptions()->contains(factory->GetId())) {
 				// Deduct resource
-				factory->GetCharacter().RemoveResource(IRON_CUBE_COUNT, 1.0f);
+				factory->GetCharacter().SetVariable(IRON_CUBE_COUNT, IFE{std::max(factory->GetCharacter().GetVariable(IRON_CUBE_COUNT).GetIntOrZero() - 1, 0)});
 				// Save source
 				if (_iron_source_1 == 0) {
 					_iron_source_1 = industry_location;
@@ -262,12 +262,12 @@ m2::void_expected CanPlayerDevelop(m2::Character& player, const m2g::pb::TurnBas
 	}
 
 	// Check if the tile can be developed
-	if (m2::IsEqual(selected_industry_tile_1.GetAttribute(DEVELOPMENT_BAN), 1.0f, 0.001f)) {
+	if (selected_industry_tile_1.GetConstant(DEVELOPMENT_BAN)) {
 		return make_unexpected("Selected tile cannot be developed");
 	}
 	if (develop_action.industry_tile_2()) {
 		const auto& selected_industry_tile_2 = M2_GAME.GetNamedItem(develop_action.industry_tile_2());
-		if (m2::IsEqual(selected_industry_tile_2.GetAttribute(DEVELOPMENT_BAN), 1.0f, 0.001f)) {
+		if (selected_industry_tile_2.GetConstant(DEVELOPMENT_BAN)) {
 			return make_unexpected("Selected tile cannot be developed");
 		}
 	}
@@ -283,7 +283,7 @@ m2::void_expected CanPlayerDevelop(m2::Character& player, const m2g::pb::TurnBas
 		} else {
 			// Reserve resource
 			auto* factory = FindFactoryAtLocation(develop_action.iron_sources_1());
-			factory->GetCharacter().RemoveResource(IRON_CUBE_COUNT, 1.0f);
+			factory->GetCharacter().SetVariable(IRON_CUBE_COUNT, IFE{std::max(factory->GetCharacter().GetVariable(IRON_CUBE_COUNT).GetIntOrZero() - 1, 0)});
 			reserved_resource = factory;
 		}
 	} else if (is_merchant_location(develop_action.iron_sources_1())) {
@@ -321,7 +321,7 @@ m2::void_expected CanPlayerDevelop(m2::Character& player, const m2g::pb::TurnBas
 		}
 	}
 	if (reserved_resource) {
-		reserved_resource->GetCharacter().AddResource(IRON_CUBE_COUNT, 1.0f);
+		reserved_resource->GetCharacter().SetVariable(IRON_CUBE_COUNT, IFE{reserved_resource->GetCharacter().GetVariable(IRON_CUBE_COUNT).GetIntOrZero() + 1});
 	}
 	// Check if exploration finished with a success
 	if (not resource_sources_are_valid) {
@@ -331,7 +331,7 @@ m2::void_expected CanPlayerDevelop(m2::Character& player, const m2g::pb::TurnBas
 	// Check if the player has enough money to buy the resources
 	auto iron_from_market = is_merchant_location(develop_action.iron_sources_1()) ? 1 : 0;
 	iron_from_market += develop_action.industry_tile_2() && is_merchant_location(develop_action.iron_sources_2()) ? 1 : 0;
-	if (m2::RoundI(player.GetResource(MONEY)) < M2G_PROXY.market_iron_cost(iron_from_market)) {
+	if (player.GetVariable(MONEY).GetIntOrZero() < M2G_PROXY.market_iron_cost(iron_from_market)) {
 		return make_unexpected("Player does not have enough money");
 	}
 
@@ -349,14 +349,14 @@ std::pair<Card,int> ExecuteDevelopAction(m2::Character& player, const m2g::pb::T
 	// Take resources
 	if (is_industry_location(develop_action.iron_sources_1())) {
 		auto* factory = FindFactoryAtLocation(develop_action.iron_sources_1());
-		factory->GetCharacter().RemoveResource(IRON_CUBE_COUNT, 1.0f);
+		factory->GetCharacter().SetVariable(IRON_CUBE_COUNT, IFE{std::max(factory->GetCharacter().GetVariable(IRON_CUBE_COUNT).GetIntOrZero() - 1, 0)});
 	} else if (is_merchant_location(develop_action.iron_sources_1())) {
 		M2G_PROXY.buy_iron_from_market();
 	}
 	if (develop_action.industry_tile_2()) {
 		if (is_industry_location(develop_action.iron_sources_2())) {
 			auto* factory = FindFactoryAtLocation(develop_action.iron_sources_2());
-			factory->GetCharacter().RemoveResource(IRON_CUBE_COUNT, 1.0f);
+			factory->GetCharacter().SetVariable(IRON_CUBE_COUNT, IFE{std::max(factory->GetCharacter().GetVariable(IRON_CUBE_COUNT).GetIntOrZero() - 1, 0)});
 		} else if (is_merchant_location(develop_action.iron_sources_2())) {
 			M2G_PROXY.buy_iron_from_market();
 		}

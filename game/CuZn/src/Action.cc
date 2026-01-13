@@ -8,6 +8,8 @@
 #include <cuzn/journeys/ScoutJourney.h>
 #include <cuzn/journeys/SellJourney.h>
 #include <cuzn/object/Factory.h>
+#include <m2g_ConstantType.pb.h>
+#include <m2g_VariableType.pb.h>
 #include <m2/Log.h>
 #include <m2/Game.h>
 
@@ -21,7 +23,7 @@ m2::void_expected HandleActionWhileLiquidating(m2::Character& turnHolderCharacte
 		for (const auto* factory : expectFactoriesAndGain->first) {
 			M2_LEVEL.objects.Free(factory->GetId());
 		}
-		turnHolderCharacter.AddResource(m2g::pb::MONEY, m2::ToFloat(expectFactoriesAndGain->second));
+		turnHolderCharacter.SetVariable(m2g::pb::MONEY, m2::IFE{turnHolderCharacter.GetVariable(m2g::pb::MONEY).GetIntOrZero() + expectFactoriesAndGain->second});
 		return {}; // Liquidation successful
 	} else {
 		return m2::make_unexpected(expectFactoriesAndGain.error());
@@ -110,7 +112,7 @@ m2::expected<int> HandleActionWhileNotLiquidating(m2::Character& turnHolderChara
 	}
 	// Deduct money from player
 	LOG_INFO("Deducting money from player", moneySpent);
-	turnHolderCharacter.RemoveResource(m2g::pb::MONEY, m2::ToFloat(moneySpent));
+	turnHolderCharacter.SetVariable(m2g::pb::MONEY, m2::IFE{std::max(turnHolderCharacter.GetVariable(m2g::pb::MONEY).GetIntOrZero() - moneySpent, 0)});
 
 	return moneySpent;
 }

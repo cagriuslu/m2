@@ -67,19 +67,19 @@ bool is_merchant_location(MerchantLocation location) {
 
 bool DoesMerchantHasDevelopBenefit(const MerchantLocation location) {
 	const auto merchantCity = city_of_location(location);
-	return M2_GAME.GetNamedItem(merchantCity).HasAttribute(MERCHANT_BONUS_DEVELOP);
+	return static_cast<bool>(M2_GAME.GetNamedItem(merchantCity).GetConstant(MERCHANT_BONUS_DEVELOP));
 }
 int MerchantIncomePointsBenefit(const MerchantLocation location) {
 	const auto merchantCity = city_of_location(location);
-	return m2::RoundI(M2_GAME.GetNamedItem(merchantCity).GetAttribute(MERCHANT_BONUS_INCOME));
+	return M2_GAME.GetNamedItem(merchantCity).GetConstant(MERCHANT_BONUS_INCOME).GetIntOrZero();
 }
 int MerchantVictoryPointsBenefit(const MerchantLocation location) {
 	const auto merchantCity = city_of_location(location);
-	return m2::RoundI(M2_GAME.GetNamedItem(merchantCity).GetAttribute(MERCHANT_BONUS_VICTORY_POINTS));
+	return M2_GAME.GetNamedItem(merchantCity).GetConstant(MERCHANT_BONUS_VICTORY_POINTS).GetIntOrZero();
 }
 int MerchantMoneyBenefit(const MerchantLocation location) {
 	const auto merchantCity = city_of_location(location);
-	return m2::RoundI(M2_GAME.GetNamedItem(merchantCity).GetAttribute(MERCHANT_BONUS_MONEY));
+	return M2_GAME.GetNamedItem(merchantCity).GetConstant(MERCHANT_BONUS_MONEY).GetIntOrZero();
 }
 
 bool is_connection(Connection connection) {

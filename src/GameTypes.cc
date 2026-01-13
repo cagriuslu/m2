@@ -1,7 +1,9 @@
 #include <m2/GameTypes.h>
 #include <m2/BuildOptions.h>
 
-m2::IFE::IFE(const pb::IFE& ife) {
+using namespace m2;
+
+IFE::IFE(const pb::IFE& ife) {
 	if (ife.has_i()) {
 		_value = ife.i();
 	} else if (ife.has_fe()) {
@@ -9,12 +11,14 @@ m2::IFE::IFE(const pb::IFE& ife) {
 	}
 }
 
-m2::IFE::operator bool() const {
+IFE::operator bool() const {
 	return std::holds_alternative<std::monostate>(_value)
 		? false
-		: std::holds_alternative<int32_t>(_value) ? std::get<int32_t>(_value) : static_cast<bool>(std::get<FE>(_value));
+		: std::holds_alternative<int32_t>(_value)
+			? std::get<int32_t>(_value)
+			: static_cast<bool>(std::get<FE>(_value));
 }
-m2::IFE::operator pb::IFE() const {
+IFE::operator pb::IFE() const {
 	pb::IFE pbIfe;
 	if (IsInt()) {
 		pbIfe.set_i(std::get<int32_t>(_value));
@@ -23,18 +27,42 @@ m2::IFE::operator pb::IFE() const {
 	}
 	return pbIfe;
 }
-bool m2::IFE::IsZero() const {
-	return !static_cast<bool>(*this);
+
+IFE IFE::UnsafeAdd(const IFE& rhs) const {
+	if (IsInt() && rhs.IsInt()) {
+		return IFE{UnsafeGetInt() + rhs.UnsafeGetInt()};
+	} else if (IsFE() && rhs.IsFE()) {
+		return IFE{UnsafeGetFE() + rhs.UnsafeGetFE()};
+	} else if (IsNull()) {
+		return rhs;
+	} else {
+		return *this;
+	}
 }
-bool m2::IFE::IsInt() const {
-	return std::holds_alternative<int32_t>(_value);
+IFE IFE::UnsafeSubtract(const IFE& rhs) const {
+	if (IsInt() && rhs.IsInt()) {
+		return IFE{UnsafeGetInt() - rhs.UnsafeGetInt()};
+	} else if (IsFE() && rhs.IsFE()) {
+		return IFE{UnsafeGetFE() - rhs.UnsafeGetFE()};
+	} else if (IsNull()) {
+		return rhs.Negate();
+	} else {
+		return *this;
+	}
 }
-bool m2::IFE::IsFE() const {
-	return std::holds_alternative<FE>(_value);
+IFE IFE::Negate() const {
+	if (IsNull()) {
+		return *this;
+	} else if (IsInt()) {
+		return IFE{-UnsafeGetInt()};
+	} else {
+		return IFE{-UnsafeGetFE()};
+	}
 }
-int32_t m2::IFE::GetInt() const {
-	return std::holds_alternative<std::monostate>(_value) ? 0 : std::get<int32_t>(_value);
+
+int32_t IFE::GetIntOrZero() const {
+	return IsInt() ? UnsafeGetInt() : 0;
 }
-m2::FE m2::IFE::GetFE() const {
-	return std::holds_alternative<std::monostate>(_value) ? FE::Zero() : std::get<FE>(_value);
+FE IFE::GetFEOrZero() const {
+	return IsFE() ? UnsafeGetFE() : FE::Zero();
 }

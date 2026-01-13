@@ -30,18 +30,11 @@ m2::pb::TurnBasedNetworkMessage m2::GenerateServerUpdate(uint32_t& nextSequenceN
 					}
 					object_descriptor->add_named_items(named_item_ptr->Type());
 				}
-				pb::for_each_enum_value<m2g::pb::ResourceType>([&v, object_descriptor](m2g::pb::ResourceType rt) {
-					if (v.HasResource(rt)) {
-						auto* resource = object_descriptor->add_resources();
-						resource->set_type(rt);
-						resource->set_amount(v.GetResource(rt));
-					}
-				});
-				pb::for_each_enum_value<m2g::pb::AttributeType>([&v, object_descriptor](m2g::pb::AttributeType at) {
-					if (v.HasAttribute(at)) {
-						auto* attribute = object_descriptor->add_attributes();
-						attribute->set_type(at);
-						attribute->set_amount(v.GetAttribute(at));
+				pb::for_each_enum_value<m2g::pb::VariableType>([&v, object_descriptor](m2g::pb::VariableType vt) {
+					if (v.GetVariable(vt)) {
+						auto* resource = object_descriptor->add_variables();
+						resource->set_type(vt);
+						resource->mutable_ife()->CopyFrom(static_cast<pb::IFE>(v.GetVariable(vt)));
 					}
 				});
 			}

@@ -66,7 +66,7 @@ NetworkJourney::~NetworkJourney() {
 	deinit();
 	for (auto& source : _resource_sources) {
 		if (source.reserved_object) {
-			source.reserved_object->GetCharacter().AddResource(source.resource_type, 1.0f);
+			source.reserved_object->GetCharacter().SetVariable(source.resource_type, IFE{source.reserved_object->GetCharacter().GetVariable(source.resource_type).GetIntOrZero() + 1});
 			source.reserved_object = nullptr;
 		}
 	}
@@ -214,7 +214,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::HandleResourceEnterSignal() {
 					LOG_DEBUG("Player agreed");
 					// Reserve resource
 					auto* factory = FindFactoryAtLocation(*closest_mines_with_coal.begin());
-					factory->GetCharacter().RemoveResource(COAL_CUBE_COUNT, 1.0f);
+					factory->GetCharacter().SetVariable(COAL_CUBE_COUNT, IFE{std::max(factory->GetCharacter().GetVariable(COAL_CUBE_COUNT).GetIntOrZero() - 1, 0)});
 					unspecified_resource->reserved_object = factory;
 					// Specify resource source
 					unspecified_resource->source = *closest_mines_with_coal.begin();
@@ -241,7 +241,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::HandleResourceEnterSignal() {
 					LOG_DEBUG("Player agreed");
 					// Reserve resource
 					auto* factory = FindFactoryAtLocation(industry_location);
-					factory->GetCharacter().RemoveResource(BEER_BARREL_COUNT, 1.0f);
+					factory->GetCharacter().SetVariable(BEER_BARREL_COUNT, IFE{std::max(factory->GetCharacter().GetVariable(BEER_BARREL_COUNT).GetIntOrZero() - 1, 0)});
 					unspecified_resource->reserved_object = factory;
 					// Specify resource source
 					unspecified_resource->source = industry_location;
@@ -272,7 +272,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::HandleResourceMouseClickSignal
 			// Check if the location is one of the dimming exceptions
 			if (M2_LEVEL.GetDimmingExceptions()->contains(factory->GetId())) {
 				// Reserve resource
-				factory->GetCharacter().RemoveResource(unspecified_resource->resource_type, 1.0f);
+				factory->GetCharacter().SetVariable(unspecified_resource->resource_type, IFE{std::max(factory->GetCharacter().GetVariable(unspecified_resource->resource_type).GetIntOrZero() - 1, 0)});
 				unspecified_resource->reserved_object = factory;
 				unspecified_resource->source = selected_location;
 				// Re-enter resource selection
@@ -294,7 +294,6 @@ std::optional<NetworkJourneyStep> NetworkJourney::HandleResourceExitSignal() {
 
 std::optional<NetworkJourneyStep> NetworkJourney::HandleConfirmationEnterSignal() {
 	LOG_INFO("Asking for confirmation...");
-	// TODO
 	if (ask_for_confirmation("Are you sure?", "", "OK", "Cancel")) {
 		LOG_INFO("Network action confirmed");
 
@@ -396,7 +395,7 @@ m2::void_expected CanPlayerNetwork(m2::Character& player, const m2g::pb::TurnBas
 		return is_merchant_location(static_cast<Location>(coal_source));
 	});
 	// Check if the player has enough money
-	if (m2::RoundI(player.GetResource(MONEY)) < road_cost(network_action.connection_2()) + M2G_PROXY.market_coal_cost(m2::I(coal_from_market))) {
+	if (player.GetVariable(MONEY).GetIntOrZero() < road_cost(network_action.connection_2()) + M2G_PROXY.market_coal_cost(m2::I(coal_from_market))) {
 		return make_unexpected("Player does not have enough money");
 	}
 
@@ -425,7 +424,7 @@ std::pair<Card,int> ExecuteNetworkAction(m2::Character& player, const m2g::pb::T
 		auto location = static_cast<Location>(coal_source);
 		if (is_industry_location(location)) {
 			auto* factory = FindFactoryAtLocation(location);
-			factory->GetCharacter().RemoveResource(COAL_CUBE_COUNT, 1.0f);
+			factory->GetCharacter().SetVariable(COAL_CUBE_COUNT, IFE{std::max(factory->GetCharacter().GetVariable(COAL_CUBE_COUNT).GetIntOrZero() - 1, 0)});
 		} else if (is_merchant_location(location)) {
 			M2G_PROXY.buy_coal_from_market();
 		}
@@ -433,7 +432,7 @@ std::pair<Card,int> ExecuteNetworkAction(m2::Character& player, const m2g::pb::T
 	if (network_action.beer_source()) {
 		auto location = static_cast<Location>(network_action.beer_source());
 		auto* factory = FindFactoryAtLocation(location);
-		factory->GetCharacter().RemoveResource(BEER_BARREL_COUNT, 1.0f);
+		factory->GetCharacter().SetVariable(BEER_BARREL_COUNT, IFE{std::max(factory->GetCharacter().GetVariable(BEER_BARREL_COUNT).GetIntOrZero() - 1, 0)});
 	}
 
 	// Create the road on the map

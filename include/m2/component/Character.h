@@ -74,18 +74,13 @@ namespace m2 {
 		virtual float AddResource(m2g::pb::ResourceType resource_type, float amount) = 0;
 		virtual float RemoveResource(m2g::pb::ResourceType resource_type, float amount) = 0;
 		virtual void ClearResource(m2g::pb::ResourceType resource_type) = 0;
-		virtual void ClearResources() = 0;
 
 		[[nodiscard]] virtual bool HasAttribute(m2g::pb::AttributeType attribute_type) const = 0;
 		[[nodiscard]] virtual float GetAttribute(m2g::pb::AttributeType attribute_type) const = 0;
-		virtual float SetAttribute(m2g::pb::AttributeType attribute_type, float value) = 0;
-		virtual void ClearAttribute(m2g::pb::AttributeType attribute_type) = 0;
-		virtual void ClearAttributes() = 0;
 
 		[[nodiscard]] virtual IFE GetProperty(m2g::pb::PropertyType) const = 0;
 		virtual void SetProperty(m2g::pb::PropertyType, int32_t) = 0;
 		virtual void SetProperty(m2g::pb::PropertyType, FE) = 0;
-		virtual void AddPropertyMax(m2g::pb::PropertyType, const FE& add, const FE& maxValue) = 0;
 
 		[[nodiscard]] virtual IFE GetVariable(m2g::pb::VariableType) const = 0;
 		virtual IFE SetVariable(m2g::pb::VariableType, IFE) = 0;
@@ -120,18 +115,13 @@ namespace m2 {
 		float AddResource(m2g::pb::ResourceType resource_type, float amount) override;
 		float RemoveResource(m2g::pb::ResourceType resource_type, float amount) override;
 		void ClearResource(m2g::pb::ResourceType resource_type) override;
-		void ClearResources() override;
 
 		[[nodiscard]] bool HasAttribute(m2g::pb::AttributeType attribute_type) const override;
 		[[nodiscard]] float GetAttribute(m2g::pb::AttributeType attribute_type) const override;
-		float SetAttribute(m2g::pb::AttributeType attribute_type, float value) override;
-		void ClearAttribute(m2g::pb::AttributeType attribute_type) override;
-		void ClearAttributes() override;
 
 		[[nodiscard]] IFE GetProperty(m2g::pb::PropertyType) const override { throw M2_ERROR("CompactCharacter doesn't support properties"); }
 		void SetProperty(m2g::pb::PropertyType, int32_t) override { throw M2_ERROR("CompactCharacter doesn't support properties"); }
 		void SetProperty(m2g::pb::PropertyType, FE) override { throw M2_ERROR("CompactCharacter doesn't support properties"); }
-		void AddPropertyMax(m2g::pb::PropertyType, const FE&, const FE&) override { throw M2_ERROR("CompactCharacter doesn't support properties"); }
 
 		[[nodiscard]] IFE GetVariable(m2g::pb::VariableType) const override;
 		IFE SetVariable(m2g::pb::VariableType, IFE) override;
@@ -167,20 +157,15 @@ namespace m2 {
 		float AddResource(m2g::pb::ResourceType resource_type, float amount) override;
 		float RemoveResource(m2g::pb::ResourceType resource_type, float amount) override;
 		void ClearResource(m2g::pb::ResourceType resource_type) override;
-		void ClearResources() override;
 
 		[[nodiscard]] bool HasAttribute(m2g::pb::AttributeType attribute_type) const override;
 		[[nodiscard]] float GetAttribute(m2g::pb::AttributeType attribute_type) const override;
-		float SetAttribute(m2g::pb::AttributeType attribute_type, float value) override;
-		void ClearAttribute(m2g::pb::AttributeType attribute_type) override;
-		void ClearAttributes() override;
 
 		[[nodiscard]] bool HasProperty(const m2g::pb::PropertyType pt) const { return static_cast<bool>(_properties[PropertyTypeIndex(pt)]); }
 		[[nodiscard]] IFE GetProperty(const m2g::pb::PropertyType pt) const override { return _properties[PropertyTypeIndex(pt)]; }
 		void SetProperty(const m2g::pb::PropertyType pt, const int32_t value) override { _properties[PropertyTypeIndex(pt)] = IFE{value}; }
 		void SetProperty(const m2g::pb::PropertyType pt, FE value) override { _properties[PropertyTypeIndex(pt)] = IFE{value}; }
 		void SetProperty(const m2g::pb::PropertyType pt, IFE value) { _properties[PropertyTypeIndex(pt)] = value; }
-		void AddPropertyMax(m2g::pb::PropertyType pt, const FE& add, const FE& maxValue) override;
 		void ClearProperty(const m2g::pb::PropertyType pt) { _properties[PropertyTypeIndex(pt)] = {}; }
 		void ClearProperties() { _properties = std::vector<IFE>(pb::enum_value_count<m2g::pb::PropertyType>()); }
 
@@ -193,7 +178,7 @@ namespace m2 {
 		static int ResourceTypeIndex(m2g::pb::ResourceType);
 		static int AttributeTypeIndex(m2g::pb::AttributeType);
 		static int PropertyTypeIndex(m2g::pb::PropertyType);
-		static int VariableIndex(const m2g::pb::VariableType v) { return pb::enum_index<m2g::pb::VariableType>(v); }
+		static int VariableIndex(const m2g::pb::VariableType v) { return pb::enum_index(v); }
 		friend void FullCharacterIteratorIncrementor(Iterator&);
 	};
 
