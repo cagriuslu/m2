@@ -86,12 +86,18 @@ namespace m2 {
 		virtual void SetProperty(m2g::pb::PropertyType, int32_t) = 0;
 		virtual void SetProperty(m2g::pb::PropertyType, FE) = 0;
 		virtual void AddPropertyMax(m2g::pb::PropertyType, const FE& add, const FE& maxValue) = 0;
+
+		[[nodiscard]] virtual IFE GetVariable(m2g::pb::VariableType) const = 0;
+		virtual IFE SetVariable(m2g::pb::VariableType, IFE) = 0;
+		virtual void ClearVariable(m2g::pb::VariableType) = 0;
+		virtual void ClearVariables() = 0;
 	};
 
 	class CompactCharacter final : public Character {
 		const Item* _item{};
 		std::pair<m2g::pb::ResourceType, float> _resource;
 		std::pair<m2g::pb::AttributeType, float> _attribute;
+		std::pair<m2g::pb::VariableType, IFE> _variable;
 
 	public:
 		CompactCharacter() = default;
@@ -126,6 +132,11 @@ namespace m2 {
 		void SetProperty(m2g::pb::PropertyType, int32_t) override { throw M2_ERROR("CompactCharacter doesn't support properties"); }
 		void SetProperty(m2g::pb::PropertyType, FE) override { throw M2_ERROR("CompactCharacter doesn't support properties"); }
 		void AddPropertyMax(m2g::pb::PropertyType, const FE&, const FE&) override { throw M2_ERROR("CompactCharacter doesn't support properties"); }
+
+		[[nodiscard]] IFE GetVariable(m2g::pb::VariableType) const override;
+		IFE SetVariable(m2g::pb::VariableType, IFE) override;
+		void ClearVariable(m2g::pb::VariableType) override;
+		void ClearVariables() override;
 	};
 
 	class FastCharacter final : public Character {
@@ -133,6 +144,7 @@ namespace m2 {
 		std::vector<float> _resources = std::vector<float>(pb::enum_value_count<m2g::pb::ResourceType>()); // TODO deprecated
 		std::vector<float> _attributes = std::vector<float>(pb::enum_value_count<m2g::pb::AttributeType>()); // TODO deprecated
 		std::vector<IFE> _properties = std::vector<IFE>(pb::enum_value_count<m2g::pb::PropertyType>());
+		std::vector<IFE> _variables = std::vector<IFE>(pb::enum_value_count<m2g::pb::VariableType>());
 
 	public:
 		FastCharacter() = default;
@@ -166,16 +178,22 @@ namespace m2 {
 		[[nodiscard]] bool HasProperty(const m2g::pb::PropertyType pt) const { return static_cast<bool>(_properties[PropertyTypeIndex(pt)]); }
 		[[nodiscard]] IFE GetProperty(const m2g::pb::PropertyType pt) const override { return _properties[PropertyTypeIndex(pt)]; }
 		void SetProperty(const m2g::pb::PropertyType pt, const int32_t value) override { _properties[PropertyTypeIndex(pt)] = IFE{value}; }
-		void SetProperty(const m2g::pb::PropertyType pt, FE value) override { _properties[PropertyTypeIndex(pt)] = IFE{std::move(value)}; }
-		void SetProperty(const m2g::pb::PropertyType pt, IFE value) { _properties[PropertyTypeIndex(pt)] = std::move(value); }
+		void SetProperty(const m2g::pb::PropertyType pt, FE value) override { _properties[PropertyTypeIndex(pt)] = IFE{value}; }
+		void SetProperty(const m2g::pb::PropertyType pt, IFE value) { _properties[PropertyTypeIndex(pt)] = value; }
 		void AddPropertyMax(m2g::pb::PropertyType pt, const FE& add, const FE& maxValue) override;
 		void ClearProperty(const m2g::pb::PropertyType pt) { _properties[PropertyTypeIndex(pt)] = {}; }
 		void ClearProperties() { _properties = std::vector<IFE>(pb::enum_value_count<m2g::pb::PropertyType>()); }
+
+		[[nodiscard]] IFE GetVariable(const m2g::pb::VariableType v) const override { return _variables[VariableIndex(v)]; }
+		IFE SetVariable(const m2g::pb::VariableType v, const IFE ife) override { _variables[VariableIndex(v)] = ife; return ife; }
+		void ClearVariable(const m2g::pb::VariableType v) override { _variables[VariableIndex(v)] = {}; }
+		void ClearVariables() override { _variables = std::vector<IFE>(pb::enum_value_count<m2g::pb::VariableType>()); }
 
 	private:
 		static int ResourceTypeIndex(m2g::pb::ResourceType);
 		static int AttributeTypeIndex(m2g::pb::AttributeType);
 		static int PropertyTypeIndex(m2g::pb::PropertyType);
+		static int VariableIndex(const m2g::pb::VariableType v) { return pb::enum_index<m2g::pb::VariableType>(v); }
 		friend void FullCharacterIteratorIncrementor(Iterator&);
 	};
 

@@ -181,6 +181,28 @@ void m2::CompactCharacter::ClearAttributes() {
 	_attribute.second = 0;
 }
 
+m2::IFE m2::CompactCharacter::GetVariable(const m2g::pb::VariableType v) const {
+	if (_variable.first == v) {
+		return _variable.second;
+	}
+	return {};
+}
+m2::IFE m2::CompactCharacter::SetVariable(const m2g::pb::VariableType v, const IFE ife) {
+	if (_variable.first != m2g::pb::NO_VARIABLE && _variable.first != v) {
+		throw M2_ERROR("CompactCharacter cannot hold more than one type of variables");
+	}
+	_variable = std::make_pair(v, ife);
+	return ife;
+}
+void m2::CompactCharacter::ClearVariable(const m2g::pb::VariableType v) {
+	if (_variable.first == v) {
+		_variable = {};
+	}
+}
+void m2::CompactCharacter::ClearVariables() {
+	_variable = {};
+}
+
 void m2::FullCharacterIteratorIncrementor(m2::Character::Iterator& it) {
 	const auto& character = dynamic_cast<const m2::FastCharacter&>(it.GetCharacter());
 	auto curr_index = it.GetIndex();
