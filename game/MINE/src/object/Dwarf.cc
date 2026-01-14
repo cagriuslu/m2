@@ -53,9 +53,10 @@ m2::void_expected create_dwarf(m2::Object& obj, const m2::VecF& position) {
 			phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->ApplyForceToCenter(direction_vector * force_multiplier * 4000.0f);
 		}
 		// Jump
-		auto is_grounded = chr.GetResource(RESOURCE_IS_GROUNDED_X) != 0.0f && chr.GetResource(RESOURCE_IS_GROUNDED_Y) != 0.0f;
+		const auto is_grounded = static_cast<bool>(chr.GetVariable(VARIABLE_IS_GROUNDED_X))
+			&& static_cast<bool>(chr.GetVariable(VARIABLE_IS_GROUNDED_Y));
 		if (is_grounded && M2_GAME.events.IsKeyDown(JUMP)) {
-			chr.ClearResource(RESOURCE_JUMP_ENERGY);
+			chr.ClearVariable(VARIABLE_JUMP_ENERGY);
 			auto linear_velocity = phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->GetLinearVelocity();
 			linear_velocity = linear_velocity.WithY(linear_velocity.GetY() - 7.0f);
 			phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->SetLinearVelocity(linear_velocity);
@@ -69,11 +70,11 @@ m2::void_expected create_dwarf(m2::Object& obj, const m2::VecF& position) {
 				if (obj_under_mouse.GetCharacterId()) {
 					auto& chr_under_mouse = obj_under_mouse.GetCharacter();
 					// If character has HP
-					if (chr_under_mouse.HasResource(RESOURCE_HP)) {
+					if (chr_under_mouse.GetVariable(VARIABLE_HP)) {
 						// Damage object
-						chr_under_mouse.RemoveResource(RESOURCE_HP, 2.0f * m2::ToDurationF(delta));
+						chr_under_mouse.SubtractVariable(VARIABLE_HP, 2.0f * m2::ToDurationF(delta), 0.0f);
 						// Show health bar
-						auto hp = chr_under_mouse.GetResource(RESOURCE_HP);
+						auto hp = chr_under_mouse.GetVariable(VARIABLE_HP).GetFEOrZero().ToFloat();
 						// If object under mouse runs out of HP
 						if (hp == 0.0f) {
 							// Delete object
@@ -89,15 +90,15 @@ m2::void_expected create_dwarf(m2::Object& obj, const m2::VecF& position) {
 		}
 	};
 	chr.update = [](m2::Character& chr, const m2::Stopwatch::Duration& delta) {
-		chr.AddResource(RESOURCE_JUMP_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
+		chr.AddVariable(VARIABLE_JUMP_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
 	};
 	phy.onCollision = [&chr](MAYBE m2::Physique& phy, m2::Physique& other, const m2::box2d::Contact& contact) {
 		// Check if in contact with obstacle
 		if (other.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] && other.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->GetAllLayersBelongingTo() & (COLLIDER_LAYER_BACKGROUND_OBSTACLE | COLLIDER_LAYER_FOREGROUND_OBSTACLE)) {
 			// Check is contact normal points upwards
 			if (abs(contact.normal.GetX()) <= -contact.normal.GetY()) {
-				chr.SetResource(RESOURCE_IS_GROUNDED_X, other.position.GetX());
-				chr.SetResource(RESOURCE_IS_GROUNDED_Y, other.position.GetY());
+				chr.SetVariable(VARIABLE_IS_GROUNDED_X, other.position.GetX());
+				chr.SetVariable(VARIABLE_IS_GROUNDED_Y, other.position.GetY());
 			}
 		}
 	};
@@ -105,9 +106,9 @@ m2::void_expected create_dwarf(m2::Object& obj, const m2::VecF& position) {
 		// Check if in contact with obstacle
 		if (other.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] && other.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->GetAllLayersBelongingTo() & (COLLIDER_LAYER_BACKGROUND_OBSTACLE | COLLIDER_LAYER_FOREGROUND_OBSTACLE)) {
 			// Check if the other object is the grounding object
-			if (chr.GetResource(RESOURCE_IS_GROUNDED_X) == other.position.GetX() && chr.GetResource(RESOURCE_IS_GROUNDED_Y) == other.position.GetY()) {
-				chr.SetResource(RESOURCE_IS_GROUNDED_X, 0.0f);
-				chr.SetResource(RESOURCE_IS_GROUNDED_Y, 0.0f);
+			if (chr.GetVariable(VARIABLE_IS_GROUNDED_X).GetFOrZero() == other.position.GetX() && chr.GetVariable(VARIABLE_IS_GROUNDED_Y).GetFOrZero() == other.position.GetY()) {
+				chr.SetVariable(VARIABLE_IS_GROUNDED_X, 0.0f);
+				chr.SetVariable(VARIABLE_IS_GROUNDED_Y, 0.0f);
 			}
 		}
 	};

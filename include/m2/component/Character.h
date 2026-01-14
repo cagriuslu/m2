@@ -9,7 +9,6 @@
 #include <functional>
 #include <variant>
 
-
 namespace m2 {
 	class Character : public Component {
 	public:
@@ -83,6 +82,26 @@ namespace m2 {
 		virtual IFE SetVariable(m2g::pb::VariableType, IFE) = 0;
 		virtual void ClearVariable(m2g::pb::VariableType) = 0;
 		virtual void ClearVariables() = 0;
+
+		// Utilities
+
+		IFE SetVariable(const m2g::pb::VariableType vt, const int32_t i) { return SetVariable(vt, IFE{i}); }
+		IFE SetVariable(const m2g::pb::VariableType vt, const FE fe) { return SetVariable(vt, IFE{fe}); }
+		template <int dummy = {}>
+		constexpr IFE SetVariable(const m2g::pb::VariableType vt, const float value) requires (not GAME_IS_DETERMINISTIC) { return SetVariable(vt, IFE{FE{value}}); }
+
+		int32_t AddVariable(m2g::pb::VariableType, int32_t value, std::optional<int32_t> maxValue = {});
+		int32_t SubtractVariable(m2g::pb::VariableType, int32_t value, std::optional<int32_t> minValue = {});
+		FE AddVariable(m2g::pb::VariableType, FE value, std::optional<FE> maxValue = {});
+		FE SubtractVariable(m2g::pb::VariableType, FE value, std::optional<FE> minValue = {});
+		template <int dummy = {}>
+		constexpr float AddVariable(const m2g::pb::VariableType vt, const float value, const std::optional<float> maxValue = {}) requires (not GAME_IS_DETERMINISTIC) {
+			return AddVariable(vt, FE{value}, maxValue ? std::optional{FE{*maxValue}} : std::optional<FE>{}).ToFloat();
+		}
+		template <int dummy = {}>
+		constexpr float SubtractVariable(const m2g::pb::VariableType vt, const float value, const std::optional<float> minValue = {}) requires (not GAME_IS_DETERMINISTIC) {
+			return SubtractVariable(vt, FE{value}, minValue ? std::optional{FE{*minValue}} : std::optional<FE>{}).ToFloat();
+		}
 	};
 
 	class CompactCharacter final : public Character {

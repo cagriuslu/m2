@@ -1,0 +1,11 @@
+syntax = "proto3";
+package m2g.pb;
+
+enum VariableType {
+  NO_VARIABLE = 0;
+
+  VARIABLE_HP = 1;
+  VARIABLE_JUMP_ENERGY = 1001;
+  VARIABLE_IS_GROUNDED_X = 1002;
+  VARIABLE_IS_GROUNDED_Y = 1003;
+}

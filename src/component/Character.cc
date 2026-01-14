@@ -75,6 +75,51 @@ std::vector<m2g::pb::CardType> m2::Character::NamedCardTypes(const m2g::pb::Card
 	return types;
 }
 
+int32_t Character::AddVariable(const m2g::pb::VariableType vt, const int32_t value, const std::optional<int32_t> maxValue) {
+	if (GetVariable(vt).IsFE()) {
+		throw M2_ERROR("Variable contains FE");
+	}
+	if (maxValue) {
+		SetVariable(vt, std::min(GetVariable(vt).GetIntOrZero() + value, *maxValue));
+	} else {
+		SetVariable(vt, GetVariable(vt).GetIntOrZero() + value);
+	}
+	return GetVariable(vt).UnsafeGetInt();
+}
+int32_t Character::SubtractVariable(const m2g::pb::VariableType vt, const int32_t value, const std::optional<int32_t> minValue) {
+	if (GetVariable(vt).IsFE()) {
+		throw M2_ERROR("Variable contains FE");
+	}
+	if (minValue) {
+		SetVariable(vt, std::max(GetVariable(vt).GetIntOrZero() - value, *minValue));
+	} else {
+		SetVariable(vt, GetVariable(vt).GetIntOrZero() - value);
+	}
+	return GetVariable(vt).UnsafeGetInt();
+}
+FE Character::AddVariable(const m2g::pb::VariableType vt, const FE value, const std::optional<FE> maxValue) {
+	if (GetVariable(vt).IsInt()) {
+		throw M2_ERROR("Variable contains int32");
+	}
+	if (maxValue) {
+		SetVariable(vt, std::min(GetVariable(vt).GetFEOrZero() + value, *maxValue));
+	} else {
+		SetVariable(vt, GetVariable(vt).GetFEOrZero() + value);
+	}
+	return GetVariable(vt).UnsafeGetFE();
+}
+FE Character::SubtractVariable(const m2g::pb::VariableType vt, const FE value, const std::optional<FE> minValue) {
+	if (GetVariable(vt).IsInt()) {
+		throw M2_ERROR("Variable contains int32");
+	}
+	if (minValue) {
+		SetVariable(vt, std::max(GetVariable(vt).GetFEOrZero() - value, *minValue));
+	} else {
+		SetVariable(vt, GetVariable(vt).GetFEOrZero() - value);
+	}
+	return GetVariable(vt).UnsafeGetFE();
+}
+
 namespace {
 	void tiny_character_iterator_incrementor(m2::Character::Iterator& it) {
 		it.Set(nullptr);
