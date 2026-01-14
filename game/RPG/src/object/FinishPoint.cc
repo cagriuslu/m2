@@ -14,7 +14,7 @@ m2::void_expected rpg::init_finish_point(m2::Object& obj, const m2::VecF& positi
 		.fixtures = {m2::third_party::physics::FixtureDefinition{
 			.shape = m2::third_party::physics::CircleShape::FromSpriteCircleFixture(sprite.OriginalPb().regular().fixtures(0).circle(), sprite.Ppm()),
 			.isSensor = true,
-			.colliderFilter = m2::third_party::physics::gColliderCategoryToParams[m2::I(m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_FRIENDLY_ITEM)]
+			.colliderFilter = m2::third_party::physics::gColliderCategoryToParams[m2::I(m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_FRIENDLY_CARD)]
 		}},
 		.allowSleeping = true,
 		.initiallyAwake = false,

@@ -103,7 +103,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::HandleSignal(const POIOrCancel
 
 std::optional<NetworkJourneyStep> NetworkJourney::HandleInitialEnterSignal() {
 	// Ask if double railroads should be built
-	if (M2G_PROXY.is_railroad_era() && 1 < M2_PLAYER.GetCharacter().CountItem(m2g::pb::ROAD_TILE)) {
+	if (M2G_PROXY.is_railroad_era() && 1 < M2_PLAYER.GetCharacter().CountCard(m2g::pb::ROAD_TILE)) {
 		_build_double_railroads = ask_for_confirmation("Build double railroads?", "", "Yes", "No");
 	}
 
@@ -354,7 +354,7 @@ m2::void_expected CanPlayerNetwork(m2::Character& player, const m2g::pb::TurnBas
 	if (not is_card(network_action.card())) {
 		return make_unexpected("Selected card is not a card");
 	}
-	if (player.FindItems(network_action.card()) == player.EndItems()) {
+	if (player.FindCards(network_action.card()) == player.EndCards()) {
 		return make_unexpected("Player does not have the selected card");
 	}
 
@@ -370,7 +370,7 @@ m2::void_expected CanPlayerNetwork(m2::Character& player, const m2g::pb::TurnBas
 			return make_unexpected("Selected connections are the same");
 		}
 	}
-	if (player.CountItem(ROAD_TILE) < (network_action.connection_2() ? 2 : 1)) {
+	if (player.CountCard(ROAD_TILE) < (network_action.connection_2() ? 2 : 1)) {
 		return make_unexpected("Player doesn't have enough road tiles");
 	}
 	// Check if the connections can be built in this era
@@ -402,15 +402,15 @@ m2::void_expected CanPlayerNetwork(m2::Character& player, const m2g::pb::TurnBas
 	return {};
 }
 
-std::pair<Card,int> ExecuteNetworkAction(m2::Character& player, const m2g::pb::TurnBasedClientCommand_NetworkAction& network_action) {
+std::pair<m2g::pb::CardType,int> ExecuteNetworkAction(m2::Character& player, const m2g::pb::TurnBasedClientCommand_NetworkAction& network_action) {
 	// Assume everything is validated
 
 	// Take road tiles from player
-	auto road_tile_it = player.FindItems(ROAD_TILE);
-	player.RemoveItem(road_tile_it);
+	auto road_tile_it = player.FindCards(ROAD_TILE);
+	player.RemoveCard(road_tile_it);
 	if (network_action.connection_2()) {
-		auto road_tile_it_2 = player.FindItems(ROAD_TILE);
-		player.RemoveItem(road_tile_it_2);
+		auto road_tile_it_2 = player.FindCards(ROAD_TILE);
+		player.RemoveCard(road_tile_it_2);
 	}
 
 	// Calculate the cost of building the road

@@ -1,5 +1,5 @@
 #include <m2/Proxy.h>
-#include <rpg/group/ItemGroup.h>
+#include <rpg/group/CardGroup.h>
 #include <rpg/object/Enemy.h>
 #include <rpg/object/Player.h>
 #include <rpg/Objects.h>
@@ -12,9 +12,9 @@
 
 using namespace m2g;
 
-const std::unordered_map<pb::ItemType, std::pair<pb::ResourceType, float>> m2g::Proxy::CONSUMABLE_BENEFITS = {
-	{pb::ITEM_CONSUMABLE_HP_POTION_20, {pb::RESOURCE_HP, 0.2f}},
-	{pb::ITEM_CONSUMABLE_HP_POTION_80, {pb::RESOURCE_HP, 0.8f}},
+const std::unordered_map<pb::CardType, std::pair<pb::ResourceType, float>> m2g::Proxy::CONSUMABLE_BENEFITS = {
+	{pb::CARD_CONSUMABLE_HP_POTION_20, {pb::RESOURCE_HP, 0.2f}},
+	{pb::CARD_CONSUMABLE_HP_POTION_80, {pb::RESOURCE_HP, 0.8f}},
 };
 
 void m2g::Proxy::load_resources() {
@@ -68,14 +68,14 @@ m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object&
 			return rpg::init_finish_point(obj, position);
 		case pb::ObjectType::CUTEOPUS:
 			return Enemy::init(obj, position);
-		case pb::ObjectType::MACHINE_GUN_ITEM_DROP:
-			return rpg::create_dropped_item(obj, position, m2g::pb::ITEM_REUSABLE_MACHINE_GUN);
-		case pb::ObjectType::EXPLOSIVE_ITEM_DROP:
-			return rpg::create_dropped_item(obj, position, m2g::pb::ITEM_REUSABLE_EXPLOSIVE);
-		case pb::ObjectType::LONG_SWORD_ITEM_DROP:
-			return rpg::create_dropped_item(obj, position, m2g::pb::ITEM_REUSABLE_LONG_SWORD);
-		case pb::ObjectType::AXE_ITEM_DROP:
-			return rpg::create_dropped_item(obj, position, m2g::pb::ITEM_REUSABLE_AXE);
+		case pb::ObjectType::MACHINE_GUN_CARD_DROP:
+			return rpg::create_dropped_card(obj, position, m2g::pb::CARD_REUSABLE_MACHINE_GUN);
+		case pb::ObjectType::EXPLOSIVE_CARD_DROP:
+			return rpg::create_dropped_card(obj, position, m2g::pb::CARD_REUSABLE_EXPLOSIVE);
+		case pb::ObjectType::LONG_SWORD_CARD_DROP:
+			return rpg::create_dropped_card(obj, position, m2g::pb::CARD_REUSABLE_LONG_SWORD);
+		case pb::ObjectType::AXE_CARD_DROP:
+			return rpg::create_dropped_card(obj, position, m2g::pb::CARD_REUSABLE_AXE);
 		case pb::BUSH_01:
 		case pb::FLOWER_ORANGE_02:
 		case pb::FLOWER_PINK_03:
@@ -98,9 +98,9 @@ m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object&
 m2::Group* m2g::Proxy::create_group(pb::GroupType group_type) {
 	switch (group_type) {
 		case pb::GROUP_LOW_HP_POTION_DROPPER:
-			return new rpg::ItemGroup({std::make_pair(pb::ITEM_CONSUMABLE_HP_POTION_20, 4.0f), std::make_pair(pb::ITEM_CONSUMABLE_HP_POTION_80, 1.0f)});
+			return new rpg::CardGroup({std::make_pair(pb::CARD_CONSUMABLE_HP_POTION_20, 4.0f), std::make_pair(pb::CARD_CONSUMABLE_HP_POTION_80, 1.0f)});
 		case pb::GROUP_MACHINE_GUN_DROPPER:
-			return new rpg::ItemGroup({{pb::ITEM_REUSABLE_MACHINE_GUN, 1.0f}});
+			return new rpg::CardGroup({{pb::CARD_REUSABLE_MACHINE_GUN, 1.0f}});
 		default:
 			return nullptr;
 	}
@@ -198,7 +198,7 @@ const m2::UiPanelBlueprint* m2g::Proxy::generate_right_hud() {
 	        .onUpdate = [](m2::widget::ProgressBar& self) {
 		        if (const auto *player = M2_LEVEL.GetPlayer(); player) {
 			        if (const auto ammo = player->GetCharacter().GetResource(pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO); ammo != 0.0f) {
-				        if (const auto weapon = player->GetCharacter().FindItems(pb::ITEM_CATEGORY_SPECIAL_RANGED_WEAPON); weapon) {
+				        if (const auto weapon = player->GetCharacter().FindCards(pb::CARD_CATEGORY_SPECIAL_RANGED_WEAPON); weapon) {
 					        self.SetProgress(ammo / weapon->GetAcquireBenefit(pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO));
 				        }
 			        }

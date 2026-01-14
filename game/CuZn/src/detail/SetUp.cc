@@ -24,7 +24,7 @@ std::vector<m2g::pb::SpriteType> PossiblyActiveMerchantLocations(int client_coun
 	}
 }
 
-std::vector<m2g::pb::ItemType> PrepareMerchantLicenseList(int client_count) {
+std::vector<m2g::pb::CardType> PrepareMerchantLicenseList(int client_count) {
 	// Figure out the attribute to use for card selection
 	m2g::pb::ConstantType count_attr = [=]() {
 		switch (client_count) {
@@ -36,11 +36,11 @@ std::vector<m2g::pb::ItemType> PrepareMerchantLicenseList(int client_count) {
 	}();
 
 	// Prepare the list
-	std::vector<m2g::pb::ItemType> merchant_licenses;
-	M2_GAME.ForEachNamedItem([&merchant_licenses, count_attr](MAYBE m2g::pb::ItemType item_type, const m2::Item& item) {
-		if (item.Category() == pb::ITEM_CATEGORY_MERCHANT_LICENSE) {
-			auto license_count = item.GetConstant(count_attr).GetIntOrZero();
-			merchant_licenses.insert(merchant_licenses.end(), license_count, item.Type());
+	std::vector<m2g::pb::CardType> merchant_licenses;
+	M2_GAME.ForEachNamedCard([&merchant_licenses, count_attr](MAYBE m2g::pb::CardType card_type, const m2::Card& card) {
+		if (card.Category() == pb::CARD_CATEGORY_MERCHANT_LICENSE) {
+			auto license_count = card.GetConstant(count_attr).GetIntOrZero();
+			merchant_licenses.insert(merchant_licenses.end(), license_count, card.Type());
 		}
 		return true;
 	});
@@ -53,7 +53,7 @@ std::vector<m2g::pb::ItemType> PrepareMerchantLicenseList(int client_count) {
 	return merchant_licenses;
 }
 
-std::vector<m2g::pb::ItemType> PrepareDrawDeck(int client_count) {
+std::vector<m2g::pb::CardType> PrepareDrawDeck(int client_count) {
 	// Figure out the attribute to use for card selection
 	m2g::pb::ConstantType count_attr = [=]() {
 		switch (client_count) {
@@ -65,11 +65,11 @@ std::vector<m2g::pb::ItemType> PrepareDrawDeck(int client_count) {
 	}();
 
 	// Prepare deck
-	std::vector<m2g::pb::ItemType> draw_deck;
-	M2_GAME.ForEachNamedItem([&draw_deck, count_attr](MAYBE m2g::pb::ItemType item_type, const m2::Item& item) {
-		if (item.Category() == pb::ITEM_CATEGORY_INDUSTRY_CARD || item.Category() == pb::ITEM_CATEGORY_CITY_CARD) {
-			auto card_count = item.GetConstant(count_attr).GetIntOrZero();
-			draw_deck.insert(draw_deck.end(), card_count, item.Type());
+	std::vector<m2g::pb::CardType> draw_deck;
+	M2_GAME.ForEachNamedCard([&draw_deck, count_attr](MAYBE m2g::pb::CardType card_type, const m2::Card& card) {
+		if (card.Category() == pb::CARD_CATEGORY_INDUSTRY_CARD || card.Category() == pb::CARD_CATEGORY_CITY_CARD) {
+			auto card_count = card.GetConstant(count_attr).GetIntOrZero();
+			draw_deck.insert(draw_deck.end(), card_count, card.Type());
 		}
 		return true;
 	});
@@ -82,7 +82,7 @@ std::vector<m2g::pb::ItemType> PrepareDrawDeck(int client_count) {
 	return draw_deck;
 }
 
-void Give8CardsToEachPlayer(std::vector<ItemType>& deck) {
+void Give8CardsToEachPlayer(std::vector<CardType>& deck) {
 	for (size_t i = 0; i < M2_LEVEL.multiPlayerObjectIds.size(); ++i) {
 		const auto playerObjectId = M2_LEVEL.multiPlayerObjectIds[i];
 		m2Repeat(8) {
@@ -90,8 +90,8 @@ void Give8CardsToEachPlayer(std::vector<ItemType>& deck) {
 			const auto cardType = deck.back();
 			deck.pop_back();
 			// Add card
-			const auto& card = M2_GAME.GetNamedItem(cardType);
-			M2_LEVEL.objects[playerObjectId].GetCharacter().AddNamedItem(card);
+			const auto& card = M2_GAME.GetNamedCard(cardType);
+			M2_LEVEL.objects[playerObjectId].GetCharacter().AddNamedCard(card);
 			LOG_DEBUG("Giving card to player", i, card.in_game_name());
 		}
 	}

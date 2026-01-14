@@ -50,7 +50,7 @@ enum SpriteType {
     CUTEOPUS_CORPSE_RAW = 214;
     CUTEOPUS_CORPSE = 215;
 
-    // Items
+    // Cards
     GUN_BULLET = 2001;
     SWORD = 2002;
     MACHINE_GUN_BULLET = 2003;

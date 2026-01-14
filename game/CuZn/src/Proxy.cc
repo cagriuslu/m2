@@ -98,8 +98,8 @@ void m2g::Proxy::turnBasedServerPopulate(MAYBE const std::string& name, MAYBE co
 				// Retrieve merchant object
 				auto merchant_object_id = merchant_object_ids[possibly_active_merchant_loc];
 				auto& merchant_char = M2_LEVEL.objects[merchant_object_id].GetCharacter();
-				LOG_DEBUG("Adding license to merchant", m2g::pb::ItemType_Name(license));
-				merchant_char.AddNamedItem(M2_GAME.GetNamedItem(license));
+				LOG_DEBUG("Adding license to merchant", m2g::pb::CardType_Name(license));
+				merchant_char.AddNamedCard(M2_GAME.GetNamedCard(license));
 				merchant_char.SetVariable(pb::BEER_BARREL_COUNT, IFE{merchant_char.GetVariable(pb::BEER_BARREL_COUNT).GetIntOrZero() + 1});
 			}
 		}
@@ -210,7 +210,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		auto card = _draw_deck.back();
 		_draw_deck.pop_back();
 		game_state_tracker().SetVariable(pb::DRAW_DECK_SIZE, IFE{I(_draw_deck.size())});
-		turn_holder_character.AddNamedItem(M2_GAME.GetNamedItem(card));
+		turn_holder_character.AddNamedCard(M2_GAME.GetNamedCard(card));
 
 		// Check if first turn finished for all players
 		if (_waiting_players.empty()) {
@@ -234,7 +234,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 			auto card = _draw_deck.back();
 			_draw_deck.pop_back();
 			game_state_tracker().SetVariable(pb::DRAW_DECK_SIZE, IFE{I(_draw_deck.size())});
-			turn_holder_character.AddNamedItem(M2_GAME.GetNamedItem(card));
+			turn_holder_character.AddNamedCard(M2_GAME.GetNamedCard(card));
 		}
 
 		game_state_tracker().SetVariable(pb::IS_LAST_ACTION_OF_PLAYER, IFE{0});
@@ -397,13 +397,13 @@ void m2g::Proxy::bot_handle_server_update(const m2::pb::TurnBasedServerUpdate& s
 			return obj_desc.object_id() == player_object_id;
 		});
 		// Find any card
-		auto card_it = std::find_if(object_it->named_items().begin(), object_it->named_items().end(), [](int item_type) {
-			return is_card(static_cast<m2g::pb::ItemType>(item_type));
+		auto card_it = std::find_if(object_it->named_cards().begin(), object_it->named_cards().end(), [](int card_type) {
+			return is_card(static_cast<m2g::pb::CardType>(card_type));
 		});
 		// Pass turn
 		LOG_INFO("Bot passing turn");
 		m2g::pb::TurnBasedClientCommand cc;
-		cc.mutable_pass_action()->set_card(static_cast<m2g::pb::ItemType>(*card_it));
+		cc.mutable_pass_action()->set_card(static_cast<m2g::pb::CardType>(*card_it));
 		M2_GAME.FindBot(receiver_index).queue_client_command(cc);
 	}
 }
@@ -459,12 +459,12 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 	}
 }
 
-m2::void_expected m2g::Proxy::init_server_update_fg_object(m2::Object& obj, const m2::VecF& position, const std::vector<m2g::pb::ItemType>& items) {
+m2::void_expected m2g::Proxy::init_server_update_fg_object(m2::Object& obj, const m2::VecF& position, const std::vector<m2g::pb::CardType>& cards) {
 	switch (obj.GetType()) {
 		case pb::FACTORY: {
-			auto city = std::ranges::find_if(items, is_city);
-			auto industry_tile = std::ranges::find_if(items, is_industry_tile);
-			if (city != items.end() && industry_tile != items.end()) {
+			auto city = std::ranges::find_if(cards, is_city);
+			auto industry_tile = std::ranges::find_if(cards, is_industry_tile);
+			if (city != cards.end() && industry_tile != cards.end()) {
 				return InitFactory(obj, position, *city, *industry_tile);
 			} else {
 				return m2::make_unexpected("Unable to find city or industry tile of the object received from the server");
@@ -506,8 +506,8 @@ int m2g::Proxy::total_card_count() const {
 	const auto player_card_lists = M2_LEVEL.multiPlayerObjectIds
 		| std::views::transform(m2::ObjectIdToObject)
 		| std::views::transform(m2::ObjectToCharacter)
-		| std::views::transform(m2::GenerateNamedItemTypesFilter({pb::ITEM_CATEGORY_CITY_CARD, pb::ITEM_CATEGORY_INDUSTRY_CARD, pb::ITEM_CATEGORY_WILD_CARD}));
-	const auto card_count = std::accumulate(player_card_lists.begin(), player_card_lists.end(), 0, [](const int sum, const std::vector<Card>& card_list) { return sum + I(card_list.size()); });
+		| std::views::transform(m2::GenerateNamedCardTypesFilter({pb::CARD_CATEGORY_CITY_CARD, pb::CARD_CATEGORY_INDUSTRY_CARD, pb::CARD_CATEGORY_WILD_CARD}));
+	const auto card_count = std::accumulate(player_card_lists.begin(), player_card_lists.end(), 0, [](const int sum, const std::vector<pb::CardType>& card_list) { return sum + I(card_list.size()); });
 	return card_count + game_state_tracker().GetVariable(pb::DRAW_DECK_SIZE).GetIntOrZero();
 }
 bool m2g::Proxy::is_last_action_of_player() const {
@@ -681,7 +681,7 @@ m2g::Proxy::LiquidationDetails m2g::Proxy::prepare_railroad_era() {
 	// Reset merchant beer
 	for (const auto& merchantObjId: merchant_object_ids | std::views::values) {
 		auto& merchantChr = M2_LEVEL.objects[merchantObjId].GetCharacter();
-		if (merchantChr.HasItem(pb::ITEM_CATEGORY_MERCHANT_LICENSE)) {
+		if (merchantChr.HasCard(pb::CARD_CATEGORY_MERCHANT_LICENSE)) {
 			merchantChr.SetVariable(pb::BEER_BARREL_COUNT, IFE{1});
 		}
 	}
@@ -693,14 +693,14 @@ m2g::Proxy::LiquidationDetails m2g::Proxy::prepare_railroad_era() {
 	game_state_tracker().SetVariable(pb::DRAW_DECK_SIZE, IFE{I(_draw_deck.size())});
 
 	// Give roads to players
-	const auto& road_item = M2_GAME.GetNamedItem(pb::ROAD_TILE);
-	auto road_possession_limit = Z(road_item.GetConstant(pb::POSSESSION_LIMIT).GetIntOrZero());
+	const auto& road_card = M2_GAME.GetNamedCard(pb::ROAD_TILE);
+	auto road_possession_limit = Z(road_card.GetConstant(pb::POSSESSION_LIMIT).GetIntOrZero());
 	std::ranges::for_each(M2_LEVEL.multiPlayerObjectIds
 		| std::views::transform(m2::ObjectIdToObject)
 		| std::views::transform(m2::ObjectToCharacter),
 		[&](m2::Character& human_player) {
-			while (human_player.CountItem(pb::ROAD_TILE) < road_possession_limit) {
-				human_player.AddNamedItem(road_item);
+			while (human_player.CountCard(pb::ROAD_TILE) < road_possession_limit) {
+				human_player.AddNamedCard(road_card);
 			}
 		});
 

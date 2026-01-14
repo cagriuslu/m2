@@ -3,4 +3,4 @@ How weapons work:
 - Special weapon also comes with special bullets.
 - Player first checks if there's a special weapon, and uses that. Otherwise, default weapon is used.
 
-- Dash capability is also an item. Dash item uses Dash energy, another item constantly adds Dash energy.
+- Dash capability is also an card. Dash card uses Dash energy, another card constantly adds Dash energy.

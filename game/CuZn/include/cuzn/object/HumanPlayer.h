@@ -11,8 +11,8 @@ m2::void_expected PlayerInitOtherInstance(m2::Object& obj);
 // Card Accessors
 
 size_t PlayerCardCount(const m2::Character& player);
-std::list<Card> PlayerCards(const m2::Character& player);
-inline bool PlayerHasCard(const m2::Character& player, const Card card) { return player.FindItems(card) != player.EndItems(); }
+std::list<m2g::pb::CardType> PlayerCards(const m2::Character& player);
+inline bool PlayerHasCard(const m2::Character& player, const m2g::pb::CardType card) { return player.FindCards(card) != player.EndCards(); }
 
 // Resource Accessors
 
@@ -25,17 +25,17 @@ int PlayerMoney(const m2::Character& player);
 // Industry and Tile Accessors
 
 size_t PlayerIndustryTileCount(const m2::Character& player);
-std::optional<m2g::pb::ItemType> PlayerNextIndustryTileOfCategory(const m2::Character& player, m2g::pb::ItemCategory tile_category);
-std::optional<m2g::pb::ItemType> PlayerNextIndustryTileOfIndustry(const m2::Character& player, Industry);
+std::optional<m2g::pb::CardType> PlayerNextIndustryTileOfCategory(const m2::Character& player, m2g::pb::CardCategory tile_category);
+std::optional<m2g::pb::CardType> PlayerNextIndustryTileOfIndustry(const m2::Character& player, Industry);
 size_t PlayerBuiltFactoryCount(const m2::Character& player);
 std::set<IndustryLocation> PlayerBuiltFactoryLocations(const m2::Character& player);
 std::set<IndustryLocation> PlayerSellableFactoryLocations(const m2::Character& player);
-m2::void_expected PlayerCanOverbuild(const m2::Character& player, IndustryLocation, Card);
+m2::void_expected PlayerCanOverbuild(const m2::Character& player, IndustryLocation, m2g::pb::CardType);
 
 // Road and Network Accessors
 
-inline size_t PlayerUnbuiltRoadCount(const m2::Character& player) { return player.CountItem(m2g::pb::ROAD_TILE); }
-std::set<m2g::pb::ItemType> PlayerCitiesInNetwork(const m2::Character& player);
+inline size_t PlayerUnbuiltRoadCount(const m2::Character& player) { return player.CountCard(m2g::pb::ROAD_TILE); }
+std::set<m2g::pb::CardType> PlayerCitiesInNetwork(const m2::Character& player);
 std::set<m2g::pb::SpriteType> PlayerCanalsInNetwork(const m2::Character& player, Connection provisional_extra_connection = {});
 std::set<m2g::pb::SpriteType> PlayerRailroadsInNetwork(const m2::Character& player, Connection provisional_extra_connection = {});
 std::set<m2g::pb::SpriteType> PlayerConnectionsInNetwork(const m2::Character& player, Connection provisional_extra_connection = {});

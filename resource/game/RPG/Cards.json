@@ -1,18 +1,18 @@
 {
-  "items": [
+  "cards": [
     {
-      "type": "NO_ITEM"
+      "type": "NO_CARD"
     },
     {
-      "type": "ITEM_CONSUMABLE_HP_POTION_20",
+      "type": "CARD_CONSUMABLE_HP_POTION_20",
       "uiSprite": "SPRITE_HP_POTION_20"
     },
     {
-      "type": "ITEM_CONSUMABLE_HP_POTION_80",
+      "type": "CARD_CONSUMABLE_HP_POTION_80",
       "uiSprite": "SPRITE_HP_POTION_80"
     },
     {
-      "type": "ITEM_REUSABLE_DASH_2S",
+      "type": "CARD_REUSABLE_DASH_2S",
       "costs": [
         {
           "type": "RESOURCE_DASH_ENERGY",
@@ -21,8 +21,8 @@
       ]
     },
     {
-      "type": "ITEM_REUSABLE_GUN",
-      "category": "ITEM_CATEGORY_DEFAULT_RANGED_WEAPON",
+      "type": "CARD_REUSABLE_GUN",
+      "category": "CARD_CATEGORY_DEFAULT_RANGED_WEAPON",
       "costs": [
         {
           "type": "RESOURCE_RANGED_ENERGY",
@@ -58,8 +58,8 @@
       "gameSprite": "GUN_BULLET"
     },
     {
-      "type": "ITEM_REUSABLE_MACHINE_GUN",
-      "category": "ITEM_CATEGORY_SPECIAL_RANGED_WEAPON",
+      "type": "CARD_REUSABLE_MACHINE_GUN",
+      "category": "CARD_CATEGORY_SPECIAL_RANGED_WEAPON",
       "costs": [
         {
           "type": "RESOURCE_RANGED_ENERGY",
@@ -106,8 +106,8 @@
       "uiSprite": "MACHINE_GUN_ICON"
     },
     {
-      "type": "ITEM_REUSABLE_EXPLOSIVE",
-      "category": "ITEM_CATEGORY_SPECIAL_RANGED_WEAPON",
+      "type": "CARD_REUSABLE_EXPLOSIVE",
+      "category": "CARD_CATEGORY_SPECIAL_RANGED_WEAPON",
       "costs": [
         {
           "type": "RESOURCE_RANGED_ENERGY",
@@ -158,8 +158,8 @@
       "uiSprite": "EXPLOSIVE_ICON"
     },
     {
-      "type": "ITEM_REUSABLE_SWORD",
-      "category": "ITEM_CATEGORY_DEFAULT_MELEE_WEAPON",
+      "type": "CARD_REUSABLE_SWORD",
+      "category": "CARD_CATEGORY_DEFAULT_MELEE_WEAPON",
       "costs": [
         {
           "type": "RESOURCE_MELEE_ENERGY",
@@ -183,8 +183,8 @@
       "gameSprite": "SWORD"
     },
     {
-      "type": "ITEM_REUSABLE_ENEMY_SWORD",
-      "category": "ITEM_CATEGORY_DEFAULT_MELEE_WEAPON",
+      "type": "CARD_REUSABLE_ENEMY_SWORD",
+      "category": "CARD_CATEGORY_DEFAULT_MELEE_WEAPON",
       "costs": [
         {
           "type": "RESOURCE_MELEE_ENERGY",
@@ -208,8 +208,8 @@
       "gameSprite": "SWORD"
     },
     {
-      "type": "ITEM_REUSABLE_LONG_SWORD",
-      "category": "ITEM_CATEGORY_SPECIAL_MELEE_WEAPON",
+      "type": "CARD_REUSABLE_LONG_SWORD",
+      "category": "CARD_CATEGORY_SPECIAL_MELEE_WEAPON",
       "costs": [
         {
           "type": "RESOURCE_MELEE_ENERGY",
@@ -234,8 +234,8 @@
       "uiSprite": "LONGSWORD_ICON"
     },
     {
-      "type": "ITEM_REUSABLE_AXE",
-      "category": "ITEM_CATEGORY_SPECIAL_MELEE_WEAPON",
+      "type": "CARD_REUSABLE_AXE",
+      "category": "CARD_CATEGORY_SPECIAL_MELEE_WEAPON",
       "costs": [
         {
           "type": "RESOURCE_MELEE_ENERGY",

@@ -11,4 +11,4 @@ void ExecuteScoutJourney();
 m2::void_expected CanPlayerScout(m2::Character& player, const m2g::pb::TurnBasedClientCommand_ScoutAction& scout_action);
 
 // For the server, returns the card to be discarded
-Card ExecuteScoutAction(m2::Character& player, const m2g::pb::TurnBasedClientCommand_ScoutAction& scout_action);
+m2g::pb::CardType ExecuteScoutAction(m2::Character& player, const m2g::pb::TurnBasedClientCommand_ScoutAction& scout_action);

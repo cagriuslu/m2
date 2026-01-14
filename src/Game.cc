@@ -142,9 +142,9 @@ m2::Game::Game() {
 
 	_objectBlueprints = LoadObjectBlueprints(_proxy.objectBlueprints);
 
-	const pb::Items* inMemoryItems = _proxy.items ? &*_proxy.items : nullptr;
-	named_items = pb::LUT<pb::Item, Item>::load(inMemoryItems, _resources.GetItemsPath(), &pb::Items::items);
-	LOG_INFO("Loaded named items", named_items.size());
+	const pb::Cards* inMemoryCards = _proxy.cards ? &*_proxy.cards : nullptr;
+	named_cards = pb::LUT<pb::Card, Card>::load(inMemoryCards, _resources.GetCardsPath(), &pb::Cards::cards);
+	LOG_INFO("Loaded named cards", named_cards.size());
 
 	animations = pb::LUT<pb::Animation, Animation>::load(static_cast<pb::Animations*>(nullptr), _resources.GetAnimationsPath(), &pb::Animations::animations);
 	LOG_INFO("Loaded animations", animations.size());
@@ -970,9 +970,9 @@ void m2::Game::ForEachSprite(const std::function<bool(m2g::pb::SpriteType, const
 	}
 }
 
-void m2::Game::ForEachNamedItem(const std::function<bool(m2g::pb::ItemType, const Item&)>& op) const {
-	for (int i = 0; i < pb::enum_value_count<m2g::pb::ItemType>(); ++i) {
-		if (const auto type = pb::enum_value<m2g::pb::ItemType>(i); not op(type, GetNamedItem(type))) {
+void m2::Game::ForEachNamedCard(const std::function<bool(m2g::pb::CardType, const Card&)>& op) const {
+	for (int i = 0; i < pb::enum_value_count<m2g::pb::CardType>(); ++i) {
+		if (const auto type = pb::enum_value<m2g::pb::CardType>(i); not op(type, GetNamedCard(type))) {
 			return;
 		}
 	}

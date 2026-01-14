@@ -1,18 +1,17 @@
 #pragma once
-#include <m2g_ItemType.pb.h>
+#include <m2g_CardType.pb.h>
 #include <m2g_SpriteType.pb.h>
 #include <m2/component/Character.h>
 #include <m2/math/VecF.h>
 #include <m2/M2.h>
 
-using Card = m2g::pb::ItemType;
-using City = m2g::pb::ItemType;
+using City = m2g::pb::CardType;
 using IndustryCity = City;
 using MerchantCity = City;
-using Industry = m2g::pb::ItemType;
-using SellableIndustry = m2g::pb::ItemType;
-using IndustryTile = m2g::pb::ItemType;
-using IndustryTileCategory = m2g::pb::ItemCategory;
+using Industry = m2g::pb::CardType;
+using SellableIndustry = m2g::pb::CardType;
+using IndustryTile = m2g::pb::CardType;
+using IndustryTileCategory = m2g::pb::CardCategory;
 using IndustrySprite = m2g::pb::SpriteType;
 using Location = m2g::pb::SpriteType;
 using IndustryLocation = Location;
@@ -22,7 +21,7 @@ using POI = m2g::pb::SpriteType; // Location or Connection
 
 // Assertions
 
-bool is_card(Card card);
+bool is_card(m2g::pb::CardType card);
 bool is_city(City city);
 bool is_industry_city(IndustryCity city);
 bool is_merchant_city(MerchantCity city);
@@ -42,8 +41,8 @@ bool is_connection(Connection connection);
 bool is_canal(Connection connection);
 bool is_railroad(Connection connection);
 bool is_poi(POI lc);
-bool is_canal_license(m2g::pb::ItemType item);
-bool is_railroad_license(m2g::pb::ItemType item);
+bool is_canal_license(m2g::pb::CardType card);
+bool is_railroad_license(m2g::pb::CardType card);
 bool location_has_industry(IndustryLocation location, Industry industry);
 
 // Converters
@@ -54,7 +53,7 @@ Industry industry_of_industry_tile_category(IndustryTileCategory category);
 IndustryTileCategory industry_tile_category_of_industry(Industry industry_card);
 IndustryTileCategory industry_tile_category_of_industry_tile(IndustryTile industry_tile);
 IndustrySprite industry_sprite_of_industry(Industry industry);
-m2g::pb::ItemType merchant_license_type_of_sellable_industry(SellableIndustry sellable_industry);
+m2g::pb::CardType merchant_license_type_of_sellable_industry(SellableIndustry sellable_industry);
 std::vector<MerchantLocation> merchant_locations_of_merchant_city(MerchantCity city);
 
 // Generators

@@ -4,7 +4,7 @@ package m2.pb;
 import "m2g_AttributeType.proto";
 import "m2g_ConstantType.proto";
 import "m2g_VariableType.proto";
-import "m2g_ItemType.proto";
+import "m2g_CardType.proto";
 import "m2g_PropertyType.proto";
 import "m2g_ResourceType.proto";
 import "m2g_SpriteType.proto";
@@ -44,10 +44,10 @@ message Variable {
   IFE ife = 2;
 }
 
-/// An item also represents a capability
-message Item {
-  m2g.pb.ItemType type = 1;
-  m2g.pb.ItemCategory category = 2;
+/// An card also represents a capability
+message Card {
+  m2g.pb.CardType type = 1;
+  m2g.pb.CardCategory category = 2;
   repeated Resource costs = 5; // DEPRECATED
   repeated Resource benefits = 6; // DEPRECATED
   repeated Resource acquire_benefits = 7; // Gained before benefits. DEPRECATED
@@ -59,6 +59,6 @@ message Item {
   string in_game_name = 12;
 }
 
-message Items {
-  repeated Item items = 1;
+message Cards {
+  repeated Card cards = 1;
 }

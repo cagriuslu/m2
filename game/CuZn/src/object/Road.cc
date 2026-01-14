@@ -17,7 +17,7 @@ namespace {
 					// Check if there's a built factory
 					if (const auto* factory = FindFactoryAtLocation(location); factory && IsFactorySold(factory->GetCharacter())) {
 						const auto industry_tile = ToIndustryTileOfFactoryCharacter(factory->GetCharacter());
-						return acc2 + M2_GAME.GetNamedItem(industry_tile).GetConstant(m2g::pb::LINK_BONUS).GetIntOrZero();
+						return acc2 + M2_GAME.GetNamedCard(industry_tile).GetConstant(m2g::pb::LINK_BONUS).GetIntOrZero();
 					}
 					return acc2;
 				}); });
@@ -73,7 +73,7 @@ m2::void_expected InitRoad(m2::Object& obj, const m2::VecF& position, const Conn
 	// Add the city cards to the character
 	auto& chr = obj.AddFastCharacter();
 	for (const auto city : cities_from_connection(connection)) {
-		chr.AddNamedItem(M2_GAME.GetNamedItem(city));
+		chr.AddNamedCard(M2_GAME.GetNamedCard(city));
 	}
 
 	const auto parent_id = obj.GetParentId();

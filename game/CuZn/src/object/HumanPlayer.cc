@@ -32,17 +32,17 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj, const m2::VecF& positi
 	// Add industry tiles
 	for (auto industry_tile = m2g::pb::COTTON_MILL_TILE_I;
 	     industry_tile <= m2g::pb::MANUFACTURED_GOODS_TILE_VIII;
-	     industry_tile = static_cast<m2g::pb::ItemType>(m2::I(industry_tile) + 1)) {
+	     industry_tile = static_cast<m2g::pb::CardType>(m2::I(industry_tile) + 1)) {
 		// Lookup possession count
-		const auto& item = M2_GAME.GetNamedItem(industry_tile);
-		auto possession_limit = item.GetConstant(m2g::pb::POSSESSION_LIMIT).GetIntOrZero();
-		m2Repeat(possession_limit) { chr.AddNamedItem(item); }
+		const auto& card = M2_GAME.GetNamedCard(industry_tile);
+		auto possession_limit = card.GetConstant(m2g::pb::POSSESSION_LIMIT).GetIntOrZero();
+		m2Repeat(possession_limit) { chr.AddNamedCard(card); }
 	}
 
 	// Add connection tiles
-	const auto& road_item = M2_GAME.GetNamedItem(m2g::pb::ROAD_TILE);
-	auto road_possession_limit = road_item.GetConstant(m2g::pb::POSSESSION_LIMIT).GetIntOrZero();
-	m2Repeat(road_possession_limit) { chr.AddNamedItem(road_item); }
+	const auto& road_card = M2_GAME.GetNamedCard(m2g::pb::ROAD_TILE);
+	auto road_possession_limit = road_card.GetConstant(m2g::pb::POSSESSION_LIMIT).GetIntOrZero();
+	m2Repeat(road_possession_limit) { chr.AddNamedCard(road_card); }
 
 	auto& phy = obj.AddPhysique();
 	phy.position = position;
@@ -176,7 +176,7 @@ m2::void_expected PlayerInitOtherInstance(m2::Object& obj) {
 	auto& chr = obj.AddFastCharacter();
 
 	// TODO check if the following is really necessary. If the TurnBasedServerUpdate is verified, it's necessary.
-	// TODO Otherwise, we don't need to fill the character with items and resources.
+	// TODO Otherwise, we don't need to fill the character with cards and resources.
 
 	chr.SetVariable(m2g::pb::MONEY, m2::IFE{17});
 	chr.SetVariable(m2g::pb::INCOME_POINTS, m2::IFE{0});
@@ -184,32 +184,32 @@ m2::void_expected PlayerInitOtherInstance(m2::Object& obj) {
 	// Add industry tiles
 	for (auto industry_tile = m2g::pb::COTTON_MILL_TILE_I;
 		 industry_tile <= m2g::pb::MANUFACTURED_GOODS_TILE_VIII;
-		 industry_tile = static_cast<m2g::pb::ItemType>(m2::I(industry_tile) + 1)) {
+		 industry_tile = static_cast<m2g::pb::CardType>(m2::I(industry_tile) + 1)) {
 		// Lookup possession count
-		const auto& item = M2_GAME.GetNamedItem(industry_tile);
-		auto possession_limit = item.GetConstant(m2g::pb::POSSESSION_LIMIT).GetIntOrZero();
-		m2Repeat(possession_limit) { chr.AddNamedItem(item); }
+		const auto& card = M2_GAME.GetNamedCard(industry_tile);
+		auto possession_limit = card.GetConstant(m2g::pb::POSSESSION_LIMIT).GetIntOrZero();
+		m2Repeat(possession_limit) { chr.AddNamedCard(card); }
 		 }
 
 	// Add connection tiles
-	const auto& road_item = M2_GAME.GetNamedItem(m2g::pb::ROAD_TILE);
-	auto road_possession_limit = road_item.GetConstant(m2g::pb::POSSESSION_LIMIT).GetIntOrZero();
-	m2Repeat(road_possession_limit) { chr.AddNamedItem(road_item); }
+	const auto& road_card = M2_GAME.GetNamedCard(m2g::pb::ROAD_TILE);
+	auto road_possession_limit = road_card.GetConstant(m2g::pb::POSSESSION_LIMIT).GetIntOrZero();
+	m2Repeat(road_possession_limit) { chr.AddNamedCard(road_card); }
 
 	return {};
 }
 
 size_t PlayerCardCount(const m2::Character& player) {
-	return player.CountItem(m2g::pb::ItemCategory::ITEM_CATEGORY_CITY_CARD)
-	+ player.CountItem(m2g::pb::ItemCategory::ITEM_CATEGORY_WILD_CARD)
-	+ player.CountItem(m2g::pb::ItemCategory::ITEM_CATEGORY_INDUSTRY_CARD);
+	return player.CountCard(m2g::pb::CardCategory::CARD_CATEGORY_CITY_CARD)
+	+ player.CountCard(m2g::pb::CardCategory::CARD_CATEGORY_WILD_CARD)
+	+ player.CountCard(m2g::pb::CardCategory::CARD_CATEGORY_INDUSTRY_CARD);
 }
-std::list<Card> PlayerCards(const m2::Character& player) {
-	std::list<Card> card_list;
-	for (auto it = player.BeginItems(); it != player.EndItems(); ++it) {
-		if (it->Category() == m2g::pb::ItemCategory::ITEM_CATEGORY_CITY_CARD
-			|| it->Category() == m2g::pb::ItemCategory::ITEM_CATEGORY_WILD_CARD
-			|| it->Category() == m2g::pb::ItemCategory::ITEM_CATEGORY_INDUSTRY_CARD) {
+std::list<m2g::pb::CardType> PlayerCards(const m2::Character& player) {
+	std::list<m2g::pb::CardType> card_list;
+	for (auto it = player.BeginCards(); it != player.EndCards(); ++it) {
+		if (it->Category() == m2g::pb::CardCategory::CARD_CATEGORY_CITY_CARD
+			|| it->Category() == m2g::pb::CardCategory::CARD_CATEGORY_WILD_CARD
+			|| it->Category() == m2g::pb::CardCategory::CARD_CATEGORY_INDUSTRY_CARD) {
 			card_list.emplace_back(it->Type());
 		}
 	}
@@ -232,8 +232,8 @@ int PlayerEstimatedVictoryPoints(const m2::Character& player) {
 			| std::views::filter(IsFactoryCharacter)
 			| std::views::filter(IsFactorySold);
 	return std::accumulate(soldFactories.begin(), soldFactories.end(), 0, [](int acc, m2::Character& factoryCharacter) -> int {
-		const auto& industryTileItem = M2_GAME.GetNamedItem(ToIndustryTileOfFactoryCharacter(factoryCharacter));
-		return acc + industryTileItem.GetConstant(m2g::pb::VICTORY_POINTS_BONUS).GetIntOrZero();
+		const auto& industryTileCard = M2_GAME.GetNamedCard(ToIndustryTileOfFactoryCharacter(factoryCharacter));
+		return acc + industryTileCard.GetConstant(m2g::pb::VICTORY_POINTS_BONUS).GetIntOrZero();
 	});
 }
 int PlayerVictoryPoints(const m2::Character& player) {
@@ -247,27 +247,27 @@ int PlayerMoney(const m2::Character& player) {
 }
 
 size_t PlayerIndustryTileCount(const m2::Character& player) {
-	return player.CountItem(m2g::pb::ItemCategory::ITEM_CATEGORY_COAL_MINE_TILE)
-		+ player.CountItem(m2g::pb::ItemCategory::ITEM_CATEGORY_IRON_WORKS_TILE)
-		+ player.CountItem(m2g::pb::ItemCategory::ITEM_CATEGORY_BREWERY_TILE)
-		+ player.CountItem(m2g::pb::ItemCategory::ITEM_CATEGORY_COTTON_MILL_TILE)
-		+ player.CountItem(m2g::pb::ItemCategory::ITEM_CATEGORY_MANUFACTURED_GOODS_TILE)
-		+ player.CountItem(m2g::pb::ItemCategory::ITEM_CATEGORY_POTTERY_TILE);
+	return player.CountCard(m2g::pb::CardCategory::CARD_CATEGORY_COAL_MINE_TILE)
+		+ player.CountCard(m2g::pb::CardCategory::CARD_CATEGORY_IRON_WORKS_TILE)
+		+ player.CountCard(m2g::pb::CardCategory::CARD_CATEGORY_BREWERY_TILE)
+		+ player.CountCard(m2g::pb::CardCategory::CARD_CATEGORY_COTTON_MILL_TILE)
+		+ player.CountCard(m2g::pb::CardCategory::CARD_CATEGORY_MANUFACTURED_GOODS_TILE)
+		+ player.CountCard(m2g::pb::CardCategory::CARD_CATEGORY_POTTERY_TILE);
 }
-std::optional<m2g::pb::ItemType> PlayerNextIndustryTileOfCategory(const m2::Character& player, const m2g::pb::ItemCategory tile_category) {
-	// Find the item with the category with the smallest integer value
-	auto tile_item = m2g::pb::ItemType_MAX;
-	for (auto item_it = player.FindItems(tile_category); item_it != player.EndItems(); ++item_it) {
-		tile_item = std::min(tile_item, item_it->Type());
+std::optional<m2g::pb::CardType> PlayerNextIndustryTileOfCategory(const m2::Character& player, const m2g::pb::CardCategory tile_category) {
+	// Find the card with the category with the smallest integer value
+	auto tile_card = m2g::pb::CardType_MAX;
+	for (auto card_it = player.FindCards(tile_category); card_it != player.EndCards(); ++card_it) {
+		tile_card = std::min(tile_card, card_it->Type());
 	}
 
-	if (tile_item == m2g::pb::ItemType_MAX) {
+	if (tile_card == m2g::pb::CardType_MAX) {
 		return std::nullopt;
 	} else {
-		return tile_item;
+		return tile_card;
 	}
 }
-std::optional<m2g::pb::ItemType> PlayerNextIndustryTileOfIndustry(const m2::Character& player, const Industry industry) {
+std::optional<m2g::pb::CardType> PlayerNextIndustryTileOfIndustry(const m2::Character& player, const Industry industry) {
 	return PlayerNextIndustryTileOfCategory(player, industry_tile_category_of_industry(industry));
 }
 size_t PlayerBuiltFactoryCount(const m2::Character& player) {
@@ -297,7 +297,7 @@ std::set<IndustryLocation> PlayerSellableFactoryLocations(const m2::Character& p
 		| std::views::transform(ToIndustryLocationOfFactoryCharacter);
 	return {factories_view.begin(), factories_view.end()};
 }
-m2::void_expected PlayerCanOverbuild(const m2::Character& player, const IndustryLocation location, const Card card) {
+m2::void_expected PlayerCanOverbuild(const m2::Character& player, const IndustryLocation location, const m2g::pb::CardType card) {
 	// Check the industry type of the already built factory
 	const auto* factory = FindFactoryAtLocation(location);
 	const auto industryOfFactory = ToIndustryOfFactoryCharacter(factory->GetCharacter());
@@ -333,8 +333,8 @@ m2::void_expected PlayerCanOverbuild(const m2::Character& player, const Industry
 	return {};
 }
 
-std::set<m2g::pb::ItemType> PlayerCitiesInNetwork(const m2::Character& player) {
-	std::set<m2g::pb::ItemType> cities;
+std::set<m2g::pb::CardType> PlayerCitiesInNetwork(const m2::Character& player) {
+	std::set<m2g::pb::CardType> cities;
 
 	auto cities_view = M2_LEVEL.characters
 		| std::views::transform(m2::ToCharacterBase)
@@ -363,13 +363,13 @@ std::set<m2g::pb::SpriteType> PlayerCanalsInNetwork(const m2::Character& player,
 		cities_in_network.insert(extra_cities.begin(), extra_cities.end());
 	}
 
-	std::ranges::for_each(cities_in_network, [&canals](m2g::pb::ItemType city) {
+	std::ranges::for_each(cities_in_network, [&canals](m2g::pb::CardType city) {
 		// Iterate and find all the canals that have the city as one of it's legs
 		for (int i = m2g::pb::BELPER_DERBY_CANAL_RAILROAD; i <= m2g::pb::REDDITCH_OXFORD_CANAL_RAILROAD; ++i) {
 			auto road_location_type = static_cast<m2g::pb::SpriteType>(i);
 			const auto& road_location = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(road_location_type));
-			if (std::ranges::any_of(road_location.NamedItems(), is_canal_license) &&
-				std::ranges::count(road_location.NamedItems(), city)) {
+			if (std::ranges::any_of(road_location.NamedCards(), is_canal_license) &&
+				std::ranges::count(road_location.NamedCards(), city)) {
 				canals.insert(road_location_type);
 			}
 		}
@@ -386,13 +386,13 @@ std::set<m2g::pb::SpriteType> PlayerRailroadsInNetwork(const m2::Character& play
 		cities_in_network.insert(extra_cities.begin(), extra_cities.end());
 	}
 
-	std::ranges::for_each(cities_in_network, [&railroads](m2g::pb::ItemType city) {
+	std::ranges::for_each(cities_in_network, [&railroads](m2g::pb::CardType city) {
 		// Iterate and find all the railroads that have the city as one of it's legs
 		for (int i = m2g::pb::BELPER_DERBY_CANAL_RAILROAD; i <= m2g::pb::REDDITCH_OXFORD_CANAL_RAILROAD; ++i) {
 			auto road_location_type = static_cast<m2g::pb::SpriteType>(i);
 			const auto& road_location = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(road_location_type));
-			if (std::ranges::any_of(road_location.NamedItems(), is_railroad_license) &&
-				std::ranges::count(road_location.NamedItems(), city)) {
+			if (std::ranges::any_of(road_location.NamedCards(), is_railroad_license) &&
+				std::ranges::count(road_location.NamedCards(), city)) {
 				railroads.insert(road_location_type);
 			}
 		}

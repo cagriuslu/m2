@@ -364,63 +364,63 @@
           "type": "GLOUCESTER_1",
           "duplicate": {
             "originalType": "MERCHANT_BACKGROUND",
-            "additionalNamedItems": ["GLOUCESTER_CARD"]
+            "additionalNamedCards": ["GLOUCESTER_CARD"]
           }
         },
         {
           "type": "GLOUCESTER_2",
           "duplicate": {
             "originalType": "MERCHANT_BACKGROUND",
-            "additionalNamedItems": ["GLOUCESTER_CARD"]
+            "additionalNamedCards": ["GLOUCESTER_CARD"]
           }
         },
         {
           "type": "SHREWSBURY_1",
           "duplicate": {
             "originalType": "MERCHANT_BACKGROUND",
-            "additionalNamedItems": ["SHREWSBURY_CARD"]
+            "additionalNamedCards": ["SHREWSBURY_CARD"]
           }
         },
         {
           "type": "OXFORD_1",
           "duplicate": {
             "originalType": "MERCHANT_BACKGROUND",
-            "additionalNamedItems": ["OXFORD_CARD"]
+            "additionalNamedCards": ["OXFORD_CARD"]
           }
         },
         {
           "type": "OXFORD_2",
           "duplicate": {
             "originalType": "MERCHANT_BACKGROUND",
-            "additionalNamedItems": ["OXFORD_CARD"]
+            "additionalNamedCards": ["OXFORD_CARD"]
           }
         },
         {
           "type": "NOTTINGHAM_1",
           "duplicate": {
             "originalType": "MERCHANT_BACKGROUND",
-            "additionalNamedItems": ["NOTTINGHAM_CARD"]
+            "additionalNamedCards": ["NOTTINGHAM_CARD"]
           }
         },
         {
           "type": "NOTTINGHAM_2",
           "duplicate": {
             "originalType": "MERCHANT_BACKGROUND",
-            "additionalNamedItems": ["NOTTINGHAM_CARD"]
+            "additionalNamedCards": ["NOTTINGHAM_CARD"]
           }
         },
         {
           "type": "WARRINGTON_1",
           "duplicate": {
             "originalType": "MERCHANT_BACKGROUND",
-            "additionalNamedItems": ["WARRINGTON_CARD"]
+            "additionalNamedCards": ["WARRINGTON_CARD"]
           }
         },
         {
           "type": "WARRINGTON_2",
           "duplicate": {
             "originalType": "MERCHANT_BACKGROUND",
-            "additionalNamedItems": ["WARRINGTON_CARD"]
+            "additionalNamedCards": ["WARRINGTON_CARD"]
           }
         },
         {
@@ -624,7 +624,7 @@
           "type": "BURTON_UPON_TRENT_WALSALL_CANAL",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3",
-            "additionalNamedItems": ["BURTON_UPON_TRENT_CARD", "WALSALL_CARD", "CANAL_LICENSE"]
+            "additionalNamedCards": ["BURTON_UPON_TRENT_CARD", "WALSALL_CARD", "CANAL_LICENSE"]
           }
         },
         {
@@ -641,35 +641,35 @@
               "y": -8
             },
             "isBackgroundTile": true,
-            "namedItems": ["MANUFACTURED_GOODS_CARD", "BREWERY_CARD"]
+            "namedCards": ["MANUFACTURED_GOODS_CARD", "BREWERY_CARD"]
           }
         },
         {
           "type": "UTTOXETER_MANUFACTURED_GOODS_BREWERY",
           "duplicate": {
             "originalType": "SPRITE_MANUFACTURED_GOODS_BREWERY",
-            "additionalNamedItems": ["UTTOXETER_CARD"]
+            "additionalNamedCards": ["UTTOXETER_CARD"]
           }
         },
         {
           "type": "STAFFORD_MANUFACTURED_GOODS_BREWERY",
           "duplicate": {
             "originalType": "SPRITE_MANUFACTURED_GOODS_BREWERY",
-            "additionalNamedItems": ["STAFFORD_CARD"]
+            "additionalNamedCards": ["STAFFORD_CARD"]
           }
         },
         {
           "type": "WALSALL_MANUFACTURED_GOODS_BREWERY",
           "duplicate": {
             "originalType": "SPRITE_MANUFACTURED_GOODS_BREWERY",
-            "additionalNamedItems": ["WALSALL_CARD"]
+            "additionalNamedCards": ["WALSALL_CARD"]
           }
         },
         {
           "type": "NUNEATON_MANUFACTURED_GOODS_BREWERY",
           "duplicate": {
             "originalType": "SPRITE_MANUFACTURED_GOODS_BREWERY",
-            "additionalNamedItems": ["NUNEATON_CARD"]
+            "additionalNamedCards": ["NUNEATON_CARD"]
           }
         },
         {
@@ -686,49 +686,49 @@
               "y": -8
             },
             "isBackgroundTile": true,
-            "namedItems": ["MANUFACTURED_GOODS_CARD", "COAL_MINE_CARD"]
+            "namedCards": ["MANUFACTURED_GOODS_CARD", "COAL_MINE_CARD"]
           }
         },
         {
           "type": "STONE_MANUFACTURED_GOODS_COAL_MINE",
           "duplicate": {
             "originalType": "SPRITE_MANUFACTURED_GOODS_COAL_MINE",
-            "additionalNamedItems": ["STONE_CARD"]
+            "additionalNamedCards": ["STONE_CARD"]
           }
         },
         {
           "type": "BURTON_UPON_TRENT_MANUFACTURED_GOODS_COAL_MINE",
           "duplicate": {
             "originalType": "SPRITE_MANUFACTURED_GOODS_COAL_MINE",
-            "additionalNamedItems": ["BURTON_UPON_TRENT_CARD"]
+            "additionalNamedCards": ["BURTON_UPON_TRENT_CARD"]
           }
         },
         {
           "type": "CANNOCK_MANUFACTURED_GOODS_COAL_MINE",
           "duplicate": {
             "originalType": "SPRITE_MANUFACTURED_GOODS_COAL_MINE",
-            "additionalNamedItems": ["CANNOCK_CARD"]
+            "additionalNamedCards": ["CANNOCK_CARD"]
           }
         },
         {
           "type": "WOLFERHAMPTON_MANUFACTURED_GOODS_COAL_MINE",
           "duplicate": {
             "originalType": "SPRITE_MANUFACTURED_GOODS_COAL_MINE",
-            "additionalNamedItems": ["WOLFERHAMPTON_CARD"]
+            "additionalNamedCards": ["WOLFERHAMPTON_CARD"]
           }
         },
         {
           "type": "COVENTRY_MANUFACTURED_GOODS_COAL_MINE",
           "duplicate": {
             "originalType": "SPRITE_MANUFACTURED_GOODS_COAL_MINE",
-            "additionalNamedItems": ["COVENTRY_CARD"]
+            "additionalNamedCards": ["COVENTRY_CARD"]
           }
         },
         {
           "type": "REDDITCH_MANUFACTURED_GOODS_COAL_MINE",
           "duplicate": {
             "originalType": "SPRITE_MANUFACTURED_GOODS_COAL_MINE",
-            "additionalNamedItems": ["REDDITCH_CARD"]
+            "additionalNamedCards": ["REDDITCH_CARD"]
           }
         },
         {
@@ -744,35 +744,35 @@
               "y": -8
             },
             "isBackgroundTile": true,
-            "namedItems": ["MANUFACTURED_GOODS_CARD"]
+            "namedCards": ["MANUFACTURED_GOODS_CARD"]
           }
         },
         {
           "type": "STOKE_ON_TRENT_MANUFACTURED_GOODS",
           "duplicate": {
             "originalType": "SPRITE_MANUFACTURED_GOODS",
-            "additionalNamedItems": ["STOKE_ON_TRENT_CARD"]
+            "additionalNamedCards": ["STOKE_ON_TRENT_CARD"]
           }
         },
         {
           "type": "WOLFERHAMPTON_MANUFACTURED_GOODS",
           "duplicate": {
             "originalType": "SPRITE_MANUFACTURED_GOODS",
-            "additionalNamedItems": ["WOLFERHAMPTON_CARD"]
+            "additionalNamedCards": ["WOLFERHAMPTON_CARD"]
           }
         },
         {
           "type": "BIRMINGHAM_MANUFACTURED_GOODS_1",
           "duplicate": {
             "originalType": "SPRITE_MANUFACTURED_GOODS",
-            "additionalNamedItems": ["BIRMINGHAM_CARD"]
+            "additionalNamedCards": ["BIRMINGHAM_CARD"]
           }
         },
         {
           "type": "BIRMINGHAM_MANUFACTURED_GOODS_2",
           "duplicate": {
             "originalType": "SPRITE_MANUFACTURED_GOODS",
-            "additionalNamedItems": ["BIRMINGHAM_CARD"]
+            "additionalNamedCards": ["BIRMINGHAM_CARD"]
           }
         },
         {
@@ -789,42 +789,42 @@
               "y": -8
             },
             "isBackgroundTile": true,
-            "namedItems": ["COTTON_MILL_CARD", "MANUFACTURED_GOODS_CARD"]
+            "namedCards": ["COTTON_MILL_CARD", "MANUFACTURED_GOODS_CARD"]
           }
         },
         {
           "type": "BELPER_COTTON_MILL_MANUFACTURED_GOODS",
           "duplicate": {
             "originalType": "SPRITE_COTTON_MILL_MANUFACTURED_GOODS",
-            "additionalNamedItems": ["BELPER_CARD"]
+            "additionalNamedCards": ["BELPER_CARD"]
           }
         },
         {
           "type": "DERBY_COTTON_MILL_MANUFACTURED_GOODS",
           "duplicate": {
             "originalType": "SPRITE_COTTON_MILL_MANUFACTURED_GOODS",
-            "additionalNamedItems": ["DERBY_CARD"]
+            "additionalNamedCards": ["DERBY_CARD"]
           }
         },
         {
           "type": "LEEK_COTTON_MILL_MANUFACTURED_GOODS",
           "duplicate": {
             "originalType": "SPRITE_COTTON_MILL_MANUFACTURED_GOODS",
-            "additionalNamedItems": ["LEEK_CARD"]
+            "additionalNamedCards": ["LEEK_CARD"]
           }
         },
         {
           "type": "STOKE_ON_TRENT_COTTON_MILL_MANUFACTURED_GOODS",
           "duplicate": {
             "originalType": "SPRITE_COTTON_MILL_MANUFACTURED_GOODS",
-            "additionalNamedItems": ["STOKE_ON_TRENT_CARD"]
+            "additionalNamedCards": ["STOKE_ON_TRENT_CARD"]
           }
         },
         {
           "type": "BIRMINGHAM_COTTON_MILL_MANUFACTURED_GOODS",
           "duplicate": {
             "originalType": "SPRITE_COTTON_MILL_MANUFACTURED_GOODS",
-            "additionalNamedItems": ["BIRMINGHAM_CARD"]
+            "additionalNamedCards": ["BIRMINGHAM_CARD"]
           }
         },
         {
@@ -841,28 +841,28 @@
               "y": -8
             },
             "isBackgroundTile": true,
-            "namedItems": ["COTTON_MILL_CARD", "BREWERY_CARD"]
+            "namedCards": ["COTTON_MILL_CARD", "BREWERY_CARD"]
           }
         },
         {
           "type": "DERBY_COTTON_MILL_BREWERY",
           "duplicate": {
             "originalType": "SPRITE_COTTON_MILL_BREWERY",
-            "additionalNamedItems": ["DERBY_CARD"]
+            "additionalNamedCards": ["DERBY_CARD"]
           }
         },
         {
           "type": "STONE_COTTON_MILL_BREWERY",
           "duplicate": {
             "originalType": "SPRITE_COTTON_MILL_BREWERY",
-            "additionalNamedItems": ["STONE_CARD"]
+            "additionalNamedCards": ["STONE_CARD"]
           }
         },
         {
           "type": "UTTOXETER_COTTON_MILL_BREWERY",
           "duplicate": {
             "originalType": "SPRITE_COTTON_MILL_BREWERY",
-            "additionalNamedItems": ["UTTOXETER_CARD"]
+            "additionalNamedCards": ["UTTOXETER_CARD"]
           }
         },
         {
@@ -879,42 +879,42 @@
               "y": -8
             },
             "isBackgroundTile": true,
-            "namedItems": ["COTTON_MILL_CARD", "COAL_MINE_CARD"]
+            "namedCards": ["COTTON_MILL_CARD", "COAL_MINE_CARD"]
           }
         },
         {
           "type": "LEEK_COTTON_MILL_COAL_MINE",
           "duplicate": {
             "originalType": "SPRITE_COTTON_MILL_COAL_MINE",
-            "additionalNamedItems": ["LEEK_CARD"]
+            "additionalNamedCards": ["LEEK_CARD"]
           }
         },
         {
           "type": "TAMWORTH_COTTON_MILL_COAL_MINE_1",
           "duplicate": {
             "originalType": "SPRITE_COTTON_MILL_COAL_MINE",
-            "additionalNamedItems": ["TAMWORTH_CARD"]
+            "additionalNamedCards": ["TAMWORTH_CARD"]
           }
         },
         {
           "type": "TAMWORTH_COTTON_MILL_COAL_MINE_2",
           "duplicate": {
             "originalType": "SPRITE_COTTON_MILL_COAL_MINE",
-            "additionalNamedItems": ["TAMWORTH_CARD"]
+            "additionalNamedCards": ["TAMWORTH_CARD"]
           }
         },
         {
           "type": "KIDDERMINSTER_COTTON_MILL_COAL_MINE",
           "duplicate": {
             "originalType": "SPRITE_COTTON_MILL_COAL_MINE",
-            "additionalNamedItems": ["KIDDERMINSTER_CARD"]
+            "additionalNamedCards": ["KIDDERMINSTER_CARD"]
           }
         },
         {
           "type": "NUNEATON_COTTON_MILL_COAL_MINE",
           "duplicate": {
             "originalType": "SPRITE_COTTON_MILL_COAL_MINE",
-            "additionalNamedItems": ["NUNEATON_CARD"]
+            "additionalNamedCards": ["NUNEATON_CARD"]
           }
         },
         {
@@ -930,28 +930,28 @@
               "y": -8
             },
             "isBackgroundTile": true,
-            "namedItems": ["COTTON_MILL_CARD"]
+            "namedCards": ["COTTON_MILL_CARD"]
           }
         },
         {
           "type": "KIDDERMINSTER_COTTON_MILL",
           "duplicate": {
             "originalType": "SPRITE_COTTON_MILL",
-            "additionalNamedItems": ["KIDDERMINSTER_CARD"]
+            "additionalNamedCards": ["KIDDERMINSTER_CARD"]
           }
         },
         {
           "type": "WORCESTER_COTTON_MILL_1",
           "duplicate": {
             "originalType": "SPRITE_COTTON_MILL",
-            "additionalNamedItems": ["WORCESTER_CARD"]
+            "additionalNamedCards": ["WORCESTER_CARD"]
           }
         },
         {
           "type": "WORCESTER_COTTON_MILL_2",
           "duplicate": {
             "originalType": "SPRITE_COTTON_MILL",
-            "additionalNamedItems": ["WORCESTER_CARD"]
+            "additionalNamedCards": ["WORCESTER_CARD"]
           }
         },
         {
@@ -967,28 +967,28 @@
               "y": -8
             },
             "isBackgroundTile": true,
-            "namedItems": ["BREWERY_CARD"]
+            "namedCards": ["BREWERY_CARD"]
           }
         },
         {
           "type": "BURTON_UPON_TRENT_BREWERY",
           "duplicate": {
             "originalType": "SPRITE_BREWERY",
-            "additionalNamedItems": ["BURTON_UPON_TRENT_CARD"]
+            "additionalNamedCards": ["BURTON_UPON_TRENT_CARD"]
           }
         },
         {
           "type": "STANDALONE_BREWERY_1",
           "duplicate": {
             "originalType": "SPRITE_BREWERY",
-            "additionalNamedItems": ["STANDALONE_LOCATION_1_CARD"]
+            "additionalNamedCards": ["STANDALONE_LOCATION_1_CARD"]
           }
         },
         {
           "type": "STANDALONE_BREWERY_2",
           "duplicate": {
             "originalType": "SPRITE_BREWERY",
-            "additionalNamedItems": ["STANDALONE_LOCATION_2_CARD"]
+            "additionalNamedCards": ["STANDALONE_LOCATION_2_CARD"]
           }
         },
         {
@@ -1005,21 +1005,21 @@
               "y": -8
             },
             "isBackgroundTile": true,
-            "namedItems": ["IRON_WORKS_CARD", "MANUFACTURED_GOODS_CARD"]
+            "namedCards": ["IRON_WORKS_CARD", "MANUFACTURED_GOODS_CARD"]
           }
         },
         {
           "type": "WALSALL_IRON_WORKS_MANUFACTURED_GOODS",
           "duplicate": {
             "originalType": "SPRITE_IRON_WORKS_MANUFACTURED_GOODS",
-            "additionalNamedItems": ["WALSALL_CARD"]
+            "additionalNamedCards": ["WALSALL_CARD"]
           }
         },
         {
           "type": "COVENTRY_IRON_WORKS_MANUFACTURED_GOODS",
           "duplicate": {
             "originalType": "SPRITE_IRON_WORKS_MANUFACTURED_GOODS",
-            "additionalNamedItems": ["COVENTRY_CARD"]
+            "additionalNamedCards": ["COVENTRY_CARD"]
           }
         },
         {
@@ -1036,14 +1036,14 @@
               "y": -8
             },
             "isBackgroundTile": true,
-            "namedItems": ["IRON_WORKS_CARD", "BREWERY_CARD"]
+            "namedCards": ["IRON_WORKS_CARD", "BREWERY_CARD"]
           }
         },
         {
           "type": "COALBROOKEDALE_IRON_WORKS_BREWERY",
           "duplicate": {
             "originalType": "SPRITE_IRON_WORKS_BREWERY",
-            "additionalNamedItems": ["COALBROOKEDALE_CARD"]
+            "additionalNamedCards": ["COALBROOKEDALE_CARD"]
           }
         },
         {
@@ -1059,42 +1059,42 @@
               "y": -8
             },
             "isBackgroundTile": true,
-            "namedItems": ["IRON_WORKS_CARD"]
+            "namedCards": ["IRON_WORKS_CARD"]
           }
         },
         {
           "type": "DERBY_IRON_WORKS",
           "duplicate": {
             "originalType": "SPRITE_IRON_WORKS",
-            "additionalNamedItems": ["DERBY_CARD"]
+            "additionalNamedCards": ["DERBY_CARD"]
           }
         },
         {
           "type": "COALBROOKEDALE_IRON_WORKS",
           "duplicate": {
             "originalType": "SPRITE_IRON_WORKS",
-            "additionalNamedItems": ["COALBROOKEDALE_CARD"]
+            "additionalNamedCards": ["COALBROOKEDALE_CARD"]
           }
         },
         {
           "type": "DUDLEY_IRON_WORKS",
           "duplicate": {
             "originalType": "SPRITE_IRON_WORKS",
-            "additionalNamedItems": ["DUDLEY_CARD"]
+            "additionalNamedCards": ["DUDLEY_CARD"]
           }
         },
         {
           "type": "BIRMINGHAM_IRON_WORKS",
           "duplicate": {
             "originalType": "SPRITE_IRON_WORKS",
-            "additionalNamedItems": ["BIRMINGHAM_CARD"]
+            "additionalNamedCards": ["BIRMINGHAM_CARD"]
           }
         },
         {
           "type": "REDDITCH_IRON_WORKS",
           "duplicate": {
             "originalType": "SPRITE_IRON_WORKS",
-            "additionalNamedItems": ["REDDITCH_CARD"]
+            "additionalNamedCards": ["REDDITCH_CARD"]
           }
         },
         {
@@ -1111,14 +1111,14 @@
               "y": -8
             },
             "isBackgroundTile": true,
-            "namedItems": ["POTTERY_CARD", "IRON_WORKS_CARD"]
+            "namedCards": ["POTTERY_CARD", "IRON_WORKS_CARD"]
           }
         },
         {
           "type": "STOKE_ON_TRENT_POTTERY_IRON_WORKS",
           "duplicate": {
             "originalType": "SPRITE_POTTERY_IRON_WORKS",
-            "additionalNamedItems": ["STOKE_ON_TRENT_CARD"]
+            "additionalNamedCards": ["STOKE_ON_TRENT_CARD"]
           }
         },
         {
@@ -1134,294 +1134,294 @@
               "y": -8
             },
             "isBackgroundTile": true,
-            "namedItems": ["POTTERY_CARD"]
+            "namedCards": ["POTTERY_CARD"]
           }
         },
         {
           "type": "BELPER_POTTERY",
           "duplicate": {
             "originalType": "SPRITE_POTTERY",
-            "additionalNamedItems": ["BELPER_CARD"]
+            "additionalNamedCards": ["BELPER_CARD"]
           }
         },
         {
           "type": "STAFFORD_POTTERY",
           "duplicate": {
             "originalType": "SPRITE_POTTERY",
-            "additionalNamedItems": ["STAFFORD_CARD"]
+            "additionalNamedCards": ["STAFFORD_CARD"]
           }
         },
         {
           "type": "COVENTRY_POTTERY",
           "duplicate": {
             "originalType": "SPRITE_POTTERY",
-            "additionalNamedItems": ["COVENTRY_CARD"]
+            "additionalNamedCards": ["COVENTRY_CARD"]
           }
         },
         {
           "type": "BELPER_DERBY_CANAL_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_2",
-            "additionalNamedItems": ["BELPER_CARD", "DERBY_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["BELPER_CARD", "DERBY_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "DERBY_BURTON_UPON_TRENT_CANAL_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
-            "additionalNamedItems": ["DERBY_CARD", "BURTON_UPON_TRENT_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["DERBY_CARD", "BURTON_UPON_TRENT_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "DERBY_NOTTINGHAM_CANAL_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3",
-            "additionalNamedItems": ["DERBY_CARD", "NOTTINGHAM_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["DERBY_CARD", "NOTTINGHAM_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "LEEK_STOKE_ON_TRENT_CANAL_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3",
-            "additionalNamedItems": ["LEEK_CARD", "STOKE_ON_TRENT_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["LEEK_CARD", "STOKE_ON_TRENT_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "STOKE_ON_TRENT_STONE_CANAL_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_2",
-            "additionalNamedItems": ["STONE_CARD", "STOKE_ON_TRENT_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["STONE_CARD", "STOKE_ON_TRENT_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "STOKE_ON_TRENT_WARRINGTON_CANAL_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3",
-            "additionalNamedItems": ["WARRINGTON_CARD", "STOKE_ON_TRENT_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["WARRINGTON_CARD", "STOKE_ON_TRENT_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "STONE_STAFFORD_CANAL_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_2",
-            "additionalNamedItems": ["STONE_CARD", "STAFFORD_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["STONE_CARD", "STAFFORD_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "STONE_BURTON_UPON_TRENT_CANAL_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
-            "additionalNamedItems": ["STONE_CARD", "BURTON_UPON_TRENT_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["STONE_CARD", "BURTON_UPON_TRENT_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "STAFFORD_CANNOCK_CANAL_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_2",
-            "additionalNamedItems": ["STAFFORD_CARD", "CANNOCK_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["STAFFORD_CARD", "CANNOCK_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "BURTON_UPON_TRENT_TAMWORTH_CANAL_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
-            "additionalNamedItems": ["BURTON_UPON_TRENT_CARD", "TAMWORTH_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["BURTON_UPON_TRENT_CARD", "TAMWORTH_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "CANNOCK_BREWERY1_CANAL_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3",
-            "additionalNamedItems": ["CANNOCK_CARD", "STANDALONE_LOCATION_1_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["CANNOCK_CARD", "STANDALONE_LOCATION_1_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "CANNOCK_WALSALL_CANAL_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
-            "additionalNamedItems": ["CANNOCK_CARD", "WALSALL_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["CANNOCK_CARD", "WALSALL_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "CANNOCK_WOLFERHAMPTON_CANAL_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_2",
-            "additionalNamedItems": ["CANNOCK_CARD", "WOLFERHAMPTON_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["CANNOCK_CARD", "WOLFERHAMPTON_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "TAMWORTH_BIRMINGHAM_CANAL_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_4",
-            "additionalNamedItems": ["TAMWORTH_CARD", "BIRMINGHAM_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["TAMWORTH_CARD", "BIRMINGHAM_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "TAMWORTH_NUNEATON_CANAL_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
-            "additionalNamedItems": ["TAMWORTH_CARD", "NUNEATON_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["TAMWORTH_CARD", "NUNEATON_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "WALSALL_WOLFERHAMPTON_CANAL_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3",
-            "additionalNamedItems": ["WALSALL_CARD", "WOLFERHAMPTON_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["WALSALL_CARD", "WOLFERHAMPTON_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "WALSALL_BIRMINGHAM_CANAL_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
-            "additionalNamedItems": ["WALSALL_CARD", "BIRMINGHAM_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["WALSALL_CARD", "BIRMINGHAM_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "COALBROOKEDALE_KIDDERMINSTER_CANAL_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
-            "additionalNamedItems": ["COALBROOKEDALE_CARD", "KIDDERMINSTER_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["COALBROOKEDALE_CARD", "KIDDERMINSTER_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "COALBROOKEDALE_WOLFERHAMPTON_CANAL_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3",
-            "additionalNamedItems": ["COALBROOKEDALE_CARD", "WOLFERHAMPTON_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["COALBROOKEDALE_CARD", "WOLFERHAMPTON_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "COALBROOKEDALE_SHREWSBURY_CANAL_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3",
-            "additionalNamedItems": ["COALBROOKEDALE_CARD", "SHREWSBURY_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["COALBROOKEDALE_CARD", "SHREWSBURY_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "DUDLEY_KIDDERMINSTER_CANAL_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3",
-            "additionalNamedItems": ["DUDLEY_CARD", "KIDDERMINSTER_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["DUDLEY_CARD", "KIDDERMINSTER_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "DUDLEY_WOLFERHAMPTON_CANAL_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
-            "additionalNamedItems": ["DUDLEY_CARD", "WOLFERHAMPTON_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["DUDLEY_CARD", "WOLFERHAMPTON_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "DUDLEY_BIRMINGHAM_CANAL_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3",
-            "additionalNamedItems": ["DUDLEY_CARD", "BIRMINGHAM_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["DUDLEY_CARD", "BIRMINGHAM_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "KIDDERMINSTER_WORCESTER_BREWERY2_CANAL_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
-            "additionalNamedItems": ["KIDDERMINSTER_CARD", "WORCESTER_CARD", "STANDALONE_LOCATION_2_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["KIDDERMINSTER_CARD", "WORCESTER_CARD", "STANDALONE_LOCATION_2_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "WORCESTER_BIRMINGHAM_CANAL_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
-            "additionalNamedItems": ["WORCESTER_CARD", "BIRMINGHAM_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["WORCESTER_CARD", "BIRMINGHAM_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "WORCESTER_GLOUCESTER_CANAL_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_2",
-            "additionalNamedItems": ["WORCESTER_CARD", "GLOUCESTER_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["WORCESTER_CARD", "GLOUCESTER_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "BIRMINGHAM_COVENTRY_CANAL_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3",
-            "additionalNamedItems": ["BIRMINGHAM_CARD", "COVENTRY_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["BIRMINGHAM_CARD", "COVENTRY_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "BIRMINGHAM_OXFORD_CANAL_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
-            "additionalNamedItems": ["BIRMINGHAM_CARD", "OXFORD_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["BIRMINGHAM_CARD", "OXFORD_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "REDDITCH_GLOUCESTER_CANAL_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
-            "additionalNamedItems": ["REDDITCH_CARD", "GLOUCESTER_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["REDDITCH_CARD", "GLOUCESTER_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "REDDITCH_OXFORD_CANAL_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3",
-            "additionalNamedItems": ["REDDITCH_CARD", "OXFORD_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["REDDITCH_CARD", "OXFORD_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "BELPER_LEEK_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
-            "additionalNamedItems": ["BELPER_CARD", "LEEK_CARD", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["BELPER_CARD", "LEEK_CARD", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "DERBY_UTTOXETER_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
-            "additionalNamedItems": ["DERBY_CARD", "UTTOXETER_CARD", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["DERBY_CARD", "UTTOXETER_CARD", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "STONE_UTTOXETER_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
-            "additionalNamedItems": ["STONE_CARD", "UTTOXETER_CARD", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["STONE_CARD", "UTTOXETER_CARD", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "BURTON_UPON_TRENT_CANNOCK_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
-            "additionalNamedItems": ["BURTON_UPON_TRENT_CARD", "CANNOCK_CARD", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["BURTON_UPON_TRENT_CARD", "CANNOCK_CARD", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "TAMWORTH_WALSALL_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
-            "additionalNamedItems": ["TAMWORTH_CARD", "WALSALL_CARD", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["TAMWORTH_CARD", "WALSALL_CARD", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "BIRMINGHAM_NUNEATON_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
-            "additionalNamedItems": ["BIRMINGHAM_CARD", "NUNEATON_CARD", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["BIRMINGHAM_CARD", "NUNEATON_CARD", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "BIRMINGHAM_REDDITCH_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
-            "additionalNamedItems": ["BIRMINGHAM_CARD", "REDDITCH_CARD", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["BIRMINGHAM_CARD", "REDDITCH_CARD", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "COVENTRY_NUNEATON_RAILROAD",
           "duplicate": {
             "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
-            "additionalNamedItems": ["COVENTRY_CARD", "NUNEATON_CARD", "RAILROAD_LICENSE"]
+            "additionalNamedCards": ["COVENTRY_CARD", "NUNEATON_CARD", "RAILROAD_LICENSE"]
           }
         },
         {
@@ -1437,35 +1437,35 @@
               "y": -8
             },
             "isBackgroundTile": true,
-            "namedItems": ["COAL_MINE_CARD"]
+            "namedCards": ["COAL_MINE_CARD"]
           }
         },
         {
           "type": "BELPER_COAL_MINE",
           "duplicate": {
             "originalType": "SPRITE_COAL_MINE",
-            "additionalNamedItems": ["BELPER_CARD"]
+            "additionalNamedCards": ["BELPER_CARD"]
           }
         },
         {
           "type": "CANNOCK_COAL_MINE",
           "duplicate": {
             "originalType": "SPRITE_COAL_MINE",
-            "additionalNamedItems": ["CANNOCK_CARD"]
+            "additionalNamedCards": ["CANNOCK_CARD"]
           }
         },
         {
           "type": "COALBROOKEDALE_COAL_MINE",
           "duplicate": {
             "originalType": "SPRITE_COAL_MINE",
-            "additionalNamedItems": ["COALBROOKEDALE_CARD"]
+            "additionalNamedCards": ["COALBROOKEDALE_CARD"]
           }
         },
         {
           "type": "DUDLEY_COAL_MINE",
           "duplicate": {
             "originalType": "SPRITE_COAL_MINE",
-            "additionalNamedItems": ["DUDLEY_CARD"]
+            "additionalNamedCards": ["DUDLEY_CARD"]
           }
         }
       ]

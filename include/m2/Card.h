@@ -6,8 +6,8 @@
 #include <string>
 
 namespace m2 {
-	class Item {
-		pb::Item _item;
+	class Card {
+		pb::Card _card;
 		std::vector<float> _costs = std::vector<float>(pb::enum_value_count<m2g::pb::ResourceType>());
 		std::vector<float> _benefits = std::vector<float>(pb::enum_value_count<m2g::pb::ResourceType>());
 		std::vector<float> _acquire_benefits = std::vector<float>(pb::enum_value_count<m2g::pb::ResourceType>());
@@ -16,33 +16,33 @@ namespace m2 {
 		std::vector<IFE> _constants = std::vector<IFE>(pb::enum_value_count<m2g::pb::ConstantType>());
 
 	public:
-		Item() = default;
-		explicit Item(pb::Item item);
+		Card() = default;
+		explicit Card(pb::Card card);
 		// Prevent accidental copying
-		Item(const Item& other) = delete;
-		Item& operator=(const Item& other) = delete;
+		Card(const Card& other) = delete;
+		Card& operator=(const Card& other) = delete;
 		// Move allowed
-		Item(Item&& other) = default;
-		Item& operator=(Item&& other) = default;
+		Card(Card&& other) = default;
+		Card& operator=(Card&& other) = default;
 
-		[[nodiscard]] m2g::pb::ItemType Type() const { return _item.type(); }
-		[[nodiscard]] m2g::pb::ItemCategory Category() const { return _item.category(); }
-		[[nodiscard]] size_t GetCostCount() const { return _item.costs_size(); }
+		[[nodiscard]] m2g::pb::CardType Type() const { return _card.type(); }
+		[[nodiscard]] m2g::pb::CardCategory Category() const { return _card.category(); }
+		[[nodiscard]] size_t GetCostCount() const { return _card.costs_size(); }
 		[[nodiscard]] std::pair<m2g::pb::ResourceType, float> GetCostByIndex(size_t i) const;
 		[[nodiscard]] float GetCost(m2g::pb::ResourceType) const;
 		[[nodiscard]] float TryGetCost(m2g::pb::ResourceType, float default_value) const;
 		[[nodiscard]] bool HasCost(m2g::pb::ResourceType) const;
-		[[nodiscard]] size_t GetBenefitCount() const { return _item.benefits_size(); }
+		[[nodiscard]] size_t GetBenefitCount() const { return _card.benefits_size(); }
 		[[nodiscard]] std::pair<m2g::pb::ResourceType, float> GetBenefitByIndex(size_t i) const;
 		[[nodiscard]] float GetBenefit(m2g::pb::ResourceType) const;
 		[[nodiscard]] float TryGetBenefit(m2g::pb::ResourceType, float default_value) const;
 		[[nodiscard]] bool HasBenefit(m2g::pb::ResourceType) const;
-		[[nodiscard]] size_t GetAcquireBenefitCount() const { return _item.acquire_benefits_size(); }
+		[[nodiscard]] size_t GetAcquireBenefitCount() const { return _card.acquire_benefits_size(); }
 		[[nodiscard]] std::pair<m2g::pb::ResourceType, float> GetAcquireBenefitByIndex(size_t i) const;
 		[[nodiscard]] float GetAcquireBenefit(m2g::pb::ResourceType) const;
 		[[nodiscard]] float TryGetAcquireBenefit(m2g::pb::ResourceType, float default_value) const;
 		[[nodiscard]] bool HasAcquireBenefit(m2g::pb::ResourceType) const;
-		[[nodiscard]] size_t GetAttributeCount() const { return _item.attributes_size(); }
+		[[nodiscard]] size_t GetAttributeCount() const { return _card.attributes_size(); }
 		[[nodiscard]] std::pair<m2g::pb::AttributeType, float> GetAttributeByIndex(size_t i) const;
 		[[nodiscard]] float GetAttribute(m2g::pb::AttributeType) const;
 		[[nodiscard]] float TryGetAttribute(m2g::pb::AttributeType, float default_value) const;
@@ -51,14 +51,14 @@ namespace m2 {
 		[[nodiscard]] IFE TryGetAttribute2(m2g::pb::AttributeType, const IFE& defaultValue) const;
 		[[nodiscard]] bool HasAttribute2(m2g::pb::AttributeType) const;
 		[[nodiscard]] IFE GetConstant(const m2g::pb::ConstantType c) const { return _constants[pb::enum_index(c)]; }
-		[[nodiscard]] m2g::pb::SpriteType GameSprite() const { return _item.game_sprite(); }
-		[[nodiscard]] m2g::pb::SpriteType UiSprite() const { return _item.ui_sprite(); }
-		[[nodiscard]] const std::string& in_game_name() const { return _item.in_game_name(); }
+		[[nodiscard]] m2g::pb::SpriteType GameSprite() const { return _card.game_sprite(); }
+		[[nodiscard]] m2g::pb::SpriteType UiSprite() const { return _card.ui_sprite(); }
+		[[nodiscard]] const std::string& in_game_name() const { return _card.in_game_name(); }
 	};
 
 	// Transformers
-	const Item& ToNamedItem(m2g::pb::ItemType item_type);
-	std::function<float(const Item&)> ToAttributeValue(m2g::pb::AttributeType attribute_type);
+	const Card& ToNamedCard(m2g::pb::CardType card_type);
+	std::function<float(const Card&)> ToAttributeValue(m2g::pb::AttributeType attribute_type);
 
 	float GetResourceAmount(const pb::Resource& resource);
 }

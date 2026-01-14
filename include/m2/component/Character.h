@@ -1,6 +1,6 @@
 #pragma once
 #include "../Component.h"
-#include "../Item.h"
+#include "../Card.h"
 #include <m2/containers/AssociativeList.h>
 #include <m2/GameTypes.h>
 #include <m2g_Interaction.pb.h>
@@ -18,31 +18,31 @@ namespace m2 {
 		class Iterator {
 		public:
 			using Incrementor = std::function<void(Iterator&)>;
-			using Filter = std::variant<std::monostate,m2g::pb::ItemType,m2g::pb::ItemCategory>;
+			using Filter = std::variant<std::monostate,m2g::pb::CardType,m2g::pb::CardCategory>;
 		private:
 			const Character& _character;
 			Incrementor _incrementor;
 			Filter _filter;
 			size_t _index{}; // Some implementations may use index to aid with iteration
-			const Item* _item_ptr;
+			const Card* _card_ptr;
 		public:
 			using difference_type = std::ptrdiff_t;
-			using value_type = const Item;
-			using pointer = const Item*;
-			using reference = const Item&;
+			using value_type = const Card;
+			using pointer = const Card*;
+			using reference = const Card&;
 			using iterator_category = std::forward_iterator_tag;
 
-			Iterator(const Character& character, Incrementor incrementor, const Filter filter, const size_t index, const Item* ptr) : _character(character), _incrementor(std::move(incrementor)), _filter(filter), _index(index), _item_ptr(ptr) {}
+			Iterator(const Character& character, Incrementor incrementor, const Filter filter, const size_t index, const Card* ptr) : _character(character), _incrementor(std::move(incrementor)), _filter(filter), _index(index), _card_ptr(ptr) {}
 			Iterator& operator++() { _incrementor(*this); return *this; }
-			bool operator==(const Iterator& other) const { return _item_ptr == other._item_ptr; }
-			explicit operator bool() const { return _item_ptr; }
-			const Item& operator*() const { return *_item_ptr; }
-			const Item* operator->() const { return _item_ptr; }
+			bool operator==(const Iterator& other) const { return _card_ptr == other._card_ptr; }
+			explicit operator bool() const { return _card_ptr; }
+			const Card& operator*() const { return *_card_ptr; }
+			const Card* operator->() const { return _card_ptr; }
 
 			[[nodiscard]] const Character& GetCharacter() const { return _character; }
 			[[nodiscard]] Filter GetFilter() const { return _filter; }
-			[[nodiscard]] const Item* Get() const { return _item_ptr; }
-			void Set(const Item* ptr) { _item_ptr = ptr; }
+			[[nodiscard]] const Card* Get() const { return _card_ptr; }
+			void Set(const Card* ptr) { _card_ptr = ptr; }
 			[[nodiscard]] size_t GetIndex() const { return _index; }
 			void SetIndex(const size_t index) { _index = index; }
 		};
@@ -53,20 +53,20 @@ namespace m2 {
 		std::optional<m2g::pb::InteractionData> ExecuteInteraction(Character& initiator, const m2g::pb::InteractionData& data);
 		std::optional<m2g::pb::InteractionData> ExecuteInteraction(const m2g::pb::InteractionData& data);
 
-		[[nodiscard]] bool HasItem(m2g::pb::ItemType item_type) const;
-		[[nodiscard]] bool HasItem(m2g::pb::ItemCategory item_cat) const;
-		[[nodiscard]] size_t CountItem(m2g::pb::ItemType item_type) const;
-		[[nodiscard]] size_t CountItem(m2g::pb::ItemCategory item_cat) const;
-		[[nodiscard]] virtual Iterator FindItems(m2g::pb::ItemType item_type) const = 0;
-		[[nodiscard]] virtual Iterator FindItems(m2g::pb::ItemCategory item_cat) const = 0;
-		[[nodiscard]] virtual Iterator BeginItems() const = 0;
-		[[nodiscard]] virtual Iterator EndItems() const = 0;
-		[[nodiscard]] std::vector<m2g::pb::ItemType> NamedItemTypes() const;
-		[[nodiscard]] std::vector<m2g::pb::ItemType> NamedItemTypes(m2g::pb::ItemCategory item_cat) const;
-		virtual void AddNamedItem(const Item& item) = 0;
-		virtual void AddNamedItemWithoutBenefits(const Item& item) = 0;
-		virtual void RemoveItem(const Iterator& item) = 0;
-		virtual void ClearItems() = 0;
+		[[nodiscard]] bool HasCard(m2g::pb::CardType card_type) const;
+		[[nodiscard]] bool HasCard(m2g::pb::CardCategory card_cat) const;
+		[[nodiscard]] size_t CountCard(m2g::pb::CardType card_type) const;
+		[[nodiscard]] size_t CountCard(m2g::pb::CardCategory card_cat) const;
+		[[nodiscard]] virtual Iterator FindCards(m2g::pb::CardType card_type) const = 0;
+		[[nodiscard]] virtual Iterator FindCards(m2g::pb::CardCategory card_cat) const = 0;
+		[[nodiscard]] virtual Iterator BeginCards() const = 0;
+		[[nodiscard]] virtual Iterator EndCards() const = 0;
+		[[nodiscard]] std::vector<m2g::pb::CardType> NamedCardTypes() const;
+		[[nodiscard]] std::vector<m2g::pb::CardType> NamedCardTypes(m2g::pb::CardCategory card_cat) const;
+		virtual void AddNamedCard(const Card& card) = 0;
+		virtual void AddNamedCardWithoutBenefits(const Card& card) = 0;
+		virtual void RemoveCard(const Iterator& card) = 0;
+		virtual void ClearCards() = 0;
 
 		[[nodiscard]] virtual bool HasResource(m2g::pb::ResourceType resource_type) const = 0;
 		[[nodiscard]] virtual float GetResource(m2g::pb::ResourceType resource_type) const = 0;
@@ -89,7 +89,7 @@ namespace m2 {
 	};
 
 	class CompactCharacter final : public Character {
-		const Item* _item{};
+		const Card* _card{};
 		std::pair<m2g::pb::ResourceType, float> _resource;
 		std::pair<m2g::pb::AttributeType, float> _attribute;
 		std::pair<m2g::pb::VariableType, IFE> _variable;
@@ -100,14 +100,14 @@ namespace m2 {
 
 		[[nodiscard]] int32_t Hash(int32_t initialValue) const;
 
-		[[nodiscard]] Iterator FindItems(m2g::pb::ItemType item_type) const override;
-		[[nodiscard]] Iterator FindItems(m2g::pb::ItemCategory item_cat) const override;
-		[[nodiscard]] Iterator BeginItems() const override;
-		[[nodiscard]] Iterator EndItems() const override;
-		void AddNamedItem(const Item& item) override;
-		void AddNamedItemWithoutBenefits(const Item& item) override;
-		void RemoveItem(const Iterator& item) override;
-		void ClearItems() override;
+		[[nodiscard]] Iterator FindCards(m2g::pb::CardType card_type) const override;
+		[[nodiscard]] Iterator FindCards(m2g::pb::CardCategory card_cat) const override;
+		[[nodiscard]] Iterator BeginCards() const override;
+		[[nodiscard]] Iterator EndCards() const override;
+		void AddNamedCard(const Card& card) override;
+		void AddNamedCardWithoutBenefits(const Card& card) override;
+		void RemoveCard(const Iterator& card) override;
+		void ClearCards() override;
 
 		[[nodiscard]] bool HasResource(m2g::pb::ResourceType resource_type) const override;
 		[[nodiscard]] float GetResource(m2g::pb::ResourceType resource_type) const override;
@@ -130,7 +130,7 @@ namespace m2 {
 	};
 
 	class FastCharacter final : public Character {
-		std::vector<const Item*> _items;
+		std::vector<const Card*> _cards;
 		std::vector<float> _resources = std::vector<float>(pb::enum_value_count<m2g::pb::ResourceType>()); // TODO deprecated
 		std::vector<float> _attributes = std::vector<float>(pb::enum_value_count<m2g::pb::AttributeType>()); // TODO deprecated
 		std::vector<IFE> _properties = std::vector<IFE>(pb::enum_value_count<m2g::pb::PropertyType>());
@@ -142,14 +142,14 @@ namespace m2 {
 
 		[[nodiscard]] int32_t Hash(int32_t initialValue) const;
 
-		[[nodiscard]] Iterator FindItems(m2g::pb::ItemType item_type) const override;
-		[[nodiscard]] Iterator FindItems(m2g::pb::ItemCategory item_cat) const override;
-		[[nodiscard]] Iterator BeginItems() const override;
-		[[nodiscard]] Iterator EndItems() const override;
-		void AddNamedItem(const Item& item) override;
-		void AddNamedItemWithoutBenefits(const Item& item) override;
-		void RemoveItem(const Iterator& item) override;
-		void ClearItems() override;
+		[[nodiscard]] Iterator FindCards(m2g::pb::CardType card_type) const override;
+		[[nodiscard]] Iterator FindCards(m2g::pb::CardCategory card_cat) const override;
+		[[nodiscard]] Iterator BeginCards() const override;
+		[[nodiscard]] Iterator EndCards() const override;
+		void AddNamedCard(const Card& card) override;
+		void AddNamedCardWithoutBenefits(const Card& card) override;
+		void RemoveCard(const Iterator& card) override;
+		void ClearCards() override;
 
 		[[nodiscard]] bool HasResource(m2g::pb::ResourceType resource_type) const override;
 		[[nodiscard]] float GetResource(m2g::pb::ResourceType resource_type) const override;
@@ -185,9 +185,9 @@ namespace m2 {
 	using CharacterVariant = std::variant<CompactCharacter,FastCharacter>;
 
 	// Filters
-	constexpr auto HasItemOfType(m2g::pb::ItemType it) { return [it](const Character& c) { return c.HasItem(it); }; }
-	std::function<std::vector<m2g::pb::ItemType>(Character&)> GenerateNamedItemTypesFilter(m2g::pb::ItemCategory item_category);
-	std::function<std::vector<m2g::pb::ItemType>(Character&)> GenerateNamedItemTypesFilter(std::initializer_list<m2g::pb::ItemCategory> categoriesToFilter);
+	constexpr auto HasCardOfType(m2g::pb::CardType it) { return [it](const Character& c) { return c.HasCard(it); }; }
+	std::function<std::vector<m2g::pb::CardType>(Character&)> GenerateNamedCardTypesFilter(m2g::pb::CardCategory card_category);
+	std::function<std::vector<m2g::pb::CardType>(Character&)> GenerateNamedCardTypesFilter(std::initializer_list<m2g::pb::CardCategory> categoriesToFilter);
 	// Transformers
 	Character& ToCharacterBase(CharacterVariant& v);
 	FastCharacter& ToFastCharacter(CharacterVariant& v);

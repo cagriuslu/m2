@@ -43,7 +43,7 @@ RectF tiles_window_ratio() {
 	return RectF{0.05f, 0.05f, 0.9f, 0.9f};
 }
 
-UiPanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType exclude_tile) {
+UiPanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::CardType exclude_tile) {
 	return UiPanelBlueprint{
 		.name = "TilesWindow",
 		.w = 61,
@@ -66,12 +66,12 @@ UiPanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType
 				.h = 10,
 				.variant = TextSelectionBlueprint{
 					.options = {
-						{"Cotton Mill", static_cast<int>(m2g::pb::ITEM_CATEGORY_COTTON_MILL_TILE)},
-						{"Iron Works", static_cast<int>(m2g::pb::ITEM_CATEGORY_IRON_WORKS_TILE)},
-						{"Brewery", static_cast<int>(m2g::pb::ITEM_CATEGORY_BREWERY_TILE)},
-						{"Coal Mine", static_cast<int>(m2g::pb::ITEM_CATEGORY_COAL_MINE_TILE)},
-						{"Pottery", static_cast<int>(m2g::pb::ITEM_CATEGORY_POTTERY_TILE)},
-						{"Manufactured Goods", static_cast<int>(m2g::pb::ITEM_CATEGORY_MANUFACTURED_GOODS_TILE)}},
+						{"Cotton Mill", static_cast<int>(m2g::pb::CARD_CATEGORY_COTTON_MILL_TILE)},
+						{"Iron Works", static_cast<int>(m2g::pb::CARD_CATEGORY_IRON_WORKS_TILE)},
+						{"Brewery", static_cast<int>(m2g::pb::CARD_CATEGORY_BREWERY_TILE)},
+						{"Coal Mine", static_cast<int>(m2g::pb::CARD_CATEGORY_COAL_MINE_TILE)},
+						{"Pottery", static_cast<int>(m2g::pb::CARD_CATEGORY_POTTERY_TILE)},
+						{"Manufactured Goods", static_cast<int>(m2g::pb::CARD_CATEGORY_MANUFACTURED_GOODS_TILE)}},
 					.line_count = 6,
 					.allow_multiple_selection = false,
 					.show_scroll_bar = false,
@@ -80,15 +80,15 @@ UiPanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType
 						if (auto industry_type_selections = self.GetSelectedOptions(); not industry_type_selections.empty()) {
 							auto industry_type_selection = industry_type_selections[0];
 							auto industry_type_selection_int = I(industry_type_selection);
-							auto industry_type = static_cast<m2g::pb::ItemCategory>(industry_type_selection_int);
+							auto industry_type = static_cast<m2g::pb::CardCategory>(industry_type_selection_int);
 							// Gather the industry tiles
 							std::vector<IndustryTile> industry_tiles;
-							for (auto item_it = M2_PLAYER.GetCharacter().FindItems(industry_type); item_it != M2_PLAYER.GetCharacter().EndItems(); ++item_it) {
-								if (item_it->Type() == tile_to_filter) {
+							for (auto card_it = M2_PLAYER.GetCharacter().FindCards(industry_type); card_it != M2_PLAYER.GetCharacter().EndCards(); ++card_it) {
+								if (card_it->Type() == tile_to_filter) {
 									// Don't emplace, clear filter because only one tile is filtered
 									tile_to_filter = {};
 								} else {
-									industry_tiles.emplace_back(item_it->Type());
+									industry_tiles.emplace_back(card_it->Type());
 								}
 							}
 							// Sort the tiles
@@ -96,14 +96,14 @@ UiPanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType
 							// Look up tile names
 							TextSelectionBlueprint::Options options;
 							std::ranges::transform(industry_tiles, std::back_inserter(options), [](const IndustryTile tile) {
-								return TextSelectionBlueprint::Option{M2_GAME.GetNamedItem(tile).in_game_name(), I(tile)};
+								return TextSelectionBlueprint::Option{M2_GAME.GetNamedCard(tile).in_game_name(), I(tile)};
 							});
 							// Look for the other widget
 							self.Parent().FindWidget<TextSelection>("TileLevelSelection")
 									->SetOptions(std::move(options)); // Trigger the other widget to recreate itself
 							const auto industry = industry_of_industry_tile_category(industry_type);
 							self.Parent().FindWidget<Image>("IndustryVisual")
-									->SetSpriteType(M2_GAME.GetNamedItem(industry).UiSprite()); // Set the industry image
+									->SetSpriteType(M2_GAME.GetNamedCard(industry).UiSprite()); // Set the industry image
 						} else {
 							self.Parent().FindWidget<TextSelection>("TileLevelSelection")
 									->SetOptions({}); // Trigger the other widget to recreate itself
@@ -139,7 +139,7 @@ UiPanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType
 					.show_scroll_bar = false,
 					.onAction = [](const TextSelection &self) -> UiAction {
 						if (auto selections = self.GetSelectedOptions(); not selections.empty()) {
-							const auto selectedTileType = static_cast<m2g::pb::ItemType>(I(selections[0]));
+							const auto selectedTileType = static_cast<m2g::pb::CardType>(I(selections[0]));
 							self.Parent().FindWidget<Text>("BuildRequirements")->set_text(GetIndustryTileBuildRequirementsString(selectedTileType));
 							self.Parent().FindWidget<Text>("ResourceGain")->set_text(GetIndustryTileResourceGainString(selectedTileType));
 							self.Parent().FindWidget<Text>("SellRequirements")->set_text(GetIndustryTileSellRequirementsString(selectedTileType));
@@ -265,8 +265,8 @@ UiPanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType
 						// Find the other blueprint
 						if (auto* tile_selection = self.Parent().FindWidget<TextSelection>("TileLevelSelection")) {
 							if (auto selections = tile_selection->GetSelectedOptions(); not selections.empty()) {
-								auto item_type = static_cast<m2g::pb::ItemType>(I(selections[0]));
-								return MakeReturnAction<m2g::pb::ItemType>(item_type);
+								auto card_type = static_cast<m2g::pb::CardType>(I(selections[0]));
+								return MakeReturnAction<m2g::pb::CardType>(card_type);
 							}
 						}
 						return MakeReturnAction();
@@ -277,16 +277,16 @@ UiPanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType
 	};
 }
 
-std::optional<m2g::pb::ItemType> ask_for_tile_selection(m2g::pb::ItemType exclude_tile) {
+std::optional<m2g::pb::CardType> ask_for_tile_selection(m2g::pb::CardType exclude_tile) {
 	LOG_INFO("Asking player to select a tile...");
 
-	std::optional<m2g::pb::ItemType> selected_tile;
+	std::optional<m2g::pb::CardType> selected_tile;
 	UiPanel::create_and_run_blocking(std::make_unique<UiPanelBlueprint>(generate_tiles_window("Select tile to develop", exclude_tile)),
 			tiles_window_ratio(), M2_GAME.DrawGameToTexture(M2_LEVEL.GetCamera()->InferPositionF()))
 			.IfQuit([] { M2_GAME.quit = true; })
 			.IfVoidReturn([&]() { LOG_INFO("Tile selection cancelled"); })
-			.IfReturn<m2g::pb::ItemType>([&selected_tile](auto picked_tile) {
-				LOG_INFO("Tile selected", m2g::pb::ItemType_Name(picked_tile));
+			.IfReturn<m2g::pb::CardType>([&selected_tile](auto picked_tile) {
+				LOG_INFO("Tile selected", m2g::pb::CardType_Name(picked_tile));
 				selected_tile = picked_tile;
 			});
 
@@ -294,7 +294,7 @@ std::optional<m2g::pb::ItemType> ask_for_tile_selection(m2g::pb::ItemType exclud
 }
 
 std::string GetIndustryTileBuildRequirementsString(const IndustryTile industryTileType) {
-	const auto& industryTile = M2_GAME.GetNamedItem(industryTileType);
+	const auto& industryTile = M2_GAME.GetNamedCard(industryTileType);
 	std::string build_requirements = "£" + m2::ToString(industryTile.GetConstant(m2g::pb::MONEY_COST).GetIntOrZero());
 	if (const auto coal_cost = industryTile.GetConstant(m2g::pb::COAL_COST).GetIntOrZero()) {
 		build_requirements += ", " + m2::ToString(coal_cost) + " Coal";
@@ -305,7 +305,7 @@ std::string GetIndustryTileBuildRequirementsString(const IndustryTile industryTi
 	return build_requirements;
 }
 std::string GetIndustryTileResourceGainString(const IndustryTile industryTileType) {
-	const auto& industryTile = M2_GAME.GetNamedItem(industryTileType);
+	const auto& industryTile = M2_GAME.GetNamedCard(industryTileType);
 	std::string resource_gain;
 	if (const auto coal_gain = industryTile.GetConstant(m2g::pb::COAL_BONUS).GetIntOrZero()) {
 		resource_gain = m2::ToString(coal_gain) + " Coal";
@@ -322,14 +322,14 @@ std::string GetIndustryTileResourceGainString(const IndustryTile industryTileTyp
 	return resource_gain;
 }
 std::string GetIndustryTileSellRequirementsString(const IndustryTile industryTileType) {
-	const auto& industryTile = M2_GAME.GetNamedItem(industryTileType);
+	const auto& industryTile = M2_GAME.GetNamedCard(industryTileType);
 	if (auto sell_beer_cost = industryTile.GetConstant(m2g::pb::BEER_COST).GetIntOrZero()) {
 		return m2::ToString(sell_beer_cost) + " Beer";
 	}
 	return {};
 }
 std::string GetIndustryTileSellBenefitsString(const IndustryTile industryTileType) {
-	const auto& industryTile = M2_GAME.GetNamedItem(industryTileType);
+	const auto& industryTile = M2_GAME.GetNamedCard(industryTileType);
 	std::string sell_benefits = m2::ToString(industryTile.GetConstant(m2g::pb::VICTORY_POINTS_BONUS).GetIntOrZero()) + " Points, ";
 	sell_benefits += m2::ToString(industryTile.GetConstant(m2g::pb::INCOME_POINTS_BONUS).GetIntOrZero()) + " Income, ";
 	sell_benefits += m2::ToString(industryTile.GetConstant(m2g::pb::LINK_BONUS).GetIntOrZero()) + " Link";

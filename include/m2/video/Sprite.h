@@ -21,7 +21,7 @@ namespace m2 {
 		int _ppm{};
 		VecF _centerToOriginVecPx;
 		VecF _centerToOriginVecM;
-		std::vector<m2g::pb::ItemType> _namedItems;
+		std::vector<m2g::pb::CardType> _namedCards;
 
 	   public:
 		Sprite() = default;
@@ -43,7 +43,7 @@ namespace m2 {
 		[[nodiscard]] const VecF& CenterToOriginVecPx() const { return _centerToOriginVecPx; }
 		[[nodiscard]] const VecF& CenterToOriginVecM() const { return _centerToOriginVecM; }
 		[[nodiscard]] bool IsBackgroundTile() const { return _originalPb->regular().is_background_tile(); }
-		[[nodiscard]] const std::vector<m2g::pb::ItemType>& NamedItems() const { return _namedItems; }
+		[[nodiscard]] const std::vector<m2g::pb::CardType>& NamedCards() const { return _namedCards; }
 
 		[[nodiscard]] SDL_Texture* GetTexture(bool foregroundCompanion = false) const;
 		[[nodiscard]] VecF TextureTotalDims(bool foregroundCompanion = false) const;

@@ -11,7 +11,7 @@ using namespace m2g::pb;
 
 // TODO add other types of Ranged Weapons: Machine Gun, Shotgun, Bow
 
-m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& position, const m2::VecF& intended_direction, const m2::Item& ranged_weapon, bool is_friend) {
+m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& position, const m2::VecF& intended_direction, const m2::Card& ranged_weapon, bool is_friend) {
 	// Check if weapon has necessary attributes
 	if (!ranged_weapon.HasAttribute(ATTRIBUTE_LINEAR_SPEED)) {
 		throw M2_ERROR("Ranged weapon has no linear speed");

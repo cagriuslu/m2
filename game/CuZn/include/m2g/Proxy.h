@@ -35,7 +35,7 @@ namespace m2g {
 		void bot_handle_server_update(const m2::pb::TurnBasedServerUpdate& server_update);
 		void bot_handle_server_command(const m2g::pb::TurnBasedServerCommand& server_command, int receiver_index);
 		void post_tile_create(m2::Object& obj, pb::SpriteType sprite_type);
-		m2::void_expected init_server_update_fg_object(m2::Object&, const m2::VecF& position, const std::vector<m2g::pb::ItemType>&);
+		m2::void_expected init_server_update_fg_object(m2::Object&, const m2::VecF& position, const std::vector<m2g::pb::CardType>&);
 
 	private:
 		m2::Id _game_state_tracker_id{};
@@ -87,7 +87,7 @@ namespace m2g {
 
 		// Server only fields
 
-		std::vector<Card> _draw_deck;
+		std::vector<m2g::pb::CardType> _draw_deck;
 		bool _is_first_turn{true};
 		/// Liquidation is a special state where a player needs to sell some of its factories to pay back their loan.
 		/// In this state, the current state holder is the player that needs to sell its factories.

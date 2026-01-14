@@ -1,19 +1,19 @@
-Character components can have items, resources, and attributes.
+Character components can have cards, resources, and attributes.
 
 Resources represent a non-negative amount of certain resource type. Resources are not allowed to go below zero, because
-item usage system depends on resources being available to decide whether an item can be used or not.
+card usage system depends on resources being available to decide whether an card can be used or not.
 
-Attributes are like resources, except that the value of them can get below zero. Item attributes are immutable, but
-character attributes are variable. Attributes are not taken into account when acquiring or using an item.
+Attributes are like resources, except that the value of them can get below zero. Card attributes are immutable, but
+character attributes are variable. Attributes are not taken into account when acquiring or using an card.
 
-Items are completely abstract entities. They have a certain type and a category for identification. They have different
-usage types such as: Consumable (item disappears after use), Reusable (item doesn't disappear after use), Automatic
-(item is used automatically every physics loop), Passive (item cannot be used, only held). Items can have costs
-(required resources to use the item), benefits (resources gained upon use), and immutable attributes (a value of certain
+Cards are completely abstract entities. They have a certain type and a category for identification. They have different
+usage types such as: Consumable (card disappears after use), Reusable (card doesn't disappear after use), Automatic
+(card is used automatically every physics loop), Passive (card cannot be used, only held). Cards can have costs
+(required resources to use the card), benefits (resources gained upon use), and immutable attributes (a value of certain
 attribute type).
 
-Character has an update callback to process the effects of items with automatic effects. They also have a user
-customizable, periodic update callback. Although it's possible for one game object to give items or resources to
+Character has an update callback to process the effects of cards with automatic effects. They also have a user
+customizable, periodic update callback. Although it's possible for one game object to give cards or resources to
 another directly, the preferred way of interactions between objects is to prepare a m2g::pb::InteractionData, and give
 it to the other object using character().execute_interaction(interaction_data) function. This is because it's usually
 safer for the object itself to be aware of such interactions, rather than their states being modified by external

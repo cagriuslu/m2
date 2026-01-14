@@ -1,7 +1,7 @@
 syntax = "proto3";
 package m2g.pb;
 
-import "m2g_ItemType.proto";
+import "m2g_CardType.proto";
 import "m2g_SpriteType.proto";
 
 message TurnBasedServerCommand {
@@ -23,43 +23,43 @@ message TurnBasedServerCommand {
 
 message TurnBasedClientCommand {
   message BuildAction {
-    ItemType card = 1;
+    CardType card = 1;
     SpriteType industry_location = 2;
-    ItemType industry_tile = 3;
+    CardType industry_tile = 3;
     repeated SpriteType coal_sources = 4;
     repeated SpriteType iron_sources = 5;
   }
   message NetworkAction {
-    ItemType card = 1;
+    CardType card = 1;
     SpriteType connection_1 = 3;
     SpriteType connection_2 = 4;
     repeated SpriteType coal_sources = 5;
     SpriteType beer_source = 6;
   }
   message SellAction {
-    ItemType card = 1;
+    CardType card = 1;
     SpriteType industry_location = 2;
     SpriteType merchant_location = 3;
     repeated SpriteType beer_sources = 4;
-    ItemType merchant_develop_benefit_industry_tile = 5;
+    CardType merchant_develop_benefit_industry_tile = 5;
   }
   message LoanAction {
-    ItemType card = 1;
+    CardType card = 1;
   }
   message DevelopAction {
-    ItemType card = 1;
-    ItemType industry_tile_1 = 2;
-    ItemType industry_tile_2 = 3;
+    CardType card = 1;
+    CardType industry_tile_1 = 2;
+    CardType industry_tile_2 = 3;
     SpriteType iron_sources_1 = 4;
     SpriteType iron_sources_2 = 5;
   }
   message ScoutAction {
-    ItemType card_0 = 1;
-    ItemType card_1 = 2;
-    ItemType card_2 = 3;
+    CardType card_0 = 1;
+    CardType card_1 = 2;
+    CardType card_2 = 3;
   }
   message PassAction {
-    ItemType card = 1;
+    CardType card = 1;
   }
   message LiquidateAction {
     repeated SpriteType locations_to_sell = 1;

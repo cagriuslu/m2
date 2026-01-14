@@ -5,7 +5,7 @@ import "m2g_SpriteType.proto";
 import "RectI.proto";
 import "VecF.proto";
 import "Dim2f.proto";
-import "m2g_ItemType.proto";
+import "m2g_CardType.proto";
 
 message Fixture {
   message RectangleFixture {
@@ -70,8 +70,8 @@ message RegularSprite {
 
   ForegroundCompanion foreground_companion = 8;
 
-  // Sprites can hold immutable items just to simplify attribute lookup
-  repeated m2g.pb.ItemType named_items = 9;
+  // Sprites can hold immutable cards just to simplify attribute lookup
+  repeated m2g.pb.CardType named_cards = 9;
 }
 
 message Color {
@@ -102,8 +102,8 @@ message SpriteEffect {
 message Duplicate {
   m2g.pb.SpriteType original_type = 1;
 
-  // Sprites can hold immutable items just to simplify attribute lookup
-  repeated m2g.pb.ItemType additional_named_items = 2;
+  // Sprites can hold immutable cards just to simplify attribute lookup
+  repeated m2g.pb.CardType additional_named_cards = 2;
 
   // Optionally, sprite effects might be applied to the original sprite
   repeated SpriteEffect additional_effects = 3;

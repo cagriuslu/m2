@@ -16,7 +16,7 @@ enum class SellJourneyStep {
 	EXPECT_CONFIRMATION,
 };
 class SellJourney : public m2::FsmBase<SellJourneyStep, POIOrCancelSignal> {
-	Card _selected_card{};
+	m2g::pb::CardType _selected_card{};
 	IndustryLocation _selected_location{};
 	MerchantLocation _merchant_location{};
 	std::vector<Location> _beer_sources;
@@ -50,4 +50,4 @@ private:
 
 m2::void_expected CanPlayerSell(m2::Character& player, const m2g::pb::TurnBasedClientCommand_SellAction& sell_action);
 
-Card ExecuteSellAction(m2::Character& player, const m2g::pb::TurnBasedClientCommand_SellAction& sell_action);
+m2g::pb::CardType ExecuteSellAction(m2::Character& player, const m2g::pb::TurnBasedClientCommand_SellAction& sell_action);

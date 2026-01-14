@@ -58,7 +58,7 @@ static widget::ProgressBarBlueprint dash_progress_bar = {
 		.onUpdate = [](widget::ProgressBar& self) {
 			if (M2_LEVEL.GetPlayer()) {
 				// Check if player has DASH capability
-				if (M2_PLAYER.GetCharacter().HasItem(m2g::pb::ITEM_REUSABLE_DASH_2S)) {
+				if (M2_PLAYER.GetCharacter().HasCard(m2g::pb::CARD_REUSABLE_DASH_2S)) {
 					float counter = M2_PLAYER.GetCharacter().GetResource(m2g::pb::RESOURCE_DASH_ENERGY);
 					float cooldown = 2.0f;
 					counter = (cooldown <= counter) ? cooldown : counter;

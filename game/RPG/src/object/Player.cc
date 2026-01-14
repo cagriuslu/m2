@@ -12,7 +12,7 @@
 #include <rpg/Defs.h>
 #include <array>
 #include <m2/third_party/physics/ColliderCategory.h>
-#include "rpg/UseItem.h"
+#include "rpg/UseCard.h"
 
 using namespace rpg;
 using namespace m2g;
@@ -52,12 +52,12 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 	gfx.position = position;
 
 	auto& chr = obj.AddFastCharacter();
-	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_DASH_2S));
+	chr.AddNamedCard(M2_GAME.GetNamedCard(m2g::pb::CARD_REUSABLE_DASH_2S));
 	if (M2_LEVEL.GetLevelIdentifier() != "MeleeTutorialClosed") {
 		// 4th level is melee tutorial
-		chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_GUN));
+		chr.AddNamedCard(M2_GAME.GetNamedCard(m2g::pb::CARD_REUSABLE_GUN));
 	}
-	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_SWORD));
+	chr.AddNamedCard(M2_GAME.GetNamedCard(m2g::pb::CARD_REUSABLE_SWORD));
 	chr.AddResource(m2g::pb::RESOURCE_HP, 1.0f);
 	chr.AddResource(m2g::pb::RESOURCE_DASH_ENERGY, 2.0f);
 
@@ -71,7 +71,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 		auto [direction_enum, direction_vector] = m2::calculate_character_movement(m2g::pb::MOVE_LEFT, m2g::pb::MOVE_RIGHT, m2g::pb::MOVE_UP, m2g::pb::MOVE_DOWN);
 		float move_force;
 		// Check if dash
-		if (direction_vector && M2_GAME.events.PopKeyPress(m2g::pb::DASH) && UseItem(chr, *chr.FindItems(m2g::pb::ITEM_REUSABLE_DASH_2S))) {
+		if (direction_vector && M2_GAME.events.PopKeyPress(m2g::pb::DASH) && UseCard(chr, *chr.FindCards(m2g::pb::CARD_REUSABLE_DASH_2S))) {
 			chr.ClearResource(RESOURCE_DASH_ENERGY);
 			move_force = PLAYER_DASH_FORCE;
 		} else {
@@ -87,22 +87,22 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 
 		// Primary weapon
 		if (M2_GAME.events.IsMouseButtonDown(m2::MouseButton::PRIMARY)) {
-			auto shoot = [&](const m2::Item& weapon) {
+			auto shoot = [&](const m2::Card& weapon) {
 				rpg::create_projectile(*m2::CreateObject({}, id), phy.position, vector_to_mouse, weapon, true);
 				// Knock-back
 				phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->ApplyForceToCenter(m2::VecF::CreateUnitVectorWithAngle(vector_to_mouse.GetAngle() + m2::PI) * 50000.0f);
 			};
 
-			// Check if there is a special ranged weapon and try to use the item
-			auto special_it = chr.FindItems(m2g::pb::ITEM_CATEGORY_SPECIAL_RANGED_WEAPON);
+			// Check if there is a special ranged weapon and try to use the card
+			auto special_it = chr.FindCards(m2g::pb::CARD_CATEGORY_SPECIAL_RANGED_WEAPON);
 			if (special_it) {
-				if (UseItem(chr, *special_it)) {
+				if (UseCard(chr, *special_it)) {
 					shoot(*special_it);
 				}
 			} else {
 				// Find default weapon and try to use it
-				auto default_it = chr.FindItems(m2g::pb::ITEM_CATEGORY_DEFAULT_RANGED_WEAPON);
-				if (default_it && UseItem(chr, *default_it)) {
+				auto default_it = chr.FindCards(m2g::pb::CARD_CATEGORY_DEFAULT_RANGED_WEAPON);
+				if (default_it && UseCard(chr, *default_it)) {
 					chr.ClearResource(RESOURCE_RANGED_ENERGY);
 					shoot(*default_it);
 				}
@@ -111,21 +111,21 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 
 		// Secondary weapon
 		if (M2_GAME.events.IsMouseButtonDown(m2::MouseButton::SECONDARY)) {
-			auto slash = [&](const m2::Item& weapon) {
+			auto slash = [&](const m2::Card& weapon) {
 				rpg::create_blade(*m2::CreateObject({}, id), phy.position, vector_to_mouse, weapon, true);
 			};
 
-			// Check if there is a special melee weapon and try to use the item
-			auto special_it = chr.FindItems(m2g::pb::ITEM_CATEGORY_SPECIAL_MELEE_WEAPON);
+			// Check if there is a special melee weapon and try to use the card
+			auto special_it = chr.FindCards(m2g::pb::CARD_CATEGORY_SPECIAL_MELEE_WEAPON);
 			if (special_it) {
 				// Try to use the weapon
-				if (UseItem(chr, *special_it)) {
+				if (UseCard(chr, *special_it)) {
 					slash(*special_it);
 				}
 			} else {
 				// Find default melee weapon and try to use it
-				auto default_it = chr.FindItems(m2g::pb::ITEM_CATEGORY_DEFAULT_MELEE_WEAPON);
-				if (default_it && UseItem(chr, *default_it)) {
+				auto default_it = chr.FindCards(m2g::pb::CARD_CATEGORY_DEFAULT_MELEE_WEAPON);
+				if (default_it && UseCard(chr, *default_it)) {
 					chr.ClearResource(RESOURCE_MELEE_ENERGY);
 					slash(*default_it);
 				}
@@ -145,13 +145,13 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 			}
 		}
 		// Check if special ammo finished
-		if (auto special_it = chr.FindItems(m2g::pb::ITEM_CATEGORY_SPECIAL_RANGED_WEAPON);
+		if (auto special_it = chr.FindCards(m2g::pb::CARD_CATEGORY_SPECIAL_RANGED_WEAPON);
 			special_it && !chr.HasResource(m2g::pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO)) {
 			// Remove weapon if no ammo left
-			chr.RemoveItem(special_it);
+			chr.RemoveCard(special_it);
 		}
 		// Show/hide ammo display
-		M2G_PROXY.set_ammo_display_state((bool) chr.FindItems(m2g::pb::ITEM_CATEGORY_SPECIAL_RANGED_WEAPON));
+		M2G_PROXY.set_ammo_display_state((bool) chr.FindCards(m2g::pb::CARD_CATEGORY_SPECIAL_RANGED_WEAPON));
 	};
 	phy.onCollision = [](MAYBE m2::Physique& me, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
 		if (auto* other_char = other.Owner().TryGetCharacter(); other_char && 10.0f < m2::VecF{me.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->GetLinearVelocity()}.GetLength()) {
@@ -164,10 +164,10 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 		if (data.has_hit_damage()) {
 			// Get hit by an enemy
 			self.RemoveResource(m2g::pb::RESOURCE_HP, data.hit_damage());
-		} else if (data.has_item_type()) {
-			const auto& item = M2_GAME.GetNamedItem(data.item_type());
-			// If the item in a consumable
-			if (const auto consumableIt = M2G_PROXY.CONSUMABLE_BENEFITS.find(item.Type()); consumableIt != M2G_PROXY.CONSUMABLE_BENEFITS.end()) {
+		} else if (data.has_card_type()) {
+			const auto& card = M2_GAME.GetNamedCard(data.card_type());
+			// If the card in a consumable
+			if (const auto consumableIt = M2G_PROXY.CONSUMABLE_BENEFITS.find(card.Type()); consumableIt != M2G_PROXY.CONSUMABLE_BENEFITS.end()) {
 				// Gain the benefits
 				if (consumableIt->second.first == RESOURCE_HP) {
 					const auto current = self.GetResource(consumableIt->second.first);
@@ -175,19 +175,19 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 				}
 			} else {
 				// Player can hold only one special weapon of certain type, get rid of the previous one
-				constexpr std::array<ItemCategory, 2> special_categories = {ITEM_CATEGORY_SPECIAL_RANGED_WEAPON, ITEM_CATEGORY_SPECIAL_MELEE_WEAPON};
+				constexpr std::array<CardCategory, 2> special_categories = {CARD_CATEGORY_SPECIAL_RANGED_WEAPON, CARD_CATEGORY_SPECIAL_MELEE_WEAPON};
 				constexpr std::array<ResourceType, 2> special_ammo_type = {RESOURCE_SPECIAL_RANGED_WEAPON_AMMO, NO_RESOURCE};
 				for (size_t i = 0; i < special_categories.size(); ++i) {
-					if (auto sp = special_categories[i]; sp == item.Category()) {
-						if (auto it = self.FindItems(sp); it) {
-							self.RemoveItem(it); // Remove weapon
+					if (auto sp = special_categories[i]; sp == card.Category()) {
+						if (auto it = self.FindCards(sp); it) {
+							self.RemoveCard(it); // Remove weapon
 							self.ClearResource(special_ammo_type[i]); // Also remove any ammo
 						}
 						break;
 					}
 				}
-				// Add item
-				self.AddNamedItem(item);
+				// Add card
+				self.AddNamedCard(card);
 			}
 		}
 		return std::nullopt;

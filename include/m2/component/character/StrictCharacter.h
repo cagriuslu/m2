@@ -1,26 +1,26 @@
 #pragma once
 #include <m2/GameTypes.h>
 #include <m2/Meta.h>
-#include <m2g_ItemType.pb.h>
+#include <m2g_CardType.pb.h>
 #include <m2g_VariableType.pb.h>
 #include <array>
 
 namespace m2 {
 	template <std::size_t N>
-	using PossibleItemTypes = std::array<m2g::pb::ItemType, N>;
+	using PossibleCardTypes = std::array<m2g::pb::CardType, N>;
 
 	template <std::size_t N>
 	using PossibleVariableTypes = std::array<m2g::pb::VariableType, N>;
 
-	template <PossibleItemTypes possibleItemTypes, PossibleVariableTypes possibleVariableTypes>
+	template <PossibleCardTypes possibleCardTypes, PossibleVariableTypes possibleVariableTypes>
 	class StrictCharacter {
-		// Verify that item types and variable types are unique
-		static_assert(AreArrayElementsUnique(possibleItemTypes), "StrictCharacter supports only unique ItemTypes");
+		// Verify that card types and variable types are unique
+		static_assert(AreArrayElementsUnique(possibleCardTypes), "StrictCharacter supports only unique CardTypes");
 		static_assert(AreArrayElementsUnique(possibleVariableTypes), "StrictCharacter supports only unique VariableTypes");
 
-		static consteval int ItemTypeIndex(m2g::pb::ItemType it) {
-			for (int i = 0; i < possibleItemTypes.size(); ++i) {
-				if (possibleItemTypes[i] == it) { return i; }
+		static consteval int CardTypeIndex(m2g::pb::CardType it) {
+			for (int i = 0; i < possibleCardTypes.size(); ++i) {
+				if (possibleCardTypes[i] == it) { return i; }
 			}
 			return -1;
 		}
@@ -31,25 +31,25 @@ namespace m2 {
 			return -1;
 		}
 
-		std::array<bool, possibleItemTypes.size()> _items;
+		std::array<bool, possibleCardTypes.size()> _cards;
 		std::array<IFE, possibleVariableTypes.size()> _variables;
 
 	public:
 
-		template <m2g::pb::ItemType itemType>
-		[[nodiscard]] bool HasItem() const {
-			static_assert(DoesArrayContainElement(possibleItemTypes, itemType), "This StrictCharacter specialization can't hold the given ItemType");
-			return _items[ItemTypeIndex(itemType)];
+		template <m2g::pb::CardType cardType>
+		[[nodiscard]] bool HasCard() const {
+			static_assert(DoesArrayContainElement(possibleCardTypes, cardType), "This StrictCharacter specialization can't hold the given CardType");
+			return _cards[CardTypeIndex(cardType)];
 		}
-		template <m2g::pb::ItemType itemType>
-		void AddItemIfNotPresent() {
-			static_assert(DoesArrayContainElement(possibleItemTypes, itemType), "This StrictCharacter specialization can't hold the given ItemType");
-			_items[ItemTypeIndex(itemType)] = true;
+		template <m2g::pb::CardType cardType>
+		void AddCardIfNotPresent() {
+			static_assert(DoesArrayContainElement(possibleCardTypes, cardType), "This StrictCharacter specialization can't hold the given CardType");
+			_cards[CardTypeIndex(cardType)] = true;
 		}
-		template <m2g::pb::ItemType itemType>
-		void RemoveItem() {
-			static_assert(DoesArrayContainElement(possibleItemTypes, itemType), "This StrictCharacter specialization can't hold the given ItemType");
-			_items[ItemTypeIndex(itemType)] = false;
+		template <m2g::pb::CardType cardType>
+		void RemoveCard() {
+			static_assert(DoesArrayContainElement(possibleCardTypes, cardType), "This StrictCharacter specialization can't hold the given CardType");
+			_cards[CardTypeIndex(cardType)] = false;
 		}
 
 		template <m2g::pb::VariableType variableType>

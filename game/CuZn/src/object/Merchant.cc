@@ -3,7 +3,7 @@
 #include <m2/Game.h>
 
 bool can_merchant_buy_sellable_industry(m2::Character& chr, SellableIndustry ind) {
-	return chr.HasItem(m2g::pb::WILD_MERCHANT_LICENSE) || chr.HasItem(merchant_license_type_of_sellable_industry(ind));
+	return chr.HasCard(m2g::pb::WILD_MERCHANT_LICENSE) || chr.HasCard(merchant_license_type_of_sellable_industry(ind));
 }
 
 m2::Object* find_merchant_at_location(m2g::pb::SpriteType location) {
@@ -20,15 +20,15 @@ m2::Object* find_merchant_at_location(m2g::pb::SpriteType location) {
 
 void init_merchant(m2::Object& obj, const m2::VecF& position) {
 	auto& chr = obj.AddFastCharacter();
-	// Active merchants will be given a merchant license during setup. (ITEM_CATEGORY_MERCHANT_LICENSE)
+	// Active merchants will be given a merchant license during setup. (CARD_CATEGORY_MERCHANT_LICENSE)
 	// Passive merchants will simply exist without a license.
 
 	auto& gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT);
 	gfx.position = position;
 	gfx.preDraw = [&chr](m2::Graphic& g, const m2::Stopwatch::Duration&) {
 		// Set the sprite if license is added. Licenses are assigned after population, thus do it pre_draw.
-		auto it = chr.FindItems(m2g::pb::ITEM_CATEGORY_MERCHANT_LICENSE);
-		if (it != chr.EndItems()) {
+		auto it = chr.FindCards(m2g::pb::CARD_CATEGORY_MERCHANT_LICENSE);
+		if (it != chr.EndCards()) {
 			g.visual = &std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(it->GameSprite()));
 		} else {
 			g.visual = std::monostate{};

@@ -35,7 +35,7 @@ m2::expected<int> HandleActionWhileNotLiquidating(m2::Character& turnHolderChara
 		return m2::make_unexpected("Received unexpected liquidation command");
 	}
 
-	std::pair<Card,int> cardToDiscardAndMoneySpent{};
+	std::pair<m2g::pb::CardType,int> cardToDiscardAndMoneySpent{};
 	if (clientCommand.has_build_action()) {
 		LOG_INFO("Validating build action");
 		if (const auto buildValidation = CanPlayerBuild(turnHolderCharacter, clientCommand.build_action()); not buildValidation) {
@@ -55,9 +55,9 @@ m2::expected<int> HandleActionWhileNotLiquidating(m2::Character& turnHolderChara
 				cities_from_connection(clientCommand.network_action().connection_1())[0],
 				cities_from_connection(clientCommand.network_action().connection_1())[1],
 				clientCommand.network_action().connection_2()
-					? cities_from_connection(clientCommand.network_action().connection_2())[0] : m2g::pb::NO_ITEM,
+					? cities_from_connection(clientCommand.network_action().connection_2())[0] : m2g::pb::NO_CARD,
 				clientCommand.network_action().connection_2()
-					? cities_from_connection(clientCommand.network_action().connection_2())[1] : m2g::pb::NO_ITEM));
+					? cities_from_connection(clientCommand.network_action().connection_2())[1] : m2g::pb::NO_CARD));
 		LOG_INFO("Executing network action");
 		cardToDiscardAndMoneySpent = ExecuteNetworkAction(turnHolderCharacter, clientCommand.network_action());
 	} else if (clientCommand.has_sell_action()) {
@@ -78,7 +78,7 @@ m2::expected<int> HandleActionWhileNotLiquidating(m2::Character& turnHolderChara
 		actionNotification.set_notification(GenerateDevelopNotification(
 				industry_of_industry_tile(clientCommand.develop_action().industry_tile_1()),
 				clientCommand.develop_action().industry_tile_2()
-					? industry_of_industry_tile(clientCommand.develop_action().industry_tile_2()) : m2g::pb::NO_ITEM));
+					? industry_of_industry_tile(clientCommand.develop_action().industry_tile_2()) : m2g::pb::NO_CARD));
 		LOG_INFO("Executing develop action");
 		cardToDiscardAndMoneySpent = ExecuteDevelopAction(turnHolderCharacter, clientCommand.develop_action());
 	} else if (clientCommand.has_loan_action()) {
@@ -106,9 +106,9 @@ m2::expected<int> HandleActionWhileNotLiquidating(m2::Character& turnHolderChara
 
 	// Discard card from player
 	if (cardToDiscard) {
-		LOG_INFO("Discard card from player", M2_GAME.GetNamedItem(cardToDiscard).in_game_name());
-		const auto card_it = turnHolderCharacter.FindItems(cardToDiscard);
-		turnHolderCharacter.RemoveItem(card_it);
+		LOG_INFO("Discard card from player", M2_GAME.GetNamedCard(cardToDiscard).in_game_name());
+		const auto card_it = turnHolderCharacter.FindCards(cardToDiscard);
+		turnHolderCharacter.RemoveCard(card_it);
 	}
 	// Deduct money from player
 	LOG_INFO("Deducting money from player", moneySpent);

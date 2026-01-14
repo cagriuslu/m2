@@ -20,56 +20,56 @@ std::optional<m2g::pb::InteractionData> m2::Character::ExecuteInteraction(const 
 	}
 	return std::nullopt;
 }
-bool m2::Character::HasItem(m2g::pb::ItemType item_type) const {
-    for (auto it = BeginItems(); it != EndItems(); ++it) {
-        if (it->Type() == item_type) {
+bool m2::Character::HasCard(m2g::pb::CardType card_type) const {
+    for (auto it = BeginCards(); it != EndCards(); ++it) {
+        if (it->Type() == card_type) {
             return true;
         }
     }
 	return false;
 }
-bool m2::Character::HasItem(m2g::pb::ItemCategory item_cat) const {
-    for (auto it = BeginItems(); it != EndItems(); ++it) {
-        if (it->Category() == item_cat) {
+bool m2::Character::HasCard(m2g::pb::CardCategory card_cat) const {
+    for (auto it = BeginCards(); it != EndCards(); ++it) {
+        if (it->Category() == card_cat) {
             return true;
         }
     }
 	return false;
 }
-size_t m2::Character::CountItem(m2g::pb::ItemType item_type) const {
+size_t m2::Character::CountCard(m2g::pb::CardType card_type) const {
     size_t count = 0;
-    for (auto it = BeginItems(); it != EndItems(); ++it) {
-        if (it->Type() == item_type) {
+    for (auto it = BeginCards(); it != EndCards(); ++it) {
+        if (it->Type() == card_type) {
             ++count;
         }
     }
 	return count;
 }
-size_t m2::Character::CountItem(m2g::pb::ItemCategory item_cat) const {
+size_t m2::Character::CountCard(m2g::pb::CardCategory card_cat) const {
     size_t count = 0;
-    for (auto it = BeginItems(); it != EndItems(); ++it) {
-        if (it->Category() == item_cat) {
+    for (auto it = BeginCards(); it != EndCards(); ++it) {
+        if (it->Category() == card_cat) {
             ++count;
         }
     }
     return count;
 }
-std::vector<m2g::pb::ItemType> m2::Character::NamedItemTypes() const {
-	std::vector<m2g::pb::ItemType> types;
-	for (auto it = BeginItems(); it != EndItems(); ++it) {
-		auto* item = it.Get();
-		if (auto* named_item = dynamic_cast<const Item*>(item)) {
-			types.emplace_back(named_item->Type());
+std::vector<m2g::pb::CardType> m2::Character::NamedCardTypes() const {
+	std::vector<m2g::pb::CardType> types;
+	for (auto it = BeginCards(); it != EndCards(); ++it) {
+		auto* card = it.Get();
+		if (auto* named_card = dynamic_cast<const Card*>(card)) {
+			types.emplace_back(named_card->Type());
 		}
 	}
 	return types;
 }
-std::vector<m2g::pb::ItemType> m2::Character::NamedItemTypes(const m2g::pb::ItemCategory item_cat) const {
-	std::vector<m2g::pb::ItemType> types;
-	for (auto it = FindItems(item_cat); it != EndItems(); ++it) {
-		auto* item = it.Get();
-		if (auto* named_item = dynamic_cast<const Item*>(item)) {
-			types.emplace_back(named_item->Type());
+std::vector<m2g::pb::CardType> m2::Character::NamedCardTypes(const m2g::pb::CardCategory card_cat) const {
+	std::vector<m2g::pb::CardType> types;
+	for (auto it = FindCards(card_cat); it != EndCards(); ++it) {
+		auto* card = it.Get();
+		if (auto* named_card = dynamic_cast<const Card*>(card)) {
+			types.emplace_back(named_card->Type());
 		}
 	}
 	return types;
@@ -84,8 +84,8 @@ namespace {
 m2::CompactCharacter::CompactCharacter(uint64_t object_id) : Character(object_id) {}
 int32_t m2::CompactCharacter::Hash(const int32_t initialValue) const {
 	auto hash = initialValue;
-	if (_item) {
-		hash = HashI(_item->Type(), hash);
+	if (_card) {
+		hash = HashI(_card->Type(), hash);
 	}
 	if (_resource.first) {
 		throw M2_ERROR("CompactCharacter doesn't support hashing of resources");
@@ -95,38 +95,38 @@ int32_t m2::CompactCharacter::Hash(const int32_t initialValue) const {
 	}
 	return hash;
 }
-m2::Character::Iterator m2::CompactCharacter::FindItems(m2g::pb::ItemType item_type) const {
-	return {*this, tiny_character_iterator_incrementor, item_type, 0,
-			_item && _item->Type() == item_type ? _item : nullptr};
+m2::Character::Iterator m2::CompactCharacter::FindCards(m2g::pb::CardType card_type) const {
+	return {*this, tiny_character_iterator_incrementor, card_type, 0,
+			_card && _card->Type() == card_type ? _card : nullptr};
 }
-m2::Character::Iterator m2::CompactCharacter::FindItems(m2g::pb::ItemCategory cat) const {
+m2::Character::Iterator m2::CompactCharacter::FindCards(m2g::pb::CardCategory cat) const {
 	return {*this, tiny_character_iterator_incrementor, cat, 0,
-			_item && _item->Category() == cat ? _item : nullptr};
+			_card && _card->Category() == cat ? _card : nullptr};
 }
-m2::Character::Iterator m2::CompactCharacter::BeginItems() const {
-	return {*this, tiny_character_iterator_incrementor, {}, 0, _item};
+m2::Character::Iterator m2::CompactCharacter::BeginCards() const {
+	return {*this, tiny_character_iterator_incrementor, {}, 0, _card};
 }
-m2::Character::Iterator m2::CompactCharacter::EndItems() const {
+m2::Character::Iterator m2::CompactCharacter::EndCards() const {
 	return {*this, tiny_character_iterator_incrementor, {}, 0, nullptr};
 }
-void m2::CompactCharacter::AddNamedItem(const Item& item) {
-	_item = &item;
+void m2::CompactCharacter::AddNamedCard(const Card& card) {
+	_card = &card;
 	// Get acquire benefits
-	for (size_t i = 0; i < _item->GetAcquireBenefitCount(); ++i) {
-		const auto benefit = _item->GetAcquireBenefitByIndex(i);
+	for (size_t i = 0; i < _card->GetAcquireBenefitCount(); ++i) {
+		const auto benefit = _card->GetAcquireBenefitByIndex(i);
 		AddResource(benefit.first, benefit.second);
 	}
 }
-void m2::CompactCharacter::AddNamedItemWithoutBenefits(const Item& item) {
-	_item = &item;
+void m2::CompactCharacter::AddNamedCardWithoutBenefits(const Card& card) {
+	_card = &card;
 }
-void m2::CompactCharacter::RemoveItem(const Iterator& item) {
-	if (item != EndItems()) {
-		_item = {};
+void m2::CompactCharacter::RemoveCard(const Iterator& card) {
+	if (card != EndCards()) {
+		_card = {};
 	}
 }
-void m2::CompactCharacter::ClearItems() {
-	_item = {};
+void m2::CompactCharacter::ClearCards() {
+	_card = {};
 }
 bool m2::CompactCharacter::HasResource(m2g::pb::ResourceType resource_type) const {
 	return _resource.first == resource_type && _resource.second != 0.0f;
@@ -193,34 +193,34 @@ void m2::FullCharacterIteratorIncrementor(m2::Character::Iterator& it) {
 	auto curr_index = it.GetIndex();
 	auto filter = it.GetFilter();
 	if (std::holds_alternative<std::monostate>(filter)) {
-		if (curr_index + 1 < character._items.size()) {
-			// Next item
+		if (curr_index + 1 < character._cards.size()) {
+			// Next card
 			it.SetIndex(curr_index + 1);
-			it.Set(character._items[curr_index + 1]);
+			it.Set(character._cards[curr_index + 1]);
 			return;
 		}
-	} else if (std::holds_alternative<m2g::pb::ItemType>(filter)) {
-		for (size_t i = curr_index + 1; i < character._items.size(); ++i) {
-			if (character._items[i]->Type() == std::get<m2g::pb::ItemType>(filter)) {
-				// Found item
+	} else if (std::holds_alternative<m2g::pb::CardType>(filter)) {
+		for (size_t i = curr_index + 1; i < character._cards.size(); ++i) {
+			if (character._cards[i]->Type() == std::get<m2g::pb::CardType>(filter)) {
+				// Found card
 				it.SetIndex(i);
-				it.Set(character._items[i]);
+				it.Set(character._cards[i]);
 				return;
 			}
 		}
-	} else if (std::holds_alternative<m2g::pb::ItemCategory>(filter)) {
-		for (size_t i = curr_index + 1; i < character._items.size(); ++i) {
-			if (character._items[i]->Category() == std::get<m2g::pb::ItemCategory>(filter)) {
-				// Found item
+	} else if (std::holds_alternative<m2g::pb::CardCategory>(filter)) {
+		for (size_t i = curr_index + 1; i < character._cards.size(); ++i) {
+			if (character._cards[i]->Category() == std::get<m2g::pb::CardCategory>(filter)) {
+				// Found card
 				it.SetIndex(i);
-				it.Set(character._items[i]);
+				it.Set(character._cards[i]);
 				return;
 			}
 		}
 	} else {
 		throw M2_ERROR("Invalid iterator filter");
 	}
-	// Item not found
+	// Card not found
 	it.Set(nullptr);
 }
 
@@ -232,9 +232,9 @@ int32_t m2::FastCharacter::Hash(const int32_t initialValue) const {
 	}
 	// ReSharper disable once CppDFAUnreachableCode
 	auto hash = initialValue;
-	for (const auto* item : _items) {
-		if (item) {
-			hash = HashI(item->Type(), hash);
+	for (const auto* card : _cards) {
+		if (card) {
+			hash = HashI(card->Type(), hash);
 		}
 	}
 	for (const auto& property : _properties) {
@@ -246,53 +246,53 @@ int32_t m2::FastCharacter::Hash(const int32_t initialValue) const {
 	}
 	return hash;
 }
-m2::Character::Iterator m2::FastCharacter::FindItems(m2g::pb::ItemType item_type) const {
-	for (size_t i = 0; i < _items.size(); ++i) {
-		const auto& item = _items[i];
-		if (item->Type() == item_type) {
-			return {*this, FullCharacterIteratorIncrementor, item_type, i, item};
+m2::Character::Iterator m2::FastCharacter::FindCards(m2g::pb::CardType card_type) const {
+	for (size_t i = 0; i < _cards.size(); ++i) {
+		const auto& card = _cards[i];
+		if (card->Type() == card_type) {
+			return {*this, FullCharacterIteratorIncrementor, card_type, i, card};
 		}
 	}
-	return EndItems();
+	return EndCards();
 }
-m2::Character::Iterator m2::FastCharacter::FindItems(m2g::pb::ItemCategory cat) const {
-	for (size_t i = 0; i < _items.size(); ++i) {
-		const auto& item = _items[i];
-		if (item->Category() == cat) {
-			return {*this, FullCharacterIteratorIncrementor, cat, i, item};
+m2::Character::Iterator m2::FastCharacter::FindCards(m2g::pb::CardCategory cat) const {
+	for (size_t i = 0; i < _cards.size(); ++i) {
+		const auto& card = _cards[i];
+		if (card->Category() == cat) {
+			return {*this, FullCharacterIteratorIncrementor, cat, i, card};
 		}
 	}
-	return EndItems();
+	return EndCards();
 }
-m2::Character::Iterator m2::FastCharacter::BeginItems() const {
-	if (!_items.empty()) {
-		return {*this, FullCharacterIteratorIncrementor, {}, 0, _items.front()};
+m2::Character::Iterator m2::FastCharacter::BeginCards() const {
+	if (!_cards.empty()) {
+		return {*this, FullCharacterIteratorIncrementor, {}, 0, _cards.front()};
 	}
-	return EndItems();
+	return EndCards();
 }
-m2::Character::Iterator m2::FastCharacter::EndItems() const {
+m2::Character::Iterator m2::FastCharacter::EndCards() const {
 	return {*this, FullCharacterIteratorIncrementor, {}, 0, nullptr};
 }
-void m2::FastCharacter::AddNamedItem(const Item& item) {
-	_items.emplace_back(&item);
+void m2::FastCharacter::AddNamedCard(const Card& card) {
+	_cards.emplace_back(&card);
 	// Get acquire benefits
-	for (size_t i = 0; i < _items.back()->GetAcquireBenefitCount(); ++i) {
-		const auto benefit = _items.back()->GetAcquireBenefitByIndex(i);
+	for (size_t i = 0; i < _cards.back()->GetAcquireBenefitCount(); ++i) {
+		const auto benefit = _cards.back()->GetAcquireBenefitByIndex(i);
 		AddResource(benefit.first, benefit.second);
 	}
 }
-void m2::FastCharacter::AddNamedItemWithoutBenefits(const Item& item) {
-	_items.emplace_back(&item);
+void m2::FastCharacter::AddNamedCardWithoutBenefits(const Card& card) {
+	_cards.emplace_back(&card);
 }
-void m2::FastCharacter::RemoveItem(const Iterator& item) {
-	if (item != EndItems()) {
-		auto it = _items.cbegin();
-		std::advance(it, item.GetIndex());
-		_items.erase(it);
+void m2::FastCharacter::RemoveCard(const Iterator& card) {
+	if (card != EndCards()) {
+		auto it = _cards.cbegin();
+		std::advance(it, card.GetIndex());
+		_cards.erase(it);
 	}
 }
-void m2::FastCharacter::ClearItems() {
-	_items.clear();
+void m2::FastCharacter::ClearCards() {
+	_cards.clear();
 }
 bool m2::FastCharacter::HasResource(m2g::pb::ResourceType resource_type) const {
 	return _resources[ResourceTypeIndex(resource_type)] != 0.0f;
@@ -333,19 +333,19 @@ int m2::FastCharacter::PropertyTypeIndex(m2g::pb::PropertyType pt) {
 	return pb::enum_index(pt);
 }
 
-std::function<std::vector<m2g::pb::ItemType>(m2::Character&)> m2::GenerateNamedItemTypesFilter(m2g::pb::ItemCategory item_category) {
-	return [item_category](m2::Character& c) -> std::vector<m2g::pb::ItemType> {
-		return c.NamedItemTypes(item_category);
+std::function<std::vector<m2g::pb::CardType>(m2::Character&)> m2::GenerateNamedCardTypesFilter(m2g::pb::CardCategory card_category) {
+	return [card_category](m2::Character& c) -> std::vector<m2g::pb::CardType> {
+		return c.NamedCardTypes(card_category);
 	};
 }
-std::function<std::vector<m2g::pb::ItemType>(m2::Character&)> m2::GenerateNamedItemTypesFilter(std::initializer_list<m2g::pb::ItemCategory> categoriesToFilter) {
-	return [categoriesToFilter = std::move(categoriesToFilter)](const Character& c) -> std::vector<m2g::pb::ItemType> {
-		std::vector<m2g::pb::ItemType> itemTypes;
+std::function<std::vector<m2g::pb::CardType>(m2::Character&)> m2::GenerateNamedCardTypesFilter(std::initializer_list<m2g::pb::CardCategory> categoriesToFilter) {
+	return [categoriesToFilter = std::move(categoriesToFilter)](const Character& c) -> std::vector<m2g::pb::CardType> {
+		std::vector<m2g::pb::CardType> cardTypes;
 		for (const auto& cat : categoriesToFilter) {
-			auto _tmp = c.NamedItemTypes(cat);
-			itemTypes.insert(itemTypes.cend(), _tmp.begin(), _tmp.end());
+			auto _tmp = c.NamedCardTypes(cat);
+			cardTypes.insert(cardTypes.cend(), _tmp.begin(), _tmp.end());
 		}
-		return itemTypes;
+		return cardTypes;
 	};
 }
 

@@ -4,7 +4,7 @@ package m2g.pb;
 enum ConstantType {
   NO_CONSTANT = 0;
 
-  // ITEM_CATEGORY_TILE
+  // CARD_CATEGORY_TILE
   VICTORY_POINTS_BONUS = 1; // Number of victory points gained when the factory is sold
   INCOME_POINTS_BONUS = 2; // Number of income points gained when the factory is sold
   LINK_BONUS = 3; // Number of links a factory have
@@ -18,10 +18,10 @@ enum ConstantType {
   BEER_BONUS_SECOND_ERA = 11; // Number of beer barrels gained when this factory is built
   COAL_BONUS = 12; // Number of coal cubes gained when this factory is built
   IRON_BONUS = 13; // Number of iron cubes gained when this factory is built
-  POSSESSION_LIMIT = 14; // How many of such items can be held by each player (factory and road tiles)
+  POSSESSION_LIMIT = 14; // How many of such cards can be held by each player (factory and road tiles)
   TILE_LEVEL = 15;
 
-  // ITEM_CATEGORY_*_CARD
+  // CARD_CATEGORY_*_CARD
   COUNT_IN_2_PLAYER_GAME = 21; // How many exists in the game for a 2-player game
   COUNT_IN_3_PLAYER_GAME = 22; // How many exists in the game for a 3-player game
   COUNT_IN_4_PLAYER_GAME = 23; // How many exists in the game for a 4-player game
@@ -29,7 +29,7 @@ enum ConstantType {
   MERCHANT_COUNT_IN_3_PLAYER_GAME = 25; // Merchant license count in a 3 player game
   MERCHANT_COUNT_IN_4_PLAYER_GAME = 26; // Merchant license count in a 4 player game
 
-  // ITEM_CATEGORY_CITY_CARD (merchant cities)
+  // CARD_CATEGORY_CITY_CARD (merchant cities)
   MERCHANT_BONUS_DEVELOP = 31;
   MERCHANT_BONUS_INCOME = 32;
   MERCHANT_BONUS_VICTORY_POINTS = 33;

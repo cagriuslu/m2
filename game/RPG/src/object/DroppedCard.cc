@@ -3,8 +3,8 @@
 #include <m2/Game.h>
 #include <m2/third_party/physics/ColliderCategory.h>
 
-m2::void_expected rpg::create_dropped_item(m2::Object &obj, const m2::VecF& position, m2g::pb::ItemType item_type) {
-	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(M2_GAME.GetNamedItem(item_type).UiSprite()));
+m2::void_expected rpg::create_dropped_card(m2::Object &obj, const m2::VecF& position, m2g::pb::CardType card_type) {
+	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(M2_GAME.GetNamedCard(card_type).UiSprite()));
 
 	auto& phy = obj.AddPhysique();
 	phy.position = position;
@@ -13,7 +13,7 @@ m2::void_expected rpg::create_dropped_item(m2::Object &obj, const m2::VecF& posi
 		.fixtures = {m2::third_party::physics::FixtureDefinition{
 			.shape = m2::third_party::physics::CircleShape::FromSpriteCircleFixture(sprite.OriginalPb().regular().fixtures(0).circle(), sprite.Ppm()),
 			.isSensor = true,
-			.colliderFilter = m2::third_party::physics::gColliderCategoryToParams[m2::I(m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_FRIENDLY_ITEM)]
+			.colliderFilter = m2::third_party::physics::gColliderCategoryToParams[m2::I(m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_FRIENDLY_CARD)]
 		}},
 		.allowSleeping = true,
 		.initiallyAwake = false,
@@ -21,12 +21,12 @@ m2::void_expected rpg::create_dropped_item(m2::Object &obj, const m2::VecF& posi
 	};
 	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2::pb::PhysicsLayer::SEA_LEVEL);
 
-	obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, M2_GAME.GetNamedItem(item_type).UiSprite()).position = position;
+	obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, M2_GAME.GetNamedCard(card_type).UiSprite()).position = position;
 
-	phy.onCollision = [item_type](m2::Physique& phy, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
+	phy.onCollision = [card_type](m2::Physique& phy, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
 		if (auto* other_char = other.Owner().TryGetCharacter(); other_char) {
 			m2g::pb::InteractionData data;
-			data.set_item_type(item_type);
+			data.set_card_type(card_type);
 			other_char->ExecuteInteraction(data);
 		}
 		M2_DEFER(m2::CreateObjectDeleter(phy.OwnerId()));

@@ -1,6 +1,6 @@
 #pragma once
 #include "Common.h"
-#include <m2g_ItemType.pb.h>
+#include <m2g_CardType.pb.h>
 #include <m2g_ResourceType.pb.h>
 #include <m2/game/Fsm.h>
 #include <m2/math/VecF.h>
@@ -32,7 +32,7 @@ class NetworkJourney : public m2::FsmBase<NetworkJourneyStep, POIOrCancelSignal>
 	std::optional<std::list<m2::UiPanel>::iterator> _cancel_button_panel;
 
 	bool _build_double_railroads{};
-	m2g::pb::ItemType _selected_card{};
+	m2g::pb::CardType _selected_card{};
 	m2g::pb::SpriteType _selected_connection_1{}, _selected_connection_2{};
 	std::vector<ResourceSource> _resource_sources;
 	m2::ObjectId _decoy_road_1{}, _decoy_road_2{};
@@ -62,4 +62,4 @@ protected:
 m2::void_expected CanPlayerNetwork(m2::Character& player, const m2g::pb::TurnBasedClientCommand_NetworkAction& network_action);
 
 // For the server
-std::pair<Card,int> ExecuteNetworkAction(m2::Character& player, const m2g::pb::TurnBasedClientCommand_NetworkAction& network_action);
+std::pair<m2g::pb::CardType,int> ExecuteNetworkAction(m2::Character& player, const m2g::pb::TurnBasedClientCommand_NetworkAction& network_action);

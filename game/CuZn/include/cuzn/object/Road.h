@@ -16,12 +16,12 @@ void RemoveAllRoads();
 constexpr auto IsRoadCharacter = [](const m2::Character& chr) { return chr.Owner().GetType() == m2g::pb::ROAD; };
 
 // Transformers
-constexpr auto ToCitiesOfRoadCharacter = [](const m2::Character& chr) -> std::set<m2g::pb::ItemType> {
+constexpr auto ToCitiesOfRoadCharacter = [](const m2::Character& chr) -> std::set<m2g::pb::CardType> {
 	if (not IsRoadCharacter(chr)) {
 		throw M2_ERROR("Character doesn't belong to canal or railroad");
 	}
-	std::set<m2g::pb::ItemType> city_cards;
-	for (auto it = chr.FindItems(m2g::pb::ITEM_CATEGORY_CITY_CARD); it != chr.EndItems(); ++it) {
+	std::set<m2g::pb::CardType> city_cards;
+	for (auto it = chr.FindCards(m2g::pb::CARD_CATEGORY_CITY_CARD); it != chr.EndCards(); ++it) {
 		city_cards.insert(it->Type());
 	}
 	return city_cards;

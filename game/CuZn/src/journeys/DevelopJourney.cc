@@ -195,8 +195,8 @@ std::optional<DevelopJourneyStep> DevelopJourney::HandleConfirmationEnterSignal(
 	LOG_INFO("Asking for confirmation...");
 
 	auto confirmation = _develop_double_tiles
-		? ask_for_confirmation("Develop " + ItemType_Name(_selected_tile_1), "and " + ItemType_Name(_selected_tile_2) + "?", "Yes", "No")
-		: ask_for_confirmation("Develop " + ItemType_Name(_selected_tile_1) + "?", "", "Yes", "No");
+		? ask_for_confirmation("Develop " + CardType_Name(_selected_tile_1), "and " + CardType_Name(_selected_tile_2) + "?", "Yes", "No")
+		: ask_for_confirmation("Develop " + CardType_Name(_selected_tile_1) + "?", "", "Yes", "No");
 	if (confirmation) {
 		LOG_INFO("Develop action confirmed");
 
@@ -224,7 +224,7 @@ m2::void_expected CanPlayerDevelop(m2::Character& player, const m2g::pb::TurnBas
 	if (not is_card(develop_action.card())) {
 		return make_unexpected("Selected card is not a card");
 	}
-	if (player.FindItems(develop_action.card()) == player.EndItems()) {
+	if (player.FindCards(develop_action.card()) == player.EndCards()) {
 		return make_unexpected("Player does not have the selected card");
 	}
 
@@ -233,29 +233,29 @@ m2::void_expected CanPlayerDevelop(m2::Character& player, const m2g::pb::TurnBas
 		|| (develop_action.industry_tile_2() && not is_industry_tile(develop_action.industry_tile_2()))) {
 		return make_unexpected("Selected industry tile is not an industry tile");
 	}
-	if (player.FindItems(develop_action.industry_tile_1()) == player.EndItems()
-		|| (develop_action.industry_tile_2() && player.FindItems(develop_action.industry_tile_2()) == player.EndItems())) {
+	if (player.FindCards(develop_action.industry_tile_1()) == player.EndCards()
+		|| (develop_action.industry_tile_2() && player.FindCards(develop_action.industry_tile_2()) == player.EndCards())) {
 		return make_unexpected("Player does not have the selected tile");
 	}
 
 	// Check if the tiles are the next tiles
-	const auto& selected_industry_tile_1 = M2_GAME.GetNamedItem(develop_action.industry_tile_1());
+	const auto& selected_industry_tile_1 = M2_GAME.GetNamedCard(develop_action.industry_tile_1());
 	auto next_industry_tile_1 = PlayerNextIndustryTileOfCategory(player, selected_industry_tile_1.Category());
 	if (not next_industry_tile_1 || *next_industry_tile_1 != develop_action.industry_tile_1()) {
 		return make_unexpected("Player cannot develop the selected tile");
 	}
 	if (develop_action.industry_tile_2()) {
 		// Reserve the first tile
-		player.RemoveItem(player.FindItems(develop_action.industry_tile_1()));
+		player.RemoveCard(player.FindCards(develop_action.industry_tile_1()));
 		// Check the tile
-		const auto& selected_industry_tile_2 = M2_GAME.GetNamedItem(develop_action.industry_tile_2());
+		const auto& selected_industry_tile_2 = M2_GAME.GetNamedCard(develop_action.industry_tile_2());
 		auto next_industry_tile_2 = PlayerNextIndustryTileOfCategory(player, selected_industry_tile_2.Category());
 		auto success = true;
 		if (not next_industry_tile_2 || *next_industry_tile_2 != develop_action.industry_tile_2()) {
 			success = false;
 		}
 		// Give the tile back
-		player.AddNamedItemWithoutBenefits(M2_GAME.GetNamedItem(develop_action.industry_tile_1()));
+		player.AddNamedCardWithoutBenefits(M2_GAME.GetNamedCard(develop_action.industry_tile_1()));
 		if (not success) {
 			return make_unexpected("Player cannot develop the selected tile");
 		}
@@ -266,7 +266,7 @@ m2::void_expected CanPlayerDevelop(m2::Character& player, const m2g::pb::TurnBas
 		return make_unexpected("Selected tile cannot be developed");
 	}
 	if (develop_action.industry_tile_2()) {
-		const auto& selected_industry_tile_2 = M2_GAME.GetNamedItem(develop_action.industry_tile_2());
+		const auto& selected_industry_tile_2 = M2_GAME.GetNamedCard(develop_action.industry_tile_2());
 		if (selected_industry_tile_2.GetConstant(DEVELOPMENT_BAN)) {
 			return make_unexpected("Selected tile cannot be developed");
 		}
@@ -338,7 +338,7 @@ m2::void_expected CanPlayerDevelop(m2::Character& player, const m2g::pb::TurnBas
 	return {};
 }
 
-std::pair<Card,int> ExecuteDevelopAction(m2::Character& player, const m2g::pb::TurnBasedClientCommand_DevelopAction& develop_action) {
+std::pair<CardType,int> ExecuteDevelopAction(m2::Character& player, const m2g::pb::TurnBasedClientCommand_DevelopAction& develop_action) {
 	// Assume validation is done
 
 	// Calculate the cost of buying the resources
@@ -363,9 +363,9 @@ std::pair<Card,int> ExecuteDevelopAction(m2::Character& player, const m2g::pb::T
 	}
 
 	// Take tile from player
-	player.RemoveItem(player.FindItems(develop_action.industry_tile_1()));
+	player.RemoveCard(player.FindCards(develop_action.industry_tile_1()));
 	if (develop_action.industry_tile_2()) {
-		player.RemoveItem(player.FindItems(develop_action.industry_tile_2()));
+		player.RemoveCard(player.FindCards(develop_action.industry_tile_2()));
 	}
 
 	FlipExhaustedFactories();

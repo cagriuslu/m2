@@ -13,8 +13,8 @@
 #include "m2/Game.h"
 #include "m2/game/Pathfinder.h"
 #include <rpg/Graphic.h>
-#include "rpg/UseItem.h"
-#include "rpg/group/ItemGroup.h"
+#include "rpg/UseCard.h"
+#include "rpg/group/CardGroup.h"
 
 using namespace rpg;
 using namespace m2g;
@@ -65,8 +65,8 @@ m2::void_expected Enemy::init(m2::Object& obj, const m2::VecF& position) {
 	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2::pb::PhysicsLayer::SEA_LEVEL);
 
 	auto& chr = obj.AddFastCharacter();
-	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_GUN));
-	chr.AddNamedItem(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_ENEMY_SWORD));
+	chr.AddNamedCard(M2_GAME.GetNamedCard(m2g::pb::CARD_REUSABLE_GUN));
+	chr.AddNamedCard(M2_GAME.GetNamedCard(m2g::pb::CARD_REUSABLE_ENEMY_SWORD));
 	chr.AddResource(m2g::pb::RESOURCE_HP, 1.0f);
 
     obj.impl = std::make_unique<Enemy>(obj, M2G_PROXY.get_enemy(obj.GetType()));
@@ -115,16 +115,16 @@ m2::void_expected Enemy::init(m2::Object& obj, const m2::VecF& position) {
 			}
 			// Check if we died
 			if (not self.HasResource(RESOURCE_HP)) {
-				// Drop item
+				// Drop card
 				auto drop_position = self.Owner().GetPhysique().position;
 				if (m2::Group* group = obj.TryGetGroup()) {
-					// Check if the object belongs to item group
-					auto* item_group = dynamic_cast<ItemGroup*>(group);
-					if (item_group) {
-						auto optional_item = item_group->pop_item();
-						if (optional_item) {
+					// Check if the object belongs to card group
+					auto* card_group = dynamic_cast<CardGroup*>(group);
+					if (card_group) {
+						auto optional_card = card_group->pop_card();
+						if (optional_card) {
 							M2_DEFER([=]() {
-								create_dropped_item(*m2::CreateObject(), drop_position, *optional_item);
+								create_dropped_card(*m2::CreateObject(), drop_position, *optional_card);
 							});
 						}
 					}
@@ -211,8 +211,8 @@ void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
 			auto capability = ai.capabilities(0);
 			switch (capability) {
 				case pb::CAPABILITY_RANGED: {
-					auto it = obj.GetCharacter().FindItems(m2g::pb::ITEM_CATEGORY_DEFAULT_RANGED_WEAPON);
-					if (it && UseItem(obj.GetCharacter(), *it)) {
+					auto it = obj.GetCharacter().FindCards(m2g::pb::CARD_CATEGORY_DEFAULT_RANGED_WEAPON);
+					if (it && UseCard(obj.GetCharacter(), *it)) {
 						obj.GetCharacter().ClearResource(RESOURCE_RANGED_ENERGY);
 						auto shoot_direction = M2_PLAYER.GetPhysique().position - selfPosition;
 						rpg::create_projectile(*m2::CreateObject({}, obj.GetId()), selfPosition,
@@ -223,8 +223,8 @@ void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
 					break;
 				}
 				case pb::CAPABILITY_MELEE: {
-					auto it = obj.GetCharacter().FindItems(m2g::pb::ITEM_CATEGORY_DEFAULT_MELEE_WEAPON);
-					if (it && UseItem(obj.GetCharacter(), *it)) {
+					auto it = obj.GetCharacter().FindCards(m2g::pb::CARD_CATEGORY_DEFAULT_MELEE_WEAPON);
+					if (it && UseCard(obj.GetCharacter(), *it)) {
 						obj.GetCharacter().ClearResource(RESOURCE_MELEE_ENERGY);
 						rpg::create_blade(*m2::CreateObject({}, obj.GetId()), selfPosition,
 							M2_PLAYER.GetPhysique().position - selfPosition, *it, false);

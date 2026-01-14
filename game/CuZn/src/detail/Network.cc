@@ -56,7 +56,7 @@ m2::Graph<City> CreateActiveConnectionsGraph() {
 	for (const auto& road_chr : M2_LEVEL.characters | std::views::transform(m2::ToCharacterBase) | std::views::filter(IsRoadCharacter)) {
 		// Get the cities connected by the road
 		std::vector<City> cities;
-		std::transform(road_chr.FindItems(ITEM_CATEGORY_CITY_CARD), road_chr.EndItems(), std::back_inserter(cities), [](const auto& item) { return item.Type(); });
+		std::transform(road_chr.FindCards(CARD_CATEGORY_CITY_CARD), road_chr.EndCards(), std::back_inserter(cities), [](const auto& card) { return card.Type(); });
 		// Fill the graph
 		if (cities.size() == 2) {
 			active_connections.AddEdge({cities[0], cities[1], m2::Float::One()});

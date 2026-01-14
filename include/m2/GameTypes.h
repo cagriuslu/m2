@@ -5,6 +5,7 @@
 #include <IFE.pb.h>
 
 namespace m2 {
+	// TODO move to math/IFE.h
 	class IFE {
 		std::variant<std::monostate, int32_t, FE> _value{};
 

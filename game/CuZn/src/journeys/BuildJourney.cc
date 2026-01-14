@@ -20,11 +20,11 @@ using namespace m2g;
 using namespace m2g::pb;
 
 namespace {
-	std::set<IndustryLocation> buildable_industry_locations_in_network_with_card(const Character& player, Card card) {
+	std::set<IndustryLocation> buildable_industry_locations_in_network_with_card(const Character& player, m2g::pb::CardType card) {
 		if (not is_card(card)) {
-			throw M2_ERROR("Item is not a card");
+			throw M2_ERROR("Card is not a card");
 		}
-		if (player.FindItems(card) == player.EndItems()) {
+		if (player.FindCards(card) == player.EndCards()) {
 			throw M2_ERROR("Player does not own the given card");
 		}
 
@@ -34,7 +34,7 @@ namespace {
 			// If there are no locations in network, or the wild location card is selected, all locations are considered in-network
 			industry_locations_in_network = all_industry_locations();
 		} else {
-			if (M2_GAME.named_items[card].Category() == ITEM_CATEGORY_CITY_CARD) {
+			if (M2_GAME.named_cards[card].Category() == CARD_CATEGORY_CITY_CARD) {
 				// If the card is a city card, add the city to list of cities
 				cities_in_network.insert(card);
 			}
@@ -72,14 +72,14 @@ namespace {
 		if (card == WILD_LOCATION_CARD || card == WILD_INDUSTRY_CARD) {
 			// No filtering
 			return industry_locations_in_network;
-		} else if (M2_GAME.named_items[card].Category() == ITEM_CATEGORY_INDUSTRY_CARD) {
+		} else if (M2_GAME.named_cards[card].Category() == CARD_CATEGORY_INDUSTRY_CARD) {
 			// Filter by industry
 			auto filtered_locations = industry_locations_in_network | std::views::filter([card](IndustryLocation location) {
 				auto industries = industries_on_location(location);
 				return std::find(industries.begin(), industries.end(), card) != industries.end();
 			});
 			return {filtered_locations.begin(), filtered_locations.end()};
-		} else if (M2_GAME.named_items[card].Category() == ITEM_CATEGORY_CITY_CARD) {
+		} else if (M2_GAME.named_cards[card].Category() == CARD_CATEGORY_CITY_CARD) {
 			// Filter by city
 			auto filtered_locations = industry_locations_in_network | std::views::filter([card](IndustryLocation location) {
 				return city_of_location(location) == card;
@@ -90,20 +90,20 @@ namespace {
 		}
 	}
 
-	std::vector<Industry> buildable_industries_with_card_on_location(ItemType selected_card, const SpriteType selected_location) {
+	std::vector<Industry> buildable_industries_with_card_on_location(CardType selected_card, const SpriteType selected_location) {
 		if (not is_card(selected_card)) {
-			throw M2_ERROR("Item is not a card");
+			throw M2_ERROR("Card is not a card");
 		}
 		if (not is_industry_location(selected_location)) {
 			throw M2_ERROR("Sprite is not an industry location");
 		}
 
-		const auto& selected_card_item = M2_GAME.GetNamedItem(selected_card);
+		const auto& selected_card_card = M2_GAME.GetNamedCard(selected_card);
 		const auto& selected_sprite_sprite = std::get<Sprite>(M2_GAME.GetSpriteOrTextLabel(selected_location));
 		// Lookup industries on the sprite
-		std::vector<ItemType> selected_sprite_industries;
-		std::ranges::copy_if(selected_sprite_sprite.NamedItems(), std::back_inserter(selected_sprite_industries), [](auto item_type) {
-			return (M2_GAME.GetNamedItem(item_type).Category() == ITEM_CATEGORY_INDUSTRY_CARD);
+		std::vector<CardType> selected_sprite_industries;
+		std::ranges::copy_if(selected_sprite_sprite.NamedCards(), std::back_inserter(selected_sprite_industries), [](auto card_type) {
+			return (M2_GAME.GetNamedCard(card_type).Category() == CARD_CATEGORY_INDUSTRY_CARD);
 		});
 		if (selected_sprite_industries.empty()) {
 			throw M2_ERROR("Selected sprite does not hold any industry cards");
@@ -116,25 +116,25 @@ namespace {
 		}
 
 		// If the card is wild card
-		if (selected_card_item.Category() == ITEM_CATEGORY_WILD_CARD) {
+		if (selected_card_card.Category() == CARD_CATEGORY_WILD_CARD) {
 			// Any industry in the selected location can be built
 			return selected_sprite_industries;
-		} else if (selected_card_item.Category() == ITEM_CATEGORY_INDUSTRY_CARD) {
+		} else if (selected_card_card.Category() == CARD_CATEGORY_INDUSTRY_CARD) {
 			// Check if the selected industry exists in the sprite's industries
 			auto industry_card_it = std::find(selected_sprite_industries.begin(), selected_sprite_industries.end(), selected_card);
 			if (industry_card_it == selected_sprite_industries.end()) {
 				return {}; // No buildable industries
 			}
 			return {selected_card}; // Only the selected industry card is buildable
-		} else { // ITEM_CATEGORY_CITY_CARD
+		} else { // CARD_CATEGORY_CITY_CARD
 			// Look up the location of the sprite
-			auto location_card_it = std::ranges::find_if(selected_sprite_sprite.NamedItems(), [](auto item_type) {
-				return (M2_GAME.GetNamedItem(item_type).Category() == ITEM_CATEGORY_CITY_CARD);
+			auto location_card_it = std::ranges::find_if(selected_sprite_sprite.NamedCards(), [](auto card_type) {
+				return (M2_GAME.GetNamedCard(card_type).Category() == CARD_CATEGORY_CITY_CARD);
 			});
-			if (location_card_it == selected_sprite_sprite.NamedItems().end()) {
+			if (location_card_it == selected_sprite_sprite.NamedCards().end()) {
 				throw M2_ERROR("Selected sprite does not hold a location card");
 			}
-			ItemType selected_sprite_location = *location_card_it;
+			CardType selected_sprite_location = *location_card_it;
 			// Check if the card belongs to this location
 			if (selected_card == selected_sprite_location) {
 				// Any industry in the selected location can be built
@@ -146,9 +146,9 @@ namespace {
 
 	bool is_next_tile_higher_level_than_built_tile(const Character& factory_character, const IndustryTile next_industry_tile) {
 		auto built_industry_tile_type = ToIndustryTileOfFactoryCharacter(factory_character);
-		const auto& built_industry_tile_item = M2_GAME.GetNamedItem(built_industry_tile_type);
-		const auto& next_industry_tile_item = M2_GAME.GetNamedItem(next_industry_tile);
-		return built_industry_tile_item.GetConstant(TILE_LEVEL).GetIntOrZero() < next_industry_tile_item.GetConstant(TILE_LEVEL).GetIntOrZero();
+		const auto& built_industry_tile_card = M2_GAME.GetNamedCard(built_industry_tile_type);
+		const auto& next_industry_tile_card = M2_GAME.GetNamedCard(next_industry_tile);
+		return built_industry_tile_card.GetConstant(TILE_LEVEL).GetIntOrZero() < next_industry_tile_card.GetConstant(TILE_LEVEL).GetIntOrZero();
 	}
 }
 
@@ -254,10 +254,10 @@ std::optional<BuildJourneyStep> BuildJourney::HandleLocationMouseClickSignal(con
 
 		// Create empty entries in resource_sources for every required resource
 		_resource_sources.insert(_resource_sources.end(),
-				M2_GAME.GetNamedItem(*tile_type).GetConstant(COAL_COST).GetIntOrZero(),
+				M2_GAME.GetNamedCard(*tile_type).GetConstant(COAL_COST).GetIntOrZero(),
 				std::make_pair(COAL_CUBE_COUNT, NO_SPRITE));
 		_resource_sources.insert(_resource_sources.end(),
-				M2_GAME.GetNamedItem(*tile_type).GetConstant(IRON_COST).GetIntOrZero(),
+				M2_GAME.GetNamedCard(*tile_type).GetConstant(IRON_COST).GetIntOrZero(),
 				std::make_pair(IRON_CUBE_COUNT, NO_SPRITE));
 		return _resource_sources.empty() ? BuildJourneyStep::EXPECT_CONFIRMATION : BuildJourneyStep::EXPECT_RESOURCE_SOURCE;
 	} else {
@@ -408,9 +408,9 @@ std::optional<BuildJourneyStep> BuildJourney::HandleResourceExitSignal() {
 }
 std::optional<BuildJourneyStep> BuildJourney::HandleConfirmationEnterSignal() {
 	LOG_INFO("Asking for confirmation...");
-	auto card_name = M2_GAME.GetNamedItem(_selected_card).in_game_name();
-	auto city_name = M2_GAME.GetNamedItem(city_of_location(_selected_location)).in_game_name();
-	auto industry_name = M2_GAME.GetNamedItem(_selected_industry).in_game_name();
+	auto card_name = M2_GAME.GetNamedCard(_selected_card).in_game_name();
+	auto city_name = M2_GAME.GetNamedCard(city_of_location(_selected_location)).in_game_name();
+	auto industry_name = M2_GAME.GetNamedCard(_selected_industry).in_game_name();
 	if (ask_for_confirmation("Build " + industry_name + " in " + city_name, "using " + card_name + " card?", "OK", "Cancel")) {
 		LOG_INFO("Build action confirmed");
 
@@ -451,7 +451,7 @@ m2::void_expected CanPlayerBuild(m2::Character& player, const m2g::pb::TurnBased
 	if (not is_card(build_action.card())) {
 		return make_unexpected("Selected card is not a card");
 	}
-	if (player.FindItems(build_action.card()) == player.EndItems()) {
+	if (player.FindCards(build_action.card()) == player.EndCards()) {
 		return make_unexpected("Player does not have the selected card");
 	}
 
@@ -459,12 +459,12 @@ m2::void_expected CanPlayerBuild(m2::Character& player, const m2g::pb::TurnBased
 	if (not is_industry_tile(build_action.industry_tile())) {
 		return make_unexpected("Selected industry tile is not an industry tile");
 	}
-	if (player.FindItems(build_action.industry_tile()) == player.EndItems()) {
+	if (player.FindCards(build_action.industry_tile()) == player.EndCards()) {
 		return make_unexpected("Player does not have the selected tile");
 	}
 	auto industry = industry_of_industry_tile(build_action.industry_tile());
 	// Check if the tile is the next tile
-	const auto& selected_industry_tile = M2_GAME.GetNamedItem(build_action.industry_tile());
+	const auto& selected_industry_tile = M2_GAME.GetNamedCard(build_action.industry_tile());
 	auto next_industry_tile = PlayerNextIndustryTileOfCategory(player, selected_industry_tile.Category());
 	if (not next_industry_tile || *next_industry_tile != build_action.industry_tile()) {
 		return make_unexpected("Player cannot use the selected tile");
@@ -512,10 +512,10 @@ m2::void_expected CanPlayerBuild(m2::Character& player, const m2g::pb::TurnBased
 	std::vector<std::pair<VariableType, Location>> resource_sources;
 	// Create empty entries in resource_sources for every required resource
 	resource_sources.insert(resource_sources.end(),
-		M2_GAME.GetNamedItem(build_action.industry_tile()).GetConstant(COAL_COST).GetIntOrZero(),
+		M2_GAME.GetNamedCard(build_action.industry_tile()).GetConstant(COAL_COST).GetIntOrZero(),
 		std::make_pair(COAL_CUBE_COUNT, NO_SPRITE));
 	resource_sources.insert(resource_sources.end(),
-		M2_GAME.GetNamedItem(build_action.industry_tile()).GetConstant(IRON_COST).GetIntOrZero(),
+		M2_GAME.GetNamedCard(build_action.industry_tile()).GetConstant(IRON_COST).GetIntOrZero(),
 		std::make_pair(IRON_CUBE_COUNT, NO_SPRITE));
 	// Gather reserved resources so that they can be given back
 	std::vector<std::pair<m2::Object*, m2g::pb::VariableType>> reserved_resources;
@@ -607,7 +607,7 @@ return_resources:
 		return is_merchant_location(static_cast<Location>(iron_source));
 	});
 	// Check if the player has enough money
-	if (player.GetVariable(MONEY).GetIntOrZero() < M2_GAME.GetNamedItem(build_action.industry_tile()).GetConstant(MONEY_COST).GetIntOrZero() +
+	if (player.GetVariable(MONEY).GetIntOrZero() < M2_GAME.GetNamedCard(build_action.industry_tile()).GetConstant(MONEY_COST).GetIntOrZero() +
 		M2G_PROXY.market_coal_cost(I(coal_from_market)) + M2G_PROXY.market_iron_cost(I(iron_from_market))) {
 		return make_unexpected("Player does not have enough money");
 	}
@@ -615,14 +615,14 @@ return_resources:
 	return {};
 }
 
-std::pair<Card,int> ExecuteBuildAction(m2::Character& player, const m2g::pb::TurnBasedClientCommand_BuildAction& build_action) {
+std::pair<m2g::pb::CardType,int> ExecuteBuildAction(m2::Character& player, const m2g::pb::TurnBasedClientCommand_BuildAction& build_action) {
 	// Assume validation is done
 
 	// Take tile from player
-	const auto& tile_item = M2_GAME.GetNamedItem(build_action.industry_tile());
-	auto tile_category = tile_item.Category();
+	const auto& tile_card = M2_GAME.GetNamedCard(build_action.industry_tile());
+	auto tile_category = tile_card.Category();
 	auto tile_type = PlayerNextIndustryTileOfCategory(player, tile_category);
-	player.RemoveItem(player.FindItems(*tile_type));
+	player.RemoveCard(player.FindCards(*tile_type));
 
 	// Calculate the cost before building the industry
 	auto coal_from_market = std::count_if(build_action.coal_sources().begin(), build_action.coal_sources().end(), [](const auto& coal_source) {
@@ -631,7 +631,7 @@ std::pair<Card,int> ExecuteBuildAction(m2::Character& player, const m2g::pb::Tur
 	auto iron_from_market = std::count_if(build_action.iron_sources().begin(), build_action.iron_sources().end(), [](const auto& iron_source) {
 		return is_merchant_location(static_cast<Location>(iron_source));
 	});
-	auto cost = M2_GAME.GetNamedItem(build_action.industry_tile()).GetConstant(MONEY_COST).GetIntOrZero() +
+	auto cost = M2_GAME.GetNamedCard(build_action.industry_tile()).GetConstant(MONEY_COST).GetIntOrZero() +
 		M2G_PROXY.market_coal_cost(m2::I(coal_from_market)) + M2G_PROXY.market_iron_cost(m2::I(iron_from_market));
 
 	// Take resources
@@ -664,10 +664,10 @@ std::pair<Card,int> ExecuteBuildAction(m2::Character& player, const m2g::pb::Tur
 	auto city = city_of_location(build_action.industry_location());
 	InitFactory(*it, position_of_industry_location(build_action.industry_location()), city, build_action.industry_tile());
 	// Give resources to factory, sell to market at the same time
-	if (tile_category == ITEM_CATEGORY_COAL_MINE_TILE) {
+	if (tile_category == CARD_CATEGORY_COAL_MINE_TILE) {
 		// If there's a connection to coal market
 		if (find_connected_coal_market(city)) {
-			auto gained_resource_count = tile_item.GetConstant(COAL_BONUS).GetIntOrZero();
+			auto gained_resource_count = tile_card.GetConstant(COAL_BONUS).GetIntOrZero();
 			auto [sell_count, revenue] = M2G_PROXY.market_coal_revenue(gained_resource_count);
 			// Sell to market
 			M2G_PROXY.sell_coal_to_market(sell_count);
@@ -676,10 +676,10 @@ std::pair<Card,int> ExecuteBuildAction(m2::Character& player, const m2g::pb::Tur
 			// Keep the rest
 			it->GetCharacter().SetVariable(COAL_CUBE_COUNT, IFE{it->GetCharacter().GetVariable(COAL_CUBE_COUNT).GetIntOrZero() + gained_resource_count - sell_count});
 		} else {
-			it->GetCharacter().SetVariable(COAL_CUBE_COUNT, IFE{it->GetCharacter().GetVariable(COAL_CUBE_COUNT).GetIntOrZero() + tile_item.GetConstant(COAL_BONUS).GetIntOrZero()});
+			it->GetCharacter().SetVariable(COAL_CUBE_COUNT, IFE{it->GetCharacter().GetVariable(COAL_CUBE_COUNT).GetIntOrZero() + tile_card.GetConstant(COAL_BONUS).GetIntOrZero()});
 		}
-	} else if (tile_category == ITEM_CATEGORY_IRON_WORKS_TILE) {
-		auto gained_resource_count = tile_item.GetConstant(IRON_BONUS).GetIntOrZero();
+	} else if (tile_category == CARD_CATEGORY_IRON_WORKS_TILE) {
+		auto gained_resource_count = tile_card.GetConstant(IRON_BONUS).GetIntOrZero();
 		auto [sell_count, revenue] = M2G_PROXY.market_iron_revenue(gained_resource_count);
 		// Sell to market
 		M2G_PROXY.sell_iron_to_market(sell_count);
@@ -687,9 +687,9 @@ std::pair<Card,int> ExecuteBuildAction(m2::Character& player, const m2g::pb::Tur
 		player.SetVariable(MONEY, IFE{player.GetVariable(MONEY).GetIntOrZero() + revenue});
 		// Keep the rest
 		it->GetCharacter().SetVariable(IRON_CUBE_COUNT, IFE{it->GetCharacter().GetVariable(IRON_CUBE_COUNT).GetIntOrZero() + gained_resource_count - sell_count});
-	} else if (tile_category == ITEM_CATEGORY_BREWERY_TILE) {
+	} else if (tile_category == CARD_CATEGORY_BREWERY_TILE) {
 		it->GetCharacter().SetVariable(BEER_BARREL_COUNT, IFE{it->GetCharacter().GetVariable(BEER_BARREL_COUNT).GetIntOrZero()
-			+ tile_item.GetConstant(M2G_PROXY.is_canal_era() ? BEER_BONUS_FIRST_ERA : BEER_BONUS_SECOND_ERA).GetIntOrZero()});
+			+ tile_card.GetConstant(M2G_PROXY.is_canal_era() ? BEER_BONUS_FIRST_ERA : BEER_BONUS_SECOND_ERA).GetIntOrZero()});
 	}
 
 	FlipExhaustedFactories();

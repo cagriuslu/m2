@@ -19,7 +19,7 @@ enum class BuildJourneyStep {
 class BuildJourney : public m2::FsmBase<BuildJourneyStep, POIOrCancelSignal> {
 	std::optional<std::list<m2::UiPanel>::iterator> _cancel_button_panel;
 
-	Card _selected_card{};
+	m2g::pb::CardType _selected_card{};
 	IndustryLocation _selected_location{};
 	Industry _selected_industry{};
 	IndustryTile _industry_tile{};
@@ -50,4 +50,4 @@ protected:
 m2::void_expected CanPlayerBuild(m2::Character& player, const m2g::pb::TurnBasedClientCommand_BuildAction& build_action);
 
 // For the server
-std::pair<Card,int> ExecuteBuildAction(m2::Character& player, const m2g::pb::TurnBasedClientCommand_BuildAction& build_action);
+std::pair<m2g::pb::CardType,int> ExecuteBuildAction(m2::Character& player, const m2g::pb::TurnBasedClientCommand_BuildAction& build_action);

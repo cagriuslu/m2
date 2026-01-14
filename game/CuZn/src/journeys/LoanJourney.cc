@@ -29,7 +29,7 @@ m2::void_expected CanPlayerAttemptToLoan(m2::Character& player) {
 void ExecuteLoanJourney() {
 	LOG_INFO("Loan action");
 	if (auto selected_card = ask_for_card_selection(); selected_card) {
-		auto card_name = M2_GAME.GetNamedItem(*selected_card).in_game_name();
+		auto card_name = M2_GAME.GetNamedCard(*selected_card).in_game_name();
 		if (ask_for_confirmation("Take a loan using ", card_name + " card?", "OK", "Cancel")) {
 			LOG_INFO("Loan action confirmed");
 
@@ -50,14 +50,14 @@ m2::void_expected CanPlayerLoan(m2::Character& player, const m2g::pb::TurnBasedC
 	}
 
 	// Check if the player holds the selected card
-	if (player.FindItems(loan_action.card()) == player.EndItems()) {
+	if (player.FindCards(loan_action.card()) == player.EndCards()) {
 		return m2::make_unexpected("Player does not have the selected card: " + m2::pb::enum_name(loan_action.card()));
 	}
 
 	return {};
 }
 
-Card ExecuteLoanAction(m2::Character& player, const TurnBasedClientCommand_LoanAction& loan_action) {
+m2g::pb::CardType ExecuteLoanAction(m2::Character& player, const TurnBasedClientCommand_LoanAction& loan_action) {
 	const auto currIncomePoints = PlayerIncomePoints(player);
 	const auto currIncomeLevel = IncomeLevelFromIncomePoints(currIncomePoints);
 	const auto newIncomeLevel = ClampIncomeLevel(currIncomeLevel - 3);

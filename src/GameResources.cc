@@ -49,7 +49,7 @@ m2::GameResources::GameResources(const std::string& gameIdentifier, const std::s
 		_spriteSheets = _defaultResourceDir / "SpriteSheets.json";
 	}
 
-	_items = _gameResourceDir / "Items.json";
+	_cards = _gameResourceDir / "Cards.json";
 
 	_animations = _gameResourceDir / "Animations.json";
 	if (not std::filesystem::exists(_animations)) {

@@ -24,7 +24,7 @@ int RequiredBeerCountToSell(IndustryLocation location) {
 		throw M2_ERROR("Invalid factory location");
 	} else {
 		auto industry_tile = ToIndustryTileOfFactoryCharacter(factory->GetCharacter());
-		return M2_GAME.GetNamedItem(industry_tile).GetConstant(BEER_COST).GetIntOrZero();
+		return M2_GAME.GetNamedCard(industry_tile).GetConstant(BEER_COST).GetIntOrZero();
 	}
 }
 
@@ -66,7 +66,7 @@ void FlipExhaustedFactories() {
 
 void SellFactory(m2::Character& factory_chr) {
 	const auto tileType = ToIndustryTileOfFactoryCharacter(factory_chr);
-	const auto& tileTtem = M2_GAME.GetNamedItem(tileType);
+	const auto& tileTtem = M2_GAME.GetNamedCard(tileType);
 	// Earn income points
 	const auto incomeBonus = tileTtem.GetConstant(INCOME_POINTS_BONUS).GetIntOrZero();
 	const auto currIncomePoints = factory_chr.Owner().TryGetParent()->GetCharacter().GetVariable(INCOME_POINTS).GetIntOrZero();
@@ -92,14 +92,14 @@ City ToCityOfFactoryCharacter(m2::Character& chr) {
 	if (not IsFactoryCharacter(chr)) {
 		throw M2_ERROR("Character doesn't belong to a factory");
 	}
-	return chr.FindItems(m2g::pb::ITEM_CATEGORY_CITY_CARD)->Type();
+	return chr.FindCards(m2g::pb::CARD_CATEGORY_CITY_CARD)->Type();
 }
 
 Industry ToIndustryOfFactoryCharacter(const m2::Character& chr) {
 	if (not IsFactoryCharacter(chr)) {
 		throw M2_ERROR("Character doesn't belong to a factory");
 	}
-	return chr.FindItems(m2g::pb::ITEM_CATEGORY_INDUSTRY_CARD)->Type();
+	return chr.FindCards(m2g::pb::CARD_CATEGORY_INDUSTRY_CARD)->Type();
 }
 
 IndustryTile ToIndustryTileOfFactoryCharacter(const m2::Character& chr) {
@@ -108,7 +108,7 @@ IndustryTile ToIndustryTileOfFactoryCharacter(const m2::Character& chr) {
 	}
 	auto industry = ToIndustryOfFactoryCharacter(chr);
 	auto industry_tile_category = industry_tile_category_of_industry(industry);
-	return chr.FindItems(industry_tile_category)->Type();
+	return chr.FindCards(industry_tile_category)->Type();
 }
 
 IndustryLocation ToIndustryLocationOfFactoryCharacter(m2::Character& chr) {
@@ -134,9 +134,9 @@ m2::void_expected InitFactory(m2::Object& obj, const m2::VecF& position, City ci
 
 	// Add all available information to the factories: industry, city, industry tile
 	auto& chr = obj.AddFastCharacter();
-	chr.AddNamedItem(M2_GAME.GetNamedItem(industry));
-	chr.AddNamedItem(M2_GAME.GetNamedItem(city));
-	chr.AddNamedItem(M2_GAME.GetNamedItem(industry_tile));
+	chr.AddNamedCard(M2_GAME.GetNamedCard(industry));
+	chr.AddNamedCard(M2_GAME.GetNamedCard(city));
+	chr.AddNamedCard(M2_GAME.GetNamedCard(industry_tile));
 
 	auto color = M2G_PROXY.player_colors[parent_index];
 	auto& _gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, industry_sprite_of_industry(industry));

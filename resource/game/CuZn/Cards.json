@@ -1,11 +1,11 @@
 {
-  "items": [
+  "cards": [
     {
-      "type": "NO_ITEM"
+      "type": "NO_CARD"
     },
     {
       "type": "WILD_LOCATION_CARD",
-      "category": "ITEM_CATEGORY_WILD_CARD",
+      "category": "CARD_CATEGORY_WILD_CARD",
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -24,7 +24,7 @@
     },
     {
       "type": "WILD_INDUSTRY_CARD",
-      "category": "ITEM_CATEGORY_WILD_CARD",
+      "category": "CARD_CATEGORY_WILD_CARD",
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -43,7 +43,7 @@
     },
     {
       "type": "COTTON_MILL_CARD",
-      "category": "ITEM_CATEGORY_INDUSTRY_CARD",
+      "category": "CARD_CATEGORY_INDUSTRY_CARD",
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -63,7 +63,7 @@
     },
     {
       "type": "IRON_WORKS_CARD",
-      "category": "ITEM_CATEGORY_INDUSTRY_CARD",
+      "category": "CARD_CATEGORY_INDUSTRY_CARD",
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -83,7 +83,7 @@
     },
     {
       "type": "BREWERY_CARD",
-      "category": "ITEM_CATEGORY_INDUSTRY_CARD",
+      "category": "CARD_CATEGORY_INDUSTRY_CARD",
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -103,7 +103,7 @@
     },
     {
       "type": "COAL_MINE_CARD",
-      "category": "ITEM_CATEGORY_INDUSTRY_CARD",
+      "category": "CARD_CATEGORY_INDUSTRY_CARD",
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -123,7 +123,7 @@
     },
     {
       "type": "POTTERY_CARD",
-      "category": "ITEM_CATEGORY_INDUSTRY_CARD",
+      "category": "CARD_CATEGORY_INDUSTRY_CARD",
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -143,7 +143,7 @@
     },
     {
       "type": "MANUFACTURED_GOODS_CARD",
-      "category": "ITEM_CATEGORY_INDUSTRY_CARD",
+      "category": "CARD_CATEGORY_INDUSTRY_CARD",
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -163,7 +163,7 @@
     },
     {
       "type": "BELPER_CARD",
-      "category": "ITEM_CATEGORY_CITY_CARD",
+      "category": "CARD_CATEGORY_CITY_CARD",
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -182,7 +182,7 @@
     },
     {
       "type": "DERBY_CARD",
-      "category": "ITEM_CATEGORY_CITY_CARD",
+      "category": "CARD_CATEGORY_CITY_CARD",
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -201,7 +201,7 @@
     },
     {
       "type": "LEEK_CARD",
-      "category": "ITEM_CATEGORY_CITY_CARD",
+      "category": "CARD_CATEGORY_CITY_CARD",
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -220,7 +220,7 @@
     },
     {
       "type": "STOKE_ON_TRENT_CARD",
-      "category": "ITEM_CATEGORY_CITY_CARD",
+      "category": "CARD_CATEGORY_CITY_CARD",
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -239,7 +239,7 @@
     },
     {
       "type": "STONE_CARD",
-      "category": "ITEM_CATEGORY_CITY_CARD",
+      "category": "CARD_CATEGORY_CITY_CARD",
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -258,7 +258,7 @@
     },
     {
       "type": "UTTOXETER_CARD",
-      "category": "ITEM_CATEGORY_CITY_CARD",
+      "category": "CARD_CATEGORY_CITY_CARD",
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -277,7 +277,7 @@
     },
     {
       "type": "STAFFORD_CARD",
-      "category": "ITEM_CATEGORY_CITY_CARD",
+      "category": "CARD_CATEGORY_CITY_CARD",
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -296,7 +296,7 @@
     },
     {
       "type": "BURTON_UPON_TRENT_CARD",
-      "category": "ITEM_CATEGORY_CITY_CARD",
+      "category": "CARD_CATEGORY_CITY_CARD",
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -315,7 +315,7 @@
     },
     {
       "type": "CANNOCK_CARD",
-      "category": "ITEM_CATEGORY_CITY_CARD",
+      "category": "CARD_CATEGORY_CITY_CARD",
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -334,7 +334,7 @@
     },
     {
       "type": "TAMWORTH_CARD",
-      "category": "ITEM_CATEGORY_CITY_CARD",
+      "category": "CARD_CATEGORY_CITY_CARD",
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -353,7 +353,7 @@
     },
     {
       "type": "WALSALL_CARD",
-      "category": "ITEM_CATEGORY_CITY_CARD",
+      "category": "CARD_CATEGORY_CITY_CARD",
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -372,7 +372,7 @@
     },
     {
       "type": "COALBROOKEDALE_CARD",
-      "category": "ITEM_CATEGORY_CITY_CARD",
+      "category": "CARD_CATEGORY_CITY_CARD",
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -391,7 +391,7 @@
     },
     {
       "type": "DUDLEY_CARD",
-      "category": "ITEM_CATEGORY_CITY_CARD",
+      "category": "CARD_CATEGORY_CITY_CARD",
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -410,7 +410,7 @@
     },
     {
       "type": "KIDDERMINSTER_CARD",
-      "category": "ITEM_CATEGORY_CITY_CARD",
+      "category": "CARD_CATEGORY_CITY_CARD",
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -429,7 +429,7 @@
     },
     {
       "type": "WOLFERHAMPTON_CARD",
-      "category": "ITEM_CATEGORY_CITY_CARD",
+      "category": "CARD_CATEGORY_CITY_CARD",
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -448,7 +448,7 @@
     },
     {
       "type": "WORCESTER_CARD",
-      "category": "ITEM_CATEGORY_CITY_CARD",
+      "category": "CARD_CATEGORY_CITY_CARD",
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -467,7 +467,7 @@
     },
     {
       "type": "BIRMINGHAM_CARD",
-      "category": "ITEM_CATEGORY_CITY_CARD",
+      "category": "CARD_CATEGORY_CITY_CARD",
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -486,7 +486,7 @@
     },
     {
       "type": "COVENTRY_CARD",
-      "category": "ITEM_CATEGORY_CITY_CARD",
+      "category": "CARD_CATEGORY_CITY_CARD",
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -505,7 +505,7 @@
     },
     {
       "type": "NUNEATON_CARD",
-      "category": "ITEM_CATEGORY_CITY_CARD",
+      "category": "CARD_CATEGORY_CITY_CARD",
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -524,7 +524,7 @@
     },
     {
       "type": "REDDITCH_CARD",
-      "category": "ITEM_CATEGORY_CITY_CARD",
+      "category": "CARD_CATEGORY_CITY_CARD",
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -543,17 +543,17 @@
     },
     {
       "type": "STANDALONE_LOCATION_1_CARD",
-      "category": "ITEM_CATEGORY_CITY_CARD",
+      "category": "CARD_CATEGORY_CITY_CARD",
       "inGameName": "Standalone Farm 1"
     },
     {
       "type": "STANDALONE_LOCATION_2_CARD",
-      "category": "ITEM_CATEGORY_CITY_CARD",
+      "category": "CARD_CATEGORY_CITY_CARD",
       "inGameName": "Standalone Farm 2"
     },
     {
       "type": "GLOUCESTER_CARD",
-      "category": "ITEM_CATEGORY_CITY_CARD",
+      "category": "CARD_CATEGORY_CITY_CARD",
       "constants": [
         {
           "type": "MERCHANT_BONUS_DEVELOP",
@@ -564,7 +564,7 @@
     },
     {
       "type": "SHREWSBURY_CARD",
-      "category": "ITEM_CATEGORY_CITY_CARD",
+      "category": "CARD_CATEGORY_CITY_CARD",
       "constants": [
         {
           "type": "MERCHANT_BONUS_VICTORY_POINTS",
@@ -575,7 +575,7 @@
     },
     {
       "type": "OXFORD_CARD",
-      "category": "ITEM_CATEGORY_CITY_CARD",
+      "category": "CARD_CATEGORY_CITY_CARD",
       "constants": [
         {
           "type": "MERCHANT_BONUS_INCOME",
@@ -586,7 +586,7 @@
     },
     {
       "type": "NOTTINGHAM_CARD",
-      "category": "ITEM_CATEGORY_CITY_CARD",
+      "category": "CARD_CATEGORY_CITY_CARD",
       "constants": [
         {
           "type": "MERCHANT_BONUS_VICTORY_POINTS",
@@ -597,7 +597,7 @@
     },
     {
       "type": "WARRINGTON_CARD",
-      "category": "ITEM_CATEGORY_CITY_CARD",
+      "category": "CARD_CATEGORY_CITY_CARD",
       "constants": [
         {
           "type": "MERCHANT_BONUS_MONEY",
@@ -608,7 +608,7 @@
     },
     {
       "type": "COTTON_MILL_MERCHANT_LICENSE",
-      "category": "ITEM_CATEGORY_MERCHANT_LICENSE",
+      "category": "CARD_CATEGORY_MERCHANT_LICENSE",
       "constants": [
         {
           "type": "BEER_BONUS_FIRST_ERA",
@@ -635,7 +635,7 @@
     },
     {
       "type": "POTTERY_MERCHANT_LICENSE",
-      "category": "ITEM_CATEGORY_MERCHANT_LICENSE",
+      "category": "CARD_CATEGORY_MERCHANT_LICENSE",
       "constants": [
         {
           "type": "BEER_BONUS_FIRST_ERA",
@@ -662,7 +662,7 @@
     },
     {
       "type": "MANUFACTURED_GOODS_MERCHANT_LICENSE",
-      "category": "ITEM_CATEGORY_MERCHANT_LICENSE",
+      "category": "CARD_CATEGORY_MERCHANT_LICENSE",
       "constants": [
         {
           "type": "BEER_BONUS_FIRST_ERA",
@@ -689,7 +689,7 @@
     },
     {
       "type": "WILD_MERCHANT_LICENSE",
-      "category": "ITEM_CATEGORY_MERCHANT_LICENSE",
+      "category": "CARD_CATEGORY_MERCHANT_LICENSE",
       "constants": [
         {
           "type": "BEER_BONUS_FIRST_ERA",
@@ -716,7 +716,7 @@
     },
     {
       "type": "NO_MERCHANT_LICENSE",
-      "category": "ITEM_CATEGORY_MERCHANT_LICENSE",
+      "category": "CARD_CATEGORY_MERCHANT_LICENSE",
       "constants": [
         {
           "type": "MERCHANT_COUNT_IN_2_PLAYER_GAME",
@@ -735,7 +735,7 @@
     },
     {
       "type": "COTTON_MILL_TILE_I",
-      "category": "ITEM_CATEGORY_COTTON_MILL_TILE",
+      "category": "CARD_CATEGORY_COTTON_MILL_TILE",
       "constants": [
         {
           "type": "TILE_LEVEL",
@@ -774,7 +774,7 @@
     },
     {
       "type": "COTTON_MILL_TILE_II",
-      "category": "ITEM_CATEGORY_COTTON_MILL_TILE",
+      "category": "CARD_CATEGORY_COTTON_MILL_TILE",
       "constants": [
         {
           "type": "TILE_LEVEL",
@@ -813,7 +813,7 @@
     },
     {
       "type": "COTTON_MILL_TILE_III",
-      "category": "ITEM_CATEGORY_COTTON_MILL_TILE",
+      "category": "CARD_CATEGORY_COTTON_MILL_TILE",
       "constants": [
         {
           "type": "TILE_LEVEL",
@@ -856,7 +856,7 @@
     },
     {
       "type": "COTTON_MILL_TILE_IV",
-      "category": "ITEM_CATEGORY_COTTON_MILL_TILE",
+      "category": "CARD_CATEGORY_COTTON_MILL_TILE",
       "constants": [
         {
           "type": "TILE_LEVEL",
@@ -899,7 +899,7 @@
     },
     {
       "type": "IRON_WORKS_TILE_I",
-      "category": "ITEM_CATEGORY_IRON_WORKS_TILE",
+      "category": "CARD_CATEGORY_IRON_WORKS_TILE",
       "constants": [
         {
           "type": "TILE_LEVEL",
@@ -942,7 +942,7 @@
     },
     {
       "type": "IRON_WORKS_TILE_II",
-      "category": "ITEM_CATEGORY_IRON_WORKS_TILE",
+      "category": "CARD_CATEGORY_IRON_WORKS_TILE",
       "constants": [
         {
           "type": "TILE_LEVEL",
@@ -981,7 +981,7 @@
     },
     {
       "type": "IRON_WORKS_TILE_III",
-      "category": "ITEM_CATEGORY_IRON_WORKS_TILE",
+      "category": "CARD_CATEGORY_IRON_WORKS_TILE",
       "constants": [
         {
           "type": "TILE_LEVEL",
@@ -1020,7 +1020,7 @@
     },
     {
       "type": "IRON_WORKS_TILE_IV",
-      "category": "ITEM_CATEGORY_IRON_WORKS_TILE",
+      "category": "CARD_CATEGORY_IRON_WORKS_TILE",
       "constants": [
         {
           "type": "TILE_LEVEL",
@@ -1059,7 +1059,7 @@
     },
     {
       "type": "BREWERY_TILE_I",
-      "category": "ITEM_CATEGORY_BREWERY_TILE",
+      "category": "CARD_CATEGORY_BREWERY_TILE",
       "constants": [
         {
           "type": "TILE_LEVEL",
@@ -1106,7 +1106,7 @@
     },
     {
       "type": "BREWERY_TILE_II",
-      "category": "ITEM_CATEGORY_BREWERY_TILE",
+      "category": "CARD_CATEGORY_BREWERY_TILE",
       "constants": [
         {
           "type": "TILE_LEVEL",
@@ -1149,7 +1149,7 @@
     },
     {
       "type": "BREWERY_TILE_III",
-      "category": "ITEM_CATEGORY_BREWERY_TILE",
+      "category": "CARD_CATEGORY_BREWERY_TILE",
       "constants": [
         {
           "type": "TILE_LEVEL",
@@ -1192,7 +1192,7 @@
     },
     {
       "type": "BREWERY_TILE_IV",
-      "category": "ITEM_CATEGORY_BREWERY_TILE",
+      "category": "CARD_CATEGORY_BREWERY_TILE",
       "constants": [
         {
           "type": "TILE_LEVEL",
@@ -1239,7 +1239,7 @@
     },
     {
       "type": "COAL_MINE_TILE_I",
-      "category": "ITEM_CATEGORY_COAL_MINE_TILE",
+      "category": "CARD_CATEGORY_COAL_MINE_TILE",
       "constants": [
         {
           "type": "TILE_LEVEL",
@@ -1278,7 +1278,7 @@
     },
     {
       "type": "COAL_MINE_TILE_II",
-      "category": "ITEM_CATEGORY_COAL_MINE_TILE",
+      "category": "CARD_CATEGORY_COAL_MINE_TILE",
       "constants": [
         {
           "type": "TILE_LEVEL",
@@ -1313,7 +1313,7 @@
     },
     {
       "type": "COAL_MINE_TILE_III",
-      "category": "ITEM_CATEGORY_COAL_MINE_TILE",
+      "category": "CARD_CATEGORY_COAL_MINE_TILE",
       "constants": [
         {
           "type": "TILE_LEVEL",
@@ -1352,7 +1352,7 @@
     },
     {
       "type": "COAL_MINE_TILE_IV",
-      "category": "ITEM_CATEGORY_COAL_MINE_TILE",
+      "category": "CARD_CATEGORY_COAL_MINE_TILE",
       "constants": [
         {
           "type": "TILE_LEVEL",
@@ -1391,7 +1391,7 @@
     },
     {
       "type": "POTTERY_TILE_I",
-      "category": "ITEM_CATEGORY_POTTERY_TILE",
+      "category": "CARD_CATEGORY_POTTERY_TILE",
       "constants": [
         {
           "type": "TILE_LEVEL",
@@ -1434,7 +1434,7 @@
     },
     {
       "type": "POTTERY_TILE_II",
-      "category": "ITEM_CATEGORY_POTTERY_TILE",
+      "category": "CARD_CATEGORY_POTTERY_TILE",
       "constants": [
         {
           "type": "TILE_LEVEL",
@@ -1473,7 +1473,7 @@
     },
     {
       "type": "POTTERY_TILE_III",
-      "category": "ITEM_CATEGORY_POTTERY_TILE",
+      "category": "CARD_CATEGORY_POTTERY_TILE",
       "constants": [
         {
           "type": "TILE_LEVEL",
@@ -1516,7 +1516,7 @@
     },
     {
       "type": "POTTERY_TILE_IV",
-      "category": "ITEM_CATEGORY_POTTERY_TILE",
+      "category": "CARD_CATEGORY_POTTERY_TILE",
       "constants": [
         {
           "type": "TILE_LEVEL",
@@ -1555,7 +1555,7 @@
     },
     {
       "type": "POTTERY_TILE_V",
-      "category": "ITEM_CATEGORY_POTTERY_TILE",
+      "category": "CARD_CATEGORY_POTTERY_TILE",
       "constants": [
         {
           "type": "TILE_LEVEL",
@@ -1598,7 +1598,7 @@
     },
     {
       "type": "MANUFACTURED_GOODS_TILE_I",
-      "category": "ITEM_CATEGORY_MANUFACTURED_GOODS_TILE",
+      "category": "CARD_CATEGORY_MANUFACTURED_GOODS_TILE",
       "constants": [
         {
           "type": "TILE_LEVEL",
@@ -1641,7 +1641,7 @@
     },
     {
       "type": "MANUFACTURED_GOODS_TILE_II",
-      "category": "ITEM_CATEGORY_MANUFACTURED_GOODS_TILE",
+      "category": "CARD_CATEGORY_MANUFACTURED_GOODS_TILE",
       "constants": [
         {
           "type": "TILE_LEVEL",
@@ -1680,7 +1680,7 @@
     },
     {
       "type": "MANUFACTURED_GOODS_TILE_III",
-      "category": "ITEM_CATEGORY_MANUFACTURED_GOODS_TILE",
+      "category": "CARD_CATEGORY_MANUFACTURED_GOODS_TILE",
       "constants": [
         {
           "type": "TILE_LEVEL",
@@ -1715,7 +1715,7 @@
     },
     {
       "type": "MANUFACTURED_GOODS_TILE_IV",
-      "category": "ITEM_CATEGORY_MANUFACTURED_GOODS_TILE",
+      "category": "CARD_CATEGORY_MANUFACTURED_GOODS_TILE",
       "constants": [
         {
           "type": "TILE_LEVEL",
@@ -1754,7 +1754,7 @@
     },
     {
       "type": "MANUFACTURED_GOODS_TILE_V",
-      "category": "ITEM_CATEGORY_MANUFACTURED_GOODS_TILE",
+      "category": "CARD_CATEGORY_MANUFACTURED_GOODS_TILE",
       "constants": [
         {
           "type": "TILE_LEVEL",
@@ -1793,7 +1793,7 @@
     },
     {
       "type": "MANUFACTURED_GOODS_TILE_VI",
-      "category": "ITEM_CATEGORY_MANUFACTURED_GOODS_TILE",
+      "category": "CARD_CATEGORY_MANUFACTURED_GOODS_TILE",
       "constants": [
         {
           "type": "TILE_LEVEL",
@@ -1828,7 +1828,7 @@
     },
     {
       "type": "MANUFACTURED_GOODS_TILE_VII",
-      "category": "ITEM_CATEGORY_MANUFACTURED_GOODS_TILE",
+      "category": "CARD_CATEGORY_MANUFACTURED_GOODS_TILE",
       "constants": [
         {
           "type": "TILE_LEVEL",
@@ -1867,7 +1867,7 @@
     },
     {
       "type": "MANUFACTURED_GOODS_TILE_VIII",
-      "category": "ITEM_CATEGORY_MANUFACTURED_GOODS_TILE",
+      "category": "CARD_CATEGORY_MANUFACTURED_GOODS_TILE",
       "constants": [
         {
           "type": "TILE_LEVEL",

@@ -1,6 +1,6 @@
 #pragma once
 #include <m2/Object.h>
-#include <m2g_ItemType.pb.h>
+#include <m2g_CardType.pb.h>
 #include <cuzn/Detail.h>
 
 // Filters

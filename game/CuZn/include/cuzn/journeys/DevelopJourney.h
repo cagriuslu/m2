@@ -19,8 +19,8 @@ class DevelopJourney : public m2::FsmBase<DevelopJourneyStep, POIOrCancelSignal>
 	std::optional<std::list<m2::UiPanel>::iterator> _cancel_button_panel;
 
 	bool _develop_double_tiles{};
-	Card _selected_card{};
-	m2g::pb::ItemType _selected_tile_1{}, _selected_tile_2{};
+	m2g::pb::CardType _selected_card{};
+	m2g::pb::CardType _selected_tile_1{}, _selected_tile_2{};
 	m2g::pb::SpriteType _iron_source_1{}, _iron_source_2{};
 	m2::Object *_reserved_source_1{}, *_reserved_source_2{};
 	
@@ -43,4 +43,4 @@ protected:
 m2::void_expected CanPlayerDevelop(m2::Character& player, const m2g::pb::TurnBasedClientCommand_DevelopAction& develop_action);
 
 // For the server
-std::pair<Card,int> ExecuteDevelopAction(m2::Character& player, const m2g::pb::TurnBasedClientCommand_DevelopAction& develop_action);
+std::pair<m2g::pb::CardType,int> ExecuteDevelopAction(m2::Character& player, const m2g::pb::TurnBasedClientCommand_DevelopAction& develop_action);

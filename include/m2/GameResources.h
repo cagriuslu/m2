@@ -15,7 +15,7 @@ namespace m2 {
 		// Game Resources
 
 		std::filesystem::path _gameResourceDir;
-		std::filesystem::path _defaultFont, _levelsDir, _spriteSheets, _items, _animations, _songs, _keys;
+		std::filesystem::path _defaultFont, _levelsDir, _spriteSheets, _cards, _animations, _songs, _keys;
 
 	public:
 		explicit GameResources(const std::string& gameIdentifier, const std::string& defaultFont);
@@ -30,7 +30,7 @@ namespace m2 {
 		[[nodiscard]] const std::filesystem::path& GetDefaultFontPath() const { return _defaultFont; }
 		[[nodiscard]] const std::filesystem::path& GetLevelsDir() const { return _levelsDir; }
 		[[nodiscard]] const std::filesystem::path& GetSpriteSheetsPath() const { return _spriteSheets; }
-		[[nodiscard]] const std::filesystem::path& GetItemsPath() const { return _items; }
+		[[nodiscard]] const std::filesystem::path& GetCardsPath() const { return _cards; }
 		[[nodiscard]] const std::filesystem::path& GetAnimationsPath() const { return _animations; }
 		[[nodiscard]] const std::filesystem::path& GetSongsPath() const { return _songs; }
 		[[nodiscard]] const std::filesystem::path& GetKeysPath() const { return _keys; }

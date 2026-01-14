@@ -1,8 +1,8 @@
 syntax = "proto3";
 package m2g.pb;
 
-enum ItemType {
-  NO_ITEM = 0;
+enum CardType {
+  NO_CARD = 0;
 
   // These two cards don't go into the draw deck, thus their counts in game are zero.
   WILD_LOCATION_CARD = 1;
@@ -48,7 +48,7 @@ enum ItemType {
   NOTTINGHAM_CARD = 34;
   WARRINGTON_CARD = 35;
 
-  // ITEM_CATEGORY_MERCHANT_LICENSE
+  // CARD_CATEGORY_MERCHANT_LICENSE
   COTTON_MILL_MERCHANT_LICENSE = 101;
   POTTERY_MERCHANT_LICENSE = 102;
   MANUFACTURED_GOODS_MERCHANT_LICENSE = 103;
@@ -93,26 +93,26 @@ enum ItemType {
   ROAD_TILE = 303; // Given to HumanPlayers as a tile
 }
 
-enum ItemCategory {
-  NO_ITEM_CATEGORY = 0;
+enum CardCategory {
+  NO_CARD_CATEGORY = 0;
 
   // Given to HUMAN_PLAYERs to hold onto as cards
-  ITEM_CATEGORY_WILD_CARD = 1;
+  CARD_CATEGORY_WILD_CARD = 1;
   // Given to sprite to show their location and industries
   // Given to TILEs to signify the industry and the city
-  ITEM_CATEGORY_INDUSTRY_CARD = 2;
-  ITEM_CATEGORY_CITY_CARD = 3;
+  CARD_CATEGORY_INDUSTRY_CARD = 2;
+  CARD_CATEGORY_CITY_CARD = 3;
 
   // Given to HUMAN_PLAYERs to signify the tiles held by them
   // Given to TILEs to signify a built industry
   // The order should not be modified carelessly.
-  ITEM_CATEGORY_COTTON_MILL_TILE = 4;
-  ITEM_CATEGORY_IRON_WORKS_TILE = 5;
-  ITEM_CATEGORY_BREWERY_TILE = 6;
-  ITEM_CATEGORY_COAL_MINE_TILE = 7;
-  ITEM_CATEGORY_POTTERY_TILE = 8;
-  ITEM_CATEGORY_MANUFACTURED_GOODS_TILE = 9;
+  CARD_CATEGORY_COTTON_MILL_TILE = 4;
+  CARD_CATEGORY_IRON_WORKS_TILE = 5;
+  CARD_CATEGORY_BREWERY_TILE = 6;
+  CARD_CATEGORY_COAL_MINE_TILE = 7;
+  CARD_CATEGORY_POTTERY_TILE = 8;
+  CARD_CATEGORY_MANUFACTURED_GOODS_TILE = 9;
 
   // Given to MERCHANTs to signify which industries they deal with
-  ITEM_CATEGORY_MERCHANT_LICENSE = 11;
+  CARD_CATEGORY_MERCHANT_LICENSE = 11;
 }

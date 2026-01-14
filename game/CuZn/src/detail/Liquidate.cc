@@ -7,8 +7,8 @@
 
 int LiquidationReturnOfFactoryCharacter(m2::Character& chr) {
 	auto industry_tile_type = ToIndustryTileOfFactoryCharacter(chr);
-	const auto& industry_tile_item = M2_GAME.GetNamedItem(industry_tile_type);
-	auto money_cost_i = industry_tile_item.GetConstant(m2g::pb::MONEY_COST).GetIntOrZero();
+	const auto& industry_tile_card = M2_GAME.GetNamedCard(industry_tile_type);
+	auto money_cost_i = industry_tile_card.GetConstant(m2g::pb::MONEY_COST).GetIntOrZero();
 	auto rounded_down_half_cost = money_cost_i >> 1;
 	return rounded_down_half_cost;
 }

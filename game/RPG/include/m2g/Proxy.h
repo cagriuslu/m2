@@ -13,10 +13,10 @@ namespace m2g {
 			{.objectType = pb::SKELETON, .defaultSpriteType = pb::SKELETON_LOOKDOWN_00, .defaultAnimationType = pb::ANIMATION_TYPE_SKELETON_MOVEMENT},
 			{.objectType = pb::CASTLE_FINISH_POINT, .defaultSpriteType = pb::CASTLE_FINISH_POINT_SPRITE},
 			{.objectType = pb::CUTEOPUS, .defaultSpriteType = pb::CUTEOPUS_LOOKDOWN_00, .defaultAnimationType = pb::ANIMATION_TYPE_CUTEOPUS_MOVEMENT},
-			{.objectType = pb::MACHINE_GUN_ITEM_DROP, .defaultSpriteType = pb::MACHINE_GUN_ICON},
-			{.objectType = pb::EXPLOSIVE_ITEM_DROP, .defaultSpriteType = pb::EXPLOSIVE_ICON},
-			{.objectType = pb::LONG_SWORD_ITEM_DROP, .defaultSpriteType = pb::LONGSWORD_ICON},
-			{.objectType = pb::AXE_ITEM_DROP, .defaultSpriteType = pb::AXE_ICON},
+			{.objectType = pb::MACHINE_GUN_CARD_DROP, .defaultSpriteType = pb::MACHINE_GUN_ICON},
+			{.objectType = pb::EXPLOSIVE_CARD_DROP, .defaultSpriteType = pb::EXPLOSIVE_ICON},
+			{.objectType = pb::LONG_SWORD_CARD_DROP, .defaultSpriteType = pb::LONGSWORD_ICON},
+			{.objectType = pb::AXE_CARD_DROP, .defaultSpriteType = pb::AXE_ICON},
 			{.objectType = pb::BUSH_01, .defaultSpriteType = pb::SPRITE_BUSH_01},
 			{.objectType = pb::FLOWER_ORANGE_02, .defaultSpriteType = pb::SPRITE_FLOWER_ORANGE_02},
 			{.objectType = pb::FLOWER_PINK_03, .defaultSpriteType = pb::SPRITE_FLOWER_PINK_03},
@@ -63,6 +63,6 @@ namespace m2g {
 		m2::UiPanelBlueprint _you_died_menu;
 		const m2::UiPanelBlueprint* you_died_menu();
 
-		static const std::unordered_map<pb::ItemType, std::pair<pb::ResourceType, float>> CONSUMABLE_BENEFITS;
+		static const std::unordered_map<pb::CardType, std::pair<pb::ResourceType, float>> CONSUMABLE_BENEFITS;
 	};
 }

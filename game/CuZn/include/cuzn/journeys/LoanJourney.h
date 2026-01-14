@@ -11,4 +11,4 @@ void ExecuteLoanJourney();
 m2::void_expected CanPlayerLoan(m2::Character& player, const m2g::pb::TurnBasedClientCommand_LoanAction& loan_action);
 
 // For the server, returns the card to be discarded
-Card ExecuteLoanAction(m2::Character& player, const m2g::pb::TurnBasedClientCommand_LoanAction& loan_action);
+m2g::pb::CardType ExecuteLoanAction(m2::Character& player, const m2g::pb::TurnBasedClientCommand_LoanAction& loan_action);
