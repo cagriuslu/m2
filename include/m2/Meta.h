@@ -9,6 +9,7 @@
 #include <set>
 #include <ranges>
 #include <optional>
+#include <algorithm>
 #include <tuple>
 #include <memory>
 #include <cmath>
@@ -68,6 +69,20 @@ namespace m2 {
 
 	template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
 	template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+
+	// std::array utilities
+
+	template<typename T, std::size_t N>
+	constexpr bool AreArrayElementsUnique(const std::array<T, N>& arr) {
+		std::array<T, N> copy = arr;
+		std::sort(copy.begin(), copy.end());
+		auto last = std::unique(copy.begin(), copy.end());
+		return last == copy.end();
+	}
+	template<typename T, std::size_t N>
+	constexpr bool DoesArrayContainElement(const std::array<T, N>& arr, const T& el) {
+		return std::find(arr.begin(), arr.end(), el) != arr.end();
+	}
 
 	// Range utilities
 
