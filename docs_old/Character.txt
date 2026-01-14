@@ -14,10 +14,11 @@ attribute type).
 
 Character has an update callback to process the effects of cards with automatic effects. They also have a user
 customizable, periodic update callback. Although it's possible for one game object to give cards or resources to
-another directly, the preferred way of interactions between objects is to prepare a m2g::pb::InteractionData, and give
-it to the other object using character().execute_interaction(interaction_data) function. This is because it's usually
-safer for the object itself to be aware of such interactions, rather than their states being modified by external
-parties. If a certain other action needs to be taken after such exchange, the effected should be aware of the exchange
-explicitly. Ex. There can be multiple sources of damage. If each source decreases the health of an enemy, each one has to
-trigger the death of the enemy as well. However, it the damage were to be represented as an interaction, the damage
-sources can trigger this interaction, and the enemy can handle the death scenario itself, in one place.
+another directly, the preferred way of interactions between objects is to prepare a
+m2g::pb::Proxy::InterCharacterMessage, and give it to the other object using
+character().execute_interaction(interaction_data) function. This is because it's usually safer for the object itself to
+be aware of such interactions, rather than their states being modified by external parties. If a certain other action
+needs to be taken after such exchange, the effected should be aware of the exchange explicitly. Ex. There can be
+multiple sources of damage. If each source decreases the health of an enemy, each one has to trigger the death of the
+enemy as well. However, it the damage were to be represented as an interaction, the damage sources can trigger this
+interaction, and the enemy can handle the death scenario itself, in one place.

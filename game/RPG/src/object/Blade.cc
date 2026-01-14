@@ -5,6 +5,7 @@
 #include <m2/Log.h>
 #include <m2/third_party/physics/ColliderCategory.h>
 #include <rpg/Physics.h>
+#include <m2g/Proxy.h>
 
 using namespace m2g;
 using namespace m2g::pb;
@@ -63,10 +64,7 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF& position, c
 	};
 	phy.onCollision = [average_damage, damage_accuracy](MAYBE m2::Physique& phy, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
 		if (auto* other_char = other.Owner().TryGetCharacter(); other_char) {
-			InteractionData data;
-			data.set_hit_damage(m2::ApplyAccuracy(average_damage, average_damage, damage_accuracy));
-			other_char->ExecuteInteraction(data);
-			// TODO knock-back
+			other_char->ExecuteInteraction(std::make_unique<Proxy::HitDamage>(m2::ApplyAccuracy(average_damage, average_damage, damage_accuracy)));
 		}
 	};
 	phy.postStep = [&](m2::Physique& phy, const m2::Stopwatch::Duration&) {

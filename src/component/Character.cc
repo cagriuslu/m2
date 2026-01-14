@@ -3,20 +3,22 @@
 #include <algorithm>
 #include <m2/protobuf/Detail.h>
 
+using namespace m2;
+
 static_assert(std::forward_iterator<m2::Pool<m2::CharacterVariant>::Iterator>);
 
 m2::Character::Character(uint64_t object_id) : Component(object_id) {}
-std::optional<m2g::pb::InteractionData> m2::Character::ExecuteInteraction(Character& initiator, const m2g::pb::InteractionData& data) {
-	if (this->on_interaction) {
-		return this->on_interaction(*this, &initiator, data);
+std::unique_ptr<const Proxy::InterCharacterMessage> m2::Character::ExecuteInteraction(Character& initiator, std::unique_ptr<const Proxy::InterCharacterMessage>&& data) {
+	if (this->onMessage) {
+		return this->onMessage(*this, &initiator, data);
 	}
-	return std::nullopt;
+	return {};
 }
-std::optional<m2g::pb::InteractionData> m2::Character::ExecuteInteraction(const m2g::pb::InteractionData& data) {
-	if (this->on_interaction) {
-		return this->on_interaction(*this, nullptr, data);
+std::unique_ptr<const Proxy::InterCharacterMessage> m2::Character::ExecuteInteraction(std::unique_ptr<const Proxy::InterCharacterMessage>&& data) {
+	if (this->onMessage) {
+		return this->onMessage(*this, nullptr, data);
 	}
-	return std::nullopt;
+	return {};
 }
 bool m2::Character::HasCard(m2g::pb::CardType card_type) const {
     for (auto it = BeginCards(); it != EndCards(); ++it) {

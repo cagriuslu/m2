@@ -63,9 +63,7 @@ m2::void_expected rpg::create_spikes(m2::Object& obj, const m2::VecF& position) 
 		} else if (std::get<const m2::Sprite*>(gfx.visual) == &spikes_out) {
 			// Spikes are out
 			if (auto* other_char = other.Owner().TryGetCharacter(); other_char){
-				m2g::pb::InteractionData data;
-				data.set_hit_damage(1.0f);
-				other_char->ExecuteInteraction(data);
+				other_char->ExecuteInteraction(std::make_unique<m2g::Proxy::HitDamage>(1.0f));
 			}
 		}
 	};

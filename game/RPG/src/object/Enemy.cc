@@ -3,7 +3,6 @@
 #include <m2/Log.h>
 #include <m2/Object.h>
 #include <m2/game/CharacterMovement.h>
-#include <m2g_Interaction.pb.h>
 #include <rpg/Data.h>
 #include <rpg/Detail.h>
 #include <rpg/Objects.h>
@@ -92,10 +91,10 @@ m2::void_expected Enemy::init(m2::Object& obj, const m2::VecF& position) {
 		chr.AddResource(RESOURCE_RANGED_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
 		chr.AddResource(RESOURCE_MELEE_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
 	};
-	chr.on_interaction = [&, obj_type = obj.GetType()](m2::Character& self, MAYBE m2::Character* other, const InteractionData& data) -> std::optional<m2g::pb::InteractionData> {
-		if (data.has_hit_damage()) {
+	chr.onMessage = [&, obj_type = obj.GetType()](m2::Character& self, MAYBE m2::Character* other, const std::unique_ptr<const Proxy::InterCharacterMessage>& data) -> std::unique_ptr<const Proxy::InterCharacterMessage> {
+		if (const auto* hitDamage = dynamic_cast<const Proxy::HitDamage*>(data.get())) {
 			// Deduct HP
-			self.RemoveResource(RESOURCE_HP, data.hit_damage());
+			self.RemoveResource(RESOURCE_HP, hitDamage->hp);
 			// Apply mask effect
 			self.SetResource(m2g::pb::RESOURCE_DAMAGE_EFFECT_TTL, 0.15f);
 			// Play audio effect if not already doing so
@@ -151,10 +150,10 @@ m2::void_expected Enemy::init(m2::Object& obj, const m2::VecF& position) {
 						[](MAYBE auto& v) { }
 				}, impl.ai_fsm);
 			}
-		} else if (data.has_stun_duration()) {
-			self.SetResource(m2g::pb::RESOURCE_STUN_TTL, data.stun_duration());
+		} else if (const auto* stunDuration = dynamic_cast<const Proxy::StunDuration*>(data.get())) {
+			self.SetResource(m2g::pb::RESOURCE_STUN_TTL, stunDuration->seconds);
 		}
-		return std::nullopt;
+		return {};
 	};
 	phy.postStep = [&](MAYBE m2::Physique& phy, const m2::Stopwatch::Duration&) {
 		m2::VecF velocity = m2::VecF{phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->GetLinearVelocity()};

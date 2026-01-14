@@ -164,6 +164,11 @@ namespace m2 {
 			virtual ~LevelState() = default;
 		};
 
+		class InterCharacterMessage {
+		public:
+			virtual ~InterCharacterMessage() = default;
+		};
+
 	private:
 		static pb::Cards GenerateDefaultCards();
 	};

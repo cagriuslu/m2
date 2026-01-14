@@ -91,27 +91,20 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& positi
 			chr.SetResource(RESOURCE_TTL, 0.0f); // Clear TTL, chr.update will create the explosion
 		} else {
 			if (auto* other_char = other.Owner().TryGetCharacter(); other_char) {
-				InteractionData data;
+				float damage = 0.0f;
 				if (is_explosive && chr.HasResource(RESOURCE_EXPLOSION_TTL)) {
 					LOG_DEBUG("Explosive damage");
 					auto distance = chr.Owner().GetPhysique().position.GetDistanceTo(other.position);
 					auto damage_ratio = distance / damage_radius;
 					if (damage_ratio < 1.1f) {
-						// Calculate damage
-						float damage = m2::ApplyAccuracy(average_damage, average_damage, damage_accuracy) * damage_ratio;
-						data.set_hit_damage(damage);
+						damage = m2::ApplyAccuracy(average_damage, average_damage, damage_accuracy) * damage_ratio;
 					}
 				} else if (chr.HasResource(RESOURCE_TTL)) {
 					LOG_DEBUG("Regular damage");
-					// Calculate damage
-					float damage = m2::ApplyAccuracy(average_damage, average_damage, damage_accuracy);
-					data.set_hit_damage(damage);
-					// Clear TTL
+					damage = m2::ApplyAccuracy(average_damage, average_damage, damage_accuracy);
 					chr.ClearResource(RESOURCE_TTL);
 				}
-				other_char->ExecuteInteraction(data);
-
-				// TODO knock-back
+				other_char->ExecuteInteraction(std::make_unique<m2g::Proxy::HitDamage>(damage));
 			}
 		}
 	};

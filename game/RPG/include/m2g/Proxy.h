@@ -44,7 +44,7 @@ namespace m2g {
 		m2::Group* create_group(m2g::pb::GroupType group_type);
 
 		// Game specific
-	   public:
+
 		rpg::pb::Enemies enemies;
 		unsigned alive_enemy_count{};
 		const rpg::pb::Enemy* get_enemy(m2g::pb::ObjectType object_type) const;
@@ -64,5 +64,18 @@ namespace m2g {
 		const m2::UiPanelBlueprint* you_died_menu();
 
 		static const std::unordered_map<pb::CardType, std::pair<pb::ResourceType, float>> CONSUMABLE_BENEFITS;
+
+		struct HitDamage final : m2::Proxy::InterCharacterMessage {
+			float hp;
+			explicit HitDamage(const float _hp) : hp(_hp) {}
+		};
+		struct StunDuration final : m2::Proxy::InterCharacterMessage {
+			float seconds;
+			explicit StunDuration(const float _seconds) : seconds(_seconds) {}
+		};
+		struct Card final : m2::Proxy::InterCharacterMessage {
+			pb::CardType type;
+			explicit Card(const pb::CardType _type) : type(_type) {}
+		};
 	};
 }

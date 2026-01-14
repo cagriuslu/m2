@@ -155,17 +155,15 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 	};
 	phy.onCollision = [](MAYBE m2::Physique& me, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
 		if (auto* other_char = other.Owner().TryGetCharacter(); other_char && 10.0f < m2::VecF{me.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->GetLinearVelocity()}.GetLength()) {
-			InteractionData data;
-			data.set_stun_duration(2.0f);
-			other_char->ExecuteInteraction(data);
+			other_char->ExecuteInteraction(std::make_unique<m2g::Proxy::StunDuration>(2.0f));
 		}
 	};
-	chr.on_interaction = [](m2::Character& self, MAYBE m2::Character* other, const InteractionData& data) -> std::optional<m2g::pb::InteractionData> {
-		if (data.has_hit_damage()) {
+	chr.onMessage = [](m2::Character& self, MAYBE m2::Character* other, const std::unique_ptr<const m2::Proxy::InterCharacterMessage>& data) -> std::unique_ptr<const m2::Proxy::InterCharacterMessage> {
+		if (const auto* hitDamage = dynamic_cast<const m2g::Proxy::HitDamage*>(data.get())) {
 			// Get hit by an enemy
-			self.RemoveResource(m2g::pb::RESOURCE_HP, data.hit_damage());
-		} else if (data.has_card_type()) {
-			const auto& card = M2_GAME.GetNamedCard(data.card_type());
+			self.RemoveResource(m2g::pb::RESOURCE_HP, hitDamage->hp);
+		} else if (const auto* receivedCard = dynamic_cast<const m2g::Proxy::Card*>(data.get())) {
+			const auto& card = M2_GAME.GetNamedCard(receivedCard->type);
 			// If the card in a consumable
 			if (const auto consumableIt = M2G_PROXY.CONSUMABLE_BENEFITS.find(card.Type()); consumableIt != M2G_PROXY.CONSUMABLE_BENEFITS.end()) {
 				// Gain the benefits
@@ -190,7 +188,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 				self.AddNamedCard(card);
 			}
 		}
-		return std::nullopt;
+		return {};
 	};
 	gfx.preDraw = [&](MAYBE m2::Graphic& gfx, const m2::Stopwatch::Duration& delta) {
 		impl.animation_fsm.time(m2::ToDurationF(delta));

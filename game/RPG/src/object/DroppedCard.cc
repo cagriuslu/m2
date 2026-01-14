@@ -1,7 +1,8 @@
 #include <rpg/Objects.h>
-#include <Character.pb.h>
+#include <m2g/Proxy.h>
 #include <m2/Game.h>
 #include <m2/third_party/physics/ColliderCategory.h>
+#include <Character.pb.h>
 
 m2::void_expected rpg::create_dropped_card(m2::Object &obj, const m2::VecF& position, m2g::pb::CardType card_type) {
 	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(M2_GAME.GetNamedCard(card_type).UiSprite()));
@@ -25,9 +26,7 @@ m2::void_expected rpg::create_dropped_card(m2::Object &obj, const m2::VecF& posi
 
 	phy.onCollision = [card_type](m2::Physique& phy, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
 		if (auto* other_char = other.Owner().TryGetCharacter(); other_char) {
-			m2g::pb::InteractionData data;
-			data.set_card_type(card_type);
-			other_char->ExecuteInteraction(data);
+			other_char->ExecuteInteraction(std::make_unique<m2g::Proxy::Card>(card_type));
 		}
 		M2_DEFER(m2::CreateObjectDeleter(phy.OwnerId()));
 	};

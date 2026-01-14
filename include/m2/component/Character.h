@@ -3,17 +3,18 @@
 #include "../Card.h"
 #include <m2/containers/AssociativeList.h>
 #include <m2/GameTypes.h>
-#include <m2g_Interaction.pb.h>
+#include <m2/Proxy.h>
 #include <utility>
 #include <vector>
 #include <functional>
 #include <variant>
 
+
 namespace m2 {
 	class Character : public Component {
 	public:
 		std::function<void(Character& self, const Stopwatch::Duration& delta)> update;
-		std::function<std::optional<m2g::pb::InteractionData>(Character& self, Character* other, const m2g::pb::InteractionData& data)> on_interaction;
+		std::function<std::unique_ptr<const Proxy::InterCharacterMessage>(Character& self, Character* other, const std::unique_ptr<const Proxy::InterCharacterMessage>& data)> onMessage;
 
 		class Iterator {
 		public:
@@ -50,8 +51,8 @@ namespace m2 {
 		Character() = default;
 		explicit Character(uint64_t object_id);
 
-		std::optional<m2g::pb::InteractionData> ExecuteInteraction(Character& initiator, const m2g::pb::InteractionData& data);
-		std::optional<m2g::pb::InteractionData> ExecuteInteraction(const m2g::pb::InteractionData& data);
+		std::unique_ptr<const Proxy::InterCharacterMessage> ExecuteInteraction(Character& initiator, std::unique_ptr<const Proxy::InterCharacterMessage>&& data);
+		std::unique_ptr<const Proxy::InterCharacterMessage> ExecuteInteraction(std::unique_ptr<const Proxy::InterCharacterMessage>&& data);
 
 		[[nodiscard]] bool HasCard(m2g::pb::CardType card_type) const;
 		[[nodiscard]] bool HasCard(m2g::pb::CardCategory card_cat) const;
