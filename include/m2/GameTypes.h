@@ -11,10 +11,14 @@ namespace m2 {
 
 	public:
 		IFE() = default;
-		explicit IFE(const int32_t i) : _value(i) {}
-		explicit IFE(FE&& fe) : _value(fe) {}
-		explicit IFE(const FE& fe) : _value(fe) {}
-		explicit IFE(const pb::IFE&);
+		// ReSharper disable once CppNonExplicitConvertingConstructor
+		IFE(const int32_t i) : _value(i) {}
+		// ReSharper disable once CppNonExplicitConvertingConstructor
+		IFE(FE&& fe) : _value(fe) {}
+		// ReSharper disable once CppNonExplicitConvertingConstructor
+		IFE(const FE& fe) : _value(fe) {}
+		// ReSharper disable once CppNonExplicitConvertingConstructor
+		IFE(const pb::IFE&);
 
 		explicit operator bool() const;
 		explicit operator pb::IFE() const;

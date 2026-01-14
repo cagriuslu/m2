@@ -12,7 +12,6 @@ namespace m2 {
 		std::vector<float> _benefits = std::vector<float>(pb::enum_value_count<m2g::pb::ResourceType>());
 		std::vector<float> _acquire_benefits = std::vector<float>(pb::enum_value_count<m2g::pb::ResourceType>());
 		std::vector<float> _attributes = std::vector<float>(pb::enum_value_count<m2g::pb::AttributeType>());
-		std::vector<IFE> _attributes2 = std::vector<IFE>(pb::enum_value_count<m2g::pb::AttributeType>());
 		std::vector<IFE> _constants = std::vector<IFE>(pb::enum_value_count<m2g::pb::ConstantType>());
 
 	public:
@@ -47,9 +46,6 @@ namespace m2 {
 		[[nodiscard]] float GetAttribute(m2g::pb::AttributeType) const;
 		[[nodiscard]] float TryGetAttribute(m2g::pb::AttributeType, float default_value) const;
 		[[nodiscard]] bool HasAttribute(m2g::pb::AttributeType) const;
-		[[nodiscard]] IFE GetAttribute2(m2g::pb::AttributeType) const;
-		[[nodiscard]] IFE TryGetAttribute2(m2g::pb::AttributeType, const IFE& defaultValue) const;
-		[[nodiscard]] bool HasAttribute2(m2g::pb::AttributeType) const;
 		[[nodiscard]] IFE GetConstant(const m2g::pb::ConstantType c) const { return _constants[pb::enum_index(c)]; }
 		[[nodiscard]] m2g::pb::SpriteType GameSprite() const { return _card.game_sprite(); }
 		[[nodiscard]] m2g::pb::SpriteType UiSprite() const { return _card.ui_sprite(); }

@@ -17,9 +17,6 @@ m2::Card::Card(pb::Card card) : _card(std::move(card)) {
 	for (const auto& attribute : _card.attributes()) {
 		_attributes[pb::enum_index(attribute.type())] = attribute.amount();
 	}
-	for (const auto& attribute2 : _card.attributes2()) {
-		_attributes2[pb::enum_index(attribute2.type())] = IFE{attribute2.ife()};
-	}
 	for (const auto& constant : _card.constants()) {
 		_constants[pb::enum_index(constant.type())] = IFE{constant.ife()};
 	}
@@ -80,16 +77,6 @@ float m2::Card::TryGetAttribute(m2g::pb::AttributeType type, float default_value
 }
 bool m2::Card::HasAttribute(m2g::pb::AttributeType type) const {
 	return GetAttribute(type) != 0.0f;
-}
-m2::IFE m2::Card::GetAttribute2(const m2g::pb::AttributeType type) const {
-	return _attributes2[pb::enum_index(type)];
-}
-m2::IFE m2::Card::TryGetAttribute2(const m2g::pb::AttributeType type, const IFE& defaultValue) const {
-	const auto value = GetAttribute2(type);
-	return value ? value : defaultValue;
-}
-bool m2::Card::HasAttribute2(const m2g::pb::AttributeType type) const {
-	return static_cast<bool>(GetAttribute2(type));
 }
 
 const m2::Card& m2::ToNamedCard(m2g::pb::CardType card_type) {

@@ -1,9 +1,7 @@
 #include <m2/component/Character.h>
 #include <m2/Game.h>
-#include <m2/Log.h>
 #include <algorithm>
 #include <m2/protobuf/Detail.h>
-#include <cstdlib>
 
 static_assert(std::forward_iterator<m2::Pool<m2::CharacterVariant>::Iterator>);
 
@@ -237,11 +235,11 @@ int32_t m2::FastCharacter::Hash(const int32_t initialValue) const {
 			hash = HashI(card->Type(), hash);
 		}
 	}
-	for (const auto& property : _properties) {
-		if (property && property.IsInt()) {
-			hash = HashI(property.UnsafeGetInt(), hash);
-		} else if (property && property.IsFE()) {
-			hash = HashI(ToRawValue(property.UnsafeGetFE()), hash);
+	for (const auto& variable : _variables) {
+		if (variable && variable.IsInt()) {
+			hash = HashI(variable.UnsafeGetInt(), hash);
+		} else if (variable && variable.IsFE()) {
+			hash = HashI(ToRawValue(variable.UnsafeGetFE()), hash);
 		}
 	}
 	return hash;

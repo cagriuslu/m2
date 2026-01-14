@@ -5,20 +5,9 @@ import "m2g_AttributeType.proto";
 import "m2g_ConstantType.proto";
 import "m2g_VariableType.proto";
 import "m2g_CardType.proto";
-import "m2g_PropertyType.proto";
 import "m2g_ResourceType.proto";
 import "m2g_SpriteType.proto";
 import "IFE.proto";
-
-message Property {
-  m2g.pb.PropertyType type = 1;
-  IFE ife = 2;
-}
-
-message Attribute2 {
-  m2g.pb.AttributeType type = 1;
-  IFE ife = 2;
-}
 
 // DEPRECATED
 message Resource {
@@ -44,7 +33,6 @@ message Variable {
   IFE ife = 2;
 }
 
-/// An card also represents a capability
 message Card {
   m2g.pb.CardType type = 1;
   m2g.pb.CardCategory category = 2;
@@ -52,7 +40,6 @@ message Card {
   repeated Resource benefits = 6; // DEPRECATED
   repeated Resource acquire_benefits = 7; // Gained before benefits. DEPRECATED
   repeated Attribute attributes = 8; // DEPRECATED
-  repeated Attribute2 attributes2 = 9;
   repeated Constant constants = 13;
   m2g.pb.SpriteType game_sprite = 10;
   m2g.pb.SpriteType ui_sprite = 11;
