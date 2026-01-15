@@ -1,27 +1,11 @@
 syntax = "proto3";
 package m2.pb;
 
-import "m2g_AttributeType.proto";
 import "m2g_ConstantType.proto";
 import "m2g_VariableType.proto";
 import "m2g_CardType.proto";
-import "m2g_ResourceType.proto";
 import "m2g_SpriteType.proto";
 import "IFE.proto";
-
-// DEPRECATED
-message Resource {
-  m2g.pb.ResourceType type = 1;
-  oneof value {
-    float amount = 2;
-  }
-}
-
-// DEPRECATED
-message Attribute {
-  m2g.pb.AttributeType type = 1;
-  float amount = 2;
-}
 
 message Constant {
   m2g.pb.ConstantType type = 1;
@@ -36,14 +20,10 @@ message Variable {
 message Card {
   m2g.pb.CardType type = 1;
   m2g.pb.CardCategory category = 2;
-  repeated Resource costs = 5; // DEPRECATED
-  repeated Resource benefits = 6; // DEPRECATED
-  repeated Resource acquire_benefits = 7; // Gained before benefits. DEPRECATED
-  repeated Attribute attributes = 8; // DEPRECATED
-  repeated Constant constants = 13;
-  m2g.pb.SpriteType game_sprite = 10;
-  m2g.pb.SpriteType ui_sprite = 11;
-  string in_game_name = 12;
+  repeated Constant constants = 3;
+  m2g.pb.SpriteType game_sprite = 4;
+  m2g.pb.SpriteType ui_sprite = 5;
+  string in_game_name = 6;
 }
 
 message Cards {

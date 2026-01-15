@@ -65,7 +65,7 @@ message TurnBasedServerUpdate {
     VecF position = 2;
     m2g.pb.ObjectType object_type = 3;
     uint64 parent_id = 4;
-    repeated m2g.pb.CardType named_cards = 5;
+    repeated m2g.pb.CardType cards = 5;
     repeated Variable variables = 6;
   }
   repeated ObjectDescriptor objects_with_character = 5;

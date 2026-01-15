@@ -12,15 +12,15 @@ using namespace m2g::pb;
 
 m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF& position, const m2::VecF &direction, const m2::Card &melee_weapon, bool is_friend) {
 	// Check if weapon has necessary attributes
-	if (!melee_weapon.HasAttribute(ATTRIBUTE_AVERAGE_DAMAGE)) {
+	if (!melee_weapon.GetConstant(ATTRIBUTE_AVERAGE_DAMAGE)) {
 		throw M2_ERROR("Melee weapon has no average damage");
 	}
-	if (!melee_weapon.HasAttribute(ATTRIBUTE_AVERAGE_TTL)) {
+	if (!melee_weapon.GetConstant(ATTRIBUTE_AVERAGE_TTL)) {
 		throw M2_ERROR("Melee weapon has no average TTL");
 	}
-	float average_damage = melee_weapon.GetAttribute(ATTRIBUTE_AVERAGE_DAMAGE);
-	float damage_accuracy = melee_weapon.TryGetAttribute(ATTRIBUTE_DAMAGE_ACCURACY, 1.0f);
-	float average_ttl = melee_weapon.GetAttribute(ATTRIBUTE_AVERAGE_TTL);
+	float average_damage = melee_weapon.GetConstant(ATTRIBUTE_AVERAGE_DAMAGE).GetFOrZero();
+	float damage_accuracy = melee_weapon.GetConstant(ATTRIBUTE_DAMAGE_ACCURACY).GetFOrValue(1.0f);
+	float average_ttl = melee_weapon.GetConstant(ATTRIBUTE_AVERAGE_TTL).GetFOrZero();
 
 	const float direction_angle = direction.GetAngle();
 	constexpr float swing_angle = m2::ToRadians(120.0f); // Swing angle is 120 degrees
@@ -54,11 +54,11 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF& position, c
 
 	// Add character
 	auto& chr = obj.AddCompactCharacter();
-	chr.AddResource(RESOURCE_TTL, average_ttl);
+	chr.SetVariable(RESOURCE_TTL, average_ttl);
 
 	chr.update = [](m2::Character& chr, const m2::Stopwatch::Duration& delta) {
-		chr.RemoveResource(RESOURCE_TTL, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
-		if (!chr.HasResource(RESOURCE_TTL)) {
+		chr.SubtractVariable(RESOURCE_TTL, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count(), 0.0f);
+		if (not chr.GetVariable(RESOURCE_TTL)) {
 			M2_DEFER(m2::CreateObjectDeleter(chr.OwnerId()));
 		}
 	};

@@ -61,22 +61,11 @@ namespace m2 {
 		[[nodiscard]] virtual Iterator FindCards(m2g::pb::CardCategory card_cat) const = 0;
 		[[nodiscard]] virtual Iterator BeginCards() const = 0;
 		[[nodiscard]] virtual Iterator EndCards() const = 0;
-		[[nodiscard]] std::vector<m2g::pb::CardType> NamedCardTypes() const;
-		[[nodiscard]] std::vector<m2g::pb::CardType> NamedCardTypes(m2g::pb::CardCategory card_cat) const;
-		virtual void AddNamedCard(const Card& card) = 0;
-		virtual void AddNamedCardWithoutBenefits(const Card& card) = 0;
+		[[nodiscard]] std::vector<m2g::pb::CardType> CardTypes() const;
+		[[nodiscard]] std::vector<m2g::pb::CardType> CardTypes(m2g::pb::CardCategory card_cat) const;
+		virtual void AddCard(const Card& card) = 0;
 		virtual void RemoveCard(const Iterator& card) = 0;
 		virtual void ClearCards() = 0;
-
-		[[nodiscard]] virtual bool HasResource(m2g::pb::ResourceType resource_type) const = 0;
-		[[nodiscard]] virtual float GetResource(m2g::pb::ResourceType resource_type) const = 0;
-		virtual float SetResource(m2g::pb::ResourceType resource_type, float amount) = 0;
-		virtual float AddResource(m2g::pb::ResourceType resource_type, float amount) = 0;
-		virtual float RemoveResource(m2g::pb::ResourceType resource_type, float amount) = 0;
-		virtual void ClearResource(m2g::pb::ResourceType resource_type) = 0;
-
-		[[nodiscard]] virtual bool HasAttribute(m2g::pb::AttributeType attribute_type) const = 0;
-		[[nodiscard]] virtual float GetAttribute(m2g::pb::AttributeType attribute_type) const = 0;
 
 		[[nodiscard]] virtual IFE GetVariable(m2g::pb::VariableType) const = 0;
 		virtual IFE SetVariable(m2g::pb::VariableType, IFE) = 0;
@@ -87,27 +76,26 @@ namespace m2 {
 
 		IFE SetVariable(const m2g::pb::VariableType vt, const int32_t i) { return SetVariable(vt, IFE{i}); }
 		IFE SetVariable(const m2g::pb::VariableType vt, const FE fe) { return SetVariable(vt, IFE{fe}); }
-		template <int dummy = {}>
-		constexpr IFE SetVariable(const m2g::pb::VariableType vt, const float value) requires (not GAME_IS_DETERMINISTIC) { return SetVariable(vt, IFE{FE{value}}); }
+		template <bool Enable = not GAME_IS_DETERMINISTIC>
+		constexpr IFE SetVariable(const m2g::pb::VariableType vt, const float value) requires (Enable) { return SetVariable(vt, IFE{FE{value}}); }
 
 		int32_t AddVariable(m2g::pb::VariableType, int32_t value, std::optional<int32_t> maxValue = {});
-		int32_t SubtractVariable(m2g::pb::VariableType, int32_t value, std::optional<int32_t> minValue = {});
 		FE AddVariable(m2g::pb::VariableType, FE value, std::optional<FE> maxValue = {});
-		FE SubtractVariable(m2g::pb::VariableType, FE value, std::optional<FE> minValue = {});
-		template <int dummy = {}>
-		constexpr float AddVariable(const m2g::pb::VariableType vt, const float value, const std::optional<float> maxValue = {}) requires (not GAME_IS_DETERMINISTIC) {
+		template <bool Enable = not GAME_IS_DETERMINISTIC>
+		constexpr float AddVariable(const m2g::pb::VariableType vt, const float value, const std::optional<float> maxValue = {}) requires (Enable) {
 			return AddVariable(vt, FE{value}, maxValue ? std::optional{FE{*maxValue}} : std::optional<FE>{}).ToFloat();
 		}
-		template <int dummy = {}>
-		constexpr float SubtractVariable(const m2g::pb::VariableType vt, const float value, const std::optional<float> minValue = {}) requires (not GAME_IS_DETERMINISTIC) {
+
+		int32_t SubtractVariable(m2g::pb::VariableType, int32_t value, std::optional<int32_t> minValue = {});
+		FE SubtractVariable(m2g::pb::VariableType, FE value, std::optional<FE> minValue = {});
+		template <bool Enable = not GAME_IS_DETERMINISTIC>
+		constexpr float SubtractVariable(const m2g::pb::VariableType vt, const float value, const std::optional<float> minValue = {}) requires (Enable) {
 			return SubtractVariable(vt, FE{value}, minValue ? std::optional{FE{*minValue}} : std::optional<FE>{}).ToFloat();
 		}
 	};
 
 	class CompactCharacter final : public Character {
 		const Card* _card{};
-		std::pair<m2g::pb::ResourceType, float> _resource;
-		std::pair<m2g::pb::AttributeType, float> _attribute;
 		std::pair<m2g::pb::VariableType, IFE> _variable;
 
 	public:
@@ -120,20 +108,9 @@ namespace m2 {
 		[[nodiscard]] Iterator FindCards(m2g::pb::CardCategory card_cat) const override;
 		[[nodiscard]] Iterator BeginCards() const override;
 		[[nodiscard]] Iterator EndCards() const override;
-		void AddNamedCard(const Card& card) override;
-		void AddNamedCardWithoutBenefits(const Card& card) override;
+		void AddCard(const Card& card) override;
 		void RemoveCard(const Iterator& card) override;
 		void ClearCards() override;
-
-		[[nodiscard]] bool HasResource(m2g::pb::ResourceType resource_type) const override;
-		[[nodiscard]] float GetResource(m2g::pb::ResourceType resource_type) const override;
-		float SetResource(m2g::pb::ResourceType resource_type, float amount) override;
-		float AddResource(m2g::pb::ResourceType resource_type, float amount) override;
-		float RemoveResource(m2g::pb::ResourceType resource_type, float amount) override;
-		void ClearResource(m2g::pb::ResourceType resource_type) override;
-
-		[[nodiscard]] bool HasAttribute(m2g::pb::AttributeType attribute_type) const override;
-		[[nodiscard]] float GetAttribute(m2g::pb::AttributeType attribute_type) const override;
 
 		[[nodiscard]] IFE GetVariable(m2g::pb::VariableType) const override;
 		IFE SetVariable(m2g::pb::VariableType, IFE) override;
@@ -143,8 +120,6 @@ namespace m2 {
 
 	class FastCharacter final : public Character {
 		std::vector<const Card*> _cards;
-		std::vector<float> _resources = std::vector<float>(pb::enum_value_count<m2g::pb::ResourceType>()); // TODO deprecated
-		std::vector<float> _attributes = std::vector<float>(pb::enum_value_count<m2g::pb::AttributeType>()); // TODO deprecated
 		std::vector<IFE> _variables = std::vector<IFE>(pb::enum_value_count<m2g::pb::VariableType>());
 
 	public:
@@ -157,20 +132,9 @@ namespace m2 {
 		[[nodiscard]] Iterator FindCards(m2g::pb::CardCategory card_cat) const override;
 		[[nodiscard]] Iterator BeginCards() const override;
 		[[nodiscard]] Iterator EndCards() const override;
-		void AddNamedCard(const Card& card) override;
-		void AddNamedCardWithoutBenefits(const Card& card) override;
+		void AddCard(const Card& card) override;
 		void RemoveCard(const Iterator& card) override;
 		void ClearCards() override;
-
-		[[nodiscard]] bool HasResource(m2g::pb::ResourceType resource_type) const override;
-		[[nodiscard]] float GetResource(m2g::pb::ResourceType resource_type) const override;
-		float SetResource(m2g::pb::ResourceType resource_type, float amount) override;
-		float AddResource(m2g::pb::ResourceType resource_type, float amount) override;
-		float RemoveResource(m2g::pb::ResourceType resource_type, float amount) override;
-		void ClearResource(m2g::pb::ResourceType resource_type) override;
-
-		[[nodiscard]] bool HasAttribute(m2g::pb::AttributeType attribute_type) const override;
-		[[nodiscard]] float GetAttribute(m2g::pb::AttributeType attribute_type) const override;
 
 		[[nodiscard]] IFE GetVariable(const m2g::pb::VariableType v) const override { return _variables[VariableIndex(v)]; }
 		IFE SetVariable(const m2g::pb::VariableType v, const IFE ife) override { _variables[VariableIndex(v)] = ife; return ife; }
@@ -178,9 +142,6 @@ namespace m2 {
 		void ClearVariables() override { _variables = std::vector<IFE>(pb::enum_value_count<m2g::pb::VariableType>()); }
 
 	private:
-		static int ResourceTypeIndex(m2g::pb::ResourceType);
-		static int AttributeTypeIndex(m2g::pb::AttributeType);
-		static int PropertyTypeIndex(m2g::pb::PropertyType);
 		static int VariableIndex(const m2g::pb::VariableType v) { return pb::enum_index(v); }
 		friend void FullCharacterIteratorIncrementor(Iterator&);
 	};
@@ -189,8 +150,8 @@ namespace m2 {
 
 	// Filters
 	constexpr auto HasCardOfType(m2g::pb::CardType it) { return [it](const Character& c) { return c.HasCard(it); }; }
-	std::function<std::vector<m2g::pb::CardType>(Character&)> GenerateNamedCardTypesFilter(m2g::pb::CardCategory card_category);
-	std::function<std::vector<m2g::pb::CardType>(Character&)> GenerateNamedCardTypesFilter(std::initializer_list<m2g::pb::CardCategory> categoriesToFilter);
+	std::function<std::vector<m2g::pb::CardType>(Character&)> GenerateCardTypesFilter(m2g::pb::CardCategory card_category);
+	std::function<std::vector<m2g::pb::CardType>(Character&)> GenerateCardTypesFilter(std::initializer_list<m2g::pb::CardCategory> categoriesToFilter);
 	// Transformers
 	Character& ToCharacterBase(CharacterVariant& v);
 	FastCharacter& ToFastCharacter(CharacterVariant& v);

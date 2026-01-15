@@ -52,12 +52,12 @@ m2::Sprite::Sprite(const std::vector<SpriteSheet>& spriteSheets, const SpriteShe
 	_centerToOriginVecM = _centerToOriginVecPx / static_cast<float>(_ppm);
 
 	// Fill named cards
-	for (const auto& named_card : _originalPb->regular().named_cards()) {
-		_namedCards.emplace_back(static_cast<m2g::pb::CardType>(named_card));
+	for (const auto& card : _originalPb->regular().cards()) {
+		_cards.emplace_back(static_cast<m2g::pb::CardType>(card));
 	}
 	if (sprite.has_duplicate()) {
-		for (const auto& named_card : sprite.duplicate().additional_named_cards()) {
-			_namedCards.emplace_back(static_cast<m2g::pb::CardType>(named_card));
+		for (const auto& card : sprite.duplicate().additional_cards()) {
+			_cards.emplace_back(static_cast<m2g::pb::CardType>(card));
 		}
 	}
 

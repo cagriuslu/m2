@@ -28,6 +28,20 @@ IFE::operator pb::IFE() const {
 	return pbIfe;
 }
 
+int32_t IFE::GetIntOrZero() const {
+	return IsInt() ? UnsafeGetInt() : 0;
+}
+int32_t IFE::GetIntOrValue(const int32_t defaultValue) const {
+	return std::holds_alternative<int32_t>(_value) ? std::get<int32_t>(_value) : defaultValue;
+}
+
+FE IFE::GetFEOrZero() const {
+	return IsFE() ? UnsafeGetFE() : FE::Zero();
+}
+FE IFE::GetFEOrValue(const FE defaultValue) const {
+	return std::holds_alternative<FE>(_value) ? std::get<FE>(_value) : defaultValue;
+}
+
 IFE IFE::UnsafeAdd(const IFE& rhs) const {
 	if (IsInt() && rhs.IsInt()) {
 		return IFE{UnsafeGetInt() + rhs.UnsafeGetInt()};
@@ -58,11 +72,4 @@ IFE IFE::Negate() const {
 	} else {
 		return IFE{-UnsafeGetFE()};
 	}
-}
-
-int32_t IFE::GetIntOrZero() const {
-	return IsInt() ? UnsafeGetInt() : 0;
-}
-FE IFE::GetFEOrZero() const {
-	return IsFE() ? UnsafeGetFE() : FE::Zero();
 }

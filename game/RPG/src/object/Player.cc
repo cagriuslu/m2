@@ -12,7 +12,6 @@
 #include <rpg/Defs.h>
 #include <array>
 #include <m2/third_party/physics/ColliderCategory.h>
-#include "rpg/UseCard.h"
 
 using namespace rpg;
 using namespace m2g;
@@ -52,14 +51,13 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 	gfx.position = position;
 
 	auto& chr = obj.AddFastCharacter();
-	chr.AddNamedCard(M2_GAME.GetNamedCard(m2g::pb::CARD_REUSABLE_DASH_2S));
 	if (M2_LEVEL.GetLevelIdentifier() != "MeleeTutorialClosed") {
 		// 4th level is melee tutorial
-		chr.AddNamedCard(M2_GAME.GetNamedCard(m2g::pb::CARD_REUSABLE_GUN));
+		chr.AddCard(M2_GAME.GetCard(m2g::pb::CARD_REUSABLE_GUN));
 	}
-	chr.AddNamedCard(M2_GAME.GetNamedCard(m2g::pb::CARD_REUSABLE_SWORD));
-	chr.AddResource(m2g::pb::RESOURCE_HP, 1.0f);
-	chr.AddResource(m2g::pb::RESOURCE_DASH_ENERGY, 2.0f);
+	chr.AddCard(M2_GAME.GetCard(m2g::pb::CARD_REUSABLE_SWORD));
+	chr.SetVariable(m2g::pb::RESOURCE_HP, 1.0f);
+	chr.SetVariable(m2g::pb::RESOURCE_DASH_ENERGY, 2.0f);
 
 	obj.impl = std::make_unique<rpg::Player>(obj);
 	auto& impl = dynamic_cast<Player&>(*obj.impl);
@@ -71,9 +69,11 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 		auto [direction_enum, direction_vector] = m2::calculate_character_movement(m2g::pb::MOVE_LEFT, m2g::pb::MOVE_RIGHT, m2g::pb::MOVE_UP, m2g::pb::MOVE_DOWN);
 		float move_force;
 		// Check if dash
-		if (direction_vector && M2_GAME.events.PopKeyPress(m2g::pb::DASH) && UseCard(chr, *chr.FindCards(m2g::pb::CARD_REUSABLE_DASH_2S))) {
-			chr.ClearResource(RESOURCE_DASH_ENERGY);
-			move_force = PLAYER_DASH_FORCE;
+		if (direction_vector && M2_GAME.events.PopKeyPress(m2g::pb::DASH)) {
+			if (2.0f < chr.GetVariable(RESOURCE_DASH_ENERGY).GetFOrZero()) {
+				chr.ClearVariable(RESOURCE_DASH_ENERGY);
+				move_force = PLAYER_DASH_FORCE;
+			}
 		} else {
 			// Character movement
 			auto anim_state_type = detail::to_animation_state_type(direction_enum);
@@ -96,14 +96,15 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 			// Check if there is a special ranged weapon and try to use the card
 			auto special_it = chr.FindCards(m2g::pb::CARD_CATEGORY_SPECIAL_RANGED_WEAPON);
 			if (special_it) {
-				if (UseCard(chr, *special_it)) {
+				if (special_it->GetConstant(CONSTANT_MELEE_ENERGY_REQUIREMENT).GetFOrZero() <= chr.GetVariable(RESOURCE_MELEE_ENERGY).GetFOrZero()) {
+					chr.ClearVariable(RESOURCE_RANGED_ENERGY);
 					shoot(*special_it);
 				}
 			} else {
 				// Find default weapon and try to use it
 				auto default_it = chr.FindCards(m2g::pb::CARD_CATEGORY_DEFAULT_RANGED_WEAPON);
-				if (default_it && UseCard(chr, *default_it)) {
-					chr.ClearResource(RESOURCE_RANGED_ENERGY);
+				if (default_it && default_it->GetConstant(CONSTANT_RANGED_ENERGY_REQUIREMENT).GetFOrZero() <= chr.GetVariable(RESOURCE_RANGED_ENERGY).GetFOrZero()) {
+					chr.ClearVariable(RESOURCE_RANGED_ENERGY);
 					shoot(*default_it);
 				}
 			}
@@ -119,26 +120,27 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 			auto special_it = chr.FindCards(m2g::pb::CARD_CATEGORY_SPECIAL_MELEE_WEAPON);
 			if (special_it) {
 				// Try to use the weapon
-				if (UseCard(chr, *special_it)) {
+				if (special_it->GetConstant(CONSTANT_MELEE_ENERGY_REQUIREMENT).GetFOrZero() <= chr.GetVariable(RESOURCE_MELEE_ENERGY).GetFOrZero()) {
+					chr.ClearVariable(RESOURCE_MELEE_ENERGY);
 					slash(*special_it);
 				}
 			} else {
 				// Find default melee weapon and try to use it
 				auto default_it = chr.FindCards(m2g::pb::CARD_CATEGORY_DEFAULT_MELEE_WEAPON);
-				if (default_it && UseCard(chr, *default_it)) {
-					chr.ClearResource(RESOURCE_MELEE_ENERGY);
+				if (default_it && default_it->GetConstant(CONSTANT_MELEE_ENERGY_REQUIREMENT).GetFOrZero() <= chr.GetVariable(RESOURCE_MELEE_ENERGY).GetFOrZero()) {
+					chr.ClearVariable(RESOURCE_MELEE_ENERGY);
 					slash(*default_it);
 				}
 			}
 		}
 	};
 	chr.update = [](MAYBE m2::Character& chr, const m2::Stopwatch::Duration& delta) {
-		chr.AddResource(RESOURCE_DASH_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
-		chr.AddResource(RESOURCE_RANGED_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
-		chr.AddResource(RESOURCE_MELEE_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
+		chr.AddVariable(RESOURCE_DASH_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
+		chr.AddVariable(RESOURCE_RANGED_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
+		chr.AddVariable(RESOURCE_MELEE_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
 
 		// Check if died
-		if (not chr.HasResource(m2g::pb::RESOURCE_HP)) {
+		if (not chr.GetVariable(m2g::pb::RESOURCE_HP)) {
 			LOG_INFO("You died");
 			if (m2::UiPanel::create_and_run_blocking(M2G_PROXY.you_died_menu()).IsQuit()) {
 				M2_GAME.quit = true;
@@ -146,7 +148,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 		}
 		// Check if special ammo finished
 		if (auto special_it = chr.FindCards(m2g::pb::CARD_CATEGORY_SPECIAL_RANGED_WEAPON);
-			special_it && !chr.HasResource(m2g::pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO)) {
+			special_it && not chr.GetVariable(m2g::pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO)) {
 			// Remove weapon if no ammo left
 			chr.RemoveCard(special_it);
 		}
@@ -161,31 +163,34 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 	chr.onMessage = [](m2::Character& self, MAYBE m2::Character* other, const std::unique_ptr<const m2::Proxy::InterCharacterMessage>& data) -> std::unique_ptr<const m2::Proxy::InterCharacterMessage> {
 		if (const auto* hitDamage = dynamic_cast<const m2g::Proxy::HitDamage*>(data.get())) {
 			// Get hit by an enemy
-			self.RemoveResource(m2g::pb::RESOURCE_HP, hitDamage->hp);
+			self.SubtractVariable(m2g::pb::RESOURCE_HP, hitDamage->hp, 0.0f);
 		} else if (const auto* receivedCard = dynamic_cast<const m2g::Proxy::Card*>(data.get())) {
-			const auto& card = M2_GAME.GetNamedCard(receivedCard->type);
+			const auto& card = M2_GAME.GetCard(receivedCard->type);
 			// If the card in a consumable
 			if (const auto consumableIt = M2G_PROXY.CONSUMABLE_BENEFITS.find(card.Type()); consumableIt != M2G_PROXY.CONSUMABLE_BENEFITS.end()) {
 				// Gain the benefits
 				if (consumableIt->second.first == RESOURCE_HP) {
-					const auto current = self.GetResource(consumableIt->second.first);
-					self.SetResource(consumableIt->second.first, std::min(current + consumableIt->second.second, 1.0f));
+					const auto current = self.GetVariable(consumableIt->second.first).GetFOrZero();
+					self.SetVariable(consumableIt->second.first, std::min(current + consumableIt->second.second, 1.0f));
 				}
 			} else {
 				// Player can hold only one special weapon of certain type, get rid of the previous one
 				constexpr std::array<CardCategory, 2> special_categories = {CARD_CATEGORY_SPECIAL_RANGED_WEAPON, CARD_CATEGORY_SPECIAL_MELEE_WEAPON};
-				constexpr std::array<ResourceType, 2> special_ammo_type = {RESOURCE_SPECIAL_RANGED_WEAPON_AMMO, NO_RESOURCE};
+				constexpr std::array<VariableType, 2> special_ammo_type = {RESOURCE_SPECIAL_RANGED_WEAPON_AMMO, NO_VARIABLE};
 				for (size_t i = 0; i < special_categories.size(); ++i) {
 					if (auto sp = special_categories[i]; sp == card.Category()) {
 						if (auto it = self.FindCards(sp); it) {
 							self.RemoveCard(it); // Remove weapon
-							self.ClearResource(special_ammo_type[i]); // Also remove any ammo
+							self.ClearVariable(special_ammo_type[i]); // Also remove any ammo
 						}
 						break;
 					}
 				}
 				// Add card
-				self.AddNamedCard(card);
+				self.AddCard(card);
+				if (const auto ammo = card.GetConstant(m2g::pb::CONSTANT_AMMO_GAIN)) {
+					self.SetVariable(m2g::pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO, ammo.GetIntOrZero());
+				}
 			}
 		}
 		return {};
@@ -197,7 +202,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 		// Draw the sprite itself
 		m2::Graphic::DefaultDrawCallback(gfx);
 		// Draw the HP addon
-		DrawAddons(gfx, chr.GetResource(RESOURCE_HP));
+		DrawAddons(gfx, chr.GetVariable(RESOURCE_HP).GetFOrZero());
 	};
 
 	M2_LEVEL.playerId = M2_LEVEL.objects.GetId(&obj);

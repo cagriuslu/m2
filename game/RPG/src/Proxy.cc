@@ -12,7 +12,7 @@
 
 using namespace m2g;
 
-const std::unordered_map<pb::CardType, std::pair<pb::ResourceType, float>> m2g::Proxy::CONSUMABLE_BENEFITS = {
+const std::unordered_map<pb::CardType, std::pair<pb::VariableType, float>> m2g::Proxy::CONSUMABLE_BENEFITS = {
 	{pb::CARD_CONSUMABLE_HP_POTION_20, {pb::RESOURCE_HP, 0.2f}},
 	{pb::CARD_CONSUMABLE_HP_POTION_80, {pb::RESOURCE_HP, 0.8f}},
 };
@@ -196,13 +196,6 @@ const m2::UiPanelBlueprint* m2g::Proxy::generate_right_hud() {
 	    .variant = m2::widget::ProgressBarBlueprint{
 	        .bar_color = SDL_Color{0, 127, 255, 255},
 	        .onUpdate = [](m2::widget::ProgressBar& self) {
-		        if (const auto *player = M2_LEVEL.GetPlayer(); player) {
-			        if (const auto ammo = player->GetCharacter().GetResource(pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO); ammo != 0.0f) {
-				        if (const auto weapon = player->GetCharacter().FindCards(pb::CARD_CATEGORY_SPECIAL_RANGED_WEAPON); weapon) {
-					        self.SetProgress(ammo / weapon->GetAcquireBenefit(pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO));
-				        }
-			        }
-		        }
 	        	self.SetProgress(0.0f);
 	        }
 	    }

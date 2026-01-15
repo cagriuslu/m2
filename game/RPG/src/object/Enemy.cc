@@ -12,7 +12,6 @@
 #include "m2/Game.h"
 #include "m2/game/Pathfinder.h"
 #include <rpg/Graphic.h>
-#include "rpg/UseCard.h"
 #include "rpg/group/CardGroup.h"
 
 using namespace rpg;
@@ -64,9 +63,9 @@ m2::void_expected Enemy::init(m2::Object& obj, const m2::VecF& position) {
 	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2::pb::PhysicsLayer::SEA_LEVEL);
 
 	auto& chr = obj.AddFastCharacter();
-	chr.AddNamedCard(M2_GAME.GetNamedCard(m2g::pb::CARD_REUSABLE_GUN));
-	chr.AddNamedCard(M2_GAME.GetNamedCard(m2g::pb::CARD_REUSABLE_ENEMY_SWORD));
-	chr.AddResource(m2g::pb::RESOURCE_HP, 1.0f);
+	chr.AddCard(M2_GAME.GetCard(m2g::pb::CARD_REUSABLE_GUN));
+	chr.AddCard(M2_GAME.GetCard(m2g::pb::CARD_REUSABLE_ENEMY_SWORD));
+	chr.SetVariable(m2g::pb::RESOURCE_HP, 1.0f);
 
     obj.impl = std::make_unique<Enemy>(obj, M2G_PROXY.get_enemy(obj.GetType()));
 	auto& impl = dynamic_cast<Enemy&>(*obj.impl);
@@ -86,17 +85,17 @@ m2::void_expected Enemy::init(m2::Object& obj, const m2::VecF& position) {
 		}, impl.ai_fsm);
 	};
 	chr.update = [](m2::Character& chr, const m2::Stopwatch::Duration& delta) {
-		chr.RemoveResource(RESOURCE_STUN_TTL, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
-		chr.RemoveResource(RESOURCE_DAMAGE_EFFECT_TTL, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
-		chr.AddResource(RESOURCE_RANGED_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
-		chr.AddResource(RESOURCE_MELEE_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
+		chr.SubtractVariable(RESOURCE_STUN_TTL, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count(), 0.0f);
+		chr.SubtractVariable(RESOURCE_DAMAGE_EFFECT_TTL, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count(), 0.0f);
+		chr.AddVariable(RESOURCE_RANGED_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
+		chr.AddVariable(RESOURCE_MELEE_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
 	};
 	chr.onMessage = [&, obj_type = obj.GetType()](m2::Character& self, MAYBE m2::Character* other, const std::unique_ptr<const Proxy::InterCharacterMessage>& data) -> std::unique_ptr<const Proxy::InterCharacterMessage> {
 		if (const auto* hitDamage = dynamic_cast<const Proxy::HitDamage*>(data.get())) {
 			// Deduct HP
-			self.RemoveResource(RESOURCE_HP, hitDamage->hp);
+			self.SubtractVariable(RESOURCE_HP, hitDamage->hp, 0.0f);
 			// Apply mask effect
-			self.SetResource(m2g::pb::RESOURCE_DAMAGE_EFFECT_TTL, 0.15f);
+			self.SetVariable(m2g::pb::RESOURCE_DAMAGE_EFFECT_TTL, 0.15f);
 			// Play audio effect if not already doing so
 			if (obj.GetSoundId() == 0) {
 				// Add sound emitter
@@ -113,7 +112,7 @@ m2::void_expected Enemy::init(m2::Object& obj, const m2::VecF& position) {
 				};
 			}
 			// Check if we died
-			if (not self.HasResource(RESOURCE_HP)) {
+			if (not self.GetVariable(RESOURCE_HP)) {
 				// Drop card
 				auto drop_position = self.Owner().GetPhysique().position;
 				if (m2::Group* group = obj.TryGetGroup()) {
@@ -151,7 +150,7 @@ m2::void_expected Enemy::init(m2::Object& obj, const m2::VecF& position) {
 				}, impl.ai_fsm);
 			}
 		} else if (const auto* stunDuration = dynamic_cast<const Proxy::StunDuration*>(data.get())) {
-			self.SetResource(m2g::pb::RESOURCE_STUN_TTL, stunDuration->seconds);
+			self.SetVariable(m2g::pb::RESOURCE_STUN_TTL, stunDuration->seconds);
 		}
 		return {};
 	};
@@ -164,7 +163,7 @@ m2::void_expected Enemy::init(m2::Object& obj, const m2::VecF& position) {
 	gfx.preDraw = [&](m2::Graphic&, const m2::Stopwatch::Duration& delta) {
 		using namespace m2::pb;
 		impl.animation_fsm.time(m2::ToDurationF(delta));
-		if (chr.HasResource(RESOURCE_DAMAGE_EFFECT_TTL)) {
+		if (chr.GetVariable(RESOURCE_DAMAGE_EFFECT_TTL)) {
 			impl.animation_fsm.signal(m2::AnimationFsmSignal{ANIMATION_STATE_HURT});
 		} else {
 			impl.animation_fsm.signal(m2::AnimationFsmSignal{ANIMATION_STATE_IDLE});
@@ -174,7 +173,7 @@ m2::void_expected Enemy::init(m2::Object& obj, const m2::VecF& position) {
 		// Draw the sprite itself
 		m2::Graphic::DefaultDrawCallback(gfx);
 		// Draw the HP addon
-		DrawAddons(gfx, chr.GetResource(RESOURCE_HP));
+		DrawAddons(gfx, chr.GetVariable(RESOURCE_HP).GetFOrZero());
 #ifdef DEBUG
 		std::visit(m2::overloaded {
 				[](ChaserFsm& v) { m2::Pathfinder::draw_path(v.reverse_path(), SDL_Color{127, 127, 255, 255}); },
@@ -188,7 +187,7 @@ m2::void_expected Enemy::init(m2::Object& obj, const m2::VecF& position) {
 
 void rpg::Enemy::move_towards(m2::Object& obj, m2::VecF direction, float force) {
 	// If not stunned
-	if (not obj.GetCharacter().HasResource(m2g::pb::RESOURCE_STUN_TTL)) {
+	if (not obj.GetCharacter().GetVariable(m2g::pb::RESOURCE_STUN_TTL)) {
 		direction = direction.Normalize();
 		// Walk animation
 		auto char_move_dir = m2::to_character_movement_direction(direction);
@@ -203,7 +202,7 @@ void rpg::Enemy::move_towards(m2::Object& obj, m2::VecF direction, float force) 
 void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
 	const auto& selfPosition = obj.GetPhysique().position;
 	// If not stunned
-	if (not obj.GetCharacter().HasResource(m2g::pb::RESOURCE_STUN_TTL)) {
+	if (not obj.GetCharacter().GetVariable(m2g::pb::RESOURCE_STUN_TTL)) {
 		// Attack if player is close
 		if (selfPosition.IsNear(M2_PLAYER.GetPhysique().position, ai.attack_distance())) {
 			// Based on what the capability is
@@ -211,8 +210,8 @@ void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
 			switch (capability) {
 				case pb::CAPABILITY_RANGED: {
 					auto it = obj.GetCharacter().FindCards(m2g::pb::CARD_CATEGORY_DEFAULT_RANGED_WEAPON);
-					if (it && UseCard(obj.GetCharacter(), *it)) {
-						obj.GetCharacter().ClearResource(RESOURCE_RANGED_ENERGY);
+					if (it && it->GetConstant(CONSTANT_RANGED_ENERGY_REQUIREMENT).GetFOrZero() <= obj.GetCharacter().GetVariable(RESOURCE_RANGED_ENERGY).GetFOrZero()) {
+						obj.GetCharacter().ClearVariable(RESOURCE_RANGED_ENERGY);
 						auto shoot_direction = M2_PLAYER.GetPhysique().position - selfPosition;
 						rpg::create_projectile(*m2::CreateObject({}, obj.GetId()), selfPosition,
 							shoot_direction, *it, false);
@@ -223,8 +222,8 @@ void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
 				}
 				case pb::CAPABILITY_MELEE: {
 					auto it = obj.GetCharacter().FindCards(m2g::pb::CARD_CATEGORY_DEFAULT_MELEE_WEAPON);
-					if (it && UseCard(obj.GetCharacter(), *it)) {
-						obj.GetCharacter().ClearResource(RESOURCE_MELEE_ENERGY);
+					if (it && it->GetConstant(CONSTANT_MELEE_ENERGY_REQUIREMENT).GetFOrZero() <= obj.GetCharacter().GetVariable(RESOURCE_MELEE_ENERGY).GetFOrZero()) {
+						obj.GetCharacter().ClearVariable(RESOURCE_MELEE_ENERGY);
 						rpg::create_blade(*m2::CreateObject({}, obj.GetId()), selfPosition,
 							M2_PLAYER.GetPhysique().position - selfPosition, *it, false);
 					}

@@ -5,7 +5,7 @@
 #include <Character.pb.h>
 
 m2::void_expected rpg::create_dropped_card(m2::Object &obj, const m2::VecF& position, m2g::pb::CardType card_type) {
-	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(M2_GAME.GetNamedCard(card_type).UiSprite()));
+	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(M2_GAME.GetCard(card_type).UiSprite()));
 
 	auto& phy = obj.AddPhysique();
 	phy.position = position;
@@ -22,7 +22,7 @@ m2::void_expected rpg::create_dropped_card(m2::Object &obj, const m2::VecF& posi
 	};
 	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2::pb::PhysicsLayer::SEA_LEVEL);
 
-	obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, M2_GAME.GetNamedCard(card_type).UiSprite()).position = position;
+	obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, M2_GAME.GetCard(card_type).UiSprite()).position = position;
 
 	phy.onCollision = [card_type](m2::Physique& phy, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
 		if (auto* other_char = other.Owner().TryGetCharacter(); other_char) {

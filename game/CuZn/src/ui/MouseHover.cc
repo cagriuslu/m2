@@ -16,9 +16,9 @@ std::pair<UiPanelBlueprint,RectF> GenerateBuiltIndustryLocationMouseHoverUiBluep
 	}
 
 	const auto industryType = ToIndustryOfFactoryCharacter(factory->GetCharacter());
-	const auto& industryCard = M2_GAME.GetNamedCard(industryType);
+	const auto& industryCard = M2_GAME.GetCard(industryType);
 	const auto industryTileType = ToIndustryTileOfFactoryCharacter(factory->GetCharacter());
-	const auto& industryTile = M2_GAME.GetNamedCard(industryTileType);
+	const auto& industryTile = M2_GAME.GetCard(industryTileType);
 	return std::make_pair(
 			UiPanelBlueprint{
 				.name = "BuiltIndustryLocationHover",
@@ -78,9 +78,9 @@ std::pair<UiPanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluep
 	}
 
 	if (industries.size() == 1) {
-		const auto& industryCard = M2_GAME.GetNamedCard(industries[0]);
+		const auto& industryCard = M2_GAME.GetCard(industries[0]);
 		const auto nextIndustryTileType = PlayerNextIndustryTileOfIndustry(M2_PLAYER.GetCharacter(), industries[0]);
-		const auto* nextIndustryTile = nextIndustryTileType ? &M2_GAME.GetNamedCard(*nextIndustryTileType) : nullptr;
+		const auto* nextIndustryTile = nextIndustryTileType ? &M2_GAME.GetCard(*nextIndustryTileType) : nullptr;
 		return std::make_pair(
 				UiPanelBlueprint{
 					.name = "EmptyIndustryLocationHover",
@@ -174,12 +174,12 @@ std::pair<UiPanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluep
 				},
 				RectF{0.0f, 0.0f, 0.33f, 0.2222f});
 	} else { // industries.size() == 2
-		const auto& industryCard1 = M2_GAME.GetNamedCard(industries[0]);
-		const auto& industryCard2 = M2_GAME.GetNamedCard(industries[1]);
+		const auto& industryCard1 = M2_GAME.GetCard(industries[0]);
+		const auto& industryCard2 = M2_GAME.GetCard(industries[1]);
 		const auto nextIndustryTileType1 = PlayerNextIndustryTileOfIndustry(M2_PLAYER.GetCharacter(), industries[0]);
 		const auto nextIndustryTileType2 = PlayerNextIndustryTileOfIndustry(M2_PLAYER.GetCharacter(), industries[1]);
-		const auto* nextIndustryTile1 = nextIndustryTileType1 ? &M2_GAME.GetNamedCard(*nextIndustryTileType1) : nullptr;
-		const auto* nextIndustryTile2 = nextIndustryTileType2 ? &M2_GAME.GetNamedCard(*nextIndustryTileType2) : nullptr;
+		const auto* nextIndustryTile1 = nextIndustryTileType1 ? &M2_GAME.GetCard(*nextIndustryTileType1) : nullptr;
+		const auto* nextIndustryTile2 = nextIndustryTileType2 ? &M2_GAME.GetCard(*nextIndustryTileType2) : nullptr;
 		return std::make_pair(
 				UiPanelBlueprint{
 					.name = "EmptyIndustryLocationHover2",

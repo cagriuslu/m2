@@ -1,6 +1,0 @@
-syntax = "proto3";
-package m2g.pb;
-
-enum PropertyType {
-  NO_PROPERTY = 0;
-}

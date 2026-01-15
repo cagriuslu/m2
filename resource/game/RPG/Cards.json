@@ -12,47 +12,36 @@
       "uiSprite": "SPRITE_HP_POTION_80"
     },
     {
-      "type": "CARD_REUSABLE_DASH_2S",
-      "costs": [
-        {
-          "type": "RESOURCE_DASH_ENERGY",
-          "amount": 2.0
-        }
-      ]
-    },
-    {
       "type": "CARD_REUSABLE_GUN",
       "category": "CARD_CATEGORY_DEFAULT_RANGED_WEAPON",
-      "costs": [
-        {
-          "type": "RESOURCE_RANGED_ENERGY",
-          "amount": 0.3
-        }
-      ],
-      "attributes": [
+      "constants": [
         {
           "type": "ATTRIBUTE_LINEAR_SPEED",
-          "amount": 20
+          "ife": { "fe": 20.0 }
         },
         {
           "type": "ATTRIBUTE_ANGULAR_ACCURACY",
-          "amount": 0.984
+          "ife": { "fe": 0.984 }
         },
         {
           "type": "ATTRIBUTE_AVERAGE_DAMAGE",
-          "amount": 0.30
+          "ife": { "fe": 0.3 }
         },
         {
           "type": "ATTRIBUTE_DAMAGE_ACCURACY",
-          "amount": 0.9
+          "ife": { "fe": 0.9 }
         },
         {
           "type": "ATTRIBUTE_AVERAGE_TTL",
-          "amount": 0.55
+          "ife": { "fe": 0.55 }
         },
         {
           "type": "ATTRIBUTE_TTL_ACCURACY",
-          "amount": 0.9
+          "ife": { "fe": 0.9 }
+        },
+        {
+          "type": "CONSTANT_RANGED_ENERGY_REQUIREMENT",
+          "ife": { "fe": 0.3 }
         }
       ],
       "gameSprite": "GUN_BULLET"
@@ -60,46 +49,38 @@
     {
       "type": "CARD_REUSABLE_MACHINE_GUN",
       "category": "CARD_CATEGORY_SPECIAL_RANGED_WEAPON",
-      "costs": [
-        {
-          "type": "RESOURCE_RANGED_ENERGY",
-          "amount": 0.08
-        },
-        {
-          "type": "RESOURCE_SPECIAL_RANGED_WEAPON_AMMO",
-          "amount": 1.0
-        }
-      ],
-      "acquireBenefits": [
-        {
-          "type": "RESOURCE_SPECIAL_RANGED_WEAPON_AMMO",
-          "amount": 80
-        }
-      ],
-      "attributes": [
+      "constants": [
         {
           "type": "ATTRIBUTE_LINEAR_SPEED",
-          "amount": 20
+          "ife": { "fe": 20.0 }
         },
         {
           "type": "ATTRIBUTE_ANGULAR_ACCURACY",
-          "amount": 0.965
+          "ife": { "fe": 0.965 }
         },
         {
           "type": "ATTRIBUTE_AVERAGE_DAMAGE",
-          "amount": 0.30
+          "ife": { "fe": 0.3 }
         },
         {
           "type": "ATTRIBUTE_DAMAGE_ACCURACY",
-          "amount": 0.9
+          "ife": { "fe": 0.9 }
         },
         {
           "type": "ATTRIBUTE_AVERAGE_TTL",
-          "amount": 0.50
+          "ife": { "fe": 0.5 }
         },
         {
           "type": "ATTRIBUTE_TTL_ACCURACY",
-          "amount": 0.9
+          "ife": { "fe": 0.9 }
+        },
+        {
+          "type": "CONSTANT_AMMO_GAIN",
+          "ife": { "i": 80 }
+        },
+        {
+          "type": "CONSTANT_RANGED_ENERGY_REQUIREMENT",
+          "ife": { "fe": 0.08 }
         }
       ],
       "gameSprite": "MACHINE_GUN_BULLET",
@@ -108,50 +89,42 @@
     {
       "type": "CARD_REUSABLE_EXPLOSIVE",
       "category": "CARD_CATEGORY_SPECIAL_RANGED_WEAPON",
-      "costs": [
-        {
-          "type": "RESOURCE_RANGED_ENERGY",
-          "amount": 1.0
-        },
-        {
-          "type": "RESOURCE_SPECIAL_RANGED_WEAPON_AMMO",
-          "amount": 1.0
-        }
-      ],
-      "acquireBenefits": [
-        {
-          "type": "RESOURCE_SPECIAL_RANGED_WEAPON_AMMO",
-          "amount": 8
-        }
-      ],
-      "attributes": [
+      "constants": [
         {
           "type": "ATTRIBUTE_LINEAR_SPEED",
-          "amount": 1.5
+          "ife": { "fe": 1.5 }
         },
         {
           "type": "ATTRIBUTE_ANGULAR_ACCURACY",
-          "amount": 1
+          "ife": { "fe": 1.0 }
         },
         {
           "type": "ATTRIBUTE_AVERAGE_DAMAGE",
-          "amount": 1
+          "ife": { "fe": 1.0 }
         },
         {
           "type": "ATTRIBUTE_DAMAGE_ACCURACY",
-          "amount": 0.95
+          "ife": { "fe": 0.95 }
         },
         {
           "type": "ATTRIBUTE_DAMAGE_RADIUS",
-          "amount": 2
+          "ife": { "fe": 2.0 }
         },
         {
           "type": "ATTRIBUTE_AVERAGE_TTL",
-          "amount": 3.5
+          "ife": { "fe": 3.5 }
         },
         {
           "type": "ATTRIBUTE_TTL_ACCURACY",
-          "amount": 0.75
+          "ife": { "fe": 0.75 }
+        },
+        {
+          "type": "CONSTANT_AMMO_GAIN",
+          "ife": { "i": 8 }
+        },
+        {
+          "type": "CONSTANT_RANGED_ENERGY_REQUIREMENT",
+          "ife": { "fe": 1.0 }
         }
       ],
       "gameSprite": "EXPLOSIVE_BULLET",
@@ -160,24 +133,22 @@
     {
       "type": "CARD_REUSABLE_SWORD",
       "category": "CARD_CATEGORY_DEFAULT_MELEE_WEAPON",
-      "costs": [
-        {
-          "type": "RESOURCE_MELEE_ENERGY",
-          "amount": 0.4
-        }
-      ],
-      "attributes": [
+      "constants": [
         {
           "type": "ATTRIBUTE_AVERAGE_DAMAGE",
-          "amount": 0.25
+          "ife": { "fe": 0.25 }
         },
         {
           "type": "ATTRIBUTE_DAMAGE_ACCURACY",
-          "amount": 0.9
+          "ife": { "fe": 0.9 }
         },
         {
           "type": "ATTRIBUTE_AVERAGE_TTL",
-          "amount": 0.25
+          "ife": { "fe": 0.25 }
+        },
+        {
+          "type": "CONSTANT_MELEE_ENERGY_REQUIREMENT",
+          "ife": { "fe": 0.4 }
         }
       ],
       "gameSprite": "SWORD"
@@ -185,24 +156,22 @@
     {
       "type": "CARD_REUSABLE_ENEMY_SWORD",
       "category": "CARD_CATEGORY_DEFAULT_MELEE_WEAPON",
-      "costs": [
-        {
-          "type": "RESOURCE_MELEE_ENERGY",
-          "amount": 1
-        }
-      ],
-      "attributes": [
+      "constants": [
         {
           "type": "ATTRIBUTE_AVERAGE_DAMAGE",
-          "amount": 0.225
+          "ife": { "fe": 0.225 }
         },
         {
           "type": "ATTRIBUTE_DAMAGE_ACCURACY",
-          "amount": 0.9
+          "ife": { "fe": 0.9 }
         },
         {
           "type": "ATTRIBUTE_AVERAGE_TTL",
-          "amount": 0.3
+          "ife": { "fe": 0.3 }
+        },
+        {
+          "type": "CONSTANT_MELEE_ENERGY_REQUIREMENT",
+          "ife": { "fe": 1.0 }
         }
       ],
       "gameSprite": "SWORD"
@@ -210,24 +179,22 @@
     {
       "type": "CARD_REUSABLE_LONG_SWORD",
       "category": "CARD_CATEGORY_SPECIAL_MELEE_WEAPON",
-      "costs": [
-        {
-          "type": "RESOURCE_MELEE_ENERGY",
-          "amount": 1.0
-        }
-      ],
-      "attributes": [
+      "constants": [
         {
           "type": "ATTRIBUTE_AVERAGE_DAMAGE",
-          "amount": 0.65
+          "ife": { "fe": 0.65 }
         },
         {
           "type": "ATTRIBUTE_DAMAGE_ACCURACY",
-          "amount": 0.9
+          "ife": { "fe": 0.9 }
         },
         {
           "type": "ATTRIBUTE_AVERAGE_TTL",
-          "amount": 0.45
+          "ife": { "fe": 0.45 }
+        },
+        {
+          "type": "CONSTANT_MELEE_ENERGY_REQUIREMENT",
+          "ife": { "fe": 1.0 }
         }
       ],
       "gameSprite": "LONGSWORD",
@@ -236,24 +203,22 @@
     {
       "type": "CARD_REUSABLE_AXE",
       "category": "CARD_CATEGORY_SPECIAL_MELEE_WEAPON",
-      "costs": [
-        {
-          "type": "RESOURCE_MELEE_ENERGY",
-          "amount": 0.25
-        }
-      ],
-      "attributes": [
+      "constants": [
         {
           "type": "ATTRIBUTE_AVERAGE_DAMAGE",
-          "amount": 0.45
+          "ife": { "fe": 0.45 }
         },
         {
           "type": "ATTRIBUTE_DAMAGE_ACCURACY",
-          "amount": 0.9
+          "ife": { "fe": 0.9 }
         },
         {
           "type": "ATTRIBUTE_AVERAGE_TTL",
-          "amount": 0.15
+          "ife": { "fe": 0.15 }
+        },
+        {
+          "type": "CONSTANT_MELEE_ENERGY_REQUIREMENT",
+          "ife": { "fe": 0.25 }
         }
       ],
       "gameSprite": "AXE",

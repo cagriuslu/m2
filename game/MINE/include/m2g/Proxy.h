@@ -11,6 +11,7 @@ namespace m2g {
 			{.objectType = pb::DWARF, .defaultSpriteType = pb::DWARF_FULL},
 			{.objectType = pb::BLACKSMITH, .defaultSpriteType = pb::BLACKSMITH_FULL},
 		};
+		const std::optional<m2::pb::Cards> cards = GenerateDefaultCards();
 
 		const m2::UiPanelBlueprint* MainMenuBlueprint();
 		const m2::UiPanelBlueprint* PauseMenuBlueprint();

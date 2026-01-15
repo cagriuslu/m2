@@ -239,7 +239,7 @@ m2::void_expected CanPlayerDevelop(m2::Character& player, const m2g::pb::TurnBas
 	}
 
 	// Check if the tiles are the next tiles
-	const auto& selected_industry_tile_1 = M2_GAME.GetNamedCard(develop_action.industry_tile_1());
+	const auto& selected_industry_tile_1 = M2_GAME.GetCard(develop_action.industry_tile_1());
 	auto next_industry_tile_1 = PlayerNextIndustryTileOfCategory(player, selected_industry_tile_1.Category());
 	if (not next_industry_tile_1 || *next_industry_tile_1 != develop_action.industry_tile_1()) {
 		return make_unexpected("Player cannot develop the selected tile");
@@ -248,14 +248,14 @@ m2::void_expected CanPlayerDevelop(m2::Character& player, const m2g::pb::TurnBas
 		// Reserve the first tile
 		player.RemoveCard(player.FindCards(develop_action.industry_tile_1()));
 		// Check the tile
-		const auto& selected_industry_tile_2 = M2_GAME.GetNamedCard(develop_action.industry_tile_2());
+		const auto& selected_industry_tile_2 = M2_GAME.GetCard(develop_action.industry_tile_2());
 		auto next_industry_tile_2 = PlayerNextIndustryTileOfCategory(player, selected_industry_tile_2.Category());
 		auto success = true;
 		if (not next_industry_tile_2 || *next_industry_tile_2 != develop_action.industry_tile_2()) {
 			success = false;
 		}
 		// Give the tile back
-		player.AddNamedCardWithoutBenefits(M2_GAME.GetNamedCard(develop_action.industry_tile_1()));
+		player.AddCard(M2_GAME.GetCard(develop_action.industry_tile_1()));
 		if (not success) {
 			return make_unexpected("Player cannot develop the selected tile");
 		}
@@ -266,7 +266,7 @@ m2::void_expected CanPlayerDevelop(m2::Character& player, const m2g::pb::TurnBas
 		return make_unexpected("Selected tile cannot be developed");
 	}
 	if (develop_action.industry_tile_2()) {
-		const auto& selected_industry_tile_2 = M2_GAME.GetNamedCard(develop_action.industry_tile_2());
+		const auto& selected_industry_tile_2 = M2_GAME.GetCard(develop_action.industry_tile_2());
 		if (selected_industry_tile_2.GetConstant(DEVELOPMENT_BAN)) {
 			return make_unexpected("Selected tile cannot be developed");
 		}

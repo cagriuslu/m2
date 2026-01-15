@@ -4,12 +4,12 @@
 #include <m2/Log.h>
 
 namespace {
-	template <typename NamedCardListT, typename VariableListT>
-	void update_character(m2::Character* c, const NamedCardListT& named_cards, const VariableListT& variables) {
+	template <typename CardListT, typename VariableListT>
+	void update_character(m2::Character* c, const CardListT& cards, const VariableListT& variables) {
 		// Update cards
 		c->ClearCards();
-		for (auto named_card_type : named_cards) {
-			c->AddNamedCardWithoutBenefits(M2_GAME.GetNamedCard(static_cast<m2g::pb::CardType>(named_card_type)));
+		for (auto card_type : cards) {
+			c->AddCard(M2_GAME.GetCard(static_cast<m2g::pb::CardType>(card_type)));
 		}
 		// Update resources
 		c->ClearVariables();
@@ -113,7 +113,7 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::network::SequenceNo>>
 					if (v.Owner().GetType() != server_character.object_type()) {
 						return make_unexpected("Server and local object type mismatch");
 					}
-					if (std::distance(v.BeginCards(), v.EndCards()) != server_character.named_cards_size()) {
+					if (std::distance(v.BeginCards(), v.EndCards()) != server_character.cards_size()) {
 						return make_unexpected("Server and local card count mismatch");
 					}
 					// TODO other checks
@@ -164,7 +164,7 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::network::SequenceNo>>
 		pb::VecF position;
 		m2g::pb::ObjectType object_type;
 		ObjectId server_object_parent_id;
-		std::vector<m2g::pb::CardType> named_cards;
+		std::vector<m2g::pb::CardType> cards;
 		std::vector<m2::pb::Variable> variables;
 	};
 	std::vector<ObjectToCreate> objects_to_be_created;
@@ -175,7 +175,7 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::network::SequenceNo>>
 			LOG_TRACE("Server object is still alive", object_desc.object_id(), it->first);
 			// Update the character
 			auto* character = M2_LEVEL.objects.Get(it->second.first)->TryGetCharacter();
-			update_character(character, object_desc.named_cards(), object_desc.variables());
+			update_character(character, object_desc.cards(), object_desc.variables());
 			// Mark object as visited
 			it->second.second = true;
 		} else {
@@ -187,7 +187,7 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::network::SequenceNo>>
 
 			// Add details about the object that'll be created into a list
 			objects_to_be_created.push_back({object_desc.object_id(), object_desc.position(), object_desc.object_type(),
-											 object_desc.parent_id(), int_list_to_card_list(object_desc.named_cards().begin(), object_desc.named_cards().end()),
+											 object_desc.parent_id(), int_list_to_card_list(object_desc.cards().begin(), object_desc.cards().end()),
 											 {object_desc.variables().begin(), object_desc.variables().end()}});
 		}
 	}
@@ -208,11 +208,11 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::network::SequenceNo>>
 				// Simply, create the object
 				LOG_NETWORK("Server has created an object", it->server_object_id);
 				auto obj_it = m2::CreateObject(it->object_type, 0);
-				auto load_result = M2G_PROXY.init_server_update_fg_object(*obj_it, m2::VecF{it->position}, it->named_cards);
+				auto load_result = M2G_PROXY.init_server_update_fg_object(*obj_it, m2::VecF{it->position}, it->cards);
 				m2ReflectUnexpected(load_result);
 				// Update the character
 				auto* character = obj_it->TryGetCharacter();
-				update_character(character, it->named_cards, it->variables);
+				update_character(character, it->cards, it->variables);
 				// Add object to the map, marked as visited
 				_server_to_local_map[it->server_object_id] = std::make_pair(obj_it.GetId(), true);
 				// Delete the object details from the objects_to_be_created vector
@@ -221,11 +221,11 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::network::SequenceNo>>
 				// If the object has a parent that's already created, create the object by looking up the corresponding parent
 				LOG_NETWORK("Server has created an object", it->server_object_id);
 				auto obj_it = m2::CreateObject(it->object_type, parent_it->second.first);
-				auto load_result = M2G_PROXY.init_server_update_fg_object(*obj_it, m2::VecF{it->position}, it->named_cards);
+				auto load_result = M2G_PROXY.init_server_update_fg_object(*obj_it, m2::VecF{it->position}, it->cards);
 				m2ReflectUnexpected(load_result);
 				// Update the character
 				auto* character = obj_it->TryGetCharacter();
-				update_character(character, it->named_cards, it->variables);
+				update_character(character, it->cards, it->variables);
 				// Add object to the map, marked as visited
 				_server_to_local_map[it->server_object_id] = std::make_pair(obj_it.GetId(), true);
 				// Delete the object details from the objects_to_be_created vector

@@ -10,7 +10,7 @@ using namespace m2::widget;
 
 namespace {
 	RGB cards_window_card_color(m2g::pb::CardType card) {
-		switch (M2_GAME.named_cards[card].Category()) {
+		switch (M2_GAME.cards[card].Category()) {
 			case m2g::pb::CARD_CATEGORY_WILD_CARD:
 				return {255, 200, 71};
 			case m2g::pb::CARD_CATEGORY_INDUSTRY_CARD:
@@ -23,7 +23,7 @@ namespace {
 	}
 
 	TextSelectionBlueprint::Options list_cards_as_selection_options(const m2g::pb::CardType exclude_card_1, const m2g::pb::CardType exclude_card_2) {
-		const auto card_filter = GenerateNamedCardTypesFilter(
+		const auto card_filter = GenerateCardTypesFilter(
 				{m2g::pb::CARD_CATEGORY_CITY_CARD,
 				m2g::pb::CARD_CATEGORY_INDUSTRY_CARD,
 				m2g::pb::CARD_CATEGORY_WILD_CARD});
@@ -38,14 +38,14 @@ namespace {
 					filter_card_2 = static_cast<m2g::pb::CardType>(0);
 				} else {
 					// Add option
-					options.emplace_back(TextSelectionBlueprint::Option{.text = M2_GAME.GetNamedCard(card).in_game_name(), .return_value = static_cast<int>(card), .text_color = cards_window_card_color(card)});
+					options.emplace_back(TextSelectionBlueprint::Option{.text = M2_GAME.GetCard(card).in_game_name(), .return_value = static_cast<int>(card), .text_color = cards_window_card_color(card)});
 				}});
 
 		// Sort first by type, then by alphabetically
 		std::ranges::sort(options,
 				[](const TextSelectionBlueprint::Option& a, const TextSelectionBlueprint::Option& b) {
-					const auto a_category = M2_GAME.named_cards[static_cast<m2g::pb::CardType>(I(a.return_value))].Category();
-					const auto b_category = M2_GAME.named_cards[static_cast<m2g::pb::CardType>(I(b.return_value))].Category();
+					const auto a_category = M2_GAME.cards[static_cast<m2g::pb::CardType>(I(a.return_value))].Category();
+					const auto b_category = M2_GAME.cards[static_cast<m2g::pb::CardType>(I(b.return_value))].Category();
 					if (a_category != b_category) {
 						return a_category < b_category;
 					}

@@ -226,7 +226,7 @@ std::optional<SellJourneyStep> SellJourney::HandleDevelopBenefitIndustryTileEnte
 				// Ask for tile selection
 				if (const auto selected_tile = ask_for_tile_selection()) {
 					// Check if tile can be developed
-					if (M2_GAME.GetNamedCard(*selected_tile).GetConstant(DEVELOPMENT_BAN)) {
+					if (M2_GAME.GetCard(*selected_tile).GetConstant(DEVELOPMENT_BAN)) {
 						M2_LEVEL.ShowMessage("Selected industry cannot be developed", 8.0f);
 						M2_DEFER(m2g::Proxy::main_journey_deleter);
 						return std::nullopt;
@@ -241,10 +241,10 @@ std::optional<SellJourneyStep> SellJourney::HandleDevelopBenefitIndustryTileEnte
 }
 
 std::optional<SellJourneyStep> SellJourney::HandleConfirmationEnterSignal() {
-	const auto card_name = M2_GAME.GetNamedCard(_selected_card).in_game_name();
-	const auto city_name = M2_GAME.GetNamedCard(city_of_location(_selected_location)).in_game_name();
+	const auto card_name = M2_GAME.GetCard(_selected_card).in_game_name();
+	const auto city_name = M2_GAME.GetCard(city_of_location(_selected_location)).in_game_name();
 	const auto industry = ToIndustryOfFactoryCharacter(FindFactoryAtLocation(_selected_location)->GetCharacter());
-	const auto industry_name = M2_GAME.GetNamedCard(industry).in_game_name();
+	const auto industry_name = M2_GAME.GetCard(industry).in_game_name();
 	if (ask_for_confirmation("Sell " + industry_name + " in " + city_name, "using " + card_name + " card?", "OK", "Cancel")) {
 		m2g::pb::TurnBasedClientCommand cc;
 		cc.mutable_sell_action()->set_card(_selected_card);
@@ -321,7 +321,7 @@ m2::void_expected CanPlayerSell(m2::Character& player, const m2g::pb::TurnBasedC
 			"Selected develop benefit tile is not an industry tile");
 		m2ReturnUnexpectedUnless(PlayerNextIndustryTileOfCategory(player, industry_tile_category_of_industry_tile(tile)) == tile,
 			"Selected develop benefit tile is not the next tile to develop in the category");
-		m2ReturnUnexpectedUnless(M2_GAME.GetNamedCard(tile).GetConstant(DEVELOPMENT_BAN).GetIntOrZero() == 0,
+		m2ReturnUnexpectedUnless(M2_GAME.GetCard(tile).GetConstant(DEVELOPMENT_BAN).GetIntOrZero() == 0,
 			"Selected develop benefit tile cannot be developed");
 	}
 

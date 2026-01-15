@@ -34,6 +34,7 @@ namespace m2g {
 			{.objectType = pb::CIRCULAR_BUMPER, .defaultSpriteType = pb::SPRITE_CIRCULAR_BUMPER},
 			{.objectType = pb::DOOR, .defaultSpriteType = pb::SPRITE_DOOR},
 		};
+		const std::optional<m2::pb::Cards> cards = GenerateDefaultCards(); // TODO if the game doesn't use items, we must not deal with this
 
 		const m2::UiPanelBlueprint* MainMenuBlueprint();
 		const m2::UiPanelBlueprint* PauseMenuBlueprint();

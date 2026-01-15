@@ -3,6 +3,7 @@
 #include <m2/Game.h>
 #include <m2/M2.h>
 #include <m2/ui/widget/ProgressBar.h>
+#include <m2g_VariableType.pb.h>
 
 using namespace m2;
 
@@ -44,7 +45,7 @@ static widget::ProgressBarBlueprint hp_progress_bar = {
 		.bar_color = SDL_Color{255, 0, 0, 255},
 		.onUpdate = [](widget::ProgressBar& self) {
 			if (M2_LEVEL.GetPlayer()) {
-				self.SetProgress(M2_PLAYER.GetCharacter().GetResource(m2g::pb::RESOURCE_HP));
+				self.SetProgress(M2_PLAYER.GetCharacter().GetVariable(m2g::pb::RESOURCE_HP).GetFOrZero());
 			}
 			self.SetProgress(0.0f);
 		}
@@ -57,13 +58,10 @@ static widget::ProgressBarBlueprint dash_progress_bar = {
 		.bar_color = SDL_Color{255, 255, 0, 255},
 		.onUpdate = [](widget::ProgressBar& self) {
 			if (M2_LEVEL.GetPlayer()) {
-				// Check if player has DASH capability
-				if (M2_PLAYER.GetCharacter().HasCard(m2g::pb::CARD_REUSABLE_DASH_2S)) {
-					float counter = M2_PLAYER.GetCharacter().GetResource(m2g::pb::RESOURCE_DASH_ENERGY);
-					float cooldown = 2.0f;
-					counter = (cooldown <= counter) ? cooldown : counter;
-					self.SetProgress(counter / cooldown);
-				}
+				float counter = M2_PLAYER.GetCharacter().GetVariable(m2g::pb::RESOURCE_DASH_ENERGY).GetFOrZero();
+				float cooldown = 2.0f;
+				counter = (cooldown <= counter) ? cooldown : counter;
+				self.SetProgress(counter / cooldown);
 			}
 			self.SetProgress(0.0f);
 		}

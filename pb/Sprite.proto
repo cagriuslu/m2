@@ -71,7 +71,7 @@ message RegularSprite {
   ForegroundCompanion foreground_companion = 8;
 
   // Sprites can hold immutable cards just to simplify attribute lookup
-  repeated m2g.pb.CardType named_cards = 9;
+  repeated m2g.pb.CardType cards = 9;
 }
 
 message Color {
@@ -103,7 +103,7 @@ message Duplicate {
   m2g.pb.SpriteType original_type = 1;
 
   // Sprites can hold immutable cards just to simplify attribute lookup
-  repeated m2g.pb.CardType additional_named_cards = 2;
+  repeated m2g.pb.CardType additional_cards = 2;
 
   // Optionally, sprite effects might be applied to the original sprite
   repeated SpriteEffect additional_effects = 3;

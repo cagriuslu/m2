@@ -29,7 +29,7 @@ m2::void_expected CanPlayerAttemptToLoan(m2::Character& player) {
 void ExecuteLoanJourney() {
 	LOG_INFO("Loan action");
 	if (auto selected_card = ask_for_card_selection(); selected_card) {
-		auto card_name = M2_GAME.GetNamedCard(*selected_card).in_game_name();
+		auto card_name = M2_GAME.GetCard(*selected_card).in_game_name();
 		if (ask_for_confirmation("Take a loan using ", card_name + " card?", "OK", "Cancel")) {
 			LOG_INFO("Loan action confirmed");
 

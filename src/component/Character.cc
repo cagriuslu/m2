@@ -54,23 +54,17 @@ size_t m2::Character::CountCard(m2g::pb::CardCategory card_cat) const {
     }
     return count;
 }
-std::vector<m2g::pb::CardType> m2::Character::NamedCardTypes() const {
+std::vector<m2g::pb::CardType> m2::Character::CardTypes() const {
 	std::vector<m2g::pb::CardType> types;
 	for (auto it = BeginCards(); it != EndCards(); ++it) {
-		auto* card = it.Get();
-		if (auto* named_card = dynamic_cast<const Card*>(card)) {
-			types.emplace_back(named_card->Type());
-		}
+		types.emplace_back(it->Type());
 	}
 	return types;
 }
-std::vector<m2g::pb::CardType> m2::Character::NamedCardTypes(const m2g::pb::CardCategory card_cat) const {
+std::vector<m2g::pb::CardType> m2::Character::CardTypes(const m2g::pb::CardCategory card_cat) const {
 	std::vector<m2g::pb::CardType> types;
 	for (auto it = FindCards(card_cat); it != EndCards(); ++it) {
-		auto* card = it.Get();
-		if (auto* named_card = dynamic_cast<const Card*>(card)) {
-			types.emplace_back(named_card->Type());
-		}
+		types.emplace_back(it->Type());
 	}
 	return types;
 }
@@ -86,17 +80,6 @@ int32_t Character::AddVariable(const m2g::pb::VariableType vt, const int32_t val
 	}
 	return GetVariable(vt).UnsafeGetInt();
 }
-int32_t Character::SubtractVariable(const m2g::pb::VariableType vt, const int32_t value, const std::optional<int32_t> minValue) {
-	if (GetVariable(vt).IsFE()) {
-		throw M2_ERROR("Variable contains FE");
-	}
-	if (minValue) {
-		SetVariable(vt, std::max(GetVariable(vt).GetIntOrZero() - value, *minValue));
-	} else {
-		SetVariable(vt, GetVariable(vt).GetIntOrZero() - value);
-	}
-	return GetVariable(vt).UnsafeGetInt();
-}
 FE Character::AddVariable(const m2g::pb::VariableType vt, const FE value, const std::optional<FE> maxValue) {
 	if (GetVariable(vt).IsInt()) {
 		throw M2_ERROR("Variable contains int32");
@@ -107,6 +90,17 @@ FE Character::AddVariable(const m2g::pb::VariableType vt, const FE value, const 
 		SetVariable(vt, GetVariable(vt).GetFEOrZero() + value);
 	}
 	return GetVariable(vt).UnsafeGetFE();
+}
+int32_t Character::SubtractVariable(const m2g::pb::VariableType vt, const int32_t value, const std::optional<int32_t> minValue) {
+	if (GetVariable(vt).IsFE()) {
+		throw M2_ERROR("Variable contains FE");
+	}
+	if (minValue) {
+		SetVariable(vt, std::max(GetVariable(vt).GetIntOrZero() - value, *minValue));
+	} else {
+		SetVariable(vt, GetVariable(vt).GetIntOrZero() - value);
+	}
+	return GetVariable(vt).UnsafeGetInt();
 }
 FE Character::SubtractVariable(const m2g::pb::VariableType vt, const FE value, const std::optional<FE> minValue) {
 	if (GetVariable(vt).IsInt()) {
@@ -132,12 +126,6 @@ int32_t m2::CompactCharacter::Hash(const int32_t initialValue) const {
 	if (_card) {
 		hash = HashI(_card->Type(), hash);
 	}
-	if (_resource.first) {
-		throw M2_ERROR("CompactCharacter doesn't support hashing of resources");
-	}
-	if (_attribute.first) {
-		throw M2_ERROR("CompactCharacter doesn't support hashing of attributes");
-	}
 	return hash;
 }
 m2::Character::Iterator m2::CompactCharacter::FindCards(m2g::pb::CardType card_type) const {
@@ -154,15 +142,7 @@ m2::Character::Iterator m2::CompactCharacter::BeginCards() const {
 m2::Character::Iterator m2::CompactCharacter::EndCards() const {
 	return {*this, tiny_character_iterator_incrementor, {}, 0, nullptr};
 }
-void m2::CompactCharacter::AddNamedCard(const Card& card) {
-	_card = &card;
-	// Get acquire benefits
-	for (size_t i = 0; i < _card->GetAcquireBenefitCount(); ++i) {
-		const auto benefit = _card->GetAcquireBenefitByIndex(i);
-		AddResource(benefit.first, benefit.second);
-	}
-}
-void m2::CompactCharacter::AddNamedCardWithoutBenefits(const Card& card) {
+void m2::CompactCharacter::AddCard(const Card& card) {
 	_card = &card;
 }
 void m2::CompactCharacter::RemoveCard(const Iterator& card) {
@@ -172,43 +152,6 @@ void m2::CompactCharacter::RemoveCard(const Iterator& card) {
 }
 void m2::CompactCharacter::ClearCards() {
 	_card = {};
-}
-bool m2::CompactCharacter::HasResource(m2g::pb::ResourceType resource_type) const {
-	return _resource.first == resource_type && _resource.second != 0.0f;
-}
-float m2::CompactCharacter::GetResource(m2g::pb::ResourceType resource_type) const {
-	return (_resource.first == resource_type) ? _resource.second : float{};
-}
-float m2::CompactCharacter::SetResource(m2g::pb::ResourceType resource_type, float amount) {
-	_resource = std::make_pair(resource_type, amount);
-	return _resource.second;
-}
-float m2::CompactCharacter::AddResource(m2g::pb::ResourceType resource_type, float amount) {
-	if (_resource.first == m2g::pb::NO_RESOURCE) {
-		SetResource(resource_type, 0.0f);
-	}
-	if (_resource.first == resource_type) {
-		const auto currValue = _resource.second;
-		const auto newValue = std::max(currValue + amount, 0.0f);
-		_resource.second = newValue;
-		return newValue;
-	} else {
-		throw M2_ERROR("Attempt to add/remove resource, but CompactCharacter doesn't carry that resource");
-	}
-}
-float m2::CompactCharacter::RemoveResource(m2g::pb::ResourceType resource_type, float amount) {
-	return AddResource(resource_type, -amount);
-}
-void m2::CompactCharacter::ClearResource(m2g::pb::ResourceType resource_type) {
-	if (_resource.first == resource_type) {
-		_resource.second = 0.0f;
-	}
-}
-bool m2::CompactCharacter::HasAttribute(m2g::pb::AttributeType attribute_type) const {
-	return _attribute.first == attribute_type && _attribute.second != 0.0f;
-}
-float m2::CompactCharacter::GetAttribute(m2g::pb::AttributeType attribute_type) const {
-	return (_attribute.first == attribute_type) ? _attribute.second : float{};
 }
 
 m2::IFE m2::CompactCharacter::GetVariable(const m2g::pb::VariableType v) const {
@@ -318,15 +261,7 @@ m2::Character::Iterator m2::FastCharacter::BeginCards() const {
 m2::Character::Iterator m2::FastCharacter::EndCards() const {
 	return {*this, FullCharacterIteratorIncrementor, {}, 0, nullptr};
 }
-void m2::FastCharacter::AddNamedCard(const Card& card) {
-	_cards.emplace_back(&card);
-	// Get acquire benefits
-	for (size_t i = 0; i < _cards.back()->GetAcquireBenefitCount(); ++i) {
-		const auto benefit = _cards.back()->GetAcquireBenefitByIndex(i);
-		AddResource(benefit.first, benefit.second);
-	}
-}
-void m2::FastCharacter::AddNamedCardWithoutBenefits(const Card& card) {
+void m2::FastCharacter::AddCard(const Card& card) {
 	_cards.emplace_back(&card);
 }
 void m2::FastCharacter::RemoveCard(const Iterator& card) {
@@ -339,55 +274,17 @@ void m2::FastCharacter::RemoveCard(const Iterator& card) {
 void m2::FastCharacter::ClearCards() {
 	_cards.clear();
 }
-bool m2::FastCharacter::HasResource(m2g::pb::ResourceType resource_type) const {
-	return _resources[ResourceTypeIndex(resource_type)] != 0.0f;
-}
-float m2::FastCharacter::GetResource(m2g::pb::ResourceType resource_type) const {
-	return _resources[ResourceTypeIndex(resource_type)];
-}
-float m2::FastCharacter::SetResource(m2g::pb::ResourceType resource_type, float amount) {
-	_resources[ResourceTypeIndex(resource_type)] = amount;
-	return amount;
-}
-float m2::FastCharacter::AddResource(m2g::pb::ResourceType resource_type, float amount) {
-	const auto currValue = _resources[ResourceTypeIndex(resource_type)];
-	const auto newValue = std::max(currValue + amount, 0.0f);
-	_resources[ResourceTypeIndex(resource_type)] = newValue;
-	return newValue;
-}
-float m2::FastCharacter::RemoveResource(m2g::pb::ResourceType resource_type, float amount) {
-	return AddResource(resource_type, -amount);
-}
-void m2::FastCharacter::ClearResource(m2g::pb::ResourceType resource_type) {
-	_resources[ResourceTypeIndex(resource_type)] = 0.0f;
-}
-bool m2::FastCharacter::HasAttribute(m2g::pb::AttributeType attribute_type) const {
-	return _attributes[AttributeTypeIndex(attribute_type)] != 0.0f;
-}
-float m2::FastCharacter::GetAttribute(m2g::pb::AttributeType attribute_type) const {
-	return _attributes[AttributeTypeIndex(attribute_type)];
-}
 
-int m2::FastCharacter::ResourceTypeIndex(m2g::pb::ResourceType resource_type) {
-	return pb::enum_index(resource_type);
-}
-int m2::FastCharacter::AttributeTypeIndex(m2g::pb::AttributeType attribute_type) {
-	return pb::enum_index(attribute_type);
-}
-int m2::FastCharacter::PropertyTypeIndex(m2g::pb::PropertyType pt) {
-	return pb::enum_index(pt);
-}
-
-std::function<std::vector<m2g::pb::CardType>(m2::Character&)> m2::GenerateNamedCardTypesFilter(m2g::pb::CardCategory card_category) {
+std::function<std::vector<m2g::pb::CardType>(m2::Character&)> m2::GenerateCardTypesFilter(m2g::pb::CardCategory card_category) {
 	return [card_category](m2::Character& c) -> std::vector<m2g::pb::CardType> {
-		return c.NamedCardTypes(card_category);
+		return c.CardTypes(card_category);
 	};
 }
-std::function<std::vector<m2g::pb::CardType>(m2::Character&)> m2::GenerateNamedCardTypesFilter(std::initializer_list<m2g::pb::CardCategory> categoriesToFilter) {
+std::function<std::vector<m2g::pb::CardType>(m2::Character&)> m2::GenerateCardTypesFilter(std::initializer_list<m2g::pb::CardCategory> categoriesToFilter) {
 	return [categoriesToFilter = std::move(categoriesToFilter)](const Character& c) -> std::vector<m2g::pb::CardType> {
 		std::vector<m2g::pb::CardType> cardTypes;
 		for (const auto& cat : categoriesToFilter) {
-			auto _tmp = c.NamedCardTypes(cat);
+			auto _tmp = c.CardTypes(cat);
 			cardTypes.insert(cardTypes.cend(), _tmp.begin(), _tmp.end());
 		}
 		return cardTypes;

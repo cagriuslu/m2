@@ -34,15 +34,15 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj, const m2::VecF& positi
 	     industry_tile <= m2g::pb::MANUFACTURED_GOODS_TILE_VIII;
 	     industry_tile = static_cast<m2g::pb::CardType>(m2::I(industry_tile) + 1)) {
 		// Lookup possession count
-		const auto& card = M2_GAME.GetNamedCard(industry_tile);
+		const auto& card = M2_GAME.GetCard(industry_tile);
 		auto possession_limit = card.GetConstant(m2g::pb::POSSESSION_LIMIT).GetIntOrZero();
-		m2Repeat(possession_limit) { chr.AddNamedCard(card); }
+		m2Repeat(possession_limit) { chr.AddCard(card); }
 	}
 
 	// Add connection tiles
-	const auto& road_card = M2_GAME.GetNamedCard(m2g::pb::ROAD_TILE);
+	const auto& road_card = M2_GAME.GetCard(m2g::pb::ROAD_TILE);
 	auto road_possession_limit = road_card.GetConstant(m2g::pb::POSSESSION_LIMIT).GetIntOrZero();
-	m2Repeat(road_possession_limit) { chr.AddNamedCard(road_card); }
+	m2Repeat(road_possession_limit) { chr.AddCard(road_card); }
 
 	auto& phy = obj.AddPhysique();
 	phy.position = position;
@@ -186,15 +186,15 @@ m2::void_expected PlayerInitOtherInstance(m2::Object& obj) {
 		 industry_tile <= m2g::pb::MANUFACTURED_GOODS_TILE_VIII;
 		 industry_tile = static_cast<m2g::pb::CardType>(m2::I(industry_tile) + 1)) {
 		// Lookup possession count
-		const auto& card = M2_GAME.GetNamedCard(industry_tile);
+		const auto& card = M2_GAME.GetCard(industry_tile);
 		auto possession_limit = card.GetConstant(m2g::pb::POSSESSION_LIMIT).GetIntOrZero();
-		m2Repeat(possession_limit) { chr.AddNamedCard(card); }
+		m2Repeat(possession_limit) { chr.AddCard(card); }
 		 }
 
 	// Add connection tiles
-	const auto& road_card = M2_GAME.GetNamedCard(m2g::pb::ROAD_TILE);
+	const auto& road_card = M2_GAME.GetCard(m2g::pb::ROAD_TILE);
 	auto road_possession_limit = road_card.GetConstant(m2g::pb::POSSESSION_LIMIT).GetIntOrZero();
-	m2Repeat(road_possession_limit) { chr.AddNamedCard(road_card); }
+	m2Repeat(road_possession_limit) { chr.AddCard(road_card); }
 
 	return {};
 }
@@ -232,7 +232,7 @@ int PlayerEstimatedVictoryPoints(const m2::Character& player) {
 			| std::views::filter(IsFactoryCharacter)
 			| std::views::filter(IsFactorySold);
 	return std::accumulate(soldFactories.begin(), soldFactories.end(), 0, [](int acc, m2::Character& factoryCharacter) -> int {
-		const auto& industryTileCard = M2_GAME.GetNamedCard(ToIndustryTileOfFactoryCharacter(factoryCharacter));
+		const auto& industryTileCard = M2_GAME.GetCard(ToIndustryTileOfFactoryCharacter(factoryCharacter));
 		return acc + industryTileCard.GetConstant(m2g::pb::VICTORY_POINTS_BONUS).GetIntOrZero();
 	});
 }
@@ -368,8 +368,8 @@ std::set<m2g::pb::SpriteType> PlayerCanalsInNetwork(const m2::Character& player,
 		for (int i = m2g::pb::BELPER_DERBY_CANAL_RAILROAD; i <= m2g::pb::REDDITCH_OXFORD_CANAL_RAILROAD; ++i) {
 			auto road_location_type = static_cast<m2g::pb::SpriteType>(i);
 			const auto& road_location = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(road_location_type));
-			if (std::ranges::any_of(road_location.NamedCards(), is_canal_license) &&
-				std::ranges::count(road_location.NamedCards(), city)) {
+			if (std::ranges::any_of(road_location.Cards(), is_canal_license) &&
+				std::ranges::count(road_location.Cards(), city)) {
 				canals.insert(road_location_type);
 			}
 		}
@@ -391,8 +391,8 @@ std::set<m2g::pb::SpriteType> PlayerRailroadsInNetwork(const m2::Character& play
 		for (int i = m2g::pb::BELPER_DERBY_CANAL_RAILROAD; i <= m2g::pb::REDDITCH_OXFORD_CANAL_RAILROAD; ++i) {
 			auto road_location_type = static_cast<m2g::pb::SpriteType>(i);
 			const auto& road_location = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(road_location_type));
-			if (std::ranges::any_of(road_location.NamedCards(), is_railroad_license) &&
-				std::ranges::count(road_location.NamedCards(), city)) {
+			if (std::ranges::any_of(road_location.Cards(), is_railroad_license) &&
+				std::ranges::count(road_location.Cards(), city)) {
 				railroads.insert(road_location_type);
 			}
 		}

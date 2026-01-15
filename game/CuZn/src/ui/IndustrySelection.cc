@@ -26,7 +26,7 @@ std::optional<m2g::pb::CardType> ask_for_industry_selection(m2g::pb::CardType in
 			UiWidgetBlueprint{
 				.x = 5, .y = 14, .w = 50, .h = 5,
 				.variant = TextBlueprint{
-					.text = M2_GAME.GetNamedCard(industry_1).in_game_name(),
+					.text = M2_GAME.GetCard(industry_1).in_game_name(),
 					.onAction = [industry_1](MAYBE const Text& self) -> UiAction {
 						return MakeReturnAction<m2g::pb::CardType>(industry_1);
 					}
@@ -35,7 +35,7 @@ std::optional<m2g::pb::CardType> ask_for_industry_selection(m2g::pb::CardType in
 			UiWidgetBlueprint{
 				.x = 5, .y = 21, .w = 50, .h = 5,
 				.variant = TextBlueprint{
-					.text = M2_GAME.GetNamedCard(industry_2).in_game_name(),
+					.text = M2_GAME.GetCard(industry_2).in_game_name(),
 					.onAction = [industry_2](MAYBE const Text& self) -> UiAction {
 						return MakeReturnAction<m2g::pb::CardType>(industry_2);
 					}

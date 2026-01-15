@@ -23,12 +23,7 @@ m2::pb::TurnBasedNetworkMessage m2::GenerateServerUpdate(uint32_t& nextSequenceN
 				object_descriptor->set_object_type(v.Owner().GetType());
 				object_descriptor->set_parent_id(v.Owner().GetParentId());
 				for (auto card_it = v.BeginCards(); card_it != v.EndCards(); ++card_it) {
-					const auto* card_ptr = card_it.Get();
-					const auto* named_card_ptr = dynamic_cast<const Card*>(card_ptr);
-					if (!named_card_ptr) {
-						throw M2_ERROR("TurnBasedServerUpdate does not support unnamed cards");
-					}
-					object_descriptor->add_named_cards(named_card_ptr->Type());
+					object_descriptor->add_cards(card_it->Type());
 				}
 				pb::for_each_enum_value<m2g::pb::VariableType>([&v, object_descriptor](m2g::pb::VariableType vt) {
 					if (v.GetVariable(vt)) {
