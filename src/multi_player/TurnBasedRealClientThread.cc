@@ -3,22 +3,6 @@
 #include <m2/GameTypes.h>
 #include <m2/Log.h>
 
-namespace {
-	template <typename CardListT, typename VariableListT>
-	void update_character(m2::Character* c, const CardListT& cards, const VariableListT& variables) {
-		// Update cards
-		c->ClearCards();
-		for (auto card_type : cards) {
-			c->AddCard(M2_GAME.GetCard(static_cast<m2g::pb::CardType>(card_type)));
-		}
-		// Update resources
-		c->ClearVariables();
-		for (const auto& variable : variables) {
-			c->SetVariable(variable.type(), m2::IFE{variable.ife()});
-		}
-	}
-}
-
 m2::network::TurnBasedRealClientThread::TurnBasedRealClientThread(std::string addr)
 	: detail::TurnBasedClientThreadBase{std::move(addr), true} {
 	latch();
@@ -113,9 +97,6 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::network::SequenceNo>>
 					if (v.Owner().GetType() != server_character.object_type()) {
 						return make_unexpected("Server and local object type mismatch");
 					}
-					if (std::distance(v.BeginCards(), v.EndCards()) != server_character.cards_size()) {
-						return make_unexpected("Server and local card count mismatch");
-					}
 					// TODO other checks
 
 					// Map server ObjectIDs to local ObjectIDs
@@ -165,7 +146,7 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::network::SequenceNo>>
 		m2g::pb::ObjectType object_type;
 		ObjectId server_object_parent_id;
 		std::vector<m2g::pb::CardType> cards;
-		std::vector<m2::pb::Variable> variables;
+		pb::TurnBasedServerUpdate::ObjectDescriptor object_descriptor;
 	};
 	std::vector<ObjectToCreate> objects_to_be_created;
 
@@ -175,7 +156,7 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::network::SequenceNo>>
 			LOG_TRACE("Server object is still alive", object_desc.object_id(), it->first);
 			// Update the character
 			auto* character = M2_LEVEL.objects.Get(it->second.first)->TryGetCharacter();
-			update_character(character, object_desc.cards(), object_desc.variables());
+			character->Load(object_desc);
 			// Mark object as visited
 			it->second.second = true;
 		} else {
@@ -187,8 +168,8 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::network::SequenceNo>>
 
 			// Add details about the object that'll be created into a list
 			objects_to_be_created.push_back({object_desc.object_id(), object_desc.position(), object_desc.object_type(),
-											 object_desc.parent_id(), int_list_to_card_list(object_desc.cards().begin(), object_desc.cards().end()),
-											 {object_desc.variables().begin(), object_desc.variables().end()}});
+				object_desc.parent_id(), int_list_to_card_list(object_desc.cards().begin(), object_desc.cards().end()),
+				object_desc});
 		}
 	}
 
@@ -212,7 +193,7 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::network::SequenceNo>>
 				m2ReflectUnexpected(load_result);
 				// Update the character
 				auto* character = obj_it->TryGetCharacter();
-				update_character(character, it->cards, it->variables);
+				character->Load(it->object_descriptor);
 				// Add object to the map, marked as visited
 				_server_to_local_map[it->server_object_id] = std::make_pair(obj_it.GetId(), true);
 				// Delete the object details from the objects_to_be_created vector
@@ -225,7 +206,7 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::network::SequenceNo>>
 				m2ReflectUnexpected(load_result);
 				// Update the character
 				auto* character = obj_it->TryGetCharacter();
-				update_character(character, it->cards, it->variables);
+				character->Load(it->object_descriptor);
 				// Add object to the map, marked as visited
 				_server_to_local_map[it->server_object_id] = std::make_pair(obj_it.GetId(), true);
 				// Delete the object details from the objects_to_be_created vector

@@ -11,7 +11,7 @@ m2::void_expected PlayerInitOtherInstance(m2::Object& obj);
 // Card Accessors
 
 size_t PlayerCardCount(const m2::Character& player);
-std::list<m2g::pb::CardType> PlayerCards(const m2::Character& player);
+std::vector<m2g::pb::CardType> PlayerCards(const m2::Character& player);
 inline bool PlayerHasCard(const m2::Character& player, const m2g::pb::CardType card) { return player.FindCards(card) != player.EndCards(); }
 
 // Resource Accessors
@@ -34,7 +34,7 @@ m2::void_expected PlayerCanOverbuild(const m2::Character& player, IndustryLocati
 
 // Road and Network Accessors
 
-inline size_t PlayerUnbuiltRoadCount(const m2::Character& player) { return player.CountCard(m2g::pb::ROAD_TILE); }
+inline size_t PlayerUnbuiltRoadCount(const m2::Character& player) { return player.CountCards(m2g::pb::ROAD_TILE); }
 std::set<m2g::pb::CardType> PlayerCitiesInNetwork(const m2::Character& player);
 std::set<m2g::pb::SpriteType> PlayerCanalsInNetwork(const m2::Character& player, Connection provisional_extra_connection = {});
 std::set<m2g::pb::SpriteType> PlayerRailroadsInNetwork(const m2::Character& player, Connection provisional_extra_connection = {});

@@ -200,20 +200,19 @@ m2::void_expected PlayerInitOtherInstance(m2::Object& obj) {
 }
 
 size_t PlayerCardCount(const m2::Character& player) {
-	return player.CountCard(m2g::pb::CardCategory::CARD_CATEGORY_CITY_CARD)
-	+ player.CountCard(m2g::pb::CardCategory::CARD_CATEGORY_WILD_CARD)
-	+ player.CountCard(m2g::pb::CardCategory::CARD_CATEGORY_INDUSTRY_CARD);
+	return player.CountCards(m2g::pb::CardCategory::CARD_CATEGORY_CITY_CARD)
+	+ player.CountCards(m2g::pb::CardCategory::CARD_CATEGORY_WILD_CARD)
+	+ player.CountCards(m2g::pb::CardCategory::CARD_CATEGORY_INDUSTRY_CARD);
 }
-std::list<m2g::pb::CardType> PlayerCards(const m2::Character& player) {
-	std::list<m2g::pb::CardType> card_list;
-	for (auto it = player.BeginCards(); it != player.EndCards(); ++it) {
-		if (it->Category() == m2g::pb::CardCategory::CARD_CATEGORY_CITY_CARD
-			|| it->Category() == m2g::pb::CardCategory::CARD_CATEGORY_WILD_CARD
-			|| it->Category() == m2g::pb::CardCategory::CARD_CATEGORY_INDUSTRY_CARD) {
-			card_list.emplace_back(it->Type());
-		}
-	}
-	return card_list;
+std::vector<m2g::pb::CardType> PlayerCards(const m2::Character& player) {
+	const auto& playerChr = dynamic_cast<const m2::FastCharacter&>(player);
+	const auto cityCards = playerChr.GetCardTypes(m2g::pb::CARD_CATEGORY_CITY_CARD);
+	const auto industryCards = playerChr.GetCardTypes(m2g::pb::CARD_CATEGORY_INDUSTRY_CARD);
+	const auto wildCards = playerChr.GetCardTypes(m2g::pb::CARD_CATEGORY_WILD_CARD);
+	auto cards = cityCards;
+	cards.insert(cards.end(), industryCards.begin(), industryCards.end());
+	cards.insert(cards.end(), wildCards.begin(), wildCards.end());
+	return cards;
 }
 
 int PlayerLinkCount(const m2::Character& player) {
@@ -247,12 +246,12 @@ int PlayerMoney(const m2::Character& player) {
 }
 
 size_t PlayerIndustryTileCount(const m2::Character& player) {
-	return player.CountCard(m2g::pb::CardCategory::CARD_CATEGORY_COAL_MINE_TILE)
-		+ player.CountCard(m2g::pb::CardCategory::CARD_CATEGORY_IRON_WORKS_TILE)
-		+ player.CountCard(m2g::pb::CardCategory::CARD_CATEGORY_BREWERY_TILE)
-		+ player.CountCard(m2g::pb::CardCategory::CARD_CATEGORY_COTTON_MILL_TILE)
-		+ player.CountCard(m2g::pb::CardCategory::CARD_CATEGORY_MANUFACTURED_GOODS_TILE)
-		+ player.CountCard(m2g::pb::CardCategory::CARD_CATEGORY_POTTERY_TILE);
+	return player.CountCards(m2g::pb::CardCategory::CARD_CATEGORY_COAL_MINE_TILE)
+		+ player.CountCards(m2g::pb::CardCategory::CARD_CATEGORY_IRON_WORKS_TILE)
+		+ player.CountCards(m2g::pb::CardCategory::CARD_CATEGORY_BREWERY_TILE)
+		+ player.CountCards(m2g::pb::CardCategory::CARD_CATEGORY_COTTON_MILL_TILE)
+		+ player.CountCards(m2g::pb::CardCategory::CARD_CATEGORY_MANUFACTURED_GOODS_TILE)
+		+ player.CountCards(m2g::pb::CardCategory::CARD_CATEGORY_POTTERY_TILE);
 }
 std::optional<m2g::pb::CardType> PlayerNextIndustryTileOfCategory(const m2::Character& player, const m2g::pb::CardCategory tile_category) {
 	// Find the card with the category with the smallest integer value

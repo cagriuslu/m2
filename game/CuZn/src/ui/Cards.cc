@@ -1,4 +1,5 @@
 #include <cuzn/ui/Cards.h>
+#include <cuzn/object/HumanPlayer.h>
 #include <cuzn/Detail.h>
 #include <m2/Log.h>
 #include <m2/Game.h>
@@ -23,11 +24,7 @@ namespace {
 	}
 
 	TextSelectionBlueprint::Options list_cards_as_selection_options(const m2g::pb::CardType exclude_card_1, const m2g::pb::CardType exclude_card_2) {
-		const auto card_filter = GenerateCardTypesFilter(
-				{m2g::pb::CARD_CATEGORY_CITY_CARD,
-				m2g::pb::CARD_CATEGORY_INDUSTRY_CARD,
-				m2g::pb::CARD_CATEGORY_WILD_CARD});
-		const auto cards = card_filter(M2_PLAYER.GetCharacter());
+		const auto cards = PlayerCards(M2_PLAYER.GetCharacter());
 
 		m2g::pb::CardType filter_card_1 = exclude_card_1, filter_card_2 = exclude_card_2;
 		TextSelectionBlueprint::Options options;

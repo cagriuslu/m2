@@ -53,24 +53,23 @@ namespace m2 {
 		std::unique_ptr<const Proxy::InterCharacterMessage> ExecuteInteraction(Character& initiator, std::unique_ptr<const Proxy::InterCharacterMessage>&& data);
 		std::unique_ptr<const Proxy::InterCharacterMessage> ExecuteInteraction(std::unique_ptr<const Proxy::InterCharacterMessage>&& data);
 
-		[[nodiscard]] bool HasCard(m2g::pb::CardType card_type) const;
-		[[nodiscard]] bool HasCard(m2g::pb::CardCategory card_cat) const;
-		[[nodiscard]] size_t CountCard(m2g::pb::CardType card_type) const;
-		[[nodiscard]] size_t CountCard(m2g::pb::CardCategory card_cat) const;
+		[[nodiscard]] virtual int32_t Hash(int32_t initialValue) const = 0;
+		virtual void Store(pb::TurnBasedServerUpdate::ObjectDescriptor& objDesc) const = 0;
+		virtual void Load(const pb::TurnBasedServerUpdate::ObjectDescriptor& objDesc) = 0;
+
+		[[nodiscard]] virtual bool HasCard(m2g::pb::CardType) const = 0;
+		[[nodiscard]] virtual bool HasCard(m2g::pb::CardCategory) const = 0;
+		[[nodiscard]] virtual size_t CountCards(m2g::pb::CardType) const = 0;
+		[[nodiscard]] virtual size_t CountCards(m2g::pb::CardCategory) const = 0;
 		[[nodiscard]] virtual Iterator FindCards(m2g::pb::CardType card_type) const = 0;
 		[[nodiscard]] virtual Iterator FindCards(m2g::pb::CardCategory card_cat) const = 0;
-		[[nodiscard]] virtual Iterator BeginCards() const = 0;
 		[[nodiscard]] virtual Iterator EndCards() const = 0;
-		[[nodiscard]] std::vector<m2g::pb::CardType> CardTypes() const;
-		[[nodiscard]] std::vector<m2g::pb::CardType> CardTypes(m2g::pb::CardCategory card_cat) const;
 		virtual void AddCard(const Card& card) = 0;
 		virtual void RemoveCard(const Iterator& card) = 0;
-		virtual void ClearCards() = 0;
 
 		[[nodiscard]] virtual IFE GetVariable(m2g::pb::VariableType) const = 0;
 		virtual IFE SetVariable(m2g::pb::VariableType, IFE) = 0;
 		virtual void ClearVariable(m2g::pb::VariableType) = 0;
-		virtual void ClearVariables() = 0;
 
 		// Utilities
 
@@ -102,20 +101,23 @@ namespace m2 {
 		CompactCharacter() = default;
 		explicit CompactCharacter(uint64_t object_id);
 
-		[[nodiscard]] int32_t Hash(int32_t initialValue) const;
+		[[nodiscard]] int32_t Hash(int32_t initialValue) const override;
+		void Store(pb::TurnBasedServerUpdate::ObjectDescriptor& objDesc) const override;
+		void Load(const pb::TurnBasedServerUpdate::ObjectDescriptor& objDesc) override;
 
+		[[nodiscard]] bool HasCard(m2g::pb::CardType) const override;
+		[[nodiscard]] bool HasCard(m2g::pb::CardCategory) const override;
+		[[nodiscard]] size_t CountCards(m2g::pb::CardType) const override;
+		[[nodiscard]] size_t CountCards(m2g::pb::CardCategory) const override;
 		[[nodiscard]] Iterator FindCards(m2g::pb::CardType card_type) const override;
 		[[nodiscard]] Iterator FindCards(m2g::pb::CardCategory card_cat) const override;
-		[[nodiscard]] Iterator BeginCards() const override;
 		[[nodiscard]] Iterator EndCards() const override;
 		void AddCard(const Card& card) override;
 		void RemoveCard(const Iterator& card) override;
-		void ClearCards() override;
 
 		[[nodiscard]] IFE GetVariable(m2g::pb::VariableType) const override;
 		IFE SetVariable(m2g::pb::VariableType, IFE) override;
 		void ClearVariable(m2g::pb::VariableType) override;
-		void ClearVariables() override;
 	};
 
 	class FastCharacter final : public Character {
@@ -126,20 +128,28 @@ namespace m2 {
 		FastCharacter() = default;
 		explicit FastCharacter(uint64_t object_id);
 
-		[[nodiscard]] int32_t Hash(int32_t initialValue) const;
+		[[nodiscard]] int32_t Hash(int32_t initialValue) const override;
+		void Store(pb::TurnBasedServerUpdate::ObjectDescriptor& objDesc) const override;
+		void Load(const pb::TurnBasedServerUpdate::ObjectDescriptor& objDesc) override;
 
+		[[nodiscard]] bool HasCard(m2g::pb::CardType) const override;
+		[[nodiscard]] bool HasCard(m2g::pb::CardCategory) const override;
+		[[nodiscard]] size_t CountCards(m2g::pb::CardType) const override;
+		[[nodiscard]] size_t CountCards(m2g::pb::CardCategory) const override;
 		[[nodiscard]] Iterator FindCards(m2g::pb::CardType card_type) const override;
 		[[nodiscard]] Iterator FindCards(m2g::pb::CardCategory card_cat) const override;
-		[[nodiscard]] Iterator BeginCards() const override;
 		[[nodiscard]] Iterator EndCards() const override;
 		void AddCard(const Card& card) override;
 		void RemoveCard(const Iterator& card) override;
-		void ClearCards() override;
 
 		[[nodiscard]] IFE GetVariable(const m2g::pb::VariableType v) const override { return _variables[VariableIndex(v)]; }
 		IFE SetVariable(const m2g::pb::VariableType v, const IFE ife) override { _variables[VariableIndex(v)] = ife; return ife; }
 		void ClearVariable(const m2g::pb::VariableType v) override { _variables[VariableIndex(v)] = {}; }
-		void ClearVariables() override { _variables = std::vector<IFE>(pb::enum_value_count<m2g::pb::VariableType>()); }
+
+		// Utilities
+
+		[[nodiscard]] std::vector<m2g::pb::CardType> GetCardTypes() const;
+		[[nodiscard]] std::vector<m2g::pb::CardType> GetCardTypes(m2g::pb::CardCategory) const;
 
 	private:
 		static int VariableIndex(const m2g::pb::VariableType v) { return pb::enum_index(v); }
@@ -149,10 +159,11 @@ namespace m2 {
 	using CharacterVariant = std::variant<CompactCharacter,FastCharacter>;
 
 	// Filters
+
 	constexpr auto HasCardOfType(m2g::pb::CardType it) { return [it](const Character& c) { return c.HasCard(it); }; }
-	std::function<std::vector<m2g::pb::CardType>(Character&)> GenerateCardTypesFilter(m2g::pb::CardCategory card_category);
-	std::function<std::vector<m2g::pb::CardType>(Character&)> GenerateCardTypesFilter(std::initializer_list<m2g::pb::CardCategory> categoriesToFilter);
+
 	// Transformers
+
 	Character& ToCharacterBase(CharacterVariant& v);
 	FastCharacter& ToFastCharacter(CharacterVariant& v);
 	const FastCharacter& ToFastCharacter(const CharacterVariant& v);

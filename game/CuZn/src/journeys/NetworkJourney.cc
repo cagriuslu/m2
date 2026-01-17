@@ -103,7 +103,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::HandleSignal(const POIOrCancel
 
 std::optional<NetworkJourneyStep> NetworkJourney::HandleInitialEnterSignal() {
 	// Ask if double railroads should be built
-	if (M2G_PROXY.is_railroad_era() && 1 < M2_PLAYER.GetCharacter().CountCard(m2g::pb::ROAD_TILE)) {
+	if (M2G_PROXY.is_railroad_era() && 1 < M2_PLAYER.GetCharacter().CountCards(m2g::pb::ROAD_TILE)) {
 		_build_double_railroads = ask_for_confirmation("Build double railroads?", "", "Yes", "No");
 	}
 
@@ -370,7 +370,7 @@ m2::void_expected CanPlayerNetwork(m2::Character& player, const m2g::pb::TurnBas
 			return make_unexpected("Selected connections are the same");
 		}
 	}
-	if (player.CountCard(ROAD_TILE) < (network_action.connection_2() ? 2 : 1)) {
+	if (player.CountCards(ROAD_TILE) < (network_action.connection_2() ? 2 : 1)) {
 		return make_unexpected("Player doesn't have enough road tiles");
 	}
 	// Check if the connections can be built in this era

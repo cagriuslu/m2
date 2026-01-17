@@ -74,7 +74,7 @@ bool is_there_coal_on_the_board() {
 			M2_LEVEL.characters
 				| std::views::transform(m2::ToCharacterBase)
 				| std::views::filter(IsFactoryCharacter),
-			[](m2::Character& chr) {
+			[](const m2::Character& chr) {
 				return 0 < chr.GetVariable(COAL_CUBE_COUNT).GetIntOrZero();
 			});
 	// Check the market as well

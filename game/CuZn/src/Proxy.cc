@@ -506,8 +506,10 @@ int m2g::Proxy::total_card_count() const {
 	const auto player_card_lists = M2_LEVEL.multiPlayerObjectIds
 		| std::views::transform(m2::ObjectIdToObject)
 		| std::views::transform(m2::ObjectToCharacter)
-		| std::views::transform(m2::GenerateCardTypesFilter({pb::CARD_CATEGORY_CITY_CARD, pb::CARD_CATEGORY_INDUSTRY_CARD, pb::CARD_CATEGORY_WILD_CARD}));
-	const auto card_count = std::accumulate(player_card_lists.begin(), player_card_lists.end(), 0, [](const int sum, const std::vector<pb::CardType>& card_list) { return sum + I(card_list.size()); });
+		| std::views::transform([](m2::Character& chr) {
+			return I(chr.CountCards(pb::CARD_CATEGORY_CITY_CARD) + chr.CountCards(pb::CARD_CATEGORY_INDUSTRY_CARD) + chr.CountCards(pb::CARD_CATEGORY_WILD_CARD));
+		});
+	const auto card_count = std::accumulate(player_card_lists.begin(), player_card_lists.end(), 0);
 	return card_count + game_state_tracker().GetVariable(pb::DRAW_DECK_SIZE).GetIntOrZero();
 }
 bool m2g::Proxy::is_last_action_of_player() const {
@@ -699,7 +701,7 @@ m2g::Proxy::LiquidationDetails m2g::Proxy::prepare_railroad_era() {
 		| std::views::transform(m2::ObjectIdToObject)
 		| std::views::transform(m2::ObjectToCharacter),
 		[&](m2::Character& human_player) {
-			while (human_player.CountCard(pb::ROAD_TILE) < road_possession_limit) {
+			while (human_player.CountCards(pb::ROAD_TILE) < road_possession_limit) {
 				human_player.AddCard(road_card);
 			}
 		});
