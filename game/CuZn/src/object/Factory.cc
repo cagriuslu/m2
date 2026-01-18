@@ -92,23 +92,23 @@ City ToCityOfFactoryCharacter(m2::Character& chr) {
 	if (not IsFactoryCharacter(chr)) {
 		throw M2_ERROR("Character doesn't belong to a factory");
 	}
-	return chr.FindCards(m2g::pb::CARD_CATEGORY_CITY_CARD)->Type();
+	return *chr.GetFirstCardType(CARD_CATEGORY_CITY_CARD);
 }
 
 Industry ToIndustryOfFactoryCharacter(const m2::Character& chr) {
 	if (not IsFactoryCharacter(chr)) {
 		throw M2_ERROR("Character doesn't belong to a factory");
 	}
-	return chr.FindCards(m2g::pb::CARD_CATEGORY_INDUSTRY_CARD)->Type();
+	return *chr.GetFirstCardType(CARD_CATEGORY_INDUSTRY_CARD);
 }
 
 IndustryTile ToIndustryTileOfFactoryCharacter(const m2::Character& chr) {
 	if (not IsFactoryCharacter(chr)) {
 		throw M2_ERROR("Character doesn't belong to a factory");
 	}
-	auto industry = ToIndustryOfFactoryCharacter(chr);
-	auto industry_tile_category = industry_tile_category_of_industry(industry);
-	return chr.FindCards(industry_tile_category)->Type();
+	const auto industry = ToIndustryOfFactoryCharacter(chr);
+	const auto industry_tile_category = industry_tile_category_of_industry(industry);
+	return *chr.GetFirstCardType(industry_tile_category);
 }
 
 IndustryLocation ToIndustryLocationOfFactoryCharacter(m2::Character& chr) {
@@ -134,9 +134,9 @@ m2::void_expected InitFactory(m2::Object& obj, const m2::VecF& position, City ci
 
 	// Add all available information to the factories: industry, city, industry tile
 	auto& chr = obj.AddFastCharacter();
-	chr.AddCard(M2_GAME.GetCard(industry));
-	chr.AddCard(M2_GAME.GetCard(city));
-	chr.AddCard(M2_GAME.GetCard(industry_tile));
+	chr.AddCard(industry);
+	chr.AddCard(city);
+	chr.AddCard(industry_tile);
 
 	auto color = M2G_PROXY.player_colors[parent_index];
 	auto& _gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, industry_sprite_of_industry(industry));

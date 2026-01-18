@@ -66,17 +66,11 @@ FE Character::SubtractVariable(const m2g::pb::VariableType vt, const FE value, c
 	return GetVariable(vt).UnsafeGetFE();
 }
 
-namespace {
-	void tiny_character_iterator_incrementor(Character::Iterator& it) {
-		it.Set(nullptr);
-	}
-}
-
 CompactCharacter::CompactCharacter(uint64_t object_id) : Character(object_id) {}
 int32_t CompactCharacter::Hash(const int32_t initialValue) const {
 	auto hash = initialValue;
 	if (_card) {
-		hash = HashI(_card->Type(), hash);
+		hash = HashI(*_card, hash);
 	}
 	if (_variable.first && _variable.second) {
 		if (_variable.second.IsInt()) {
@@ -89,7 +83,7 @@ int32_t CompactCharacter::Hash(const int32_t initialValue) const {
 }
 void CompactCharacter::Store(pb::TurnBasedServerUpdate::ObjectDescriptor& objDesc) const {
 	if (_card) {
-		objDesc.add_cards(_card->Type());
+		objDesc.add_cards(*_card);
 	}
 	if (_variable.first && _variable.second) {
 		auto* var = objDesc.add_variables();
@@ -104,44 +98,39 @@ void CompactCharacter::Load(const pb::TurnBasedServerUpdate::ObjectDescriptor& o
 	if (1 < objDesc.variables_size()) {
 		throw M2_ERROR("Attempted to load a compact character from turn-based object descriptor with multiple variables");
 	}
-	_card = nullptr;
+	_card = std::nullopt;
 	_variable = {};
 	if (objDesc.cards_size()) {
-		_card = &M2_GAME.GetCard(objDesc.cards(0));
+		_card = objDesc.cards(0);
 	}
 	if (objDesc.variables_size()) {
 		_variable = std::make_pair(objDesc.variables(0).type(), IFE{objDesc.variables(0).ife()});
 	}
 }
 bool CompactCharacter::HasCard(const m2g::pb::CardType ct) const {
-	return _card && _card->Type() == ct;
+	return _card == ct;
 }
 bool CompactCharacter::HasCard(const m2g::pb::CardCategory cc) const {
-	return _card && _card->Category() == cc;
+	return _card && M2_GAME.GetCard(*_card).Category() == cc;
 }
 size_t CompactCharacter::CountCards(const m2g::pb::CardType ct) const {
-	return _card && _card->Type() == ct ? 1 : 0;
+	return HasCard(ct) ? 1 : 0;
 }
 size_t CompactCharacter::CountCards(const m2g::pb::CardCategory cc) const {
-	return _card && _card->Category() == cc ? 1 : 0;
+	return HasCard(cc) ? 1 : 0;
 }
-Character::Iterator CompactCharacter::FindCards(m2g::pb::CardType card_type) const {
-	return {*this, tiny_character_iterator_incrementor, card_type, 0,
-			_card && _card->Type() == card_type ? _card : nullptr};
+std::optional<m2g::pb::CardType> CompactCharacter::GetFirstCardType(const m2g::pb::CardCategory cc) const {
+	return HasCard(cc) ? _card : std::optional<m2g::pb::CardType>{};
 }
-Character::Iterator CompactCharacter::FindCards(m2g::pb::CardCategory cat) const {
-	return {*this, tiny_character_iterator_incrementor, cat, 0,
-			_card && _card->Category() == cat ? _card : nullptr};
+void CompactCharacter::AddCard(const m2g::pb::CardType ct) {
+	if (_card) {
+		throw M2_ERROR("CompactCharacter cannot hold more than one card");
+	}
+	_card = ct;
 }
-Character::Iterator CompactCharacter::EndCards() const {
-	return {*this, tiny_character_iterator_incrementor, {}, 0, nullptr};
-}
-void CompactCharacter::AddCard(const Card& card) {
-	_card = &card;
-}
-void CompactCharacter::RemoveCard(const Iterator& card) {
-	if (card != EndCards()) {
-		_card = {};
+void CompactCharacter::RemoveCard(const m2g::pb::CardType ct) {
+	if (_card == ct) {
+		_card = std::nullopt;
 	}
 }
 
@@ -162,42 +151,6 @@ void CompactCharacter::ClearVariable(const m2g::pb::VariableType v) {
 	if (_variable.first == v) {
 		_variable = {};
 	}
-}
-
-void m2::FullCharacterIteratorIncrementor(Character::Iterator& it) {
-	const auto& character = dynamic_cast<const FastCharacter&>(it.GetCharacter());
-	auto curr_index = it.GetIndex();
-	auto filter = it.GetFilter();
-	if (std::holds_alternative<std::monostate>(filter)) {
-		if (curr_index + 1 < character._cards.size()) {
-			// Next card
-			it.SetIndex(curr_index + 1);
-			it.Set(character._cards[curr_index + 1]);
-			return;
-		}
-	} else if (std::holds_alternative<m2g::pb::CardType>(filter)) {
-		for (size_t i = curr_index + 1; i < character._cards.size(); ++i) {
-			if (character._cards[i]->Type() == std::get<m2g::pb::CardType>(filter)) {
-				// Found card
-				it.SetIndex(i);
-				it.Set(character._cards[i]);
-				return;
-			}
-		}
-	} else if (std::holds_alternative<m2g::pb::CardCategory>(filter)) {
-		for (size_t i = curr_index + 1; i < character._cards.size(); ++i) {
-			if (character._cards[i]->Category() == std::get<m2g::pb::CardCategory>(filter)) {
-				// Found card
-				it.SetIndex(i);
-				it.Set(character._cards[i]);
-				return;
-			}
-		}
-	} else {
-		throw M2_ERROR("Invalid iterator filter");
-	}
-	// Card not found
-	it.Set(nullptr);
 }
 
 FastCharacter::FastCharacter(uint64_t object_id) : Character(object_id) {}
@@ -280,34 +233,18 @@ size_t FastCharacter::CountCards(const m2g::pb::CardCategory cc) const {
 	}
 	return count;
 }
-Character::Iterator FastCharacter::FindCards(m2g::pb::CardType card_type) const {
-	for (size_t i = 0; i < _cards.size(); ++i) {
-		const auto& card = _cards[i];
-		if (card->Type() == card_type) {
-			return {*this, FullCharacterIteratorIncrementor, card_type, i, card};
-		}
+std::optional<m2g::pb::CardType> FastCharacter::GetFirstCardType(const m2g::pb::CardCategory cc) const {
+	if (const auto it = std::ranges::find_if(_cards, [=](const Card* card) { return card->Category() == cc; }); it != _cards.end()) {
+		return (*it)->Type();
 	}
-	return EndCards();
+	return std::nullopt;
 }
-Character::Iterator FastCharacter::FindCards(m2g::pb::CardCategory cat) const {
-	for (size_t i = 0; i < _cards.size(); ++i) {
-		const auto& card = _cards[i];
-		if (card->Category() == cat) {
-			return {*this, FullCharacterIteratorIncrementor, cat, i, card};
-		}
-	}
-	return EndCards();
+void FastCharacter::AddCard(const m2g::pb::CardType ct) {
+	_cards.emplace_back(&M2_GAME.GetCard(ct));
 }
-Character::Iterator FastCharacter::EndCards() const {
-	return {*this, FullCharacterIteratorIncrementor, {}, 0, nullptr};
-}
-void FastCharacter::AddCard(const Card& card) {
-	_cards.emplace_back(&card);
-}
-void FastCharacter::RemoveCard(const Iterator& card) {
-	if (card != EndCards()) {
-		auto it = _cards.cbegin();
-		std::advance(it, card.GetIndex());
+void FastCharacter::RemoveCard(const m2g::pb::CardType ct) {
+	const auto* card = &M2_GAME.GetCard(ct);
+	if (const auto it = std::ranges::find(_cards, card); it != _cards.end()) {
 		_cards.erase(it);
 	}
 }
@@ -322,6 +259,12 @@ std::vector<m2g::pb::CardType> FastCharacter::GetCardTypes(const m2g::pb::CardCa
 		[=](const Card* card) { return card->Category() == cc; },
 		[](const Card* card) { return card->Type(); });
 	return retval;
+}
+const Card* FastCharacter::GetFirstCard(const m2g::pb::CardCategory cc) const {
+	if (const auto it = std::ranges::find_if(_cards, [=](const Card* card) { return card->Category() == cc; }); it != _cards.end()) {
+		return *it;
+	}
+	return nullptr;
 }
 
 Character& m2::ToCharacterBase(CharacterVariant& v) {

@@ -24,7 +24,7 @@ namespace {
 		if (not is_card(card)) {
 			throw M2_ERROR("Card is not a card");
 		}
-		if (player.FindCards(card) == player.EndCards()) {
+		if (not player.HasCard(card)) {
 			throw M2_ERROR("Player does not own the given card");
 		}
 
@@ -451,7 +451,7 @@ m2::void_expected CanPlayerBuild(m2::Character& player, const m2g::pb::TurnBased
 	if (not is_card(build_action.card())) {
 		return make_unexpected("Selected card is not a card");
 	}
-	if (player.FindCards(build_action.card()) == player.EndCards()) {
+	if (not player.HasCard(build_action.card())) {
 		return make_unexpected("Player does not have the selected card");
 	}
 
@@ -459,7 +459,7 @@ m2::void_expected CanPlayerBuild(m2::Character& player, const m2g::pb::TurnBased
 	if (not is_industry_tile(build_action.industry_tile())) {
 		return make_unexpected("Selected industry tile is not an industry tile");
 	}
-	if (player.FindCards(build_action.industry_tile()) == player.EndCards()) {
+	if (not player.HasCard(build_action.industry_tile())) {
 		return make_unexpected("Player does not have the selected tile");
 	}
 	auto industry = industry_of_industry_tile(build_action.industry_tile());
@@ -622,7 +622,7 @@ std::pair<m2g::pb::CardType,int> ExecuteBuildAction(m2::Character& player, const
 	const auto& tile_card = M2_GAME.GetCard(build_action.industry_tile());
 	auto tile_category = tile_card.Category();
 	auto tile_type = PlayerNextIndustryTileOfCategory(player, tile_category);
-	player.RemoveCard(player.FindCards(*tile_type));
+	player.RemoveCard(*tile_type);
 
 	// Calculate the cost before building the industry
 	auto coal_from_market = std::count_if(build_action.coal_sources().begin(), build_action.coal_sources().end(), [](const auto& coal_source) {

@@ -27,9 +27,8 @@ void init_merchant(m2::Object& obj, const m2::VecF& position) {
 	gfx.position = position;
 	gfx.preDraw = [&chr](m2::Graphic& g, const m2::Stopwatch::Duration&) {
 		// Set the sprite if license is added. Licenses are assigned after population, thus do it pre_draw.
-		auto it = chr.FindCards(m2g::pb::CARD_CATEGORY_MERCHANT_LICENSE);
-		if (it != chr.EndCards()) {
-			g.visual = &std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(it->GameSprite()));
+		if (const auto* merchantLicense = dynamic_cast<const m2::FastCharacter&>(chr).GetFirstCard(m2g::pb::CARD_CATEGORY_MERCHANT_LICENSE)) {
+			g.visual = &std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(merchantLicense->GameSprite()));
 		} else {
 			g.visual = std::monostate{};
 		}

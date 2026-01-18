@@ -12,7 +12,7 @@ m2::void_expected PlayerInitOtherInstance(m2::Object& obj);
 
 size_t PlayerCardCount(const m2::Character& player);
 std::vector<m2g::pb::CardType> PlayerCards(const m2::Character& player);
-inline bool PlayerHasCard(const m2::Character& player, const m2g::pb::CardType card) { return player.FindCards(card) != player.EndCards(); }
+inline bool PlayerHasCard(const m2::Character& player, const m2g::pb::CardType card) { return player.HasCard(card); }
 
 // Resource Accessors
 

@@ -99,7 +99,7 @@ void m2g::Proxy::turnBasedServerPopulate(MAYBE const std::string& name, MAYBE co
 				auto merchant_object_id = merchant_object_ids[possibly_active_merchant_loc];
 				auto& merchant_char = M2_LEVEL.objects[merchant_object_id].GetCharacter();
 				LOG_DEBUG("Adding license to merchant", m2g::pb::CardType_Name(license));
-				merchant_char.AddCard(M2_GAME.GetCard(license));
+				merchant_char.AddCard(license);
 				merchant_char.SetVariable(pb::BEER_BARREL_COUNT, IFE{merchant_char.GetVariable(pb::BEER_BARREL_COUNT).GetIntOrZero() + 1});
 			}
 		}
@@ -210,7 +210,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		auto card = _draw_deck.back();
 		_draw_deck.pop_back();
 		game_state_tracker().SetVariable(pb::DRAW_DECK_SIZE, IFE{I(_draw_deck.size())});
-		turn_holder_character.AddCard(M2_GAME.GetCard(card));
+		turn_holder_character.AddCard(card);
 
 		// Check if first turn finished for all players
 		if (_waiting_players.empty()) {
@@ -234,7 +234,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 			auto card = _draw_deck.back();
 			_draw_deck.pop_back();
 			game_state_tracker().SetVariable(pb::DRAW_DECK_SIZE, IFE{I(_draw_deck.size())});
-			turn_holder_character.AddCard(M2_GAME.GetCard(card));
+			turn_holder_character.AddCard(card);
 		}
 
 		game_state_tracker().SetVariable(pb::IS_LAST_ACTION_OF_PLAYER, IFE{0});
@@ -702,7 +702,7 @@ m2g::Proxy::LiquidationDetails m2g::Proxy::prepare_railroad_era() {
 		| std::views::transform(m2::ObjectToCharacter),
 		[&](m2::Character& human_player) {
 			while (human_player.CountCards(pb::ROAD_TILE) < road_possession_limit) {
-				human_player.AddCard(road_card);
+				human_player.AddCard(pb::ROAD_TILE);
 			}
 		});
 

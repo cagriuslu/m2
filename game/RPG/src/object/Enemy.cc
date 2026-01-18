@@ -63,8 +63,8 @@ m2::void_expected Enemy::init(m2::Object& obj, const m2::VecF& position) {
 	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2::pb::PhysicsLayer::SEA_LEVEL);
 
 	auto& chr = obj.AddFastCharacter();
-	chr.AddCard(M2_GAME.GetCard(m2g::pb::CARD_REUSABLE_GUN));
-	chr.AddCard(M2_GAME.GetCard(m2g::pb::CARD_REUSABLE_ENEMY_SWORD));
+	chr.AddCard(m2g::pb::CARD_REUSABLE_GUN);
+	chr.AddCard(m2g::pb::CARD_REUSABLE_ENEMY_SWORD);
 	chr.SetVariable(m2g::pb::RESOURCE_HP, 1.0f);
 
     obj.impl = std::make_unique<Enemy>(obj, M2G_PROXY.get_enemy(obj.GetType()));
@@ -209,23 +209,22 @@ void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
 			auto capability = ai.capabilities(0);
 			switch (capability) {
 				case pb::CAPABILITY_RANGED: {
-					auto it = obj.GetCharacter().FindCards(m2g::pb::CARD_CATEGORY_DEFAULT_RANGED_WEAPON);
-					if (it && it->GetConstant(CONSTANT_RANGED_ENERGY_REQUIREMENT).GetFOrZero() <= obj.GetCharacter().GetVariable(RESOURCE_RANGED_ENERGY).GetFOrZero()) {
+					if (const auto* rangedWeapon = dynamic_cast<const m2::FastCharacter&>(obj.GetCharacter()).GetFirstCard(CARD_CATEGORY_DEFAULT_RANGED_WEAPON);
+						rangedWeapon && rangedWeapon->GetConstant(CONSTANT_RANGED_ENERGY_REQUIREMENT).GetFOrZero() <= obj.GetCharacter().GetVariable(RESOURCE_RANGED_ENERGY).GetFOrZero()) {
 						obj.GetCharacter().ClearVariable(RESOURCE_RANGED_ENERGY);
-						auto shoot_direction = M2_PLAYER.GetPhysique().position - selfPosition;
-						rpg::create_projectile(*m2::CreateObject({}, obj.GetId()), selfPosition,
-							shoot_direction, *it, false);
+						const auto shoot_direction = M2_PLAYER.GetPhysique().position - selfPosition;
+						create_projectile(*m2::CreateObject({}, obj.GetId()), selfPosition, shoot_direction, *rangedWeapon, false);
 						// Knock-back
 						obj.GetPhysique().body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->ApplyForceToCenter(m2::VecF::CreateUnitVectorWithAngle(shoot_direction.GetAngle() + m2::PI) * 5000.0f);
 					}
 					break;
 				}
 				case pb::CAPABILITY_MELEE: {
-					auto it = obj.GetCharacter().FindCards(m2g::pb::CARD_CATEGORY_DEFAULT_MELEE_WEAPON);
-					if (it && it->GetConstant(CONSTANT_MELEE_ENERGY_REQUIREMENT).GetFOrZero() <= obj.GetCharacter().GetVariable(RESOURCE_MELEE_ENERGY).GetFOrZero()) {
+					if (const auto* meleeWeapon = dynamic_cast<const m2::FastCharacter&>(obj.GetCharacter()).GetFirstCard(CARD_CATEGORY_DEFAULT_MELEE_WEAPON);
+						meleeWeapon && meleeWeapon->GetConstant(CONSTANT_MELEE_ENERGY_REQUIREMENT).GetFOrZero() <= obj.GetCharacter().GetVariable(RESOURCE_MELEE_ENERGY).GetFOrZero()) {
 						obj.GetCharacter().ClearVariable(RESOURCE_MELEE_ENERGY);
-						rpg::create_blade(*m2::CreateObject({}, obj.GetId()), selfPosition,
-							M2_PLAYER.GetPhysique().position - selfPosition, *it, false);
+						create_blade(*m2::CreateObject({}, obj.GetId()), selfPosition,
+							M2_PLAYER.GetPhysique().position - selfPosition, *meleeWeapon, false);
 					}
 					break;
 				}

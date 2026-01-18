@@ -224,7 +224,7 @@ m2::void_expected CanPlayerDevelop(m2::Character& player, const m2g::pb::TurnBas
 	if (not is_card(develop_action.card())) {
 		return make_unexpected("Selected card is not a card");
 	}
-	if (player.FindCards(develop_action.card()) == player.EndCards()) {
+	if (not player.HasCard(develop_action.card())) {
 		return make_unexpected("Player does not have the selected card");
 	}
 
@@ -233,8 +233,7 @@ m2::void_expected CanPlayerDevelop(m2::Character& player, const m2g::pb::TurnBas
 		|| (develop_action.industry_tile_2() && not is_industry_tile(develop_action.industry_tile_2()))) {
 		return make_unexpected("Selected industry tile is not an industry tile");
 	}
-	if (player.FindCards(develop_action.industry_tile_1()) == player.EndCards()
-		|| (develop_action.industry_tile_2() && player.FindCards(develop_action.industry_tile_2()) == player.EndCards())) {
+	if (not player.HasCard(develop_action.industry_tile_1()) || (develop_action.industry_tile_2() && not player.HasCard(develop_action.industry_tile_2()))) {
 		return make_unexpected("Player does not have the selected tile");
 	}
 
@@ -246,7 +245,7 @@ m2::void_expected CanPlayerDevelop(m2::Character& player, const m2g::pb::TurnBas
 	}
 	if (develop_action.industry_tile_2()) {
 		// Reserve the first tile
-		player.RemoveCard(player.FindCards(develop_action.industry_tile_1()));
+		player.RemoveCard(develop_action.industry_tile_1());
 		// Check the tile
 		const auto& selected_industry_tile_2 = M2_GAME.GetCard(develop_action.industry_tile_2());
 		auto next_industry_tile_2 = PlayerNextIndustryTileOfCategory(player, selected_industry_tile_2.Category());
@@ -255,7 +254,7 @@ m2::void_expected CanPlayerDevelop(m2::Character& player, const m2g::pb::TurnBas
 			success = false;
 		}
 		// Give the tile back
-		player.AddCard(M2_GAME.GetCard(develop_action.industry_tile_1()));
+		player.AddCard(develop_action.industry_tile_1());
 		if (not success) {
 			return make_unexpected("Player cannot develop the selected tile");
 		}
@@ -363,9 +362,9 @@ std::pair<CardType,int> ExecuteDevelopAction(m2::Character& player, const m2g::p
 	}
 
 	// Take tile from player
-	player.RemoveCard(player.FindCards(develop_action.industry_tile_1()));
+	player.RemoveCard(develop_action.industry_tile_1());
 	if (develop_action.industry_tile_2()) {
-		player.RemoveCard(player.FindCards(develop_action.industry_tile_2()));
+		player.RemoveCard(develop_action.industry_tile_2());
 	}
 
 	FlipExhaustedFactories();

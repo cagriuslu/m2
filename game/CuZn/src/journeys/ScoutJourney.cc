@@ -14,7 +14,7 @@ m2::void_expected CanPlayerAttemptToScout(m2::Character& player) {
 	}
 
 	// Player needs to have no other Wild cards
-	if (player.FindCards(m2g::pb::CARD_CATEGORY_WILD_CARD) != player.EndCards()) {
+	if (player.HasCard(m2g::pb::CARD_CATEGORY_WILD_CARD)) {
 		return m2::make_unexpected("Scout action is not allowed while already holding a wild card");
 	}
 
@@ -66,12 +66,10 @@ m2::void_expected CanPlayerScout(m2::Character& player, const m2g::pb::TurnBased
 }
 
 m2g::pb::CardType ExecuteScoutAction(m2::Character& player, const m2g::pb::TurnBasedClientCommand_ScoutAction& scout_action) {
-	auto card_1_it = player.FindCards(scout_action.card_1());
-	player.RemoveCard(card_1_it);
-	auto card_2_it = player.FindCards(scout_action.card_2());
-	player.RemoveCard(card_2_it);
-	player.AddCard(M2_GAME.GetCard(m2g::pb::WILD_INDUSTRY_CARD));
-	player.AddCard(M2_GAME.GetCard(m2g::pb::WILD_LOCATION_CARD));
+	player.RemoveCard(scout_action.card_1());
+	player.RemoveCard(scout_action.card_2());
+	player.AddCard(m2g::pb::WILD_INDUSTRY_CARD);
+	player.AddCard(m2g::pb::WILD_LOCATION_CARD);
 
 	return scout_action.card_0();
 }

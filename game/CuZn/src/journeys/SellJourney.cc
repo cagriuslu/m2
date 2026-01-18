@@ -348,7 +348,7 @@ m2g::pb::CardType ExecuteSellAction(m2::Character& player, const m2g::pb::TurnBa
 	// Merchant develop benefit
 	if (sell_action.merchant_develop_benefit_industry_tile()) {
 		// Take tile from player
-		player.RemoveCard(player.FindCards(sell_action.merchant_develop_benefit_industry_tile()));
+		player.RemoveCard(sell_action.merchant_develop_benefit_industry_tile());
 	}
 	if (DoesBeerSourcesContainMerchant(sell_action.beer_sources(), sell_action.merchant_location())) {
 		if (const auto incomePointsBenefit = MerchantIncomePointsBenefit(sell_action.merchant_location())) {

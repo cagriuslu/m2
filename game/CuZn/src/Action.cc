@@ -107,8 +107,7 @@ m2::expected<int> HandleActionWhileNotLiquidating(m2::Character& turnHolderChara
 	// Discard card from player
 	if (cardToDiscard) {
 		LOG_INFO("Discard card from player", M2_GAME.GetCard(cardToDiscard).in_game_name());
-		const auto card_it = turnHolderCharacter.FindCards(cardToDiscard);
-		turnHolderCharacter.RemoveCard(card_it);
+		turnHolderCharacter.RemoveCard(cardToDiscard);
 	}
 	// Deduct money from player
 	LOG_INFO("Deducting money from player", moneySpent);

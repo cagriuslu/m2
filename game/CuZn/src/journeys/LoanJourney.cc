@@ -50,7 +50,7 @@ m2::void_expected CanPlayerLoan(m2::Character& player, const m2g::pb::TurnBasedC
 	}
 
 	// Check if the player holds the selected card
-	if (player.FindCards(loan_action.card()) == player.EndCards()) {
+	if (not player.HasCard(loan_action.card())) {
 		return m2::make_unexpected("Player does not have the selected card: " + m2::pb::enum_name(loan_action.card()));
 	}
 

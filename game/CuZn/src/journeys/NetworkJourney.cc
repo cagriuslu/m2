@@ -354,7 +354,7 @@ m2::void_expected CanPlayerNetwork(m2::Character& player, const m2g::pb::TurnBas
 	if (not is_card(network_action.card())) {
 		return make_unexpected("Selected card is not a card");
 	}
-	if (player.FindCards(network_action.card()) == player.EndCards()) {
+	if (not player.HasCard(network_action.card())) {
 		return make_unexpected("Player does not have the selected card");
 	}
 
@@ -406,11 +406,9 @@ std::pair<m2g::pb::CardType,int> ExecuteNetworkAction(m2::Character& player, con
 	// Assume everything is validated
 
 	// Take road tiles from player
-	auto road_tile_it = player.FindCards(ROAD_TILE);
-	player.RemoveCard(road_tile_it);
+	player.RemoveCard(ROAD_TILE);
 	if (network_action.connection_2()) {
-		auto road_tile_it_2 = player.FindCards(ROAD_TILE);
-		player.RemoveCard(road_tile_it_2);
+		player.RemoveCard(ROAD_TILE);
 	}
 
 	// Calculate the cost of building the road

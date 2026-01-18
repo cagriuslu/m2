@@ -36,13 +36,13 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj, const m2::VecF& positi
 		// Lookup possession count
 		const auto& card = M2_GAME.GetCard(industry_tile);
 		auto possession_limit = card.GetConstant(m2g::pb::POSSESSION_LIMIT).GetIntOrZero();
-		m2Repeat(possession_limit) { chr.AddCard(card); }
+		m2Repeat(possession_limit) { chr.AddCard(industry_tile); }
 	}
 
 	// Add connection tiles
 	const auto& road_card = M2_GAME.GetCard(m2g::pb::ROAD_TILE);
 	auto road_possession_limit = road_card.GetConstant(m2g::pb::POSSESSION_LIMIT).GetIntOrZero();
-	m2Repeat(road_possession_limit) { chr.AddCard(road_card); }
+	m2Repeat(road_possession_limit) { chr.AddCard(m2g::pb::ROAD_TILE); }
 
 	auto& phy = obj.AddPhysique();
 	phy.position = position;
@@ -188,13 +188,13 @@ m2::void_expected PlayerInitOtherInstance(m2::Object& obj) {
 		// Lookup possession count
 		const auto& card = M2_GAME.GetCard(industry_tile);
 		auto possession_limit = card.GetConstant(m2g::pb::POSSESSION_LIMIT).GetIntOrZero();
-		m2Repeat(possession_limit) { chr.AddCard(card); }
+		m2Repeat(possession_limit) { chr.AddCard(industry_tile); }
 		 }
 
 	// Add connection tiles
 	const auto& road_card = M2_GAME.GetCard(m2g::pb::ROAD_TILE);
 	auto road_possession_limit = road_card.GetConstant(m2g::pb::POSSESSION_LIMIT).GetIntOrZero();
-	m2Repeat(road_possession_limit) { chr.AddCard(road_card); }
+	m2Repeat(road_possession_limit) { chr.AddCard(m2g::pb::ROAD_TILE); }
 
 	return {};
 }
@@ -255,16 +255,12 @@ size_t PlayerIndustryTileCount(const m2::Character& player) {
 }
 std::optional<m2g::pb::CardType> PlayerNextIndustryTileOfCategory(const m2::Character& player, const m2g::pb::CardCategory tile_category) {
 	// Find the card with the category with the smallest integer value
-	auto tile_card = m2g::pb::CardType_MAX;
-	for (auto card_it = player.FindCards(tile_category); card_it != player.EndCards(); ++card_it) {
-		tile_card = std::min(tile_card, card_it->Type());
-	}
-
-	if (tile_card == m2g::pb::CardType_MAX) {
+	auto tiles = dynamic_cast<const m2::FastCharacter&>(player).GetCardTypes(tile_category);
+	if (tiles.empty()) {
 		return std::nullopt;
-	} else {
-		return tile_card;
 	}
+	std::ranges::sort(tiles);
+	return tiles[0];
 }
 std::optional<m2g::pb::CardType> PlayerNextIndustryTileOfIndustry(const m2::Character& player, const Industry industry) {
 	return PlayerNextIndustryTileOfCategory(player, industry_tile_category_of_industry(industry));

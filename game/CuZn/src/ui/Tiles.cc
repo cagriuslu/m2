@@ -76,20 +76,11 @@ UiPanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::CardType
 					.allow_multiple_selection = false,
 					.show_scroll_bar = false,
 					.onAction = [exclude_tile](const TextSelection &self) -> UiAction {
-						auto tile_to_filter = exclude_tile; // Create a copy because it'll be mutated once the filtered tile is encountered
-						if (auto industry_type_selections = self.GetSelectedOptions(); not industry_type_selections.empty()) {
-							auto industry_type_selection = industry_type_selections[0];
-							auto industry_type_selection_int = I(industry_type_selection);
-							auto industry_type = static_cast<m2g::pb::CardCategory>(industry_type_selection_int);
-							// Gather the industry tiles
-							std::vector<IndustryTile> industry_tiles;
-							for (auto card_it = M2_PLAYER.GetCharacter().FindCards(industry_type); card_it != M2_PLAYER.GetCharacter().EndCards(); ++card_it) {
-								if (card_it->Type() == tile_to_filter) {
-									// Don't emplace, clear filter because only one tile is filtered
-									tile_to_filter = {};
-								} else {
-									industry_tiles.emplace_back(card_it->Type());
-								}
+						if (const auto industry_type_selections = self.GetSelectedOptions(); not industry_type_selections.empty()) {
+							const auto industry_type = static_cast<m2g::pb::CardCategory>(I(industry_type_selections[0]));
+							auto industry_tiles = dynamic_cast<const m2::FastCharacter&>(M2_PLAYER.GetCharacter()).GetCardTypes(industry_type);
+							if (const auto it = std::ranges::find(industry_tiles, exclude_tile); it != industry_tiles.end()) {
+								industry_tiles.erase(it);
 							}
 							// Sort the tiles
 							std::ranges::sort(industry_tiles, TileComparator{});

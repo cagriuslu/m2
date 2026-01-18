@@ -73,7 +73,7 @@ m2::void_expected InitRoad(m2::Object& obj, const m2::VecF& position, const Conn
 	// Add the city cards to the character
 	auto& chr = obj.AddFastCharacter();
 	for (const auto city : cities_from_connection(connection)) {
-		chr.AddCard(M2_GAME.GetCard(city));
+		chr.AddCard(city);
 	}
 
 	const auto parent_id = obj.GetParentId();

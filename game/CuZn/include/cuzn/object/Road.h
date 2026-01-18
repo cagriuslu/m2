@@ -20,11 +20,8 @@ constexpr auto ToCitiesOfRoadCharacter = [](const m2::Character& chr) -> std::se
 	if (not IsRoadCharacter(chr)) {
 		throw M2_ERROR("Character doesn't belong to canal or railroad");
 	}
-	std::set<m2g::pb::CardType> city_cards;
-	for (auto it = chr.FindCards(m2g::pb::CARD_CATEGORY_CITY_CARD); it != chr.EndCards(); ++it) {
-		city_cards.insert(it->Type());
-	}
-	return city_cards;
+	const auto cardTypes = dynamic_cast<const m2::FastCharacter&>(chr).GetCardTypes(m2g::pb::CARD_CATEGORY_CITY_CARD);
+	return {cardTypes.begin(), cardTypes.end()};
 };
 
 m2::void_expected InitRoad(m2::Object& obj, const m2::VecF& position, Connection connection);
