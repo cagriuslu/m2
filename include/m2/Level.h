@@ -4,6 +4,7 @@
 #include <m2/Object.h>
 #include <m2/bulk_sheet_editor/State.h>
 #include <m2/containers/DrawList.h>
+#include <m2/component/character/CharacterVariant.h>
 #include <m2/game/Pathfinder.h>
 #include <m2/game/Selection.h>
 #include <m2/level_editor/State.h>

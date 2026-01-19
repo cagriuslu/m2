@@ -1,8 +1,9 @@
 #pragma once
 
+#include "cuzn/Detail.h"
+#include <m2/component/character/FastCharacter.h>
 #include <m2/Object.h>
 #include <set>
-#include "cuzn/Detail.h"
 
 // Accessors
 m2::Object* FindRoadAtLocation(m2g::pb::SpriteType location);
