@@ -22,6 +22,7 @@ namespace m2 {
 	// Transformers
 
 	inline ShiftedPoolId ToShiftedPoolId(const Id id) { return id & gShiftedPoolIdMask; }
+	inline PoolId ToPoolId(const Id id) { return ToShiftedPoolId(id) >> gPoolIdShiftCount; }
 	inline uint64_t IdToKey(const Id id) { return id & 0xFFFFFF000000ull; }
 	inline uint64_t IdToIndex(const Id id) { return id & 0xFFFFFFull; }
 	constexpr auto pool_iterator_to_data = [](const auto &it) { return it.Data(); };

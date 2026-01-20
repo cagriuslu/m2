@@ -149,6 +149,16 @@ namespace m2 {
 	// each variant type within a Dummy type. Then, initializes this new variant with the Dummy wrapped version of T.
 	// Then, queries the index of this new variant. Use ::value to get the index of T in VariantT.
 
+	// Tuple utilities
+
+	template <typename T, typename TupleT>
+	struct GetIndexInTuple;
+	template <typename T, typename... Ts>
+	struct GetIndexInTuple<T, std::tuple<Ts...>> : std::integral_constant<size_t, std::variant<Dummy<Ts>...>(Dummy<T>()).index()> {};
+	// First, unwraps the types contained in a tuple with std::tuple<Ts...>. Then, forms a new variant by wrapping
+	// each tuple type within a Dummy type. Then, initializes this new variant with the Dummy wrapped version of T.
+	// Then, queries the index of this new variant. Use ::value to get the index of T in TupleT.
+
 	// Algorithms
 
 	template <typename InputIt, typename OutputIt, typename UnaryPredicate, typename UnaryOperation>

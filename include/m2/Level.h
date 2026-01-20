@@ -3,6 +3,7 @@
 #include <m2/Meta.h>
 #include <m2/Object.h>
 #include <m2/bulk_sheet_editor/State.h>
+#include <m2/component/character/CharacterStorage.h>
 #include <m2/containers/DrawList.h>
 #include <m2/component/character/CharacterVariant.h>
 #include <m2/game/Pathfinder.h>
@@ -40,6 +41,8 @@ namespace m2 {
 		Stopwatch::Duration _totalPauseDuration; /// Total duration spent while the level was paused
 		std::optional<Stopwatch> _pausedAt; //// A stopwatch that is initialized only when the level is first paused
 		std::optional<network::Timecode> _nextGameStateHashTimecode;
+
+		CharacterStorage _characterStorage;
 
 		// Special properties effecting the simulation
 
@@ -83,7 +86,6 @@ namespace m2 {
 		Pool<Physique> physics;
 		Pool<Light> lights;
 		Pool<SoundEmitter> soundEmitters;
-		Pool<CharacterVariant> characters;
 		std::array<b2World*, PHYSICS_LAYER_COUNT> world{};
 		World world2;
 		box2d::ContactListener* contactListener{};
@@ -152,6 +154,11 @@ namespace m2 {
 		void Unpause();
 		void SetNextGameStateHashTimecode(const network::Timecode tc) { _nextGameStateHashTimecode = tc; }
 		void MarkForDeletion() { _markedForDeletion = true; }
+
+		// Objects
+
+		const CharacterStorage& GetCharacterStorage() const { return _characterStorage; }
+		CharacterStorage& GetCharacterStorage() { return _characterStorage; }
 
 		// Dimming control
 

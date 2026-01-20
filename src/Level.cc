@@ -31,7 +31,7 @@ Level::~Level() {
 	physics.Clear();
 	lights.Clear();
 	soundEmitters.Clear();
-	characters.Clear();
+	_characterStorage.ClearPools();
 
 	if (_debugDraw) {
 		delete static_cast<third_party::physics::box2d::DebugDraw*>(_debugDraw);
@@ -199,9 +199,7 @@ int32_t Level::CalculateGameStateHash() {
 		hash = HashI(ToRawValue(phy.position.GetY()), hash);
 		hash = HashI(ToRawValue(phy.orientation), hash);
 	}
-	for (const auto& chr : characters) {
-		hash = std::visit([hash](const auto& c) -> int32_t { return c.Hash(hash); }, chr);
-	}
+	hash = _characterStorage.HashCharacters(hash);
 	_nextGameStateHashTimecode.reset();
 	return hash;
 }

@@ -80,9 +80,6 @@ LightId Object::GetLightId() const {
 SoundEmitterId Object::GetSoundId() const {
 	return _sound_emitter_id;
 }
-CharacterId Object::GetCharacterId() const {
-    return _character_id;
-}
 
 Object* Object::TryGetParent() const {
     return _parent_id ? M2_LEVEL.objects.Get(_parent_id) : nullptr;
@@ -107,11 +104,7 @@ SoundEmitter* Object::TryGetSoundEmitter() const {
 	return _sound_emitter_id ? M2_LEVEL.soundEmitters.Get(_sound_emitter_id) : nullptr;
 }
 Character* Object::TryGetCharacter() const {
-	auto* character_variant = M2_LEVEL.characters.Get(_character_id);
-	if (not character_variant) {
-		return nullptr;
-	}
-	return &ToCharacterBase(*character_variant);
+	return M2_LEVEL.GetCharacterStorage().GetCharacter(_character_id);
 }
 
 Physique& Object::GetPhysique() const {
@@ -131,8 +124,7 @@ SoundEmitter& Object::GetSoundEmitter() const {
 	return M2_LEVEL.soundEmitters[_sound_emitter_id];
 }
 Character& Object::GetCharacter() const {
-    auto& it = M2_LEVEL.characters[_character_id];
-    return ToCharacterBase(it);
+	return *TryGetCharacter();
 }
 
 VecF Object::InferPositionF() const {
@@ -188,16 +180,6 @@ SoundEmitter& Object::AddSoundEmitter() {
 	auto sound = M2_LEVEL.soundEmitters.Emplace(GetId());
 	_sound_emitter_id = sound.GetId();
 	return *sound;
-}
-Character& Object::AddCompactCharacter() {
-    auto character = M2_LEVEL.characters.Emplace(std::in_place_type<CompactCharacter>, GetId());
-    _character_id = character.GetId();
-    return std::get<CompactCharacter>(*character);
-}
-Character& Object::AddFastCharacter() {
-    auto character = M2_LEVEL.characters.Emplace(std::in_place_type<FastCharacter>, GetId());
-    _character_id = character.GetId();
-    return std::get<FastCharacter>(*character);
 }
 
 void Object::MoveLayer(const std::optional<pb::PhysicsLayer> newPhysicsLayer, const std::optional<DrawLayer> newDrawLayer) {
@@ -279,7 +261,7 @@ void Object::RemoveSoundEmitter() {
 }
 void Object::RemoveCharacter() {
 	if (_character_id) {
-		M2_LEVEL.characters.Free(_character_id);
+		M2_LEVEL.GetCharacterStorage().FreeCharacter(_character_id);
 		_character_id = 0;
 	}
 }

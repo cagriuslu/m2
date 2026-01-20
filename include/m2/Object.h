@@ -46,7 +46,7 @@ namespace m2 {
 		[[nodiscard]] GraphicId GetGraphicId() const;
 		[[nodiscard]] LightId GetLightId() const;
 		[[nodiscard]] SoundEmitterId GetSoundId() const;
-		[[nodiscard]] CharacterId GetCharacterId() const;
+		[[nodiscard]] CharacterId GetCharacterId() const { return _character_id; }
 
 		[[nodiscard]] Object* TryGetParent() const;
 		[[nodiscard]] Group* TryGetGroup() const;
@@ -73,8 +73,6 @@ namespace m2 {
 		Graphic& AddGraphic(DrawLayer layer, m2g::pb::SpriteType, const VecF& position = {});
 		Light& AddLight();
 		SoundEmitter& AddSoundEmitter();
-		Character& AddCompactCharacter();
-		Character& AddFastCharacter();
 
 		/// This method may cause some of the components IDs to change. Must be called from a deferred action.
 		void MoveLayer(std::optional<pb::PhysicsLayer>, std::optional<DrawLayer>);
@@ -85,7 +83,7 @@ namespace m2 {
 		void RemoveSoundEmitter();
 		void RemoveCharacter();
 
-	   private:
+	private:
 		mutable std::optional<ObjectId> _id;
 		m2g::pb::ObjectType _object_type{};
 		ObjectId _parent_id{};
@@ -99,6 +97,10 @@ namespace m2 {
 		LightId _light_id{}; // TODO make part of another component?
 		SoundEmitterId _sound_emitter_id{};
 		CharacterId _character_id{};
+
+		/// Give friendship to AddCharacterToObject so that it can add a character to the Object
+		template <std::size_t CharacterVariantIndex>
+		friend Character& AddCharacterToObject(Object&);
 	};
 
 	Pool<Object>::Iterator CreateObject(m2g::pb::ObjectType type = {}, ObjectId parent_id = 0); // TODO add orientation to the params
