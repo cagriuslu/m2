@@ -1,6 +1,7 @@
 #include <m2/Group.h>
 #include <m2/M2.h>
 #include <m2/Log.h>
+#include <m2/ObjectEx.h>
 #include <m2/Object.h>
 #include <m2/game/CharacterMovement.h>
 #include <rpg/Data.h>
@@ -62,7 +63,7 @@ m2::void_expected Enemy::init(m2::Object& obj, const m2::VecF& position) {
 	};
 	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2::pb::PhysicsLayer::SEA_LEVEL);
 
-	auto& chr = obj.AddFastCharacter();
+	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::FastCharacterStorageIndex>(obj);
 	chr.AddCard(m2g::pb::CARD_REUSABLE_GUN);
 	chr.AddCard(m2g::pb::CARD_REUSABLE_ENEMY_SWORD);
 	chr.SetVariable(m2g::pb::RESOURCE_HP, 1.0f);

@@ -1,4 +1,5 @@
 #include <m2/math/VecF.h>
+#include <m2/ObjectEx.h>
 #include <m2/Object.h>
 #include "m2/Game.h"
 #include <rpg/Objects.h>
@@ -53,7 +54,7 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF& position, c
 	gfx.z = 0.5f;
 
 	// Add character
-	auto& chr = obj.AddCompactCharacter();
+	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::CompactCharacterStorageIndex>(obj);
 	chr.SetVariable(RESOURCE_TTL, average_ttl);
 
 	chr.update = [](m2::Character& chr, const m2::Stopwatch::Duration& delta) {

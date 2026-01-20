@@ -1,3 +1,4 @@
+#include <m2/ObjectEx.h>
 #include <m2/Object.h>
 #include <rpg/Physics.h>
 #include "m2/Game.h"
@@ -60,7 +61,7 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& positi
 	gfx.z = 0.5f;
 
 	// Add character
-	auto& chr = obj.AddCompactCharacter();
+	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::CompactCharacterStorageIndex>(obj);
 	chr.SetVariable(RESOURCE_TTL, ttl);
 
 	chr.update = [=, &phy, &obj](m2::Character& chr, const m2::Stopwatch::Duration& delta) {
