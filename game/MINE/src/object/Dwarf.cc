@@ -4,6 +4,7 @@
 #include <m2/box2d/Query.h>
 #include <m2/game/CharacterMovement.h>
 #include <m2/third_party/physics/ColliderCategory.h>
+#include <m2/ObjectEx.h>
 
 using namespace m2g;
 using namespace m2g::pb;
@@ -35,7 +36,7 @@ m2::void_expected create_dwarf(m2::Object& obj, const m2::VecF& position) {
 
 	obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, DWARF_FULL).position = position;
 
-	auto& chr = obj.AddFastCharacter();
+	auto& chr = m2::AddCharacterToObject<ProxyEx::FastCharacterStorageIndex>(obj);
 
 	phy.preStep = [&chr](m2::Physique& phy, const m2::Stopwatch::Duration& delta) {
 		// Character movement
