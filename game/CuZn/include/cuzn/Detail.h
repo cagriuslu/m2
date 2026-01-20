@@ -1,6 +1,7 @@
 #pragma once
 #include <m2g_CardType.pb.h>
 #include <m2g_SpriteType.pb.h>
+#include <m2/component/character/FastCharacter.h>
 #include <m2/component/Character.h>
 #include <m2/math/VecF.h>
 #include <m2/M2.h>
@@ -18,6 +19,10 @@ using IndustryLocation = Location;
 using MerchantLocation = Location;
 using Connection = m2g::pb::SpriteType;
 using POI = m2g::pb::SpriteType; // Location or Connection
+
+// Characters
+
+m2::Pool<m2::FastCharacter>& GetCharacterPool();
 
 // Assertions
 

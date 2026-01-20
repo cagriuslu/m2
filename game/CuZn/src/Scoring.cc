@@ -23,8 +23,7 @@ void score_links_and_remove_roads() {
 
 void score_sold_factories_and_remove_obsolete() {
 	std::ranges::for_each(
-			M2_LEVEL.characters
-				| std::views::transform(m2::ToCharacterBase)
+			GetCharacterPool()
 				| std::views::filter(IsFactoryCharacter)
 				| std::views::filter(IsFactorySold),
 			[](const m2::Character& factory) {

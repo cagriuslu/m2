@@ -8,8 +8,7 @@ std::set<Location> find_breweries_with_beer(m2::Character& player, City city, st
 	std::set<Location> locations;
 
 	// Look-up player's own breweries with beer
-	auto player_breweries_with_beer = M2_LEVEL.characters
-		| std::views::transform(m2::ToCharacterBase)
+	auto player_breweries_with_beer = GetCharacterPool()
 		| std::views::filter(m2::IsComponentOfAnyDescendant(player.OwnerId()))
 		| std::views::filter(IsFactoryCharacter)
 		| std::views::filter([](m2::Character& chr) { return static_cast<bool>(chr.GetVariable(m2g::pb::BEER_BARREL_COUNT)); })

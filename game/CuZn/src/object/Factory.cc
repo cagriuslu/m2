@@ -2,14 +2,14 @@
 #include <m2/Game.h>
 #include <cuzn/detail/Graphic.h>
 #include <cuzn/detail/Income.h>
+#include <m2/ObjectEx.h>
 #include <m2/Log.h>
 
 using namespace m2g;
 using namespace m2g::pb;
 
 m2::Object* FindFactoryAtLocation(Location location) {
-	auto factories = M2_LEVEL.characters
-		| std::views::transform(m2::ToCharacterBase)
+	auto factories = GetCharacterPool()
 		| std::views::filter(IsFactoryCharacter)
 		| std::views::transform(m2::ToOwner)
 		| std::views::filter(m2::IsObjectInArea(std::get<m2::RectF>(M2G_PROXY.industry_positions[location])));
@@ -32,8 +32,7 @@ void RemoveObsoleteFactories() {
 	std::vector<m2::ObjectId> ids;
 	ids.reserve(20); // Reserve an average amount of space
 	std::ranges::copy(
-		M2_LEVEL.characters
-		| std::views::transform(m2::ToCharacterBase)
+		GetCharacterPool()
 		| std::views::filter(IsFactoryCharacter)
 		| std::views::filter(IsFactoryLevel1)
 		| std::views::transform(m2::ToOwnerId),
@@ -47,8 +46,7 @@ void RemoveObsoleteFactories() {
 
 void FlipExhaustedFactories() {
 	std::ranges::for_each(
-		M2_LEVEL.characters
-			| std::views::transform(m2::ToCharacterBase)
+		GetCharacterPool()
 			| std::views::filter(IsFactoryCharacter)
 			| std::views::filter(IsFactoryNotSold),
 		[](m2::Character& chr) {
@@ -133,7 +131,7 @@ m2::void_expected InitFactory(m2::Object& obj, const m2::VecF& position, City ci
 	auto industry = industry_of_industry_tile(industry_tile);
 
 	// Add all available information to the factories: industry, city, industry tile
-	auto& chr = obj.AddFastCharacter();
+	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::FastCharacterStorageIndex>(obj);
 	chr.AddCard(industry);
 	chr.AddCard(city);
 	chr.AddCard(industry_tile);

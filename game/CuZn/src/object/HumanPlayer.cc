@@ -11,6 +11,7 @@
 #include <cuzn/Detail.h>
 #include <ranges>
 #include <numeric>
+#include <m2/ObjectEx.h>
 #include <cuzn/ConsumingCoal.h>
 #include <cuzn/ConsumingIron.h>
 
@@ -25,7 +26,7 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj, const m2::VecF& positi
 
 	obj.impl = std::make_unique<HumanPlayer>(obj);
 
-	auto& chr = obj.AddFastCharacter();
+	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::FastCharacterStorageIndex>(obj);
 	chr.SetVariable(m2g::pb::MONEY, m2::IFE{17});
 	chr.SetVariable(m2g::pb::INCOME_POINTS, m2::IFE{0});
 
@@ -173,7 +174,7 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj, const m2::VecF& positi
 m2::void_expected PlayerInitOtherInstance(m2::Object& obj) {
 	DEBUG_FN();
 
-	auto& chr = obj.AddFastCharacter();
+	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::FastCharacterStorageIndex>(obj);
 
 	// TODO check if the following is really necessary. If the TurnBasedServerUpdate is verified, it's necessary.
 	// TODO Otherwise, we don't need to fill the character with cards and resources.
@@ -216,8 +217,7 @@ std::vector<m2g::pb::CardType> PlayerCards(const m2::Character& player) {
 }
 
 int PlayerLinkCount(const m2::Character& player) {
-	auto road_characters = M2_LEVEL.characters
-			| std::views::transform(m2::ToCharacterBase)
+	auto road_characters = GetCharacterPool()
 			| std::views::filter(m2::IsComponentOfAnyDescendant(player.OwnerId()))
 			| std::views::filter(IsRoadCharacter);
 	return std::accumulate(road_characters.begin(), road_characters.end(), 0, [](int acc, m2::Character& road_char) -> int {
@@ -225,8 +225,7 @@ int PlayerLinkCount(const m2::Character& player) {
 	});
 }
 int PlayerEstimatedVictoryPoints(const m2::Character& player) {
-	auto soldFactories = M2_LEVEL.characters
-			| std::views::transform(m2::ToCharacterBase)
+	auto soldFactories = GetCharacterPool()
 			| std::views::filter(m2::IsComponentOfAnyDescendant(player.OwnerId()))
 			| std::views::filter(IsFactoryCharacter)
 			| std::views::filter(IsFactorySold);
@@ -266,23 +265,20 @@ std::optional<m2g::pb::CardType> PlayerNextIndustryTileOfIndustry(const m2::Char
 	return PlayerNextIndustryTileOfCategory(player, industry_tile_category_of_industry(industry));
 }
 size_t PlayerBuiltFactoryCount(const m2::Character& player) {
-	auto factories_view = M2_LEVEL.characters
-		| std::views::transform(m2::ToCharacterBase)
+	auto factories_view = GetCharacterPool()
 		| std::views::filter(m2::IsComponentOfAnyDescendant(player.OwnerId()))
 		| std::views::filter(IsFactoryCharacter);
 	return std::distance(factories_view.begin(), factories_view.end());
 }
 std::set<IndustryLocation> PlayerBuiltFactoryLocations(const m2::Character& player) {
-	auto factories_view = M2_LEVEL.characters
-		| std::views::transform(m2::ToCharacterBase)
+	auto factories_view = GetCharacterPool()
 		| std::views::filter(m2::IsComponentOfAnyDescendant(player.OwnerId()))
 		| std::views::filter(IsFactoryCharacter)
 		| std::views::transform(ToIndustryLocationOfFactoryCharacter);
 	return {factories_view.begin(), factories_view.end()};
 }
 std::set<IndustryLocation> PlayerSellableFactoryLocations(const m2::Character& player) {
-	auto factories_view = M2_LEVEL.characters
-		| std::views::transform(m2::ToCharacterBase)
+	auto factories_view = GetCharacterPool()
 		| std::views::filter(m2::IsComponentOfAnyDescendant(player.OwnerId()))
 		| std::views::filter(IsFactoryCharacter)
 		| std::views::filter(IsFactoryNotSold)
@@ -331,15 +327,13 @@ m2::void_expected PlayerCanOverbuild(const m2::Character& player, const Industry
 std::set<m2g::pb::CardType> PlayerCitiesInNetwork(const m2::Character& player) {
 	std::set<m2g::pb::CardType> cities;
 
-	auto cities_view = M2_LEVEL.characters
-		| std::views::transform(m2::ToCharacterBase)
+	auto cities_view = GetCharacterPool()
 		| std::views::filter(m2::IsComponentOfAnyDescendant(player.OwnerId()))
 		| std::views::filter(IsFactoryCharacter)
 		| std::views::transform(ToCityOfFactoryCharacter);
 	cities.insert(cities_view.begin(), cities_view.end());
 
-	auto roads_view = M2_LEVEL.characters
-		| std::views::transform(m2::ToCharacterBase)
+	auto roads_view = GetCharacterPool()
 		| std::views::filter(m2::IsComponentOfAnyDescendant(player.OwnerId()))
 		| std::views::filter(IsRoadCharacter)
 		| std::views::transform(ToCitiesOfRoadCharacter);

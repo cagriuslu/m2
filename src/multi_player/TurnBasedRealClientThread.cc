@@ -82,30 +82,29 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::network::SequenceNo>>
 			return make_unexpected("Player ID doesn't match the ID found in local player list");
 		}
 
-		if (M2_LEVEL.characters.Size() != Z(server_update.objects_with_character_size())) {
+		if (M2_LEVEL.GetCharacterStorage().GetTotalCharacterCount() != server_update.objects_with_character_size()) {
 			return make_unexpected("Server and local have different number of characters");
 		}
 
 		int i = 0;
-		for (auto char_it = M2_LEVEL.characters.begin(); char_it != M2_LEVEL.characters.end() && i < server_update.objects_with_character_size(); ++char_it, ++i) {
-			auto server_character = server_update.objects_with_character(i);
-			auto success = std::visit(overloaded {
-				[this, &server_character](const auto& v) -> m2::void_expected {
-					if (v.Owner().InferPositionF() != VecF{server_character.position()}) {
-						return make_unexpected("Server and local position mismatch");
-					}
-					if (v.Owner().GetType() != server_character.object_type()) {
-						return make_unexpected("Server and local object type mismatch");
-					}
-					// TODO other checks
-
-					// Map server ObjectIDs to local ObjectIDs
-					_server_to_local_map[server_character.object_id()] = std::make_pair(v.OwnerId(), true);
-
-					return {};
-				}
-			}, *char_it);
-			m2ReflectUnexpected(success);
+		const auto error = M2_LEVEL.GetCharacterStorage().ForEachCharacter<std::string>([&](const Character& chr) -> std::optional<std::string> {
+			if (server_update.objects_with_character_size() <= i) {
+				return "Local level has more characters than server";
+			}
+			const auto& serverChr = server_update.objects_with_character(i);
+			if (chr.Owner().InferPositionF() != VecF{serverChr.position()}) {
+				return "Server and local object position mismatch";
+			}
+			if (chr.Owner().GetType() != serverChr.object_type()) {
+				return "Server and local object type mismatch";
+			}
+			// Map server ObjectIDs to local ObjectIDs
+			_server_to_local_map[serverChr.object_id()] = std::make_pair(chr.OwnerId(), true);
+			++i;
+			return std::nullopt;
+		});
+		if (error) {
+			return make_unexpected(*error);
 		}
 
 		// Check if server_to_local_map contains all the players in the game

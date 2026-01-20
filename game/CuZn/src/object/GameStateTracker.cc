@@ -1,9 +1,10 @@
 #include <cuzn/object/GameStateTracker.h>
 #include <m2/Game.h>
 #include <cuzn/detail/Market.h>
+#include <m2/ObjectEx.h>
 
 void InitGameStateTracker(m2::Object& obj) {
-	auto& chr = obj.AddFastCharacter();
+	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::FastCharacterStorageIndex>(obj);
 	// Hold the resources belonging to the market
 	chr.SetVariable(m2g::pb::COAL_CUBE_COUNT, m2::IFE{COAL_MARKET_INITIAL_COUNT});
 	chr.SetVariable(m2g::pb::IRON_CUBE_COUNT, m2::IFE{IRON_MARKET_INITIAL_COUNT});

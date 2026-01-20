@@ -5,6 +5,10 @@
 using namespace m2g;
 using namespace m2g::pb;
 
+m2::Pool<m2::FastCharacter>& GetCharacterPool() {
+	return M2_LEVEL.GetCharacterStorage().GetPoolOfVariant<ProxyEx::FastCharacterStorageIndex>();
+}
+
 bool is_card(m2g::pb::CardType card) {
 	const auto& card_card = M2_GAME.GetCard(card);
 	return (card_card.Category() == CARD_CATEGORY_WILD_CARD ||

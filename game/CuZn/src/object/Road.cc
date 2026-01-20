@@ -2,6 +2,7 @@
 #include <m2/Game.h>
 #include "m2/Log.h"
 #include <cuzn/object/Factory.h>
+#include <m2/ObjectEx.h>
 #include <numeric>
 
 namespace {
@@ -25,8 +26,7 @@ namespace {
 }
 
 m2::Object* FindRoadAtLocation(const m2g::pb::SpriteType location) {
-	auto roads = M2_LEVEL.characters
-				 | std::views::transform(m2::ToCharacterBase)
+	auto roads = GetCharacterPool()
 				 | std::views::filter(IsRoadCharacter)
 				 | std::views::transform(m2::ToOwner)
 				 | std::views::filter(m2::IsObjectInArea(std::get<m2::RectF>( M2G_PROXY.connection_positions[location])));
@@ -51,8 +51,7 @@ int LinkCountOfRoadCharacter(const m2::Character& chr) {
 void RemoveAllRoads() {
 	std::vector<m2::ObjectId> ids;
 	std::ranges::copy(
-			M2_LEVEL.characters
-				| std::views::transform(m2::ToCharacterBase)
+			GetCharacterPool()
 				| std::views::filter(IsRoadCharacter)
 				| std::views::transform(m2::ToOwnerId),
 			std::back_inserter(ids));
@@ -71,7 +70,7 @@ m2::void_expected InitRoad(m2::Object& obj, const m2::VecF& position, const Conn
 	}
 
 	// Add the city cards to the character
-	auto& chr = obj.AddFastCharacter();
+	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::FastCharacterStorageIndex>(obj);
 	for (const auto city : cities_from_connection(connection)) {
 		chr.AddCard(city);
 	}

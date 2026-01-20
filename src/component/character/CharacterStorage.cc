@@ -9,37 +9,6 @@ CharacterStorage::CharacterStorage() {
 	}, _storageTuple);
 }
 
-int32_t CharacterStorage::HashCharacters(int32_t hash) {
-	const auto hasher = [](auto& pool, int32_t hash_) -> int32_t {
-		for (const Character& chr : *pool) {
-			hash_ = chr.Hash(hash_);
-		}
-		return hash_;
-	};
-
-	std::apply([&](auto&... pool) {
-		(
-			(hash = hasher(pool, hash)), ...
-		);
-	}, _storageTuple);
-	return hash;
-}
-void CharacterStorage::UpdateCharacters(const Stopwatch::Duration& delta) {
-	const auto updater = [&](auto& pool) {
-		for (Character& chr : *pool) {
-			if (chr.update) {
-				chr.update(chr, delta);
-			}
-		}
-	};
-
-	std::apply([&](auto&... pool) {
-		(
-			(updater(pool)), ...
-		);
-	}, _storageTuple);
-}
-
 const Character* CharacterStorage::GetCharacter(const CharacterId chrId) const {
 	const auto baseShiftedPoolId = I(GetBasePoolId());
 	const auto poolIdOfCharacter = I(ToPoolId(chrId));
@@ -79,6 +48,46 @@ Character* CharacterStorage::GetCharacter(const CharacterId chrId) {
 	return chr;
 }
 
+int CharacterStorage::GetTotalCharacterCount() const {
+	int count = 0;
+	std::apply([&](const auto&... pool) {
+		(
+			(count += I(pool->Size())), ...
+		);
+	}, _storageTuple);
+	return count;
+}
+int32_t CharacterStorage::HashCharacters(int32_t hash) {
+	const auto hasher = [](auto& pool, int32_t hash_) -> int32_t {
+		for (const Character& chr : *pool) {
+			hash_ = chr.Hash(hash_);
+		}
+		return hash_;
+	};
+
+	std::apply([&](auto&... pool) {
+		(
+			(hash = hasher(pool, hash)), ...
+		);
+	}, _storageTuple);
+	return hash;
+}
+
+void CharacterStorage::UpdateCharacters(const Stopwatch::Duration& delta) {
+	const auto updater = [&](auto& pool) {
+		for (Character& chr : *pool) {
+			if (chr.update) {
+				chr.update(chr, delta);
+			}
+		}
+	};
+
+	std::apply([&](auto&... pool) {
+		(
+			(updater(pool)), ...
+		);
+	}, _storageTuple);
+}
 void CharacterStorage::FreeCharacter(const CharacterId chrId) {
 	const auto baseShiftedPoolId = I(GetBasePoolId());
 	const auto poolIdOfCharacter = I(ToPoolId(chrId));
@@ -99,7 +108,6 @@ void CharacterStorage::FreeCharacter(const CharacterId chrId) {
 		);
 	}, _storageTuple);
 }
-
 void CharacterStorage::ClearPools() {
 	std::apply([&](auto&... pool) {
 		(
