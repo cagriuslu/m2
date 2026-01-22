@@ -4,7 +4,7 @@
 namespace m2 {
 	class FastCharacter final : public Character {
 		std::vector<const Card*> _cards;
-		std::vector<IFE> _variables = std::vector<IFE>(pb::enum_value_count<m2g::pb::VariableType>());
+		std::vector<IVFE> _variables = std::vector<IVFE>(pb::enum_value_count<m2g::pb::VariableType>());
 
 	public:
 		FastCharacter() = default;
@@ -22,8 +22,8 @@ namespace m2 {
 		void AddCard(m2g::pb::CardType) override;
 		void RemoveCard(m2g::pb::CardType) override;
 
-		[[nodiscard]] IFE GetVariable(const m2g::pb::VariableType v) const override { return _variables[pb::enum_index(v)]; }
-		IFE SetVariable(const m2g::pb::VariableType v, const IFE ife) override { _variables[pb::enum_index(v)] = ife; return ife; }
+		[[nodiscard]] IVFE GetVariable(const m2g::pb::VariableType v) const override { return _variables[pb::enum_index(v)]; }
+		IVFE SetVariable(const m2g::pb::VariableType v, const IVFE ivfe) override { _variables[pb::enum_index(v)] = ivfe; return ivfe; }
 		void ClearVariable(const m2g::pb::VariableType v) override { _variables[pb::enum_index(v)] = {}; }
 
 		// Utilities

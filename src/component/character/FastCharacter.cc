@@ -35,18 +35,18 @@ void FastCharacter::Store(pb::TurnBasedServerUpdate::ObjectDescriptor& objDesc) 
 		if (_variables[i]) {
 			auto* var = objDesc.add_variables();
 			var->set_type(static_cast<m2g::pb::VariableType>(i));
-			var->mutable_ife()->CopyFrom(static_cast<pb::IFE>(_variables[i]));
+			var->mutable_ivfe()->CopyFrom(static_cast<pb::IVFE>(_variables[i]));
 		}
 	}
 }
 void FastCharacter::Load(const pb::TurnBasedServerUpdate::ObjectDescriptor& objDesc) {
 	_cards.clear();
-	_variables = std::vector<IFE>(pb::enum_value_count<m2g::pb::VariableType>());
+	_variables = std::vector<IVFE>(pb::enum_value_count<m2g::pb::VariableType>());
 	for (const auto& card : objDesc.cards()) {
 		_cards.emplace_back(&M2_GAME.GetCard(static_cast<m2g::pb::CardType>(card)));
 	}
 	for (const auto& variable : objDesc.variables()) {
-		_variables[pb::enum_index(variable.type())] = IFE{variable.ife()};
+		_variables[pb::enum_index(variable.type())] = IVFE{variable.ivfe()};
 	}
 }
 bool FastCharacter::HasCard(const m2g::pb::CardType ct) const {

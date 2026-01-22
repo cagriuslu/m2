@@ -62,7 +62,7 @@ m2g::pb::CardType ExecuteLoanAction(m2::Character& player, const TurnBasedClient
 	const auto currIncomeLevel = IncomeLevelFromIncomePoints(currIncomePoints);
 	const auto newIncomeLevel = ClampIncomeLevel(currIncomeLevel - 3);
 	const auto newIncomePoints = HighestIncomePointsOfLevel(newIncomeLevel);
-	player.SetVariable(INCOME_POINTS, IFE{ClampIncomePoints(newIncomePoints)});
-	player.SetVariable(MONEY, IFE{player.GetVariable(MONEY).GetIntOrZero() + 30});
+	player.SetVariable(INCOME_POINTS, IVFE{ClampIncomePoints(newIncomePoints)});
+	player.SetVariable(MONEY, IVFE{player.GetVariable(MONEY).GetIntOrZero() + 30});
 	return loan_action.card();
 }

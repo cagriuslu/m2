@@ -1,6 +1,6 @@
 #include <../../include/m2/multi_player/TurnBasedRealClientThread.h>
 #include <m2/Game.h>
-#include <m2/GameTypes.h>
+#include <m2/math/IVFE.h>
 #include <m2/Log.h>
 
 m2::network::TurnBasedRealClientThread::TurnBasedRealClientThread(std::string addr)

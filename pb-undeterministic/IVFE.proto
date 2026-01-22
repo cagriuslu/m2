@@ -1,0 +1,12 @@
+syntax = "proto3";
+package m2.pb;
+
+import "m2g_VariableType.proto";
+
+message IVFE {
+  oneof value_variant {
+    int32 i = 1;
+    m2g.pb.VariableType v = 2;
+    float fe = 3;
+  }
+}

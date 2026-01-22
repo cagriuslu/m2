@@ -6,7 +6,7 @@
 
 m2::Card::Card(pb::Card card) : _card(std::move(card)) {
 	for (const auto& constant : _card.constants()) {
-		_constants[pb::enum_index(constant.type())] = IFE{constant.ife()};
+		_constants[pb::enum_index(constant.type())] = IVFE{constant.ivfe()};
 	}
 }
 

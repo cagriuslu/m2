@@ -25,7 +25,7 @@ void CompactCharacter::Store(pb::TurnBasedServerUpdate::ObjectDescriptor& objDes
 	if (_variable.first && _variable.second) {
 		auto* var = objDesc.add_variables();
 		var->set_type(_variable.first);
-		var->mutable_ife()->CopyFrom(static_cast<pb::IFE>(_variable.second));
+		var->mutable_ivfe()->CopyFrom(static_cast<pb::IVFE>(_variable.second));
 	}
 }
 void CompactCharacter::Load(const pb::TurnBasedServerUpdate::ObjectDescriptor& objDesc) {
@@ -41,7 +41,7 @@ void CompactCharacter::Load(const pb::TurnBasedServerUpdate::ObjectDescriptor& o
 		_card = objDesc.cards(0);
 	}
 	if (objDesc.variables_size()) {
-		_variable = std::make_pair(objDesc.variables(0).type(), IFE{objDesc.variables(0).ife()});
+		_variable = std::make_pair(objDesc.variables(0).type(), IVFE{objDesc.variables(0).ivfe()});
 	}
 }
 bool CompactCharacter::HasCard(const m2g::pb::CardType ct) const {
@@ -71,18 +71,18 @@ void CompactCharacter::RemoveCard(const m2g::pb::CardType ct) {
 	}
 }
 
-IFE CompactCharacter::GetVariable(const m2g::pb::VariableType v) const {
+IVFE CompactCharacter::GetVariable(const m2g::pb::VariableType v) const {
 	if (_variable.first == v) {
 		return _variable.second;
 	}
 	return {};
 }
-IFE CompactCharacter::SetVariable(const m2g::pb::VariableType v, const IFE ife) {
+IVFE CompactCharacter::SetVariable(const m2g::pb::VariableType v, const IVFE ivfe) {
 	if (_variable.first != m2g::pb::NO_VARIABLE && _variable.first != v) {
 		throw M2_ERROR("CompactCharacter cannot hold more than one type of variables");
 	}
-	_variable = std::make_pair(v, ife);
-	return ife;
+	_variable = std::make_pair(v, ivfe);
+	return ivfe;
 }
 void CompactCharacter::ClearVariable(const m2g::pb::VariableType v) {
 	if (_variable.first == v) {

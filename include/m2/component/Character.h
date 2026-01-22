@@ -2,7 +2,7 @@
 #include "../Component.h"
 #include "../Card.h"
 #include <m2/containers/AssociativeList.h>
-#include <m2/GameTypes.h>
+#include <m2/math/IVFE.h>
 #include <m2/Proxy.h>
 #include <functional>
 
@@ -30,16 +30,16 @@ namespace m2 {
 		virtual void AddCard(m2g::pb::CardType) = 0;
 		virtual void RemoveCard(m2g::pb::CardType) = 0;
 
-		[[nodiscard]] virtual IFE GetVariable(m2g::pb::VariableType) const = 0;
-		virtual IFE SetVariable(m2g::pb::VariableType, IFE) = 0;
+		[[nodiscard]] virtual IVFE GetVariable(m2g::pb::VariableType) const = 0;
+		virtual IVFE SetVariable(m2g::pb::VariableType, IVFE) = 0;
 		virtual void ClearVariable(m2g::pb::VariableType) = 0;
 
 		// Utilities
 
-		IFE SetVariable(const m2g::pb::VariableType vt, const int32_t i) { return SetVariable(vt, IFE{i}); }
-		IFE SetVariable(const m2g::pb::VariableType vt, const FE fe) { return SetVariable(vt, IFE{fe}); }
+		IVFE SetVariable(const m2g::pb::VariableType vt, const int32_t i) { return SetVariable(vt, IVFE{i}); }
+		IVFE SetVariable(const m2g::pb::VariableType vt, const FE fe) { return SetVariable(vt, IVFE{fe}); }
 		template <bool Enable = not GAME_IS_DETERMINISTIC>
-		constexpr IFE SetVariable(const m2g::pb::VariableType vt, const float value) requires (Enable) { return SetVariable(vt, IFE{FE{value}}); }
+		constexpr IVFE SetVariable(const m2g::pb::VariableType vt, const float value) requires (Enable) { return SetVariable(vt, IVFE{FE{value}}); }
 
 		int32_t AddVariable(m2g::pb::VariableType, int32_t value, std::optional<int32_t> maxValue = {});
 		FE AddVariable(m2g::pb::VariableType, FE value, std::optional<FE> maxValue = {});
@@ -63,4 +63,5 @@ namespace m2 {
 	// Transformers
 
 	inline Object& ToOwnerOfCharacter(const Character& chr) { return chr.Owner(); }
+	m2g::pb::CardCategory ToCategoryOfCard(m2g::pb::CardType);
 }

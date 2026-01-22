@@ -5,16 +5,16 @@ import "m2g_ConstantType.proto";
 import "m2g_VariableType.proto";
 import "m2g_CardType.proto";
 import "m2g_SpriteType.proto";
-import "IFE.proto";
+import "IVFE.proto";
 
 message Constant {
   m2g.pb.ConstantType type = 1;
-  IFE ife = 2;
+  IVFE ivfe = 2;
 }
 
 message Variable {
   m2g.pb.VariableType type = 1;
-  IFE ife = 2;
+  IVFE ivfe = 2;
 }
 
 message Card {

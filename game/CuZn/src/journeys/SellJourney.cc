@@ -74,7 +74,7 @@ SellJourney::~SellJourney() {
 	deinit();
 	// Return the reserved resources
 	for (auto* object : _reserved_beers) {
-		object->GetCharacter().SetVariable(BEER_BARREL_COUNT, IFE{object->GetCharacter().GetVariable(BEER_BARREL_COUNT).GetIntOrZero() + 1});
+		object->GetCharacter().SetVariable(BEER_BARREL_COUNT, IVFE{object->GetCharacter().GetVariable(BEER_BARREL_COUNT).GetIntOrZero() + 1});
 	}
 	_reserved_beers.clear();
 }
@@ -192,11 +192,11 @@ std::optional<SellJourneyStep> SellJourney::HandleResourcePoiOrCancelSignal(cons
 		// Reserve the resource
 		if (is_industry_location(poi)) {
 			auto* factory = FindFactoryAtLocation(poi);
-			factory->GetCharacter().SetVariable(BEER_BARREL_COUNT, IFE{std::max(factory->GetCharacter().GetVariable(BEER_BARREL_COUNT).GetIntOrZero() - 1, 0)});
+			factory->GetCharacter().SetVariable(BEER_BARREL_COUNT, IVFE{std::max(factory->GetCharacter().GetVariable(BEER_BARREL_COUNT).GetIntOrZero() - 1, 0)});
 			_reserved_beers.emplace_back(factory);
 		} else if (is_merchant_location(poi)) {
 			auto* merchant = find_merchant_at_location(poi);
-			merchant->GetCharacter().SetVariable(BEER_BARREL_COUNT, IFE{std::max(merchant->GetCharacter().GetVariable(BEER_BARREL_COUNT).GetIntOrZero() - 1, 0)});
+			merchant->GetCharacter().SetVariable(BEER_BARREL_COUNT, IVFE{std::max(merchant->GetCharacter().GetVariable(BEER_BARREL_COUNT).GetIntOrZero() - 1, 0)});
 			_reserved_beers.emplace_back(merchant);
 		}
 		// Specify source
@@ -295,17 +295,17 @@ m2::void_expected CanPlayerSell(m2::Character& player, const m2g::pb::TurnBasedC
 			// Reserve the resource
 			if (is_industry_location(beer_source)) {
 				auto* source_factory = FindFactoryAtLocation(beer_source);
-				source_factory->GetCharacter().SetVariable(BEER_BARREL_COUNT, IFE{std::max(source_factory->GetCharacter().GetVariable(BEER_BARREL_COUNT).GetIntOrZero() - 1, 0)});
+				source_factory->GetCharacter().SetVariable(BEER_BARREL_COUNT, IVFE{std::max(source_factory->GetCharacter().GetVariable(BEER_BARREL_COUNT).GetIntOrZero() - 1, 0)});
 				reserved_beers.emplace_back(source_factory);
 			} else if (is_merchant_location(beer_source)) {
 				auto* source_merchant = find_merchant_at_location(beer_source);
-				source_merchant->GetCharacter().SetVariable(BEER_BARREL_COUNT, IFE{std::max(source_merchant->GetCharacter().GetVariable(BEER_BARREL_COUNT).GetIntOrZero() - 1, 0)});
+				source_merchant->GetCharacter().SetVariable(BEER_BARREL_COUNT, IVFE{std::max(source_merchant->GetCharacter().GetVariable(BEER_BARREL_COUNT).GetIntOrZero() - 1, 0)});
 				reserved_beers.emplace_back(source_merchant);
 			}
 		}
 		// Give back the reserved resources
 		for (auto* source : reserved_beers) {
-			source->GetCharacter().SetVariable(BEER_BARREL_COUNT, IFE{source->GetCharacter().GetVariable(BEER_BARREL_COUNT).GetIntOrZero() + 1});
+			source->GetCharacter().SetVariable(BEER_BARREL_COUNT, IVFE{source->GetCharacter().GetVariable(BEER_BARREL_COUNT).GetIntOrZero() + 1});
 		}
 	} else {
 		m2ReturnUnexpectedUnless(sell_action.beer_sources_size() == 0, "Beer not required but beer sources are provided");
@@ -336,10 +336,10 @@ m2g::pb::CardType ExecuteSellAction(m2::Character& player, const m2g::pb::TurnBa
 		auto beer_source = static_cast<Location>(beer_source_i);
 		if (is_industry_location(beer_source)) {
 			auto* source_factory = FindFactoryAtLocation(beer_source);
-			source_factory->GetCharacter().SetVariable(BEER_BARREL_COUNT, IFE{std::max(source_factory->GetCharacter().GetVariable(BEER_BARREL_COUNT).GetIntOrZero() - 1, 0)});
+			source_factory->GetCharacter().SetVariable(BEER_BARREL_COUNT, IVFE{std::max(source_factory->GetCharacter().GetVariable(BEER_BARREL_COUNT).GetIntOrZero() - 1, 0)});
 		} else if (is_merchant_location(beer_source)) {
 			auto* source_merchant = find_merchant_at_location(beer_source);
-			source_merchant->GetCharacter().SetVariable(BEER_BARREL_COUNT, IFE{std::max(source_merchant->GetCharacter().GetVariable(BEER_BARREL_COUNT).GetIntOrZero() - 1, 0)});
+			source_merchant->GetCharacter().SetVariable(BEER_BARREL_COUNT, IVFE{std::max(source_merchant->GetCharacter().GetVariable(BEER_BARREL_COUNT).GetIntOrZero() - 1, 0)});
 		}
 	}
 
@@ -353,15 +353,15 @@ m2g::pb::CardType ExecuteSellAction(m2::Character& player, const m2g::pb::TurnBa
 	if (DoesBeerSourcesContainMerchant(sell_action.beer_sources(), sell_action.merchant_location())) {
 		if (const auto incomePointsBenefit = MerchantIncomePointsBenefit(sell_action.merchant_location())) {
 			LOG_INFO("Player income points benefit", incomePointsBenefit);
-			player.SetVariable(INCOME_POINTS, IFE{ClampIncomePoints(PlayerIncomePoints(player) + incomePointsBenefit)});
+			player.SetVariable(INCOME_POINTS, IVFE{ClampIncomePoints(PlayerIncomePoints(player) + incomePointsBenefit)});
 		}
 		if (const auto victoryPointsBenefit = MerchantVictoryPointsBenefit(sell_action.merchant_location())) {
 			LOG_INFO("Player victory points benefit", victoryPointsBenefit);
-			player.SetVariable(VICTORY_POINTS, IFE{player.GetVariable(VICTORY_POINTS).GetIntOrZero() + victoryPointsBenefit});
+			player.SetVariable(VICTORY_POINTS, IVFE{player.GetVariable(VICTORY_POINTS).GetIntOrZero() + victoryPointsBenefit});
 		}
 		if (const auto moneyPointsBenefit = MerchantMoneyBenefit(sell_action.merchant_location())) {
 			LOG_INFO("Player income points benefit", moneyPointsBenefit);
-			player.SetVariable(MONEY, IFE{player.GetVariable(MONEY).GetIntOrZero() + moneyPointsBenefit});
+			player.SetVariable(MONEY, IVFE{player.GetVariable(MONEY).GetIntOrZero() + moneyPointsBenefit});
 		}
 	}
 

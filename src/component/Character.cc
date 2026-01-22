@@ -63,3 +63,7 @@ FE Character::SubtractVariable(const m2g::pb::VariableType vt, const FE value, c
 	}
 	return GetVariable(vt).UnsafeGetFE();
 }
+
+m2g::pb::CardCategory m2::ToCategoryOfCard(const m2g::pb::CardType ct) {
+	return M2_GAME.GetCard(ct).Category();
+}

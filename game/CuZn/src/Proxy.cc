@@ -100,7 +100,7 @@ void m2g::Proxy::turnBasedServerPopulate(MAYBE const std::string& name, MAYBE co
 				auto& merchant_char = M2_LEVEL.objects[merchant_object_id].GetCharacter();
 				LOG_DEBUG("Adding license to merchant", m2g::pb::CardType_Name(license));
 				merchant_char.AddCard(license);
-				merchant_char.SetVariable(pb::BEER_BARREL_COUNT, IFE{merchant_char.GetVariable(pb::BEER_BARREL_COUNT).GetIntOrZero() + 1});
+				merchant_char.SetVariable(pb::BEER_BARREL_COUNT, IVFE{merchant_char.GetVariable(pb::BEER_BARREL_COUNT).GetIntOrZero() + 1});
 			}
 		}
 	}
@@ -110,7 +110,7 @@ void m2g::Proxy::turnBasedServerPopulate(MAYBE const std::string& name, MAYBE co
 	m2Repeat(client_count) { draw_deck.pop_back(); } // In the canal era, we discard client_count number of cards from the deck
 	Give8CardsToEachPlayer(draw_deck);
 	_draw_deck = std::move(draw_deck);
-	game_state_tracker().SetVariable(pb::DRAW_DECK_SIZE, IFE{I(_draw_deck.size())});
+	game_state_tracker().SetVariable(pb::DRAW_DECK_SIZE, IVFE{I(_draw_deck.size())});
 
 	// Don't put the first player on the list
 	for (int i = 1; i < M2_GAME.ServerThread().GetClientCount(); ++i) {
@@ -118,17 +118,17 @@ void m2g::Proxy::turnBasedServerPopulate(MAYBE const std::string& name, MAYBE co
 	}
 	// Now that the player order is determined, fill the game state tracker with the order
 	{
-		game_state_tracker().SetVariable(pb::FIRST_PLAYER_INDEX, IFE{0});
+		game_state_tracker().SetVariable(pb::FIRST_PLAYER_INDEX, IVFE{0});
 		auto waitingPlayersCopy = _waiting_players;
 		for (auto order = pb::SECOND_PLAYER_INDEX;
 				order <= pb::FORTH_PLAYER_INDEX;
 				order = static_cast<pb::VariableType>(I(order) + 1)) {
 			if (not waitingPlayersCopy.empty()) {
-				game_state_tracker().SetVariable(order, IFE{waitingPlayersCopy.front()});
+				game_state_tracker().SetVariable(order, IVFE{waitingPlayersCopy.front()});
 				waitingPlayersCopy.pop_front();
 				continue;
 			}
-			game_state_tracker().SetVariable(order, IFE{-1});
+			game_state_tracker().SetVariable(order, IVFE{-1});
 		}
 	}
 }
@@ -182,11 +182,11 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		// Save spent money to game state tracker so that it's shared among clients
 		for (int i = 0; i < M2_GAME.GetTotalPlayerCount(); ++i) {
 			auto money_spent_by_player_enum = static_cast<pb::VariableType>(pb::MONEY_SPENT_BY_PLAYER_0 + i);
-			game_state_tracker().SetVariable(money_spent_by_player_enum, IFE{0});
+			game_state_tracker().SetVariable(money_spent_by_player_enum, IVFE{0});
 		}
 		for (auto [player_index, spent_money] : _played_players) {
 			auto money_spent_by_player_enum = static_cast<pb::VariableType>(pb::MONEY_SPENT_BY_PLAYER_0 + player_index);
-			game_state_tracker().SetVariable(money_spent_by_player_enum, IFE{spent_money});
+			game_state_tracker().SetVariable(money_spent_by_player_enum, IVFE{spent_money});
 		}
 	}
 
@@ -209,14 +209,14 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		// Give card to player
 		auto card = _draw_deck.back();
 		_draw_deck.pop_back();
-		game_state_tracker().SetVariable(pb::DRAW_DECK_SIZE, IFE{I(_draw_deck.size())});
+		game_state_tracker().SetVariable(pb::DRAW_DECK_SIZE, IVFE{I(_draw_deck.size())});
 		turn_holder_character.AddCard(card);
 
 		// Check if first turn finished for all players
 		if (_waiting_players.empty()) {
 			LOG_INFO("First turn ended");
 			_is_first_turn = false;
-			game_state_tracker().SetVariable(pb::IS_LAST_ACTION_OF_PLAYER, IFE{0});
+			game_state_tracker().SetVariable(pb::IS_LAST_ACTION_OF_PLAYER, IVFE{0});
 			liquidation_necessary = prepare_next_round();
 		} else {
 			// Otherwise, just fetch the next player from _waiting_players
@@ -226,18 +226,18 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		// If there are odd number of cards, the turn holder does not change
 		// Push to the front of the waiting players, so that it's popped first below.
 		_waiting_players.push_front(turn_holder_index);
-		game_state_tracker().SetVariable(pb::IS_LAST_ACTION_OF_PLAYER, IFE{1});
+		game_state_tracker().SetVariable(pb::IS_LAST_ACTION_OF_PLAYER, IVFE{1});
 		LOG_INFO("Continuing with the same player");
 	} else { // not is_first_turn() && (card_count % 2) == 0
 		// If there are even number of cards, the turn holder changes. Give cards to player
 		while (not _draw_deck.empty() && PlayerCardCount(turn_holder_character) < 8) {
 			auto card = _draw_deck.back();
 			_draw_deck.pop_back();
-			game_state_tracker().SetVariable(pb::DRAW_DECK_SIZE, IFE{I(_draw_deck.size())});
+			game_state_tracker().SetVariable(pb::DRAW_DECK_SIZE, IVFE{I(_draw_deck.size())});
 			turn_holder_character.AddCard(card);
 		}
 
-		game_state_tracker().SetVariable(pb::IS_LAST_ACTION_OF_PLAYER, IFE{0});
+		game_state_tracker().SetVariable(pb::IS_LAST_ACTION_OF_PLAYER, IVFE{0});
 
 		// Try to prepare the next round.
 		if (_waiting_players.empty()) {
@@ -260,16 +260,16 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		for (auto order = pb::FIRST_PLAYER_INDEX; order <= pb::FORTH_PLAYER_INDEX;
 				order = static_cast<pb::VariableType>(I(order) + 1)) {
 			if (not playedPlayersCopy.empty()) {
-				game_state_tracker().SetVariable(order, IFE{playedPlayersCopy.front().first});
+				game_state_tracker().SetVariable(order, IVFE{playedPlayersCopy.front().first});
 				playedPlayersCopy.pop_front();
 				continue;
 			}
 			if (not waitingPlayersCopy.empty()) {
-				game_state_tracker().SetVariable(order, IFE{waitingPlayersCopy.front()});
+				game_state_tracker().SetVariable(order, IVFE{waitingPlayersCopy.front()});
 				waitingPlayersCopy.pop_front();
 				continue;
 			}
-			game_state_tracker().SetVariable(order, IFE{-1});
+			game_state_tracker().SetVariable(order, IVFE{-1});
 		}
 	}
 
@@ -625,9 +625,9 @@ std::optional<std::pair<m2g::Proxy::PlayerIndex, m2g::pb::TurnBasedServerCommand
 		const auto newPlayerMoney = playerMoney + incomeLevel;
 		if (newPlayerMoney < 0) {
 			LOG_INFO("Player doesn't have enough money to pay its loan, they'll lose victory points", newPlayerMoney);
-			player_character.SetVariable(pb::VICTORY_POINTS, IFE{player_character.GetVariable(pb::VICTORY_POINTS).GetIntOrZero() + newPlayerMoney});
+			player_character.SetVariable(pb::VICTORY_POINTS, IVFE{player_character.GetVariable(pb::VICTORY_POINTS).GetIntOrZero() + newPlayerMoney});
 		}
-		player_character.SetVariable(pb::MONEY, IFE{std::clamp(newPlayerMoney, 0, INT32_MAX)});
+		player_character.SetVariable(pb::MONEY, IVFE{std::clamp(newPlayerMoney, 0, INT32_MAX)});
 	}
 
 	// Determine player orders
@@ -684,7 +684,7 @@ m2g::Proxy::LiquidationDetails m2g::Proxy::prepare_railroad_era() {
 	for (const auto& merchantObjId: merchant_object_ids | std::views::values) {
 		auto& merchantChr = M2_LEVEL.objects[merchantObjId].GetCharacter();
 		if (merchantChr.HasCard(pb::CARD_CATEGORY_MERCHANT_LICENSE)) {
-			merchantChr.SetVariable(pb::BEER_BARREL_COUNT, IFE{1});
+			merchantChr.SetVariable(pb::BEER_BARREL_COUNT, IVFE{1});
 		}
 	}
 
@@ -692,7 +692,7 @@ m2g::Proxy::LiquidationDetails m2g::Proxy::prepare_railroad_era() {
 	auto draw_deck = PrepareDrawDeck(M2_GAME.ServerThread().GetClientCount());
 	Give8CardsToEachPlayer(draw_deck);
 	_draw_deck = std::move(draw_deck);
-	game_state_tracker().SetVariable(pb::DRAW_DECK_SIZE, IFE{I(_draw_deck.size())});
+	game_state_tracker().SetVariable(pb::DRAW_DECK_SIZE, IVFE{I(_draw_deck.size())});
 
 	// Give roads to players
 	const auto& road_card = M2_GAME.GetCard(pb::ROAD_TILE);
@@ -706,24 +706,24 @@ m2g::Proxy::LiquidationDetails m2g::Proxy::prepare_railroad_era() {
 			}
 		});
 
-	game_state_tracker().SetVariable(pb::IS_RAILROAD_ERA, IFE{1});
-	game_state_tracker().SetVariable(pb::IS_LAST_ACTION_OF_PLAYER, IFE{0});
+	game_state_tracker().SetVariable(pb::IS_RAILROAD_ERA, IVFE{1});
+	game_state_tracker().SetVariable(pb::IS_LAST_ACTION_OF_PLAYER, IVFE{0});
 	LOG_INFO("Switch to railroad era and next player");
 	return std::nullopt;
 }
 
 void m2g::Proxy::buy_coal_from_market() {
-	game_state_tracker().SetVariable(pb::COAL_CUBE_COUNT, IFE{std::max(game_state_tracker().GetVariable(pb::COAL_CUBE_COUNT).GetIntOrZero() - 1, 0)});
+	game_state_tracker().SetVariable(pb::COAL_CUBE_COUNT, IVFE{std::max(game_state_tracker().GetVariable(pb::COAL_CUBE_COUNT).GetIntOrZero() - 1, 0)});
 }
 
 void m2g::Proxy::buy_iron_from_market() {
-	game_state_tracker().SetVariable(pb::IRON_CUBE_COUNT, IFE{std::max(game_state_tracker().GetVariable(pb::IRON_CUBE_COUNT).GetIntOrZero() - 1, 0)});
+	game_state_tracker().SetVariable(pb::IRON_CUBE_COUNT, IVFE{std::max(game_state_tracker().GetVariable(pb::IRON_CUBE_COUNT).GetIntOrZero() - 1, 0)});
 }
 
 void m2g::Proxy::sell_coal_to_market(int count) {
-	game_state_tracker().SetVariable(pb::COAL_CUBE_COUNT, IFE{game_state_tracker().GetVariable(pb::COAL_CUBE_COUNT).GetIntOrZero() + count});
+	game_state_tracker().SetVariable(pb::COAL_CUBE_COUNT, IVFE{game_state_tracker().GetVariable(pb::COAL_CUBE_COUNT).GetIntOrZero() + count});
 }
 
 void m2g::Proxy::sell_iron_to_market(int count) {
-	game_state_tracker().SetVariable(pb::IRON_CUBE_COUNT, IFE{game_state_tracker().GetVariable(pb::IRON_CUBE_COUNT).GetIntOrZero() + count});
+	game_state_tracker().SetVariable(pb::IRON_CUBE_COUNT, IVFE{game_state_tracker().GetVariable(pb::IRON_CUBE_COUNT).GetIntOrZero() + count});
 }
