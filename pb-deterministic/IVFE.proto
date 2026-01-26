@@ -6,7 +6,8 @@ import "m2g_VariableType.proto";
 message IVFE {
   oneof value_variant {
     int32 i = 1;
-    m2g.pb.VariableType v = 2;
-    int32 fe = 3;
+    int64 l = 2;
+    m2g.pb.VariableType v = 3;
+    int32 fe = 4;
   }
 }

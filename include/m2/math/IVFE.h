@@ -5,18 +5,22 @@
 #include <IVFE.pb.h>
 
 namespace m2 {
+	// TODO rename to something more generic so that we don't have to add a new letter every time we add a new type
+	// ReSharper disable CppNonExplicitConvertingConstructor
 	class IVFE {
-		std::variant<std::monostate, int32_t, m2g::pb::VariableType, FE> _value{};
+		std::variant<std::monostate, int32_t, int64_t, m2g::pb::VariableType, FE> _value{};
 
 	public:
 		IVFE() = default;
-		explicit IVFE(const int32_t i) : _value(i) {}
-		explicit IVFE(const m2g::pb::VariableType vt) : _value(vt) {}
-		explicit IVFE(FE&& fe) : _value(fe) {}
-		explicit IVFE(const FE& fe) : _value(fe) {}
+		IVFE(const int32_t i) : _value(i) {}
+		IVFE(const int64_t l) : _value(l) {}
+		IVFE(const uint64_t l) : _value(static_cast<int64_t>(l)) {}
+		IVFE(const m2g::pb::VariableType vt) : _value(vt) {}
+		IVFE(FE&& fe) : _value(fe) {}
+		IVFE(const FE& fe) : _value(fe) {}
 		template <bool Enable = not GAME_IS_DETERMINISTIC>
-		explicit IVFE(const float f) requires (Enable) : _value(FE{f}) {}
-		explicit IVFE(const pb::IVFE&);
+		IVFE(const float f) requires (Enable) : _value(FE{f}) {}
+		IVFE(const pb::IVFE&);
 
 		explicit operator bool() const;
 		explicit operator pb::IVFE() const;
@@ -24,6 +28,7 @@ namespace m2 {
 		[[nodiscard]] bool IsNull() const { return std::holds_alternative<std::monostate>(_value); }
 		[[nodiscard]] bool IsNonNull() const { return not IsNull(); }
 		[[nodiscard]] bool IsInt() const { return std::holds_alternative<int32_t>(_value); }
+		[[nodiscard]] bool IsLong() const { return std::holds_alternative<int64_t>(_value); }
 		[[nodiscard]] bool IsVariableType() const { return std::holds_alternative<m2g::pb::VariableType>(_value); }
 		[[nodiscard]] bool IsFE() const { return std::holds_alternative<FE>(_value); }
 		template <bool Enable = not GAME_IS_DETERMINISTIC>
@@ -32,6 +37,10 @@ namespace m2 {
 		[[nodiscard]] int32_t UnsafeGetInt() const { return std::get<int32_t>(_value); }
 		[[nodiscard]] int32_t GetIntOrZero() const;
 		[[nodiscard]] int32_t GetIntOrValue(int32_t defaultValue) const;
+
+		[[nodiscard]] int64_t UnsafeGetLong() const { return std::get<int64_t>(_value); }
+		[[nodiscard]] int64_t GetLongOrZero() const;
+		[[nodiscard]] int64_t GetLongOrValue(int64_t defaultValue) const;
 
 		[[nodiscard]] m2g::pb::VariableType UnsafeGetVariableType() const { return std::get<m2g::pb::VariableType>(_value); }
 		[[nodiscard]] int32_t GetVariableTypeOrZero() const;

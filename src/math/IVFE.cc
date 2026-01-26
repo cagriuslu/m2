@@ -6,6 +6,8 @@ using namespace m2;
 IVFE::IVFE(const pb::IVFE& ivfe) {
 	if (ivfe.has_i()) {
 		_value = ivfe.i();
+	} else if (ivfe.has_l()) {
+		_value = ivfe.l();
 	} else if (ivfe.has_v()) {
 		_value = ivfe.v();
 	} else if (ivfe.has_fe()) {
@@ -18,14 +20,18 @@ IVFE::operator bool() const {
 		? false
 		: std::holds_alternative<int32_t>(_value)
 			? std::get<int32_t>(_value)
-			: std::holds_alternative<m2g::pb::VariableType>(_value)
-				? std::get<m2g::pb::VariableType>(_value)
-				: static_cast<bool>(std::get<FE>(_value));
+			: std::holds_alternative<int64_t>(_value)
+				? std::get<int64_t>(_value)
+				: std::holds_alternative<m2g::pb::VariableType>(_value)
+					? std::get<m2g::pb::VariableType>(_value)
+					: static_cast<bool>(std::get<FE>(_value));
 }
 IVFE::operator pb::IVFE() const {
 	pb::IVFE pbIvfe;
 	if (IsInt()) {
 		pbIvfe.set_i(std::get<int32_t>(_value));
+	} else if (IsLong()) {
+		pbIvfe.set_l(std::get<int64_t>(_value));
 	} else if (IsVariableType()) {
 		pbIvfe.set_v(std::get<m2g::pb::VariableType>(_value));
 	} else if (IsFE()) {
@@ -39,6 +45,13 @@ int32_t IVFE::GetIntOrZero() const {
 }
 int32_t IVFE::GetIntOrValue(const int32_t defaultValue) const {
 	return std::holds_alternative<int32_t>(_value) ? std::get<int32_t>(_value) : defaultValue;
+}
+
+int64_t IVFE::GetLongOrZero() const {
+	return IsLong() ? UnsafeGetLong() : 0;
+}
+int64_t IVFE::GetLongOrValue(int64_t defaultValue) const {
+	return std::holds_alternative<int64_t>(_value) ? std::get<int64_t>(_value) : defaultValue;
 }
 
 int32_t IVFE::GetVariableTypeOrZero() const {
@@ -58,6 +71,8 @@ FE IVFE::GetFEOrValue(const FE defaultValue) const {
 IVFE IVFE::UnsafeAdd(const IVFE& rhs) const {
 	if (IsInt() && rhs.IsInt()) {
 		return IVFE{UnsafeGetInt() + rhs.UnsafeGetInt()};
+	} else if (IsLong() && rhs.IsLong()) {
+		return IVFE{UnsafeGetLong() + rhs.UnsafeGetLong()};
 	} else if (IsFE() && rhs.IsFE()) {
 		return IVFE{UnsafeGetFE() + rhs.UnsafeGetFE()};
 	} else if (IsVariableType()) {
@@ -71,6 +86,8 @@ IVFE IVFE::UnsafeAdd(const IVFE& rhs) const {
 IVFE IVFE::UnsafeSubtract(const IVFE& rhs) const {
 	if (IsInt() && rhs.IsInt()) {
 		return IVFE{UnsafeGetInt() - rhs.UnsafeGetInt()};
+	} else if (IsLong() && rhs.IsLong()) {
+		return IVFE{UnsafeGetLong() - rhs.UnsafeGetLong()};
 	} else if (IsFE() && rhs.IsFE()) {
 		return IVFE{UnsafeGetFE() - rhs.UnsafeGetFE()};
 	} else if (IsVariableType()) {
@@ -86,6 +103,8 @@ IVFE IVFE::Negate() const {
 		return *this;
 	} else if (IsInt()) {
 		return IVFE{-UnsafeGetInt()};
+	} else if (IsLong()) {
+		return IVFE{-UnsafeGetLong()};
 	} else if (IsVariableType()) {
 		throw M2_ERROR("Attempt to negate VariableType");
 	} else {
