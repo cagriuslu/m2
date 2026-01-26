@@ -28,8 +28,17 @@ namespace m2 {
 	constexpr auto pool_iterator_to_data = [](const auto &it) { return it.Data(); };
 	constexpr auto to_id = [](const auto &it) { return it.GetId(); };
 
+	/// This class allows a user to deallocate items from a Pool without knowing the exact type of it
+	class PoolBase {
+	public:
+		virtual ~PoolBase() = default;
+
+		virtual void Free(Id) = 0;
+		virtual void Clear() = 0;
+	};
+
 	template <typename T, uint64_t Capacity = 65536>
-	class Pool {
+	class Pool : public PoolBase {
 		static_assert(Capacity <= 16777216, "Max Pool capacity is 16777216 because the index is limited to 24 bits");
 	public:
 		class Iterator {
@@ -56,7 +65,7 @@ namespace m2 {
 				for (uint64_t i = IdToIndex(_id) + 1; i <= _pool->_highestAllocatedIndex; ++i) {
 					auto& item = _pool->_array[i];
 					if (IdToKey(item.id)) {
-						_data = &item.data;
+						_data = &item.storage.data;
 						_id = item.id;
 						return *this;
 					}
@@ -74,10 +83,15 @@ namespace m2 {
 		};
 
 		struct Item {
-			T data;
+			union Storage {
+				Storage() {}
+				~Storage() {}
+				std::array<uint8_t, sizeof(T)> placeholder{};
+				T data;
+			} storage;
 			// If allocated: 16 bit ShiftedPoolId | 24 bit Key | 24 bit Index
 			// If available: 16 bit zeros | 24 bit zeros | 24 bit NextFreeIndex
-			Id id;
+			Id id{};
 		};
 
 	private:
@@ -92,10 +106,13 @@ namespace m2 {
 	public:
 		// Constructors
 
-		Pool() {
+		Pool() : PoolBase() {
 			if (_shiftedPoolId == 0) { throw M2_ERROR("PoolId overflow"); }
 			// Each item points to the next item as next free index
 			for (uint64_t i = 0; i < Capacity; ++i) { _array[i].id = IdToIndex(i + 1); }
+		}
+		~Pool() override {
+			Pool::Clear();
 		}
 
 		// Accessors
@@ -107,19 +124,21 @@ namespace m2 {
 		[[nodiscard]] bool Contains(const T* data) const { return GetId(data); }
 		[[nodiscard]] bool ContainsIndex(const uint64_t index) const { return GetIndex(index); }
 		T* Get(const Id id) {
-			if (auto* item = GetArrayItem(id)) { return &item->data; }
+			if (not id) { return nullptr; }
+			if (auto* item = GetArrayItem(id)) { return &item->storage.data; }
 			return nullptr;
 		}
 		const T* Get(const Id id) const {
-			if (const auto* item = GetArrayItem(id)) { return &item->data; }
+			if (not id) { return nullptr; }
+			if (const auto* item = GetArrayItem(id)) { return &item->storage.data; }
 			return nullptr;
 		}
 		T* GetIndex(const uint64_t index) {
-			if (auto& item = _array[index]; IdToKey(item.id)) { return &item.data; }
+			if (auto& item = _array[index]; IdToKey(item.id)) { return &item.storage.data; }
 			return nullptr;
 		}
 		const T* GetIndex(const uint64_t index) const {
-			if (const auto& item = _array[index]; IdToKey(item.id)) { return &item.data; }
+			if (const auto& item = _array[index]; IdToKey(item.id)) { return &item.storage.data; }
 			return nullptr;
 		}
 		T& operator[](const Id id) {
@@ -133,10 +152,10 @@ namespace m2 {
 		Id GetId(const T* data) const {
 			const auto* byte_ptr = reinterpret_cast<const uint8_t*>(data);
 			// Check if data is in range of items
-			const auto* lowest_byte_ptr = reinterpret_cast<const uint8_t*>(&_array[_lowestAllocatedIndex].data);
-			const auto* highest_byte_ptr = reinterpret_cast<const uint8_t*>(&_array[_highestAllocatedIndex].data);
+			const auto* lowest_byte_ptr = reinterpret_cast<const uint8_t*>(&_array[_lowestAllocatedIndex].storage.data);
+			const auto* highest_byte_ptr = reinterpret_cast<const uint8_t*>(&_array[_highestAllocatedIndex].storage.data);
 			if (lowest_byte_ptr <= byte_ptr && byte_ptr <= highest_byte_ptr) {
-				const auto offset_of_data = reinterpret_cast<uint8_t*>(&(reinterpret_cast<Item*>(0)->data));
+				const auto offset_of_data = reinterpret_cast<uint8_t*>(&(reinterpret_cast<Item*>(0)->storage.data));
 				const auto* item_ptr = reinterpret_cast<const Item*>(byte_ptr - offset_of_data);
 				// Check if item is allocated
 				if (IdToKey(item_ptr->id)) {
@@ -145,7 +164,7 @@ namespace m2 {
 			}
 			return 0;
 		}
-		Id GetId(const uint64_t index) const {
+		[[nodiscard]] Id GetId(const uint64_t index) const {
 			if (const auto& item = _array[index]; IdToKey(item.id)) { return item.id; }
 			return 0;
 		}
@@ -155,7 +174,7 @@ namespace m2 {
 		Iterator begin() {
 			if (_size) {
 				Item& item = _array[_lowestAllocatedIndex];
-				return {this, &item.data, item.id};
+				return {this, &item.storage.data, item.id};
 			}
 			return end();
 		}
@@ -172,8 +191,11 @@ namespace m2 {
 			const uint64_t index_to_alloc = _nextFreeIndex;
 			Item &item = _array[index_to_alloc];
 			// Create object in-place
-			item.data.~T();
-			new (&item.data) T{std::forward<Args>(args)...};
+			if (ContainsIndex(index_to_alloc)) {
+				item.storage.data.~T();
+			}
+			item.storage.placeholder = {};
+			new (&item.storage.data) T{std::forward<Args>(args)...};
 			// Store next free index
 			_nextFreeIndex = IdToIndex(item.id);
 			// Set id of the new item
@@ -191,19 +213,19 @@ namespace m2 {
 			if (index_to_alloc < _lowestAllocatedIndex) {
 				_lowestAllocatedIndex = index_to_alloc;
 			}
-			return {this, &item.data, item.id};
+			return {this, &item.storage.data, item.id};
 		}
 		// TODO add erase(it)
 		// TODO rename free to erase
 		// TODO provide index to iterator function to replace free_index
-		void Free(const Id id) {
-			auto* item_ptr = GetArrayItem(id);
-			if (item_ptr) {
+		void Free(const Id id) override {
+			if (not id) { return; }
+			if (auto* item_ptr = GetArrayItem(id)) {
 				// Get index of item
 				auto index = IdToIndex(item_ptr->id);
 				// Clear item (avoid swap-delete, objects might rely on `this`, ex. Pool ID lookups)
-				item_ptr->data.~T();
-				new (&item_ptr->data) T();
+				item_ptr->storage.data.~T();
+				item_ptr->storage.placeholder = {};
 				item_ptr->id = IdToIndex(_nextFreeIndex);
 				// Set next free index
 				_nextFreeIndex = index;
@@ -233,9 +255,9 @@ namespace m2 {
 			Free(GetId(data));
 		}
 		void FreeIndex(const uint64_t idx) {
-			if (auto& item = _array[idx]; IdToKey(item.id)) { Free(GetId(&item.data)); }
+			if (auto& item = _array[idx]; IdToKey(item.id)) { Free(GetId(&item.storage.data)); }
 		}
-		void Clear() {
+		void Clear() override {
 			while (_size) {
 				auto it = begin();
 				Free(it.GetId());
