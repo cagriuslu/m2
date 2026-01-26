@@ -143,13 +143,13 @@ m2::Game::Game() {
 	_objectBlueprints = LoadObjectBlueprints(_proxy.objectBlueprints);
 
 	const pb::Cards* inMemoryCards = _proxy.cards ? &*_proxy.cards : nullptr;
-	cards = pb::LUT<pb::Card, Card>::load(inMemoryCards, _resources.GetCardsPath(), &pb::Cards::cards);
+	cards = pb::MessageLUT<pb::Card, Card>::load(inMemoryCards, _resources.GetCardsPath(), &pb::Cards::cards);
 	LOG_INFO("Loaded named cards", cards.size());
 
-	animations = pb::LUT<pb::Animation, Animation>::load(static_cast<pb::Animations*>(nullptr), _resources.GetAnimationsPath(), &pb::Animations::animations);
+	animations = pb::MessageLUT<pb::Animation, Animation>::load(static_cast<pb::Animations*>(nullptr), _resources.GetAnimationsPath(), &pb::Animations::animations);
 	LOG_INFO("Loaded animations", animations.size());
 
-	songs = pb::LUT<pb::Song, Song>::load(static_cast<pb::Songs*>(nullptr), _resources.GetSongsPath(), &pb::Songs::songs);
+	songs = pb::MessageLUT<pb::Song, Song>::load(static_cast<pb::Songs*>(nullptr), _resources.GetSongsPath(), &pb::Songs::songs);
 	LOG_INFO("Loaded songs", songs.size());
 
 	keyToScancodeMap = GenerateKeyToScancodeMap(_resources.GetKeysPath());
