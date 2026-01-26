@@ -11,7 +11,7 @@
 #include "rpg/fsm/Patroller.h"
 
 namespace rpg {
-    struct Enemy : public m2::ObjectImpl {
+    struct Enemy : public m2::HeapObjectImpl {
 		m2::AnimationFsm animation_fsm;
 
 		using AiFsmVariant = std::variant<

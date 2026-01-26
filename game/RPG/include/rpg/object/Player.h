@@ -9,7 +9,7 @@
 #include "m2/game/fsm/AnimationFsm.h"
 
 namespace rpg {
-	struct Player : public m2::ObjectImpl {
+	struct Player : public m2::HeapObjectImpl {
 		m2::AnimationFsm animation_fsm;
 
 		explicit Player(m2::Object& obj);

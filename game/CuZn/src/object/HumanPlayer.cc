@@ -15,10 +15,10 @@
 #include <cuzn/ConsumingCoal.h>
 #include <cuzn/ConsumingIron.h>
 
-struct HumanPlayer : public m2::ObjectImpl {
+struct HumanPlayer : public m2::HeapObjectImpl {
 	std::optional<Location> currentMouseHoverLocation;
 
-	explicit HumanPlayer(m2::Object& object) : ObjectImpl(object) {}
+	explicit HumanPlayer(m2::Object& object) : HeapObjectImpl(object) {}
 };
 
 m2::void_expected PlayerInitThisInstance(m2::Object& obj, const m2::VecF& position) {

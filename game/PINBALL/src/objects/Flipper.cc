@@ -16,11 +16,11 @@ namespace {
 		GOING_DOWN
 	};
 
-	struct FlipperImpl final : m2::ObjectImpl {
+	struct FlipperImpl final : m2::HeapObjectImpl {
 		float initialRotation; // Clamped to [0, 2*PI)
 		FlipperState state{FlipperState::RESTING};
 
-		explicit FlipperImpl(m2::Object& object, const float initialRotation_) : ObjectImpl(object), initialRotation(m2::ClampRadiansTo2Pi(initialRotation_)) {}
+		explicit FlipperImpl(m2::Object& object, const float initialRotation_) : HeapObjectImpl(object), initialRotation(m2::ClampRadiansTo2Pi(initialRotation_)) {}
 	};
 }
 

@@ -3,10 +3,10 @@
 #include <m2/game/Timer.h>
 #include <m2/third_party/physics/ColliderCategory.h>
 
-struct Spikes : public m2::ObjectImpl {
+struct Spikes : public m2::HeapObjectImpl {
 	std::optional<m2::Timer> trigger_timer;
 
-	explicit Spikes(m2::Object& object) : ObjectImpl(object) {}
+	explicit Spikes(m2::Object& object) : HeapObjectImpl(object) {}
 };
 
 m2::void_expected rpg::create_spikes(m2::Object& obj, const m2::VecF& position) {

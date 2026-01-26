@@ -23,7 +23,7 @@ namespace m2 {
 	/// If the component is created and destroyed rapidly => Pool
 	/// Else => impl
 	struct Object final {
-		std::unique_ptr<ObjectImpl> impl; /// Custom Data
+		std::variant<std::unique_ptr<HeapObjectImpl>, PoolObjectImpl> impl; /// Custom Data
 
 		Object() = default;
 		explicit Object(m2g::pb::ObjectType type, ObjectId parent_id = 0);
@@ -120,6 +120,6 @@ namespace m2 {
 
 	Object& ObjectIdToObject(ObjectId id);
 	const Object& ObjectIdToConstObject(ObjectId id);
-	inline Character& UnsafeObjectToCharacter(Object* o) { return o->GetCharacter(); }
-	inline Character& ObjectToCharacter(Object& o) { return o.GetCharacter(); }
+	inline Character& UnsafeObjectToCharacter(const Object* o) { return o->GetCharacter(); }
+	inline Character& ObjectToCharacter(const Object& o) { return o.GetCharacter(); }
 }

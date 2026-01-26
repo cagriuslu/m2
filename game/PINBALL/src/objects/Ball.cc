@@ -7,10 +7,10 @@
 // The ball is 0.5m in diameter.
 
 namespace {
-	struct BallImpl final : m2::ObjectImpl {
+	struct BallImpl final : m2::HeapObjectImpl {
 		std::optional<m2::VecF> lastCollidedWallPosition;
 
-		explicit BallImpl(m2::Object& object) : ObjectImpl(object) {}
+		explicit BallImpl(m2::Object& object) : HeapObjectImpl(object) {}
 	};
 
 	m2::third_party::physics::RigidBody& GetActiveRigidBody(m2::Physique& phy) {
