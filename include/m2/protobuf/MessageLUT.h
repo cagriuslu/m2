@@ -7,13 +7,13 @@
 
 namespace m2::pb {
 	template <typename ProtoItemT, typename LoadedItemT = int>
-	class LUT {
+	class MessageLUT {
 		std::vector<LoadedItemT> _vector;
 
-		explicit LUT(std::vector<LoadedItemT>&& vec) : _vector(std::move(vec)) {}
+		explicit MessageLUT(std::vector<LoadedItemT>&& vec) : _vector(std::move(vec)) {}
 
 	public:
-		LUT() = default;
+		MessageLUT() = default;
 
 		[[nodiscard]] std::vector<LoadedItemT>::size_type size() const { return _vector.size(); }
 
@@ -70,7 +70,7 @@ namespace m2::pb {
 		}
 
 		template <typename EnvelopeT, typename... LoadedItemArgs>
-		static LUT load(const EnvelopeT* inMemoryEnvelope, const std::filesystem::path& overrideEnvelopePath,
+		static MessageLUT load(const EnvelopeT* inMemoryEnvelope, const std::filesystem::path& overrideEnvelopePath,
 				const ::google::protobuf::RepeatedPtrField<ProtoItemT>& (EnvelopeT::*listAccessor)() const,
 				LoadedItemArgs... args) {
 			const auto protoItems = LoadProtoItems(inMemoryEnvelope, overrideEnvelopePath, listAccessor);
@@ -85,7 +85,7 @@ namespace m2::pb {
 				const auto keyIndex = pb::enum_index(key); // Index of the enum value
 				items[keyIndex] = LoadedItemT{protoItem, args...};
 			}
-			return LUT{std::move(items)};
+			return MessageLUT{std::move(items)};
 		}
 	};
 }

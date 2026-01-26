@@ -15,7 +15,7 @@
 #include "multi_player/TurnBasedBotClientThread.h"
 #include "multi_player/TurnBasedServerActorInterface.h"
 #include "multi_player/TurnBasedServerComponents.h"
-#include "protobuf/LUT.h"
+#include "protobuf/MessageLUT.h"
 #include <m2g_ObjectType.pb.h>
 #include <m2g/Proxy.h>
 #include <SDL.h>
@@ -91,9 +91,9 @@ namespace m2 {
 		std::vector<SpriteSheet> spriteSheets;
 		std::optional<SpriteEffectsSheet> spriteEffectsSheet;
 		std::vector<m2g::pb::SpriteType> level_editor_background_sprites;
-		pb::LUT<pb::Card, Card> cards;
-		pb::LUT<pb::Animation, Animation> animations;
-		pb::LUT<pb::Song, Song> songs;
+		pb::MessageLUT<pb::Card, Card> cards;
+		pb::MessageLUT<pb::Animation, Animation> animations;
+		pb::MessageLUT<pb::Song, Song> songs;
 		std::multimap<m2g::pb::KeyType, SDL_Scancode> keyToScancodeMap;
 		std::map<SDL_Scancode, m2g::pb::KeyType> scancodeToKeyMap;
 		const Rational& FontLetterWidthToHeightRatio() const { return _font_letter_width_to_height_ratio; }
