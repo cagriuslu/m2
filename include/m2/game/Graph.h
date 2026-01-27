@@ -174,7 +174,8 @@ namespace m2 {
 							// Insert neighbor into frontiers
 							frontiers.insert({neighborPriority, neighbor});
 							// Set the previous position of neighbor as the current position
-							approachVia[neighbor] = edge;
+							approachVia.erase(neighbor);
+							approachVia.emplace(neighbor, edge);
 						}
 					}
 				}
