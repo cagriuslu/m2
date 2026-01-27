@@ -83,6 +83,14 @@ namespace m2 {
 	constexpr bool DoesArrayContainElement(const std::array<T, N>& arr, const T& el) {
 		return std::find(arr.begin(), arr.end(), el) != arr.end();
 	}
+	template <typename T, std::size_t N1, std::size_t N2>
+	constexpr std::array<T, N1 + N2> ConcatArray(std::array<T, N1> lhs, std::array<T, N2> rhs) {
+		std::array<T, N1 + N2> result{};
+		std::size_t index = 0;
+		for (auto& el : lhs) { result[index++] = std::move(el); }
+		for (auto& el : rhs) { result[index++] = std::move(el); }
+		return result;
+	}
 
 	// Range utilities
 
