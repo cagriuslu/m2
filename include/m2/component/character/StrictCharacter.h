@@ -5,216 +5,59 @@
 #include <array>
 
 namespace m2 {
-	template <std::size_t N>
-	using PossibleCardTypes = std::array<m2g::pb::CardType, N>;
-
-	template <std::size_t N>
-	using PossibleVariableTypes = std::array<m2g::pb::VariableType, N>;
-
-	template <PossibleCardTypes possibleCardTypes, PossibleVariableTypes possibleVariableTypes = PossibleVariableTypes<0>{}>
+	template <typename StrictCardCharacter, typename StrictVariableCharacter>
 	class StrictCharacter final : public Character {
-		// Verify that card types and variable types are unique
-		static_assert(AreArrayElementsUnique(possibleCardTypes), "StrictCharacter supports only unique CardTypes");
-		static_assert(AreArrayElementsUnique(possibleVariableTypes), "StrictCharacter supports only unique VariableTypes");
-
-		static constexpr int CardTypeIndex(const m2g::pb::CardType ct) {
-			for (int i = 0; i < I(possibleCardTypes.size()); ++i) { if (possibleCardTypes[i] == ct) { return i; } }
-			return -1;
-		}
-		static constexpr int VariableTypeIndex(const m2g::pb::VariableType vt) {
-			for (int i = 0; i < I(possibleVariableTypes.size()); ++i) { if (possibleVariableTypes[i] == vt) { return i; } }
-			return -1;
-		}
-
-		std::array<bool, possibleCardTypes.size()> _cards;
-		std::array<IVFE, possibleVariableTypes.size()> _variables;
+		StrictCardCharacter _cards;
+		StrictVariableCharacter _variables;
 
 	public:
 		using Character::Character;
 
-		[[nodiscard]] bool CanHoldCard(const m2g::pb::CardType ct) const {
-			return CardTypeIndex(ct) != -1;
-		}
-		[[nodiscard]] bool CanHoldVariable(const m2g::pb::VariableType vt) const {
-			return VariableTypeIndex(vt) != -1;
-		}
+		[[nodiscard]] bool CanHoldCard(const m2g::pb::CardType ct) const { return _cards.CanHoldCard(ct); }
+		[[nodiscard]] bool CanHoldVariable(const m2g::pb::VariableType vt) const { return _variables.CanHoldVariable(vt); }
 
 		template <m2g::pb::CardType cardType>
-		[[nodiscard]] bool HasCard() const {
-			static_assert(DoesArrayContainElement(possibleCardTypes, cardType), "This StrictCharacter specialization can't hold the given CardType");
-			return _cards[CardTypeIndex(cardType)];
-		}
+		[[nodiscard]] bool HasCard() const { return _cards.template HasCard<cardType>(); }
 		template <m2g::pb::CardType cardType>
-		void AddCardIfNotPresent() {
-			static_assert(DoesArrayContainElement(possibleCardTypes, cardType), "This StrictCharacter specialization can't hold the given CardType");
-			_cards[CardTypeIndex(cardType)] = true;
-		}
+		void AddCardIfNotPresent() { return _cards.template AddCardIfNotPresent<cardType>(); }
 		template <m2g::pb::CardType cardType>
-		void RemoveCard() {
-			static_assert(DoesArrayContainElement(possibleCardTypes, cardType), "This StrictCharacter specialization can't hold the given CardType");
-			_cards[CardTypeIndex(cardType)] = false;
-		}
+		void RemoveCard() { return _cards.template RemoveCard<cardType>(); }
 
 		template <m2g::pb::VariableType variableType>
-		[[nodiscard]] IVFE GetVariable() const {
-			static_assert(DoesArrayContainElement(possibleVariableTypes, variableType), "This StrictCharacter specialization can't hold the given VariableType");
-			return _variables[VariableTypeIndex(variableType)];
-		}
+		[[nodiscard]] IVFE GetVariable() const { return _variables.template GetVariable<variableType>(); }
 		template <m2g::pb::VariableType variableType>
-		IVFE SetVariable(const IVFE ivfe) {
-			static_assert(DoesArrayContainElement(possibleVariableTypes, variableType), "This StrictCharacter specialization can't hold the given VariableType");
-			_variables[VariableTypeIndex(variableType)] = ivfe; return ivfe;
-		}
+		IVFE SetVariable(const IVFE ivfe) { return _variables.template SetVariable<variableType>(ivfe); }
 
-		[[nodiscard]] bool HasCard(const m2g::pb::CardType ct) const override {
-			if (const auto cardTypeIndex = CardTypeIndex(ct); cardTypeIndex == -1) {
-				return false;
-			} else {
-				return _cards[cardTypeIndex];
-			}
-		}
-		[[nodiscard]] bool HasCard(const m2g::pb::CardCategory cc) const override {
-			for (int i = 0; i < I(possibleCardTypes.size()); ++i) {
-				const auto possibleCardType = possibleCardTypes[i];
-				if (const auto cat = ToCategoryOfCard(possibleCardType); cat == cc) {
-					if (_cards[i]) { return true; }
-				}
-			}
-			return false;
-		}
-		[[nodiscard]] size_t CountCards(const m2g::pb::CardType ct) const override {
-			return HasCard(ct) ? 1 : 0;
-		}
-		[[nodiscard]] size_t CountCards(const m2g::pb::CardCategory cc) const override {
-			size_t count = 0;
-			for (int i = 0; i < I(possibleCardTypes.size()); ++i) {
-				const auto possibleCardType = possibleCardTypes[i];
-				if (const auto cat = ToCategoryOfCard(possibleCardType); cat == cc) {
-					if (_cards[i]) { ++count; }
-				}
-			}
-			return count;
-		}
-		[[nodiscard]] std::optional<m2g::pb::CardType> GetFirstCardType(const m2g::pb::CardCategory cc) const override {
-			for (int i = 0; i < I(possibleCardTypes.size()); ++i) {
-				const auto possibleCardType = possibleCardTypes[i];
-				if (const auto cat = ToCategoryOfCard(possibleCardType); cat == cc) {
-					if (_cards[i]) { return possibleCardType; }
-				}
-			}
-			return std::nullopt;
-		}
-		[[nodiscard]] bool TryAddCard(const m2g::pb::CardType ct) {
-			if (const auto cardTypeIndex = CardTypeIndex(ct); cardTypeIndex == -1) {
-				return false;
-			} else {
-				if (_cards[cardTypeIndex]) {
-					return false;
-				}
-				_cards[cardTypeIndex] = true;
-				return true;
-			}
-		}
-		void UnsafeAddCard(const m2g::pb::CardType ct) {
-			_cards[CardTypeIndex(ct)] = true;
-		}
-		void RemoveCard(const m2g::pb::CardType ct) override {
-			if (const auto cardTypeIndex = CardTypeIndex(ct); cardTypeIndex != -1) {
-				_cards[cardTypeIndex] = false;
-			}
-		}
+		[[nodiscard]] bool HasCard(const m2g::pb::CardType ct) const override { return _cards.HasCard(ct); }
+		[[nodiscard]] bool HasCard(const m2g::pb::CardCategory cc) const override { return _cards.HasCard(cc); }
+		[[nodiscard]] size_t CountCards(const m2g::pb::CardType ct) const override { return _cards.CountCards(ct); }
+		[[nodiscard]] size_t CountCards(const m2g::pb::CardCategory cc) const override { return _cards.CountCards(cc); }
+		[[nodiscard]] std::optional<m2g::pb::CardType> GetFirstCardType(const m2g::pb::CardCategory cc) const override { return _cards.GetFirstCardType(cc); }
+		[[nodiscard]] bool TryAddCard(const m2g::pb::CardType ct) { return _cards.TryAddCard(ct); }
+		void UnsafeAddCard(const m2g::pb::CardType ct) { _cards.UnsafeAddCard(ct); }
+		void RemoveCard(const m2g::pb::CardType ct) override { _cards.RemoveCard(ct); }
 
-		[[nodiscard]] IVFE GetVariable(const m2g::pb::VariableType vt) const override {
-			if (const auto variableTypeIndex = VariableTypeIndex(vt); variableTypeIndex == -1) {
-				return {};
-			} else {
-				return _variables[variableTypeIndex];
-			}
-		}
-		[[nodiscard]] expected<IVFE> TrySetVariable(const m2g::pb::VariableType vt, const IVFE ivfe) {
-			if (const auto variableTypeIndex = VariableTypeIndex(vt); variableTypeIndex == -1) {
-				return make_unexpected("StrictCharacter specialization cannot hold " + ToString(vt));
-			} else {
-				_variables[variableTypeIndex] = ivfe;
-				return ivfe;
-			}
-		}
-		IVFE UnsafeSetVariable(const m2g::pb::VariableType vt, const IVFE ivfe) {
-			_variables[VariableTypeIndex(vt)] = ivfe;
-			return ivfe;
-		}
-		void ClearVariable(const m2g::pb::VariableType vt) override {
-			if (const auto variableTypeIndex = VariableTypeIndex(vt); variableTypeIndex != -1) {
-				_variables[variableTypeIndex] = {};
-			}
-		}
+		[[nodiscard]] IVFE GetVariable(const m2g::pb::VariableType vt) const override { return _variables.GetVariable(vt); }
+		[[nodiscard]] expected<IVFE> TrySetVariable(const m2g::pb::VariableType vt, const IVFE ivfe) { return _variables.TrySetVariable(vt, ivfe); }
+		IVFE UnsafeSetVariable(const m2g::pb::VariableType vt, const IVFE ivfe) { return _variables.UnsafeSetVariable(vt, ivfe); }
+		void ClearVariable(const m2g::pb::VariableType vt) override { return _variables.ClearVariable(vt); }
 
 	protected:
 		[[nodiscard]] int32_t Hash(int32_t hash) const override {
-			if constexpr (not GAME_IS_DETERMINISTIC) {
-				// ReSharper disable once CppDFAUnreachableCode
-				throw M2_ERROR("Game is not deterministic");
-			}
-			// ReSharper disable once CppDFAUnreachableCode
-			for (int i = 0; i < I(possibleCardTypes.size()); ++i) {
-				const auto possibleCardType = possibleCardTypes[i];
-				if (_cards[i]) {
-					hash = HashI(possibleCardType, hash);
-				}
-			}
-			for (const auto& variable : _variables) {
-				if (variable && variable.IsInt()) {
-					hash = HashI(variable.UnsafeGetInt(), hash);
-				} else if (variable && variable.IsFE()) {
-					hash = HashI(ToRawValue(variable.UnsafeGetFE()), hash);
-				}
-			}
-			return hash;
+			hash = _cards.HashCards(hash);
+			return _variables.HashVariables(hash);
 		}
 		void Store(pb::TurnBasedServerUpdate::ObjectDescriptor& objDesc) const override {
-			for (int i = 0; i < I(possibleCardTypes.size()); ++i) {
-				const auto possibleCardType = possibleCardTypes[i];
-				if (_cards[i]) {
-					objDesc.add_cards(possibleCardType);
-				}
-			}
-			for (int i = 0; i < I(possibleVariableTypes.size()); ++i) {
-				const auto possibleVariableType = possibleVariableTypes[i];
-				if (_variables[i]) {
-					auto* var = objDesc.add_variables();
-					var->set_type(possibleVariableType);
-					var->mutable_ivfe()->CopyFrom(static_cast<pb::IVFE>(_variables[i]));
-				}
-			}
+			_cards.StoreCards(objDesc);
+			_variables.StoreVariables(objDesc);
 		}
 		void Load(const pb::TurnBasedServerUpdate::ObjectDescriptor& objDesc) override {
-			_cards = std::array<bool, possibleCardTypes.size()>{};
-			_variables = std::array<IVFE, possibleVariableTypes.size()>{};
-			for (const auto& card : objDesc.cards()) {
-				AddCard(static_cast<m2g::pb::CardType>(card));
-			}
-			for (const auto& variable : objDesc.variables()) {
-				SetVariable(variable.type(), IVFE{variable.ivfe()});
-			}
+			_cards.LoadCards(objDesc);
+			_variables.LoadVariables(objDesc);
 		}
 
-		void AddCard(const m2g::pb::CardType ct) override {
-			if (const auto cardTypeIndex = CardTypeIndex(ct); cardTypeIndex == -1) {
-				throw M2_ERROR("Strict character variant cannot hold the added card type");
-			} else {
-				if (_cards[cardTypeIndex]) {
-					throw M2_ERROR("Strict character cannot hold more than one of each card type");
-				}
-				_cards[cardTypeIndex] = true;
-			}
-		}
+		void AddCard(const m2g::pb::CardType ct) override { _cards.AddCard(ct); }
 
-		IVFE SetVariable(const m2g::pb::VariableType vt, const IVFE ivfe) override {
-			if (const auto variableTypeIndex = VariableTypeIndex(vt); variableTypeIndex == -1) {
-				throw M2_ERROR("Strict character variant cannot hold the stored variable type");
-			} else {
-				_variables[variableTypeIndex] = ivfe; return ivfe;
-			}
-		}
+		IVFE SetVariable(const m2g::pb::VariableType vt, const IVFE ivfe) override { return _variables.SetVariable(vt, ivfe); }
 	};
 }
