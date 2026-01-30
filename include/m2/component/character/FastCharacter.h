@@ -19,11 +19,15 @@ namespace m2 {
 		[[nodiscard]] size_t CountCards(m2g::pb::CardType) const override;
 		[[nodiscard]] size_t CountCards(m2g::pb::CardCategory) const override;
 		[[nodiscard]] std::optional<m2g::pb::CardType> GetFirstCardType(m2g::pb::CardCategory) const override;
-		void AddCard(m2g::pb::CardType) override;
+		expected<void> TryAddCard(const m2g::pb::CardType ct) override { AddCard(ct); return {}; }
+		void UnsafeAddCard(const m2g::pb::CardType ct) override { AddCard(ct); }
+		void AddCard(m2g::pb::CardType);
 		void RemoveCard(m2g::pb::CardType) override;
 
 		[[nodiscard]] IVFE GetVariable(const m2g::pb::VariableType v) const override { return _variables[pb::enum_index(v)]; }
-		IVFE SetVariable(const m2g::pb::VariableType v, const IVFE ivfe) override { _variables[pb::enum_index(v)] = ivfe; return ivfe; }
+		expected<IVFE> TrySetVariable(const m2g::pb::VariableType vt, const IVFE ivfe) override { return SetVariable(vt, ivfe); }
+		IVFE UnsafeSetVariable(const m2g::pb::VariableType vt, const IVFE ivfe) override { return SetVariable(vt, ivfe); }
+		IVFE SetVariable(const m2g::pb::VariableType v, const IVFE ivfe) { _variables[pb::enum_index(v)] = ivfe; return ivfe; }
 		void ClearVariable(const m2g::pb::VariableType v) override { _variables[pb::enum_index(v)] = {}; }
 
 		// Utilities

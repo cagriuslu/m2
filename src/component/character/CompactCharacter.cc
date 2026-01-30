@@ -10,11 +10,7 @@ int32_t CompactCharacter::Hash(const int32_t initialValue) const {
 		hash = HashI(*_card, hash);
 	}
 	if (_variable.first && _variable.second) {
-		if (_variable.second.IsInt()) {
-			hash = HashI(_variable.second.UnsafeGetInt(), hash);
-		} else if (_variable.second.IsFE()) {
-			hash = HashI(ToRawValue(_variable.second.UnsafeGetFE()), hash);
-		}
+		hash = _variable.second.Hash(hash);
 	}
 	return hash;
 }
@@ -59,9 +55,16 @@ size_t CompactCharacter::CountCards(const m2g::pb::CardCategory cc) const {
 std::optional<m2g::pb::CardType> CompactCharacter::GetFirstCardType(const m2g::pb::CardCategory cc) const {
 	return HasCard(cc) ? _card : std::optional<m2g::pb::CardType>{};
 }
-void CompactCharacter::AddCard(const m2g::pb::CardType ct) {
+expected<void> CompactCharacter::TryAddCard(const m2g::pb::CardType ct) {
 	if (_card) {
-		throw M2_ERROR("CompactCharacter cannot hold more than one card");
+		return make_unexpected("Character cannot hold more than one card");
+	}
+	_card = ct;
+	return {};
+}
+void CompactCharacter::UnsafeAddCard(const m2g::pb::CardType ct) {
+	if (_card) {
+		throw M2_ERROR("Character cannot hold more than one card");
 	}
 	_card = ct;
 }
@@ -77,9 +80,16 @@ IVFE CompactCharacter::GetVariable(const m2g::pb::VariableType v) const {
 	}
 	return {};
 }
-IVFE CompactCharacter::SetVariable(const m2g::pb::VariableType v, const IVFE ivfe) {
-	if (_variable.first != m2g::pb::NO_VARIABLE && _variable.first != v) {
-		throw M2_ERROR("CompactCharacter cannot hold more than one type of variables");
+expected<IVFE> CompactCharacter::TrySetVariable(const m2g::pb::VariableType v, const IVFE ivfe) {
+	if (_variable.first && _variable.first != v) {
+		return make_unexpected("Character cannot hold more than one type of variables");
+	}
+	_variable = std::make_pair(v, ivfe);
+	return ivfe;
+}
+IVFE CompactCharacter::UnsafeSetVariable(const m2g::pb::VariableType v, const IVFE ivfe) {
+	if (_variable.first && _variable.first != v) {
+		throw M2_ERROR("Character cannot hold more than one type of variables");
 	}
 	_variable = std::make_pair(v, ivfe);
 	return ivfe;

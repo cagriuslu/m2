@@ -33,13 +33,13 @@ namespace m2 {
 		[[nodiscard]] size_t CountCards(const m2g::pb::CardType ct) const override { return _cards.CountCards(ct); }
 		[[nodiscard]] size_t CountCards(const m2g::pb::CardCategory cc) const override { return _cards.CountCards(cc); }
 		[[nodiscard]] std::optional<m2g::pb::CardType> GetFirstCardType(const m2g::pb::CardCategory cc) const override { return _cards.GetFirstCardType(cc); }
-		[[nodiscard]] bool TryAddCard(const m2g::pb::CardType ct) { return _cards.TryAddCard(ct); }
-		void UnsafeAddCard(const m2g::pb::CardType ct) { _cards.UnsafeAddCard(ct); }
+		[[nodiscard]] expected<void> TryAddCard(const m2g::pb::CardType ct) override { return _cards.TryAddCard(ct); }
+		void UnsafeAddCard(const m2g::pb::CardType ct) override { _cards.UnsafeAddCard(ct); }
 		void RemoveCard(const m2g::pb::CardType ct) override { _cards.RemoveCard(ct); }
 
 		[[nodiscard]] IVFE GetVariable(const m2g::pb::VariableType vt) const override { return _variables.GetVariable(vt); }
-		[[nodiscard]] expected<IVFE> TrySetVariable(const m2g::pb::VariableType vt, const IVFE ivfe) { return _variables.TrySetVariable(vt, ivfe); }
-		IVFE UnsafeSetVariable(const m2g::pb::VariableType vt, const IVFE ivfe) { return _variables.UnsafeSetVariable(vt, ivfe); }
+		[[nodiscard]] expected<IVFE> TrySetVariable(const m2g::pb::VariableType vt, const IVFE ivfe) override { return _variables.TrySetVariable(vt, ivfe); }
+		IVFE UnsafeSetVariable(const m2g::pb::VariableType vt, const IVFE ivfe) override { return _variables.UnsafeSetVariable(vt, ivfe); }
 		void ClearVariable(const m2g::pb::VariableType vt) override { return _variables.ClearVariable(vt); }
 
 	protected:
@@ -55,9 +55,5 @@ namespace m2 {
 			_cards.LoadCards(objDesc);
 			_variables.LoadVariables(objDesc);
 		}
-
-		void AddCard(const m2g::pb::CardType ct) override { _cards.AddCard(ct); }
-
-		IVFE SetVariable(const m2g::pb::VariableType vt, const IVFE ivfe) override { return _variables.SetVariable(vt, ivfe); }
 	};
 }

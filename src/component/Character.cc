@@ -1,7 +1,6 @@
 #include <m2/component/Character.h>
 #include <m2/Game.h>
 #include <algorithm>
-#include <m2/protobuf/Detail.h>
 
 using namespace m2;
 
@@ -19,47 +18,47 @@ std::unique_ptr<const Proxy::InterCharacterMessage> Character::ExecuteInteractio
 	return {};
 }
 
-int32_t Character::AddVariable(const m2g::pb::VariableType vt, const int32_t value, const std::optional<int32_t> maxValue) {
-	if (GetVariable(vt).IsFE()) {
-		throw M2_ERROR("Variable contains FE");
+int32_t Character::UnsafeAddVariable(const m2g::pb::VariableType vt, const int32_t value, const std::optional<int32_t> maxValue) {
+	if (GetVariable(vt).IsNonNull() && not GetVariable(vt).IsInt()) {
+		throw M2_ERROR("Variable contains a different type of value");
 	}
 	if (maxValue) {
-		SetVariable(vt, std::min(GetVariable(vt).GetIntOrZero() + value, *maxValue));
+		UnsafeSetVariable(vt, std::min(GetVariable(vt).GetIntOrZero() + value, *maxValue));
 	} else {
-		SetVariable(vt, GetVariable(vt).GetIntOrZero() + value);
+		UnsafeSetVariable(vt, GetVariable(vt).GetIntOrZero() + value);
 	}
 	return GetVariable(vt).UnsafeGetInt();
 }
-FE Character::AddVariable(const m2g::pb::VariableType vt, const FE value, const std::optional<FE> maxValue) {
-	if (GetVariable(vt).IsInt()) {
-		throw M2_ERROR("Variable contains int32");
+FE Character::UnsafeAddVariable(const m2g::pb::VariableType vt, const FE value, const std::optional<FE> maxValue) {
+	if (GetVariable(vt).IsNonNull() && not GetVariable(vt).IsFE()) {
+		throw M2_ERROR("Variable contains a different type of value");
 	}
 	if (maxValue) {
-		SetVariable(vt, std::min(GetVariable(vt).GetFEOrZero() + value, *maxValue));
+		UnsafeSetVariable(vt, std::min(GetVariable(vt).GetFEOrZero() + value, *maxValue));
 	} else {
-		SetVariable(vt, GetVariable(vt).GetFEOrZero() + value);
+		UnsafeSetVariable(vt, GetVariable(vt).GetFEOrZero() + value);
 	}
 	return GetVariable(vt).UnsafeGetFE();
 }
-int32_t Character::SubtractVariable(const m2g::pb::VariableType vt, const int32_t value, const std::optional<int32_t> minValue) {
-	if (GetVariable(vt).IsFE()) {
-		throw M2_ERROR("Variable contains FE");
+int32_t Character::UnsafeSubtractVariable(const m2g::pb::VariableType vt, const int32_t value, const std::optional<int32_t> minValue) {
+	if (GetVariable(vt).IsNonNull() && not GetVariable(vt).IsInt()) {
+		throw M2_ERROR("Variable contains a different type of value");
 	}
 	if (minValue) {
-		SetVariable(vt, std::max(GetVariable(vt).GetIntOrZero() - value, *minValue));
+		UnsafeSetVariable(vt, std::max(GetVariable(vt).GetIntOrZero() - value, *minValue));
 	} else {
-		SetVariable(vt, GetVariable(vt).GetIntOrZero() - value);
+		UnsafeSetVariable(vt, GetVariable(vt).GetIntOrZero() - value);
 	}
 	return GetVariable(vt).UnsafeGetInt();
 }
-FE Character::SubtractVariable(const m2g::pb::VariableType vt, const FE value, const std::optional<FE> minValue) {
-	if (GetVariable(vt).IsInt()) {
-		throw M2_ERROR("Variable contains int32");
+FE Character::UnsafeSubtractVariable(const m2g::pb::VariableType vt, const FE value, const std::optional<FE> minValue) {
+	if (GetVariable(vt).IsNonNull() && not GetVariable(vt).IsFE()) {
+		throw M2_ERROR("Variable contains a different type of value");
 	}
 	if (minValue) {
-		SetVariable(vt, std::max(GetVariable(vt).GetFEOrZero() - value, *minValue));
+		UnsafeSetVariable(vt, std::max(GetVariable(vt).GetFEOrZero() - value, *minValue));
 	} else {
-		SetVariable(vt, GetVariable(vt).GetFEOrZero() - value);
+		UnsafeSetVariable(vt, GetVariable(vt).GetFEOrZero() - value);
 	}
 	return GetVariable(vt).UnsafeGetFE();
 }

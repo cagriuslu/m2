@@ -27,32 +27,29 @@ namespace m2 {
 		[[nodiscard]] virtual size_t CountCards(m2g::pb::CardType) const = 0;
 		[[nodiscard]] virtual size_t CountCards(m2g::pb::CardCategory) const = 0;
 		[[nodiscard]] virtual std::optional<m2g::pb::CardType> GetFirstCardType(m2g::pb::CardCategory) const = 0;
-		virtual void AddCard(m2g::pb::CardType) = 0;
+		virtual expected<void> TryAddCard(m2g::pb::CardType) = 0;
+		virtual void UnsafeAddCard(m2g::pb::CardType) = 0;
 		virtual void RemoveCard(m2g::pb::CardType) = 0;
 
 		[[nodiscard]] virtual IVFE GetVariable(m2g::pb::VariableType) const = 0;
-		virtual IVFE SetVariable(m2g::pb::VariableType, IVFE) = 0;
+		virtual expected<IVFE> TrySetVariable(m2g::pb::VariableType, IVFE) = 0;
+		virtual IVFE UnsafeSetVariable(m2g::pb::VariableType, IVFE) = 0;
 		virtual void ClearVariable(m2g::pb::VariableType) = 0;
 
 		// Utilities
 
-		IVFE SetVariable(const m2g::pb::VariableType vt, const int32_t i) { return SetVariable(vt, IVFE{i}); }
-		IVFE SetVariable(const m2g::pb::VariableType vt, const FE fe) { return SetVariable(vt, IVFE{fe}); }
+		int32_t UnsafeAddVariable(m2g::pb::VariableType, int32_t value, std::optional<int32_t> maxValue = {});
+		FE UnsafeAddVariable(m2g::pb::VariableType, FE value, std::optional<FE> maxValue = {});
 		template <bool Enable = not GAME_IS_DETERMINISTIC>
-		constexpr IVFE SetVariable(const m2g::pb::VariableType vt, const float value) requires (Enable) { return SetVariable(vt, IVFE{FE{value}}); }
-
-		int32_t AddVariable(m2g::pb::VariableType, int32_t value, std::optional<int32_t> maxValue = {});
-		FE AddVariable(m2g::pb::VariableType, FE value, std::optional<FE> maxValue = {});
-		template <bool Enable = not GAME_IS_DETERMINISTIC>
-		constexpr float AddVariable(const m2g::pb::VariableType vt, const float value, const std::optional<float> maxValue = {}) requires (Enable) {
-			return AddVariable(vt, FE{value}, maxValue ? std::optional{FE{*maxValue}} : std::optional<FE>{}).ToFloat();
+		constexpr float UnsafeAddVariable(const m2g::pb::VariableType vt, const float value, const std::optional<float> maxValue = {}) requires (Enable) {
+			return UnsafeAddVariable(vt, FE{value}, maxValue ? std::optional{FE{*maxValue}} : std::optional<FE>{}).ToFloat();
 		}
 
-		int32_t SubtractVariable(m2g::pb::VariableType, int32_t value, std::optional<int32_t> minValue = {});
-		FE SubtractVariable(m2g::pb::VariableType, FE value, std::optional<FE> minValue = {});
+		int32_t UnsafeSubtractVariable(m2g::pb::VariableType, int32_t value, std::optional<int32_t> minValue = {});
+		FE UnsafeSubtractVariable(m2g::pb::VariableType, FE value, std::optional<FE> minValue = {});
 		template <bool Enable = not GAME_IS_DETERMINISTIC>
-		constexpr float SubtractVariable(const m2g::pb::VariableType vt, const float value, const std::optional<float> minValue = {}) requires (Enable) {
-			return SubtractVariable(vt, FE{value}, minValue ? std::optional{FE{*minValue}} : std::optional<FE>{}).ToFloat();
+		constexpr float UnsafeSubtractVariable(const m2g::pb::VariableType vt, const float value, const std::optional<float> minValue = {}) requires (Enable) {
+			return UnsafeSubtractVariable(vt, FE{value}, minValue ? std::optional{FE{*minValue}} : std::optional<FE>{}).ToFloat();
 		}
 	};
 

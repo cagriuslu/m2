@@ -34,6 +34,8 @@ namespace m2 {
 		template <bool Enable = not GAME_IS_DETERMINISTIC>
 		[[nodiscard]] bool IsF() const requires (Enable) { return std::holds_alternative<FE>(_value); }
 
+		[[nodiscard]] int32_t Hash(int32_t initialValue) const;
+
 		[[nodiscard]] int32_t UnsafeGetInt() const { return std::get<int32_t>(_value); }
 		[[nodiscard]] int32_t GetIntOrZero() const;
 		[[nodiscard]] int32_t GetIntOrValue(int32_t defaultValue) const;

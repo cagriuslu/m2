@@ -10,7 +10,7 @@ namespace m2 {
 	template <PossibleCardTypes possibleCardTypes>
 	class StrictCardSetCharacter {
 		// Verify that card types are unique
-		static_assert(AreArrayElementsUnique(possibleCardTypes), "StrictCardSetCharacter supports only unique CardTypes");
+		static_assert(AreArrayElementsUnique(possibleCardTypes), "CardTypes are not unique");
 
 		static constexpr int CardTypeIndex(const m2g::pb::CardType ct) {
 			for (int i = 0; i < I(possibleCardTypes.size()); ++i) { if (possibleCardTypes[i] == ct) { return i; } }
@@ -26,17 +26,17 @@ namespace m2 {
 
 		template <m2g::pb::CardType cardType>
 		[[nodiscard]] bool HasCard() const {
-			static_assert(DoesArrayContainElement(possibleCardTypes, cardType), "This StrictCardSetCharacter specialization can't hold the given CardType");
+			static_assert(DoesArrayContainElement(possibleCardTypes, cardType), "Character can't hold the given CardType");
 			return _cards[CardTypeIndex(cardType)];
 		}
 		template <m2g::pb::CardType cardType>
 		void AddCardIfNotPresent() {
-			static_assert(DoesArrayContainElement(possibleCardTypes, cardType), "This StrictCardSetCharacter specialization can't hold the given CardType");
+			static_assert(DoesArrayContainElement(possibleCardTypes, cardType), "Character can't hold the given CardType");
 			_cards[CardTypeIndex(cardType)] = true;
 		}
 		template <m2g::pb::CardType cardType>
 		void RemoveCard() {
-			static_assert(DoesArrayContainElement(possibleCardTypes, cardType), "This StrictCardSetCharacter specialization can't hold the given CardType");
+			static_assert(DoesArrayContainElement(possibleCardTypes, cardType), "Character can't hold the given CardType");
 			_cards[CardTypeIndex(cardType)] = false;
 		}
 
@@ -78,15 +78,15 @@ namespace m2 {
 			}
 			return std::nullopt;
 		}
-		[[nodiscard]] bool TryAddCard(const m2g::pb::CardType ct) {
+		[[nodiscard]] expected<void> TryAddCard(const m2g::pb::CardType ct) {
 			if (const auto cardTypeIndex = CardTypeIndex(ct); cardTypeIndex == -1) {
-				return false;
+				return make_unexpected("Character cannot hold the given card");
 			} else {
 				if (_cards[cardTypeIndex]) {
-					return false;
+					return make_unexpected("Character can hold only one of each card");
 				}
 				_cards[cardTypeIndex] = true;
-				return true;
+				return {};
 			}
 		}
 		void UnsafeAddCard(const m2g::pb::CardType ct) {
@@ -123,18 +123,7 @@ namespace m2 {
 		void LoadCards(const pb::TurnBasedServerUpdate::ObjectDescriptor& objDesc) {
 			_cards = std::array<bool, possibleCardTypes.size()>{};
 			for (const auto& card : objDesc.cards()) {
-				AddCard(static_cast<m2g::pb::CardType>(card));
-			}
-		}
-
-		void AddCard(const m2g::pb::CardType ct) {
-			if (const auto cardTypeIndex = CardTypeIndex(ct); cardTypeIndex == -1) {
-				throw M2_ERROR("This StrictCardSetCharacter specialization cannot hold the added card type");
-			} else {
-				if (_cards[cardTypeIndex]) {
-					throw M2_ERROR("Strict characters cannot hold more than one of each card type");
-				}
-				_cards[cardTypeIndex] = true;
+				UnsafeAddCard(static_cast<m2g::pb::CardType>(card));
 			}
 		}
 	};

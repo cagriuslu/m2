@@ -19,11 +19,13 @@ namespace m2 {
 		[[nodiscard]] size_t CountCards(m2g::pb::CardType) const override;
 		[[nodiscard]] size_t CountCards(m2g::pb::CardCategory) const override;
 		[[nodiscard]] std::optional<m2g::pb::CardType> GetFirstCardType(m2g::pb::CardCategory) const override;
-		void AddCard(m2g::pb::CardType) override;
+		expected<void> TryAddCard(m2g::pb::CardType) override;
+		void UnsafeAddCard(m2g::pb::CardType) override;
 		void RemoveCard(m2g::pb::CardType) override;
 
 		[[nodiscard]] IVFE GetVariable(m2g::pb::VariableType) const override;
-		IVFE SetVariable(m2g::pb::VariableType, IVFE) override;
+		expected<IVFE> TrySetVariable(m2g::pb::VariableType, IVFE) override;
+		IVFE UnsafeSetVariable(m2g::pb::VariableType, IVFE) override;
 		void ClearVariable(m2g::pb::VariableType) override;
 	};
 }

@@ -17,11 +17,7 @@ int32_t FastCharacter::Hash(const int32_t initialValue) const {
 		}
 	}
 	for (const auto& variable : _variables) {
-		if (variable && variable.IsInt()) {
-			hash = HashI(variable.UnsafeGetInt(), hash);
-		} else if (variable && variable.IsFE()) {
-			hash = HashI(ToRawValue(variable.UnsafeGetFE()), hash);
-		}
+		if (variable) { hash = variable.Hash(hash); }
 	}
 	return hash;
 }

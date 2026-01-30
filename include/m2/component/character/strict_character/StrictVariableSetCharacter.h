@@ -10,7 +10,7 @@ namespace m2 {
 	template <PossibleVariableTypes possibleVariableTypes>
 	class StrictVariableSetCharacter {
 		// Verify that variable types are unique
-		static_assert(AreArrayElementsUnique(possibleVariableTypes), "StrictCharacter supports only unique VariableTypes");
+		static_assert(AreArrayElementsUnique(possibleVariableTypes), "VariableTypes are not unique");
 
 		static constexpr int VariableTypeIndex(const m2g::pb::VariableType vt) {
 			for (int i = 0; i < I(possibleVariableTypes.size()); ++i) { if (possibleVariableTypes[i] == vt) { return i; } }
@@ -26,12 +26,12 @@ namespace m2 {
 
 		template <m2g::pb::VariableType variableType>
 		[[nodiscard]] IVFE GetVariable() const {
-			static_assert(DoesArrayContainElement(possibleVariableTypes, variableType), "This StrictVariableSetCharacter specialization can't hold the given VariableType");
+			static_assert(DoesArrayContainElement(possibleVariableTypes, variableType), "Character can't hold the given VariableType");
 			return _variables[VariableTypeIndex(variableType)];
 		}
 		template <m2g::pb::VariableType variableType>
 		IVFE SetVariable(const IVFE ivfe) {
-			static_assert(DoesArrayContainElement(possibleVariableTypes, variableType), "This StrictVariableSetCharacter specialization can't hold the given VariableType");
+			static_assert(DoesArrayContainElement(possibleVariableTypes, variableType), "Character can't hold the given VariableType");
 			_variables[VariableTypeIndex(variableType)] = ivfe; return ivfe;
 		}
 
@@ -44,7 +44,7 @@ namespace m2 {
 		}
 		[[nodiscard]] expected<IVFE> TrySetVariable(const m2g::pb::VariableType vt, const IVFE ivfe) {
 			if (const auto variableTypeIndex = VariableTypeIndex(vt); variableTypeIndex == -1) {
-				return make_unexpected("StrictVariableSetCharacter specialization cannot hold " + ToString(vt));
+				return make_unexpected("Character cannot hold " + ToString(vt));
 			} else {
 				_variables[variableTypeIndex] = ivfe;
 				return ivfe;
@@ -61,17 +61,8 @@ namespace m2 {
 		}
 
 		[[nodiscard]] int32_t HashVariables(int32_t hash) const {
-			if constexpr (not GAME_IS_DETERMINISTIC) {
-				// ReSharper disable once CppDFAUnreachableCode
-				throw M2_ERROR("Game is not deterministic");
-			}
-			// ReSharper disable once CppDFAUnreachableCode
 			for (const auto& variable : _variables) {
-				if (variable && variable.IsInt()) {
-					hash = HashI(variable.UnsafeGetInt(), hash);
-				} else if (variable && variable.IsFE()) {
-					hash = HashI(ToRawValue(variable.UnsafeGetFE()), hash);
-				}
+				if (variable) { hash = variable.Hash(hash); }
 			}
 			return hash;
 		}
@@ -88,15 +79,7 @@ namespace m2 {
 		void LoadVariables(const pb::TurnBasedServerUpdate::ObjectDescriptor& objDesc) {
 			_variables = std::array<IVFE, possibleVariableTypes.size()>{};
 			for (const auto& variable : objDesc.variables()) {
-				SetVariable(variable.type(), IVFE{variable.ivfe()});
-			}
-		}
-
-		IVFE SetVariable(const m2g::pb::VariableType vt, const IVFE ivfe) {
-			if (const auto variableTypeIndex = VariableTypeIndex(vt); variableTypeIndex == -1) {
-				throw M2_ERROR("This StrictVariableSetCharacter specialization cannot hold the stored variable type");
-			} else {
-				_variables[variableTypeIndex] = ivfe; return ivfe;
+				UnsafeSetVariable(variable.type(), IVFE{variable.ivfe()});
 			}
 		}
 	};

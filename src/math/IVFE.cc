@@ -1,4 +1,5 @@
 #include <m2/math/IVFE.h>
+#include <m2/math/Hash.h>
 #include <m2/BuildOptions.h>
 
 using namespace m2;
@@ -38,6 +39,25 @@ IVFE::operator pb::IVFE() const {
 		pbIvfe.set_fe(std::get<FE>(_value).ToRawValue());
 	}
 	return pbIvfe;
+}
+
+int32_t IVFE::Hash(const int32_t initialValue) const {
+	if constexpr (not GAME_IS_DETERMINISTIC) {
+		// ReSharper disable once CppDFAUnreachableCode
+		throw M2_ERROR("Game is not deterministic");
+	}
+	// ReSharper disable once CppDFAUnreachableCode
+	if (IsInt()) {
+		return HashI(UnsafeGetInt(), initialValue);
+	} else if (IsLong()) {
+		return HashI(UnsafeGetLong(), initialValue);
+	} else if (IsVariableType()) {
+		return HashI(UnsafeGetVariableType(), initialValue);
+	} else if (IsFE()) {
+		return HashI(ToRawValue(UnsafeGetFE()), initialValue);
+	} else {
+		return initialValue;
+	}
 }
 
 int32_t IVFE::GetIntOrZero() const {
