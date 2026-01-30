@@ -2,6 +2,7 @@
 #include <m2/Game.h>
 #include <cuzn/detail/Graphic.h>
 #include <cuzn/detail/Income.h>
+#include <m2g_CardType.pb.h>
 #include <m2/ObjectEx.h>
 #include <m2/Log.h>
 
@@ -68,9 +69,9 @@ void SellFactory(m2::Character& factory_chr) {
 	// Earn income points
 	const auto incomeBonus = tileTtem.GetConstant(INCOME_POINTS_BONUS).GetIntOrZero();
 	const auto currIncomePoints = factory_chr.Owner().TryGetParent()->GetCharacter().GetVariable(INCOME_POINTS).GetIntOrZero();
-	factory_chr.Owner().TryGetParent()->GetCharacter().SetVariable(INCOME_POINTS, m2::IVFE{ClampIncomePoints(currIncomePoints + incomeBonus)});
+	factory_chr.Owner().TryGetParent()->GetCharacter().UnsafeSetVariable(INCOME_POINTS, m2::IVFE{ClampIncomePoints(currIncomePoints + incomeBonus)});
 	// Flip the tile
-	factory_chr.SetVariable(IS_SOLD, m2::IVFE{1});
+	factory_chr.UnsafeSetVariable(IS_SOLD, m2::IVFE{1});
 }
 
 bool IsFactorySold(m2::Character& chr) {
@@ -132,9 +133,9 @@ m2::void_expected InitFactory(m2::Object& obj, const m2::VecF& position, City ci
 
 	// Add all available information to the factories: industry, city, industry tile
 	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::FastCharacterStorageIndex>(obj);
-	chr.AddCard(industry);
-	chr.AddCard(city);
-	chr.AddCard(industry_tile);
+	chr.UnsafeAddCard(industry);
+	chr.UnsafeAddCard(city);
+	chr.UnsafeAddCard(industry_tile);
 
 	auto color = M2G_PROXY.player_colors[parent_index];
 	auto& _gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, industry_sprite_of_industry(industry));

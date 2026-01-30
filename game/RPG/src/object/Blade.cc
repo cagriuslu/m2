@@ -55,10 +55,10 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF& position, c
 
 	// Add character
 	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::CompactCharacterStorageIndex>(obj);
-	chr.SetVariable(RESOURCE_TTL, average_ttl);
+	chr.UnsafeSetVariable(RESOURCE_TTL, average_ttl);
 
 	chr.update = [](m2::Character& chr, const m2::Stopwatch::Duration& delta) {
-		chr.SubtractVariable(RESOURCE_TTL, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count(), 0.0f);
+		chr.UnsafeSubtractVariable(RESOURCE_TTL, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count(), 0.0f);
 		if (not chr.GetVariable(RESOURCE_TTL)) {
 			M2_DEFER(m2::CreateObjectDeleter(chr.OwnerId()));
 		}

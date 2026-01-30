@@ -68,8 +68,8 @@ m2::void_expected CanPlayerScout(m2::Character& player, const m2g::pb::TurnBased
 m2g::pb::CardType ExecuteScoutAction(m2::Character& player, const m2g::pb::TurnBasedClientCommand_ScoutAction& scout_action) {
 	player.RemoveCard(scout_action.card_1());
 	player.RemoveCard(scout_action.card_2());
-	player.AddCard(m2g::pb::WILD_INDUSTRY_CARD);
-	player.AddCard(m2g::pb::WILD_LOCATION_CARD);
+	player.UnsafeAddCard(m2g::pb::WILD_INDUSTRY_CARD);
+	player.UnsafeAddCard(m2g::pb::WILD_LOCATION_CARD);
 
 	return scout_action.card_0();
 }

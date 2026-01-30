@@ -20,7 +20,7 @@ namespace {
 		float initialRotation; // Clamped to [0, 2*PI)
 		FlipperState state{FlipperState::RESTING};
 
-		explicit FlipperImpl(m2::Object& object, const float initialRotation_) : HeapObjectImpl(object), initialRotation(m2::ClampRadiansTo2Pi(initialRotation_)) {}
+		explicit FlipperImpl(const float initialRotation_) : HeapObjectImpl(), initialRotation(m2::ClampRadiansTo2Pi(initialRotation_)) {}
 	};
 }
 
@@ -28,8 +28,8 @@ m2::void_expected LoadFlipper(m2::Object& obj, const m2::VecF& position, float o
 	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(rightFlipper
 			? m2g::pb::SPRITE_BASIC_FLIPPER_RIGHT : m2g::pb::SPRITE_BASIC_FLIPPER_LEFT));
 
-	obj.impl = std::make_unique<FlipperImpl>(obj, orientation);
-	auto* flipper = dynamic_cast<FlipperImpl*>(obj.impl.get());
+	obj.impl = std::make_unique<FlipperImpl>(orientation);
+	auto* flipper = dynamic_cast<FlipperImpl*>(std::get<std::unique_ptr<m2::HeapObjectImpl>>(obj.impl).get());
 
 	auto& phy = obj.AddPhysique();
 	phy.position = position;

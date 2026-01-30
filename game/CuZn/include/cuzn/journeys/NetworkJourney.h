@@ -1,7 +1,6 @@
 #pragma once
 #include "Common.h"
 #include <m2g_CardType.pb.h>
-#include <m2g_ResourceType.pb.h>
 #include <m2/game/Fsm.h>
 #include <m2/math/VecF.h>
 #include <m2/component/Character.h>

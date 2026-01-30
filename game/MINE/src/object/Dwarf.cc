@@ -73,7 +73,7 @@ m2::void_expected create_dwarf(m2::Object& obj, const m2::VecF& position) {
 					// If character has HP
 					if (chr_under_mouse.GetVariable(VARIABLE_HP)) {
 						// Damage object
-						chr_under_mouse.SubtractVariable(VARIABLE_HP, 2.0f * m2::ToDurationF(delta), 0.0f);
+						chr_under_mouse.UnsafeSubtractVariable(VARIABLE_HP, 2.0f * m2::ToDurationF(delta), 0.0f);
 						// Show health bar
 						auto hp = chr_under_mouse.GetVariable(VARIABLE_HP).GetFEOrZero().ToFloat();
 						// If object under mouse runs out of HP
@@ -91,15 +91,15 @@ m2::void_expected create_dwarf(m2::Object& obj, const m2::VecF& position) {
 		}
 	};
 	chr.update = [](m2::Character& chr, const m2::Stopwatch::Duration& delta) {
-		chr.AddVariable(VARIABLE_JUMP_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
+		chr.UnsafeAddVariable(VARIABLE_JUMP_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
 	};
 	phy.onCollision = [&chr](MAYBE m2::Physique& phy, m2::Physique& other, const m2::box2d::Contact& contact) {
 		// Check if in contact with obstacle
 		if (other.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] && other.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->GetAllLayersBelongingTo() & (COLLIDER_LAYER_BACKGROUND_OBSTACLE | COLLIDER_LAYER_FOREGROUND_OBSTACLE)) {
 			// Check is contact normal points upwards
 			if (abs(contact.normal.GetX()) <= -contact.normal.GetY()) {
-				chr.SetVariable(VARIABLE_IS_GROUNDED_X, other.position.GetX());
-				chr.SetVariable(VARIABLE_IS_GROUNDED_Y, other.position.GetY());
+				chr.UnsafeSetVariable(VARIABLE_IS_GROUNDED_X, other.position.GetX());
+				chr.UnsafeSetVariable(VARIABLE_IS_GROUNDED_Y, other.position.GetY());
 			}
 		}
 	};
@@ -108,8 +108,8 @@ m2::void_expected create_dwarf(m2::Object& obj, const m2::VecF& position) {
 		if (other.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] && other.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->GetAllLayersBelongingTo() & (COLLIDER_LAYER_BACKGROUND_OBSTACLE | COLLIDER_LAYER_FOREGROUND_OBSTACLE)) {
 			// Check if the other object is the grounding object
 			if (chr.GetVariable(VARIABLE_IS_GROUNDED_X).GetFOrZero() == other.position.GetX() && chr.GetVariable(VARIABLE_IS_GROUNDED_Y).GetFOrZero() == other.position.GetY()) {
-				chr.SetVariable(VARIABLE_IS_GROUNDED_X, 0.0f);
-				chr.SetVariable(VARIABLE_IS_GROUNDED_Y, 0.0f);
+				chr.UnsafeSetVariable(VARIABLE_IS_GROUNDED_X, 0.0f);
+				chr.UnsafeSetVariable(VARIABLE_IS_GROUNDED_Y, 0.0f);
 			}
 		}
 	};

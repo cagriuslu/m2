@@ -6,7 +6,7 @@
 struct Spikes : public m2::HeapObjectImpl {
 	std::optional<m2::Timer> trigger_timer;
 
-	explicit Spikes(m2::Object& object) : HeapObjectImpl(object) {}
+	explicit Spikes() : HeapObjectImpl() {}
 };
 
 m2::void_expected rpg::create_spikes(m2::Object& obj, const m2::VecF& position) {
@@ -34,8 +34,8 @@ m2::void_expected rpg::create_spikes(m2::Object& obj, const m2::VecF& position) 
 	gfx.position = position;
 
 	// Create custom data
-	obj.impl = std::make_unique<Spikes>(obj);
-	auto& impl = dynamic_cast<Spikes&>(*obj.impl);
+	obj.impl = std::make_unique<Spikes>();
+	auto& impl = dynamic_cast<Spikes&>(*std::get<std::unique_ptr<m2::HeapObjectImpl>>(obj.impl));
 
 	phy.preStep = [&, rigidBodyDef](MAYBE m2::Physique& self, const m2::Stopwatch::Duration&) {
 		// Check if the spikes are in, and triggered

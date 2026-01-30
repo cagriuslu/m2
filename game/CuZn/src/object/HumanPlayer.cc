@@ -18,7 +18,7 @@
 struct HumanPlayer : public m2::HeapObjectImpl {
 	std::optional<Location> currentMouseHoverLocation;
 
-	explicit HumanPlayer(m2::Object& object) : HeapObjectImpl(object) {}
+	explicit HumanPlayer(m2::Object& object) : HeapObjectImpl() {}
 };
 
 m2::void_expected PlayerInitThisInstance(m2::Object& obj, const m2::VecF& position) {
@@ -27,8 +27,8 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj, const m2::VecF& positi
 	obj.impl = std::make_unique<HumanPlayer>(obj);
 
 	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::FastCharacterStorageIndex>(obj);
-	chr.SetVariable(m2g::pb::MONEY, m2::IVFE{17});
-	chr.SetVariable(m2g::pb::INCOME_POINTS, m2::IVFE{0});
+	chr.UnsafeSetVariable(m2g::pb::MONEY, m2::IVFE{17});
+	chr.UnsafeSetVariable(m2g::pb::INCOME_POINTS, m2::IVFE{0});
 
 	// Add industry tiles
 	for (auto industry_tile = m2g::pb::COTTON_MILL_TILE_I;
@@ -37,18 +37,18 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj, const m2::VecF& positi
 		// Lookup possession count
 		const auto& card = M2_GAME.GetCard(industry_tile);
 		auto possession_limit = card.GetConstant(m2g::pb::POSSESSION_LIMIT).GetIntOrZero();
-		m2Repeat(possession_limit) { chr.AddCard(industry_tile); }
+		m2Repeat(possession_limit) { chr.UnsafeAddCard(industry_tile); }
 	}
 
 	// Add connection tiles
 	const auto& road_card = M2_GAME.GetCard(m2g::pb::ROAD_TILE);
 	auto road_possession_limit = road_card.GetConstant(m2g::pb::POSSESSION_LIMIT).GetIntOrZero();
-	m2Repeat(road_possession_limit) { chr.AddCard(m2g::pb::ROAD_TILE); }
+	m2Repeat(road_possession_limit) { chr.UnsafeAddCard(m2g::pb::ROAD_TILE); }
 
 	auto& phy = obj.AddPhysique();
 	phy.position = position;
 	phy.preStep = [&o = obj](m2::Physique& phy_, const m2::Stopwatch::Duration&) {
-		auto& impl = dynamic_cast<HumanPlayer&>(*o.impl);
+		auto& impl = dynamic_cast<HumanPlayer&>(*std::get<std::unique_ptr<m2::HeapObjectImpl>>(o.impl));
 		// Start map movement with mouse
 		if (M2_GAME.events.PopMouseButtonPress(m2::MouseButton::PRIMARY, M2_GAME.Dimensions().Game())) {
 			LOG_TRACE("Begin panning");
@@ -179,8 +179,8 @@ m2::void_expected PlayerInitOtherInstance(m2::Object& obj) {
 	// TODO check if the following is really necessary. If the TurnBasedServerUpdate is verified, it's necessary.
 	// TODO Otherwise, we don't need to fill the character with cards and resources.
 
-	chr.SetVariable(m2g::pb::MONEY, m2::IVFE{17});
-	chr.SetVariable(m2g::pb::INCOME_POINTS, m2::IVFE{0});
+	chr.UnsafeSetVariable(m2g::pb::MONEY, m2::IVFE{17});
+	chr.UnsafeSetVariable(m2g::pb::INCOME_POINTS, m2::IVFE{0});
 
 	// Add industry tiles
 	for (auto industry_tile = m2g::pb::COTTON_MILL_TILE_I;
@@ -189,13 +189,13 @@ m2::void_expected PlayerInitOtherInstance(m2::Object& obj) {
 		// Lookup possession count
 		const auto& card = M2_GAME.GetCard(industry_tile);
 		auto possession_limit = card.GetConstant(m2g::pb::POSSESSION_LIMIT).GetIntOrZero();
-		m2Repeat(possession_limit) { chr.AddCard(industry_tile); }
+		m2Repeat(possession_limit) { chr.UnsafeAddCard(industry_tile); }
 		 }
 
 	// Add connection tiles
 	const auto& road_card = M2_GAME.GetCard(m2g::pb::ROAD_TILE);
 	auto road_possession_limit = road_card.GetConstant(m2g::pb::POSSESSION_LIMIT).GetIntOrZero();
-	m2Repeat(road_possession_limit) { chr.AddCard(m2g::pb::ROAD_TILE); }
+	m2Repeat(road_possession_limit) { chr.UnsafeAddCard(m2g::pb::ROAD_TILE); }
 
 	return {};
 }

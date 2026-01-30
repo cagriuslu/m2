@@ -90,7 +90,7 @@ void Give8CardsToEachPlayer(std::vector<CardType>& deck) {
 			const auto cardType = deck.back();
 			deck.pop_back();
 			// Add card
-			M2_LEVEL.objects[playerObjectId].GetCharacter().AddCard(cardType);
+			M2_LEVEL.objects[playerObjectId].GetCharacter().UnsafeAddCard(cardType);
 			LOG_DEBUG("Giving card to player", i, M2_GAME.GetCard(cardType).in_game_name());
 		}
 	}

@@ -72,7 +72,7 @@ m2::void_expected InitRoad(m2::Object& obj, const m2::VecF& position, const Conn
 	// Add the city cards to the character
 	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::FastCharacterStorageIndex>(obj);
 	for (const auto city : cities_from_connection(connection)) {
-		chr.AddCard(city);
+		chr.UnsafeAddCard(city);
 	}
 
 	const auto parent_id = obj.GetParentId();

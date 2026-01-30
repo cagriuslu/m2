@@ -4,7 +4,6 @@
 #include <cuzn/ui/Detail.h>
 #include <m2/Game.h>
 #include <cuzn/object/HumanPlayer.h>
-#include <m2g_AttributeType.pb.h>
 
 using namespace m2;
 using namespace m2::widget;

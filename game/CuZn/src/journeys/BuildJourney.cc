@@ -171,7 +171,7 @@ BuildJourney::~BuildJourney() {
 	deinit();
 	// Return the reserved resources
 	for (auto [factory, resource_type] : _reserved_resources) {
-		factory->GetCharacter().SetVariable(resource_type, IVFE{factory->GetCharacter().GetVariable(resource_type).GetIntOrZero() + 1});
+		factory->GetCharacter().UnsafeSetVariable(resource_type, IVFE{factory->GetCharacter().GetVariable(resource_type).GetIntOrZero() + 1});
 	}
 	_reserved_resources.clear();
 }
@@ -312,7 +312,7 @@ std::optional<BuildJourneyStep> BuildJourney::HandleResourceEnterSignal() {
 					LOG_DEBUG("Player agreed");
 					// Reserve resource
 					auto* factory = FindFactoryAtLocation(*closest_mines_with_coal.begin());
-					factory->GetCharacter().SetVariable(COAL_CUBE_COUNT, IVFE{std::max(factory->GetCharacter().GetVariable(COAL_CUBE_COUNT).GetIntOrZero() - 1, 0)});
+					factory->GetCharacter().UnsafeSetVariable(COAL_CUBE_COUNT, IVFE{std::max(factory->GetCharacter().GetVariable(COAL_CUBE_COUNT).GetIntOrZero() - 1, 0)});
 					_reserved_resources.emplace_back(factory, COAL_CUBE_COUNT);
 					// Specify resource source
 					unspecified_resource->second = *closest_mines_with_coal.begin();
@@ -355,7 +355,7 @@ std::optional<BuildJourneyStep> BuildJourney::HandleResourceEnterSignal() {
 					LOG_DEBUG("Player agreed");
 					// Reserve resource
 					auto* factory = FindFactoryAtLocation(*iron_industries.begin());
-					factory->GetCharacter().SetVariable(IRON_CUBE_COUNT, IVFE{std::max(factory->GetCharacter().GetVariable(IRON_CUBE_COUNT).GetIntOrZero() - 1, 0)});
+					factory->GetCharacter().UnsafeSetVariable(IRON_CUBE_COUNT, IVFE{std::max(factory->GetCharacter().GetVariable(IRON_CUBE_COUNT).GetIntOrZero() - 1, 0)});
 					_reserved_resources.emplace_back(factory, IRON_CUBE_COUNT);
 					// Specify resource source
 					unspecified_resource->second = *iron_industries.begin();
@@ -386,7 +386,7 @@ std::optional<BuildJourneyStep> BuildJourney::HandleResourceMouseClickSignal(con
 			// Check if the location is one of the dimming exceptions
 			if (M2_LEVEL.GetDimmingExceptions()->contains(factory->GetId())) {
 				// Reserve resource
-				factory->GetCharacter().SetVariable(unspecified_resource->first, IVFE{std::max(factory->GetCharacter().GetVariable(unspecified_resource->first).GetIntOrZero() - 1, 0)});
+				factory->GetCharacter().UnsafeSetVariable(unspecified_resource->first, IVFE{std::max(factory->GetCharacter().GetVariable(unspecified_resource->first).GetIntOrZero() - 1, 0)});
 				// Specify resource source
 				unspecified_resource->second = industry_location;
 				// Reserve resource
@@ -532,7 +532,7 @@ m2::void_expected CanPlayerBuild(m2::Character& player, const m2g::pb::TurnBased
 			} else {
 				// Reserve resource
 				auto* factory = FindFactoryAtLocation(location);
-				factory->GetCharacter().SetVariable(COAL_CUBE_COUNT, IVFE{std::max(factory->GetCharacter().GetVariable(COAL_CUBE_COUNT).GetIntOrZero() - 1, 0)});
+				factory->GetCharacter().UnsafeSetVariable(COAL_CUBE_COUNT, IVFE{std::max(factory->GetCharacter().GetVariable(COAL_CUBE_COUNT).GetIntOrZero() - 1, 0)});
 				reserved_resources.emplace_back(factory, COAL_CUBE_COUNT);
 				// Specify resource source
 				next_unspecified_coal_resource->second = location;
@@ -563,7 +563,7 @@ m2::void_expected CanPlayerBuild(m2::Character& player, const m2g::pb::TurnBased
 			} else {
 				// Reserve resource
 				auto* factory = FindFactoryAtLocation(location);
-				factory->GetCharacter().SetVariable(IRON_CUBE_COUNT, IVFE{std::max(factory->GetCharacter().GetVariable(IRON_CUBE_COUNT).GetIntOrZero() - 1, 0)});
+				factory->GetCharacter().UnsafeSetVariable(IRON_CUBE_COUNT, IVFE{std::max(factory->GetCharacter().GetVariable(IRON_CUBE_COUNT).GetIntOrZero() - 1, 0)});
 				reserved_resources.emplace_back(factory, IRON_CUBE_COUNT);
 				// Specify resource source
 				next_unspecified_iron_resource->second = location;
@@ -586,7 +586,7 @@ m2::void_expected CanPlayerBuild(m2::Character& player, const m2g::pb::TurnBased
 return_resources:
 	// Give back the reserved resources
 	for (auto [factory, resource_type] : reserved_resources) {
-		factory->GetCharacter().SetVariable(resource_type, IVFE{factory->GetCharacter().GetVariable(resource_type).GetIntOrZero() + 1});
+		factory->GetCharacter().UnsafeSetVariable(resource_type, IVFE{factory->GetCharacter().GetVariable(resource_type).GetIntOrZero() + 1});
 	}
 	// Check if exploration finished with a success
 	if (not resource_sources_are_valid) {
@@ -639,7 +639,7 @@ std::pair<m2g::pb::CardType,int> ExecuteBuildAction(m2::Character& player, const
 		auto location = static_cast<Location>(coal_source);
 		if (is_industry_location(location)) {
 			auto* factory = FindFactoryAtLocation(location);
-			factory->GetCharacter().SetVariable(COAL_CUBE_COUNT, IVFE{std::max(factory->GetCharacter().GetVariable(COAL_CUBE_COUNT).GetIntOrZero() - 1, 0)});
+			factory->GetCharacter().UnsafeSetVariable(COAL_CUBE_COUNT, IVFE{std::max(factory->GetCharacter().GetVariable(COAL_CUBE_COUNT).GetIntOrZero() - 1, 0)});
 		} else if (is_merchant_location(location)) {
 			M2G_PROXY.buy_coal_from_market();
 		}
@@ -648,7 +648,7 @@ std::pair<m2g::pb::CardType,int> ExecuteBuildAction(m2::Character& player, const
 		auto location = static_cast<Location>(iron_source);
 		if (is_industry_location(location)) {
 			auto* factory = FindFactoryAtLocation(location);
-			factory->GetCharacter().SetVariable(IRON_CUBE_COUNT, IVFE{std::max(factory->GetCharacter().GetVariable(IRON_CUBE_COUNT).GetIntOrZero() - 1, 0)});
+			factory->GetCharacter().UnsafeSetVariable(IRON_CUBE_COUNT, IVFE{std::max(factory->GetCharacter().GetVariable(IRON_CUBE_COUNT).GetIntOrZero() - 1, 0)});
 		} else if (is_merchant_location(location)) {
 			M2G_PROXY.buy_iron_from_market();
 		}
@@ -672,11 +672,11 @@ std::pair<m2g::pb::CardType,int> ExecuteBuildAction(m2::Character& player, const
 			// Sell to market
 			M2G_PROXY.sell_coal_to_market(sell_count);
 			// Gain revenue
-			player.SetVariable(MONEY, IVFE{player.GetVariable(MONEY).GetIntOrZero() + revenue});
+			player.UnsafeSetVariable(MONEY, IVFE{player.GetVariable(MONEY).GetIntOrZero() + revenue});
 			// Keep the rest
-			it->GetCharacter().SetVariable(COAL_CUBE_COUNT, IVFE{it->GetCharacter().GetVariable(COAL_CUBE_COUNT).GetIntOrZero() + gained_resource_count - sell_count});
+			it->GetCharacter().UnsafeSetVariable(COAL_CUBE_COUNT, IVFE{it->GetCharacter().GetVariable(COAL_CUBE_COUNT).GetIntOrZero() + gained_resource_count - sell_count});
 		} else {
-			it->GetCharacter().SetVariable(COAL_CUBE_COUNT, IVFE{it->GetCharacter().GetVariable(COAL_CUBE_COUNT).GetIntOrZero() + tile_card.GetConstant(COAL_BONUS).GetIntOrZero()});
+			it->GetCharacter().UnsafeSetVariable(COAL_CUBE_COUNT, IVFE{it->GetCharacter().GetVariable(COAL_CUBE_COUNT).GetIntOrZero() + tile_card.GetConstant(COAL_BONUS).GetIntOrZero()});
 		}
 	} else if (tile_category == CARD_CATEGORY_IRON_WORKS_TILE) {
 		auto gained_resource_count = tile_card.GetConstant(IRON_BONUS).GetIntOrZero();
@@ -684,11 +684,11 @@ std::pair<m2g::pb::CardType,int> ExecuteBuildAction(m2::Character& player, const
 		// Sell to market
 		M2G_PROXY.sell_iron_to_market(sell_count);
 		// Gain revenue
-		player.SetVariable(MONEY, IVFE{player.GetVariable(MONEY).GetIntOrZero() + revenue});
+		player.UnsafeSetVariable(MONEY, IVFE{player.GetVariable(MONEY).GetIntOrZero() + revenue});
 		// Keep the rest
-		it->GetCharacter().SetVariable(IRON_CUBE_COUNT, IVFE{it->GetCharacter().GetVariable(IRON_CUBE_COUNT).GetIntOrZero() + gained_resource_count - sell_count});
+		it->GetCharacter().UnsafeSetVariable(IRON_CUBE_COUNT, IVFE{it->GetCharacter().GetVariable(IRON_CUBE_COUNT).GetIntOrZero() + gained_resource_count - sell_count});
 	} else if (tile_category == CARD_CATEGORY_BREWERY_TILE) {
-		it->GetCharacter().SetVariable(BEER_BARREL_COUNT, IVFE{it->GetCharacter().GetVariable(BEER_BARREL_COUNT).GetIntOrZero()
+		it->GetCharacter().UnsafeSetVariable(BEER_BARREL_COUNT, IVFE{it->GetCharacter().GetVariable(BEER_BARREL_COUNT).GetIntOrZero()
 			+ tile_card.GetConstant(M2G_PROXY.is_canal_era() ? BEER_BONUS_FIRST_ERA : BEER_BONUS_SECOND_ERA).GetIntOrZero()});
 	}
 

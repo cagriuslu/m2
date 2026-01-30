@@ -18,7 +18,7 @@ using namespace rpg;
 using namespace m2g;
 using namespace m2g::pb;
 
-rpg::Player::Player(m2::Object& obj) : HeapObjectImpl(obj), animation_fsm(m2g::pb::ANIMATION_TYPE_PLAYER_MOVEMENT, obj.GetGraphicId()) {}
+rpg::Player::Player(m2::Object& obj) : HeapObjectImpl(), animation_fsm(m2g::pb::ANIMATION_TYPE_PLAYER_MOVEMENT, obj.GetGraphicId()) {}
 
 m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 	auto id = obj.GetId();
@@ -54,14 +54,14 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::FastCharacterStorageIndex>(obj);
 	if (M2_LEVEL.GetLevelIdentifier() != "MeleeTutorialClosed") {
 		// 4th level is melee tutorial
-		chr.AddCard(CARD_REUSABLE_GUN);
+		chr.UnsafeAddCard(CARD_REUSABLE_GUN);
 	}
-	chr.AddCard(CARD_REUSABLE_SWORD);
-	chr.SetVariable(RESOURCE_HP, 1.0f);
-	chr.SetVariable(RESOURCE_DASH_ENERGY, 2.0f);
+	chr.UnsafeAddCard(CARD_REUSABLE_SWORD);
+	chr.UnsafeSetVariable(RESOURCE_HP, 1.0f);
+	chr.UnsafeSetVariable(RESOURCE_DASH_ENERGY, 2.0f);
 
 	obj.impl = std::make_unique<Player>(obj);
-	auto& impl = dynamic_cast<Player&>(*obj.impl);
+	auto& impl = dynamic_cast<Player&>(*std::get<std::unique_ptr<HeapObjectImpl>>(obj.impl));
 
 	phy.preStep = [&, id=id](m2::Physique& phy, const m2::Stopwatch::Duration& delta) {
 		auto& chr = obj.GetCharacter();
@@ -131,9 +131,9 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 		}
 	};
 	chr.update = [](MAYBE m2::Character& chr, const m2::Stopwatch::Duration& delta) {
-		chr.AddVariable(RESOURCE_DASH_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
-		chr.AddVariable(RESOURCE_RANGED_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
-		chr.AddVariable(RESOURCE_MELEE_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
+		chr.UnsafeAddVariable(RESOURCE_DASH_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
+		chr.UnsafeAddVariable(RESOURCE_RANGED_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
+		chr.UnsafeAddVariable(RESOURCE_MELEE_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
 
 		// Check if died
 		if (not chr.GetVariable(m2g::pb::RESOURCE_HP)) {
@@ -159,7 +159,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 	chr.onMessage = [](m2::Character& self, MAYBE m2::Character* other, const std::unique_ptr<const m2::Proxy::InterCharacterMessage>& data) -> std::unique_ptr<const m2::Proxy::InterCharacterMessage> {
 		if (const auto* hitDamage = dynamic_cast<const m2g::Proxy::HitDamage*>(data.get())) {
 			// Get hit by an enemy
-			self.SubtractVariable(m2g::pb::RESOURCE_HP, hitDamage->hp, 0.0f);
+			self.UnsafeSubtractVariable(m2g::pb::RESOURCE_HP, hitDamage->hp, 0.0f);
 		} else if (const auto* receivedCard = dynamic_cast<const m2g::Proxy::Card*>(data.get())) {
 			const auto& card = M2_GAME.GetCard(receivedCard->type);
 			// If the card in a consumable
@@ -167,7 +167,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 				// Gain the benefits
 				if (consumableIt->second.first == RESOURCE_HP) {
 					const auto current = self.GetVariable(consumableIt->second.first).GetFOrZero();
-					self.SetVariable(consumableIt->second.first, std::min(current + consumableIt->second.second, 1.0f));
+					self.UnsafeSetVariable(consumableIt->second.first, std::min(current + consumableIt->second.second, 1.0f));
 				}
 			} else {
 				// Player can hold only one special weapon of certain type, get rid of the previous one
@@ -183,9 +183,9 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 					}
 				}
 				// Add card
-				self.AddCard(receivedCard->type);
+				self.UnsafeAddCard(receivedCard->type);
 				if (const auto ammo = card.GetConstant(m2g::pb::CONSTANT_AMMO_GAIN)) {
-					self.SetVariable(m2g::pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO, ammo.GetIntOrZero());
+					self.UnsafeSetVariable(m2g::pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO, ammo.GetIntOrZero());
 				}
 			}
 		}

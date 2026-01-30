@@ -62,10 +62,10 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& positi
 
 	// Add character
 	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::CompactCharacterStorageIndex>(obj);
-	chr.SetVariable(RESOURCE_TTL, ttl);
+	chr.UnsafeSetVariable(RESOURCE_TTL, ttl);
 
 	chr.update = [=, &phy, &obj](m2::Character& chr, const m2::Stopwatch::Duration& delta) {
-		chr.SubtractVariable(RESOURCE_TTL, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count(), 0.0f);
+		chr.UnsafeSubtractVariable(RESOURCE_TTL, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count(), 0.0f);
 
 		if (not chr.GetVariable(RESOURCE_TTL)) {
 			if (is_explosive) {
@@ -78,7 +78,7 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& positi
 				}};
 				phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(explosionBodyDef, obj.GetPhysiqueId(), obj.GetPhysique().position, phy.orientation.ToFloat(), m2::pb::PhysicsLayer::SEA_LEVEL);
 				// RESOURCE_EXPLOSION_TTL only means the object is currently exploding
-				chr.SetVariable(RESOURCE_EXPLOSION_TTL, 1.0f); // 1.0f is just symbolic
+				chr.UnsafeSetVariable(RESOURCE_EXPLOSION_TTL, 1.0f); // 1.0f is just symbolic
 			} else {
 				LOG_DEBUG("Destroying self");
 				M2_DEFER(m2::CreateObjectDeleter(chr.OwnerId()));

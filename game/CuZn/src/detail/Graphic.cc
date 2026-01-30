@@ -1,5 +1,4 @@
 #include <cuzn/detail/Graphic.h>
-#include <m2g_ResourceType.pb.h>
 #include <m2/video/TextLabel.h>
 #include <m2/Object.h>
 #include <m2/Game.h>

@@ -19,7 +19,7 @@ using namespace rpg;
 using namespace m2g;
 using namespace m2g::pb;
 
-Enemy::Enemy(m2::Object& obj, const pb::Enemy* enemy) : HeapObjectImpl(obj), animation_fsm(enemy->animation_type(), obj.GetGraphicId()) {
+Enemy::Enemy(m2::Object& obj, const pb::Enemy* enemy) : HeapObjectImpl(), animation_fsm(enemy->animation_type(), obj.GetGraphicId()) {
 	switch (enemy->ai().variant_case()) {
 		case pb::Ai::kChaser:
 			ai_fsm = ChaserFsm{&obj, &enemy->ai()};
@@ -64,12 +64,12 @@ m2::void_expected Enemy::init(m2::Object& obj, const m2::VecF& position) {
 	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2::pb::PhysicsLayer::SEA_LEVEL);
 
 	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::FastCharacterStorageIndex>(obj);
-	chr.AddCard(m2g::pb::CARD_REUSABLE_GUN);
-	chr.AddCard(m2g::pb::CARD_REUSABLE_ENEMY_SWORD);
-	chr.SetVariable(m2g::pb::RESOURCE_HP, 1.0f);
+	chr.UnsafeAddCard(m2g::pb::CARD_REUSABLE_GUN);
+	chr.UnsafeAddCard(m2g::pb::CARD_REUSABLE_ENEMY_SWORD);
+	chr.UnsafeSetVariable(m2g::pb::RESOURCE_HP, 1.0f);
 
     obj.impl = std::make_unique<Enemy>(obj, M2G_PROXY.get_enemy(obj.GetType()));
-	auto& impl = dynamic_cast<Enemy&>(*obj.impl);
+	auto& impl = dynamic_cast<Enemy&>(*std::get<std::unique_ptr<HeapObjectImpl>>(obj.impl));
 
 	// Increment enemy counter
 	M2G_PROXY.alive_enemy_count++;
@@ -86,17 +86,17 @@ m2::void_expected Enemy::init(m2::Object& obj, const m2::VecF& position) {
 		}, impl.ai_fsm);
 	};
 	chr.update = [](m2::Character& chr, const m2::Stopwatch::Duration& delta) {
-		chr.SubtractVariable(RESOURCE_STUN_TTL, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count(), 0.0f);
-		chr.SubtractVariable(RESOURCE_DAMAGE_EFFECT_TTL, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count(), 0.0f);
-		chr.AddVariable(RESOURCE_RANGED_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
-		chr.AddVariable(RESOURCE_MELEE_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
+		chr.UnsafeSubtractVariable(RESOURCE_STUN_TTL, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count(), 0.0f);
+		chr.UnsafeSubtractVariable(RESOURCE_DAMAGE_EFFECT_TTL, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count(), 0.0f);
+		chr.UnsafeAddVariable(RESOURCE_RANGED_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
+		chr.UnsafeAddVariable(RESOURCE_MELEE_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
 	};
 	chr.onMessage = [&, obj_type = obj.GetType()](m2::Character& self, MAYBE m2::Character* other, const std::unique_ptr<const Proxy::InterCharacterMessage>& data) -> std::unique_ptr<const Proxy::InterCharacterMessage> {
 		if (const auto* hitDamage = dynamic_cast<const Proxy::HitDamage*>(data.get())) {
 			// Deduct HP
-			self.SubtractVariable(RESOURCE_HP, hitDamage->hp, 0.0f);
+			self.UnsafeSubtractVariable(RESOURCE_HP, hitDamage->hp, 0.0f);
 			// Apply mask effect
-			self.SetVariable(m2g::pb::RESOURCE_DAMAGE_EFFECT_TTL, 0.15f);
+			self.UnsafeSetVariable(m2g::pb::RESOURCE_DAMAGE_EFFECT_TTL, 0.15f);
 			// Play audio effect if not already doing so
 			if (obj.GetSoundId() == 0) {
 				// Add sound emitter
@@ -151,7 +151,7 @@ m2::void_expected Enemy::init(m2::Object& obj, const m2::VecF& position) {
 				}, impl.ai_fsm);
 			}
 		} else if (const auto* stunDuration = dynamic_cast<const Proxy::StunDuration*>(data.get())) {
-			self.SetVariable(m2g::pb::RESOURCE_STUN_TTL, stunDuration->seconds);
+			self.UnsafeSetVariable(m2g::pb::RESOURCE_STUN_TTL, stunDuration->seconds);
 		}
 		return {};
 	};
@@ -193,7 +193,7 @@ void rpg::Enemy::move_towards(m2::Object& obj, m2::VecF direction, float force) 
 		// Walk animation
 		auto char_move_dir = m2::to_character_movement_direction(direction);
 		auto anim_state_type = rpg::detail::to_animation_state_type(char_move_dir);
-		dynamic_cast<Enemy&>(*obj.impl).animation_fsm.signal(m2::AnimationFsmSignal{anim_state_type});
+		dynamic_cast<Enemy&>(*std::get<std::unique_ptr<HeapObjectImpl>>(obj.impl)).animation_fsm.signal(m2::AnimationFsmSignal{anim_state_type});
 		// Apply force
 		m2::VecF force_direction = direction * (m2::ToDurationF(m2::TIME_BETWEEN_PHYSICS_SIMULATIONS) * force);
 		obj.GetPhysique().body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->ApplyForceToCenter(force_direction);

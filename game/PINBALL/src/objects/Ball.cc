@@ -10,7 +10,7 @@ namespace {
 	struct BallImpl final : m2::HeapObjectImpl {
 		std::optional<m2::VecF> lastCollidedWallPosition;
 
-		explicit BallImpl(m2::Object& object) : HeapObjectImpl(object) {}
+		explicit BallImpl(m2::Object& object) : HeapObjectImpl() {}
 	};
 
 	m2::third_party::physics::RigidBody& GetActiveRigidBody(m2::Physique& phy) {
@@ -25,7 +25,7 @@ m2::void_expected LoadBall(m2::Object& obj, const m2::VecF& position) {
 	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(m2g::pb::SPRITE_BASIC_BALL));
 
 	obj.impl = std::make_unique<BallImpl>(obj);
-	auto* ballImpl = dynamic_cast<BallImpl*>(obj.impl.get());
+	auto* ballImpl = dynamic_cast<BallImpl*>(std::get<std::unique_ptr<m2::HeapObjectImpl>>(obj.impl).get());
 
 	auto& phy = obj.AddPhysique();
 	phy.position = position;
