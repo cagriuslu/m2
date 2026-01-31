@@ -51,16 +51,84 @@ namespace {
 	}
 }
 
-m2::Exact m2::Exact::Compose(const int32_t wholePart, const int32_t fractionalPart) {
+m2::expected<m2::Exact> m2::Exact::Compose(const int32_t wholePart, const int32_t fractionalPart) {
 	// PRECISION number of bits from the left of wholePart are gonna be thrown away
 	if (wholePart != ((wholePart << PRECISION) >> PRECISION)) {
-		throw M2_ERROR("Whole part contains an integer larger than Exact can accomadate");
+		return make_unexpected("Whole part contains an integer larger than Exact can accomadate");
 	}
 	// 32 - PRECISION number of bits from the left of fractionalPart are gonna be thrown away
 	if (U(fractionalPart) != (U(fractionalPart) << (32 - PRECISION)) >> (32 - PRECISION)) {
-		throw M2_ERROR("Fractional part has unexpected bits set");
+		return make_unexpected("Fractional part has unexpected bits set");
 	}
 	return Exact{std::in_place, (wholePart << PRECISION) | fractionalPart};
+}
+m2::expected<m2::Exact> m2::Exact::ClosestExact(const std::string_view str) {
+	// Find the decimal point
+	int decimalPointIndex = -1;
+	for (int i = 0; i < I(str.size()); ++i) {
+		if (str[i] == '.') {
+			decimalPointIndex = i;
+			break;
+		}
+	}
+	if (decimalPointIndex == -1) {
+		return make_unexpected("Decimal point not found");
+	}
+	if (10 < decimalPointIndex) {
+		return make_unexpected("Whole part of the number is too large");
+	}
+
+	static const int DECIMAL_DIGIT_SIGNIFICANCE[] = {
+		0, // Significance of the decimal point
+		1,
+		10,
+		100,
+		1000,
+		10000,
+		100000,
+		1000000,
+		10000000,
+		100000000,
+		1000000000
+	};
+	static const int DECIMAL_PRECISION_POINT_TO_DECIMAL_8[] = {
+		10000000,
+		1000000,
+		100000,
+		10000,
+		1000,
+		100,
+		10,
+		1,
+		0,
+	};
+
+	/// Calculate whole part separately, because this part isn't an approximation
+	int32_t wholePart = 0;
+	for (int i = 0; i < I(str.size()); ++i) {
+		const char c = str[i];
+		if ('0' <= c && c <= '9') {
+			const int digitSignificance = decimalPointIndex - i;
+			wholePart += (c - '0') * DECIMAL_DIGIT_SIGNIFICANCE[digitSignificance];
+		} else if (c == '.') {
+			/// Read fractional part as decimal raised by 8 digits
+			int64_t fractionalPart8 = 0;
+			for (int j = i + 1; j < I(str.size()); ++j) {
+				const char f = str[j];
+				if ('0' <= f && f <= '9') {
+					const int fractionalDigitSignificance = j - decimalPointIndex - 1;
+					fractionalPart8 += (f - '0') * DECIMAL_PRECISION_POINT_TO_DECIMAL_8[fractionalDigitSignificance];
+				} else {
+					return make_unexpected("Unexpected character: " + m2::ToString(f));
+				}
+			}
+			/// Convert the fractional part from base(10) to base(2)
+			return Compose(wholePart, I(fractionalPart8 * (1ll << PRECISION) / 100000000ll));
+		} else {
+			return make_unexpected("Unexpected character: " + m2::ToString(c));
+		}
+	}
+	throw M2_ERROR("Implementation error: decimal point should have been encountered");
 }
 
 std::string m2::Exact::ToString() const {

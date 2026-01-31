@@ -42,6 +42,18 @@ TEST(Exact, constructors) {
 	EXPECT_EQ(Exact::Compose(-131072, 0).ToRawValue(), 0b10000000'00000000'00000000'00000000);
 	EXPECT_ANY_THROW(Exact::Compose(131072, 0));
 	EXPECT_ANY_THROW(Exact::Compose(-131073, 0));
+
+	EXPECT_EQ(Exact::ClosestExact("123.5", 5)->ToString(), "+000123.50000000");
+	EXPECT_EQ("123.25"_closest_exact->ToString(), "+000123.25000000");
+	EXPECT_EQ("123.75"_closest_exact->ToRawValue(), 0b00000000'00011110'11110000'00000000);
+	EXPECT_EQ("1.99902344"_closest_exact->ToRawValue(), 0b00000000'00000000'01111111'11110000);
+
+	// Some random number
+	EXPECT_EQ("12345.7254247"_closest_exact->ToString(), "+012345.72540284");
+	// Its binary representation
+	EXPECT_EQ("12345.7254247"_closest_exact->ToRawValue(), 0b00001100'00001110'01101110'01101101);
+	// Next number is already too far from the initial number, nice!
+	EXPECT_EQ((Exact{std::in_place, 0b00001100'00001110'01101110'01101110}.ToString()), "+012345.72546387");
 }
 
 TEST(Exact, operators) {

@@ -39,7 +39,9 @@ namespace m2 {
 		static Exact Min() { return Exact{std::in_place, static_cast<int32_t>(0x80000000)}; }
 		static Exact MaxInteger() { return Exact{std::in_place, (0xFFFFFFFFu << PRECISION) & 0x7FFFFFFF}; }
 		static Exact MinInteger() { return Min(); }
-		static Exact Compose(int32_t wholePart, int32_t fractionalPart);
+		static expected<Exact> Compose(int32_t wholePart, int32_t fractionalPart);
+		/// Returns the closest Exact number to the given decimal number. This operation is deterministic.
+		static expected<Exact> ClosestExact(std::string_view);
 
 		static constexpr int32_t RAW_1DIV2 = 1 << (PRECISION - 1);
 		static constexpr int32_t RAW_1DIV4 = 1 << (PRECISION - 2);
@@ -127,4 +129,8 @@ namespace m2 {
 	inline int32_t ToRawValue(const Exact& e) { return e._value; }
 	/// Provided for API compatibility. Throws when called.
 	inline int32_t ToRawValue(const float) { throw M2_ERROR("Forbidden raw value conversion on float"); }
+}
+
+constexpr m2::expected<m2::Exact> operator ""_closest_exact(const char* str, const std::size_t sz) {
+	return m2::Exact::ClosestExact(std::string_view{str, sz});
 }
