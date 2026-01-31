@@ -185,6 +185,12 @@ std::string m2::Exact::ToFastestString() const {
 	return {buffer.data()};
 }
 
+m2::Exact m2::Exact::Add(const Exact& other, const std::optional<Exact>& maxValue) const {
+	return maxValue ? std::min(*this + other, *maxValue) : *this + other;
+}
+m2::Exact m2::Exact::Subtract(const Exact& other, const std::optional<Exact>& minValue) const {
+	return minValue ? std::max(*this - other, *minValue) : *this - other;
+}
 m2::Exact m2::Exact::SquareRoot() const {
 	if (IsNegative()) {
 		throw M2_ERROR("Attempt to find the square root of a negative number");

@@ -112,6 +112,8 @@ namespace m2 {
 
 		// Modifiers
 
+		[[nodiscard]] Exact Add(const Exact& other, const std::optional<Exact>& maxValue) const;
+		[[nodiscard]] Exact Subtract(const Exact& other, const std::optional<Exact>& minValue) const;
 		[[nodiscard]] Exact AbsoluteValue() const { return IsNegative() ? -*this : *this; }
 		[[nodiscard]] Exact Inverse() const { return One() / *this; }
 		[[nodiscard]] Exact SquareRoot() const;
