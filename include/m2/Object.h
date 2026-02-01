@@ -100,7 +100,7 @@ namespace m2 {
 
 		/// Give friendship to AddCharacterToObject so that it can add a character to the Object
 		template <std::size_t CharacterVariantIndex>
-		friend Character& AddCharacterToObject(Object&);
+		friend auto& AddCharacterToObject(Object&);
 	};
 
 	Pool<Object>::Iterator CreateObject(m2g::pb::ObjectType type = {}, ObjectId parent_id = 0); // TODO add orientation to the params
