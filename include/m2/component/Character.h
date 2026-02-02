@@ -7,6 +7,10 @@
 #include <functional>
 
 namespace m2 {
+	/// Even though each object has the option to store their data in impl, there are some benefits to storing the data
+	/// inside the character: (1) In turn-based games, the character states are shared automatically. (2) In lockstep
+	/// games, the synchronization of the clients are compared automatically. (3) Enables automatic saving and loading
+	/// of levels.
 	class Character : public Component {
 	public:
 		std::function<void(Character& self, const Stopwatch::Duration& delta)> update;
