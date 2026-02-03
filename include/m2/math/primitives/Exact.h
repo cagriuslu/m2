@@ -34,6 +34,7 @@ namespace m2 {
 
 		static Exact Zero() { return Exact{}; }
 		static Exact One() { return Exact{1}; }
+		static Exact MinusOne() { return Exact{-1}; }
 		static Exact SquareRootOf2() { return Exact{std::in_place, 0b00000000'00000000'01011010'10000010}; }
 		static Exact Max() { return Exact{std::in_place, 0x7FFFFFFF}; }
 		static Exact Min() { return Exact{std::in_place, static_cast<int32_t>(0x80000000)}; }
