@@ -12,7 +12,7 @@ namespace m2 {
 		// Verify that variable types are unique
 		static_assert(AreArrayElementsUnique(possibleVariableTypes), "VariableTypes are not unique");
 
-		std::array<std::pair<m2g::pb::VariableType, IVFE>, maxVariableCount> _variables;
+		std::array<std::pair<m2g::pb::VariableType, VariableValue>, maxVariableCount> _variables;
 
 	public:
 		[[nodiscard]] bool CanHoldVariable(const m2g::pb::VariableType vt) const {
@@ -21,38 +21,38 @@ namespace m2 {
 		}
 
 		template <m2g::pb::VariableType variableType>
-		[[nodiscard]] IVFE GetVariable() const {
+		[[nodiscard]] VariableValue GetVariable() const {
 			static_assert(DoesArrayContainElement(possibleVariableTypes, variableType), "Character can't hold the given VariableType");
 			for (const auto& variable : _variables) { if (variable.first == variableType) { return variable.second; } }
 			return {};
 		}
 		template <m2g::pb::VariableType variableType>
-		expected<IVFE> TrySetVariable(const IVFE ivfe) {
+		expected<VariableValue> TrySetVariable(const VariableValue varVal) {
 			static_assert(DoesArrayContainElement(possibleVariableTypes, variableType), "Character can't hold the given VariableType");
-			for (auto& variable : _variables) { if (variable.first == variableType) { variable.second = ivfe; return ivfe; } }
-			for (auto& variable : _variables) { if (not variable.first) { variable.first = variableType; variable.second = ivfe; return ivfe; } }
+			for (auto& variable : _variables) { if (variable.first == variableType) { variable.second = varVal; return varVal; } }
+			for (auto& variable : _variables) { if (not variable.first) { variable.first = variableType; variable.second = varVal; return varVal; } }
 			return make_unexpected("No space left for VariableType");
 		}
 		template <m2g::pb::VariableType variableType>
-		expected<IVFE> UnsafeSetVariable(const IVFE ivfe) {
+		expected<VariableValue> UnsafeSetVariable(const VariableValue varVal) {
 			static_assert(DoesArrayContainElement(possibleVariableTypes, variableType), "Character can't hold the given VariableType");
-			for (auto& variable : _variables) { if (variable.first == variableType) { variable.second = ivfe; return ivfe; } }
-			for (auto& variable : _variables) { if (not variable.first) { variable.first = variableType; variable.second = ivfe; return ivfe; } }
+			for (auto& variable : _variables) { if (variable.first == variableType) { variable.second = varVal; return varVal; } }
+			for (auto& variable : _variables) { if (not variable.first) { variable.first = variableType; variable.second = varVal; return varVal; } }
 			throw M2_ERROR("No space left for VariableType");
 		}
 
-		[[nodiscard]] IVFE GetVariable(const m2g::pb::VariableType vt) const {
+		[[nodiscard]] VariableValue GetVariable(const m2g::pb::VariableType vt) const {
 			for (const auto& variable : _variables) { if (variable.first == vt) { return variable.second; } }
 			return {};
 		}
-		[[nodiscard]] expected<IVFE> TrySetVariable(const m2g::pb::VariableType vt, const IVFE ivfe) {
-			for (auto& variable : _variables) { if (variable.first == vt) { variable.second = ivfe; return ivfe; } }
-			for (auto& variable : _variables) { if (not variable.first) { variable.first = vt; variable.second = ivfe; return ivfe; } }
+		[[nodiscard]] expected<VariableValue> TrySetVariable(const m2g::pb::VariableType vt, const VariableValue varVal) {
+			for (auto& variable : _variables) { if (variable.first == vt) { variable.second = varVal; return varVal; } }
+			for (auto& variable : _variables) { if (not variable.first) { variable.first = vt; variable.second = varVal; return varVal; } }
 			return make_unexpected("No space left for VariableType");
 		}
-		IVFE UnsafeSetVariable(const m2g::pb::VariableType vt, const IVFE ivfe) {
-			for (auto& variable : _variables) { if (variable.first == vt) { variable.second = ivfe; return ivfe; } }
-			for (auto& variable : _variables) { if (not variable.first) { variable.first = vt; variable.second = ivfe; return ivfe; } }
+		VariableValue UnsafeSetVariable(const m2g::pb::VariableType vt, const VariableValue varVal) {
+			for (auto& variable : _variables) { if (variable.first == vt) { variable.second = varVal; return varVal; } }
+			for (auto& variable : _variables) { if (not variable.first) { variable.first = vt; variable.second = varVal; return varVal; } }
 			throw M2_ERROR("No space left for VariableType");
 		}
 		void ClearVariable(const m2g::pb::VariableType vt) {
@@ -70,14 +70,14 @@ namespace m2 {
 				if (variable.first && variable.second) {
 					auto* var = objDesc.add_variables();
 					var->set_type(variable.first);
-					var->mutable_ivfe()->CopyFrom(static_cast<pb::IVFE>(variable.second));
+					var->mutable_var_val()->CopyFrom(static_cast<pb::VariableValue>(variable.second));
 				}
 			}
 		}
 		void LoadVariables(const pb::TurnBasedServerUpdate::ObjectDescriptor& objDesc) {
-			_variables = std::array<std::pair<m2g::pb::VariableType, IVFE>, maxVariableCount>{};
+			_variables = std::array<std::pair<m2g::pb::VariableType, VariableValue>, maxVariableCount>{};
 			for (const auto& variable : objDesc.variables()) {
-				UnsafeSetVariable(variable.type(), IVFE{variable.ivfe()});
+				UnsafeSetVariable(variable.type(), VariableValue{variable.var_val()});
 			}
 		}
 	};

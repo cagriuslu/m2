@@ -10,7 +10,7 @@ namespace {
 	struct BallImpl final : m2::HeapObjectImpl {
 		std::optional<m2::VecF> lastCollidedWallPosition;
 
-		explicit BallImpl(m2::Object& object) : HeapObjectImpl() {}
+		explicit BallImpl(m2::Object&) : HeapObjectImpl() {}
 	};
 
 	m2::third_party::physics::RigidBody& GetActiveRigidBody(m2::Physique& phy) {

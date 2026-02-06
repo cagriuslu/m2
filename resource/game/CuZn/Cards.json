@@ -9,15 +9,15 @@
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "ivfe": { "i": 4 }
+          "varVal": { "i": 4 }
         }
       ],
       "inGameName": "Wild Location"
@@ -28,15 +28,15 @@
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "ivfe": { "i": 4 }
+          "varVal": { "i": 4 }
         }
       ],
       "inGameName": "Wild Industry"
@@ -47,15 +47,15 @@
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "ivfe": { "i": 0 }
+          "varVal": { "i": 0 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "ivfe": { "i": 6 }
+          "varVal": { "i": 6 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "ivfe": { "i": 8 }
+          "varVal": { "i": 8 }
         }
       ],
       "uiSprite": "SPRITE_COTTON_MILL",
@@ -67,15 +67,15 @@
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "ivfe": { "i": 4 }
+          "varVal": { "i": 4 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "ivfe": { "i": 4 }
+          "varVal": { "i": 4 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "ivfe": { "i": 4 }
+          "varVal": { "i": 4 }
         }
       ],
       "uiSprite": "SPRITE_IRON_WORKS",
@@ -87,15 +87,15 @@
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "ivfe": { "i": 5 }
+          "varVal": { "i": 5 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "ivfe": { "i": 5 }
+          "varVal": { "i": 5 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "ivfe": { "i": 5 }
+          "varVal": { "i": 5 }
         }
       ],
       "uiSprite": "SPRITE_BREWERY",
@@ -107,15 +107,15 @@
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         }
       ],
       "uiSprite": "SPRITE_COAL_MINE",
@@ -127,15 +127,15 @@
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         }
       ],
       "uiSprite": "SPRITE_POTTERY",
@@ -147,15 +147,15 @@
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "ivfe": { "i": 0 }
+          "varVal": { "i": 0 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "ivfe": { "i": 6 }
+          "varVal": { "i": 6 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "ivfe": { "i": 8 }
+          "varVal": { "i": 8 }
         }
       ],
       "uiSprite": "SPRITE_MANUFACTURED_GOODS",
@@ -167,15 +167,15 @@
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "ivfe": { "i": 0 }
+          "varVal": { "i": 0 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "ivfe": { "i": 0 }
+          "varVal": { "i": 0 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         }
       ],
       "inGameName": "Belper"
@@ -186,15 +186,15 @@
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "ivfe": { "i": 0 }
+          "varVal": { "i": 0 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "ivfe": { "i": 0 }
+          "varVal": { "i": 0 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         }
       ],
       "inGameName": "Derby"
@@ -205,15 +205,15 @@
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "ivfe": { "i": 0 }
+          "varVal": { "i": 0 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         }
       ],
       "inGameName": "Leek"
@@ -224,15 +224,15 @@
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "ivfe": { "i": 0 }
+          "varVal": { "i": 0 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         }
       ],
       "inGameName": "Stoke-on-Trent"
@@ -243,15 +243,15 @@
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "ivfe": { "i": 0 }
+          "varVal": { "i": 0 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         }
       ],
       "inGameName": "Stone"
@@ -262,15 +262,15 @@
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "ivfe": { "i": 0 }
+          "varVal": { "i": 0 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         }
       ],
       "inGameName": "Uttoxeter"
@@ -281,15 +281,15 @@
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         }
       ],
       "inGameName": "Stafford"
@@ -300,15 +300,15 @@
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         }
       ],
       "inGameName": "Burton-upon-Trent"
@@ -319,15 +319,15 @@
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         }
       ],
       "inGameName": "Cannock"
@@ -338,15 +338,15 @@
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         }
       ],
       "inGameName": "Tamworth"
@@ -357,15 +357,15 @@
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         }
       ],
       "inGameName": "Walsall"
@@ -376,15 +376,15 @@
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         }
       ],
       "inGameName": "Coalbrookedale"
@@ -395,15 +395,15 @@
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         }
       ],
       "inGameName": "Dudley"
@@ -414,15 +414,15 @@
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         }
       ],
       "inGameName": "Kidderminster"
@@ -433,15 +433,15 @@
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         }
       ],
       "inGameName": "Wolferhampton"
@@ -452,15 +452,15 @@
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         }
       ],
       "inGameName": "Worcester"
@@ -471,15 +471,15 @@
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         }
       ],
       "inGameName": "Birmingham"
@@ -490,15 +490,15 @@
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         }
       ],
       "inGameName": "Coventry"
@@ -509,15 +509,15 @@
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         }
       ],
       "inGameName": "Nuneaton"
@@ -528,15 +528,15 @@
       "constants": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "COUNT_IN_3_PLAYER_GAME",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "COUNT_IN_4_PLAYER_GAME",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         }
       ],
       "inGameName": "Redditch"
@@ -557,7 +557,7 @@
       "constants": [
         {
           "type": "MERCHANT_BONUS_DEVELOP",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         }
       ],
       "inGameName": "Gloucester"
@@ -568,7 +568,7 @@
       "constants": [
         {
           "type": "MERCHANT_BONUS_VICTORY_POINTS",
-          "ivfe": { "i": 4 }
+          "varVal": { "i": 4 }
         }
       ],
       "inGameName": "Shrewsbury"
@@ -579,7 +579,7 @@
       "constants": [
         {
           "type": "MERCHANT_BONUS_INCOME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         }
       ],
       "inGameName": "Oxford"
@@ -590,7 +590,7 @@
       "constants": [
         {
           "type": "MERCHANT_BONUS_VICTORY_POINTS",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         }
       ],
       "inGameName": "Nottingham"
@@ -601,7 +601,7 @@
       "constants": [
         {
           "type": "MERCHANT_BONUS_MONEY",
-          "ivfe": { "i": 5 }
+          "varVal": { "i": 5 }
         }
       ],
       "inGameName": "Warrington"
@@ -612,23 +612,23 @@
       "constants": [
         {
           "type": "BEER_BONUS_FIRST_ERA",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "BEER_BONUS_SECOND_ERA",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "MERCHANT_COUNT_IN_2_PLAYER_GAME",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "MERCHANT_COUNT_IN_3_PLAYER_GAME",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "MERCHANT_COUNT_IN_4_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         }
       ],
       "gameSprite": "COTTON_MILL"
@@ -639,23 +639,23 @@
       "constants": [
         {
           "type": "BEER_BONUS_FIRST_ERA",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "BEER_BONUS_SECOND_ERA",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "MERCHANT_COUNT_IN_2_PLAYER_GAME",
-          "ivfe": { "i": 0 }
+          "varVal": { "i": 0 }
         },
         {
           "type": "MERCHANT_COUNT_IN_3_PLAYER_GAME",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "MERCHANT_COUNT_IN_4_PLAYER_GAME",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         }
       ],
       "gameSprite": "POTTERY"
@@ -666,23 +666,23 @@
       "constants": [
         {
           "type": "BEER_BONUS_FIRST_ERA",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "BEER_BONUS_SECOND_ERA",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "MERCHANT_COUNT_IN_2_PLAYER_GAME",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "MERCHANT_COUNT_IN_3_PLAYER_GAME",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "MERCHANT_COUNT_IN_4_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         }
       ],
       "gameSprite": "MANUFACTURED_GOODS"
@@ -693,23 +693,23 @@
       "constants": [
         {
           "type": "BEER_BONUS_FIRST_ERA",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "BEER_BONUS_SECOND_ERA",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "MERCHANT_COUNT_IN_2_PLAYER_GAME",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "MERCHANT_COUNT_IN_3_PLAYER_GAME",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "MERCHANT_COUNT_IN_4_PLAYER_GAME",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         }
       ],
       "gameSprite": "COTTON_MILL_POTTERY_MANUFACTURED_GOODS"
@@ -720,15 +720,15 @@
       "constants": [
         {
           "type": "MERCHANT_COUNT_IN_2_PLAYER_GAME",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "MERCHANT_COUNT_IN_3_PLAYER_GAME",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         },
         {
           "type": "MERCHANT_COUNT_IN_4_PLAYER_GAME",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         }
       ],
       "gameSprite": "NO_SPRITE"
@@ -739,35 +739,35 @@
       "constants": [
         {
           "type": "TILE_LEVEL",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "ivfe": { "i": 5 }
+          "varVal": { "i": 5 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "ivfe": { "i": 5 }
+          "varVal": { "i": 5 }
         },
         {
           "type": "LINK_BONUS",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "ivfe": { "i": 12 }
+          "varVal": { "i": 12 }
         },
         {
           "type": "BEER_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "FORBIDDEN_ERA",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         }
       ],
       "inGameName": "I (CO)"
@@ -778,35 +778,35 @@
       "constants": [
         {
           "type": "TILE_LEVEL",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "ivfe": { "i": 5 }
+          "varVal": { "i": 5 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "ivfe": { "i": 4 }
+          "varVal": { "i": 4 }
         },
         {
           "type": "LINK_BONUS",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "MONEY_COST",
-          "ivfe": { "i": 14 }
+          "varVal": { "i": 14 }
         },
         {
           "type": "COAL_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "BEER_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         }
       ],
       "inGameName": "II"
@@ -817,39 +817,39 @@
       "constants": [
         {
           "type": "TILE_LEVEL",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "ivfe": { "i": 9 }
+          "varVal": { "i": 9 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         },
         {
           "type": "LINK_BONUS",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "ivfe": { "i": 16 }
+          "varVal": { "i": 16 }
         },
         {
           "type": "COAL_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "IRON_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "BEER_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         }
       ],
       "inGameName": "III"
@@ -860,39 +860,39 @@
       "constants": [
         {
           "type": "TILE_LEVEL",
-          "ivfe": { "i": 4 }
+          "varVal": { "i": 4 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "ivfe": { "i": 12 }
+          "varVal": { "i": 12 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "LINK_BONUS",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "ivfe": { "i": 18 }
+          "varVal": { "i": 18 }
         },
         {
           "type": "COAL_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "IRON_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "BEER_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         }
       ],
       "inGameName": "IV"
@@ -903,39 +903,39 @@
       "constants": [
         {
           "type": "TILE_LEVEL",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         },
         {
           "type": "LINK_BONUS",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "ivfe": { "i": 5 }
+          "varVal": { "i": 5 }
         },
         {
           "type": "COAL_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "FORBIDDEN_ERA",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "IRON_BONUS",
-          "ivfe": { "i": 4 }
+          "varVal": { "i": 4 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         }
       ],
       "inGameName": "I (CO)"
@@ -946,35 +946,35 @@
       "constants": [
         {
           "type": "TILE_LEVEL",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "ivfe": { "i": 5 }
+          "varVal": { "i": 5 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         },
         {
           "type": "LINK_BONUS",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "ivfe": { "i": 7 }
+          "varVal": { "i": 7 }
         },
         {
           "type": "COAL_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "IRON_BONUS",
-          "ivfe": { "i": 4 }
+          "varVal": { "i": 4 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         }
       ],
       "inGameName": "II"
@@ -985,35 +985,35 @@
       "constants": [
         {
           "type": "TILE_LEVEL",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "ivfe": { "i": 7 }
+          "varVal": { "i": 7 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "LINK_BONUS",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "ivfe": { "i": 9 }
+          "varVal": { "i": 9 }
         },
         {
           "type": "COAL_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "IRON_BONUS",
-          "ivfe": { "i": 5 }
+          "varVal": { "i": 5 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         }
       ],
       "inGameName": "III"
@@ -1024,35 +1024,35 @@
       "constants": [
         {
           "type": "TILE_LEVEL",
-          "ivfe": { "i": 4 }
+          "varVal": { "i": 4 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "ivfe": { "i": 9 }
+          "varVal": { "i": 9 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "LINK_BONUS",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "ivfe": { "i": 12 }
+          "varVal": { "i": 12 }
         },
         {
           "type": "COAL_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "IRON_BONUS",
-          "ivfe": { "i": 6 }
+          "varVal": { "i": 6 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         }
       ],
       "inGameName": "IV"
@@ -1063,43 +1063,43 @@
       "constants": [
         {
           "type": "TILE_LEVEL",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "ivfe": { "i": 4 }
+          "varVal": { "i": 4 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "ivfe": { "i": 4 }
+          "varVal": { "i": 4 }
         },
         {
           "type": "LINK_BONUS",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "MONEY_COST",
-          "ivfe": { "i": 5 }
+          "varVal": { "i": 5 }
         },
         {
           "type": "IRON_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "FORBIDDEN_ERA",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "BEER_BONUS_FIRST_ERA",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "BEER_BONUS_SECOND_ERA",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         }
       ],
       "inGameName": "I (CO)"
@@ -1110,39 +1110,39 @@
       "constants": [
         {
           "type": "TILE_LEVEL",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "ivfe": { "i": 5 }
+          "varVal": { "i": 5 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "ivfe": { "i": 5 }
+          "varVal": { "i": 5 }
         },
         {
           "type": "LINK_BONUS",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "MONEY_COST",
-          "ivfe": { "i": 7 }
+          "varVal": { "i": 7 }
         },
         {
           "type": "IRON_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "BEER_BONUS_FIRST_ERA",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "BEER_BONUS_SECOND_ERA",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         }
       ],
       "inGameName": "II"
@@ -1153,39 +1153,39 @@
       "constants": [
         {
           "type": "TILE_LEVEL",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "ivfe": { "i": 7 }
+          "varVal": { "i": 7 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "ivfe": { "i": 5 }
+          "varVal": { "i": 5 }
         },
         {
           "type": "LINK_BONUS",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "MONEY_COST",
-          "ivfe": { "i": 9 }
+          "varVal": { "i": 9 }
         },
         {
           "type": "IRON_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "BEER_BONUS_FIRST_ERA",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "BEER_BONUS_SECOND_ERA",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         }
       ],
       "inGameName": "III"
@@ -1196,43 +1196,43 @@
       "constants": [
         {
           "type": "TILE_LEVEL",
-          "ivfe": { "i": 4 }
+          "varVal": { "i": 4 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "ivfe": { "i": 10 }
+          "varVal": { "i": 10 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "ivfe": { "i": 5 }
+          "varVal": { "i": 5 }
         },
         {
           "type": "LINK_BONUS",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "MONEY_COST",
-          "ivfe": { "i": 9 }
+          "varVal": { "i": 9 }
         },
         {
           "type": "IRON_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "FORBIDDEN_ERA",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "BEER_BONUS_FIRST_ERA",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "BEER_BONUS_SECOND_ERA",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         }
       ],
       "inGameName": "IV (RRO)"
@@ -1243,35 +1243,35 @@
       "constants": [
         {
           "type": "TILE_LEVEL",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "ivfe": { "i": 4 }
+          "varVal": { "i": 4 }
         },
         {
           "type": "LINK_BONUS",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "MONEY_COST",
-          "ivfe": { "i": 5 }
+          "varVal": { "i": 5 }
         },
         {
           "type": "FORBIDDEN_ERA",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "COAL_BONUS",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         }
       ],
       "inGameName": "I (CO)"
@@ -1282,31 +1282,31 @@
       "constants": [
         {
           "type": "TILE_LEVEL",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "ivfe": { "i": 7 }
+          "varVal": { "i": 7 }
         },
         {
           "type": "LINK_BONUS",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "ivfe": { "i": 7 }
+          "varVal": { "i": 7 }
         },
         {
           "type": "COAL_BONUS",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         }
       ],
       "inGameName": "II"
@@ -1317,35 +1317,35 @@
       "constants": [
         {
           "type": "TILE_LEVEL",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "ivfe": { "i": 6 }
+          "varVal": { "i": 6 }
         },
         {
           "type": "LINK_BONUS",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "ivfe": { "i": 8 }
+          "varVal": { "i": 8 }
         },
         {
           "type": "IRON_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "COAL_BONUS",
-          "ivfe": { "i": 4 }
+          "varVal": { "i": 4 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         }
       ],
       "inGameName": "III"
@@ -1356,35 +1356,35 @@
       "constants": [
         {
           "type": "TILE_LEVEL",
-          "ivfe": { "i": 4 }
+          "varVal": { "i": 4 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "ivfe": { "i": 4 }
+          "varVal": { "i": 4 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "ivfe": { "i": 5 }
+          "varVal": { "i": 5 }
         },
         {
           "type": "LINK_BONUS",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "ivfe": { "i": 10 }
+          "varVal": { "i": 10 }
         },
         {
           "type": "IRON_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "COAL_BONUS",
-          "ivfe": { "i": 5 }
+          "varVal": { "i": 5 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         }
       ],
       "inGameName": "IV"
@@ -1395,39 +1395,39 @@
       "constants": [
         {
           "type": "TILE_LEVEL",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "ivfe": { "i": 10 }
+          "varVal": { "i": 10 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "ivfe": { "i": 5 }
+          "varVal": { "i": 5 }
         },
         {
           "type": "LINK_BONUS",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "ivfe": { "i": 17 }
+          "varVal": { "i": 17 }
         },
         {
           "type": "IRON_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "BEER_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "DEVELOPMENT_BAN",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         }
       ],
       "inGameName": "I (ND)"
@@ -1438,35 +1438,35 @@
       "constants": [
         {
           "type": "TILE_LEVEL",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "LINK_BONUS",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "ivfe": { "i": 0 }
+          "varVal": { "i": 0 }
         },
         {
           "type": "COAL_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "BEER_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         }
       ],
       "inGameName": "II"
@@ -1477,39 +1477,39 @@
       "constants": [
         {
           "type": "TILE_LEVEL",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "ivfe": { "i": 11 }
+          "varVal": { "i": 11 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "ivfe": { "i": 5 }
+          "varVal": { "i": 5 }
         },
         {
           "type": "LINK_BONUS",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "ivfe": { "i": 22 }
+          "varVal": { "i": 22 }
         },
         {
           "type": "COAL_COST",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "BEER_COST",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "DEVELOPMENT_BAN",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         }
       ],
       "inGameName": "III (ND)"
@@ -1520,35 +1520,35 @@
       "constants": [
         {
           "type": "TILE_LEVEL",
-          "ivfe": { "i": 4 }
+          "varVal": { "i": 4 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "LINK_BONUS",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "ivfe": { "i": 0 }
+          "varVal": { "i": 0 }
         },
         {
           "type": "COAL_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "BEER_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         }
       ],
       "inGameName": "IV"
@@ -1559,39 +1559,39 @@
       "constants": [
         {
           "type": "TILE_LEVEL",
-          "ivfe": { "i": 5 }
+          "varVal": { "i": 5 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "ivfe": { "i": 20 }
+          "varVal": { "i": 20 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "ivfe": { "i": 5 }
+          "varVal": { "i": 5 }
         },
         {
           "type": "LINK_BONUS",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "ivfe": { "i": 24 }
+          "varVal": { "i": 24 }
         },
         {
           "type": "COAL_COST",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "BEER_COST",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "FORBIDDEN_ERA",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         }
       ],
       "inGameName": "V (RRO)"
@@ -1602,39 +1602,39 @@
       "constants": [
         {
           "type": "TILE_LEVEL",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "ivfe": { "i": 5 }
+          "varVal": { "i": 5 }
         },
         {
           "type": "LINK_BONUS",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "MONEY_COST",
-          "ivfe": { "i": 8 }
+          "varVal": { "i": 8 }
         },
         {
           "type": "COAL_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "BEER_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "FORBIDDEN_ERA",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         }
       ],
       "inGameName": "I (CO)"
@@ -1645,35 +1645,35 @@
       "constants": [
         {
           "type": "TILE_LEVEL",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "ivfe": { "i": 5 }
+          "varVal": { "i": 5 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "LINK_BONUS",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "ivfe": { "i": 10 }
+          "varVal": { "i": 10 }
         },
         {
           "type": "IRON_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "BEER_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         }
       ],
       "inGameName": "II"
@@ -1684,31 +1684,31 @@
       "constants": [
         {
           "type": "TILE_LEVEL",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "ivfe": { "i": 4 }
+          "varVal": { "i": 4 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "ivfe": { "i": 4 }
+          "varVal": { "i": 4 }
         },
         {
           "type": "LINK_BONUS",
-          "ivfe": { "i": 0 }
+          "varVal": { "i": 0 }
         },
         {
           "type": "MONEY_COST",
-          "ivfe": { "i": 12 }
+          "varVal": { "i": 12 }
         },
         {
           "type": "COAL_COST",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         }
       ],
       "inGameName": "III"
@@ -1719,35 +1719,35 @@
       "constants": [
         {
           "type": "TILE_LEVEL",
-          "ivfe": { "i": 4 }
+          "varVal": { "i": 4 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "ivfe": { "i": 3 }
+          "varVal": { "i": 3 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "ivfe": { "i": 6 }
+          "varVal": { "i": 6 }
         },
         {
           "type": "LINK_BONUS",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "ivfe": { "i": 8 }
+          "varVal": { "i": 8 }
         },
         {
           "type": "IRON_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "BEER_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         }
       ],
       "inGameName": "IV"
@@ -1758,35 +1758,35 @@
       "constants": [
         {
           "type": "TILE_LEVEL",
-          "ivfe": { "i": 5 }
+          "varVal": { "i": 5 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "ivfe": { "i": 8 }
+          "varVal": { "i": 8 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "LINK_BONUS",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "MONEY_COST",
-          "ivfe": { "i": 16 }
+          "varVal": { "i": 16 }
         },
         {
           "type": "COAL_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "BEER_COST",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         }
       ],
       "inGameName": "V"
@@ -1797,31 +1797,31 @@
       "constants": [
         {
           "type": "TILE_LEVEL",
-          "ivfe": { "i": 6 }
+          "varVal": { "i": 6 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "ivfe": { "i": 7 }
+          "varVal": { "i": 7 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "ivfe": { "i": 6 }
+          "varVal": { "i": 6 }
         },
         {
           "type": "LINK_BONUS",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "ivfe": { "i": 20 }
+          "varVal": { "i": 20 }
         },
         {
           "type": "BEER_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         }
       ],
       "inGameName": "VI"
@@ -1832,35 +1832,35 @@
       "constants": [
         {
           "type": "TILE_LEVEL",
-          "ivfe": { "i": 7 }
+          "varVal": { "i": 7 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "ivfe": { "i": 9 }
+          "varVal": { "i": 9 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "ivfe": { "i": 4 }
+          "varVal": { "i": 4 }
         },
         {
           "type": "LINK_BONUS",
-          "ivfe": { "i": 0 }
+          "varVal": { "i": 0 }
         },
         {
           "type": "MONEY_COST",
-          "ivfe": { "i": 16 }
+          "varVal": { "i": 16 }
         },
         {
           "type": "COAL_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "IRON_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         }
       ],
       "inGameName": "VII"
@@ -1871,35 +1871,35 @@
       "constants": [
         {
           "type": "TILE_LEVEL",
-          "ivfe": { "i": 8 }
+          "varVal": { "i": 8 }
         },
         {
           "type": "VICTORY_POINTS_BONUS",
-          "ivfe": { "i": 11 }
+          "varVal": { "i": 11 }
         },
         {
           "type": "INCOME_POINTS_BONUS",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "LINK_BONUS",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "MONEY_COST",
-          "ivfe": { "i": 20 }
+          "varVal": { "i": 20 }
         },
         {
           "type": "IRON_COST",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         },
         {
           "type": "BEER_COST",
-          "ivfe": { "i": 1 }
+          "varVal": { "i": 1 }
         },
         {
           "type": "POSSESSION_LIMIT",
-          "ivfe": { "i": 2 }
+          "varVal": { "i": 2 }
         }
       ],
       "inGameName": "VIII"
@@ -1915,7 +1915,7 @@
       "constants": [
         {
           "type": "POSSESSION_LIMIT",
-          "ivfe": { "i": 14 }
+          "varVal": { "i": 14 }
         }
       ]
     }

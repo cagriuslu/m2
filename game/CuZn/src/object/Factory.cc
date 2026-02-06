@@ -69,9 +69,9 @@ void SellFactory(m2::Character& factory_chr) {
 	// Earn income points
 	const auto incomeBonus = tileTtem.GetConstant(INCOME_POINTS_BONUS).GetIntOrZero();
 	const auto currIncomePoints = factory_chr.Owner().TryGetParent()->GetCharacter().GetVariable(INCOME_POINTS).GetIntOrZero();
-	factory_chr.Owner().TryGetParent()->GetCharacter().UnsafeSetVariable(INCOME_POINTS, m2::IVFE{ClampIncomePoints(currIncomePoints + incomeBonus)});
+	factory_chr.Owner().TryGetParent()->GetCharacter().UnsafeSetVariable(INCOME_POINTS, m2::VariableValue{ClampIncomePoints(currIncomePoints + incomeBonus)});
 	// Flip the tile
-	factory_chr.UnsafeSetVariable(IS_SOLD, m2::IVFE{1});
+	factory_chr.UnsafeSetVariable(IS_SOLD, m2::VariableValue{1});
 }
 
 bool IsFactorySold(m2::Character& chr) {

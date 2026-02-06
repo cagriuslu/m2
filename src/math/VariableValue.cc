@@ -1,22 +1,22 @@
-#include <m2/math/IVFE.h>
+#include <m2/math/VariableValue.h>
 #include <m2/math/Hash.h>
 #include <m2/BuildOptions.h>
 
 using namespace m2;
 
-IVFE::IVFE(const pb::IVFE& ivfe) {
-	if (ivfe.has_i()) {
-		_value = ivfe.i();
-	} else if (ivfe.has_l()) {
-		_value = ivfe.l();
-	} else if (ivfe.has_v()) {
-		_value = ivfe.v();
-	} else if (ivfe.has_fe()) {
-		_value = FE{std::in_place, ivfe.fe()};
+VariableValue::VariableValue(const pb::VariableValue& varVal) {
+	if (varVal.has_i()) {
+		_value = varVal.i();
+	} else if (varVal.has_l()) {
+		_value = varVal.l();
+	} else if (varVal.has_v()) {
+		_value = varVal.v();
+	} else if (varVal.has_fe()) {
+		_value = FE{std::in_place, varVal.fe()};
 	}
 }
 
-IVFE::operator bool() const {
+VariableValue::operator bool() const {
 	return std::holds_alternative<std::monostate>(_value)
 		? false
 		: std::holds_alternative<int32_t>(_value)
@@ -27,8 +27,8 @@ IVFE::operator bool() const {
 					? std::get<m2g::pb::VariableType>(_value)
 					: static_cast<bool>(std::get<FE>(_value));
 }
-IVFE::operator pb::IVFE() const {
-	pb::IVFE pbIvfe;
+VariableValue::operator pb::VariableValue() const {
+	pb::VariableValue pbIvfe;
 	if (IsInt()) {
 		pbIvfe.set_i(std::get<int32_t>(_value));
 	} else if (IsLong()) {
@@ -41,7 +41,7 @@ IVFE::operator pb::IVFE() const {
 	return pbIvfe;
 }
 
-int32_t IVFE::Hash(const int32_t initialValue) const {
+int32_t VariableValue::Hash(const int32_t initialValue) const {
 	if constexpr (not GAME_IS_DETERMINISTIC) {
 		// ReSharper disable once CppDFAUnreachableCode
 		throw M2_ERROR("Game is not deterministic");
@@ -60,41 +60,41 @@ int32_t IVFE::Hash(const int32_t initialValue) const {
 	}
 }
 
-int32_t IVFE::GetIntOrZero() const {
+int32_t VariableValue::GetIntOrZero() const {
 	return IsInt() ? UnsafeGetInt() : 0;
 }
-int32_t IVFE::GetIntOrValue(const int32_t defaultValue) const {
+int32_t VariableValue::GetIntOrValue(const int32_t defaultValue) const {
 	return std::holds_alternative<int32_t>(_value) ? std::get<int32_t>(_value) : defaultValue;
 }
 
-int64_t IVFE::GetLongOrZero() const {
+int64_t VariableValue::GetLongOrZero() const {
 	return IsLong() ? UnsafeGetLong() : 0;
 }
-int64_t IVFE::GetLongOrValue(int64_t defaultValue) const {
+int64_t VariableValue::GetLongOrValue(int64_t defaultValue) const {
 	return std::holds_alternative<int64_t>(_value) ? std::get<int64_t>(_value) : defaultValue;
 }
 
-int32_t IVFE::GetVariableTypeOrZero() const {
+int32_t VariableValue::GetVariableTypeOrZero() const {
 	return IsVariableType() ? UnsafeGetVariableType() : m2g::pb::VariableType::NO_VARIABLE;
 }
-int32_t IVFE::GetVariableTypeOrValue(const m2g::pb::VariableType defaultValue) const {
+int32_t VariableValue::GetVariableTypeOrValue(const m2g::pb::VariableType defaultValue) const {
 	return std::holds_alternative<m2g::pb::VariableType>(_value) ? std::get<m2g::pb::VariableType>(_value) : defaultValue;
 }
 
-FE IVFE::GetFEOrZero() const {
+FE VariableValue::GetFEOrZero() const {
 	return IsFE() ? UnsafeGetFE() : FE::Zero();
 }
-FE IVFE::GetFEOrValue(const FE defaultValue) const {
+FE VariableValue::GetFEOrValue(const FE defaultValue) const {
 	return std::holds_alternative<FE>(_value) ? std::get<FE>(_value) : defaultValue;
 }
 
-IVFE IVFE::UnsafeAdd(const IVFE& rhs) const {
+VariableValue VariableValue::UnsafeAdd(const VariableValue& rhs) const {
 	if (IsInt() && rhs.IsInt()) {
-		return IVFE{UnsafeGetInt() + rhs.UnsafeGetInt()};
+		return VariableValue{UnsafeGetInt() + rhs.UnsafeGetInt()};
 	} else if (IsLong() && rhs.IsLong()) {
-		return IVFE{UnsafeGetLong() + rhs.UnsafeGetLong()};
+		return VariableValue{UnsafeGetLong() + rhs.UnsafeGetLong()};
 	} else if (IsFE() && rhs.IsFE()) {
-		return IVFE{UnsafeGetFE() + rhs.UnsafeGetFE()};
+		return VariableValue{UnsafeGetFE() + rhs.UnsafeGetFE()};
 	} else if (IsVariableType()) {
 		throw M2_ERROR("Attempt to add to VariableType");
 	} else if (IsNull()) {
@@ -103,13 +103,13 @@ IVFE IVFE::UnsafeAdd(const IVFE& rhs) const {
 		return *this;
 	}
 }
-IVFE IVFE::UnsafeSubtract(const IVFE& rhs) const {
+VariableValue VariableValue::UnsafeSubtract(const VariableValue& rhs) const {
 	if (IsInt() && rhs.IsInt()) {
-		return IVFE{UnsafeGetInt() - rhs.UnsafeGetInt()};
+		return VariableValue{UnsafeGetInt() - rhs.UnsafeGetInt()};
 	} else if (IsLong() && rhs.IsLong()) {
-		return IVFE{UnsafeGetLong() - rhs.UnsafeGetLong()};
+		return VariableValue{UnsafeGetLong() - rhs.UnsafeGetLong()};
 	} else if (IsFE() && rhs.IsFE()) {
-		return IVFE{UnsafeGetFE() - rhs.UnsafeGetFE()};
+		return VariableValue{UnsafeGetFE() - rhs.UnsafeGetFE()};
 	} else if (IsVariableType()) {
 		throw M2_ERROR("Attempt to subtract from VariableType");
 	} else if (IsNull()) {
@@ -118,16 +118,16 @@ IVFE IVFE::UnsafeSubtract(const IVFE& rhs) const {
 		return *this;
 	}
 }
-IVFE IVFE::Negate() const {
+VariableValue VariableValue::Negate() const {
 	if (IsNull()) {
 		return *this;
 	} else if (IsInt()) {
-		return IVFE{-UnsafeGetInt()};
+		return VariableValue{-UnsafeGetInt()};
 	} else if (IsLong()) {
-		return IVFE{-UnsafeGetLong()};
+		return VariableValue{-UnsafeGetLong()};
 	} else if (IsVariableType()) {
 		throw M2_ERROR("Attempt to negate VariableType");
 	} else {
-		return IVFE{-UnsafeGetFE()};
+		return VariableValue{-UnsafeGetFE()};
 	}
 }

@@ -17,31 +17,31 @@
       "constants": [
         {
           "type": "ATTRIBUTE_LINEAR_SPEED",
-          "ivfe": { "fe": 20.0 }
+          "varVal": { "fe": 20.0 }
         },
         {
           "type": "ATTRIBUTE_ANGULAR_ACCURACY",
-          "ivfe": { "fe": 0.984 }
+          "varVal": { "fe": 0.984 }
         },
         {
           "type": "ATTRIBUTE_AVERAGE_DAMAGE",
-          "ivfe": { "fe": 0.3 }
+          "varVal": { "fe": 0.3 }
         },
         {
           "type": "ATTRIBUTE_DAMAGE_ACCURACY",
-          "ivfe": { "fe": 0.9 }
+          "varVal": { "fe": 0.9 }
         },
         {
           "type": "ATTRIBUTE_AVERAGE_TTL",
-          "ivfe": { "fe": 0.55 }
+          "varVal": { "fe": 0.55 }
         },
         {
           "type": "ATTRIBUTE_TTL_ACCURACY",
-          "ivfe": { "fe": 0.9 }
+          "varVal": { "fe": 0.9 }
         },
         {
           "type": "CONSTANT_RANGED_ENERGY_REQUIREMENT",
-          "ivfe": { "fe": 0.3 }
+          "varVal": { "fe": 0.3 }
         }
       ],
       "gameSprite": "GUN_BULLET"
@@ -52,35 +52,35 @@
       "constants": [
         {
           "type": "ATTRIBUTE_LINEAR_SPEED",
-          "ivfe": { "fe": 20.0 }
+          "varVal": { "fe": 20.0 }
         },
         {
           "type": "ATTRIBUTE_ANGULAR_ACCURACY",
-          "ivfe": { "fe": 0.965 }
+          "varVal": { "fe": 0.965 }
         },
         {
           "type": "ATTRIBUTE_AVERAGE_DAMAGE",
-          "ivfe": { "fe": 0.3 }
+          "varVal": { "fe": 0.3 }
         },
         {
           "type": "ATTRIBUTE_DAMAGE_ACCURACY",
-          "ivfe": { "fe": 0.9 }
+          "varVal": { "fe": 0.9 }
         },
         {
           "type": "ATTRIBUTE_AVERAGE_TTL",
-          "ivfe": { "fe": 0.5 }
+          "varVal": { "fe": 0.5 }
         },
         {
           "type": "ATTRIBUTE_TTL_ACCURACY",
-          "ivfe": { "fe": 0.9 }
+          "varVal": { "fe": 0.9 }
         },
         {
           "type": "CONSTANT_AMMO_GAIN",
-          "ivfe": { "i": 80 }
+          "varVal": { "i": 80 }
         },
         {
           "type": "CONSTANT_RANGED_ENERGY_REQUIREMENT",
-          "ivfe": { "fe": 0.08 }
+          "varVal": { "fe": 0.08 }
         }
       ],
       "gameSprite": "MACHINE_GUN_BULLET",
@@ -92,39 +92,39 @@
       "constants": [
         {
           "type": "ATTRIBUTE_LINEAR_SPEED",
-          "ivfe": { "fe": 1.5 }
+          "varVal": { "fe": 1.5 }
         },
         {
           "type": "ATTRIBUTE_ANGULAR_ACCURACY",
-          "ivfe": { "fe": 1.0 }
+          "varVal": { "fe": 1.0 }
         },
         {
           "type": "ATTRIBUTE_AVERAGE_DAMAGE",
-          "ivfe": { "fe": 1.0 }
+          "varVal": { "fe": 1.0 }
         },
         {
           "type": "ATTRIBUTE_DAMAGE_ACCURACY",
-          "ivfe": { "fe": 0.95 }
+          "varVal": { "fe": 0.95 }
         },
         {
           "type": "ATTRIBUTE_DAMAGE_RADIUS",
-          "ivfe": { "fe": 2.0 }
+          "varVal": { "fe": 2.0 }
         },
         {
           "type": "ATTRIBUTE_AVERAGE_TTL",
-          "ivfe": { "fe": 3.5 }
+          "varVal": { "fe": 3.5 }
         },
         {
           "type": "ATTRIBUTE_TTL_ACCURACY",
-          "ivfe": { "fe": 0.75 }
+          "varVal": { "fe": 0.75 }
         },
         {
           "type": "CONSTANT_AMMO_GAIN",
-          "ivfe": { "i": 8 }
+          "varVal": { "i": 8 }
         },
         {
           "type": "CONSTANT_RANGED_ENERGY_REQUIREMENT",
-          "ivfe": { "fe": 1.0 }
+          "varVal": { "fe": 1.0 }
         }
       ],
       "gameSprite": "EXPLOSIVE_BULLET",
@@ -136,19 +136,19 @@
       "constants": [
         {
           "type": "ATTRIBUTE_AVERAGE_DAMAGE",
-          "ivfe": { "fe": 0.25 }
+          "varVal": { "fe": 0.25 }
         },
         {
           "type": "ATTRIBUTE_DAMAGE_ACCURACY",
-          "ivfe": { "fe": 0.9 }
+          "varVal": { "fe": 0.9 }
         },
         {
           "type": "ATTRIBUTE_AVERAGE_TTL",
-          "ivfe": { "fe": 0.25 }
+          "varVal": { "fe": 0.25 }
         },
         {
           "type": "CONSTANT_MELEE_ENERGY_REQUIREMENT",
-          "ivfe": { "fe": 0.4 }
+          "varVal": { "fe": 0.4 }
         }
       ],
       "gameSprite": "SWORD"
@@ -159,19 +159,19 @@
       "constants": [
         {
           "type": "ATTRIBUTE_AVERAGE_DAMAGE",
-          "ivfe": { "fe": 0.225 }
+          "varVal": { "fe": 0.225 }
         },
         {
           "type": "ATTRIBUTE_DAMAGE_ACCURACY",
-          "ivfe": { "fe": 0.9 }
+          "varVal": { "fe": 0.9 }
         },
         {
           "type": "ATTRIBUTE_AVERAGE_TTL",
-          "ivfe": { "fe": 0.3 }
+          "varVal": { "fe": 0.3 }
         },
         {
           "type": "CONSTANT_MELEE_ENERGY_REQUIREMENT",
-          "ivfe": { "fe": 1.0 }
+          "varVal": { "fe": 1.0 }
         }
       ],
       "gameSprite": "SWORD"
@@ -182,19 +182,19 @@
       "constants": [
         {
           "type": "ATTRIBUTE_AVERAGE_DAMAGE",
-          "ivfe": { "fe": 0.65 }
+          "varVal": { "fe": 0.65 }
         },
         {
           "type": "ATTRIBUTE_DAMAGE_ACCURACY",
-          "ivfe": { "fe": 0.9 }
+          "varVal": { "fe": 0.9 }
         },
         {
           "type": "ATTRIBUTE_AVERAGE_TTL",
-          "ivfe": { "fe": 0.45 }
+          "varVal": { "fe": 0.45 }
         },
         {
           "type": "CONSTANT_MELEE_ENERGY_REQUIREMENT",
-          "ivfe": { "fe": 1.0 }
+          "varVal": { "fe": 1.0 }
         }
       ],
       "gameSprite": "LONGSWORD",
@@ -206,19 +206,19 @@
       "constants": [
         {
           "type": "ATTRIBUTE_AVERAGE_DAMAGE",
-          "ivfe": { "fe": 0.45 }
+          "varVal": { "fe": 0.45 }
         },
         {
           "type": "ATTRIBUTE_DAMAGE_ACCURACY",
-          "ivfe": { "fe": 0.9 }
+          "varVal": { "fe": 0.9 }
         },
         {
           "type": "ATTRIBUTE_AVERAGE_TTL",
-          "ivfe": { "fe": 0.15 }
+          "varVal": { "fe": 0.15 }
         },
         {
           "type": "CONSTANT_MELEE_ENERGY_REQUIREMENT",
-          "ivfe": { "fe": 0.25 }
+          "varVal": { "fe": 0.25 }
         }
       ],
       "gameSprite": "AXE",

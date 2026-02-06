@@ -4,7 +4,7 @@
 namespace m2 {
 	class FastCharacter final : public Character {
 		std::vector<const Card*> _cards;
-		std::vector<IVFE> _variables = std::vector<IVFE>(pb::enum_value_count<m2g::pb::VariableType>());
+		std::vector<VariableValue> _variables = std::vector<VariableValue>(pb::enum_value_count<m2g::pb::VariableType>());
 
 	public:
 		FastCharacter() = default;
@@ -24,10 +24,10 @@ namespace m2 {
 		void AddCard(m2g::pb::CardType);
 		void RemoveCard(m2g::pb::CardType) override;
 
-		[[nodiscard]] IVFE GetVariable(const m2g::pb::VariableType v) const override { return _variables[pb::enum_index(v)]; }
-		expected<IVFE> TrySetVariable(const m2g::pb::VariableType vt, const IVFE ivfe) override { return SetVariable(vt, ivfe); }
-		IVFE UnsafeSetVariable(const m2g::pb::VariableType vt, const IVFE ivfe) override { return SetVariable(vt, ivfe); }
-		IVFE SetVariable(const m2g::pb::VariableType v, const IVFE ivfe) { _variables[pb::enum_index(v)] = ivfe; return ivfe; }
+		[[nodiscard]] VariableValue GetVariable(const m2g::pb::VariableType v) const override { return _variables[pb::enum_index(v)]; }
+		expected<VariableValue> TrySetVariable(const m2g::pb::VariableType vt, const VariableValue varVal) override { return SetVariable(vt, varVal); }
+		VariableValue UnsafeSetVariable(const m2g::pb::VariableType vt, const VariableValue varVal) override { return SetVariable(vt, varVal); }
+		VariableValue SetVariable(const m2g::pb::VariableType v, const VariableValue varVal) { _variables[pb::enum_index(v)] = varVal; return varVal; }
 		void ClearVariable(const m2g::pb::VariableType v) override { _variables[pb::enum_index(v)] = {}; }
 
 		// Utilities

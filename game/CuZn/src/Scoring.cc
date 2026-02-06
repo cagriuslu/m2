@@ -15,7 +15,7 @@ void score_links_and_remove_roads() {
 			[](m2::Character& player) {
 				const auto linkCount = PlayerLinkCount(player);
 				LOG_INFO("Player link count", linkCount);
-				player.UnsafeSetVariable(pb::VICTORY_POINTS, m2::IVFE{player.GetVariable(pb::VICTORY_POINTS).GetIntOrZero() + linkCount});
+				player.UnsafeSetVariable(pb::VICTORY_POINTS, m2::VariableValue{player.GetVariable(pb::VICTORY_POINTS).GetIntOrZero() + linkCount});
 			});
 	RemoveAllRoads();
 }
@@ -30,7 +30,7 @@ void score_sold_factories_and_remove_obsolete() {
 				const auto& industryTileCard = M2_GAME.GetCard(ToIndustryTileOfFactoryCharacter(factory));
 				const auto victoryPointsBonus = industryTileCard.GetConstant(pb::VICTORY_POINTS_BONUS).GetIntOrZero();
 				LOG_INFO("Player victory points bonus", victoryPointsBonus);
-				player.UnsafeSetVariable(pb::VICTORY_POINTS, m2::IVFE{player.GetVariable(pb::VICTORY_POINTS).GetIntOrZero() + victoryPointsBonus});
+				player.UnsafeSetVariable(pb::VICTORY_POINTS, m2::VariableValue{player.GetVariable(pb::VICTORY_POINTS).GetIntOrZero() + victoryPointsBonus});
 			});
 	RemoveObsoleteFactories();
 }

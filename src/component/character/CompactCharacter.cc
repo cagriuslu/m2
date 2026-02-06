@@ -21,7 +21,7 @@ void CompactCharacter::Store(pb::TurnBasedServerUpdate::ObjectDescriptor& objDes
 	if (_variable.first && _variable.second) {
 		auto* var = objDesc.add_variables();
 		var->set_type(_variable.first);
-		var->mutable_ivfe()->CopyFrom(static_cast<pb::IVFE>(_variable.second));
+		var->mutable_var_val()->CopyFrom(static_cast<pb::VariableValue>(_variable.second));
 	}
 }
 void CompactCharacter::Load(const pb::TurnBasedServerUpdate::ObjectDescriptor& objDesc) {
@@ -37,7 +37,7 @@ void CompactCharacter::Load(const pb::TurnBasedServerUpdate::ObjectDescriptor& o
 		_card = objDesc.cards(0);
 	}
 	if (objDesc.variables_size()) {
-		_variable = std::make_pair(objDesc.variables(0).type(), IVFE{objDesc.variables(0).ivfe()});
+		_variable = std::make_pair(objDesc.variables(0).type(), VariableValue{objDesc.variables(0).var_val()});
 	}
 }
 bool CompactCharacter::HasCard(const m2g::pb::CardType ct) const {
@@ -74,25 +74,25 @@ void CompactCharacter::RemoveCard(const m2g::pb::CardType ct) {
 	}
 }
 
-IVFE CompactCharacter::GetVariable(const m2g::pb::VariableType v) const {
+VariableValue CompactCharacter::GetVariable(const m2g::pb::VariableType v) const {
 	if (_variable.first == v) {
 		return _variable.second;
 	}
 	return {};
 }
-expected<IVFE> CompactCharacter::TrySetVariable(const m2g::pb::VariableType v, const IVFE ivfe) {
+expected<VariableValue> CompactCharacter::TrySetVariable(const m2g::pb::VariableType v, const VariableValue varVal) {
 	if (_variable.first && _variable.first != v) {
 		return make_unexpected("Character cannot hold more than one type of variables");
 	}
-	_variable = std::make_pair(v, ivfe);
-	return ivfe;
+	_variable = std::make_pair(v, varVal);
+	return varVal;
 }
-IVFE CompactCharacter::UnsafeSetVariable(const m2g::pb::VariableType v, const IVFE ivfe) {
+VariableValue CompactCharacter::UnsafeSetVariable(const m2g::pb::VariableType v, const VariableValue varVal) {
 	if (_variable.first && _variable.first != v) {
 		throw M2_ERROR("Character cannot hold more than one type of variables");
 	}
-	_variable = std::make_pair(v, ivfe);
-	return ivfe;
+	_variable = std::make_pair(v, varVal);
+	return varVal;
 }
 void CompactCharacter::ClearVariable(const m2g::pb::VariableType v) {
 	if (_variable.first == v) {

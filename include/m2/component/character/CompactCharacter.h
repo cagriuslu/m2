@@ -4,7 +4,7 @@
 namespace m2 {
 	class CompactCharacter final : public Character {
 		std::optional<m2g::pb::CardType> _card;
-		std::pair<m2g::pb::VariableType, IVFE> _variable;
+		std::pair<m2g::pb::VariableType, VariableValue> _variable;
 
 	public:
 		CompactCharacter() = default;
@@ -23,9 +23,9 @@ namespace m2 {
 		void UnsafeAddCard(m2g::pb::CardType) override;
 		void RemoveCard(m2g::pb::CardType) override;
 
-		[[nodiscard]] IVFE GetVariable(m2g::pb::VariableType) const override;
-		expected<IVFE> TrySetVariable(m2g::pb::VariableType, IVFE) override;
-		IVFE UnsafeSetVariable(m2g::pb::VariableType, IVFE) override;
+		[[nodiscard]] VariableValue GetVariable(m2g::pb::VariableType) const override;
+		expected<VariableValue> TrySetVariable(m2g::pb::VariableType, VariableValue) override;
+		VariableValue UnsafeSetVariable(m2g::pb::VariableType, VariableValue) override;
 		void ClearVariable(m2g::pb::VariableType) override;
 	};
 }

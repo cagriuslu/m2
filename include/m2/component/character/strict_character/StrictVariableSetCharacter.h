@@ -17,7 +17,7 @@ namespace m2 {
 			return -1;
 		}
 
-		std::array<IVFE, possibleVariableTypes.size()> _variables;
+		std::array<VariableValue, possibleVariableTypes.size()> _variables;
 
 	public:
 		[[nodiscard]] bool CanHoldVariable(const m2g::pb::VariableType vt) const {
@@ -25,34 +25,34 @@ namespace m2 {
 		}
 
 		template <m2g::pb::VariableType variableType>
-		[[nodiscard]] IVFE GetVariable() const {
+		[[nodiscard]] VariableValue GetVariable() const {
 			static_assert(DoesArrayContainElement(possibleVariableTypes, variableType), "Character can't hold the given VariableType");
 			return _variables[VariableTypeIndex(variableType)];
 		}
 		template <m2g::pb::VariableType variableType>
-		IVFE SetVariable(const IVFE ivfe) {
+		VariableValue SetVariable(const VariableValue varVal) {
 			static_assert(DoesArrayContainElement(possibleVariableTypes, variableType), "Character can't hold the given VariableType");
-			_variables[VariableTypeIndex(variableType)] = ivfe; return ivfe;
+			_variables[VariableTypeIndex(variableType)] = varVal; return varVal;
 		}
 
-		[[nodiscard]] IVFE GetVariable(const m2g::pb::VariableType vt) const {
+		[[nodiscard]] VariableValue GetVariable(const m2g::pb::VariableType vt) const {
 			if (const auto variableTypeIndex = VariableTypeIndex(vt); variableTypeIndex == -1) {
 				return {};
 			} else {
 				return _variables[variableTypeIndex];
 			}
 		}
-		[[nodiscard]] expected<IVFE> TrySetVariable(const m2g::pb::VariableType vt, const IVFE ivfe) {
+		[[nodiscard]] expected<VariableValue> TrySetVariable(const m2g::pb::VariableType vt, const VariableValue varVal) {
 			if (const auto variableTypeIndex = VariableTypeIndex(vt); variableTypeIndex == -1) {
 				return make_unexpected("Character cannot hold " + ToString(vt));
 			} else {
-				_variables[variableTypeIndex] = ivfe;
-				return ivfe;
+				_variables[variableTypeIndex] = varVal;
+				return varVal;
 			}
 		}
-		IVFE UnsafeSetVariable(const m2g::pb::VariableType vt, const IVFE ivfe) {
-			_variables[VariableTypeIndex(vt)] = ivfe;
-			return ivfe;
+		VariableValue UnsafeSetVariable(const m2g::pb::VariableType vt, const VariableValue varVal) {
+			_variables[VariableTypeIndex(vt)] = varVal;
+			return varVal;
 		}
 		void ClearVariable(const m2g::pb::VariableType vt) {
 			if (const auto variableTypeIndex = VariableTypeIndex(vt); variableTypeIndex != -1) {
@@ -72,14 +72,14 @@ namespace m2 {
 				if (_variables[i]) {
 					auto* var = objDesc.add_variables();
 					var->set_type(possibleVariableType);
-					var->mutable_ivfe()->CopyFrom(static_cast<pb::IVFE>(_variables[i]));
+					var->mutable_var_val()->CopyFrom(static_cast<pb::VariableValue>(_variables[i]));
 				}
 			}
 		}
 		void LoadVariables(const pb::TurnBasedServerUpdate::ObjectDescriptor& objDesc) {
-			_variables = std::array<IVFE, possibleVariableTypes.size()>{};
+			_variables = std::array<VariableValue, possibleVariableTypes.size()>{};
 			for (const auto& variable : objDesc.variables()) {
-				UnsafeSetVariable(variable.type(), IVFE{variable.ivfe()});
+				UnsafeSetVariable(variable.type(), VariableValue{variable.var_val()});
 			}
 		}
 	};

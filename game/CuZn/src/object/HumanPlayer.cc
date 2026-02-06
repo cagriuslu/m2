@@ -18,7 +18,7 @@
 struct HumanPlayer : public m2::HeapObjectImpl {
 	std::optional<Location> currentMouseHoverLocation;
 
-	explicit HumanPlayer(m2::Object& object) : HeapObjectImpl() {}
+	explicit HumanPlayer(m2::Object&) : HeapObjectImpl() {}
 };
 
 m2::void_expected PlayerInitThisInstance(m2::Object& obj, const m2::VecF& position) {
@@ -27,8 +27,8 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj, const m2::VecF& positi
 	obj.impl = std::make_unique<HumanPlayer>(obj);
 
 	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::FastCharacterStorageIndex>(obj);
-	chr.UnsafeSetVariable(m2g::pb::MONEY, m2::IVFE{17});
-	chr.UnsafeSetVariable(m2g::pb::INCOME_POINTS, m2::IVFE{0});
+	chr.UnsafeSetVariable(m2g::pb::MONEY, m2::VariableValue{17});
+	chr.UnsafeSetVariable(m2g::pb::INCOME_POINTS, m2::VariableValue{0});
 
 	// Add industry tiles
 	for (auto industry_tile = m2g::pb::COTTON_MILL_TILE_I;
@@ -179,8 +179,8 @@ m2::void_expected PlayerInitOtherInstance(m2::Object& obj) {
 	// TODO check if the following is really necessary. If the TurnBasedServerUpdate is verified, it's necessary.
 	// TODO Otherwise, we don't need to fill the character with cards and resources.
 
-	chr.UnsafeSetVariable(m2g::pb::MONEY, m2::IVFE{17});
-	chr.UnsafeSetVariable(m2g::pb::INCOME_POINTS, m2::IVFE{0});
+	chr.UnsafeSetVariable(m2g::pb::MONEY, m2::VariableValue{17});
+	chr.UnsafeSetVariable(m2g::pb::INCOME_POINTS, m2::VariableValue{0});
 
 	// Add industry tiles
 	for (auto industry_tile = m2g::pb::COTTON_MILL_TILE_I;

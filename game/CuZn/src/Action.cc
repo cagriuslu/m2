@@ -23,7 +23,7 @@ m2::void_expected HandleActionWhileLiquidating(m2::Character& turnHolderCharacte
 		for (const auto* factory : expectFactoriesAndGain->first) {
 			M2_LEVEL.objects.Free(factory->GetId());
 		}
-		turnHolderCharacter.UnsafeSetVariable(m2g::pb::MONEY, m2::IVFE{turnHolderCharacter.GetVariable(m2g::pb::MONEY).GetIntOrZero() + expectFactoriesAndGain->second});
+		turnHolderCharacter.UnsafeSetVariable(m2g::pb::MONEY, m2::VariableValue{turnHolderCharacter.GetVariable(m2g::pb::MONEY).GetIntOrZero() + expectFactoriesAndGain->second});
 		return {}; // Liquidation successful
 	} else {
 		return m2::make_unexpected(expectFactoriesAndGain.error());
@@ -111,7 +111,7 @@ m2::expected<int> HandleActionWhileNotLiquidating(m2::Character& turnHolderChara
 	}
 	// Deduct money from player
 	LOG_INFO("Deducting money from player", moneySpent);
-	turnHolderCharacter.UnsafeSetVariable(m2g::pb::MONEY, m2::IVFE{std::max(turnHolderCharacter.GetVariable(m2g::pb::MONEY).GetIntOrZero() - moneySpent, 0)});
+	turnHolderCharacter.UnsafeSetVariable(m2g::pb::MONEY, m2::VariableValue{std::max(turnHolderCharacter.GetVariable(m2g::pb::MONEY).GetIntOrZero() - moneySpent, 0)});
 
 	return moneySpent;
 }

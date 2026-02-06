@@ -2,28 +2,28 @@
 #include <m2/math/primitives/Exact.h>
 #include <m2/math/primitives/Float.h>
 #include <m2/ProxyTypes.h>
-#include <IVFE.pb.h>
+#include <VariableValue.pb.h>
 
 namespace m2 {
 	// TODO rename to something more generic so that we don't have to add a new letter every time we add a new type
 	// ReSharper disable CppNonExplicitConvertingConstructor
-	class IVFE {
+	class VariableValue {
 		std::variant<std::monostate, int32_t, int64_t, m2g::pb::VariableType, FE> _value{};
 
 	public:
-		IVFE() = default;
-		IVFE(const int32_t i) : _value(i) {}
-		IVFE(const int64_t l) : _value(l) {}
-		IVFE(const uint64_t l) : _value(static_cast<int64_t>(l)) {}
-		IVFE(const m2g::pb::VariableType vt) : _value(vt) {}
-		IVFE(FE&& fe) : _value(fe) {}
-		IVFE(const FE& fe) : _value(fe) {}
+		VariableValue() = default;
+		VariableValue(const int32_t i) : _value(i) {}
+		VariableValue(const int64_t l) : _value(l) {}
+		VariableValue(const uint64_t l) : _value(static_cast<int64_t>(l)) {}
+		VariableValue(const m2g::pb::VariableType vt) : _value(vt) {}
+		VariableValue(FE&& fe) : _value(fe) {}
+		VariableValue(const FE& fe) : _value(fe) {}
 		template <bool Enable = not GAME_IS_DETERMINISTIC>
-		IVFE(const float f) requires (Enable) : _value(FE{f}) {}
-		IVFE(const pb::IVFE&);
+		VariableValue(const float f) requires (Enable) : _value(FE{f}) {}
+		VariableValue(const pb::VariableValue&);
 
 		explicit operator bool() const;
-		explicit operator pb::IVFE() const;
+		explicit operator pb::VariableValue() const;
 
 		[[nodiscard]] bool IsNull() const { return std::holds_alternative<std::monostate>(_value); }
 		[[nodiscard]] bool IsNonNull() const { return not IsNull(); }
@@ -59,8 +59,8 @@ namespace m2 {
 		template <bool Enable = not GAME_IS_DETERMINISTIC>
 		[[nodiscard]] float GetFOrValue(const float defaultValue) const requires (Enable) { return GetFEOrValue(FE{defaultValue}).ToFloat(); }
 
-		[[nodiscard]] IVFE UnsafeAdd(const IVFE&) const;
-		[[nodiscard]] IVFE UnsafeSubtract(const IVFE&) const;
-		[[nodiscard]] IVFE Negate() const;
+		[[nodiscard]] VariableValue UnsafeAdd(const VariableValue&) const;
+		[[nodiscard]] VariableValue UnsafeSubtract(const VariableValue&) const;
+		[[nodiscard]] VariableValue Negate() const;
 	};
 }

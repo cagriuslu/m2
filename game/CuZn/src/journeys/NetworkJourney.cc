@@ -66,7 +66,7 @@ NetworkJourney::~NetworkJourney() {
 	deinit();
 	for (auto& source : _resource_sources) {
 		if (source.reserved_object) {
-			source.reserved_object->GetCharacter().UnsafeSetVariable(source.resource_type, IVFE{source.reserved_object->GetCharacter().GetVariable(source.resource_type).GetIntOrZero() + 1});
+			source.reserved_object->GetCharacter().UnsafeSetVariable(source.resource_type, VariableValue{source.reserved_object->GetCharacter().GetVariable(source.resource_type).GetIntOrZero() + 1});
 			source.reserved_object = nullptr;
 		}
 	}
@@ -214,7 +214,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::HandleResourceEnterSignal() {
 					LOG_DEBUG("Player agreed");
 					// Reserve resource
 					auto* factory = FindFactoryAtLocation(*closest_mines_with_coal.begin());
-					factory->GetCharacter().UnsafeSetVariable(COAL_CUBE_COUNT, IVFE{std::max(factory->GetCharacter().GetVariable(COAL_CUBE_COUNT).GetIntOrZero() - 1, 0)});
+					factory->GetCharacter().UnsafeSetVariable(COAL_CUBE_COUNT, VariableValue{std::max(factory->GetCharacter().GetVariable(COAL_CUBE_COUNT).GetIntOrZero() - 1, 0)});
 					unspecified_resource->reserved_object = factory;
 					// Specify resource source
 					unspecified_resource->source = *closest_mines_with_coal.begin();
@@ -241,7 +241,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::HandleResourceEnterSignal() {
 					LOG_DEBUG("Player agreed");
 					// Reserve resource
 					auto* factory = FindFactoryAtLocation(industry_location);
-					factory->GetCharacter().UnsafeSetVariable(BEER_BARREL_COUNT, IVFE{std::max(factory->GetCharacter().GetVariable(BEER_BARREL_COUNT).GetIntOrZero() - 1, 0)});
+					factory->GetCharacter().UnsafeSetVariable(BEER_BARREL_COUNT, VariableValue{std::max(factory->GetCharacter().GetVariable(BEER_BARREL_COUNT).GetIntOrZero() - 1, 0)});
 					unspecified_resource->reserved_object = factory;
 					// Specify resource source
 					unspecified_resource->source = industry_location;
@@ -272,7 +272,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::HandleResourceMouseClickSignal
 			// Check if the location is one of the dimming exceptions
 			if (M2_LEVEL.GetDimmingExceptions()->contains(factory->GetId())) {
 				// Reserve resource
-				factory->GetCharacter().UnsafeSetVariable(unspecified_resource->resource_type, IVFE{std::max(factory->GetCharacter().GetVariable(unspecified_resource->resource_type).GetIntOrZero() - 1, 0)});
+				factory->GetCharacter().UnsafeSetVariable(unspecified_resource->resource_type, VariableValue{std::max(factory->GetCharacter().GetVariable(unspecified_resource->resource_type).GetIntOrZero() - 1, 0)});
 				unspecified_resource->reserved_object = factory;
 				unspecified_resource->source = selected_location;
 				// Re-enter resource selection
@@ -422,7 +422,7 @@ std::pair<m2g::pb::CardType,int> ExecuteNetworkAction(m2::Character& player, con
 		auto location = static_cast<Location>(coal_source);
 		if (is_industry_location(location)) {
 			auto* factory = FindFactoryAtLocation(location);
-			factory->GetCharacter().UnsafeSetVariable(COAL_CUBE_COUNT, IVFE{std::max(factory->GetCharacter().GetVariable(COAL_CUBE_COUNT).GetIntOrZero() - 1, 0)});
+			factory->GetCharacter().UnsafeSetVariable(COAL_CUBE_COUNT, VariableValue{std::max(factory->GetCharacter().GetVariable(COAL_CUBE_COUNT).GetIntOrZero() - 1, 0)});
 		} else if (is_merchant_location(location)) {
 			M2G_PROXY.buy_coal_from_market();
 		}
@@ -430,7 +430,7 @@ std::pair<m2g::pb::CardType,int> ExecuteNetworkAction(m2::Character& player, con
 	if (network_action.beer_source()) {
 		auto location = static_cast<Location>(network_action.beer_source());
 		auto* factory = FindFactoryAtLocation(location);
-		factory->GetCharacter().UnsafeSetVariable(BEER_BARREL_COUNT, IVFE{std::max(factory->GetCharacter().GetVariable(BEER_BARREL_COUNT).GetIntOrZero() - 1, 0)});
+		factory->GetCharacter().UnsafeSetVariable(BEER_BARREL_COUNT, VariableValue{std::max(factory->GetCharacter().GetVariable(BEER_BARREL_COUNT).GetIntOrZero() - 1, 0)});
 	}
 
 	// Create the road on the map

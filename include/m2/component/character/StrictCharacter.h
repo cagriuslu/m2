@@ -24,9 +24,9 @@ namespace m2 {
 		void RemoveCard() { return _cards.template RemoveCard<cardType>(); }
 
 		template <m2g::pb::VariableType variableType>
-		[[nodiscard]] IVFE GetVariable() const { return _variables.template GetVariable<variableType>(); }
+		[[nodiscard]] VariableValue GetVariable() const { return _variables.template GetVariable<variableType>(); }
 		template <m2g::pb::VariableType variableType>
-		IVFE SetVariable(const IVFE ivfe) { return _variables.template SetVariable<variableType>(ivfe); }
+		VariableValue SetVariable(const VariableValue varVal) { return _variables.template SetVariable<variableType>(varVal); }
 
 		[[nodiscard]] bool HasCard(const m2g::pb::CardType ct) const override { return _cards.HasCard(ct); }
 		[[nodiscard]] bool HasCard(const m2g::pb::CardCategory cc) const override { return _cards.HasCard(cc); }
@@ -37,9 +37,9 @@ namespace m2 {
 		void UnsafeAddCard(const m2g::pb::CardType ct) override { _cards.UnsafeAddCard(ct); }
 		void RemoveCard(const m2g::pb::CardType ct) override { _cards.RemoveCard(ct); }
 
-		[[nodiscard]] IVFE GetVariable(const m2g::pb::VariableType vt) const override { return _variables.GetVariable(vt); }
-		[[nodiscard]] expected<IVFE> TrySetVariable(const m2g::pb::VariableType vt, const IVFE ivfe) override { return _variables.TrySetVariable(vt, ivfe); }
-		IVFE UnsafeSetVariable(const m2g::pb::VariableType vt, const IVFE ivfe) override { return _variables.UnsafeSetVariable(vt, ivfe); }
+		[[nodiscard]] VariableValue GetVariable(const m2g::pb::VariableType vt) const override { return _variables.GetVariable(vt); }
+		[[nodiscard]] expected<VariableValue> TrySetVariable(const m2g::pb::VariableType vt, const VariableValue varVal) override { return _variables.TrySetVariable(vt, varVal); }
+		VariableValue UnsafeSetVariable(const m2g::pb::VariableType vt, const VariableValue varVal) override { return _variables.UnsafeSetVariable(vt, varVal); }
 		void ClearVariable(const m2g::pb::VariableType vt) override { return _variables.ClearVariable(vt); }
 
 	protected:

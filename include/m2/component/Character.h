@@ -2,7 +2,7 @@
 #include "../Component.h"
 #include "../Card.h"
 #include <m2/containers/AssociativeList.h>
-#include <m2/math/IVFE.h>
+#include <m2/math/VariableValue.h>
 #include <m2/Proxy.h>
 #include <functional>
 
@@ -35,9 +35,9 @@ namespace m2 {
 		virtual void UnsafeAddCard(m2g::pb::CardType) = 0;
 		virtual void RemoveCard(m2g::pb::CardType) = 0;
 
-		[[nodiscard]] virtual IVFE GetVariable(m2g::pb::VariableType) const = 0;
-		virtual expected<IVFE> TrySetVariable(m2g::pb::VariableType, IVFE) = 0;
-		virtual IVFE UnsafeSetVariable(m2g::pb::VariableType, IVFE) = 0;
+		[[nodiscard]] virtual VariableValue GetVariable(m2g::pb::VariableType) const = 0;
+		virtual expected<VariableValue> TrySetVariable(m2g::pb::VariableType, VariableValue) = 0;
+		virtual VariableValue UnsafeSetVariable(m2g::pb::VariableType, VariableValue) = 0;
 		virtual void ClearVariable(m2g::pb::VariableType) = 0;
 
 		// Utilities
