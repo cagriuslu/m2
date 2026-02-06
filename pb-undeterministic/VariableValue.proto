@@ -4,10 +4,15 @@ package m2.pb;
 import "m2g_VariableType.proto";
 
 message VariableValue {
+  message LongVector {
+    repeated int64 vec = 1;
+  }
+
   oneof value_variant {
     int32 i = 1;
     int64 l = 2;
     m2g.pb.VariableType v = 3;
     float fe = 4;
+    LongVector lv = 5;
   }
 }

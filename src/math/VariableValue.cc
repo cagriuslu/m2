@@ -13,6 +13,8 @@ VariableValue::VariableValue(const pb::VariableValue& varVal) {
 		_value = varVal.v();
 	} else if (varVal.has_fe()) {
 		_value = FE{std::in_place, varVal.fe()};
+	} else if (varVal.has_lv()) {
+		_value.emplace<std::vector<int64_t>>(varVal.lv().vec().cbegin(), varVal.lv().vec().cend());
 	}
 }
 
@@ -25,20 +27,25 @@ VariableValue::operator bool() const {
 				? std::get<int64_t>(_value)
 				: std::holds_alternative<m2g::pb::VariableType>(_value)
 					? std::get<m2g::pb::VariableType>(_value)
-					: static_cast<bool>(std::get<FE>(_value));
+					: std::holds_alternative<FE>(_value)
+						? static_cast<bool>(std::get<FE>(_value))
+						: not std::get<std::vector<int64_t>>(_value).empty();
 }
 VariableValue::operator pb::VariableValue() const {
-	pb::VariableValue pbIvfe;
+	pb::VariableValue p;
 	if (IsInt()) {
-		pbIvfe.set_i(std::get<int32_t>(_value));
+		p.set_i(std::get<int32_t>(_value));
 	} else if (IsLong()) {
-		pbIvfe.set_l(std::get<int64_t>(_value));
+		p.set_l(std::get<int64_t>(_value));
 	} else if (IsVariableType()) {
-		pbIvfe.set_v(std::get<m2g::pb::VariableType>(_value));
+		p.set_v(std::get<m2g::pb::VariableType>(_value));
 	} else if (IsFE()) {
-		pbIvfe.set_fe(std::get<FE>(_value).ToRawValue());
+		p.set_fe(std::get<FE>(_value).ToRawValue());
+	} else if (IsLongVector()) {
+		const auto& lv = std::get<std::vector<int64_t>>(_value);
+		p.mutable_lv()->mutable_vec()->Add(lv.cbegin(), lv.cend());
 	}
-	return pbIvfe;
+	return p;
 }
 
 int32_t VariableValue::Hash(const int32_t initialValue) const {
@@ -55,6 +62,12 @@ int32_t VariableValue::Hash(const int32_t initialValue) const {
 		return HashI(UnsafeGetVariableType(), initialValue);
 	} else if (IsFE()) {
 		return HashI(ToRawValue(UnsafeGetFE()), initialValue);
+	} else if (IsLongVector()) {
+		int32_t hash = initialValue;
+		for (const auto l : UnsafeGetLongVector()) {
+			hash = HashI(l, hash);
+		}
+		return hash;
 	} else {
 		return initialValue;
 	}
@@ -88,6 +101,14 @@ FE VariableValue::GetFEOrValue(const FE defaultValue) const {
 	return std::holds_alternative<FE>(_value) ? std::get<FE>(_value) : defaultValue;
 }
 
+const std::vector<int64_t>& VariableValue::GetLongVectorOrEmpty() const {
+	static constexpr std::vector<int64_t> empty;
+	return IsLongVector() ? UnsafeGetLongVector() : empty;
+}
+const std::vector<int64_t>& VariableValue::GetLongVectorOrDefault(const std::vector<int64_t>& defaultValue) const {
+	return IsLongVector() ? UnsafeGetLongVector() : defaultValue;
+}
+
 VariableValue VariableValue::UnsafeAdd(const VariableValue& rhs) const {
 	if (IsInt() && rhs.IsInt()) {
 		return VariableValue{UnsafeGetInt() + rhs.UnsafeGetInt()};
@@ -95,12 +116,12 @@ VariableValue VariableValue::UnsafeAdd(const VariableValue& rhs) const {
 		return VariableValue{UnsafeGetLong() + rhs.UnsafeGetLong()};
 	} else if (IsFE() && rhs.IsFE()) {
 		return VariableValue{UnsafeGetFE() + rhs.UnsafeGetFE()};
-	} else if (IsVariableType()) {
-		throw M2_ERROR("Attempt to add to VariableType");
 	} else if (IsNull()) {
 		return rhs;
-	} else {
+	} else if (rhs.IsNull()) {
 		return *this;
+	} else {
+		throw M2_ERROR("Attempt to add imcompatible types");
 	}
 }
 VariableValue VariableValue::UnsafeSubtract(const VariableValue& rhs) const {
@@ -110,12 +131,12 @@ VariableValue VariableValue::UnsafeSubtract(const VariableValue& rhs) const {
 		return VariableValue{UnsafeGetLong() - rhs.UnsafeGetLong()};
 	} else if (IsFE() && rhs.IsFE()) {
 		return VariableValue{UnsafeGetFE() - rhs.UnsafeGetFE()};
-	} else if (IsVariableType()) {
-		throw M2_ERROR("Attempt to subtract from VariableType");
 	} else if (IsNull()) {
 		return rhs.Negate();
-	} else {
+	} else if (rhs.IsNull()) {
 		return *this;
+	} else {
+		throw M2_ERROR("Attempt to subtract imcompatible types");
 	}
 }
 VariableValue VariableValue::Negate() const {
@@ -125,9 +146,11 @@ VariableValue VariableValue::Negate() const {
 		return VariableValue{-UnsafeGetInt()};
 	} else if (IsLong()) {
 		return VariableValue{-UnsafeGetLong()};
-	} else if (IsVariableType()) {
-		throw M2_ERROR("Attempt to negate VariableType");
-	} else {
+	} else if (IsFE()) {
 		return VariableValue{-UnsafeGetFE()};
+	} else if (IsNull()) {
+		return *this;
+	} else {
+		throw M2_ERROR("Attempt to negate an imcompatible type");
 	}
 }

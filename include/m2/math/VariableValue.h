@@ -5,10 +5,9 @@
 #include <VariableValue.pb.h>
 
 namespace m2 {
-	// TODO rename to something more generic so that we don't have to add a new letter every time we add a new type
 	// ReSharper disable CppNonExplicitConvertingConstructor
 	class VariableValue {
-		std::variant<std::monostate, int32_t, int64_t, m2g::pb::VariableType, FE> _value{};
+		std::variant<std::monostate, int32_t, int64_t, m2g::pb::VariableType, FE, std::vector<int64_t>> _value{};
 
 	public:
 		VariableValue() = default;
@@ -16,10 +15,11 @@ namespace m2 {
 		VariableValue(const int64_t l) : _value(l) {}
 		VariableValue(const uint64_t l) : _value(static_cast<int64_t>(l)) {}
 		VariableValue(const m2g::pb::VariableType vt) : _value(vt) {}
-		VariableValue(FE&& fe) : _value(fe) {}
-		VariableValue(const FE& fe) : _value(fe) {}
+		VariableValue(const FE fe) : _value(fe) {}
 		template <bool Enable = not GAME_IS_DETERMINISTIC>
 		VariableValue(const float f) requires (Enable) : _value(FE{f}) {}
+		VariableValue(const std::vector<int64_t>& lv) : _value(lv) {}
+		VariableValue(std::vector<int64_t>&& lv) : _value(std::move(lv)) {}
 		VariableValue(const pb::VariableValue&);
 
 		explicit operator bool() const;
@@ -33,6 +33,7 @@ namespace m2 {
 		[[nodiscard]] bool IsFE() const { return std::holds_alternative<FE>(_value); }
 		template <bool Enable = not GAME_IS_DETERMINISTIC>
 		[[nodiscard]] bool IsF() const requires (Enable) { return std::holds_alternative<FE>(_value); }
+		[[nodiscard]] bool IsLongVector() const { return std::holds_alternative<std::vector<int64_t>>(_value); }
 
 		[[nodiscard]] int32_t Hash(int32_t initialValue) const;
 
@@ -58,6 +59,10 @@ namespace m2 {
 		[[nodiscard]] float GetFOrZero() const requires (Enable) { return GetFEOrZero().ToFloat(); }
 		template <bool Enable = not GAME_IS_DETERMINISTIC>
 		[[nodiscard]] float GetFOrValue(const float defaultValue) const requires (Enable) { return GetFEOrValue(FE{defaultValue}).ToFloat(); }
+
+		[[nodiscard]] const std::vector<int64_t>& UnsafeGetLongVector() const { return std::get<std::vector<int64_t>>(_value); }
+		[[nodiscard]] const std::vector<int64_t>& GetLongVectorOrEmpty() const;
+		[[nodiscard]] const std::vector<int64_t>& GetLongVectorOrDefault(const std::vector<int64_t>&) const;
 
 		[[nodiscard]] VariableValue UnsafeAdd(const VariableValue&) const;
 		[[nodiscard]] VariableValue UnsafeSubtract(const VariableValue&) const;
