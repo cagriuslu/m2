@@ -147,7 +147,8 @@ namespace m2 {
 
 			// While there are frontiers to explore
 			while (not frontiers.empty()) {
-				auto frontier = frontiers.begin()->second;
+				auto firstFrontier = frontiers.begin();
+				auto frontier = firstFrontier->second;
 				// If next location to process is the destination, a path is found. Stop.
 				if (frontier == to) { break; }
 
@@ -180,7 +181,7 @@ namespace m2 {
 					}
 				}
 				// Remove the current frontier as we have processed it
-				frontiers.erase(frontiers.begin());
+				frontiers.erase(firstFrontier);
 			}
 
 			auto it = approachVia.find(to); // Check if there is a path
