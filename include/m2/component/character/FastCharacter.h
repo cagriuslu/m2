@@ -24,10 +24,10 @@ namespace m2 {
 		void AddCard(m2g::pb::CardType);
 		void RemoveCard(m2g::pb::CardType) override;
 
-		[[nodiscard]] VariableValue GetVariable(const m2g::pb::VariableType v) const override { return _variables[pb::enum_index(v)]; }
-		expected<VariableValue> TrySetVariable(const m2g::pb::VariableType vt, const VariableValue varVal) override { return SetVariable(vt, varVal); }
-		VariableValue UnsafeSetVariable(const m2g::pb::VariableType vt, const VariableValue varVal) override { return SetVariable(vt, varVal); }
-		VariableValue SetVariable(const m2g::pb::VariableType v, const VariableValue varVal) { _variables[pb::enum_index(v)] = varVal; return varVal; }
+		[[nodiscard]] const VariableValue& GetVariable(const m2g::pb::VariableType v) const override { return _variables[pb::enum_index(v)]; }
+		expected<void> TrySetVariable(const m2g::pb::VariableType vt, const VariableValue varVal) override { SetVariable(vt, varVal); return {}; }
+		void UnsafeSetVariable(const m2g::pb::VariableType vt, const VariableValue varVal) override { SetVariable(vt, varVal); }
+		void SetVariable(const m2g::pb::VariableType v, VariableValue varVal) { _variables[pb::enum_index(v)] = std::move(varVal); }
 		void ClearVariable(const m2g::pb::VariableType v) override { _variables[pb::enum_index(v)] = {}; }
 
 		// Utilities

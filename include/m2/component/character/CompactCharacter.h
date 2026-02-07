@@ -23,9 +23,9 @@ namespace m2 {
 		void UnsafeAddCard(m2g::pb::CardType) override;
 		void RemoveCard(m2g::pb::CardType) override;
 
-		[[nodiscard]] VariableValue GetVariable(m2g::pb::VariableType) const override;
-		expected<VariableValue> TrySetVariable(m2g::pb::VariableType, VariableValue) override;
-		VariableValue UnsafeSetVariable(m2g::pb::VariableType, VariableValue) override;
+		[[nodiscard]] const VariableValue& GetVariable(m2g::pb::VariableType) const override;
+		expected<void> TrySetVariable(m2g::pb::VariableType, VariableValue) override;
+		void UnsafeSetVariable(m2g::pb::VariableType, VariableValue) override;
 		void ClearVariable(m2g::pb::VariableType) override;
 	};
 }

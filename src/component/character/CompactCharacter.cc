@@ -74,25 +74,24 @@ void CompactCharacter::RemoveCard(const m2g::pb::CardType ct) {
 	}
 }
 
-VariableValue CompactCharacter::GetVariable(const m2g::pb::VariableType v) const {
+const VariableValue& CompactCharacter::GetVariable(const m2g::pb::VariableType v) const {
 	if (_variable.first == v) {
 		return _variable.second;
 	}
-	return {};
+	return NULL_VARIABLE_VALUE;
 }
-expected<VariableValue> CompactCharacter::TrySetVariable(const m2g::pb::VariableType v, const VariableValue varVal) {
+expected<void> CompactCharacter::TrySetVariable(const m2g::pb::VariableType v, const VariableValue varVal) {
 	if (_variable.first && _variable.first != v) {
 		return make_unexpected("Character cannot hold more than one type of variables");
 	}
 	_variable = std::make_pair(v, varVal);
-	return varVal;
+	return {};
 }
-VariableValue CompactCharacter::UnsafeSetVariable(const m2g::pb::VariableType v, const VariableValue varVal) {
+void CompactCharacter::UnsafeSetVariable(const m2g::pb::VariableType v, const VariableValue varVal) {
 	if (_variable.first && _variable.first != v) {
 		throw M2_ERROR("Character cannot hold more than one type of variables");
 	}
 	_variable = std::make_pair(v, varVal);
-	return varVal;
 }
 void CompactCharacter::ClearVariable(const m2g::pb::VariableType v) {
 	if (_variable.first == v) {

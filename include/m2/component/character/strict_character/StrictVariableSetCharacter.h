@@ -25,7 +25,7 @@ namespace m2 {
 		}
 
 		template <m2g::pb::VariableType variableType>
-		[[nodiscard]] VariableValue GetVariable() const {
+		[[nodiscard]] const VariableValue& GetVariable() const {
 			static_assert(DoesArrayContainElement(possibleVariableTypes, variableType), "Character can't hold the given VariableType");
 			return _variables[VariableTypeIndex(variableType)];
 		}
@@ -35,24 +35,23 @@ namespace m2 {
 			_variables[VariableTypeIndex(variableType)] = varVal; return varVal;
 		}
 
-		[[nodiscard]] VariableValue GetVariable(const m2g::pb::VariableType vt) const {
+		[[nodiscard]] const VariableValue& GetVariable(const m2g::pb::VariableType vt) const {
 			if (const auto variableTypeIndex = VariableTypeIndex(vt); variableTypeIndex == -1) {
-				return {};
+				return NULL_VARIABLE_VALUE;
 			} else {
 				return _variables[variableTypeIndex];
 			}
 		}
-		[[nodiscard]] expected<VariableValue> TrySetVariable(const m2g::pb::VariableType vt, const VariableValue varVal) {
+		[[nodiscard]] expected<void> TrySetVariable(const m2g::pb::VariableType vt, const VariableValue varVal) {
 			if (const auto variableTypeIndex = VariableTypeIndex(vt); variableTypeIndex == -1) {
 				return make_unexpected("Character cannot hold " + ToString(vt));
 			} else {
 				_variables[variableTypeIndex] = varVal;
-				return varVal;
+				return {};
 			}
 		}
-		VariableValue UnsafeSetVariable(const m2g::pb::VariableType vt, const VariableValue varVal) {
+		void UnsafeSetVariable(const m2g::pb::VariableType vt, const VariableValue varVal) {
 			_variables[VariableTypeIndex(vt)] = varVal;
-			return varVal;
 		}
 		void ClearVariable(const m2g::pb::VariableType vt) {
 			if (const auto variableTypeIndex = VariableTypeIndex(vt); variableTypeIndex != -1) {

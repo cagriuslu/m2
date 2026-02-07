@@ -20,6 +20,7 @@ namespace m2 {
 	constexpr int I(const auto t) { return static_cast<int>(t); }
 	constexpr unsigned U(const auto t) { return static_cast<unsigned>(t); }
 	constexpr uint8_t U8(const auto t) { return static_cast<uint8_t>(t); }
+	constexpr int64_t L(const auto t) { return static_cast<int64_t>(t); }
 	constexpr size_t Z(const auto t) { return static_cast<size_t>(t); }
 	constexpr float ToFloat(const auto t) { return static_cast<float>(t); }
 	constexpr double D(const auto t) { return static_cast<double>(t); }

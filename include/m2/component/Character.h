@@ -35,9 +35,9 @@ namespace m2 {
 		virtual void UnsafeAddCard(m2g::pb::CardType) = 0;
 		virtual void RemoveCard(m2g::pb::CardType) = 0;
 
-		[[nodiscard]] virtual VariableValue GetVariable(m2g::pb::VariableType) const = 0;
-		virtual expected<VariableValue> TrySetVariable(m2g::pb::VariableType, VariableValue) = 0;
-		virtual VariableValue UnsafeSetVariable(m2g::pb::VariableType, VariableValue) = 0;
+		[[nodiscard]] virtual const VariableValue& GetVariable(m2g::pb::VariableType) const = 0;
+		virtual expected<void> TrySetVariable(m2g::pb::VariableType, VariableValue) = 0;
+		virtual void UnsafeSetVariable(m2g::pb::VariableType, VariableValue) = 0;
 		virtual void ClearVariable(m2g::pb::VariableType) = 0;
 
 		// Utilities

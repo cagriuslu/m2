@@ -67,5 +67,11 @@ namespace m2 {
 		[[nodiscard]] VariableValue UnsafeAdd(const VariableValue&) const;
 		[[nodiscard]] VariableValue UnsafeSubtract(const VariableValue&) const;
 		[[nodiscard]] VariableValue Negate() const;
+
+		// Modifiers
+
+		void UnsafePushBack(int64_t l);
 	};
+
+	constexpr VariableValue NULL_VARIABLE_VALUE{};
 }

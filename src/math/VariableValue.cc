@@ -154,3 +154,13 @@ VariableValue VariableValue::Negate() const {
 		throw M2_ERROR("Attempt to negate an imcompatible type");
 	}
 }
+
+void VariableValue::UnsafePushBack(const int64_t l) {
+	if (IsNull()) {
+		_value = std::vector{1zu, l};
+	} else if (IsLongVector()) {
+		std::get<std::vector<int64_t>>(_value).push_back(l);
+	} else {
+		throw M2_ERROR("Attempt to push back to an imcompatible type");
+	}
+}
