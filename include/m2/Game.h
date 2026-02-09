@@ -43,7 +43,7 @@ namespace m2 {
 	class Game {
 		static Game* _instance;
 		::m2g::Proxy _proxy{};
-		GameResources _resources{_proxy.gameIdentifier, _proxy.defaultFontPath};
+		const GameResources _resources{_proxy.gameIdentifier, _proxy.defaultFontPath}; // TODO make public
 		std::optional<GameDimensions> _dimensions;
 
 		mutable std::optional<VecF> _mouse_position_world_m;
@@ -56,46 +56,48 @@ namespace m2 {
 		////////////////////////////////////////////////////////////////////////
 		////////////////////////////// RESOURCES ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		Rational _font_letter_width_to_height_ratio; // letter w/h // TODO get rid of this, because this is only accurate if the font is used in default size, which isn't always the case
 		std::optional<TextLabelCache> _textLabelCache;
 		std::optional<ShapeCache> _shapeCache;
-		std::vector<std::variant<Sprite, pb::TextLabel>> _sprites;
-		std::vector<ObjectBlueprint> _objectBlueprints;
+		std::vector<std::variant<Sprite, pb::TextLabel>> _sprites; // TODO make const and pulic
+		std::vector<ObjectBlueprint> _objectBlueprints; // TODO make const and public
 
-	public:  // TODO private
-		std::optional<Level> _level;
+	public:
+		std::optional<Level> _level; // TODO make private
 
+		static void InitSystems();
 		static void CreateInstance();
 		static bool HasInstance() { return _instance; }
 		static Game& Instance() { return *_instance; }
 		static void DestroyInstance();
+		static void DeinitSystems();
 
 		::m2g::Proxy& Proxy() { return _proxy; }
 
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////////// WINDOW ////////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		SDL_Window* window{};
-		SDL_Cursor* cursor{};
-		SDL_Renderer* renderer{};
-		SDL_Texture* light_texture{};
-		std::optional<AudioManager> audio_manager;
-		uint32_t pixel_format{};
-		TTF_Font* font{};
-		bool quit{};
+		SDL_Window* const window{};
+		SDL_Cursor* const cursor{};
+		const uint32_t pixel_format{};
+		SDL_Renderer* renderer{}; // TODO make pointer const
+		SDL_Texture* light_texture{}; // TODO make pointer const
+		std::optional<AudioManager> audio_manager; // TODO make private
+		TTF_Font* const font{};
+		const Rational _font_letter_width_to_height_ratio; // letter w/h // TODO rename or get rid of this, because this is only accurate if the font is used in default size, which isn't always the case
+		bool quit{}; // TODO make private
 
 		////////////////////////////////////////////////////////////////////////
 		////////////////////////////// RESOURCES ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		std::optional<pb::SpriteSheets> spriteSheetsPb;
-		std::vector<SpriteSheet> spriteSheets;
-		std::optional<SpriteEffectsSheet> spriteEffectsSheet;
-		std::vector<m2g::pb::SpriteType> level_editor_background_sprites;
-		pb::MessageLUT<pb::Card, Card> cards;
-		pb::MessageLUT<pb::Animation, Animation> animations;
-		pb::MessageLUT<pb::Song, Song> songs;
-		std::multimap<m2g::pb::KeyType, SDL_Scancode> keyToScancodeMap;
-		std::map<SDL_Scancode, m2g::pb::KeyType> scancodeToKeyMap;
+		std::optional<pb::SpriteSheets> spriteSheetsPb; // TODO make const
+		std::vector<SpriteSheet> spriteSheets; // TODO make const
+		std::optional<SpriteEffectsSheet> spriteEffectsSheet; // TODO make const
+		std::vector<m2g::pb::SpriteType> level_editor_background_sprites; // TODO make const
+		pb::MessageLUT<pb::Card, Card> cards; // TODO make const
+		pb::MessageLUT<pb::Animation, Animation> animations; // TODO make const
+		pb::MessageLUT<pb::Song, Song> songs; // TODO make const
+		std::multimap<m2g::pb::KeyType, SDL_Scancode> keyToScancodeMap; // TODO make const
+		std::map<SDL_Scancode, m2g::pb::KeyType> scancodeToKeyMap; // TODO make const
 		const Rational& FontLetterWidthToHeightRatio() const { return _font_letter_width_to_height_ratio; }
 		TextLabelCache& GetTextLabelCache() { return *_textLabelCache; }
 		ShapeCache& GetShapeCache() { return *_shapeCache; }
@@ -111,7 +113,8 @@ namespace m2 {
 		////////////////////////////////////////////////////////////////////////
 		///////////////////////////////// MISC /////////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		Events events;
+		Events events; // TODO make private
+		bool _eventsAreBeingHandled{false}; // TODO make private, TODO this flag should be true for a level to be saved.
 
 		std::vector<std::string> console_output;
 
@@ -175,6 +178,7 @@ namespace m2 {
 		void ForEachCard(const std::function<bool(m2g::pb::CardType, const Card&)>& op) const;
 		std::optional<m2g::pb::SpriteType> GetMainSpriteOfObject(m2g::pb::ObjectType) const;
 		void ForEachObjectWithMainSprite(const std::function<bool(m2g::pb::ObjectType, m2g::pb::SpriteType)>& op) const;
+		[[nodiscard]] bool AreEventsBeingHandled() const { return _eventsAreBeingHandled; }
 		[[nodiscard]] VecI MousePositionPx() const { return events.MousePosition(); }
 		const VecF& MousePositionWorldM() const; // TODO move into Level?
 		const VecF& ScreenCenterToMousePositionM() const; // TODO move into Level?
@@ -185,12 +189,14 @@ namespace m2 {
 
 		// Handlers
 
+		void StartHandlingEvents();
 		void HandleQuitEvent();
 		void HandleWindowResizeEvent();
 		void HandleConsoleEvent();
 		void HandlePauseEvent();
 		void HandleHudEvents();
 		void HandleNetworkEvents();
+		void StopHandlingEvents();
 		bool ShouldSimulatePhysics();
 		void ExecutePreStep(const Stopwatch::Duration& delta);
 		void UpdateCharacters(const Stopwatch::Duration& delta);

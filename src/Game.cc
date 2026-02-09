@@ -14,28 +14,63 @@
 #include <m2/ui/UiAction.h>
 #include <m2/game/Key.h>
 
+namespace {
+	SDL_Window* CreateWindow(const int gamePpm, const float defaultGameHeightM, const char* gameFriendlyName) {
+		const auto minimumWindowDims = m2::GameDimensions::EstimateMinimumWindowDimensions(gamePpm, defaultGameHeightM);
+		if (auto* window = SDL_CreateWindow(gameFriendlyName, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+				minimumWindowDims.x, minimumWindowDims.y, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) {
+			SDL_SetWindowMinimumSize(window, minimumWindowDims.x, minimumWindowDims.y);
+			SDL_StopTextInput(); // Text input begins activated (sometimes)
+			return window;
+		} else {
+			throw M2_ERROR("SDL error: " + std::string{SDL_GetError()});
+		}
+	}
+
+	SDL_Cursor* CreateCursor() {
+		auto* cursor = SdlUtils_CreateCursor();
+		SDL_SetCursor(cursor);
+		return cursor;
+	}
+
+	uint32_t GetWindowPixelFormat(SDL_Window* const window) {
+		if (const auto pixel_format = SDL_GetWindowPixelFormat(window); pixel_format == SDL_PIXELFORMAT_UNKNOWN) {
+			throw M2_ERROR("SDL error: " + std::string{SDL_GetError()});
+		} else {
+			return pixel_format;
+		}
+	}
+
+	TTF_Font* OpenFont(const char* path, const int fontSize) {
+		if (auto* font = TTF_OpenFont(path, fontSize)) {
+			// Check certain font properties
+			if (not TTF_FontFaceIsFixedWidth(font)) {
+				// Many calculations related to text assumes a monospaced font
+				throw M2_ERROR("Font is not monospaced");
+			}
+			return font;
+		}  else {
+			throw M2_ERROR("TTF error: " + std::string{TTF_GetError()});
+		}
+	}
+
+	m2::Rational CalculateFontLetterWidthToHeightRatio(TTF_Font* const font) {
+		int fontLetterWidth, fontLetterHeight;
+		if (TTF_SizeUTF8(font, "A", &fontLetterWidth, &fontLetterHeight)) {
+			throw M2_ERROR("Unable to measure the font letter size");
+		}
+		// Font size, is the size of the letter from the baseline (ascent).
+		// Descent, is the (negated) size of the tails from the baseline.
+		// Font height is ascent + descent + line gap.
+		// You can request a certain font size, but you may not get an exact font.
+		// Height and ascent can be queried. For width, you need to render.
+		return m2::Rational{fontLetterWidth, fontLetterHeight};
+	}
+}
+
 m2::Game* m2::Game::_instance{};
 
-void m2::Game::CreateInstance() {
-	LOG_DEBUG("Creating Game instance...");
-	if (_instance) {
-		throw M2_ERROR("Cannot create multiple instance of Game");
-	}
-	_instance = new Game();
-	LOG_DEBUG("Game instance created");
-
-	// User might access GAME from the following function
-	// We have to call it after GAME is fully constructed
-	_instance->_proxy.load_resources();
-}
-
-void m2::Game::DestroyInstance() {
-	DEBUG_FN();
-	delete _instance;
-	_instance = nullptr;
-}
-
-m2::Game::Game() {
+void m2::Game::InitSystems() {
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_TIMER) != 0) {
 		throw M2_ERROR("SDL_Init error: " + std::string{SDL_GetError()});
 	}
@@ -54,21 +89,35 @@ m2::Game::Game() {
 	if (SDL_SetHint(SDL_HINT_RENDER_LINE_METHOD, "2") == false) {
 		LOG_WARN("Failed to set line render method");
 	}
-
-	const auto minimumWindowDims = GameDimensions::EstimateMinimumWindowDimensions(_proxy.gamePpm, _proxy.defaultGameHeightM);
-	if ((window = SDL_CreateWindow(_proxy.gameFriendlyName.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-		minimumWindowDims.x, minimumWindowDims.y, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == nullptr) {
-		throw M2_ERROR("SDL error: " + std::string{SDL_GetError()});
+}
+void m2::Game::CreateInstance() {
+	LOG_DEBUG("Creating Game instance...");
+	if (_instance) {
+		throw M2_ERROR("Cannot create multiple instance of Game");
 	}
-	SDL_SetWindowMinimumSize(window, minimumWindowDims.x, minimumWindowDims.y);
-	SDL_StopTextInput(); // Text input begins activated (sometimes)
+	_instance = new Game();
+	LOG_DEBUG("Game instance created");
 
-	cursor = SdlUtils_CreateCursor();
-	SDL_SetCursor(cursor);
-	if ((pixel_format = SDL_GetWindowPixelFormat(window)) == SDL_PIXELFORMAT_UNKNOWN) {
-		throw M2_ERROR("SDL error: " + std::string{SDL_GetError()});
-	}
+	// User might access GAME from the following function
+	// We have to call it after GAME is fully constructed
+	_instance->_proxy.load_resources();
+}
 
+void m2::Game::DestroyInstance() {
+	DEBUG_FN();
+	delete _instance;
+	_instance = nullptr;
+}
+void m2::Game::DeinitSystems() {
+	TTF_Quit();
+	IMG_Quit();
+	SDL_Quit();
+}
+
+m2::Game::Game() : window(CreateWindow(_proxy.gamePpm, _proxy.defaultGameHeightM, _proxy.gameFriendlyName.c_str())),
+		cursor(CreateCursor()), pixel_format(GetWindowPixelFormat(window)),
+		font(OpenFont(_resources.GetDefaultFontPath().c_str(), _proxy.default_font_size)),
+		_font_letter_width_to_height_ratio(CalculateFontLetterWidthToHeightRatio(font)) {
 	// ReSharper disable once CppDFAConstantConditions
 	if (_proxy.areGraphicsPixelated) {
 		// ReSharper disable once CppDFAUnreachableCode
@@ -99,26 +148,7 @@ m2::Game::Game() {
 	SDL_SetTextureBlendMode(light_texture, SDL_BLENDMODE_MUL);
 	SDL_SetTextureAlphaMod(light_texture, 0);
 	SDL_SetTextureColorMod(light_texture, 127, 127, 127);
-	// Open font
-	if ((font = TTF_OpenFont(_resources.GetDefaultFontPath().string().c_str(), _proxy.default_font_size)) == nullptr) {
-		throw M2_ERROR("SDL error: " + std::string{TTF_GetError()});
-	}
-	// Check font properties
-	if (not TTF_FontFaceIsFixedWidth(font)) {
-		// Many calculations related to text assumes a monospaced font
-		throw M2_ERROR("Font is not monospaced");
-	}
-	int font_letter_width, font_letter_height;
-	if (TTF_SizeUTF8(font, "A", &font_letter_width, &font_letter_height)) {
-		throw M2_ERROR("Unable to measure the font letter size");
-	}
-	LOG_INFO("Font letter size", font_letter_width, font_letter_height); // 34,16
-	// Font size, is the size of the letter from the baseline (ascent).
-	// Descent, is the (negated) size of the tails from the baseline.
-	// Font height is ascent + descent + line gap.
-	// You can request a certain font size, but you may not get an exact font.
-	// Height and ascent can be queried. For width, you need to render.
-	_font_letter_width_to_height_ratio = Rational{font_letter_width, font_letter_height};
+
 	_textLabelCache.emplace(renderer, font);
 	_shapeCache.emplace(renderer);
 
@@ -163,9 +193,6 @@ m2::Game::~Game() {
 	SDL_DestroyRenderer(renderer);
 	SDL_FreeCursor(cursor);
 	SDL_DestroyWindow(window);
-	TTF_Quit();
-	IMG_Quit();
-	SDL_Quit();
 }
 
 m2::void_expected m2::Game::HostTurnBasedGame(unsigned max_connection_count) {
@@ -488,6 +515,12 @@ m2::void_expected m2::Game::LoadBulkSheetEditor() {
 
 void m2::Game::ResetState() { events.Clear(); }
 
+void m2::Game::StartHandlingEvents() {
+	if (_eventsAreBeingHandled) {
+		throw M2_ERROR("Events were already being handled");
+	}
+	_eventsAreBeingHandled = true;
+}
 void m2::Game::HandleQuitEvent() {
 	if (events.PopQuit()) {
 		quit = true;
@@ -597,6 +630,12 @@ void m2::Game::HandleNetworkEvents() {
 			// TODO handle
 		}
 	}
+}
+void m2::Game::StopHandlingEvents() {
+	if (not _eventsAreBeingHandled) {
+		throw M2_ERROR("Events weren't already being handled");
+	}
+	_eventsAreBeingHandled = false;
 }
 bool m2::Game::ShouldSimulatePhysics() {
 	if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)

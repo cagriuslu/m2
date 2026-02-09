@@ -20,6 +20,7 @@ int main(const int argc, char **argv) {
 		return -1;
 	}
 
+	Game::InitSystems();
 	Game::CreateInstance();
 
 	// Used to keep track of when the physics update was last executed. This stopwatch is usually not reset after each
@@ -75,6 +76,7 @@ int main(const int argc, char **argv) {
 			M2_GAME.events.Clear();
 		}
 		if (M2_GAME.events.Gather()) {
+			M2_GAME.StartHandlingEvents();
 			M2_GAME.HandleQuitEvent();
 			M2_GAME.HandleWindowResizeEvent();
 			M2_GAME.HandleConsoleEvent();
@@ -82,6 +84,7 @@ int main(const int argc, char **argv) {
 			M2_GAME.HandleHudEvents();
 			M2_GAME.HandleNetworkEvents();
 			M2_GAME.ExecuteDeferredActions();
+			M2_GAME.StopHandlingEvents();
 		}
 		BREAK_IF_QUIT();
 		M2_GAME.ResetMousePosition();
@@ -154,5 +157,6 @@ int main(const int argc, char **argv) {
 	}
 
 	Game::DestroyInstance();
+	Game::DeinitSystems();
 	return 0;
 }
