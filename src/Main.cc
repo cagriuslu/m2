@@ -50,10 +50,12 @@ int main(const int argc, char **argv) {
 		// Try to load a level if there's no level
 		if (not M2_GAME.HasLevel()) {
 			LOG_DEBUG("Executing main menu...");
+			M2_GAME.StartHandlingEvents();
 			if (UiPanel::create_and_run_blocking(M2G_PROXY.MainMenuBlueprint()).IsQuit()) {
 				LOG_INFO("Main menu returned QUIT");
 				break;
 			}
+			M2_GAME.StopHandlingEvents();
 			if (not M2_GAME.HasLevel()) {
 				LOG_WARN("Main menu didn't initialize a level");
 				continue;
@@ -79,6 +81,7 @@ int main(const int argc, char **argv) {
 			M2_GAME.StartHandlingEvents();
 			M2_GAME.HandleQuitEvent();
 			M2_GAME.HandleWindowResizeEvent();
+			M2_GAME.ExecuteQueuedCommands();
 			M2_GAME.HandleConsoleEvent();
 			M2_GAME.HandlePauseEvent();
 			M2_GAME.HandleHudEvents();

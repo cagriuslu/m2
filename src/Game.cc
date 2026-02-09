@@ -13,6 +13,7 @@
 #include "m2/component/Graphic.h"
 #include <m2/ui/UiAction.h>
 #include <m2/game/Key.h>
+#include "m2/String.h"
 
 namespace {
 	SDL_Window* CreateWindow(const int gamePpm, const float defaultGameHeightM, const char* gameFriendlyName) {
@@ -529,6 +530,16 @@ void m2::Game::HandleQuitEvent() {
 void m2::Game::HandleWindowResizeEvent() {
 	if (events.PopWindowResize()) {
 		OnWindowResize();
+	}
+}
+void m2::Game::ExecuteQueuedCommands() {
+	while (not _queuedCommands.empty()) {
+		if (const auto result = ExecuteCommand(_queuedCommands.front()); std::holds_alternative<UnknownCommand>(result)) {
+			LOG_ERROR("Unknown command", _queuedCommands.front());
+		} else if (std::holds_alternative<CommandFail>(result)) {
+			LOG_ERROR("Command failed with error", std::string{"'"} + _queuedCommands.front() + "'", std::get<CommandFail>(result).error);
+		}
+		_queuedCommands.pop_front();
 	}
 }
 void m2::Game::HandleConsoleEvent() {
@@ -1118,10 +1129,12 @@ void m2::Game::RecalculateDirectionalAudio() {
 	}
 }
 
+void m2::Game::QueueCommand(std::string cmd) {
+	_queuedCommands.emplace_back(std::move(cmd));
+}
 void m2::Game::AddDeferredAction(const std::function<void()>& action) {
 	_level->deferredActions.push(action);
 }
-
 void m2::Game::ExecuteDeferredActions() {
 	// Execute deferred actions one by one. A deferred action may insert another deferred action into the queue.
 	// Thus, we cannot iterate over the queue, we must pop one by one.
@@ -1167,4 +1180,79 @@ void m2::Game::RecalculateMousePosition() const {
 		const auto camera_position = _level->objects[_level->cameraId].GetPhysique().position;
 		_mouse_position_world_m = *_screen_center_to_mouse_position_m + static_cast<VecF>(camera_position);
 	}
+}
+m2::Game::CommandResult m2::Game::ExecuteCommand(const std::string& cmd) {
+	// Make sure this function is called while the events are being handled
+	if (not _eventsAreBeingHandled) {
+		throw M2_ERROR("Attempt to execute command outside of handling events");
+	}
+
+	std::optional<std::string_view> command;
+	std::array<std::string_view, 16> argument;
+	int argCount = 0;
+
+	using std::operator""sv;
+	for (const auto wordSubrange : std::views::split(GetTrimmedView(cmd), " "sv)) {
+		const auto word = GetTrimmedView(std::string_view{wordSubrange});
+		if (not word.empty()) {
+			if (not command) {
+				command = word;
+			} else {
+				argument[argCount++] = word;
+			}
+		}
+	}
+	if (not command || command->empty()) {
+		return CommandSuccess{};
+	}
+
+	std::string arguments;
+	for (int i = 0; i < argCount; ++i) {
+		arguments += argument[i];
+		arguments += ' ';
+	}
+	LOG_INFO("Executing command with arguments", *command, arguments);
+
+	if (*command == "LoadLevelEditor") {
+		if (not argument[0].empty()) {
+			if (const auto result = M2_GAME.LoadLevelEditor((M2_GAME.GetResources().GetLevelsDir() / argument[0]).string())) {
+				return CommandSuccess{.levelReplaced = true};
+			} else {
+				return CommandFail{.error = result.error()};
+			}
+		} else {
+			return CommandFail{.error = "Missing argument"};
+		}
+	} else if (*command == "LoadSheetEditor") {
+		if (const auto result = M2_GAME.LoadBulkSheetEditor()) {
+			// Execute main menu the first time the bulk sheet editor is run
+			UiPanel::create_and_run_blocking(&m2::bulk_sheet_editor::gMainMenu);
+			return CommandSuccess{.levelReplaced = true};
+		} else {
+			return CommandFail{.error = result.error()};
+		}
+	} else if (*command == "LoadSpriteEditor") {
+		if (const auto result = M2_GAME.LoadSheetEditor()) {
+			// Execute main menu the first time the sheet editor is run
+			UiPanel::create_and_run_blocking(&m2::sheet_editor_main_menu);
+			return CommandSuccess{.levelReplaced = true};
+		} else {
+			return CommandFail{.error = result.error()};
+		}
+	} else if (*command == "MoveBackground") {
+		if (not argument[0].empty() && not argument[1].empty() && not argument[2].empty()) {
+			const auto layerFrom = strtol(std::string{argument[0]}.c_str(), nullptr, 0);
+			const auto layerTo = strtol(std::string{argument[1]}.c_str(), nullptr, 0);
+			const auto level = std::string{argument[2]};
+			if (const auto result = MoveBackground(I(layerFrom), I(layerTo), level)) {
+				return CommandSuccess{};
+			} else {
+				return CommandFail{.error = result.error()};
+			}
+		} else {
+			return CommandFail{.error = "Missing argument"};
+		}
+	}
+
+	return UnknownCommand{};
 }

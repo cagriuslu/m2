@@ -8,6 +8,10 @@ namespace m2 {
 	std::string TrimRight(std::string str);
 	std::string TrimLeft(std::string str);
 	std::string Trim(std::string str);
+	std::pair<std::string::const_iterator, std::string::const_iterator> GetTrimmedRange(const std::string&);
+	std::pair<std::string_view::const_iterator, std::string_view::const_iterator> GetTrimmedRange(std::string_view);
+	std::string_view GetTrimmedView(const std::string&);
+	std::string_view GetTrimmedView(std::string_view);
 
 	template<int N>
 	struct CompileTimeString {

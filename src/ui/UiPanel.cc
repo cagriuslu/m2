@@ -1,9 +1,8 @@
 #include <m2/Game.h>
 #include <m2/Log.h>
 #include <m2/String.h>
-#include <m2/bulk_sheet_editor/Ui.h>
 #include <m2/sdl/Detail.h>
-#include <m2/sheet_editor/Ui.h>
+#include <m2/ui/Console.h>
 #include <m2/ui/UiPanelBlueprint.h>
 #include <m2/ui/UiPanel.h>
 #include <m2/ui/UiWidgetBlueprint.h>
@@ -29,75 +28,6 @@ namespace {
 	constexpr auto IsWidgetFocused = [](const auto &w) { return w->IsFocused(); };
 	// Actions
 	constexpr auto draw_widget = [](const auto &w) { w->Draw(); };
-
-	UiAction handle_console_command(const std::string &command) {
-		M2_GAME.console_output.emplace_back(">> " + command);
-
-		if (std::regex_match(command, std::regex{"ledit(\\s.*)?"})) {
-			if (std::smatch match_results; std::regex_match(command, match_results, std::regex{"ledit\\s+(.+)"})) {
-				auto load_result = M2_GAME.LoadLevelEditor((M2_GAME.GetResources().GetLevelsDir() / match_results.str(1)).string());
-				if (load_result) {
-					return MakeClearStackAction();
-				}
-				M2_GAME.console_output.emplace_back(load_result.error());
-			} else {
-				M2_GAME.console_output.emplace_back("ledit usage:");
-				M2_GAME.console_output.emplace_back(".. file_name - open level editor with file");
-			}
-			return MakeContinueAction();
-		} else if (std::regex_match(command, std::regex{"medit(\\s.*)?"})) {
-			// MIDI editor (?)
-		} else if (command == "sedit") {
-			auto load_result = M2_GAME.LoadSheetEditor();
-			if (load_result) {
-				// Execute main menu the first time the sheet editor is run
-				auto main_menu_result = UiPanel::create_and_run_blocking(&m2::sheet_editor_main_menu);
-				return main_menu_result.IsReturn() ? MakeClearStackAction() : std::move(main_menu_result);
-			}
-			M2_GAME.console_output.emplace_back(load_result.error());
-			return MakeContinueAction();
-		} else if (command == "bsedit") {
-			auto load_result = M2_GAME.LoadBulkSheetEditor();
-			if (load_result) {
-				// Execute main menu the first time the bulk sheet editor is run
-				auto main_menu_result = UiPanel::create_and_run_blocking(&m2::bulk_sheet_editor::gMainMenu);
-				return main_menu_result.IsReturn() ? MakeClearStackAction() : std::move(main_menu_result);
-			}
-			M2_GAME.console_output.emplace_back(load_result.error());
-			return MakeContinueAction();
-		} else if (std::regex_match(command, std::regex{"mvbg(\\s.*)?"})) {
-			// Move background
-			if (std::smatch match_results; std::regex_match(command, match_results, std::regex{R"(mvbg\s+([0-9]+)\s+([0-9]+)\s+(.+))"})) {
-				auto layer_from = strtol(match_results.str(1).c_str(), nullptr, 0);
-				auto layer_to = strtol(match_results.str(2).c_str(), nullptr, 0);
-				auto level = match_results.str(3);
-				if (auto success = MoveBackground(I(layer_from), I(layer_to), level); not success) {
-					M2_GAME.console_output.emplace_back(success.error());
-				}
-			} else {
-				M2_GAME.console_output.emplace_back("mvbg usage:");
-				M2_GAME.console_output.emplace_back(".. from to - move one background layer into another");
-			}
-			return MakeContinueAction();
-		} else if (command == "quit") {
-			return MakeQuitAction();
-		} else if (command == "close") {
-			return MakeReturnAction();
-		} else if (command.empty()) {
-			// Do nothing
-		} else {
-			M2_GAME.console_output.emplace_back("Available commands:");
-			M2_GAME.console_output.emplace_back("help - display this help");
-			M2_GAME.console_output.emplace_back("ledit - open level editor");
-			M2_GAME.console_output.emplace_back("medit - open midi editor");
-			M2_GAME.console_output.emplace_back("sedit - open sheet editor");
-			M2_GAME.console_output.emplace_back("bsedit - open bulk sheet editor");
-			M2_GAME.console_output.emplace_back("mvbg - move background");
-			M2_GAME.console_output.emplace_back("close - close the console");
-			M2_GAME.console_output.emplace_back("quit - quit game");
-		}
-		return MakeContinueAction();
-	}
 }  // namespace
 
 UiAction UiPanel::run_blocking() {
@@ -596,5 +526,5 @@ UiPanelBlueprint m2::console_ui = {
                 .initial_text = "", // May be overriden with console_command on startup
                 .onAction = [](const widget::TextInput &self) -> std::pair<UiAction, std::optional<std::string>> {
 	                const auto &command = self.text_input();
-	                return std::make_pair(handle_console_command(command), std::string{});
+	                return std::make_pair(HandleConsoleCommand(command), std::string{});
                 }}}}};

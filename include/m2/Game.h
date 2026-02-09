@@ -15,6 +15,7 @@
 #include "multi_player/TurnBasedBotClientThread.h"
 #include "multi_player/TurnBasedServerActorInterface.h"
 #include "multi_player/TurnBasedServerComponents.h"
+#include <m2/ui/Console.h>
 #include "protobuf/MessageLUT.h"
 #include <m2g_ObjectType.pb.h>
 #include <m2g/Proxy.h>
@@ -52,6 +53,8 @@ namespace m2 {
 		std::variant<std::monostate, TurnBasedServerComponents, network::TurnBasedRealClientThread, multiplayer::lockstep::ServerComponents, multiplayer::lockstep::ClientActorInterface> _multiPlayerComponents;
 		bool _server_update_necessary{}, _server_update_with_shutdown{};
 		std::optional<network::SequenceNo> _lastSentOrReceivedServerUpdateSequenceNo;
+
+		std::list<std::string> _queuedCommands;
 
 		////////////////////////////////////////////////////////////////////////
 		////////////////////////////// RESOURCES ///////////////////////////////
@@ -192,6 +195,7 @@ namespace m2 {
 		void StartHandlingEvents();
 		void HandleQuitEvent();
 		void HandleWindowResizeEvent();
+		void ExecuteQueuedCommands();
 		void HandleConsoleEvent();
 		void HandlePauseEvent();
 		void HandleHudEvents();
@@ -224,12 +228,20 @@ namespace m2 {
 		void SetGameHeightM(float heightM);
 		void ResetMousePosition();
 		void RecalculateDirectionalAudio();
-
+		void QueueCommand(std::string);
 		void AddDeferredAction(const std::function<void()>& action);
 		void ExecuteDeferredActions();
 
 	   private:
 		void ResetState();
 		void RecalculateMousePosition() const;
+
+		struct CommandSuccess { bool levelReplaced{}; };
+		struct CommandFail { std::string error; };
+		struct UnknownCommand {};
+		using CommandResult = std::variant<CommandSuccess,CommandFail,UnknownCommand>;
+		CommandResult ExecuteCommand(const std::string&);
+
+		friend UiAction HandleConsoleCommand(const std::string&);
 	};
 }  // namespace m2
