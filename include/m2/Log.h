@@ -78,11 +78,11 @@ namespace m2 {
 		void LogF(pb::LogLevel lvl, const char* file, int line, const char* fmt, ...) __attribute__ ((format (printf, 4, 5)));
 #endif
 
-		bool IsDebugEnabledForObject(ObjectId);
+		bool IsDebugLoggingEnabledForObject(ObjectId);
 
 		template <typename ...Ts>
 		void LogObject(const char* file, const int line, const ObjectId id, const char* msg, const Ts& ...ts) {
-			if (pb::LogLevel::DBG < current_log_level || not IsDebugEnabledForObject(id)) {
+			if (pb::LogLevel::DBG < current_log_level || not IsDebugLoggingEnabledForObject(id)) {
 				return;
 			}
 			Log(pb::LogLevel::DBG, file, line, msg, std::forward<const Ts>(ts)...);

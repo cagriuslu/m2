@@ -9,6 +9,7 @@
 #include <m2/game/Selection.h>
 #include <m2/level_editor/State.h>
 #include <m2/m3/VecF.h>
+#include <m2/ObjectDebug.h>
 #include <m2/physics/World.h>
 #include <m2/sdl/Detail.h>
 #include <m2/sheet_editor/State.h>
@@ -23,6 +24,7 @@
 #include <queue>
 #include <functional>
 #include <optional>
+#include <flat_map>
 
 namespace m2 {
 	// Forward declarations
@@ -65,7 +67,8 @@ namespace m2 {
 
 		/// Opaque pointer to box2d::DebugDraw
 		void* _debugDraw{};
-		std::array<ObjectId, 8> _debugEnabledObjects{};
+		std::flat_map<ObjectId, ObjectDebugOptions> _objectDebugObjects;
+		std::flat_map<m2g::pb::ObjectType, ObjectDebugOptions> _objectTypeDebugObjects;
 
 	public:
 		~Level();
@@ -229,9 +232,14 @@ namespace m2 {
 		void DismissSemiBlockingUiPanel(); // Should not be called from the custom UI itself
 		void DismissSemiBlockingUiPanelDeferred(); // Can be called from the custom UI itself
 
-		bool IsDebugEnabledForObject(ObjectId) const;
-		void EnableDebugForObject(ObjectId);
-		void DisableDebugForObject(ObjectId);
+		// Object debug
+
+		const ObjectDebugOptions* GetObjectDebugOptions(ObjectId id) const;
+		const ObjectDebugOptions* GetObjectTypeDebugOptions(m2g::pb::ObjectType type) const;
+		void SetObjectDebugOptions(ObjectId id, ObjectDebugOptions);
+		void SetObjectTypeDebugOptions(m2g::pb::ObjectType type, ObjectDebugOptions);
+		void ClearObjectDebugOptions(ObjectId id);
+		void ClearObjectTypeDebugOptions(m2g::pb::ObjectType type);
 
 	   private:
 		void_expected InitAnyPlayer(

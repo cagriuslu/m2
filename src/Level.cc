@@ -231,9 +231,9 @@ std::pair<Pool<Graphic>&, DrawList*> Level::GetGraphicPoolAndDrawList(const Grap
 	}
 	if (uprightGraphics.GetShiftedPoolId() == shiftedGfxPoolId) {
 		const auto& gfx = uprightGraphics[gfxId];
-		for (auto i = 0zu; i < uprightDrawLists.size(); ++i) {
-			if (uprightDrawLists[i].ContainsObject(gfx.OwnerId())) {
-				return std::pair<Pool<Graphic>&,DrawList*>{uprightGraphics, &uprightDrawLists[i]};
+		for (auto& uprightDrawList : uprightDrawLists) {
+			if (uprightDrawList.ContainsObject(gfx.OwnerId())) {
+				return std::pair<Pool<Graphic>&,DrawList*>{uprightGraphics, &uprightDrawList};
 			}
 		}
 	}
@@ -376,23 +376,31 @@ void Level::DismissSemiBlockingUiPanelDeferred() {
 	M2_DEFER([this] { this->DismissSemiBlockingUiPanel(); });
 }
 
-bool Level::IsDebugEnabledForObject(const ObjectId id) const {
-	return std::ranges::find(_debugEnabledObjects, id) != _debugEnabledObjects.end();
-}
-void Level::EnableDebugForObject(const ObjectId id) {
-	if (std::ranges::find(_debugEnabledObjects, id) != _debugEnabledObjects.end()) {
-		return;
-	}
-	if (const auto it = std::ranges::find(_debugEnabledObjects, 0); it != _debugEnabledObjects.end()) {
-		*it = id;
+const ObjectDebugOptions* Level::GetObjectDebugOptions(const ObjectId id) const {
+	if (const auto it = _objectDebugObjects.find(id); it != _objectDebugObjects.end()) {
+		return &it->second;
 	} else {
-		LOG_WARN("No space left for another debug enabled object");
+		return nullptr;
 	}
 }
-void Level::DisableDebugForObject(const ObjectId id) {
-	if (const auto it = std::ranges::find(_debugEnabledObjects, id); it != _debugEnabledObjects.end()) {
-		*it = 0;
+const ObjectDebugOptions* Level::GetObjectTypeDebugOptions(const m2g::pb::ObjectType type) const {
+	if (const auto it = _objectTypeDebugObjects.find(type); it != _objectTypeDebugObjects.end()) {
+		return &it->second;
+	} else {
+		return nullptr;
 	}
+}
+void Level::SetObjectDebugOptions(const ObjectId id, ObjectDebugOptions options) {
+	_objectDebugObjects[id] = std::move(options);
+}
+void Level::SetObjectTypeDebugOptions(const m2g::pb::ObjectType type, ObjectDebugOptions options) {
+	_objectTypeDebugObjects[type] = std::move(options);
+}
+void Level::ClearObjectDebugOptions(const ObjectId id) {
+	_objectDebugObjects.erase(id);
+}
+void Level::ClearObjectTypeDebugOptions(const m2g::pb::ObjectType type) {
+	_objectTypeDebugObjects.erase(type);
 }
 
 void_expected Level::InitAnyPlayer(
