@@ -15,6 +15,7 @@
 #include "network/Types.h"
 #include "ui/MessageBox.h"
 #include "ObjectBlueprint.h"
+#include <span>
 
 namespace m2 {
 	class Proxy {
@@ -156,6 +157,8 @@ namespace m2 {
 		void OnPreStep(MAYBE const Stopwatch::Duration& delta) {}
 		/// A callback that's called every pre-step.
 		void OnPostStep(MAYBE const Stopwatch::Duration& delta) {}
+
+		m2::expected<void> ExecuteGameCommand(const std::span<std::string_view>&) { return make_unexpected("Game doesn't support commands"); }
 
 		class LevelState {
 		public:

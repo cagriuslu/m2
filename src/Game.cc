@@ -1213,7 +1213,13 @@ m2::Game::CommandResult m2::Game::ExecuteCommand(const std::string& cmd) {
 	}
 	LOG_INFO("Executing command with arguments", *command, arguments);
 
-	if (*command == "LoadLevelEditor") {
+	if (*command == "game") {
+		if (const auto result = _proxy.ExecuteGameCommand(argument)) {
+			return CommandSuccess{};
+		} else {
+			return CommandFail{.error = result.error()};
+		}
+	} else if (*command == "LoadLevelEditor") {
 		if (not argument[0].empty()) {
 			if (const auto result = M2_GAME.LoadLevelEditor((M2_GAME.GetResources().GetLevelsDir() / argument[0]).string())) {
 				return CommandSuccess{.levelReplaced = true};
