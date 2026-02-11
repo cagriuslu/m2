@@ -28,6 +28,7 @@ namespace m2 {
 	void DrawTextLabelBackgroundIn3dWorld(const pb::TextLabel& tl, const RectI& sourceRect, const VecF& position, bool isDimmed);
 	void DrawTextLabelIn2dWorld(const pb::TextLabel&, const RectI& sourceRect, const VecF& position, float angle, bool is_foreground = {}, float z = {});
 	void DrawTextLabelIn3dWorld(const pb::TextLabel&, const RectI& sourceRect, const VecF& position, float angle, bool is_foreground = {}, float z = {});
+	void SlowDrawSystemTextIn2dWorld(const char* str, const VecF& position);
 
 	/// Currently, this cache can only store unwrapped text.
 	class TextLabelCache {
@@ -47,11 +48,11 @@ namespace m2 {
 		};
 
 		Cache<
-				std::tuple<std::string,int>, // Key
-				RectI, // Value
-				TextLabelGenerator, // Value generator
-				TextLabelHash // Key hash function
-				> _cache;
+			std::tuple<std::string,int>, // Key
+			RectI, // Value
+			TextLabelGenerator, // Value generator
+			TextLabelHash // Key hash function
+		> _cache;
 
 	public:
 		TextLabelCache(SDL_Renderer* renderer, TTF_Font* font) : _cache(TextLabelGenerator{renderer, font}) {}

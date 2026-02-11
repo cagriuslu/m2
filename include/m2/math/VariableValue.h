@@ -74,4 +74,6 @@ namespace m2 {
 	};
 
 	constexpr VariableValue NULL_VARIABLE_VALUE{};
+
+	std::string ToString(const VariableValue&);
 }

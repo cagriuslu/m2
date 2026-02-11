@@ -42,6 +42,7 @@ m2::GameResources::GameResources(const std::string& gameIdentifier, const std::s
 
 	_gameResourceDir = _resourceDir / "game" / gameIdentifier;
 	_defaultFont = _resourceDir / defaultFont;
+	_systemFont = _resourceDir / "fonts/Roboto_Mono/RobotoMono-VariableFont_wght.ttf";
 	_levelsDir = _gameResourceDir / "levels";
 
 	_spriteSheets = _gameResourceDir / "SpriteSheets.json";

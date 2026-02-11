@@ -118,6 +118,7 @@ void m2::Game::DeinitSystems() {
 m2::Game::Game() : window(CreateWindow(_proxy.gamePpm, _proxy.defaultGameHeightM, _proxy.gameFriendlyName.c_str())),
 		cursor(CreateCursor()), pixel_format(GetWindowPixelFormat(window)),
 		font(OpenFont(_resources.GetDefaultFontPath().c_str(), _proxy.default_font_size)),
+		systemFont(OpenFont(_resources.GetSystemFontPath().c_str(), systemFontSize)),
 		_font_letter_width_to_height_ratio(CalculateFontLetterWidthToHeightRatio(font)) {
 	// ReSharper disable once CppDFAConstantConditions
 	if (_proxy.areGraphicsPixelated) {
@@ -926,6 +927,35 @@ void m2::Game::DebugDraw() {
 		}
 	}
 #endif
+
+	const auto lineHeightM = (ToFloat(systemFontSize) / _dimensions->OutputPixelsPerMeter()) * 1.2f;
+	for (const auto& [type, options] : _level->_objectTypeDebugObjects) {
+		for (const auto& obj : _level->objects) {
+			if (obj.GetType() == type) {
+				int monitorLine = 0;
+				options.ForEachMonitorValue(obj, [&](const std::string& line) {
+					const auto objPosition = obj.InferPositionF();
+					SlowDrawSystemTextIn2dWorld(line.c_str(), objPosition - VecF{0.0f, options.monitorOffsetM + ToFloat(monitorLine) * lineHeightM});
+					++monitorLine;
+				});
+			}
+		}
+	}
+	for (const auto& [id, options] : _level->_objectDebugObjects) {
+		const auto& obj = _level->objects[id];
+		// An object might have monitors due to their type. If so, we should find out how many so that we can skip
+		// printing over them.
+		const auto initialMonitorLineOffset = [&]() {
+			const auto* objTypeDebugOptions = _level->GetObjectTypeDebugOptions(obj.GetType());
+			return objTypeDebugOptions ? objTypeDebugOptions->GetMonitorCount() : 0;
+		}();
+		int monitorLine = initialMonitorLineOffset;
+		options.ForEachMonitorValue(obj, [&](const std::string& line) {
+			const auto objPosition = obj.InferPositionF();
+			SlowDrawSystemTextIn2dWorld(line.c_str(), objPosition - VecF{0.0f, options.monitorOffsetM + ToFloat(monitorLine) * lineHeightM});
+			++monitorLine;
+		});
+	}
 }
 void m2::Game::DrawHud() {
 	IF(_level->_leftHudUiPanel)->Draw();

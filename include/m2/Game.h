@@ -86,6 +86,8 @@ namespace m2 {
 		SDL_Texture* light_texture{}; // TODO make pointer const
 		std::optional<AudioManager> audio_manager; // TODO make private
 		TTF_Font* const font{};
+		const int systemFontSize = 13;
+		TTF_Font* const systemFont{};
 		const Rational _font_letter_width_to_height_ratio; // letter w/h // TODO rename or get rid of this, because this is only accurate if the font is used in default size, which isn't always the case
 		bool quit{}; // TODO make private
 

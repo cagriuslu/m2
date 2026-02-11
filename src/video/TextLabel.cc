@@ -70,6 +70,16 @@ void m2::DrawTextLabelIn3dWorld(const pb::TextLabel& tl, const RectI& sourceRect
 			angle,
 			is_foreground);
 }
+void m2::SlowDrawSystemTextIn2dWorld(const char* str, const VecF& position) {
+	sdl::SurfaceUniquePtr surface{TTF_RenderUTF8_Solid(M2_GAME.systemFont , str, SDL_Color{255, 255, 255, 255})};
+	m2SucceedOrThrowMessage(surface, TTF_GetError());
+
+	sdl::TextureUniquePtr texture{SDL_CreateTextureFromSurface(M2_GAME.renderer, surface.get())};
+	m2SucceedOrThrowMessage(texture, "Unable to create texture from surface: " + std::string{SDL_GetError()});
+
+	const SDL_Rect srcRect{0, 0, surface->w, surface->h};
+	DrawTextureIn2dWorld(M2_GAME.renderer, texture.get(), &srcRect, 0.0f, 1.0f, {}, ScreenOriginToPositionVecPx(position), 0.0f);
+}
 
 m2::RectI m2::TextLabelCache::TextLabelGenerator::operator()(const std::tuple<std::string,int>& item) {
 	// Change the font size. This operation clears the glyph caches, but that's a sacrifice I'm willing to make.

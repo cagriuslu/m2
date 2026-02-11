@@ -164,3 +164,21 @@ void VariableValue::UnsafePushBack(const int64_t l) {
 		throw M2_ERROR("Attempt to push back to an imcompatible type");
 	}
 }
+
+std::string m2::ToString(const VariableValue& v) {
+	if (v.IsNull()) {
+		return "<null>";
+	} else if (v.IsInt()) {
+		return ToString(v.UnsafeGetInt());
+	} else if (v.IsLong()) {
+		return ToString(v.UnsafeGetLong());
+	} else if (v.IsVariableType()) {
+		return pb::enum_name(v.UnsafeGetVariableType());
+	} else if (v.IsFE()) {
+		return ToString(v.UnsafeGetFE());
+	} else if (v.IsLongVector()) {
+		return ToString(v.UnsafeGetLongVector());
+	} else {
+		throw M2_ERROR("ToString not implemented for VariableValue type");
+	}
+}
