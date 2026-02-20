@@ -88,6 +88,19 @@ else()
 	set(Freetype_LIBRARIES "${CMAKE_CURRENT_BINARY_DIR}/lib/freetype/lib/libfreetype.a")
 endif()
 
+# sqlite
+if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/sqlite/libsqlite3.a")
+    BuildDependency(sqlite3)
+endif()
+
+# genORM
+if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/genORM/lib")
+    BuildDependency(genORM-cxx)
+endif()
+set(GENORM_CXX_INCLUDE_DIRS "${CMAKE_CURRENT_BINARY_DIR}/lib/genORM/include")
+set(GENORM_CXX_LIBDIR "${CMAKE_CURRENT_BINARY_DIR}/lib/genORM/lib")
+set(GENORM_CXX_LIBRARIES "${CMAKE_CURRENT_BINARY_DIR}/lib/genORM/lib/libgenORM-cxx.a")
+
 if(DEBUG)
     # GTest
     if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/googletest/lib")
@@ -176,7 +189,9 @@ if(APPLE)
 	endforeach ()
 endif()
 
-add_executable(m2 WIN32 MACOSX_BUNDLE ${M2_PUBLIC_HEADERS} ${M2_PRIVATE_HEADERS} ${M2_SOURCES} ${M2_PLATFORM_SPECIFIC_SOURCES} ${GAME_SOURCES} ${PROTO_SRCS} ${PROTO_HDRS} ${BUNDLE_RESOURCES})
+set(ORM_SOURCES "${CMAKE_BINARY_DIR}/m2.orm.h;${CMAKE_BINARY_DIR}/m2.orm.cc")
+add_executable(m2 WIN32 MACOSX_BUNDLE ${M2_PUBLIC_HEADERS} ${M2_PRIVATE_HEADERS} ${M2_SOURCES} ${M2_PLATFORM_SPECIFIC_SOURCES} ${GAME_SOURCES} ${PROTO_SRCS} ${PROTO_HDRS} ${ORM_SOURCES} ${BUNDLE_RESOURCES})
+add_dependencies(m2 build_orm_sources)
 
 if (MSVC)
     # Enable parallel build for MSVC
@@ -192,9 +207,9 @@ else()
 endif()
 
 target_include_directories(m2 PUBLIC include ${GAME_INCLUDE_DIRS})
-target_include_directories(m2 PUBLIC ${SDL2_INCLUDE_DIRS} ${SDL2_image_INCLUDE_DIRS} ${SDL2_ttf_INCLUDE_DIRS})
-target_link_directories(m2 PUBLIC ${SDL2_image_LIBDIR} ${SDL2_ttf_LIBDIR})
-target_link_libraries(m2 box2d ${SDL2_image_LIBNAME} SDL2_ttf ${Freetype_LIBRARIES} ${SDL2_STATIC_LIBRARIES} ${Protobuf_LIBRARIES} expected)
+target_include_directories(m2 PUBLIC ${SDL2_INCLUDE_DIRS} ${SDL2_image_INCLUDE_DIRS} ${SDL2_ttf_INCLUDE_DIRS} ${GENORM_CXX_INCLUDE_DIRS})
+target_link_directories(m2 PUBLIC ${SDL2_image_LIBDIR} ${SDL2_ttf_LIBDIR} ${GENORM_CXX_LIBDIR})
+target_link_libraries(m2 box2d ${SDL2_image_LIBNAME} SDL2_ttf ${Freetype_LIBRARIES} ${SDL2_STATIC_LIBRARIES} ${GENORM_CXX_LIBRARIES} sqlite3 ${Protobuf_LIBRARIES} expected)
 
 if (WIN32)
     #target_compile_options(m2 PRIVATE /analyze) # Code inspections

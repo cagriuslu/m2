@@ -11,6 +11,9 @@ add_subdirectory(SDL2_image)
 add_subdirectory(freetype)
 add_subdirectory(SDL2_ttf)
 
+add_subdirectory(sqlite)
+add_subdirectory(genORM)
+
 # Define the macro that will eventually build some of these dependencies
 macro(BuildDependency dependency)
     # This macro uses execute_process to run cmake again because it needs to finish a successful run to generate the
