@@ -27,9 +27,9 @@ namespace m2 {
         }
         /// Waits until the condition is true for any message in the queue. Messages aren't popped.
         void WaitMessage(const std::function<bool(const T&)>& condition) const {
-            _protectedQueue.Read([](const std::deque<T>&) {}, [&](const std::deque<T>& queue) -> bool {
-                return std::any_of(queue.begin(), queue.end(), condition);
-            });
+            _protectedQueue.WaitUntilAndRead([&](const std::deque<T>& queue) -> bool {
+                return std::ranges::any_of(queue, condition);
+            }, [](const std::deque<T>&) {});
         }
         /// Tries to pop one message from the queue. Does not block.
         bool PopMessage(std::optional<T>& out) {
