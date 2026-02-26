@@ -15,6 +15,7 @@
 #include <m2/sheet_editor/State.h>
 #include <m2/single_player/State.h>
 #include <m2/multi_player/lockstep/State.h>
+#include <m2/multi_player/lockstep/LevelSaverInterface.h>
 #include <m2/multi_player/turn_based/State.h>
 #include "network/Types.h"
 #include <m2/ui/UiPanel.h>
@@ -44,6 +45,8 @@ namespace m2 {
 		std::optional<network::Timecode> _nextGameStateHashTimecode;
 
 		CharacterStorage _characterStorage;
+
+		std::optional<multiplayer::lockstep::LevelSaverInterface> _levelSaver;
 
 		// Special properties effecting the simulation
 
@@ -161,6 +164,10 @@ namespace m2 {
 
 		const CharacterStorage& GetCharacterStorage() const { return _characterStorage; }
 		CharacterStorage& GetCharacterStorage() { return _characterStorage; }
+
+		expected<void> CreateLevelSaver(const std::string& fpath);
+		bool HasLevelSaver() const { return static_cast<bool>(_levelSaver); }
+		void SaveLockstepPlayerInputs(network::Timecode, std::vector<std::deque<m2g::pb::LockstepPlayerInput>>&& playerInputs);
 
 		// Dimming control
 

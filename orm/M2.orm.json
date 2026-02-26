@@ -1,0 +1,29 @@
+{
+  "genORM-config-version": 1,
+  "cxx-options": {
+    "file-prefix": "M2",
+    "namespace": "m2::orm",
+    "output-dir": "../../../../../"
+  },
+  "object-types": [
+    {
+      "name": "LocktepPlayerInput",
+      "description": "Represents an action taken by a player in a lockstep game. An instance is stored only if the player has taken an action.",
+      "members": [
+        {
+          "name": "timecode",
+          "type": "INT32",
+          "index": true
+        },
+        {
+          "name": "player_index",
+          "type": "INT32"
+        },
+        {
+          "name": "player_input",
+          "type": "BYTEARRAY"
+        }
+      ]
+    }
+  ]
+}

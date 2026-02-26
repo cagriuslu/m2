@@ -705,10 +705,14 @@ void m2::Game::ExecuteStep(const Stopwatch::Duration& delta) {
 		}
 	} else if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)
 			|| std::holds_alternative<multiplayer::lockstep::ClientActorInterface>(_multiPlayerComponents)) {
-		if (const auto simulationInputs = GetLockstepClientActor().PopSimulationInputs()) {
+		if (auto simulationInputs = GetLockstepClientActor().PopSimulationInputs()) {
 			LOG_NETWORK("Simulating inputs from all players");
 			_level->SetNextGameStateHashTimecode(simulationInputs->timecode);
 			_proxy.lockstepHandlePlayerInputs(simulationInputs->allInputs);
+			// If there's a level saver, and there are any player inputs
+			if (_level->HasLevelSaver() && std::ranges::any_of(simulationInputs->allInputs, [](const auto& playerInputs) { return not playerInputs.empty(); })) {
+				_level->SaveLockstepPlayerInputs(simulationInputs->timecode, std::move(simulationInputs->allInputs));
+			}
 		}
 	} else if constexpr (not GAME_IS_DETERMINISTIC) {
 		// ReSharper disable once CppDFAUnreachableCode

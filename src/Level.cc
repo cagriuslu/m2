@@ -297,6 +297,18 @@ void Level::Unpause() {
 	_pausedAt.reset();
 }
 
+expected<void> Level::CreateLevelSaver(const std::string& fpath) {
+	std::filesystem::remove(fpath);
+	auto result = genORM::database::open_or_create(fpath.c_str());
+	m2ReflectUnexpected(result);
+	auto db = std::make_unique<genORM::database>(std::move(result.value()));
+	_levelSaver.emplace(std::move(db));
+	return {};
+}
+void Level::SaveLockstepPlayerInputs(const network::Timecode timecode, std::vector<std::deque<m2g::pb::LockstepPlayerInput>>&& playerInputs) {
+	_levelSaver->StorePlayerInputs(timecode, std::move(playerInputs));
+}
+
 void Level::EnableDimmingWithExceptions(std::set<ObjectId>&& exceptions) {
 	LOG_DEBUG("Enabling dimming with a number of exceptions", exceptions.size());
 	_dimmingExceptions = std::move(exceptions);
