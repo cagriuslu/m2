@@ -5,6 +5,7 @@
 #include <thread>
 #include <latch>
 #include <type_traits>
+#include <utility>
 
 namespace m2 {
     /// Base class for actor interfaces. The interface manages the communication with the Actor. As an implementation
@@ -15,16 +16,18 @@ namespace m2 {
 
         MessageBox<ActorInputType> _actorInbox;
         MessageBox<ActorOutputType> _actorOutbox;
-
         std::latch _latch{1};
         Actor _actor;
         std::thread _thread;
 
-    public:
-        template <typename... TArgs>
-        explicit ActorInterfaceBase(TArgs... args) : _actor(args...), _thread(ActorFunc, this) {
+    protected:
+        template <typename... Args>
+        requires std::is_constructible_v<Actor, Args...> // Make sure the constructor isn't greedy (ie. not acting like move or copy constructor)
+        explicit ActorInterfaceBase(Args&&... args) : _actor(std::forward<Args>(args)...), _thread(ActorFunc, this) {
             _latch.count_down();
         }
+
+    public:
         ~ActorInterfaceBase() override {
             RequestStop();
             if (_thread.joinable()) {
