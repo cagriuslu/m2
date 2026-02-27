@@ -1,7 +1,8 @@
 #include <m2/math/Rational.h>
 #include <m2/M2.h>
-#include <numeric>
 #include <m2/Math.h>
+#include <numeric>
+#include <cinttypes>
 
 namespace m2::internal {
 
@@ -120,7 +121,7 @@ m2::Rational m2::Rational::PiMul2() {
 
 std::string m2::ToString(const Rational& r) {
 	char buffer[20 + 1 + 20 + 1];
-	snprintf(buffer, sizeof(buffer), "%lld/%lld", r.GetN(), r.GetD());
+	snprintf(buffer, sizeof(buffer), "%" PRId64 "/%" PRId64, r.GetN(), r.GetD());
 	return buffer;
 }
 
