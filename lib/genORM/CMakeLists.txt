@@ -17,9 +17,9 @@ add_custom_target(build_genORM DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/target/releas
 
 # Generate the ORM sources
 add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/m2.orm.h ${CMAKE_BINARY_DIR}/m2.orm.cc
+    OUTPUT ${CMAKE_BINARY_DIR}/M2.orm.h ${CMAKE_BINARY_DIR}/M2.orm.cc
     COMMAND cargo run -r --target-dir ${CMAKE_CURRENT_BINARY_DIR}/target -- ${CMAKE_SOURCE_DIR}/orm/M2.orm.json
     DEPENDS build_genORM ${CMAKE_SOURCE_DIR}/orm/M2.orm.json
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/genORM-cxx-prefix/src/genORM-cxx
 )
-add_custom_target(build_orm_sources DEPENDS ${CMAKE_BINARY_DIR}/m2.orm.h ${CMAKE_BINARY_DIR}/m2.orm.cc)
+add_custom_target(build_orm_sources DEPENDS ${CMAKE_BINARY_DIR}/M2.orm.h ${CMAKE_BINARY_DIR}/M2.orm.cc)
