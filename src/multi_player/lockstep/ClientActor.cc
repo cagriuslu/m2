@@ -122,7 +122,7 @@ std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>> ClientActor
 }
 
 void ClientActor::ProcessOneMessageFromInbox(MessageBox<ClientActorInput>& inbox) {
-	inbox.PopMessages([this](ClientActorInput& msg) {
+	inbox.TryHandleMessages([this](ClientActorInput& msg) {
 		if (std::holds_alternative<ClientActorInput::SetReadyState>(msg.variant)) {
 			const auto& readyState = std::get<ClientActorInput::SetReadyState>(msg.variant).state;
 			_serverConnection->SetReadyState(readyState);

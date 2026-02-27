@@ -75,7 +75,7 @@ void m2::TurnBasedServerActor::StartPingBroadcast() {
 
 void m2::TurnBasedServerActor::ProcessInbox(MessageBox<TurnBasedServerActorInput>& inbox, MessageBox<TurnBasedServerActorOutput>& outbox) {
 	// Process only one message
-	if (std::optional<TurnBasedServerActorInput> msg; inbox.PopMessage(msg) && msg) {
+	if (std::optional<TurnBasedServerActorInput> msg; inbox.TryPopMessage(msg) && msg) {
 		if (std::holds_alternative<TurnBasedServerActorInput::CloseLobby>(msg->variant)) {
 			if (_state != pb::SERVER_LOBBY_OPEN) {
 				throw M2_ERROR("Received unexpected lobby closure command");

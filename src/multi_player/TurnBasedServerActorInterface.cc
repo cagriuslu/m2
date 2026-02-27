@@ -48,7 +48,7 @@ void m2::TurnBasedServerActorInterface::SendServerCommand(const m2g::pb::TurnBas
 }
 
 void m2::TurnBasedServerActorInterface::ProcessOutbox() {
-	GetActorOutbox().PopMessages([this](const TurnBasedServerActorOutput& msg) {
+	GetActorOutbox().TryHandleMessages([this](const TurnBasedServerActorOutput& msg) {
 		if (std::holds_alternative<TurnBasedServerActorOutput::StateUpdate>(msg.variant)) {
 			_serverActorState = std::get<TurnBasedServerActorOutput::StateUpdate>(msg.variant);
 		} else if (std::holds_alternative<TurnBasedServerActorOutput::ClientEvent>(msg.variant)) {

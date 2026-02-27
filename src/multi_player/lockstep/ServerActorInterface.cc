@@ -12,7 +12,7 @@ ServerActorInterface::ServerActorInterface(const int maxClientCount) : ActorInte
 	}) {}
 
 bool ServerActorInterface::IsLobbyOpen() {
-	GetActorOutbox().PopMessages(_stateUpdateProcessor);
+	GetActorOutbox().TryHandleMessages(_stateUpdateProcessor);
 	return _serverStateUpdate.stateIndex == GetIndexInVariant<ServerActor::LobbyOpen, ServerActor::State>::value;
 }
 bool ServerActorInterface::IsLobbyFrozenForEveryone() {

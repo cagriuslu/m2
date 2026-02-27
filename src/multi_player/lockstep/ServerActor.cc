@@ -292,7 +292,7 @@ bool ServerActor::operator()(MessageBox<ServerActorInput>& inbox, MessageBox<Ser
 }
 
 void ServerActor::ProcessOneMessageFromInbox(MessageBox<ServerActorInput>& inbox, MessageBox<ServerActorOutput>& outbox) {
-	inbox.PopMessages([this, &outbox](const ServerActorInput& msg) {
+	inbox.TryHandleMessages([this, &outbox](const ServerActorInput& msg) {
 		if (std::holds_alternative<ServerActorInput::FreezeLobby>(msg.variant)) {
 			const auto& lobbyFreezeMsg = std::get<ServerActorInput::FreezeLobby>(msg.variant);
 			if (std::holds_alternative<LobbyOpen>(_state->Get())) {

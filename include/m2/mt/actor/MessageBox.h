@@ -16,6 +16,8 @@ namespace m2 {
                 queue.emplace_back(std::move(msg));
             });
         }
+
+        /// Peek the front-most message, if it exists.
         const T* PeekMessage() const {
             const T* frontMsg{};
             _protectedQueue.Read([&frontMsg](const std::deque<T>& queue) {
@@ -25,14 +27,16 @@ namespace m2 {
             });
             return frontMsg;
         }
-        /// Waits until the condition is true for any message in the queue. Messages aren't popped.
-        void WaitMessage(const std::function<bool(const T&)>& condition) const {
-            _protectedQueue.WaitUntilAndRead([&](const std::deque<T>& queue) -> bool {
+        /// Waits until the condition is true for any message in the queue. If timeout is given, and the condition
+        /// doesn't hold until the given timeout, returns false. Otherwise, returns true if the a message matching the
+        /// condition is encountered. Messages are never popped.
+        bool WaitMessage(const std::function<bool(const T&)>& condition, const std::optional<Stopwatch::Duration> timeout = std::nullopt) const {
+            return _protectedQueue.WaitUntilAndRead([&](const std::deque<T>& queue) -> bool {
                 return std::ranges::any_of(queue, condition);
-            }, [](const std::deque<T>&) {});
+            }, [](const std::deque<T>&) {}, timeout);
         }
         /// Tries to pop one message from the queue. Does not block.
-        bool PopMessage(std::optional<T>& out) {
+        bool TryPopMessage(std::optional<T>& out) {
             _protectedQueue.Write([&out](std::deque<T>& queue) {
                 if (not queue.empty()) {
                     out.emplace(std::move(queue.front()));
@@ -43,18 +47,18 @@ namespace m2 {
             });
             return out.has_value();
         }
-        /// Pops up to nMaxMessages messages.
-        void PopMessages(const std::function<void(T&)>& handler, const int nMaxMessages = -1) {
+        /// Handles up to nMaxMessages messages from the queue. Returns early if the queue becomes empty.
+        void TryHandleMessages(const std::function<void(T&)>& handler, const int nMaxMessages = -1) {
             std::optional<T> msg;
             if (nMaxMessages < 0) {
-                while (PopMessage(msg)) {
+                while (TryPopMessage(msg)) {
                     if (msg) {
                         handler(*msg);
                     }
                 }
             } else {
                 m2Repeat(nMaxMessages) {
-                    if (PopMessage(msg)) {
+                    if (TryPopMessage(msg)) {
                         if (msg) {
                             handler(*msg);
                         }
@@ -62,11 +66,12 @@ namespace m2 {
                 }
             }
         }
-        /// Pops up to nMaxMessages messages as long as the handler returns true.
-        void PopMessagesUntil(const std::function<bool(T&)>& handler, const int nMaxMessages = -1) {
+        /// Handles up to nMaxMessages messages from the queue, as long as the handler keeps returning true. Returns
+        /// early if the queue becomes empty.
+        void TryHandleMessagesUntil(const std::function<bool(T&)>& handler, const int nMaxMessages = -1) {
             std::optional<T> msg;
             if (nMaxMessages < 0) {
-                while (PopMessage(msg)) {
+                while (TryPopMessage(msg)) {
                     if (msg) {
                         if (not handler(*msg)) {
                             return;
@@ -75,40 +80,12 @@ namespace m2 {
                 }
             } else {
                 m2Repeat(nMaxMessages) {
-                    if (PopMessage(msg)) {
+                    if (TryPopMessage(msg)) {
                         if (msg) {
                             if (not handler(*msg)) {
                                 return;
                             }
                         }
-                    }
-                }
-            }
-        }
-        /// Keeps popping messages as long as isMessageInteresting and handler return true
-        void PopMessagesIf(const std::function<bool(const T&)>& isMessageInteresting, const std::function<bool(T&)>& handler, const int nMaxMessages = -1) {
-            if (nMaxMessages < 0) {
-                while (const auto* msg = PeekMessage()) {
-                    if (isMessageInteresting(*msg)) {
-                        std::optional<T> tmp;
-                        PopMessage(tmp);
-                        if (not handler(*tmp)) {
-                            return;
-                        }
-                    } else {
-                        return;
-                    }
-                }
-            } else {
-                m2Repeat(nMaxMessages) {
-                    if (const auto* msg = PeekMessage(); msg && isMessageInteresting(*msg)) {
-                        std::optional<T> tmp;
-                        PopMessage(tmp);
-                        if (not handler(*tmp)) {
-                            return;
-                        }
-                    } else {
-                        return;
                     }
                 }
             }
@@ -126,10 +103,10 @@ namespace m2 {
         // Wait for answer that we're interested in
         recvBox.WaitMessage(isResponseInteresting);
         // Fetch returning messages
-        recvBox.PopMessagesUntil([&](const TRecv& msg) -> bool {
+        recvBox.TryHandleMessagesUntil([&](const TRecv& msg) -> bool {
             if (isResponseInteresting(msg)) {
                 interestingResponseHandler(msg);
-                return false; // Stop
+                return false; // Answer is handled, stop
             }
             uninterestingResponseHandler(msg);
             return true; // Continue

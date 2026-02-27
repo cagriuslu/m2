@@ -130,7 +130,7 @@ void ClientActorInterface::StoreGameStateHash(const network::Timecode tc, const 
 }
 
 void ClientActorInterface::ProcessOutbox() {
-	GetActorOutbox().PopMessages([this](ClientActorOutput& msg) {
+	GetActorOutbox().TryHandleMessages([this](ClientActorOutput& msg) {
 		if (std::holds_alternative<ClientActorOutput::ConnectionToServerStateUpdate>(msg.variant)) {
 			_connectionToServerState = std::get<ClientActorOutput::ConnectionToServerStateUpdate>(msg.variant);
 		} else if (std::holds_alternative<ClientActorOutput::PlayerInputsToSimulate>(msg.variant)) {
