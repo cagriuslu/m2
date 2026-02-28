@@ -251,7 +251,6 @@ m2::void_expected m2::Game::HostLockstepGame(unsigned max_connection_count) {
 
 	return {};
 }
-
 m2::void_expected m2::Game::JoinTurnBasedGame(const std::string& addr) {
 	if (not std::holds_alternative<std::monostate>(_multiPlayerComponents)) {
 		throw M2_ERROR("Joining game requires no other multiplayer threads to exist");
@@ -274,7 +273,6 @@ m2::void_expected m2::Game::JoinLockstepGame(const std::string& addr) {
 void m2::Game::LeaveGame() {
 	_multiPlayerComponents = std::monostate{};
 }
-
 bool m2::Game::AddBot() {
 	if (not IsTurnBasedServer()) {
 		throw M2_ERROR("Only server can add bots");
@@ -299,7 +297,6 @@ bool m2::Game::AddBot() {
 	botList.erase(it);
 	return false;
 }
-
 m2::network::TurnBasedBotClientThread& m2::Game::FindBot(const int receiver_index) {
 	if (not IsTurnBasedServer()) {
 		throw M2_ERROR("Only server may hold bots");
@@ -312,7 +309,6 @@ m2::network::TurnBasedBotClientThread& m2::Game::FindBot(const int receiver_inde
 	}
 	return *it;
 }
-
 m2::multiplayer::lockstep::ClientActorInterface& m2::Game::GetLockstepClientActor() {
 	if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)) {
 		return *std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).hostClientActorInterface;
@@ -340,7 +336,6 @@ int m2::Game::GetTotalPlayerCount() {
 	}
 	throw M2_ERROR("Not a multiplayer game");
 }
-
 int m2::Game::GetSelfIndex() {
 	if (IsTurnBasedServer()) {
 		return 0;
@@ -363,7 +358,6 @@ int m2::Game::GetSelfIndex() {
 	}
 	throw M2_ERROR("Not a multiplayer game or index isn't known yet");
 }
-
 int m2::Game::GetTurnBasedTurnHolderIndex() {
 	if (IsTurnBasedServer()) {
 		return ServerThread().GetTurnHolderIndex();
@@ -373,7 +367,6 @@ int m2::Game::GetTurnBasedTurnHolderIndex() {
 	}
 	throw M2_ERROR("Not a multiplayer game");
 }
-
 bool m2::Game::IsOurTurn() {
 	if (IsTurnBasedServer()) {
 		return ServerThread().IsOurTurn();
@@ -386,7 +379,6 @@ bool m2::Game::IsOurTurn() {
 	}
 	throw M2_ERROR("Not a multiplayer game");
 }
-
 void m2::Game::QueueClientCommand(const m2g::pb::TurnBasedClientCommand& cmd) {
 	if (IsTurnBasedServer()) {
 		TurnBasedHostClientThread().queue_client_command(cmd);
@@ -395,6 +387,9 @@ void m2::Game::QueueClientCommand(const m2g::pb::TurnBasedClientCommand& cmd) {
 	} else {
 		throw M2_ERROR("Not a multiplayer game");
 	}
+}
+bool m2::Game::QueuePlayerInput(m2g::pb::LockstepPlayerInput&& playerInput) {
+	return GetLockstepClientActor().TryQueueInput(std::move(playerInput));
 }
 
 m2::void_expected m2::Game::LoadSinglePlayer(

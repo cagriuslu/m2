@@ -156,6 +156,7 @@ namespace m2 {
 		int GetTurnBasedTurnHolderIndex();
 		bool IsOurTurn();
 		void QueueClientCommand(const m2g::pb::TurnBasedClientCommand& cmd);
+		bool QueuePlayerInput(m2g::pb::LockstepPlayerInput&&);
 
 		// Level management
 

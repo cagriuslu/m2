@@ -60,16 +60,23 @@ void ClientActorInterface::StartInputStreaming() {
 	_state.emplace<SimulatingInputs>();
 }
 bool ClientActorInterface::TryQueueInput(m2g::pb::LockstepPlayerInput&& input) {
-	if (std::holds_alternative<GameNotStarted>(_state)) {
-		throw M2_ERROR("Attempt to queue input while the game hasn't started");
-	}
-	if (std::holds_alternative<SimulatingInputs>(_state)) {
-		LOG_NETWORK("Queueing input from player");
-		std::get<SimulatingInputs>(_state).selfInputs.emplace_back(input);
-		return true;
-	}
-	LOG_NETWORK("Unable to queue input from player");
-	return false;
+	return std::visit(overloaded{
+		[](const GameNotStarted&) -> bool {
+			throw M2_ERROR("Attempt to queue input while the game hasn't started");
+		},
+		[&](SimulatingInputs& simulatingInputs) {
+			LOG_NETWORK("Queueing input from player");
+			simulatingInputs.selfInputs.emplace_back(input);
+			return true;
+		},
+		[](const Lagging&) {
+			LOG_NETWORK("Unable to queue input from player while lagging");
+			return false;
+		},
+		[](const ReadyToSimulate&) -> bool {
+			throw M2_ERROR("Attempt to queue input while there are player inputs waiting to be simulated");
+		}
+	}, _state);
 }
 ClientActorInterface::SwapResult ClientActorInterface::SwapInputs() {
 	if (std::holds_alternative<GameNotStarted>(_state)) {

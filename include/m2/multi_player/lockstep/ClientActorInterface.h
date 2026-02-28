@@ -54,8 +54,8 @@ namespace m2::multiplayer::lockstep {
 		void SetReadyState(bool state);
 		/// Starts the game for this instance
 		void StartInputStreaming();
-		/// Tries to queueu an input to be commited later. Depending on the state of the connection, the interface may
-		/// not be willing to accept new input. The return value reflects whether the input was accepted.
+		/// Tries to queue a player input to be commited later. If the game is lagging, the interface may reject a new
+		/// input. In this case, returns false. If the input is queued successfully, returns true.
 		bool TryQueueInput(m2g::pb::LockstepPlayerInput&&);
 		struct SkipPhysics {};
 		struct SimulatePhysics {};
