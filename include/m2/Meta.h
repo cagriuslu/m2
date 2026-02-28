@@ -66,6 +66,11 @@ namespace m2 {
 		return ss.str();
 	}
 
+	/// For types that don't have a constructor or factory functions to properly initialize an instance (like Protobuf
+	/// messages), this function can be used to create and initialize the object as one statement.
+	template <typename T, typename BuilderF>
+	T Build(BuilderF builder) { T t{}; builder(t); return t; }
+
 	// std::visit utilities
 
 	template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
