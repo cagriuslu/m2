@@ -306,6 +306,9 @@ expected<void> Level::CreateLevelSaver(const std::string& fpath) {
 	return {};
 }
 void Level::SaveLockstepPlayerInputs(const network::Timecode timecode, std::vector<std::deque<m2g::pb::LockstepPlayerInput>>&& playerInputs) {
+	if (not _levelSaver->IsActorRunning()) {
+		throw M2_ERROR("LevelSaver stopped running prematurely");
+	}
 	_levelSaver->StorePlayerInputs(timecode, std::move(playerInputs));
 }
 
