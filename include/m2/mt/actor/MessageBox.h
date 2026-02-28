@@ -30,7 +30,8 @@ namespace m2 {
         /// Waits until the condition is true for any message in the queue. If timeout is given, and the condition
         /// doesn't hold until the given timeout, returns false. Otherwise, returns true if the a message matching the
         /// condition is encountered. Messages are never popped.
-        bool WaitMessage(const std::function<bool(const T&)>& condition, const std::optional<Stopwatch::Duration> timeout = std::nullopt) const {
+        template <typename ConditionF>
+        bool WaitMessage(ConditionF condition, const std::optional<Stopwatch::Duration> timeout = std::nullopt) const {
             return _protectedQueue.WaitUntilAndRead([&](const std::deque<T>& queue) -> bool {
                 return std::ranges::any_of(queue, condition);
             }, [](const std::deque<T>&) {}, timeout);
@@ -48,7 +49,8 @@ namespace m2 {
             return out.has_value();
         }
         /// Handles up to nMaxMessages messages from the queue. Returns early if the queue becomes empty.
-        void TryHandleMessages(const std::function<void(T&)>& handler, const int nMaxMessages = -1) {
+        template <typename HandlerF>
+        void TryHandleMessages(HandlerF handler, const int nMaxMessages = -1) {
             std::optional<T> msg;
             if (nMaxMessages < 0) {
                 while (TryPopMessage(msg)) {
@@ -68,7 +70,8 @@ namespace m2 {
         }
         /// Handles up to nMaxMessages messages from the queue, as long as the handler keeps returning true. Returns
         /// early if the queue becomes empty.
-        void TryHandleMessagesUntil(const std::function<bool(T&)>& handler, const int nMaxMessages = -1) {
+        template <typename HandlerF>
+        void TryHandleMessagesUntil(HandlerF handler, const int nMaxMessages = -1) {
             std::optional<T> msg;
             if (nMaxMessages < 0) {
                 while (TryPopMessage(msg)) {
