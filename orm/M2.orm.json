@@ -24,6 +24,27 @@
           "type": "BYTEARRAY"
         }
       ]
+    },
+    {
+      "name": "LockstepGameMetadata",
+      "description": "Contains important information about the game. Only one instance must exist.",
+      "members": [
+        {
+          "name": "player_count",
+          "type": "INT32"
+        },
+        {
+          "name": "self_index",
+          "description": "Index of the player that has saved this level",
+          "type": "INT32"
+        },
+        {
+          "name": "duration_tc",
+          "description": "The duration of the level in timecodes",
+          "type": "INT32",
+          "allow-null": true
+        }
+      ]
     }
   ]
 }

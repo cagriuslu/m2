@@ -14,6 +14,7 @@
 #include <m2/third_party/physics/box2d/DebugDraw.h>
 #include <m2/ui/widget/Text.h>
 #include <m2/Log.h>
+#include <M2.orm.h>
 #include <filesystem>
 #include <utility>
 
@@ -298,9 +299,22 @@ void Level::Unpause() {
 }
 
 expected<void> Level::CreateLevelSaver(const std::string& fpath) {
+	if (_beganAt) {
+		return make_unexpected("Level saver should have been started before starting the simulation");
+	}
+	const auto selfIt = std::ranges::find(multiPlayerObjectIds, playerId);
+	if (selfIt == multiPlayerObjectIds.end()) {
+		return make_unexpected("Self player ID is not found in multiplayer object IDs");
+	}
+	// Remove old and create
 	std::filesystem::remove(fpath);
 	auto result = genORM::database::open_or_create(fpath.c_str());
 	m2ReflectUnexpected(result);
+	// Write metadata
+	const auto selfIndex = I(std::distance(multiPlayerObjectIds.begin(), selfIt));
+	auto metadataResult = orm::LockstepGameMetadata::create(*result, I(multiPlayerObjectIds.size()), selfIndex, std::nullopt);
+	m2ReflectUnexpected(metadataResult);
+	// Move db to heap
 	auto db = std::make_unique<genORM::database>(std::move(result.value()));
 	_levelSaver.emplace(std::move(db));
 	return {};
