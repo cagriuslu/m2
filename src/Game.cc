@@ -15,9 +15,11 @@
 #include <m2/game/Key.h>
 #include "m2/String.h"
 
+using namespace m2;
+
 namespace {
 	SDL_Window* CreateWindow(const int gamePpm, const float defaultGameHeightM, const char* gameFriendlyName) {
-		const auto minimumWindowDims = m2::GameDimensions::EstimateMinimumWindowDimensions(gamePpm, defaultGameHeightM);
+		const auto minimumWindowDims = GameDimensions::EstimateMinimumWindowDimensions(gamePpm, defaultGameHeightM);
 		if (auto* window = SDL_CreateWindow(gameFriendlyName, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 				minimumWindowDims.x, minimumWindowDims.y, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) {
 			SDL_SetWindowMinimumSize(window, minimumWindowDims.x, minimumWindowDims.y);
@@ -55,7 +57,7 @@ namespace {
 		}
 	}
 
-	m2::Rational CalculateFontLetterWidthToHeightRatio(TTF_Font* const font) {
+	Rational CalculateFontLetterWidthToHeightRatio(TTF_Font* const font) {
 		int fontLetterWidth, fontLetterHeight;
 		if (TTF_SizeUTF8(font, "A", &fontLetterWidth, &fontLetterHeight)) {
 			throw M2_ERROR("Unable to measure the font letter size");
@@ -65,13 +67,13 @@ namespace {
 		// Font height is ascent + descent + line gap.
 		// You can request a certain font size, but you may not get an exact font.
 		// Height and ascent can be queried. For width, you need to render.
-		return m2::Rational{fontLetterWidth, fontLetterHeight};
+		return Rational{fontLetterWidth, fontLetterHeight};
 	}
 }
 
-m2::Game* m2::Game::_instance{};
+Game* Game::_instance{};
 
-void m2::Game::InitSystems() {
+void Game::InitSystems() {
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_TIMER) != 0) {
 		throw M2_ERROR("SDL_Init error: " + std::string{SDL_GetError()});
 	}
@@ -91,7 +93,7 @@ void m2::Game::InitSystems() {
 		LOG_WARN("Failed to set line render method");
 	}
 }
-void m2::Game::CreateInstance() {
+void Game::CreateInstance() {
 	LOG_DEBUG("Creating Game instance...");
 	if (_instance) {
 		throw M2_ERROR("Cannot create multiple instance of Game");
@@ -104,18 +106,18 @@ void m2::Game::CreateInstance() {
 	_instance->_proxy.load_resources();
 }
 
-void m2::Game::DestroyInstance() {
+void Game::DestroyInstance() {
 	DEBUG_FN();
 	delete _instance;
 	_instance = nullptr;
 }
-void m2::Game::DeinitSystems() {
+void Game::DeinitSystems() {
 	TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();
 }
 
-m2::Game::Game() : window(CreateWindow(_proxy.gamePpm, _proxy.defaultGameHeightM, _proxy.gameFriendlyName.c_str())),
+Game::Game() : window(CreateWindow(_proxy.gamePpm, _proxy.defaultGameHeightM, _proxy.gameFriendlyName.c_str())),
 		cursor(CreateCursor()), pixel_format(GetWindowPixelFormat(window)),
 		font(OpenFont(_resources.GetDefaultFontPath().c_str(), _proxy.default_font_size)),
 		systemFont(OpenFont(_resources.GetSystemFontPath().c_str(), systemFontSize)),
@@ -189,7 +191,7 @@ m2::Game::Game() : window(CreateWindow(_proxy.gamePpm, _proxy.defaultGameHeightM
 	LOG_INFO("Loaded keys and scancodes", keyToScancodeMap.size());
 }
 
-m2::Game::~Game() {
+Game::~Game() {
 	_level.reset();
 	audio_manager.reset();
 	SDL_DestroyRenderer(renderer);
@@ -197,7 +199,7 @@ m2::Game::~Game() {
 	SDL_DestroyWindow(window);
 }
 
-m2::void_expected m2::Game::HostTurnBasedGame(unsigned max_connection_count) {
+void_expected Game::HostTurnBasedGame(unsigned max_connection_count) {
 	if (not std::holds_alternative<std::monostate>(_multiPlayerComponents)) {
 		throw M2_ERROR("Hosting game requires no other multiplayer threads to exist");
 	}
@@ -219,7 +221,7 @@ m2::void_expected m2::Game::HostTurnBasedGame(unsigned max_connection_count) {
 
 	return {};
 }
-m2::void_expected m2::Game::HostLockstepGame(unsigned max_connection_count) {
+void_expected Game::HostLockstepGame(unsigned max_connection_count) {
 	if (not std::holds_alternative<std::monostate>(_multiPlayerComponents)) {
 		throw M2_ERROR("Hosting game requires no other multiplayer threads to exist");
 	}
@@ -251,7 +253,7 @@ m2::void_expected m2::Game::HostLockstepGame(unsigned max_connection_count) {
 
 	return {};
 }
-m2::void_expected m2::Game::JoinTurnBasedGame(const std::string& addr) {
+void_expected Game::JoinTurnBasedGame(const std::string& addr) {
 	if (not std::holds_alternative<std::monostate>(_multiPlayerComponents)) {
 		throw M2_ERROR("Joining game requires no other multiplayer threads to exist");
 	}
@@ -259,7 +261,7 @@ m2::void_expected m2::Game::JoinTurnBasedGame(const std::string& addr) {
 	_multiPlayerComponents.emplace<network::TurnBasedRealClientThread>(addr);
 	return {};
 }
-m2::void_expected m2::Game::JoinLockstepGame(const std::string& addr) {
+void_expected Game::JoinLockstepGame(const std::string& addr) {
 	if (not std::holds_alternative<std::monostate>(_multiPlayerComponents)) {
 		throw M2_ERROR("Joining game requires no other multiplayer threads to exist");
 	}
@@ -270,10 +272,10 @@ m2::void_expected m2::Game::JoinLockstepGame(const std::string& addr) {
 	});
 	return {};
 }
-void m2::Game::LeaveGame() {
+void Game::LeaveGame() {
 	_multiPlayerComponents = std::monostate{};
 }
-bool m2::Game::AddBot() {
+bool Game::AddBot() {
 	if (not IsTurnBasedServer()) {
 		throw M2_ERROR("Only server can add bots");
 	}
@@ -297,7 +299,7 @@ bool m2::Game::AddBot() {
 	botList.erase(it);
 	return false;
 }
-m2::network::TurnBasedBotClientThread& m2::Game::FindBot(const int receiver_index) {
+network::TurnBasedBotClientThread& Game::FindBot(const int receiver_index) {
 	if (not IsTurnBasedServer()) {
 		throw M2_ERROR("Only server may hold bots");
 	}
@@ -309,7 +311,7 @@ m2::network::TurnBasedBotClientThread& m2::Game::FindBot(const int receiver_inde
 	}
 	return *it;
 }
-m2::multiplayer::lockstep::ClientActorInterface& m2::Game::GetLockstepClientActor() {
+multiplayer::lockstep::ClientActorInterface& Game::GetLockstepClientActor() {
 	if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)) {
 		return *std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).hostClientActorInterface;
 	}
@@ -318,7 +320,7 @@ m2::multiplayer::lockstep::ClientActorInterface& m2::Game::GetLockstepClientActo
 	}
 	throw M2_ERROR("Not a lockstep multiplayer game");
 }
-int m2::Game::GetTotalPlayerCount() {
+int Game::GetTotalPlayerCount() {
 	if (IsTurnBasedServer()) {
 		return ServerThread().GetClientCount();
 	}
@@ -336,7 +338,7 @@ int m2::Game::GetTotalPlayerCount() {
 	}
 	throw M2_ERROR("Not a multiplayer game");
 }
-int m2::Game::GetSelfIndex() {
+int Game::GetSelfIndex() {
 	if (IsTurnBasedServer()) {
 		return 0;
 	}
@@ -358,7 +360,7 @@ int m2::Game::GetSelfIndex() {
 	}
 	throw M2_ERROR("Not a multiplayer game or index isn't known yet");
 }
-int m2::Game::GetTurnBasedTurnHolderIndex() {
+int Game::GetTurnBasedTurnHolderIndex() {
 	if (IsTurnBasedServer()) {
 		return ServerThread().GetTurnHolderIndex();
 	}
@@ -367,7 +369,7 @@ int m2::Game::GetTurnBasedTurnHolderIndex() {
 	}
 	throw M2_ERROR("Not a multiplayer game");
 }
-bool m2::Game::IsOurTurn() {
+bool Game::IsOurTurn() {
 	if (IsTurnBasedServer()) {
 		return ServerThread().IsOurTurn();
 	}
@@ -379,7 +381,7 @@ bool m2::Game::IsOurTurn() {
 	}
 	throw M2_ERROR("Not a multiplayer game");
 }
-void m2::Game::QueueClientCommand(const m2g::pb::TurnBasedClientCommand& cmd) {
+void Game::QueueClientCommand(const m2g::pb::TurnBasedClientCommand& cmd) {
 	if (IsTurnBasedServer()) {
 		TurnBasedHostClientThread().queue_client_command(cmd);
 	} else if (IsRealTurnBasedClient()) {
@@ -388,11 +390,11 @@ void m2::Game::QueueClientCommand(const m2g::pb::TurnBasedClientCommand& cmd) {
 		throw M2_ERROR("Not a multiplayer game");
 	}
 }
-bool m2::Game::QueuePlayerInput(m2g::pb::LockstepPlayerInput&& playerInput) {
+bool Game::QueuePlayerInput(m2g::pb::LockstepPlayerInput&& playerInput) {
 	return GetLockstepClientActor().TryQueueInput(std::move(playerInput));
 }
 
-m2::void_expected m2::Game::LoadSinglePlayer(
+void_expected Game::LoadSinglePlayer(
 	const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& level_name) {
 	_level.reset();
 	ResetState();
@@ -401,7 +403,7 @@ m2::void_expected m2::Game::LoadSinglePlayer(
 	_level.emplace();
 	return _level->InitSinglePlayer(levelPathOrBlueprint, level_name);
 }
-m2::void_expected m2::Game::LoadTurnBasedMultiPlayerAsHost(
+void_expected Game::LoadTurnBasedMultiPlayerAsHost(
 	const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& level_name) {
 	_level.reset();
 	ResetState();
@@ -446,7 +448,7 @@ m2::void_expected m2::Game::LoadTurnBasedMultiPlayerAsHost(
 
 	return success;
 }
-m2::void_expected m2::Game::LoadTurnBasedMultiPlayerAsGuest(
+void_expected Game::LoadTurnBasedMultiPlayerAsGuest(
 	const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& level_name) {
 	_level.reset();
 	ResetState();
@@ -464,7 +466,7 @@ m2::void_expected m2::Game::LoadTurnBasedMultiPlayerAsGuest(
 	m2ReturnUnexpectedUnless(expect_server_update->first == network::ServerUpdateStatus::PROCESSED, "Unexpected TurnBasedServerUpdate status");
 	return {};
 }
-m2::void_expected m2::Game::LoadLockstep(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& levelName, const m2g::pb::LockstepGameInitParams& gameInitParams) {
+void_expected Game::LoadLockstep(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& levelName, const m2g::pb::LockstepGameInitParams& gameInitParams) {
 	_level.reset();
 	ResetState();
 	// Reinit dimensions with proxy in case an editor was initialized before
@@ -485,7 +487,7 @@ m2::void_expected m2::Game::LoadLockstep(const std::variant<std::filesystem::pat
 
 	return {};
 }
-m2::void_expected m2::Game::LoadLevelEditor(const std::string& level_resource_path) {
+void_expected Game::LoadLevelEditor(const std::string& level_resource_path) {
 	_level.reset();
 	ResetState();
 	// Reinit dimensions with default parameters
@@ -493,7 +495,7 @@ m2::void_expected m2::Game::LoadLevelEditor(const std::string& level_resource_pa
 	_level.emplace();
 	return _level->InitLevelEditor(level_resource_path);
 }
-m2::void_expected m2::Game::LoadSheetEditor() {
+void_expected Game::LoadSheetEditor() {
 	_level.reset();
 	ResetState();
 	// Reinit dimensions with default parameters
@@ -501,7 +503,7 @@ m2::void_expected m2::Game::LoadSheetEditor() {
 	_level.emplace();
 	return _level->InitSheetEditor(_resources.GetSpriteSheetsPath());
 }
-m2::void_expected m2::Game::LoadBulkSheetEditor() {
+void_expected Game::LoadBulkSheetEditor() {
 	_level.reset();
 	ResetState();
 	// Reinit dimensions with default parameters
@@ -510,25 +512,25 @@ m2::void_expected m2::Game::LoadBulkSheetEditor() {
 	return _level->InitBulkSheetEditor(_resources.GetSpriteSheetsPath());
 }
 
-void m2::Game::ResetState() { events.Clear(); }
+void Game::ResetState() { events.Clear(); }
 
-void m2::Game::StartHandlingEvents() {
+void Game::StartHandlingEvents() {
 	if (_eventsAreBeingHandled) {
 		throw M2_ERROR("Events were already being handled");
 	}
 	_eventsAreBeingHandled = true;
 }
-void m2::Game::HandleQuitEvent() {
+void Game::HandleQuitEvent() {
 	if (events.PopQuit()) {
 		quit = true;
 	}
 }
-void m2::Game::HandleWindowResizeEvent() {
+void Game::HandleWindowResizeEvent() {
 	if (events.PopWindowResize()) {
 		OnWindowResize();
 	}
 }
-void m2::Game::ExecuteQueuedCommands() {
+void Game::ExecuteQueuedCommands() {
 	while (not _queuedCommands.empty()) {
 		if (const auto result = ExecuteCommand(_queuedCommands.front()); std::holds_alternative<UnknownCommand>(result)) {
 			LOG_ERROR("Unknown command", _queuedCommands.front());
@@ -538,14 +540,14 @@ void m2::Game::ExecuteQueuedCommands() {
 		_queuedCommands.pop_front();
 	}
 }
-void m2::Game::HandleConsoleEvent() {
+void Game::HandleConsoleEvent() {
 	if (events.PopKeyPress(m2g::pb::KeyType::CONSOLE)) {
 		if (UiPanel::create_and_run_blocking(&console_ui).IsQuit()) {
 			quit = true;
 		}
 	}
 }
-void m2::Game::HandlePauseEvent() {
+void Game::HandlePauseEvent() {
 	if (events.PopKeyPress(m2g::pb::KeyType::PAUSE)) {
 		// Select the correct pause menu
 		const UiPanelBlueprint* pauseMenuBlueprint{};
@@ -564,7 +566,7 @@ void m2::Game::HandlePauseEvent() {
 		}
 	}
 }
-void m2::Game::HandleHudEvents() {
+void Game::HandleHudEvents() {
 	if (_level->_semiBlockingUiPanel) {
 		_level->_semiBlockingUiPanel->HandleEvents(events, _level->IsPanning())
 				.IfQuit([this] {
@@ -597,7 +599,7 @@ void m2::Game::HandleHudEvents() {
 		IF(_level->_leftHudUiPanel)->HandleEvents(events, _level->IsPanning());
 	}
 }
-void m2::Game::HandleNetworkEvents() {
+void Game::HandleNetworkEvents() {
 	// Check if the game ended
 	if ((IsTurnBasedServer() && ServerThread().HasBeenShutdown())
 			|| (IsRealTurnBasedClient() && TurnBasedRealClientThread().is_shutdown())
@@ -638,30 +640,30 @@ void m2::Game::HandleNetworkEvents() {
 		}
 	}
 }
-void m2::Game::StopHandlingEvents() {
+void Game::StopHandlingEvents() {
 	if (not _eventsAreBeingHandled) {
 		throw M2_ERROR("Events weren't already being handled");
 	}
 	_eventsAreBeingHandled = false;
 }
-bool m2::Game::ShouldSimulatePhysics() {
+bool Game::ShouldSimulatePhysics() {
 	if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)
 			|| std::holds_alternative<multiplayer::lockstep::ClientActorInterface>(_multiPlayerComponents)) {
-		return std::holds_alternative<m2::multiplayer::lockstep::ClientActorInterface::SimulatePhysics>(GetLockstepClientActor().SwapInputs());
+		return std::holds_alternative<multiplayer::lockstep::ClientActorInterface::SimulatePhysics>(GetLockstepClientActor().SwapInputs());
 	}
 	return true;
 }
-void m2::Game::ExecutePreStep(const Stopwatch::Duration& delta) {
+void Game::ExecutePreStep(const Stopwatch::Duration& delta) {
 	_proxy.OnPreStep(delta);
 	ExecuteDeferredActions();
 	for (auto& phy : _level->physics) {
 		IF(phy.preStep)(phy, delta);
 	}
 }
-void m2::Game::UpdateCharacters(const Stopwatch::Duration& delta) {
+void Game::UpdateCharacters(const Stopwatch::Duration& delta) {
 	_level->GetCharacterStorage().UpdateCharacters(delta);
 }
-void m2::Game::ExecuteStep(const Stopwatch::Duration& delta) {
+void Game::ExecuteStep(const Stopwatch::Duration& delta) {
 	if (IsTurnBasedServer()) {
 		// Check if any of the bots need to handle the TurnBasedServerUpdate
 		for (auto& bot : std::get<TurnBasedServerComponents>(_multiPlayerComponents).botClientThreads) {
@@ -757,7 +759,7 @@ void m2::Game::ExecuteStep(const Stopwatch::Duration& delta) {
 		_level->pathfinder->clear_cache();
 	}
 }
-void m2::Game::ExecutePostStep(const Stopwatch::Duration& delta) {
+void Game::ExecutePostStep(const Stopwatch::Duration& delta) {
 	if (IsTurnBasedServer()) {
 		if (_server_update_necessary) {
 			LOG_DEBUG("Server update is necessary, sending TurnBasedServerUpdate...");
@@ -799,7 +801,7 @@ void m2::Game::ExecutePostStep(const Stopwatch::Duration& delta) {
 		IF(phy.postStep)(phy, delta);
 	}
 }
-void m2::Game::CalculateGameStateHash() {
+void Game::CalculateGameStateHash() {
 	if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)
 			|| std::holds_alternative<multiplayer::lockstep::ClientActorInterface>(_multiPlayerComponents)) {
 		if (const auto gameStateHashTimecode = _level->GetNextGameStateHashTimecode(); gameStateHashTimecode
@@ -815,19 +817,19 @@ void m2::Game::CalculateGameStateHash() {
 		}
 	}
 }
-void m2::Game::UpdateSounds(const Stopwatch::Duration& delta) {
+void Game::UpdateSounds(const Stopwatch::Duration& delta) {
 	for (auto& sound_emitter : _level->soundEmitters) {
 		IF(sound_emitter.update)(sound_emitter, delta);
 	}
 }
-void m2::Game::ExecutePreDraw(const Stopwatch::Duration& delta) {
+void Game::ExecutePreDraw(const Stopwatch::Duration& delta) {
 	for (auto& gfx : _level->uprightGraphics) {
 		if (gfx.enabled) {
 			IF(gfx.preDraw)(gfx, delta);
 		}
 	}
 }
-void m2::Game::UpdateHudContents(const Stopwatch::Duration& delta) {
+void Game::UpdateHudContents(const Stopwatch::Duration& delta) {
 	const auto deltaF = ToDurationF(delta);
 	// TODO handle returned actions
 	IF(_level->_leftHudUiPanel)->UpdateContents(deltaF);
@@ -854,11 +856,11 @@ void m2::Game::UpdateHudContents(const Stopwatch::Duration& delta) {
 				});
 	}
 }
-void m2::Game::ClearBackBuffer() const {
+void Game::ClearBackBuffer() const {
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 	SDL_RenderClear(renderer);
 }
-void m2::Game::Draw() {
+void Game::Draw() {
 	// Check if only one background layer needs to be drawn
 	const auto onlyBackgroundLayerToDraw = [&]() -> std::optional<pb::FlatGraphicsLayer> {
 		if (std::holds_alternative<level_editor::State>(_level->stateVariant)) {
@@ -894,19 +896,19 @@ void m2::Game::Draw() {
 		}
 	}
 }
-void m2::Game::DrawLights() {
+void Game::DrawLights() {
 	for (auto& light : _level->lights) {
 		IF(light.onDraw)(light);
 	}
 }
-void m2::Game::ExecutePostDraw(const Stopwatch::Duration& delta) {
+void Game::ExecutePostDraw(const Stopwatch::Duration& delta) {
 	for (auto& gfx : _level->uprightGraphics) {
 		if (gfx.enabled) {
 			IF(gfx.postDraw)(gfx, delta);
 		}
 	}
 }
-void m2::Game::DebugDraw() {
+void Game::DebugDraw() {
 #ifdef DEBUG
 	for (int i = 0; i < I(PHYSICS_LAYER_COUNT); ++i) {
 		if (_level->world[i]) {
@@ -956,7 +958,7 @@ void m2::Game::DebugDraw() {
 		});
 	}
 }
-void m2::Game::DrawHud() {
+void Game::DrawHud() {
 	IF(_level->_leftHudUiPanel)->Draw();
 	IF(_level->_rightHudUiPanel)->Draw();
 	IF(_level->_messageBoxUiPanel)->Draw();
@@ -966,7 +968,7 @@ void m2::Game::DrawHud() {
 	IF(_level->_mouseHoverUiPanel)->Draw();
 	IF(_level->_semiBlockingUiPanel)->Draw();
 }
-void m2::Game::DrawEnvelopes() const {
+void Game::DrawEnvelopes() const {
 	SDL_Rect sdl_rect{};
 
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -979,9 +981,9 @@ void m2::Game::DrawEnvelopes() const {
 	sdl_rect = static_cast<SDL_Rect>(_dimensions->RightEnvelope());
 	SDL_RenderFillRect(renderer, &sdl_rect);
 }
-void m2::Game::FlipBuffers() const { SDL_RenderPresent(renderer); }
+void Game::FlipBuffers() const { SDL_RenderPresent(renderer); }
 
-void m2::Game::OnWindowResize() {
+void Game::OnWindowResize() {
 	_dimensions->OnWindowResize();
 	if (_level) {
 		IF(_level->_leftHudUiPanel)->RecalculateRects();
@@ -1004,7 +1006,7 @@ void m2::Game::OnWindowResize() {
 		}
 	}
 }
-void m2::Game::SetScale(const float scale) {
+void Game::SetScale(const float scale) {
 	_dimensions->SetScale(scale);
 	if (_level) {
 		// Clear text label rectangles so that they are regenerated with new size
@@ -1018,7 +1020,7 @@ void m2::Game::SetScale(const float scale) {
 		}
 	}
 }
-void m2::Game::SetGameHeightM(const float heightM) {
+void Game::SetGameHeightM(const float heightM) {
 	_dimensions->SetGameHeightM(heightM);
 	if (_level) {
 		// Clear text label rectangles so that they are regenerated with new size
@@ -1032,11 +1034,11 @@ void m2::Game::SetGameHeightM(const float heightM) {
 		}
 	}
 }
-void m2::Game::ResetMousePosition() {
+void Game::ResetMousePosition() {
 	_mouse_position_world_m = std::nullopt; _screen_center_to_mouse_position_m = std::nullopt;
 }
 
-void m2::Game::ForEachSprite(const std::function<bool(m2g::pb::SpriteType, const Sprite&)>& op) const {
+void Game::ForEachSprite(const std::function<bool(m2g::pb::SpriteType, const Sprite&)>& op) const {
 	for (int i = 0; i < pb::enum_value_count<m2g::pb::SpriteType>(); ++i) {
 		const auto type = pb::enum_value<m2g::pb::SpriteType>(i);
 		if (const auto& spriteOrTextLabel = GetSpriteOrTextLabel(type);
@@ -1046,14 +1048,14 @@ void m2::Game::ForEachSprite(const std::function<bool(m2g::pb::SpriteType, const
 	}
 }
 
-void m2::Game::ForEachCard(const std::function<bool(m2g::pb::CardType, const Card&)>& op) const {
+void Game::ForEachCard(const std::function<bool(m2g::pb::CardType, const Card&)>& op) const {
 	for (int i = 0; i < pb::enum_value_count<m2g::pb::CardType>(); ++i) {
 		if (const auto type = pb::enum_value<m2g::pb::CardType>(i); not op(type, GetCard(type))) {
 			return;
 		}
 	}
 }
-std::optional<m2g::pb::SpriteType> m2::Game::GetMainSpriteOfObject(const m2g::pb::ObjectType ot) const {
+std::optional<m2g::pb::SpriteType> Game::GetMainSpriteOfObject(const m2g::pb::ObjectType ot) const {
 	const auto objectTypeIndex = pb::enum_index(ot);
 	const auto defaultSpriteType = _objectBlueprints[objectTypeIndex].defaultSpriteType;
 	if (not defaultSpriteType) {
@@ -1061,7 +1063,7 @@ std::optional<m2g::pb::SpriteType> m2::Game::GetMainSpriteOfObject(const m2g::pb
 	}
 	return defaultSpriteType;
 }
-void m2::Game::ForEachObjectWithMainSprite(const std::function<bool(m2g::pb::ObjectType, m2g::pb::SpriteType)>& op) const {
+void Game::ForEachObjectWithMainSprite(const std::function<bool(m2g::pb::ObjectType, m2g::pb::SpriteType)>& op) const {
 	for (const auto& objectBlueprint : _objectBlueprints) {
 		if (objectBlueprint.defaultSpriteType) {
 			if (not op(objectBlueprint.objectType, objectBlueprint.defaultSpriteType)) {
@@ -1071,21 +1073,21 @@ void m2::Game::ForEachObjectWithMainSprite(const std::function<bool(m2g::pb::Obj
 	}
 }
 
-const m2::VecF& m2::Game::MousePositionWorldM() const {
+const VecF& Game::MousePositionWorldM() const {
 	if (not _mouse_position_world_m) {
 		RecalculateMousePosition();
 	}
 	return *_mouse_position_world_m;
 }
 
-const m2::VecF& m2::Game::ScreenCenterToMousePositionM() const {
+const VecF& Game::ScreenCenterToMousePositionM() const {
 	if (not _screen_center_to_mouse_position_m) {
 		RecalculateMousePosition();
 	}
 	return *_screen_center_to_mouse_position_m;
 }
 
-m2::sdl::TextureUniquePtr m2::Game::DrawGameToTexture(const VecF& camera_position) {
+sdl::TextureUniquePtr Game::DrawGameToTexture(const VecF& camera_position) {
 	// Temporarily change camera position
 	const auto prev_camera_position = GetLevel().GetCamera()->GetPhysique().position;
 	GetLevel().GetCamera()->GetPhysique().position = VecFE{camera_position};
@@ -1110,7 +1112,7 @@ m2::sdl::TextureUniquePtr m2::Game::DrawGameToTexture(const VecF& camera_positio
 
 	return render_target;
 }
-bool m2::Game::IsMouseOnAnyUiPanel() const {
+bool Game::IsMouseOnAnyUiPanel() const {
 	// If semi-blocking UI panel is action, we act as if the UI panel covers the whole screen
 	if (_level->_semiBlockingUiPanel) {
 		return true;
@@ -1135,7 +1137,7 @@ bool m2::Game::IsMouseOnAnyUiPanel() const {
 	return false;
 }
 
-void m2::Game::RecalculateDirectionalAudio() {
+void Game::RecalculateDirectionalAudio() {
 	if (_level->leftListener || _level->rightListener) {
 		// Loop over sounds
 		for (auto& sound_emitter : _level->soundEmitters) {
@@ -1158,13 +1160,13 @@ void m2::Game::RecalculateDirectionalAudio() {
 	}
 }
 
-void m2::Game::QueueCommand(std::string cmd) {
+void Game::QueueCommand(std::string cmd) {
 	_queuedCommands.emplace_back(std::move(cmd));
 }
-void m2::Game::AddDeferredAction(const std::function<void()>& action) {
+void Game::AddDeferredAction(const std::function<void()>& action) {
 	_level->deferredActions.push(action);
 }
-void m2::Game::ExecuteDeferredActions() {
+void Game::ExecuteDeferredActions() {
 	// Execute deferred actions one by one. A deferred action may insert another deferred action into the queue.
 	// Thus, we cannot iterate over the queue, we must pop one by one.
 	while (not _level->deferredActions.empty()) {
@@ -1173,7 +1175,7 @@ void m2::Game::ExecuteDeferredActions() {
 	}
 }
 
-void m2::Game::RecalculateMousePosition() const {
+void Game::RecalculateMousePosition() const {
 	const auto mouse_position = events.MousePosition();
 	const auto screen_center_to_mouse_position_px =
 		VecI{mouse_position.x - Dimensions().WindowDimensions().x / 2, mouse_position.y - Dimensions().WindowDimensions().y / 2};
@@ -1210,7 +1212,7 @@ void m2::Game::RecalculateMousePosition() const {
 		_mouse_position_world_m = *_screen_center_to_mouse_position_m + static_cast<VecF>(camera_position);
 	}
 }
-m2::Game::CommandResult m2::Game::ExecuteCommand(const std::string& cmd) {
+Game::CommandResult Game::ExecuteCommand(const std::string& cmd) {
 	// Make sure this function is called while the events are being handled
 	if (not _eventsAreBeingHandled) {
 		throw M2_ERROR("Attempt to execute command outside of handling events");
@@ -1261,7 +1263,7 @@ m2::Game::CommandResult m2::Game::ExecuteCommand(const std::string& cmd) {
 	} else if (*command == "LoadSheetEditor") {
 		if (const auto result = M2_GAME.LoadBulkSheetEditor()) {
 			// Execute main menu the first time the bulk sheet editor is run
-			UiPanel::create_and_run_blocking(&m2::bulk_sheet_editor::gMainMenu);
+			UiPanel::create_and_run_blocking(&bulk_sheet_editor::gMainMenu);
 			return CommandSuccess{.levelReplaced = true};
 		} else {
 			return CommandFail{.error = result.error()};
@@ -1269,7 +1271,7 @@ m2::Game::CommandResult m2::Game::ExecuteCommand(const std::string& cmd) {
 	} else if (*command == "LoadSpriteEditor") {
 		if (const auto result = M2_GAME.LoadSheetEditor()) {
 			// Execute main menu the first time the sheet editor is run
-			UiPanel::create_and_run_blocking(&m2::sheet_editor_main_menu);
+			UiPanel::create_and_run_blocking(&sheet_editor_main_menu);
 			return CommandSuccess{.levelReplaced = true};
 		} else {
 			return CommandFail{.error = result.error()};
