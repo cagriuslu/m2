@@ -1,10 +1,8 @@
-#include <m2/m3/VecF.h>
 #include <m2/Proxy.h>
-#include "m2/Game.h"
-#include "m2/sdl/Detail.h"
-#include <SDL.h>
-#include <SDL2/SDL_image.h>
+#include <m2/Game.h>
 #include <m2/Log.h>
+#include <CMakeProject.h>
+#include <SDL.h>
 
 #define BREAK_IF_QUIT() if (M2_GAME.quit) break
 
@@ -13,7 +11,7 @@ using namespace m2;
 int main(const int argc, char **argv) {
 	StoreInitialStackPosition();
 	SetThreadNameForLogging("MN");
-	INFO_FN();
+	LOG_INFO("Commit hash", GIT_SHORT_COMMIT_HASH);
 
 	if (auto success = load_options(argc, argv); not success) {
 		LOG_ERROR("Error while loading program arguments", success.error());

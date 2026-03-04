@@ -121,6 +121,16 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 endif()
 
+# Get git commit hash
+find_package(Git REQUIRED)
+execute_process(
+    COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    OUTPUT_VARIABLE GIT_SHORT_COMMIT_HASH
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/CMakeProject.h.in" "${CMAKE_CURRENT_BINARY_DIR}/CMakeProject.h")
+
 add_subdirectory(game)
 
 # Print options

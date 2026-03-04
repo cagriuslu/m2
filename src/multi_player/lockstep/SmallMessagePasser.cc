@@ -1,3 +1,4 @@
+#include <CMakeProject.h>
 #include <m2/multi_player/lockstep/SmallMessagePasser.h>
 #include <m2/Game.h>
 #include <m2/Log.h>
@@ -239,6 +240,7 @@ void_expected SmallMessagePasser::ReadSmallMessages(std::queue<SmallMessageAndSe
 		auto recvResult = _socket.Recv(_recvBuffer, sizeof(_recvBuffer));
 		m2ReflectUnexpected(recvResult);
 
+		bool isNewConnection = false;
 		PeerConnectionParameters* peer;
 		if (peer = FindPeerConnectionParameters(recvResult->second); not peer) {
 			if (_blockUnknownConnections) {
@@ -247,6 +249,7 @@ void_expected SmallMessagePasser::ReadSmallMessages(std::queue<SmallMessageAndSe
 			}
 			LOG_NETWORK("Accepting packet from unknown source, of size", recvResult->second, recvResult->first);
 			peer = &FindOrCreatePeerConnectionParameters(recvResult->second);
+			isNewConnection = true;
 		} else {
 			LOG_NETWORK("Received packet from peer, of size", recvResult->second, recvResult->first);
 		}
@@ -257,6 +260,20 @@ void_expected SmallMessagePasser::ReadSmallMessages(std::queue<SmallMessageAndSe
 				continue;
 			}
 			// TODO check version
+			// Check git commit hash
+			if (isNewConnection) {
+				for (const auto& smallMessage : packet.small_messages()) {
+					if (smallMessage.has_complete_message()) {
+						if (smallMessage.complete_message().has_ping_with_client_details()) {
+							const auto& pingerGitCommitHash = smallMessage.complete_message().ping_with_client_details().git_short_commit_hash();
+							if (pingerGitCommitHash != GIT_SHORT_COMMIT_HASH) {
+								LOG_INFO("Accepting connection from source with different commit hash", recvResult->second, pingerGitCommitHash);
+							}
+						}
+					}
+				}
+			}
+			// Process contents
 			peer->ProcessPeerAcks(I(packet.most_recent_ack()), I(packet.ack_history_bits()), I(packet.oldest_nack()));
 			peer->ProcessReceivedMessages(packet.mutable_small_messages(), out);
 		} else {

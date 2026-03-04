@@ -1,5 +1,6 @@
 #include <m2/multi_player/lockstep/ConnectionToServer.h>
 #include <m2/Log.h>
+#include <CMakeProject.h>
 
 using namespace m2;
 using namespace m2::multiplayer;
@@ -187,12 +188,12 @@ void ConnectionToServer::QueueOutgoingMessages(const std::optional<network::Time
 	if (std::holds_alternative<SearchForServer>(_state.Get())) {
 		if (const auto* connStats = _messagePasser.GetConnectionStatistics(_serverAddressAndPort); not connStats) {
 			LOG_NETWORK("Queueing first ping toward server");
-			QueueOutgoingMessage({});
+			QueueOutgoingMessage(Build<pb::LockstepMessage>([](auto& msg) { msg.mutable_ping_with_client_details()->set_git_short_commit_hash(std::string{GIT_SHORT_COMMIT_HASH}); }));
 		} else if (const auto nAckedMsgs = connStats->GetTotalAckedOutgoingSmallMessages(); nAckedMsgs < N_RESPONSES_TO_ASSUME_CONNECTION) {
 			// Not enough ping-pongs have been made with the server. Ping the server if all previous pings have been ACKed.
 			if (connStats->GetTotalQueuedOutgoingSmallMessages() == nAckedMsgs) {
 				LOG_NETWORK("Queueing another ping toward server");
-				QueueOutgoingMessage({});
+				QueueOutgoingMessage(Build<pb::LockstepMessage>([](auto& msg) { msg.mutable_ping_with_client_details()->set_git_short_commit_hash(std::string{GIT_SHORT_COMMIT_HASH}); }));
 			}
 		} else { // nAckedMsgs == N_RESPONSES_TO_ASSUME_CONNECTION
 			// Enough ping-pongs have been made with the server. Assume that we're placed in the server's lobby.

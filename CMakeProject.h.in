@@ -1,0 +1,10 @@
+#ifndef CMAKEPROJECT_H
+#define CMAKEPROJECT_H
+
+#include <string_view>
+
+namespace m2 {
+    constexpr std::string_view GIT_SHORT_COMMIT_HASH = "@GIT_SHORT_COMMIT_HASH@";
+}
+
+#endif

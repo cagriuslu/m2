@@ -1,6 +1,7 @@
 #include <m2/multi_player/lockstep/ConnectionToPeer.h>
 #include <m2/math/Hash.h>
 #include <m2/Log.h>
+#include <CMakeProject.h>
 
 using namespace m2;
 using namespace m2::multiplayer;
@@ -42,7 +43,7 @@ std::optional<int32_t> ConnectionToPeer::GetPlayerInputHashForTimecode(const net
 void ConnectionToPeer::QueueOutgoingMessages() {
 	const auto queuePing = [this] {
 		_messagePasser.QueueMessage(MessageAndReceiver{
-			.message = {},
+			.message = Build<pb::LockstepMessage>([](auto& msg) { msg.mutable_ping_with_client_details()->set_git_short_commit_hash(std::string{GIT_SHORT_COMMIT_HASH}); }),
 			.receiver = _addressAndPort
 		});
 	};
