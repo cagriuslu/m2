@@ -15,6 +15,7 @@
 #include <m2/ui/widget/Text.h>
 #include <m2/Log.h>
 #include <M2.orm.h>
+#include <CMakeProject.h>
 #include <filesystem>
 #include <utility>
 
@@ -306,13 +307,14 @@ expected<void> Level::CreateLevelSaver(const std::string& fpath) {
 	if (selfIt == multiPlayerObjectIds.end()) {
 		return make_unexpected("Self player ID is not found in multiplayer object IDs");
 	}
-	// Remove old and create
+	// Remove old and create new
 	std::filesystem::remove(fpath);
 	auto result = genORM::database::open_or_create(fpath.c_str());
 	m2ReflectUnexpected(result);
 	// Write metadata
+	const auto commitHash = std::vector<uint8_t>{GIT_SHORT_COMMIT_HASH.cbegin(), GIT_SHORT_COMMIT_HASH.cend()};
 	const auto selfIndex = I(std::distance(multiPlayerObjectIds.begin(), selfIt));
-	auto metadataResult = orm::LockstepGameMetadata::create(*result, I(multiPlayerObjectIds.size()), selfIndex, std::nullopt);
+	auto metadataResult = orm::LockstepGameMetadata::create(*result, commitHash, I(multiPlayerObjectIds.size()), selfIndex, std::nullopt);
 	m2ReflectUnexpected(metadataResult);
 	// Move db to heap
 	auto db = std::make_unique<genORM::database>(std::move(result.value()));

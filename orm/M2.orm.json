@@ -30,6 +30,11 @@
       "description": "Contains important information about the game. Only one instance must exist.",
       "members": [
         {
+          "name": "git_short_commit_hash",
+          "description": "Git short commit hash of the player that has saved this level",
+          "type": "BYTEARRAY"
+        },
+        {
           "name": "player_count",
           "type": "INT32"
         },
