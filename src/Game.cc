@@ -551,7 +551,7 @@ void Game::HandlePauseEvent() {
 	if (events.PopKeyPress(m2g::pb::KeyType::PAUSE)) {
 		// Select the correct pause menu
 		const UiPanelBlueprint* pauseMenuBlueprint{};
-		if (std::holds_alternative<splayer::State>(GetLevel().stateVariant)) {
+		if (std::holds_alternative<m2g::Proxy::LevelState>(GetLevel().stateVariant)) {
 			pauseMenuBlueprint = _proxy.PauseMenuBlueprint();
 		} else if (std::holds_alternative<level_editor::State>(GetLevel().stateVariant)) {
 			pauseMenuBlueprint = nullptr;
@@ -559,6 +559,8 @@ void Game::HandlePauseEvent() {
 			pauseMenuBlueprint = &sheet_editor_main_menu;
 		} else if (std::holds_alternative<bulk_sheet_editor::State>(GetLevel().stateVariant)) {
 			pauseMenuBlueprint = nullptr;
+		} else {
+			throw M2_ERROR("Implementation error");
 		}
 		// Execute pause menu if found, exit if QUIT is returned
 		if (pauseMenuBlueprint && UiPanel::create_and_run_blocking(pauseMenuBlueprint).IsQuit()) {

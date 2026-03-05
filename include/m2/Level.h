@@ -13,10 +13,7 @@
 #include <m2/physics/World.h>
 #include <m2/sdl/Detail.h>
 #include <m2/sheet_editor/State.h>
-#include <m2/single_player/State.h>
-#include <m2/multi_player/lockstep/State.h>
 #include <m2/multi_player/lockstep/LevelSaverInterface.h>
-#include <m2/multi_player/turn_based/State.h>
 #include "network/Types.h"
 #include <m2/ui/UiPanel.h>
 #include <Level.pb.h>
@@ -114,10 +111,7 @@ namespace m2 {
 		std::queue<std::function<void()>> deferredActions;
 		std::variant<
 			std::monostate,
-			splayer::State, // TODO replace with proxy level
 			m2g::Proxy::LevelState,
-			multiplayer::lockstep::State,
-			multiplayer::turnbased::State,
 			level_editor::State,
 			sheet_editor::State,
 			bulk_sheet_editor::State> stateVariant;

@@ -52,7 +52,7 @@ Level::~Level() {
 
 void_expected Level::InitSinglePlayer(
     const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name) {
-	stateVariant.emplace<splayer::State>();
+	stateVariant.emplace<m2g::Proxy::LevelState>();
 	return InitAnyPlayer(levelPathOrBlueprint, name, true,
 		[](const std::string& name_, const pb::Level& lb) { M2G_PROXY.pre_single_player_level_init(name_, lb); },
 		[](const std::string& name_, const pb::Level& lb) { M2G_PROXY.post_single_player_level_init(name_, lb); });
@@ -60,7 +60,7 @@ void_expected Level::InitSinglePlayer(
 void_expected Level::InitTurnBasedMultiPlayerAsHost(
     const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name) {
 	INFO_FN();
-	stateVariant.emplace<multiplayer::turnbased::State>();
+	stateVariant.emplace<m2g::Proxy::LevelState>();
 	return InitAnyPlayer(levelPathOrBlueprint, name, false,
 		[](const std::string&, const pb::Level&) {},
 		[](const std::string& name_, const pb::Level& lb) { M2G_PROXY.postTurnBasedLevelClientInit(name_, lb); });
@@ -68,7 +68,7 @@ void_expected Level::InitTurnBasedMultiPlayerAsHost(
 void_expected Level::InitTurnBasedMultiPlayerAsGuest(
     const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name) {
 	INFO_FN();
-	stateVariant.emplace<multiplayer::turnbased::State>();
+	stateVariant.emplace<m2g::Proxy::LevelState>();
 	return InitAnyPlayer(levelPathOrBlueprint, name, false,
 		[](const std::string&, const pb::Level&) {},
 		[](const std::string& name_, const pb::Level& lb) { M2G_PROXY.postTurnBasedLevelClientInit(name_, lb); });
