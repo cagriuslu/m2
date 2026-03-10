@@ -122,7 +122,7 @@ bool ServerActor::operator()(MessageBox<ServerActorInput>& inbox, MessageBox<Ser
 		// Process all messages
 		while (not messages.empty()) {
 			const auto msg = std::move(messages.front()); messages.pop();
-			if (msg.message.type_case() == pb::LockstepMessage::TYPE_NOT_SET) {
+			if (msg.message.has_ping_with_client_details()) {
 				// Empty message received, it is used for sign-up when the lobby is open
 				if (std::holds_alternative<LobbyOpen>(_state->Get())) {
 					const auto& lobby = std::get<LobbyOpen>(_state->Get());
