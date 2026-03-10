@@ -1,23 +1,28 @@
 #include <m2/Game.h>
 #include <m2/Log.h>
-#include <Level.pb.h>
-#include <SDL2/SDL_image.h>
 #include <m2/Error.h>
 #include <m2/Object.h>
 #include <m2/video/Sprite.h>
 #include <m2/bulk_sheet_editor/Ui.h>
 #include <m2/sdl/Detail.h>
 #include <m2/sheet_editor/Ui.h>
-#include <filesystem>
-#include <ranges>
-#include "m2/component/Graphic.h"
+#include <m2/component/Graphic.h>
 #include <m2/ui/UiAction.h>
 #include <m2/game/Key.h>
-#include "m2/String.h"
+#include <m2/String.h>
+#include <M2.orm.h>
+#include <Level.pb.h>
+#include <CMakeProject.h>
+#include <SDL2/SDL_image.h>
+#include <genORM/genORM.h>
+#include <filesystem>
+#include <ranges>
 
 using namespace m2;
 
 namespace {
+	constexpr auto MAX_LOCKSTEP_CONNECTION_COUNT = 4;
+
 	SDL_Window* CreateWindow(const int gamePpm, const float defaultGameHeightM, const char* gameFriendlyName) {
 		const auto minimumWindowDims = GameDimensions::EstimateMinimumWindowDimensions(gamePpm, defaultGameHeightM);
 		if (auto* window = SDL_CreateWindow(gameFriendlyName, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
@@ -25,9 +30,8 @@ namespace {
 			SDL_SetWindowMinimumSize(window, minimumWindowDims.x, minimumWindowDims.y);
 			SDL_StopTextInput(); // Text input begins activated (sometimes)
 			return window;
-		} else {
-			throw M2_ERROR("SDL error: " + std::string{SDL_GetError()});
 		}
+		throw M2_ERROR("SDL error: " + std::string{SDL_GetError()});
 	}
 
 	SDL_Cursor* CreateCursor() {
@@ -52,9 +56,8 @@ namespace {
 				throw M2_ERROR("Font is not monospaced");
 			}
 			return font;
-		}  else {
-			throw M2_ERROR("TTF error: " + std::string{TTF_GetError()});
 		}
+		throw M2_ERROR("TTF error: " + std::string{TTF_GetError()});
 	}
 
 	Rational CalculateFontLetterWidthToHeightRatio(TTF_Font* const font) {
@@ -222,6 +225,9 @@ void_expected Game::HostTurnBasedGame(unsigned max_connection_count) {
 	return {};
 }
 void_expected Game::HostLockstepGame(unsigned max_connection_count) {
+	if (MAX_LOCKSTEP_CONNECTION_COUNT < max_connection_count) {
+		return make_unexpected("Given max connection count is higher than the limit: " + ToString(max_connection_count));
+	}
 	if (not std::holds_alternative<std::monostate>(_multiPlayerComponents)) {
 		throw M2_ERROR("Hosting game requires no other multiplayer threads to exist");
 	}
@@ -253,6 +259,15 @@ void_expected Game::HostLockstepGame(unsigned max_connection_count) {
 
 	return {};
 }
+void_expected Game::EnableLevelSaver(const std::string& fpath) {
+	if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)) {
+		return _level->EmplaceLevelSaver(std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).levelSaverInterface, fpath);
+	}
+	if (std::holds_alternative<multiplayer::lockstep::ClientComponents>(_multiPlayerComponents)) {
+		return _level->EmplaceLevelSaver(std::get<multiplayer::lockstep::ClientComponents>(_multiPlayerComponents).levelSaverInterface, fpath);
+	}
+	throw M2_ERROR("Only lockstep level can be saved");
+}
 void_expected Game::JoinTurnBasedGame(const std::string& addr) {
 	if (not std::holds_alternative<std::monostate>(_multiPlayerComponents)) {
 		throw M2_ERROR("Joining game requires no other multiplayer threads to exist");
@@ -265,11 +280,9 @@ void_expected Game::JoinLockstepGame(const std::string& addr) {
 	if (not std::holds_alternative<std::monostate>(_multiPlayerComponents)) {
 		throw M2_ERROR("Joining game requires no other multiplayer threads to exist");
 	}
-
-	_multiPlayerComponents.emplace<multiplayer::lockstep::ClientActorInterface>(network::IpAddressAndPort{
-		network::IpAddress::CreateFromString(addr),
-		network::Port::CreateFromHostOrder(1162)
-	});
+	_multiPlayerComponents.emplace<multiplayer::lockstep::ClientComponents>(
+		network::IpAddressAndPort{network::IpAddress::CreateFromString(addr), network::Port::CreateFromHostOrder(1162)}
+	);
 	return {};
 }
 void Game::LeaveGame() {
@@ -315,10 +328,21 @@ multiplayer::lockstep::ClientActorInterface& Game::GetLockstepClientActor() {
 	if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)) {
 		return *std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).hostClientActorInterface;
 	}
-	if (std::holds_alternative<multiplayer::lockstep::ClientActorInterface>(_multiPlayerComponents)) {
-		return std::get<multiplayer::lockstep::ClientActorInterface>(_multiPlayerComponents);
+	if (std::holds_alternative<multiplayer::lockstep::ClientComponents>(_multiPlayerComponents)) {
+		return std::get<multiplayer::lockstep::ClientComponents>(_multiPlayerComponents).guestClientActorInterface;
 	}
 	throw M2_ERROR("Not a lockstep multiplayer game");
+}
+multiplayer::lockstep::LevelSaverInterface* Game::GetLockstepLevelSaverInterface() {
+	if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)) {
+		auto& levelSaverInterface = std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).levelSaverInterface;
+		return levelSaverInterface ? &*levelSaverInterface : nullptr;
+	}
+	if (std::holds_alternative<multiplayer::lockstep::ClientComponents>(_multiPlayerComponents)) {
+		auto& levelSaverInterface = std::get<multiplayer::lockstep::ClientComponents>(_multiPlayerComponents).levelSaverInterface;
+		return levelSaverInterface ? &*levelSaverInterface : nullptr;
+	}
+	return nullptr;
 }
 int Game::GetTotalPlayerCount() {
 	if (IsTurnBasedServer()) {
@@ -332,9 +356,12 @@ int Game::GetTotalPlayerCount() {
 			return hostClientActor->GetTotalPlayerCount();
 		}
 	}
-	if (std::holds_alternative<multiplayer::lockstep::ClientActorInterface>(_multiPlayerComponents)) {
-		const auto& guestClientActor = std::get<multiplayer::lockstep::ClientActorInterface>(_multiPlayerComponents);
+	if (std::holds_alternative<multiplayer::lockstep::ClientComponents>(_multiPlayerComponents)) {
+		const auto& guestClientActor = std::get<multiplayer::lockstep::ClientComponents>(_multiPlayerComponents).guestClientActorInterface;
 		return guestClientActor.GetTotalPlayerCount();
+	}
+	if (std::holds_alternative<multiplayer::lockstep::ReplayComponents>(_multiPlayerComponents)) {
+		return std::get<multiplayer::lockstep::ReplayComponents>(_multiPlayerComponents).playerCount;
 	}
 	throw M2_ERROR("Not a multiplayer game");
 }
@@ -352,11 +379,14 @@ int Game::GetSelfIndex() {
 			}
 		}
 	}
-	if (std::holds_alternative<multiplayer::lockstep::ClientActorInterface>(_multiPlayerComponents)) {
-		const auto& guestClientActor = std::get<multiplayer::lockstep::ClientActorInterface>(_multiPlayerComponents);
+	if (std::holds_alternative<multiplayer::lockstep::ClientComponents>(_multiPlayerComponents)) {
+		const auto& guestClientActor = std::get<multiplayer::lockstep::ClientComponents>(_multiPlayerComponents).guestClientActorInterface;
 		if (const auto selfIndex = guestClientActor.GetSelfIndex()) {
 			return *selfIndex;
 		}
+	}
+	if (std::holds_alternative<multiplayer::lockstep::ReplayComponents>(_multiPlayerComponents)) {
+		return std::get<multiplayer::lockstep::ReplayComponents>(_multiPlayerComponents).selfIndex;
 	}
 	throw M2_ERROR("Not a multiplayer game or index isn't known yet");
 }
@@ -420,7 +450,7 @@ void_expected Game::LoadTurnBasedMultiPlayerAsHost(
 	M2_GAME.TurnBasedHostClientThread().start_if_ready();
 	// If there are bots, we need to handle the first server update
 	LOG_DEBUG("Waiting 1s until the first server update is delivered to bots");
-	std::this_thread::sleep_for(std::chrono::seconds(1)); // TODO why? system takes some time to deliver the data to bots, even though they are on the same machine
+	std::this_thread::sleep_for(std::chrono::seconds(1));
 	auto& botList = std::get<TurnBasedServerComponents>(_multiPlayerComponents).botClientThreads;
 	for (auto& bot : botList) {
 		if (const auto server_update = bot.pop_server_update(); not server_update) {
@@ -486,6 +516,55 @@ void_expected Game::LoadLockstep(const std::variant<std::filesystem::path, pb::L
 	GetLockstepClientActor().StartInputStreaming();
 
 	return {};
+}
+void_expected Game::ReplayLockstep(const std::string& fpath) {
+	auto expectDb = genORM::database::open(fpath.c_str());
+	m2ReflectUnexpected(expectDb);
+	const auto expectMetadata = orm::LockstepGameMetadata::find_by_rowid(*expectDb, 1);
+	m2ReflectUnexpected(expectMetadata);
+	if (not expectMetadata.value().has_value()) {
+		return make_unexpected("Save file doesn't contain game metadata");
+	}
+	if (const auto saveGitCommitHash = ToString(expectMetadata.value()->get_git_short_commit_hash()); saveGitCommitHash != GIT_SHORT_COMMIT_HASH) {
+		LOG_WARN("Git short commit hash of save file doesn't match with self", saveGitCommitHash);
+	}
+	const auto playerCount = expectMetadata.value()->get_player_count();
+	if (MAX_LOCKSTEP_CONNECTION_COUNT < playerCount) {
+		return make_unexpected("Save file contains a game with more players than supported: " + ToString(playerCount));
+	}
+	const auto selfIndex = expectMetadata.value()->get_self_index();
+	if (selfIndex < 0 || playerCount <= selfIndex) {
+		return make_unexpected("Save file contains an out of bounds self index: " + ToString(selfIndex));
+	}
+	pb::Level level;
+	{
+		if (const auto& levelBlueprintBytes = expectMetadata.value()->get_level_blueprint(); not levelBlueprintBytes.empty()) {
+			if (not level.ParseFromArray(levelBlueprintBytes.data(), levelBlueprintBytes.size())) {
+				return make_unexpected("Unable to parse the level blueprint inside the save file");
+			}
+		}
+	}
+	m2g::pb::LockstepGameInitParams gameInitParams;
+	{
+		if (const auto& gameInitParamsBytes = expectMetadata.value()->get_game_init_params(); not gameInitParamsBytes.empty()) {
+			if (not gameInitParams.ParseFromArray(gameInitParamsBytes.data(), gameInitParamsBytes.size())) {
+				return make_unexpected("Unable to parse the lockstep game initialization parameters inside the save file");
+			}
+		}
+	}
+	auto name = ToString(expectMetadata.value()->get_level_name());
+
+	if (not std::holds_alternative<std::monostate>(_multiPlayerComponents)) {
+		throw M2_ERROR("Replaying a lockstep game requires no other multiplayer threads to exist");
+	}
+	_multiPlayerComponents.emplace<multiplayer::lockstep::ReplayComponents>(playerCount, selfIndex, multiplayer::lockstep::LevelReplayer{std::move(*expectDb)});
+
+	_level.reset();
+	ResetState();
+	// Reinit dimensions with proxy in case an editor was initialized before
+	_dimensions->SetGameAspectRatio(_proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
+	_level.emplace();
+	return _level->InitLockstepMultiPlayer(level, name, gameInitParams);
 }
 void_expected Game::LoadLevelEditor(const std::string& level_resource_path) {
 	_level.reset();
@@ -608,8 +687,10 @@ void Game::HandleNetworkEvents() {
 			|| (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)
 				&& not std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).serverActorInterface->IsActorRunning()
 				&& not std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).hostClientActorInterface->IsActorRunning())
-			|| (std::holds_alternative<multiplayer::lockstep::ClientActorInterface>(_multiPlayerComponents)
-				&& not std::get<multiplayer::lockstep::ClientActorInterface>(_multiPlayerComponents).IsActorRunning())) {
+			|| (std::holds_alternative<multiplayer::lockstep::ClientComponents>(_multiPlayerComponents)
+				&& not std::get<multiplayer::lockstep::ClientComponents>(_multiPlayerComponents).guestClientActorInterface.IsActorRunning())
+			|| (std::holds_alternative<multiplayer::lockstep::ReplayComponents>(_multiPlayerComponents)
+				&& std::get<multiplayer::lockstep::ReplayComponents>(_multiPlayerComponents).levelReplayer.IsFinished())) {
 		_level.reset();
 		ResetState();
 		_multiPlayerComponents = std::monostate{};
@@ -650,7 +731,7 @@ void Game::StopHandlingEvents() {
 }
 bool Game::ShouldSimulatePhysics() {
 	if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)
-			|| std::holds_alternative<multiplayer::lockstep::ClientActorInterface>(_multiPlayerComponents)) {
+			|| std::holds_alternative<multiplayer::lockstep::ClientComponents>(_multiPlayerComponents)) {
 		return std::holds_alternative<multiplayer::lockstep::ClientActorInterface::SimulatePhysics>(GetLockstepClientActor().SwapInputs());
 	}
 	return true;
@@ -703,15 +784,25 @@ void Game::ExecuteStep(const Stopwatch::Duration& delta) {
 			_proxy.handle_server_command(*server_command);
 		}
 	} else if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)
-			|| std::holds_alternative<multiplayer::lockstep::ClientActorInterface>(_multiPlayerComponents)) {
+			|| std::holds_alternative<multiplayer::lockstep::ClientComponents>(_multiPlayerComponents)) {
 		if (auto simulationInputs = GetLockstepClientActor().PopSimulationInputs()) {
+			if (auto* levelSaverInterface = GetLockstepLevelSaverInterface(); levelSaverInterface) {
+				if (not levelSaverInterface->IsActorRunning()) {
+					throw M2_ERROR("Level saver stopped running prematurely");
+				}
+				if (std::ranges::any_of(simulationInputs->allInputs, [](const auto& playerInputs) { return not playerInputs.empty(); })) {
+					levelSaverInterface->StorePlayerInputs(simulationInputs->timecode, simulationInputs->allInputs);
+				}
+			}
 			LOG_NETWORK("Simulating inputs from all players");
 			_level->SetNextGameStateHashTimecode(simulationInputs->timecode);
 			_proxy.lockstepHandlePlayerInputs(simulationInputs->allInputs);
-			// If there's a level saver, and there are any player inputs
-			if (_level->HasLevelSaver() && std::ranges::any_of(simulationInputs->allInputs, [](const auto& playerInputs) { return not playerInputs.empty(); })) {
-				_level->SaveLockstepPlayerInputs(simulationInputs->timecode, std::move(simulationInputs->allInputs));
-			}
+		}
+	} else if (std::holds_alternative<multiplayer::lockstep::ReplayComponents>(_multiPlayerComponents)) {
+		if (auto simulationInputs = std::get<multiplayer::lockstep::ReplayComponents>(_multiPlayerComponents).levelReplayer.GetNextSimulationInputs()) {
+			LOG_NETWORK("Simulating inputs from level replayer");
+			_level->SetNextGameStateHashTimecode(simulationInputs->timecode);
+			_proxy.lockstepHandlePlayerInputs(simulationInputs->allInputs);
 		}
 	} else if constexpr (not GAME_IS_DETERMINISTIC) {
 		// ReSharper disable once CppDFAUnreachableCode
@@ -805,7 +896,7 @@ void Game::ExecutePostStep(const Stopwatch::Duration& delta) {
 }
 void Game::CalculateGameStateHash() {
 	if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)
-			|| std::holds_alternative<multiplayer::lockstep::ClientActorInterface>(_multiPlayerComponents)) {
+			|| std::holds_alternative<multiplayer::lockstep::ClientComponents>(_multiPlayerComponents)) {
 		if (const auto gameStateHashTimecode = _level->GetNextGameStateHashTimecode(); gameStateHashTimecode
 				&& 0 < *gameStateHashTimecode && (*gameStateHashTimecode % multiplayer::lockstep::ConnectionToServer::GAME_STATE_REPORT_PERIOD_IN_TICKS) == 0) {
 			const auto gameStateHash = _level->CalculateGameStateHash();

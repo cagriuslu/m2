@@ -53,7 +53,7 @@ void ClientActorInterface::StartInputStreaming() {
 	if (not std::holds_alternative<GameNotStarted>(_state)) {
 		throw M2_ERROR("Game can be started only once");
 	}
-	LOG_NETWORK("Commiting empty inputs to start of game");
+	LOG_NETWORK("Commiting empty input to start the game");
 	GetActorInbox().PushMessage(ClientActorInput{
 		.variant = ClientActorInput::QueueThisPlayerInput{}
 	});

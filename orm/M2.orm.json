@@ -44,6 +44,18 @@
           "type": "INT32"
         },
         {
+          "name": "level_blueprint",
+          "type": "BYTEARRAY"
+        },
+        {
+          "name": "level_name",
+          "type": "BYTEARRAY"
+        },
+        {
+          "name": "game_init_params",
+          "type": "BYTEARRAY"
+        },
+        {
           "name": "duration_tc",
           "description": "The duration of the level in timecodes",
           "type": "INT32",

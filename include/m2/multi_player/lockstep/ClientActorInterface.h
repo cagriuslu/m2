@@ -11,7 +11,8 @@ namespace m2::multiplayer::lockstep {
 		struct GameNotStarted {
 			bool lastSetReadyState{};
 		};
-		/// Simulating previously received inputs, the player can queue new inputs to be commited later.
+		/// Previously received inputs are delivered to the game and they are still being simulated. Player can queue
+		/// new inputs to be commited later.
 		struct SimulatingInputs {
 			int32_t physicsSimulationsCounter{};
 			std::deque<m2g::pb::LockstepPlayerInput> selfInputs;

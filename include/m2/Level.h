@@ -4,6 +4,7 @@
 #include <m2/Object.h>
 #include <m2/bulk_sheet_editor/State.h>
 #include <m2/component/character/CharacterStorage.h>
+#include <m2/multi_player/lockstep/LevelSaverInterface.h>
 #include <m2/containers/DrawList.h>
 #include <m2/game/Pathfinder.h>
 #include <m2/game/Selection.h>
@@ -11,9 +12,7 @@
 #include <m2/m3/VecF.h>
 #include <m2/ObjectDebug.h>
 #include <m2/physics/World.h>
-#include <m2/sdl/Detail.h>
 #include <m2/sheet_editor/State.h>
-#include <m2/multi_player/lockstep/LevelSaverInterface.h>
 #include "network/Types.h"
 #include <m2/ui/UiPanel.h>
 #include <Level.pb.h>
@@ -31,6 +30,7 @@ namespace m2 {
 	class Level final {
 		bool _markedForDeletion{false};
 
+		std::optional<m2g::pb::LockstepGameInitParams> _lockstepGameInitParams;
 		std::optional<std::filesystem::path> _lbPath;
 		std::optional<pb::Level> _lb;
 		std::string _name;
@@ -42,8 +42,6 @@ namespace m2 {
 		std::optional<network::Timecode> _nextGameStateHashTimecode;
 
 		CharacterStorage _characterStorage;
-
-		std::optional<multiplayer::lockstep::LevelSaverInterface> _levelSaver;
 
 		// Special properties effecting the simulation
 
@@ -159,9 +157,7 @@ namespace m2 {
 		const CharacterStorage& GetCharacterStorage() const { return _characterStorage; }
 		CharacterStorage& GetCharacterStorage() { return _characterStorage; }
 
-		expected<void> CreateLevelSaver(const std::string& fpath);
-		bool HasLevelSaver() const { return static_cast<bool>(_levelSaver); }
-		void SaveLockstepPlayerInputs(network::Timecode, std::vector<std::deque<m2g::pb::LockstepPlayerInput>>&& playerInputs);
+		void_expected EmplaceLevelSaver(std::optional<multiplayer::lockstep::LevelSaverInterface>& out, const std::string& fpath);
 
 		// Dimming control
 

@@ -15,6 +15,7 @@
 #include "multi_player/TurnBasedBotClientThread.h"
 #include "multi_player/TurnBasedServerActorInterface.h"
 #include "multi_player/TurnBasedServerComponents.h"
+#include <m2/multi_player/lockstep/ReplayComponents.h>
 #include <m2/ui/Console.h>
 #include "protobuf/MessageLUT.h"
 #include <m2g_ObjectType.pb.h>
@@ -30,6 +31,7 @@
 #include <m2/video/Shape.h>
 #include <m2/GameResources.h>
 #include <m2/multi_player/lockstep/ServerComponents.h>
+#include <m2/multi_player/lockstep/ClientComponents.h>
 
 #define M2_GAME (m2::Game::Instance())
 #define M2_DEFER(f) (M2_GAME.AddDeferredAction(f))
@@ -50,7 +52,14 @@ namespace m2 {
 		mutable std::optional<VecF> _mouse_position_world_m;
 		mutable std::optional<VecF> _screen_center_to_mouse_position_m;  // Doesn't mean much in 2.5D mode
 
-		std::variant<std::monostate, TurnBasedServerComponents, network::TurnBasedRealClientThread, multiplayer::lockstep::ServerComponents, multiplayer::lockstep::ClientActorInterface> _multiPlayerComponents;
+		std::variant<
+			std::monostate,
+			TurnBasedServerComponents,
+			network::TurnBasedRealClientThread,
+			multiplayer::lockstep::ServerComponents,
+			multiplayer::lockstep::ClientComponents,
+			multiplayer::lockstep::ReplayComponents
+		> _multiPlayerComponents;
 		bool _server_update_necessary{}, _server_update_with_shutdown{};
 		std::optional<network::SequenceNo> _lastSentOrReceivedServerUpdateSequenceNo;
 
@@ -132,6 +141,7 @@ namespace m2 {
 		bool IsTurnBasedMultiPlayer() const { return std::holds_alternative<TurnBasedServerComponents>(_multiPlayerComponents) || std::holds_alternative<network::TurnBasedRealClientThread>(_multiPlayerComponents); }
 		void_expected HostTurnBasedGame(unsigned max_connection_count);
 		void_expected HostLockstepGame(unsigned max_connection_count);
+		void_expected EnableLevelSaver(const std::string& fpath);
 		/// For client
 		void_expected JoinTurnBasedGame(const std::string& addr);
 		void_expected JoinLockstepGame(const std::string& addr);
@@ -141,6 +151,7 @@ namespace m2 {
 		bool AddBot();
 		/// For server
 		network::TurnBasedBotClientThread& FindBot(int receiver_index);
+
 		bool IsTurnBasedServer() const { return std::holds_alternative<TurnBasedServerComponents>(_multiPlayerComponents); }
 		bool IsRealTurnBasedClient() const { return std::holds_alternative<network::TurnBasedRealClientThread>(_multiPlayerComponents); }
 		TurnBasedServerActorInterface& ServerThread() { return *std::get<TurnBasedServerComponents>(_multiPlayerComponents).serverActorInterface; }
@@ -148,8 +159,9 @@ namespace m2 {
 		network::TurnBasedRealClientThread& TurnBasedRealClientThread() { return std::get<network::TurnBasedRealClientThread>(_multiPlayerComponents); }
 		multiplayer::lockstep::ServerActorInterface& GetLockstepServerActor() { return *std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).serverActorInterface; }
 		multiplayer::lockstep::ClientActorInterface& GetLockstepHostClientActor() { return *std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).hostClientActorInterface; }
-		multiplayer::lockstep::ClientActorInterface& GetLockstepGuestClientActor() { return std::get<multiplayer::lockstep::ClientActorInterface>(_multiPlayerComponents); }
+		multiplayer::lockstep::ClientActorInterface& GetLockstepGuestClientActor() { return std::get<multiplayer::lockstep::ClientComponents>(_multiPlayerComponents).guestClientActorInterface; }
 		multiplayer::lockstep::ClientActorInterface& GetLockstepClientActor();
+		multiplayer::lockstep::LevelSaverInterface* GetLockstepLevelSaverInterface();
 		std::optional<network::SequenceNo> LastServerUpdateSequenceNo() const { return _lastSentOrReceivedServerUpdateSequenceNo; }
 		int GetTotalPlayerCount();
 		int GetSelfIndex();
@@ -165,6 +177,7 @@ namespace m2 {
 		void_expected LoadTurnBasedMultiPlayerAsGuest(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& level_name = "");
 		/// Load lockstep level using the game init parameters received from the server (or decided locally if this instance is the server).
 		void_expected LoadLockstep(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& levelName, const m2g::pb::LockstepGameInitParams& gameInitParams);
+		void_expected ReplayLockstep(const std::string& fpath);
 		void_expected LoadLevelEditor(const std::string& level_resource_path);
 		void_expected LoadSheetEditor();
 		void_expected LoadBulkSheetEditor();

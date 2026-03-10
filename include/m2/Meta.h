@@ -58,6 +58,9 @@ namespace m2 {
 	inline std::string ToString(const char* c) { return {c}; }
 	inline std::string ToString(const std::string& s) { return s; }
 	inline std::string ToString(const std::string_view sv) { return std::string{sv}; }
+	inline std::string ToString(const std::vector<char>& bytearray) { return std::string{bytearray.cbegin(), bytearray.cend()}; }
+	inline std::string ToString(const std::vector<unsigned char>& bytearray) { return std::string{bytearray.cbegin(), bytearray.cend()}; }
+	inline std::string ToString(const std::vector<signed char>& bytearray) { return std::string{bytearray.cbegin(), bytearray.cend()}; }
 	template <typename T, typename U> std::string ToString(const std::pair<T,U>& pair) {
 		return "(" + ToString(pair.first) + "," + ToString(pair.second) + ")";
 	}

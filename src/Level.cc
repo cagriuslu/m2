@@ -76,6 +76,7 @@ void_expected Level::InitTurnBasedMultiPlayerAsGuest(
 void_expected Level::InitLockstepMultiPlayer(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& name, const m2g::pb::LockstepGameInitParams& gameInitParams) {
 	INFO_FN();
 	stateVariant.emplace<m2g::Proxy::LevelState>();
+	_lockstepGameInitParams = gameInitParams;
 	return InitAnyPlayer(levelPathOrBlueprint, name, false,
 		[&gameInitParams](const std::string& name_, const pb::Level& lb) { M2G_PROXY.PreLockstepLevelInit(name_, lb, gameInitParams); },
 		[&gameInitParams](const std::string& name_, const pb::Level& lb) { M2G_PROXY.PostLockstepLevelInit(name_, lb, gameInitParams); });
@@ -299,7 +300,7 @@ void Level::Unpause() {
 	_pausedAt.reset();
 }
 
-expected<void> Level::CreateLevelSaver(const std::string& fpath) {
+void_expected Level::EmplaceLevelSaver(std::optional<multiplayer::lockstep::LevelSaverInterface>& out, const std::string& fpath) {
 	if (_beganAt) {
 		return make_unexpected("Level saver should have been started before starting the simulation");
 	}
@@ -314,18 +315,18 @@ expected<void> Level::CreateLevelSaver(const std::string& fpath) {
 	// Write metadata
 	const auto commitHash = std::vector<uint8_t>{GIT_SHORT_COMMIT_HASH.cbegin(), GIT_SHORT_COMMIT_HASH.cend()};
 	const auto selfIndex = I(std::distance(multiPlayerObjectIds.begin(), selfIt));
-	auto metadataResult = orm::LockstepGameMetadata::create(*result, commitHash, I(multiPlayerObjectIds.size()), selfIndex, std::nullopt);
+	const auto levelBlueprint = _lb->SerializeAsString();
+	const auto gameInitParams = _lockstepGameInitParams->SerializeAsString();
+	auto metadataResult = orm::LockstepGameMetadata::create(*result, commitHash, I(multiPlayerObjectIds.size()), selfIndex,
+		std::vector<uint8_t>{levelBlueprint.cbegin(), levelBlueprint.cend()},
+		std::vector<uint8_t>{_name.cbegin(), _name.cend()},
+		std::vector<uint8_t>{gameInitParams.cbegin(), gameInitParams.cend()},
+		std::nullopt);
 	m2ReflectUnexpected(metadataResult);
 	// Move db to heap
 	auto db = std::make_unique<genORM::database>(std::move(result.value()));
-	_levelSaver.emplace(std::move(db));
+	out.emplace(std::move(db));
 	return {};
-}
-void Level::SaveLockstepPlayerInputs(const network::Timecode timecode, std::vector<std::deque<m2g::pb::LockstepPlayerInput>>&& playerInputs) {
-	if (not _levelSaver->IsActorRunning()) {
-		throw M2_ERROR("LevelSaver stopped running prematurely");
-	}
-	_levelSaver->StorePlayerInputs(timecode, std::move(playerInputs));
 }
 
 void Level::EnableDimmingWithExceptions(std::set<ObjectId>&& exceptions) {
@@ -410,16 +411,14 @@ void Level::DismissSemiBlockingUiPanelDeferred() {
 const ObjectDebugOptions* Level::GetObjectDebugOptions(const ObjectId id) const {
 	if (const auto it = _objectDebugObjects.find(id); it != _objectDebugObjects.end()) {
 		return &it->second;
-	} else {
-		return nullptr;
 	}
+	return nullptr;
 }
 const ObjectDebugOptions* Level::GetObjectTypeDebugOptions(const m2g::pb::ObjectType type) const {
 	if (const auto it = _objectTypeDebugObjects.find(type); it != _objectTypeDebugObjects.end()) {
 		return &it->second;
-	} else {
-		return nullptr;
 	}
+	return nullptr;
 }
 void Level::SetObjectDebugOptions(const ObjectId id, ObjectDebugOptions options) {
 	_objectDebugObjects[id] = std::move(options);
