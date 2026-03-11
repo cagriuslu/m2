@@ -22,6 +22,27 @@ namespace {
 		}
 		return "  ";
 	}
+
+	void SimplifyFileName(const char* fileName, std::array<char, 4>& out) {
+		const auto fileNameLen = strlen(fileName);
+		auto outIndex = 0zu;
+
+		// Fill with capital letters
+		for (auto i = 0zu; i < fileNameLen; ++i) {
+			if (const char c = fileName[i]; isupper(c) || isdigit(c)) {
+				out[outIndex++] = c;
+				if (outIndex == out.size() - 1) {
+					break;
+				}
+			}
+		}
+		// Fill remaining spaces with '-'
+		for (auto i = outIndex; i < out.size() - 1; ++i) {
+			out[i] = '-';
+		}
+		// Final null character
+		out[out.size() - 1] = 0;
+	}
 }
 
 std::mutex m2::detail::gLogMutex;
@@ -46,7 +67,7 @@ const std::string& m2::ToString(const pb::LogLevel& lvl) {
 	return LogLevel_Name(lvl);
 }
 
-void m2::detail::LogHeader(const pb::LogLevel lvl, const char *file, const int line) {
+void m2::detail::LogHeader(const pb::LogLevel lvl, const char *filePath, const int line) {
 	const auto lvl_int = static_cast<int>(lvl);
 
 	// Set unexpected event
@@ -55,7 +76,7 @@ void m2::detail::LogHeader(const pb::LogLevel lvl, const char *file, const int l
 	}
 
 	// Get time
-	const auto now = std::time(nullptr) - 1672531200ull; // 2023
+	const auto now = std::time(nullptr) - 1609459200ull; // 2021
 
 	// Convert log level into char
 	char lvl_char = 'U';
@@ -65,28 +86,16 @@ void m2::detail::LogHeader(const pb::LogLevel lvl, const char *file, const int l
 		lvl_char = gUnexpectedEventOccurred ? lvl_chars_un[lvl_int] : lvl_chars[lvl_int];
 	}
 
-	// Get file name
+	// File name
 #if defined(_WIN32) || defined(_WIN64) || defined(__WIN32__) || defined(__TOS_WIN__) || defined(__WINDOWS__)
-	const auto file_name_wo_dirs = strrchr(file, '\\');
+	const auto fileName = strrchr(filePath, '\\');
 #else
-	const auto file_name_wo_dirs = strrchr(file, '/');
+	const auto fileName = strrchr(filePath, '/');
 #endif
-	const char* file_name = file_name_wo_dirs == nullptr ? file : file_name_wo_dirs;
-	// Simplify file name
-	char file_name_capitals[4] = {};
-	int file_name_capitals_len = 0;
-	for (size_t i = 0; i < strlen(file_name) && file_name_capitals_len < 3; i++) {
-		const char c = file_name[i];
-		if (isupper(c) || isdigit(c)) {
-			file_name_capitals[file_name_capitals_len++] = c;
-		}
-	}
-	static const char* file_name_paddings[] = {
-		"---", "--", "-", ""
-	};
-	const char* file_name_padding = file_name_paddings[file_name_capitals_len];
+	std::array<char, 4> simplifiedFileName;
+	SimplifyFileName(fileName == nullptr ? filePath : fileName, simplifiedFileName);
 
-	fprintf(stderr, "[%c %09lld %s%s %03d %s] ", lvl_char, static_cast<long long>(now), file_name_padding, file_name_capitals, line % 1000, LookupThreadName());
+	fprintf(stderr, "[%c %010lld %s %03d %s] ", lvl_char, static_cast<long long>(now), simplifiedFileName.data(), line % 1000, LookupThreadName());
 }
 
 #if _MSC_VER > 1400

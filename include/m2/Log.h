@@ -55,7 +55,7 @@ namespace m2 {
 	namespace detail {
 		extern std::mutex gLogMutex;
 
-		void LogHeader(pb::LogLevel lvl, const char* file, int line);
+		void LogHeader(pb::LogLevel lvl, const char* filePath, int line);
 
 		template <typename ...Ts>
 		void Log(const pb::LogLevel lvl, const char* file, const int line, const char* msg, const Ts& ...ts) {
@@ -66,9 +66,7 @@ namespace m2 {
 			LogHeader(lvl, file, line);
 			constexpr auto argsSize = std::tuple_size_v<std::tuple<Ts...>>;
 			fprintf(stderr, argsSize ? "%s: " : "%s", msg);
-			{
-				[](...) {}(fprintf(stderr, "%s ", ::m2::ToString(ts).c_str())...);
-			}
+			((fprintf(stderr, "%s ", ::m2::ToString(ts).c_str())), ...);
 			fprintf(stderr, "\n");
 		}
 
