@@ -513,6 +513,7 @@ void_expected Game::LoadLockstep(const std::variant<std::filesystem::path, pb::L
 	auto success = _level->InitLockstepMultiPlayer(levelPathOrBlueprint, levelName, gameInitParams);
 	m2ReflectUnexpected(success);
 
+	// Send a set of empty player inputs with timecode 0 to signal the beginning of the simulation. This will also help clients synchronize.
 	GetLockstepClientActor().StartInputStreaming();
 
 	return {};
@@ -794,11 +795,12 @@ void Game::ExecuteStep(const Stopwatch::Duration& delta) {
 					levelSaverInterface->StorePlayerInputs(simulationInputs->timecode, simulationInputs->allInputs);
 				}
 			}
-			LOG_NETWORK("Simulating inputs from all players");
+			LOG_NETWORK("Simulating inputs from all players for timecode", simulationInputs->timecode);
 			_proxy.HandleLockstepPlayerInputs(simulationInputs->allInputs);
+			// Calculate game state hash if enough time has passed
 			if (0 < simulationInputs->timecode && (simulationInputs->timecode % multiplayer::lockstep::ConnectionToServer::GAME_STATE_REPORT_PERIOD_IN_TICKS) == 0) {
 				const auto gameStateHash = _level->CalculateGameStateHash(simulationInputs->timecode);
-				LOG_NETWORK("Game state hash for timecode is calculated", simulationInputs->timecode, gameStateHash);
+				LOG_NETWORK("Game state hash for timecode", simulationInputs->timecode, gameStateHash);
 				// This hash will be used during the next report. There should be enough time for the actors to receive and retain them.
 				GetLockstepClientActor().StoreGameStateHash(simulationInputs->timecode, gameStateHash);
 				// Report the game state hash to server as well. That'll be the ground truth.

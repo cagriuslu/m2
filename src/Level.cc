@@ -186,12 +186,12 @@ Stopwatch::Duration Level::GetTotalSimulatedDuration() const {
 	const auto unsimulatedDuration = _totalPauseDuration + (_pausedAt ? _pausedAt->GetDurationSince() : Stopwatch::Duration{});
 	return durationSinceLevelBegan - unsimulatedDuration;
 }
-int32_t Level::CalculateGameStateHash(network::Timecode tc) {
+int32_t Level::CalculateGameStateHash(const int32 initialValue) {
 	// ReSharper disable once CppDFAUnreachableCode
 	if constexpr (not GAME_IS_DETERMINISTIC) {
 		throw M2_ERROR("Game is not deterministic");
 	}
-	int32_t hash = tc;
+	int32_t hash = initialValue;
 	for (const auto& phy : physics) {
 		hash = HashI(ToRawValue(phy.position.GetX()), hash);
 		hash = HashI(ToRawValue(phy.position.GetY()), hash);

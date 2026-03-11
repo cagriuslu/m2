@@ -55,13 +55,22 @@ bool ClientActor::operator()(MessageBox<ClientActorInput>& inbox, MessageBox<Cli
 		// on this client.
 		_serverConnection->MarkGameAsStarted();
 		const auto timecode = _nextTimecode++;
+		if (timecode != 0) {
+			throw M2_ERROR("First timecode should have been zero");
+		}
+		if (not _unsentThisPlayerInputs->empty()) {
+			// First set of inputs are sent automatically by the game engine to signal the beginning of the simulation.
+			// It shouldn't contain a meaningful input.
+			throw M2_ERROR("First set of player inputs should have been empty");
+		}
 		LOG_NETWORK("First player inputs are available with timecode, sending to peers...", timecode);
 		_serverConnection->QueueOutgoingMessages(timecode, &*_unsentThisPlayerInputs, _lastReceivedGameStateHash);
 
-		LOG_NETWORK("Waiting after first player inputs for main thread to catch up...");
+		LOG_NETWORK("Waiting for main thread to begin simulation after sending first player inputs...");
 		std::this_thread::sleep_for(std::chrono::seconds{1});
 
-		// Store this player inputs until the next tick
+		// Even though the first set of player inputs are empty, we still simulate it. Store them until the next tick.
+		// Stored timecode becomes the expected timecode for inputs of the peers.
 		_nextSelfPlayerInputsToSimulate = std::make_pair(timecode, std::move(*_unsentThisPlayerInputs));
 		_unsentThisPlayerInputs.reset();
 		_lastPlayerInputsSentAt = Stopwatch{};
@@ -82,7 +91,7 @@ bool ClientActor::operator()(MessageBox<ClientActorInput>& inbox, MessageBox<Cli
 			}
 		});
 
-		// Store this player inputs until the next tick
+		// Store this player inputs until the next tick. Stored timecode becomes the expected timecode for inputs of the peers.
 		_nextSelfPlayerInputsToSimulate = std::make_pair(timecode, std::move(*_unsentThisPlayerInputs));
 		_unsentThisPlayerInputs.reset();
 		_lastPlayerInputsSentAt = Stopwatch{};
