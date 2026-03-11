@@ -795,14 +795,22 @@ void Game::ExecuteStep(const Stopwatch::Duration& delta) {
 				}
 			}
 			LOG_NETWORK("Simulating inputs from all players");
-			_level->SetNextGameStateHashTimecode(simulationInputs->timecode);
-			_proxy.lockstepHandlePlayerInputs(simulationInputs->allInputs);
+			_proxy.HandleLockstepPlayerInputs(simulationInputs->allInputs);
+			if (0 < simulationInputs->timecode && (simulationInputs->timecode % multiplayer::lockstep::ConnectionToServer::GAME_STATE_REPORT_PERIOD_IN_TICKS) == 0) {
+				const auto gameStateHash = _level->CalculateGameStateHash(simulationInputs->timecode);
+				LOG_NETWORK("Game state hash for timecode is calculated", simulationInputs->timecode, gameStateHash);
+				// This hash will be used during the next report. There should be enough time for the actors to receive and retain them.
+				GetLockstepClientActor().StoreGameStateHash(simulationInputs->timecode, gameStateHash);
+				// Report the game state hash to server as well. That'll be the ground truth.
+				if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)) {
+					std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).serverActorInterface->StoreGameStateHash(simulationInputs->timecode, gameStateHash);
+				}
+			}
 		}
 	} else if (std::holds_alternative<multiplayer::lockstep::ReplayComponents>(_multiPlayerComponents)) {
 		if (auto simulationInputs = std::get<multiplayer::lockstep::ReplayComponents>(_multiPlayerComponents).levelReplayer.GetNextSimulationInputs()) {
 			LOG_NETWORK("Simulating inputs from level replayer");
-			_level->SetNextGameStateHashTimecode(simulationInputs->timecode);
-			_proxy.lockstepHandlePlayerInputs(simulationInputs->allInputs);
+			_proxy.HandleLockstepPlayerInputs(simulationInputs->allInputs);
 		}
 	} else if constexpr (not GAME_IS_DETERMINISTIC) {
 		// ReSharper disable once CppDFAUnreachableCode
@@ -892,22 +900,6 @@ void Game::ExecutePostStep(const Stopwatch::Duration& delta) {
 
 	for (auto& phy : _level->physics) {
 		IF(phy.postStep)(phy, delta);
-	}
-}
-void Game::CalculateGameStateHash() {
-	if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)
-			|| std::holds_alternative<multiplayer::lockstep::ClientComponents>(_multiPlayerComponents)) {
-		if (const auto gameStateHashTimecode = _level->GetNextGameStateHashTimecode(); gameStateHashTimecode
-				&& 0 < *gameStateHashTimecode && (*gameStateHashTimecode % multiplayer::lockstep::ConnectionToServer::GAME_STATE_REPORT_PERIOD_IN_TICKS) == 0) {
-			const auto gameStateHash = _level->CalculateGameStateHash();
-			LOG_NETWORK("Game state hash for timecode is calculated", *gameStateHashTimecode, gameStateHash);
-			// This hash will be used during the next report. Thus, there's enough time for actors to receive and retain them.
-			GetLockstepClientActor().StoreGameStateHash(*gameStateHashTimecode, gameStateHash);
-			// Report the game state hash to server as well
-			if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)) {
-				std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).serverActorInterface->StoreGameStateHash(*gameStateHashTimecode, gameStateHash);
-			}
-		}
 	}
 }
 void Game::UpdateSounds(const Stopwatch::Duration& delta) {

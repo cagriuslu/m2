@@ -186,24 +186,18 @@ Stopwatch::Duration Level::GetTotalSimulatedDuration() const {
 	const auto unsimulatedDuration = _totalPauseDuration + (_pausedAt ? _pausedAt->GetDurationSince() : Stopwatch::Duration{});
 	return durationSinceLevelBegan - unsimulatedDuration;
 }
-int32_t Level::CalculateGameStateHash() {
+int32_t Level::CalculateGameStateHash(network::Timecode tc) {
+	// ReSharper disable once CppDFAUnreachableCode
 	if constexpr (not GAME_IS_DETERMINISTIC) {
-		// ReSharper disable once CppDFAUnreachableCode
 		throw M2_ERROR("Game is not deterministic");
 	}
-	// ReSharper disable once CppDFAUnreachableCode
-	if (not _nextGameStateHashTimecode) {
-		// Timecode is not necessary for the calculation, but the hash must be calculated only if there is one.
-		throw M2_ERROR("Unable to find next game state hash timecode");
-	}
-	int32_t hash = 0;
+	int32_t hash = tc;
 	for (const auto& phy : physics) {
 		hash = HashI(ToRawValue(phy.position.GetX()), hash);
 		hash = HashI(ToRawValue(phy.position.GetY()), hash);
 		hash = HashI(ToRawValue(phy.orientation), hash);
 	}
 	hash = _characterStorage.HashCharacters(hash);
-	_nextGameStateHashTimecode.reset();
 	return hash;
 }
 DrawLayer Level::GetDrawLayer(const GraphicId gfxId) {

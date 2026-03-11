@@ -111,7 +111,6 @@ int main(const int argc, char **argv) {
 				M2_GAME.ExecuteDeferredActions();
 				M2_GAME.ExecutePostStep(TIME_BETWEEN_PHYSICS_SIMULATIONS);
 				M2_GAME.ExecuteDeferredActions();
-				M2_GAME.CalculateGameStateHash();
 				M2_GAME.UpdateSounds(TIME_BETWEEN_PHYSICS_SIMULATIONS);
 				M2_GAME.ExecuteDeferredActions();
 				M2_GAME.RecalculateDirectionalAudio();
