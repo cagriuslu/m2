@@ -87,7 +87,7 @@ ClientActorInterface::SwapResult ClientActorInterface::SwapInputs() {
 	}
 	if (std::holds_alternative<SimulatingInputs>(_state)) {
 		auto& simulatingInputs = std::get<SimulatingInputs>(_state);
-		if (simulatingInputs.physicsSimulationsCounter == m2g::LOCKSTEP_PHYSICS_SIMULATION_COUNT_PER_GAME_TICK) {
+		if (++simulatingInputs.physicsSimulationsCounter == m2g::LOCKSTEP_PHYSICS_SIMULATION_COUNT_PER_GAME_TICK) {
 			LOG_NETWORK("Commiting inputs from this player");
 			GetActorInbox().PushMessage(ClientActorInput{
 				.variant = ClientActorInput::QueueThisPlayerInput{
@@ -99,7 +99,6 @@ ClientActorInterface::SwapResult ClientActorInterface::SwapInputs() {
 			// Give some time for client actor to publish the inputs to simulate
 			std::this_thread::sleep_for(std::chrono::milliseconds{5});
 		} else {
-			++simulatingInputs.physicsSimulationsCounter;
 			return SimulatePhysics{};
 		}
 		// Intentional fallthrough
