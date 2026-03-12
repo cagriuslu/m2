@@ -6,10 +6,12 @@
 namespace m2::multiplayer::lockstep {
 	class LevelReplayer {
 		genORM::database _db;
+		int _playerCount;
 		int32_t _physicsSimulationsCounter{};
+		network::Timecode _nextTimecode{};
 
 	public:
-		explicit LevelReplayer(genORM::database&& db) : _db(std::move(db)) {}
+		explicit LevelReplayer(genORM::database&& db, const int playerCount) : _db(std::move(db)), _playerCount(playerCount) {}
 
 		[[nodiscard]] bool IsFinished() const;
 

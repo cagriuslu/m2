@@ -8,6 +8,7 @@
 #include <queue>
 #include <set>
 #include <ranges>
+#include <expected>
 #include <optional>
 #include <algorithm>
 #include <tuple>
@@ -257,6 +258,12 @@ namespace m2 {
 
 		template <typename T>
 		void _succeed_or_throw_error(const char* file, const int line, const expected<T>& e) {
+			if (!e) {
+				throw Error{file, line, e.error()};
+			}
+		}
+		template <typename T, typename E>
+		void _succeed_or_throw_error(const char* file, const int line, const std::expected<T, E>& e) {
 			if (!e) {
 				throw Error{file, line, e.error()};
 			}

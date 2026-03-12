@@ -558,7 +558,7 @@ void_expected Game::ReplayLockstep(const std::string& fpath) {
 	if (not std::holds_alternative<std::monostate>(_multiPlayerComponents)) {
 		throw M2_ERROR("Replaying a lockstep game requires no other multiplayer threads to exist");
 	}
-	_multiPlayerComponents.emplace<multiplayer::lockstep::ReplayComponents>(playerCount, selfIndex, multiplayer::lockstep::LevelReplayer{std::move(*expectDb)});
+	_multiPlayerComponents.emplace<multiplayer::lockstep::ReplayComponents>(playerCount, selfIndex, multiplayer::lockstep::LevelReplayer{std::move(*expectDb), playerCount});
 
 	_level.reset();
 	ResetState();
@@ -1311,8 +1311,7 @@ Game::CommandResult Game::ExecuteCommand(const std::string& cmd) {
 
 	using std::operator""sv;
 	for (const auto wordSubrange : std::views::split(GetTrimmedView(cmd), " "sv)) {
-		const auto word = GetTrimmedView(std::string_view{wordSubrange});
-		if (not word.empty()) {
+		if (const auto word = GetTrimmedView(std::string_view{wordSubrange}); not word.empty()) {
 			if (not command) {
 				command = word;
 			} else {
@@ -1370,6 +1369,16 @@ Game::CommandResult Game::ExecuteCommand(const std::string& cmd) {
 			const auto level = std::string{argument[2]};
 			if (const auto result = MoveBackground(I(layerFrom), I(layerTo), level)) {
 				return CommandSuccess{};
+			} else {
+				return CommandFail{.error = result.error()};
+			}
+		} else {
+			return CommandFail{.error = "Missing argument"};
+		}
+	} else if (*command == "ReplayLockstep") {
+		if (not argument[0].empty()) {
+			if (const auto result = M2_GAME.ReplayLockstep(std::string{argument[0]})) {
+				return CommandSuccess{.levelReplaced = true};
 			} else {
 				return CommandFail{.error = result.error()};
 			}

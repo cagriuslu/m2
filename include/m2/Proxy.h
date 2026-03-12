@@ -101,7 +101,7 @@ namespace m2 {
 		static constexpr std::chrono::milliseconds LOCKSTEP_GAME_TICK_PERIOD{250};
 		void PreLockstepLevelInit(MAYBE const std::string& name, MAYBE const m2::pb::Level& level, MAYBE const m2g::pb::LockstepGameInitParams& gameInitParams) {}
 		void PostLockstepLevelInit(MAYBE const std::string& name, MAYBE const m2::pb::Level& level, MAYBE const m2g::pb::LockstepGameInitParams& gameInitParams) {}
-		void lockstepHandlePlayerInputs(MAYBE const std::vector<std::deque<m2g::pb::LockstepPlayerInput>>& inputs) {}
+		void HandleLockstepPlayerInputs(MAYBE const std::vector<std::deque<m2g::pb::LockstepPlayerInput>>& inputs) {}
 
 		/// Should be implemented from the perspective of a server. Implementation should return the new turn holder
 		/// index if the command is accepted and a TurnBasedServerUpdate is necessary. Implementation should return std::nullopt
