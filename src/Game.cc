@@ -266,6 +266,10 @@ void_expected Game::EnableLevelSaver(const std::string& fpath) {
 	if (std::holds_alternative<multiplayer::lockstep::ClientComponents>(_multiPlayerComponents)) {
 		return _level->EmplaceLevelSaver(std::get<multiplayer::lockstep::ClientComponents>(_multiPlayerComponents).levelSaverInterface, fpath);
 	}
+	if (std::holds_alternative<multiplayer::lockstep::ReplayComponents>(_multiPlayerComponents)) {
+		LOG_WARN("Ignoring attempt to enable level saver while replaying another save");
+		return {};
+	}
 	throw M2_ERROR("Only lockstep level can be saved");
 }
 void_expected Game::JoinTurnBasedGame(const std::string& addr) {
