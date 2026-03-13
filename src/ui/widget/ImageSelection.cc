@@ -81,12 +81,12 @@ void ImageSelection::OnDraw() {
 	auto buttons_rect = Rect().TrimTop(Rect().w);
 	auto inc_button_rect = buttons_rect.TrimLeft(buttons_rect.w / 2);
 	sdl::render_texture_with_color_mod(_plusTexture.Texture(),
-			calculate_filled_text_rect(inc_button_rect, TextHorizontalAlignment::LEFT, I(Utf8CodepointCount(_plusTexture.String().c_str()))));
+			calculate_filled_text_rect(inc_button_rect, TextHorizontalAlignment::LEFT, _plusTexture.String().c_str()));
 	draw_border(inc_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 
 	auto dec_button_rect = buttons_rect.TrimRight(buttons_rect.w / 2);
 	sdl::render_texture_with_color_mod(_minusTexture.Texture(),
-			calculate_filled_text_rect(dec_button_rect, TextHorizontalAlignment::LEFT, I(Utf8CodepointCount(_minusTexture.String().c_str()))));
+			calculate_filled_text_rect(dec_button_rect, TextHorizontalAlignment::LEFT, _minusTexture.String().c_str()));
 	draw_border(dec_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 
 	draw_border(Rect(), vertical_border_width_px(), horizontal_border_width_px());

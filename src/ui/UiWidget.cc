@@ -1,6 +1,7 @@
 #include <m2/Game.h>
 #include <m2/ui/UiWidget.h>
 #include <m2/ui/UiPanel.h>
+#include <m2/third_party/video/TextRendering.h>
 
 using namespace m2;
 
@@ -108,11 +109,10 @@ m2::RectI m2::UiWidget::calculate_wrapped_text_rect(SDL_Texture* text_texture, R
 	}
 }
 
-m2::RectI m2::UiWidget::calculate_filled_text_rect(RectI drawable_area, TextHorizontalAlignment align, int text_length) {
+m2::RectI m2::UiWidget::calculate_filled_text_rect(const RectI drawable_area, const TextHorizontalAlignment align, const char* text) {
 	// Fit the font into the drawable_area with correct aspect ratio
-	auto unaligned_destination = drawable_area.TrimToAspectRatio(
-		I(text_length * M2_GAME.FontLetterWidthToHeightRatio().GetN()),
-			I(M2_GAME.FontLetterWidthToHeightRatio().GetD()));
+	const auto defaultFontRenderedSize = thirdparty::video::CalculateRenderedUtf8Size(M2_GAME.font, M2G_PROXY.default_font_size, text);
+	const auto unaligned_destination = drawable_area.TrimToAspectRatio(defaultFontRenderedSize.x, defaultFontRenderedSize.y);
 
 	// If drawable area is wider than the font, horizontal alignment is necessary.
 	switch (align) {

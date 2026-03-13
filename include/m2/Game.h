@@ -97,7 +97,6 @@ namespace m2 {
 		TTF_Font* const font{};
 		const int systemFontSize = 13;
 		TTF_Font* const systemFont{};
-		const Rational _font_letter_width_to_height_ratio; // letter w/h // TODO rename or get rid of this, because this is only accurate if the font is used in default size, which isn't always the case
 		bool quit{}; // TODO make private
 
 		////////////////////////////////////////////////////////////////////////
@@ -112,7 +111,6 @@ namespace m2 {
 		pb::MessageLUT<pb::Song, Song> songs; // TODO make const
 		std::multimap<m2g::pb::KeyType, SDL_Scancode> keyToScancodeMap; // TODO make const
 		std::map<SDL_Scancode, m2g::pb::KeyType> scancodeToKeyMap; // TODO make const
-		const Rational& FontLetterWidthToHeightRatio() const { return _font_letter_width_to_height_ratio; }
 		TextLabelCache& GetTextLabelCache() { return *_textLabelCache; }
 		ShapeCache& GetShapeCache() { return *_shapeCache; }
 

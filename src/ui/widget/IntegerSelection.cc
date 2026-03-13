@@ -74,7 +74,7 @@ void IntegerSelection::OnDraw() {
 		// Draw the integer value
 		if (not _textTexture.first) {
 			const auto valueAsString = ToString(_value);
-			_textTexture.second = calculate_filled_text_rect(Rect().TrimRight(Rect().h / 2), TextHorizontalAlignment::LEFT, valueAsString.size());
+			_textTexture.second = calculate_filled_text_rect(Rect().TrimRight(Rect().h / 2), TextHorizontalAlignment::LEFT, valueAsString.c_str());
 			_textTexture.first = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, _textTexture.second.h, valueAsString));
 		}
 		sdl::render_texture_with_color_mod(_textTexture.first.Texture(), _textTexture.second);
@@ -84,7 +84,7 @@ void IntegerSelection::OnDraw() {
 	{
 		// Draw plus texture
 		if (not _plusTexture.first) {
-			_plusTexture.second = calculate_filled_text_rect(plusArea, TextHorizontalAlignment::CENTER, 1);
+			_plusTexture.second = calculate_filled_text_rect(plusArea, TextHorizontalAlignment::CENTER, "+");
 			_plusTexture.first = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, _plusTexture.second.h, "+"));
 		}
 		sdl::render_texture_with_color_mod(_plusTexture.first.Texture(), _plusTexture.second);
@@ -93,7 +93,7 @@ void IntegerSelection::OnDraw() {
 	{
 		// Draw minus texture
 		if (not _minusTexture.first) {
-			_minusTexture.second = calculate_filled_text_rect(minusArea, TextHorizontalAlignment::CENTER, 1);
+			_minusTexture.second = calculate_filled_text_rect(minusArea, TextHorizontalAlignment::CENTER, "-");
 			_minusTexture.first = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, _minusTexture.second.h, "-"));
 		}
 		sdl::render_texture_with_color_mod(_minusTexture.first.Texture(), _minusTexture.second);

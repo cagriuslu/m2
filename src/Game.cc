@@ -50,27 +50,9 @@ namespace {
 
 	TTF_Font* OpenFont(const char* path, const int fontSize) {
 		if (auto* font = TTF_OpenFont(path, fontSize)) {
-			// Check certain font properties
-			if (not TTF_FontFaceIsFixedWidth(font)) {
-				// Many calculations related to text assumes a monospaced font
-				throw M2_ERROR("Font is not monospaced");
-			}
 			return font;
 		}
 		throw M2_ERROR("TTF error: " + std::string{TTF_GetError()});
-	}
-
-	Rational CalculateFontLetterWidthToHeightRatio(TTF_Font* const font) {
-		int fontLetterWidth, fontLetterHeight;
-		if (TTF_SizeUTF8(font, "A", &fontLetterWidth, &fontLetterHeight)) {
-			throw M2_ERROR("Unable to measure the font letter size");
-		}
-		// Font size, is the size of the letter from the baseline (ascent).
-		// Descent, is the (negated) size of the tails from the baseline.
-		// Font height is ascent + descent + line gap.
-		// You can request a certain font size, but you may not get an exact font.
-		// Height and ascent can be queried. For width, you need to render.
-		return Rational{fontLetterWidth, fontLetterHeight};
 	}
 }
 
@@ -123,8 +105,7 @@ void Game::DeinitSystems() {
 Game::Game() : window(CreateWindow(_proxy.gamePpm, _proxy.defaultGameHeightM, _proxy.gameFriendlyName.c_str())),
 		cursor(CreateCursor()), pixel_format(GetWindowPixelFormat(window)),
 		font(OpenFont(_resources.GetDefaultFontPath().c_str(), _proxy.default_font_size)),
-		systemFont(OpenFont(_resources.GetSystemFontPath().c_str(), systemFontSize)),
-		_font_letter_width_to_height_ratio(CalculateFontLetterWidthToHeightRatio(font)) {
+		systemFont(OpenFont(_resources.GetSystemFontPath().c_str(), systemFontSize)) {
 	// ReSharper disable once CppDFAConstantConditions
 	if (_proxy.areGraphicsPixelated) {
 		// ReSharper disable once CppDFAUnreachableCode

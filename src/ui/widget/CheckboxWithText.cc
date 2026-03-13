@@ -21,7 +21,7 @@ void CheckboxWithText::OnDraw() {
 
 	// Text
 	if (auto* texture = _textTexture.Texture(); texture) {
-		const auto destinationRect = calculate_filled_text_rect(Rect(), TextHorizontalAlignment::CENTER, I(Utf8CodepointCount(_textTexture.String().c_str())));
+		const auto destinationRect = calculate_filled_text_rect(Rect(), TextHorizontalAlignment::CENTER, _textTexture.String().c_str());
 		sdl::render_texture_with_color_mod(texture, destinationRect, static_cast<RGB>(accentColor));
 	}
 

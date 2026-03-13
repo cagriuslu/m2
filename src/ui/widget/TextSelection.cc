@@ -1,5 +1,6 @@
 #include <m2/Game.h>
 #include <m2/ui/widget/TextSelection.h>
+#include <m2/third_party/video/TextRendering.h>
 
 using namespace m2;
 using namespace m2::widget;
@@ -217,9 +218,9 @@ void TextSelection::OnDraw() {
 			if (not current_selection->text_texture_and_destination) {
 				// Render the text
 				auto drawable_area = Rect().TrimRight(Rect().h / 2);
-				auto fontSize = calculate_filled_text_rect(drawable_area, TextHorizontalAlignment::LEFT, I(Utf8CodepointCount(current_selection->blueprint_option.text.c_str()))).h;
+				auto fontSize = calculate_filled_text_rect(drawable_area, TextHorizontalAlignment::LEFT, current_selection->blueprint_option.text.c_str()).h;
 				auto textTexture = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, fontSize, current_selection->blueprint_option.text));
-				auto destination_rect = calculate_filled_text_rect(drawable_area, TextHorizontalAlignment::LEFT, I(Utf8CodepointCount(current_selection->blueprint_option.text.c_str())));
+				auto destination_rect = calculate_filled_text_rect(drawable_area, TextHorizontalAlignment::LEFT, current_selection->blueprint_option.text.c_str());
 				current_selection->text_texture_and_destination = sdl::TextTextureAndDestination{std::move(textTexture), destination_rect};
 			}
 			sdl::render_texture_with_color_mod(current_selection->text_texture_and_destination->first.Texture(),
@@ -267,25 +268,19 @@ void TextSelection::OnDraw() {
 
 				// Draw text
 				auto& current_line = _options[optionIndex];
-				// Calculate how many characters can fit into the line
-				const auto textLength = I(Utf8CodepointCount(current_line.blueprint_option.text.c_str()));
-				const auto charWidthToHeightRatio = M2_GAME.FontLetterWidthToHeightRatio();
-				const auto charWidth = charWidthToHeightRatio.GetN() * textRect.h / charWidthToHeightRatio.GetD();
-				const auto maxCharCount = I(textRect.w / charWidth);
-				// Render texture if necessary
+				// Render and cache text if necessary
 				if (not current_line.text_texture_and_destination) {
+					// Calculate how many characters can fit into the line
 					const auto fontSize = textRect.h;
-					auto textTexture = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, fontSize,
-						textLength <= maxCharCount ? current_line.blueprint_option.text : current_line.blueprint_option.text.substr(0, maxCharCount - 1) + "…"));
-					// Don't bother with destination_rect, because we're going to calculate that every time
-					current_line.text_texture_and_destination = std::make_pair(std::move(textTexture), RectI{});
+					const auto croppedGlyphCount = thirdparty::video::CalculateMaxRenderedUtf8Length(M2_GAME.font, fontSize, current_line.blueprint_option.text.c_str(), textRect.w);
+					const auto uncroppedGlyphCount = I(Utf8CodepointCount(current_line.blueprint_option.text.c_str()));
+					const auto textToRender = uncroppedGlyphCount <= croppedGlyphCount ? current_line.blueprint_option.text : current_line.blueprint_option.text.substr(0, croppedGlyphCount - 1) + "…";
+					auto textTexture = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, fontSize, textToRender));
+					// Calculate the destination. It might be narrower than the available rect
+					const auto actualTextRect = calculate_filled_text_rect(textRect, TextHorizontalAlignment::LEFT, textToRender.c_str());
+					current_line.text_texture_and_destination = std::make_pair(std::move(textTexture), actualTextRect);
 				}
-				// Calculate the text rect, actual text rect might be narrower than the available text rect
-				const auto actualTextRect = calculate_filled_text_rect(textRect, TextHorizontalAlignment::LEFT,
-					textLength <= maxCharCount ? textLength : maxCharCount);
-				current_line.text_texture_and_destination->second = actualTextRect;
-				sdl::render_texture_with_color_mod(current_line.text_texture_and_destination->first.Texture(),
-					current_line.text_texture_and_destination->second, current_line.blueprint_option.text_color);
+				sdl::render_texture_with_color_mod(current_line.text_texture_and_destination->first.Texture(), current_line.text_texture_and_destination->second, current_line.blueprint_option.text_color);
 			}
 		}
 		// Scroll bar

@@ -74,8 +74,7 @@ void TextInput::OnDraw() {
 		auto textTexture = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font,
 				M2G_PROXY.default_font_size, str));
 		// Calculate destination rectangle
-		auto destination_rect = calculate_filled_text_rect(drawable_area(), TextHorizontalAlignment::LEFT,
-				I(Utf8CodepointCount(str.c_str())));
+		auto destination_rect = calculate_filled_text_rect(drawable_area(), TextHorizontalAlignment::LEFT, str.c_str());
 		// Save for later
 		_text_texture_and_destination_cache = sdl::TextTextureAndDestination{std::move(textTexture), destination_rect};
 	}
