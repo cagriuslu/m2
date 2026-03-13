@@ -40,6 +40,7 @@ namespace m2 {
 		/// Determines the initial and minimum window size.
 		const float defaultGameHeightM = 18.0f;
 
+		// Mono fonts
 		// const std::string defaultFontPath = "fonts/Courier_Prime/CourierPrime-Regular.ttf";
 		// const std::string defaultFontPath = "fonts/Kode_Mono/KodeMono-VariableFont_wght.ttf";
 		// const std::string defaultFontPath = "fonts/Martian_Mono/MartianMono-VariableFont_wdth,wght.ttf";
@@ -48,6 +49,10 @@ namespace m2 {
 		// const std::string defaultFontPath = "fonts/Syne_Mono/SyneMono-Regular.ttf";
 		const std::string defaultFontPath = "fonts/VT323/VT323-Regular.ttf";
 		// const std::string defaultFontPath = "fonts/Xanh_Mono/XanhMono-Regular.ttf";
+		// Serif fonts
+		// const std::string defaultFontPath = "fonts/IBM_Plex_Serif/IBMPlexSerif-Regular.ttf";
+		// Sans Serif fonts
+		// const std::string defaultFontPath = "fonts/Itim/Itim-Regular.ttf";
 		const int default_font_size = 240;
 
 		/// Should the world have gravity towards downwards direction
