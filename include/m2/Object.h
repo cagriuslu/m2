@@ -23,7 +23,9 @@ namespace m2 {
 	/// If the component is created and destroyed rapidly => Pool
 	/// Else => impl
 	struct Object final {
-		std::variant<std::unique_ptr<HeapObjectImpl>, PoolObjectImpl> impl; /// Custom Data
+		/// Custom data that is managed by the object itself. It's not optimized for any particular usage because every
+		/// and any type of data can be stored by it. It should be accessed only occassionally, not every update.
+		std::variant<std::unique_ptr<HeapObjectImpl>, PoolObjectImpl> impl;
 
 		Object() = default;
 		explicit Object(m2g::pb::ObjectType type, ObjectId parent_id = 0);

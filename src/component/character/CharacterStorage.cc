@@ -96,8 +96,8 @@ void CharacterStorage::FreeCharacter(const CharacterId chrId) {
 		return;
 	}
 
-	const auto remover = [](auto& pool, const CharacterId chrId) -> bool {
-		pool->Free(chrId);
+	const auto remover = [](auto& pool, const CharacterId chrId_) -> bool {
+		pool->Free(chrId_);
 		return true;
 	};
 

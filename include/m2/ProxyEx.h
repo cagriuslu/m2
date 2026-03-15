@@ -8,8 +8,10 @@ namespace m2 {
 	/// include way more types.
 	class ProxyEx {
 	public:
-		// Example
-		using CharacterVariants = std::tuple<m2::CompactCharacter, m2::FastCharacter>;
+		/// Describes different kinds of characters to the game engine. Based on this description, the game engine will
+		/// prepare pools of each kind. It is up to the objects to choose which pool to use for its character. Indexes
+		/// of the pools created by the game engine will be the same as the indexes of this tuple.
+		using CharacterVariants = std::tuple<m2::CompactCharacter, m2::FastCharacter>; // Example
 		static constexpr auto CompactCharacterStorageIndex = GetIndexInTuple<CompactCharacter, CharacterVariants>::value;
 		static constexpr auto FastCharacterStorageIndex = GetIndexInTuple<FastCharacter, CharacterVariants>::value;
 	};
