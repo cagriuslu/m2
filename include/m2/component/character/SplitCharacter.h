@@ -1,15 +1,20 @@
 #pragma once
+#include "CustomStateUtils.h"
 #include <m2/Meta.h>
 #include <m2/component/Character.h>
 #include <m2/math/Hash.h>
 #include <array>
 
+
 namespace m2 {
-	/// A character that can be customized with separate card and variable containers.
-	template <typename CardContainer, typename VariableContainer>
+	/// A character that can be customized with separate card and variable containers. Additionally, a CustomState can
+	/// be held that is not mapped to any Card or Variable type.
+	template <typename CardContainer, typename VariableContainer, typename CustomState = std::monostate,
+		typename CustomStateUtilsImpl = component::character::CustomStateUtils<CustomState>>
 	class SplitCharacter final : public Character {
 		CardContainer _cards;
 		VariableContainer _variables;
+		CustomState _customState{};
 
 	public:
 		using Character::Character;
@@ -45,18 +50,24 @@ namespace m2 {
 		void UnsafeSetVariable(const m2g::pb::VariableType vt, const VariableValue varVal) override { _variables.UnsafeSetVariable(vt, varVal); }
 		void ClearVariable(const m2g::pb::VariableType vt) override { return _variables.ClearVariable(vt); }
 
+		[[nodiscard]] const CustomState& GetCustomState() const { return _customState; }
+		[[nodiscard]] CustomState& GetCustomState() { return _customState; }
+
 	protected:
 		[[nodiscard]] int32_t Hash(int32_t hash) const override {
 			hash = _cards.HashCards(hash);
-			return _variables.HashVariables(hash);
+			hash = _variables.HashVariables(hash);
+			return CustomStateUtilsImpl::Hash(_customState, hash);
 		}
 		void Store(pb::TurnBasedServerUpdate::ObjectDescriptor& objDesc) const override {
 			_cards.StoreCards(objDesc);
 			_variables.StoreVariables(objDesc);
+			CustomStateUtilsImpl::Store(_customState, objDesc);
 		}
 		void Load(const pb::TurnBasedServerUpdate::ObjectDescriptor& objDesc) override {
 			_cards.LoadCards(objDesc);
 			_variables.LoadVariables(objDesc);
+			CustomStateUtilsImpl::Load(_customState, objDesc);
 		}
 	};
 }

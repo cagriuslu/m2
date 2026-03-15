@@ -1,5 +1,4 @@
 #pragma once
-#include "../SplitCharacter.h"
 #include <m2g_VariableType.pb.h>
 #include <array>
 
@@ -7,7 +6,7 @@ namespace m2 {
 	template <std::size_t N>
 	using PossibleVariableTypes = std::array<m2g::pb::VariableType, N>;
 
-	/// A VariableValue container that can hold a fixed number of variable types from a given set.
+	/// A VariableValue container that can hold a fixed number of variable types from a given set
 	template <PossibleVariableTypes possibleVariableTypes, std::size_t maxVariableCount>
 	class StrictVariableTypeCountCharacter {
 		// Verify that variable types are unique
