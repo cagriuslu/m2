@@ -1,5 +1,7 @@
 #pragma once
+#include <m2g/ProxyEx.h>
 #include <m2/Meta.h>
+#include <functional>
 
 namespace m2 {
 	struct Object;
@@ -16,6 +18,7 @@ namespace m2 {
 			std::vector<m2g::pb::CardCategory> cardCategoryCount{};
 			std::vector<m2g::pb::CardCategory> firstCardType{};
 			std::vector<m2g::pb::VariableType> variableValue{};
+			std::vector<std::pair<std::string, std::function<VariableValue()>>> customStateMonitor; // Name and value
 		} characterMonitor;
 
 		/// Monitors are draw above the object. This offset determines how high the monitor text should start.
@@ -25,7 +28,8 @@ namespace m2 {
 			I(characterMonitor.cardTypeCount.size()
 			+ characterMonitor.cardCategoryCount.size()
 			+ characterMonitor.firstCardType.size()
-			+ characterMonitor.variableValue.size()); }
+			+ characterMonitor.variableValue.size()
+			+ characterMonitor.customStateMonitor.size()); }
 
 		void ForEachMonitorValue(const Object&, const std::function<void(const std::string&)>&) const;
 	};

@@ -26,5 +26,12 @@ void ObjectDebugOptions::ForEachMonitorValue(const Object& obj, const std::funct
 			const auto str = std::format("{} value: {}", pb::enum_name(variableValueMonitor), ToString(value));
 			op(str);
 		}
+		for (const auto& customStateMonitor : characterMonitor.customStateMonitor) {
+			if (customStateMonitor.second) {
+				const auto value = customStateMonitor.second();
+				const auto str = std::format("{}: {}", customStateMonitor.first, ToString(value));
+				op(str);
+			}
+		}
 	}
 }
