@@ -241,6 +241,7 @@ void ConnectionToServer::QueueOutgoingMessages(const std::optional<network::Time
 					report->add_player_input_hashes(*playerInputHash);
 					playerInputHashes.emplace_back(*playerInputHash);
 				} else {
+					// Self, fill with zero
 					report->add_player_input_hashes(0);
 					playerInputHashes.emplace_back(0);
 				}

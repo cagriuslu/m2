@@ -186,7 +186,7 @@ bool ServerActor::operator()(MessageBox<ServerActorInput>& inbox, MessageBox<Ser
 								if (nextValidationTimecode < timecode
 										&& not levelStarted.currentStateValidation->IsClientSucceeded(*levelStarted.clientList.FindIndexOf(msg.sender))) {
 									// This client has failed to fullfil the state validateion
-									levelStarted.clientList.Find(msg.sender)->SetFaultOrCheatDetected();
+									levelStarted.clientList.Find(msg.sender)->SetFault(pb::LockstepFaultCode::MISSING_STATE_VALIDATION);
 								}
 							}
 						}
@@ -208,22 +208,22 @@ bool ServerActor::operator()(MessageBox<ServerActorInput>& inbox, MessageBox<Ser
 							const auto& stateReport = msg.message.state_report();
 							auto& currentStateValidation = *levelStarted.currentStateValidation;
 							if (stateReport.timecode() != currentStateValidation.expectedGameStateHash.timecode) {
-								client->SetFaultOrCheatDetected();
+								client->SetFault(pb::LockstepFaultCode::INCORRECT_STATE_REPORT_TIMECODE);
 								return;
 							}
 							if (stateReport.game_state_hash() != currentStateValidation.expectedGameStateHash.hash) {
-								client->SetFaultOrCheatDetected();
+								client->SetFault(pb::LockstepFaultCode::INCORRECT_STATE_REPORT_GAME_STATE_HASH);
 								return;
 							}
 							if (stateReport.player_input_hashes_size() != levelStarted.clientList.Size()) {
-								client->SetFaultOrCheatDetected();
+								client->SetFault(pb::LockstepFaultCode::INCORRECT_STATE_REPORT_PLAYER_COUNT);
 								return;
 							}
 							const auto senderIndex = *levelStarted.clientList.FindIndexOf(msg.sender);
 							for (int i = 0; i < stateReport.player_input_hashes_size(); ++i) {
 								if (i == senderIndex) {
 									if (stateReport.player_input_hashes(i) != 0) {
-										client->SetFaultOrCheatDetected();
+										client->SetFault(pb::LockstepFaultCode::UNEXPECTED_STATE_REPORT_SELF_PLAYER_INPUT_HASH);
 										return;
 									}
 								} else {
@@ -232,7 +232,7 @@ bool ServerActor::operator()(MessageBox<ServerActorInput>& inbox, MessageBox<Ser
 										throw M2_ERROR("Unable to find the input hash of client during validation");
 									}
 									if (stateReport.player_input_hashes(i) != *expectedInputHash) {
-										levelStarted.clientList.At(i)->SetFaultOrCheatDetected();
+										levelStarted.clientList.At(i)->SetFault(pb::LockstepFaultCode::INCORRECT_STATE_REPORT_PLAYER_INPUT_HASH);
 									}
 								}
 							}
@@ -263,7 +263,7 @@ bool ServerActor::operator()(MessageBox<ServerActorInput>& inbox, MessageBox<Ser
 			const auto& levelStarted = std::get<LevelStarted>(_state->Get());
 			pb::LockstepGameEndReport ger;
 			for (const auto& client : levelStarted.clientList) {
-				ger.add_faulty_or_cheater_player(client.IsFaultOrCheatDetected());
+				ger.add_faulty_or_cheater_player(client.IsFaultDetected());
 			}
 			if (std::ranges::any_of(ger.faulty_or_cheater_player(), [](const auto& b) { return b; })) {
 				return ger;

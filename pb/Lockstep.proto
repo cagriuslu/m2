@@ -3,6 +3,16 @@ package m2.pb;
 
 import "m2g_Lockstep.proto";
 
+enum LockstepFaultCode {
+  NO_LOCKSTEP_FAULT_CODE = 0;
+  MISSING_STATE_VALIDATION = 1;
+  INCORRECT_STATE_REPORT_TIMECODE = 2;
+  INCORRECT_STATE_REPORT_GAME_STATE_HASH = 3;
+  INCORRECT_STATE_REPORT_PLAYER_COUNT = 4;
+  UNEXPECTED_STATE_REPORT_SELF_PLAYER_INPUT_HASH = 5;
+  INCORRECT_STATE_REPORT_PLAYER_INPUT_HASH = 6;
+}
+
 message LockstepClientDetails {
   string git_short_commit_hash = 1;
 }

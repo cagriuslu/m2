@@ -53,9 +53,9 @@ void ConnectionToClient::StoreRunningInputHash(const pb::LockstepPlayerInputs& p
 		_runningInputHash.pop_front();
 	}
 }
-void ConnectionToClient::SetFaultOrCheatDetected() {
-	LOG_WARN("Client experienced fault or cheated", _addressAndPort);
-	_faultOrCheatDetected = true;
+void ConnectionToClient::SetFault(pb::LockstepFaultCode code) {
+	LOG_WARN("Client experienced fault or cheated", _addressAndPort, code);
+	_detectedFault = code;
 }
 void ConnectionToClient::EndGame(const pb::LockstepGameEndReport& ger) {
 	pb::LockstepMessage msg;
