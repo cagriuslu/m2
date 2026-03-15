@@ -7,19 +7,15 @@
 namespace m2 {
 	// ReSharper disable CppNonExplicitConvertingConstructor
 	class VariableValue {
-		std::variant<std::monostate, int32_t, int64_t, m2g::pb::VariableType, FE, std::vector<int64_t>> _value{};
+		std::variant<std::monostate, int32_t, m2g::pb::VariableType, FE> _value{};
 
 	public:
 		VariableValue() = default;
 		VariableValue(const int32_t i) : _value(i) {}
-		VariableValue(const int64_t l) : _value(l) {}
-		VariableValue(const uint64_t l) : _value(static_cast<int64_t>(l)) {}
 		VariableValue(const m2g::pb::VariableType vt) : _value(vt) {}
 		VariableValue(const FE fe) : _value(fe) {}
 		template <bool Enable = not GAME_IS_DETERMINISTIC>
 		VariableValue(const float f) requires (Enable) : _value(FE{f}) {}
-		VariableValue(const std::vector<int64_t>& lv) : _value(lv) {}
-		VariableValue(std::vector<int64_t>&& lv) : _value(std::move(lv)) {}
 		VariableValue(const pb::VariableValue&);
 
 		explicit operator bool() const;
@@ -28,22 +24,16 @@ namespace m2 {
 		[[nodiscard]] bool IsNull() const { return std::holds_alternative<std::monostate>(_value); }
 		[[nodiscard]] bool IsNonNull() const { return not IsNull(); }
 		[[nodiscard]] bool IsInt() const { return std::holds_alternative<int32_t>(_value); }
-		[[nodiscard]] bool IsLong() const { return std::holds_alternative<int64_t>(_value); }
 		[[nodiscard]] bool IsVariableType() const { return std::holds_alternative<m2g::pb::VariableType>(_value); }
 		[[nodiscard]] bool IsFE() const { return std::holds_alternative<FE>(_value); }
 		template <bool Enable = not GAME_IS_DETERMINISTIC>
 		[[nodiscard]] bool IsF() const requires (Enable) { return std::holds_alternative<FE>(_value); }
-		[[nodiscard]] bool IsLongVector() const { return std::holds_alternative<std::vector<int64_t>>(_value); }
 
 		[[nodiscard]] int32_t Hash(int32_t initialValue) const;
 
 		[[nodiscard]] int32_t UnsafeGetInt() const { return std::get<int32_t>(_value); }
 		[[nodiscard]] int32_t GetIntOrZero() const;
 		[[nodiscard]] int32_t GetIntOrValue(int32_t defaultValue) const;
-
-		[[nodiscard]] int64_t UnsafeGetLong() const { return std::get<int64_t>(_value); }
-		[[nodiscard]] int64_t GetLongOrZero() const;
-		[[nodiscard]] int64_t GetLongOrValue(int64_t defaultValue) const;
 
 		[[nodiscard]] m2g::pb::VariableType UnsafeGetVariableType() const { return std::get<m2g::pb::VariableType>(_value); }
 		[[nodiscard]] int32_t GetVariableTypeOrZero() const;
@@ -60,17 +50,9 @@ namespace m2 {
 		template <bool Enable = not GAME_IS_DETERMINISTIC>
 		[[nodiscard]] float GetFOrValue(const float defaultValue) const requires (Enable) { return GetFEOrValue(FE{defaultValue}).ToFloat(); }
 
-		[[nodiscard]] const std::vector<int64_t>& UnsafeGetLongVector() const { return std::get<std::vector<int64_t>>(_value); }
-		[[nodiscard]] const std::vector<int64_t>& GetLongVectorOrEmpty() const;
-		[[nodiscard]] const std::vector<int64_t>& GetLongVectorOrDefault(const std::vector<int64_t>&) const;
-
 		[[nodiscard]] VariableValue UnsafeAdd(const VariableValue&) const;
 		[[nodiscard]] VariableValue UnsafeSubtract(const VariableValue&) const;
 		[[nodiscard]] VariableValue Negate() const;
-
-		// Modifiers
-
-		void UnsafePushBack(int64_t l);
 	};
 
 	constexpr VariableValue NULL_VARIABLE_VALUE{};
