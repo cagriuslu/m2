@@ -1,5 +1,5 @@
 #pragma once
-#include "../StrictCharacter.h"
+#include "../SplitCharacter.h"
 #include <m2g_CardType.pb.h>
 #include <array>
 
@@ -7,8 +7,9 @@ namespace m2 {
 	template <std::size_t N>
 	using PossibleCardTypes = std::array<m2g::pb::CardType, N>;
 
+	/// A card container that can hold only a strict set of cards.
 	template <PossibleCardTypes possibleCardTypes>
-	class StrictCardSetCharacter {
+	class StrictCardTypeSetContainer {
 		// Verify that card types are unique
 		static_assert(AreArrayElementsUnique(possibleCardTypes), "CardTypes are not unique");
 

@@ -5,10 +5,11 @@
 #include <array>
 
 namespace m2 {
-	template <typename StrictCardCharacter, typename StrictVariableCharacter>
-	class StrictCharacter final : public Character {
-		StrictCardCharacter _cards;
-		StrictVariableCharacter _variables;
+	/// A character that can be customized with separate card and variable containers.
+	template <typename CardContainer, typename VariableContainer>
+	class SplitCharacter final : public Character {
+		CardContainer _cards;
+		VariableContainer _variables;
 
 	public:
 		using Character::Character;

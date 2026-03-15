@@ -1,5 +1,5 @@
 #pragma once
-#include "../StrictCharacter.h"
+#include "../SplitCharacter.h"
 #include <m2g_VariableType.pb.h>
 #include <array>
 
@@ -7,8 +7,9 @@ namespace m2 {
 	template <std::size_t N>
 	using PossibleVariableTypes = std::array<m2g::pb::VariableType, N>;
 
+	/// A VariableValue container that can hold only a strict set of variable types.
 	template <PossibleVariableTypes possibleVariableTypes>
-	class StrictVariableSetCharacter {
+	class StrictVariableTypeSetContainer {
 		// Verify that variable types are unique
 		static_assert(AreArrayElementsUnique(possibleVariableTypes), "VariableTypes are not unique");
 
