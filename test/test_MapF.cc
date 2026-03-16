@@ -29,25 +29,25 @@ TEST(MapF, contains) {
 TEST(MapF, get) {
 	m2::MapF<int> m{-5.0f, -5.0f, 10.0f, 10.0f};
 	auto [obj, id] = m.Emplace({}, 5);
-	EXPECT_EQ(*m.Get(id), 5);
+	EXPECT_EQ(*m.TryGetObject(id), 5);
 
 	auto [obj2, id2] = m.Emplace({1.0f, 1.0f, 0.0f, 0.0f}, 10);
-	EXPECT_EQ(*m.Get(id2), 10);
+	EXPECT_EQ(*m.TryGetObject(id2), 10);
 }
 
 TEST(MapF, access) {
 	m2::MapF<int> m{-5.0f, -5.0f, 10.0f, 10.0f};
 	auto [obj, id] = m.Emplace({}, 5);
-	EXPECT_EQ(m[id], 5);
+	EXPECT_EQ(m.UnsafeGetObject(id), 5);
 
 	auto [obj2, id2] = m.Emplace({1.0f, 1.0f, 0.0f, 0.0f}, 10);
-	EXPECT_EQ(m[id2], 10);
+	EXPECT_EQ(m.UnsafeGetObject(id2), 10);
 }
 
 TEST(MapF, area) {
 	auto area = m2::RectF{-5.0f, -5.0f, 10.0f, 10.0f};
 	m2::MapF<int> m(area);
-	EXPECT_TRUE(m.Area().IsEqual(area));
+	EXPECT_TRUE(m.GetArea().IsEqual(area));
 }
 
 TEST(MapF, for_each) {

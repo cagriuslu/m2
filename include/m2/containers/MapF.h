@@ -4,7 +4,6 @@
 #include <m2/containers/Pool.h>
 #include <deque>
 #include <memory>
-#include <cstdint>
 
 namespace m2 {
 	// Forward declaration
@@ -15,16 +14,12 @@ namespace m2 {
 
 		template <typename T, uint64_t Capacity, float ComparisonTolerance>
 		class Quadrant {
-			// Most common cache line size is 64 bytes.
-			// Thus, each quadrant can contain multiples of 8 IDs.
-			// The quadrant shouldn't be divided unless there are ITEM_COUNT_THRESHOLD items.
-			static constexpr unsigned ITEM_COUNT_THRESHOLD = 64 / sizeof(Id);
-
-			MapF<T,Capacity>& _map; // Back-pointer to the map, mostly used to look up the objects from the Pool
-			RectF _area; // The plot of land managed by this Quadrant
-			std::deque<ObjectAreaAndId> _items{}; // Items that lay on multiple quadrants, or all items until the child quadrants are created
-			bool _dirty{}; // Signifies that _items contain an item that could wholly fit into a child, but the children are not created yet.
-			std::array<std::pair<RectF, std::unique_ptr<Quadrant>>, 4> _children{}; // Children Quadrants. Order: TL, TR, BL, BR
+			static constexpr unsigned ITEM_COUNT_THRESHOLD = 64 / sizeof(Id); /// Most common cache line is 64 bytes
+			MapF<T,Capacity>& _map; /// Back-pointer to the map, mostly used to look up the objects from the Pool.
+			RectF _area; /// The plot of land managed by this Quadrant
+			std::deque<ObjectAreaAndId> _items{}; /// Holds the items that lay on multiple quadrants, or all items until the child quadrants are created.
+			bool _dirty{}; /// Signifies that _items contain an item that could wholly fit into a child, but the children are not created yet.
+			std::array<std::pair<RectF, std::unique_ptr<Quadrant>>, 4> _children{}; /// Children Quadrants. Order: TL, TR, BL, BR
 
 		public:
 			// Constructors
@@ -33,7 +28,7 @@ namespace m2 {
 
 			// Accessors
 
-			[[nodiscard]] const RectF& Area() const { return _area; }
+			[[nodiscard]] const RectF& GetArea() const { return _area; }
 			uint64_t ForEachContaining(const RectF& area, const std::function<bool(const RectF&,Id,T&)>& op) const;
 			uint64_t ForEachIntersecting(const RectF& area, const std::function<bool(const RectF&,Id,T&)>& op) const;
 
@@ -43,23 +38,22 @@ namespace m2 {
 			void Clear();
 
 		private:
-			// Distribute the items at this level to children
 			void Distribute();
 
 			friend class MapF<T,Capacity,ComparisonTolerance>;
 		};
 
-		// The stored object is wrapped inside MapPoolItem before being placed in the Pool
+		/// The stored object is wrapped inside MapPoolItem before being placed in the Pool
 		template <typename T>
 		struct MapPoolItem {
-			// Back-pointer to either MapF::_foreign_items, or Quadrant::_items. If the object lays outside the area
-			// managed by the Map, this points to MapF::_foreign_items. Otherwise, it points to some Quadrant::_items in
-			// some Quadrant.
+			/// Back-pointer to either MapF::_foreign_items, or Quadrant::_items. If the object lays outside the area
+			/// managed by the Map, this points to MapF::_foreign_items. Otherwise, it points to some Quadrant::_items
+			/// in some Quadrant.
 			std::deque<ObjectAreaAndId>* container{};
-			RectF area; // Area taken up by the object
-			T t; // The object itself
+			RectF area; /// Area taken up by the object
+			T t; /// The object itself
 
-			// Constructor only constructs the object itself.
+			/// Constructor only constructs the object
 			template <typename... Args>
 			explicit MapPoolItem(Args&&... args) : t(std::forward<Args>(args)...) {}
 		};
@@ -80,14 +74,14 @@ namespace m2 {
 
 		using Pool<detail::MapPoolItem<T>,Capacity>::Size;
 		using Pool<detail::MapPoolItem<T>,Capacity>::Contains;
-		T* Get(Id id);
-		const T* Get(Id id) const;
-		T& operator[](Id id);
-		const T& operator[](Id id) const;
-		[[nodiscard]] const RectF& Area() const { return _rootQuadrant.Area(); }
+		T* TryGetObject(Id id);
+		const T* TryGetObject(Id id) const;
+		T& UnsafeGetObject(Id id);
+		const T& UnsafeGetObject(Id id) const;
+		[[nodiscard]] const RectF& GetArea() const { return _rootQuadrant.GetArea(); }
 
-		// Iterate over all objects in the container. The iteration continues as long as `op` returns true.
-		// Returns the number items iterated for which op returned true.
+		/// Iterate over all objects in the container. The iteration continues as long as `op` returns true. Returns the
+		/// number items iterated for which op returned true.
 		uint64_t ForEach(const std::function<bool(const RectF&,Id,T&)>& op);
 		uint64_t ForEachContaining(const RectF& area, const std::function<bool(const RectF&,Id,T&)>& op);
 		uint64_t ForEachIntersecting(const RectF& area, const std::function<bool(const RectF&,Id,T&)>& op);
@@ -96,7 +90,7 @@ namespace m2 {
 		std::pair<T&, Id> Emplace(const RectF& area, Args&&... args);
 		void Erase(Id id);
 		void Move(Id id, const RectF& new_area);
-		void Clear();
+		void Clear() override;
 
 	private:
 		void AdjustContainer(Id id, std::deque<detail::ObjectAreaAndId>* container);
@@ -123,7 +117,7 @@ uint64_t m2::detail::Quadrant<T,Capacity,ComparisonTolerance>::ForEachContaining
 	// Search in items
 	for (auto& item : _items) {
 		if (area.DoesContain(std::get<RectF>(item), ComparisonTolerance)) {
-			if (op(std::get<RectF>(item), std::get<Id>(item), *_map.Get(std::get<Id>(item)))) {
+			if (op(std::get<RectF>(item), std::get<Id>(item), *_map.TryGetObject(std::get<Id>(item)))) {
 				++count;
 			} else {
 				return count;
@@ -145,7 +139,7 @@ uint64_t m2::detail::Quadrant<T,Capacity,ComparisonTolerance>::ForEachIntersecti
 	// Search in items
 	for (auto& item : _items) {
 		if (area.GetIntersection(std::get<RectF>(item), ComparisonTolerance)) {
-			if (op(std::get<RectF>(item), std::get<Id>(item), *_map.Get(std::get<Id>(item)))) {
+			if (op(std::get<RectF>(item), std::get<Id>(item), *_map.TryGetObject(std::get<Id>(item)))) {
 				++count;
 			} else {
 				return count;
@@ -202,6 +196,7 @@ void m2::detail::Quadrant<T,Capacity,ComparisonTolerance>::Clear() {
 
 template <typename T, uint64_t Capacity, float ComparisonTolerance>
 void m2::detail::Quadrant<T,Capacity,ComparisonTolerance>::Distribute() {
+	// Distribute the items at this level to the children
 	if (not _dirty) {
 		return; // Nothing to distribute
 	}
@@ -232,7 +227,7 @@ void m2::detail::Quadrant<T,Capacity,ComparisonTolerance>::Distribute() {
 }
 
 template <typename T, uint64_t Capacity, float ComparisonTolerance>
-T* m2::MapF<T,Capacity,ComparisonTolerance>::Get(Id id) {
+T* m2::MapF<T,Capacity,ComparisonTolerance>::TryGetObject(Id id) {
 	if (auto* item = Pool<detail::MapPoolItem<T>,Capacity>::Get(id)) {
 		return &item->t;
 	}
@@ -240,7 +235,7 @@ T* m2::MapF<T,Capacity,ComparisonTolerance>::Get(Id id) {
 }
 
 template <typename T, uint64_t Capacity, float ComparisonTolerance>
-const T* m2::MapF<T,Capacity,ComparisonTolerance>::Get(Id id) const {
+const T* m2::MapF<T,Capacity,ComparisonTolerance>::TryGetObject(Id id) const {
 	if (const auto* item = Pool<detail::MapPoolItem<T>,Capacity>::Get(id)) {
 		return &item->t;
 	}
@@ -248,16 +243,16 @@ const T* m2::MapF<T,Capacity,ComparisonTolerance>::Get(Id id) const {
 }
 
 template <typename T, uint64_t Capacity, float ComparisonTolerance>
-T& m2::MapF<T,Capacity,ComparisonTolerance>::operator[](Id id) {
-	if (auto* t = Get(id)) {
+T& m2::MapF<T,Capacity,ComparisonTolerance>::UnsafeGetObject(Id id) {
+	if (auto* t = TryGetObject(id)) {
 		return *t;
 	}
 	throw M2_ERROR("Out of bounds");
 }
 
 template <typename T, uint64_t Capacity, float ComparisonTolerance>
-const T& m2::MapF<T,Capacity,ComparisonTolerance>::operator[](Id id) const {
-	if (const auto* t = Get(id)) {
+const T& m2::MapF<T,Capacity,ComparisonTolerance>::UnsafeGetObject(Id id) const {
+	if (const auto* t = TryGetObject(id)) {
 		return *t;
 	}
 	throw M2_ERROR("Out of bounds");
@@ -282,7 +277,7 @@ uint64_t m2::MapF<T,Capacity,ComparisonTolerance>::ForEachContaining(const RectF
 	// Iterate over foreign items
 	for (auto& item : _foreignItems) {
 		if (area.DoesContain(std::get<RectF>(item), ComparisonTolerance)) {
-			if (op(std::get<RectF>(item), std::get<Id>(item), *Get(std::get<Id>(item)))) {
+			if (op(std::get<RectF>(item), std::get<Id>(item), *TryGetObject(std::get<Id>(item)))) {
 				++count;
 			} else {
 				return count;
@@ -298,7 +293,7 @@ uint64_t m2::MapF<T,Capacity,ComparisonTolerance>::ForEachIntersecting(const Rec
 	// Iterate over foreign items
 	for (auto& item : _foreignItems) {
 		if (area.GetIntersection(std::get<RectF>(item), ComparisonTolerance)) {
-			if (op(std::get<RectF>(item), std::get<Id>(item), *Get(std::get<Id>(item)))) {
+			if (op(std::get<RectF>(item), std::get<Id>(item), *TryGetObject(std::get<Id>(item)))) {
 				++count;
 			} else {
 				return count;
@@ -316,7 +311,7 @@ std::pair<T&, m2::Id> m2::MapF<T,Capacity,ComparisonTolerance>::Emplace(const Re
 	// Store area
 	pool_it->area = area;
 	// Point back-pointer to the correct container
-	if (_rootQuadrant.Area().DoesContain(area, ComparisonTolerance)) {
+	if (_rootQuadrant.GetArea().DoesContain(area, ComparisonTolerance)) {
 		// Object fits inside the managed area, insert to one of the quadrants
 		pool_it->container = _rootQuadrant.Insert({area, pool_it.GetId()});
 	} else {
@@ -354,7 +349,7 @@ void m2::MapF<T,Capacity,ComparisonTolerance>::Move(Id id, const RectF& new_area
 		}
 	}
 	// Reinsert
-	if (_rootQuadrant.Area().DoesContain(new_area, ComparisonTolerance)) {
+	if (_rootQuadrant.GetArea().DoesContain(new_area, ComparisonTolerance)) {
 		pool_item->container = _rootQuadrant.Insert({new_area, id});
 	} else {
 		_foreignItems.emplace_back(new_area, id);
