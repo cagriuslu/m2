@@ -8,9 +8,9 @@ namespace m2 {
         virtual ~HeapObjectImpl() = default;
     };
 
-    /// Stores the details for a Pool-allocated ObjectImpl. This class handles the deallocation of the Pool item when
-    /// the object is destroyed. This class is not meant to be derived from. Instead, the details of the pool and the
-    /// item should be stored.
+    /// Stores the details for a Pool-allocated ObjectImpl. This class handles the deallocation from the Pool when the
+    /// object is eventually destroyed. This class is not meant to be derived from. Instead, the pointer to the pool and
+    /// the ID of the item should be stored here.
     class PoolObjectImpl final {
         PoolBase* _poolBase;
         Id _id;

@@ -24,7 +24,11 @@ namespace m2 {
 	/// Else => impl
 	struct Object final {
 		/// Custom data that is managed by the object itself. It's not optimized for any particular usage because every
-		/// and any type of data can be stored by it. It should be accessed only occassionally, not every update.
+		/// and any type of data can be stored by it. For occassional access, HeapObjectImpl could be enough. If access
+		/// is required during every update, PoolObjectImpl should be preferred. In contract to CustomState held by the
+		/// Character, the lifetime is managed by the object itself, and can contain members that can't be default
+		/// constructed by the game engine. BEWARE, this object is not synchronized by the game engine during state
+		/// synchronization multiplayer games (ie. turn-based).
 		std::variant<std::unique_ptr<HeapObjectImpl>, PoolObjectImpl> impl;
 
 		Object() = default;

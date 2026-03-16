@@ -8,7 +8,11 @@
 
 namespace m2 {
 	/// A character that can be customized with separate card and variable containers. Additionally, a CustomState can
-	/// be held that is not mapped to any Card or Variable type.
+	/// be held that is not mapped to any Card or Variable type. Since the Character containers are pre-allocated by
+	/// the engine, CustomState must have a default constructor, which limits its usage. If the game requires holding
+	/// custom state that can't be default initialized, it should prefer to use a PoolObjectImpl (or HeapObjectImpl)
+	/// to precisely control when the object is constructed. If CustomStateUtilsImpl is implemented properly, the game
+	/// engine will ensure proper synchronization and hash compression of the CustomState.
 	template <typename CardContainer, typename VariableContainer, typename CustomState = std::monostate,
 		typename CustomStateUtilsImpl = component::character::CustomStateUtils<CustomState>>
 	class SplitCharacter final : public Character {
