@@ -4,6 +4,7 @@
 
 namespace m2 {
 	class Exact final {
+	public:
 		// PRECISION=14 divides [0, 1) into 2^14 (16384) pieces. This guarantees 4 digits of decimal fractions.
 		static constexpr auto PRECISION = 14;
 		// SIGNIFICANT=18 extends to [-131072, 131071).
@@ -15,6 +16,7 @@ namespace m2 {
 		static constexpr int32_t LEAST_SIGNIFICANT_INTEGER_BIT_MASK = I(1 << PRECISION);
 		static constexpr int32_t MOST_SIGNIFICANT_FRACTION_BIT_MASK = I(1 << (PRECISION - 1));
 
+	private:
 		int32_t _value{};
 
 		static Exact UnsafeFromInt(const int i)       noexcept { return Exact{std::in_place, i << PRECISION}; }
@@ -82,6 +84,7 @@ namespace m2 {
 		Exact operator*(const Exact& b) const { return Exact{std::in_place, static_cast<int32_t>((static_cast<int64_t>(_value) * static_cast<int64_t>(b._value)) >> PRECISION)}; }
 		Exact operator/(const Exact& b) const { return Exact{std::in_place, static_cast<int32_t>((static_cast<int64_t>(_value) << PRECISION) / static_cast<int64_t>(b._value))}; }
 		Exact& operator+=(const Exact& other) { _value += other._value; return *this; }
+		Exact& operator-=(const Exact& other) { _value -= other._value; return *this; }
 
 		// Accessors
 
@@ -113,8 +116,10 @@ namespace m2 {
 
 		// Modifiers
 
-		[[nodiscard]] Exact Add(const Exact& other, const std::optional<Exact>& maxValue) const;
-		[[nodiscard]] Exact Subtract(const Exact& other, const std::optional<Exact>& minValue) const;
+		[[nodiscard]] Exact Add(Exact other, const std::optional<Exact>& maxValue) const;
+		[[nodiscard]] Exact Subtract(Exact other, const std::optional<Exact>& minValue) const;
+		/// Preserves more information than multiplying and dividing separately
+		[[nodiscard]] Exact MultiplyDivide(Exact mul, Exact div) const;
 		[[nodiscard]] Exact AbsoluteValue() const { return IsNegative() ? -*this : *this; }
 		[[nodiscard]] Exact Inverse() const { return One() / *this; }
 		[[nodiscard]] Exact SquareRoot() const;

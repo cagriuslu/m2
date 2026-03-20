@@ -24,10 +24,20 @@ uint64_t m2::XsrRng::GenerateNextNumber64() {
 	return result;
 }
 
-m2::Exact m2::XsrRng::GenerateNextNumberExact() {
+m2::Exact m2::XsrRng::GenerateNextExact() {
 	// It's recommended that the upper 53 bits is used for fractional numbers
 	const auto nextNumber = GenerateNextNumber64();
 	const auto onlyHigherBits = nextNumber >> (64 - 53);
-	const auto int32 = static_cast<int32_t>(onlyHigherBits);
-	return Exact{std::in_place, int32};
+	return Exact{std::in_place, static_cast<int32_t>(onlyHigherBits)};
+}
+
+m2::Exact m2::XsrRng::GenerateNextNormalizedExact() {
+	const auto nextNumber = GenerateNextNumber64();
+	const auto onlyHigherBits = nextNumber >> (64 - Exact::PRECISION);
+	return Exact{std::in_place, static_cast<int32_t>(onlyHigherBits)};
+}
+
+m2::Exact m2::XsrRng::GenerateNextFractionalExact() {
+	const auto normalized = GenerateNextNormalizedExact();
+	return normalized * Exact{2} - Exact{1};
 }

@@ -185,11 +185,16 @@ std::string m2::Exact::ToFastestString() const {
 	return {buffer.data()};
 }
 
-m2::Exact m2::Exact::Add(const Exact& other, const std::optional<Exact>& maxValue) const {
+m2::Exact m2::Exact::Add(const Exact other, const std::optional<Exact>& maxValue) const {
 	return maxValue ? std::min(*this + other, *maxValue) : *this + other;
 }
-m2::Exact m2::Exact::Subtract(const Exact& other, const std::optional<Exact>& minValue) const {
+m2::Exact m2::Exact::Subtract(const Exact other, const std::optional<Exact>& minValue) const {
 	return minValue ? std::max(*this - other, *minValue) : *this - other;
+}
+m2::Exact m2::Exact::MultiplyDivide(const Exact mul, const Exact div) const {
+	const auto afterMul = static_cast<int64_t>(_value) * static_cast<int64_t>(mul._value);
+	const auto afterDiv = afterMul / static_cast<int64_t>(div._value);
+	return Exact{std::in_place, static_cast<int32_t>(afterDiv)};
 }
 m2::Exact m2::Exact::SquareRoot() const {
 	if (IsNegative()) {
