@@ -21,19 +21,25 @@ namespace m2 {
 
 		VecE operator+(const VecE& rhs) const { return {_x + rhs._x, _y + rhs._y}; }
 		VecE& operator+=(const VecE& rhs) { _x += rhs._x; _y += rhs._y; return *this; }
+		VecE& operator-=(const VecE& rhs) { _x -= rhs._x; _y -= rhs._y; return *this; }
+		VecE operator-() const { return {-_x, -_y}; }
 		VecE operator-(const VecE& rhs) const { return {_x - rhs._x, _y - rhs._y}; }
+		VecE operator-(const Exact& rhs) const { return {_x - rhs, _y - rhs}; }
+		VecE operator*(const Exact& rhs) const { return {_x * rhs, _y * rhs}; }
+		VecE operator/(const Exact& rhs) const { return {_x / rhs, _y / rhs}; }
 		explicit operator VecF() const;
 
 		// Accessors
 
 		[[nodiscard]] const Exact& GetX() const { return _x; }
 		[[nodiscard]] const Exact& GetY() const { return _y; }
-
-		// Modifiers
-
 		[[nodiscard]] Exact GetLengthSquaredFE() const;
 		[[nodiscard]] Exact GetLengthFE() const { return GetLengthSquaredFE().SquareRoot(); }
 		[[nodiscard]] Exact GetDistanceToSquaredFE(const VecE& other) const;
 		[[nodiscard]] Exact GetDistanceToFE(const VecE& other) const { return (other - *this).GetLengthFE(); }
+
+		// Modifiers
+
+		[[nodiscard]] VecE Normalize() const { const auto len = GetLengthFE(); return len ? VecE{_x / len, _y / len} : VecE{}; }
 	};
 }

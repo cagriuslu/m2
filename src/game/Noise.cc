@@ -4,6 +4,8 @@
 
 #include "m2/math/VecI.h"
 
+using namespace m2;
+
 namespace internal::perlin {
 	// Permutation table
 	unsigned p[] = {
@@ -122,4 +124,70 @@ float m2::perlin(const VecF& point, float depth) {
 	y2 = std::lerp(x1, x2, v);
 
 	return (std::lerp(y1, y2, w) + 1.0f) / 2.0f;
+}
+
+std::pair<std::vector<VecE>, int> m2::GeneratePointField(const RectE& inclusiveRect, const Exact step) {
+	std::vector<VecE> points;
+	int stride = 0;
+	for (auto y = inclusiveRect.y; y <= inclusiveRect.GetY2(); y += step) {
+		for (auto x = inclusiveRect.x; x <= inclusiveRect.GetX2(); x += step) {
+			points.emplace_back(x, y);
+			if (y == inclusiveRect.y) {
+				++stride;
+			}
+		}
+	}
+	return std::make_pair(std::move(points), stride);
+}
+
+void m2::ApplyNoiseToAllPoints(std::vector<VecE>& points, Distribution& offsetDistribution, Rng& rng) {
+	for (auto& point : points) {
+		const auto offset = VecE{offsetDistribution.GenerateNextExact(rng), offsetDistribution.GenerateNextExact(rng)};
+		point += offset;
+	}
+}
+
+Exact DecayEnvelope::GetValueAt(const Exact t) const {
+	if (t < attackDuration) {
+		// Attack
+		return t.MultiplyDivide(peakAmplitude, attackDuration);
+	}
+	if (t < attackDuration + decayDuration) {
+		// Decay
+		const auto differenceBetweenLevels = sustainAmplitude - peakAmplitude;
+		const auto timeInDecay = t - attackDuration;
+		const auto step = timeInDecay.MultiplyDivide(differenceBetweenLevels, decayDuration);
+		return peakAmplitude + step;
+	}
+	if (t < attackDuration + decayDuration + sustainDuration) {
+		// Sustain
+		return sustainAmplitude;
+	}
+	// Release
+	const auto timeInRelease = t - attackDuration - decayDuration - sustainDuration;
+	const auto step = timeInRelease.MultiplyDivide(sustainAmplitude, releaseDuration);
+	const auto releaseValue = sustainAmplitude - step;
+	return Exact::Zero() < releaseValue ? releaseValue : Exact::Zero();
+}
+
+void m2::ApplyLinearDecayPointSourceOffset(std::vector<VecE>& points, VecE source, VecE offsetAtUnitGain, const DecayEnvelope& gainEnvelope) {
+	for (auto& point : points) {
+		const auto distanceToSource = source.GetDistanceToFE(point);
+		const auto gainAtPoint = gainEnvelope.GetValueAt(distanceToSource);
+		const auto offsetAtPoint = offsetAtUnitGain * gainAtPoint;
+		point += offsetAtPoint;
+	}
+}
+
+void m2::ApplyLinearDecayPointSourceAttraction(std::vector<VecE>& points, VecE source, Exact attractionAtUnitGain, const DecayEnvelope& gainEnvelope) {
+	for (auto& point : points) {
+		const auto vectorToSource = source - point;
+		const auto distanceToSource = vectorToSource.GetLengthFE();
+		const auto gainAtPoint = gainEnvelope.GetValueAt(distanceToSource);
+		const auto attractionAmplitudeAtPoint = attractionAtUnitGain * gainAtPoint;
+		const auto attractionAtPointX = vectorToSource.GetX().MultiplyDivide(attractionAmplitudeAtPoint, distanceToSource);
+		const auto attractionAtPointY = vectorToSource.GetY().MultiplyDivide(attractionAmplitudeAtPoint, distanceToSource);
+		const auto attractionVector = VecE{attractionAtPointX, attractionAtPointY};
+		point += attractionVector;
+	}
 }
