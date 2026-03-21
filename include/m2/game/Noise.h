@@ -36,6 +36,4 @@ namespace m2 {
 	void ApplyLinearDecayPointSourceOffset(std::vector<VecE>& points, VecE source, VecE offsetAtUnitGain, const DecayEnvelope& gainEnvelope);
 	/// Applies attraction or repulsion at a point source with a gain decay. If attraction is negative, repulsion is applied.
 	void ApplyLinearDecayPointSourceAttraction(std::vector<VecE>& points, VecE source, Exact attractionAtUnitGain, const DecayEnvelope& gainEnvelope);
-
-	// offset a line in the direction of the line -> offset'i bir cok noktaya uygulamak yeterli olabilri, linear bir eksende
 }
