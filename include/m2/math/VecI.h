@@ -25,6 +25,7 @@ namespace m2 {
 
 		// Operators
 		VecI operator+(const VecI& rhs) const { return {x + rhs.x, y + rhs.y}; }
+		VecI operator+(const int rhs) const { return {x + rhs, y + rhs}; }
 		VecI operator-(const VecI& rhs) const { return {x - rhs.x, y - rhs.y}; }
 		VecI operator*(const int& rhs) const { return {x * rhs, y * rhs}; }
 		VecI operator/(const int& rhs) const { return {x / rhs, y / rhs}; }
