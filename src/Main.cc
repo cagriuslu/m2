@@ -121,7 +121,7 @@ int main(const int argc, char **argv) {
 			++totalPhySimulationCount;
 		}
 		if (prevPhySimulationCount == 4) {
-			LOG_INFO("Physics simulation can't keep up with wall clock, simulation will jump forward");
+			LOG_INFO("Physics can't keep up, will jump forward");
 			prevPhyUpdateAt->Reset();
 			prevPhyUpdateAt->RetractStartingPoint(M2_LEVEL.GetTotalPauseDuration());
 		}
