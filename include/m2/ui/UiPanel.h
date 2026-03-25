@@ -7,6 +7,16 @@
 
 namespace m2 {
 	struct UiPanel {
+		struct Fullscreen {};
+		struct RelativeToWindow {
+			RectF ratioToGameAndHudDimensions;
+			static RelativeToWindow CreateAnchoredToPosition(const RectI& positionRelativeToGameAndHud);
+		};
+		struct RelativeToWorld {
+			VecF centeredAt;
+		};
+		using PanelPosition = std::variant<Fullscreen, RelativeToWindow, RelativeToWorld>;
+
 	private:
 		/// If this field contains an object, the UiPanel has returned a Return value, but the panel wasn't destroyed
 		/// completely. Instead, the Panel is destroyed, recreated without any content, and the return value is stored
@@ -15,15 +25,13 @@ namespace m2 {
 		std::optional<AnyReturnContainer> _returnValueContainer;
 		bool _prev_text_input_state{};
 		std::unique_ptr<UiPanelBlueprint> _owned_blueprint; // `blueprint` will point here if this object exists
-		RectF _relation_to_game_and_hud_dims;
+		PanelPosition _panelPosition;
 		sdl::TextureUniquePtr _background_texture; // TODO if the screen is resized, background looks bad
 		std::optional<float> _timeout_s;
 
 		/// Used by KillWithReturnValue()
 		explicit UiPanel(AnyReturnContainer&& returnValueContainer)
 				: _returnValueContainer(std::move(returnValueContainer)) {}
-
-		// Modifiers
 
 		UiAction run_blocking();
 

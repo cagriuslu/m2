@@ -219,8 +219,8 @@ namespace m2 {
 		}
 
 		/// Displays a semi-blocking UI panel above all other UI panels. The UI is blocking in the sense that mouse
-		/// movement, button, and key presses are not delivered to other panels or game objects. The UI is semi-blocking
-		/// in the sense that other panels are still updated and the game loop keeps running.
+		/// movement, button, and key presses are not delivered to other panels or game objects. It is semi-blocking in
+		/// the sense that other panels are still updated and the game loop keeps running.
 		void ShowSemiBlockingUiPanel(RectF position_ratio, std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> blueprint);
 		UiPanel* GetSemiBlockingUiPanel() { return _semiBlockingUiPanel ? &*_semiBlockingUiPanel : nullptr; }
 		void DismissSemiBlockingUiPanel(); // Should not be called from the custom UI itself

@@ -1,3 +1,4 @@
+#include <m2/ui/UiPanel.h>
 #include <m2/Game.h>
 #include <m2/Log.h>
 #include <m2/String.h>
@@ -29,6 +30,19 @@ namespace {
 	// Actions
 	constexpr auto draw_widget = [](const auto &w) { w->Draw(); };
 }  // namespace
+
+UiPanel::RelativeToWindow UiPanel::RelativeToWindow::CreateAnchoredToPosition(const RectI& positionRelativeToGameAndHud) {
+	// Convert pixel positions to "relativeToGameAndHudDimensions"
+	const auto& gameAndHud = M2_GAME.Dimensions().GameAndHud();
+	return RelativeToWindow{
+		.ratioToGameAndHudDimensions = RectF{
+			ToFloat(positionRelativeToGameAndHud.x - gameAndHud.x) / ToFloat(gameAndHud.w),
+			ToFloat(positionRelativeToGameAndHud.y - gameAndHud.y) / ToFloat(gameAndHud.h),
+			ToFloat(positionRelativeToGameAndHud.w) / ToFloat(gameAndHud.w),
+			ToFloat(positionRelativeToGameAndHud.h) / ToFloat(gameAndHud.h)
+		}
+	};
+}
 
 UiAction UiPanel::run_blocking() {
 	LOG_DEBUG("Running blocking UI", blueprint->name);
@@ -139,20 +153,14 @@ UiPanel::UiPanel(std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBl
 	LOG_DEBUG("Initializing UI", blueprint->name);
 
 	if (std::holds_alternative<std::monostate>(fullscreen_or_pixel_rect_or_relation_to_game_and_hud)) {
-		// Fullscreen
-		_relation_to_game_and_hud_dims = {0.0f, 0.0f, 1.0f, 1.0f};
+		_panelPosition = Fullscreen{};
 	} else if (std::holds_alternative<RectI>(fullscreen_or_pixel_rect_or_relation_to_game_and_hud)) {
-		// Pixel dims, convert to "relation to game_and_hud dimensions"
-		const auto& pixel_rect = std::get<RectI>(fullscreen_or_pixel_rect_or_relation_to_game_and_hud);
-		const auto& game_and_hud_dims = M2_GAME.Dimensions().GameAndHud();
-		_relation_to_game_and_hud_dims = RectF{
-			ToFloat(pixel_rect.x - game_and_hud_dims.x) / ToFloat(game_and_hud_dims.w),
-			ToFloat(pixel_rect.y - game_and_hud_dims.y) / ToFloat(game_and_hud_dims.h),
-			ToFloat(pixel_rect.w) / ToFloat(game_and_hud_dims.w),
-			ToFloat(pixel_rect.h) / ToFloat(game_and_hud_dims.h)};
+		const auto& pixelRect = std::get<RectI>(fullscreen_or_pixel_rect_or_relation_to_game_and_hud);
+		_panelPosition = RelativeToWindow::CreateAnchoredToPosition(pixelRect);
 	} else {
-		// Relation to game_and_hud
-		_relation_to_game_and_hud_dims = std::get<RectF>(fullscreen_or_pixel_rect_or_relation_to_game_and_hud);
+		_panelPosition = RelativeToWindow{
+			.ratioToGameAndHudDimensions = std::get<RectF>(fullscreen_or_pixel_rect_or_relation_to_game_and_hud)
+		};
 	}
 
 	// Previous text input state is saved. We can now disable it to start with a clean slate
@@ -222,12 +230,19 @@ const AnyReturnContainer* UiPanel::PeekReturnValueContainer() const {
 	return IsKilled() ? &*_returnValueContainer : nullptr;
 }
 RectI UiPanel::Rect() const {
-	const auto& game_and_hud_dims = M2_GAME.Dimensions().GameAndHud();
-	return RectI{
-		RoundI(ToFloat(game_and_hud_dims.x) + _relation_to_game_and_hud_dims.x * ToFloat(game_and_hud_dims.w)),
-		RoundI(ToFloat(game_and_hud_dims.y) + _relation_to_game_and_hud_dims.y * ToFloat(game_and_hud_dims.h)),
-		RoundI(_relation_to_game_and_hud_dims.w * ToFloat(game_and_hud_dims.w)),
-		RoundI(_relation_to_game_and_hud_dims.h * ToFloat(game_and_hud_dims.h))};
+	const auto& gameAndHud = M2_GAME.Dimensions().GameAndHud();
+	if (std::holds_alternative<Fullscreen>(_panelPosition)) {
+		return gameAndHud;
+	} else if (std::holds_alternative<RelativeToWindow>(_panelPosition)) {
+		const auto& relation = std::get<RelativeToWindow>(_panelPosition).ratioToGameAndHudDimensions;
+		return RectI{
+			RoundI(ToFloat(gameAndHud.x) + relation.x * ToFloat(gameAndHud.w)),
+			RoundI(ToFloat(gameAndHud.y) + relation.y * ToFloat(gameAndHud.h)),
+			RoundI(relation.w * ToFloat(gameAndHud.w)),
+			RoundI(relation.h * ToFloat(gameAndHud.h))};
+	} else {
+		throw M2_ERROR("Not yet implemented");
+	}
 }
 
 void UiPanel::KillWithReturnValue(AnyReturnContainer&& arc) {
@@ -238,12 +253,18 @@ void UiPanel::KillWithReturnValue(AnyReturnContainer&& arc) {
 }
 
 void UiPanel::SetTopLeftPosition(const VecI& newPosition) {
-	const auto& game_and_hud_dims = M2_GAME.Dimensions().GameAndHud();
-	_relation_to_game_and_hud_dims = RectF{
-			ToFloat(newPosition.x) / ToFloat(game_and_hud_dims.w),
-			ToFloat(newPosition.y) / ToFloat(game_and_hud_dims.h),
-			_relation_to_game_and_hud_dims.w,
-			_relation_to_game_and_hud_dims.h};
+	const auto& gameAndHud = M2_GAME.Dimensions().GameAndHud();
+	if (std::holds_alternative<Fullscreen>(_panelPosition)) {
+		throw M2_ERROR("Cannot move fullscreen UI panel");
+	} else if (std::holds_alternative<RelativeToWindow>(_panelPosition)) {
+		auto& relation = std::get<RelativeToWindow>(_panelPosition).ratioToGameAndHudDimensions;
+		relation = RectF{
+			ToFloat(newPosition.x) / ToFloat(gameAndHud.w), ToFloat(newPosition.y) / ToFloat(gameAndHud.h),
+			relation.w, relation.h
+		};
+	} else {
+		throw M2_ERROR("Not yet implemented");
+	}
 	RecalculateRects();
 }
 void UiPanel::SetTimeout(const float timeoutS) {
