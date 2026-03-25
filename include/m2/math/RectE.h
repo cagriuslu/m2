@@ -2,6 +2,8 @@
 #include <m2/math/primitives/Exact.h>
 
 namespace m2 {
+	struct RectF;
+
 	struct RectE {
 		Exact x, y, w, h;
 
@@ -15,6 +17,7 @@ namespace m2 {
 
 		bool operator==(const RectE& other) const { return x == other.x && y == other.y && w == other.w && h == other.h; }
 		explicit operator bool() const { return Exact::Zero() < w && Exact::Zero() < h; }
+		explicit operator RectF() const;
 
 		// Accessors
 
