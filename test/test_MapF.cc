@@ -94,7 +94,7 @@ TEST(MapF, for_each_containing) {
 
 	// Full world search
 	bool test_failed1 = false;
-	auto count1 = m.ForEachContaining({-6.5f, -6.5f, 3.0f, 3.0f}, [=, &test_failed1]([[maybe_unused]] const m2::RectF& r, m2::Id id, int& value) -> bool {
+	auto count1 = m.ForEachEncapsulated({-6.5f, -6.5f, 3.0f, 3.0f}, [=, &test_failed1]([[maybe_unused]] const m2::RectF& r, m2::Id id, int& value) -> bool {
 		if (id == id1) {
 			if (value != value1) {
 				test_failed1 = true;
@@ -117,7 +117,7 @@ TEST(MapF, for_each_containing) {
 
 	// Full world search
 	bool test_failed2 = false;
-	auto count2 = m.ForEachContaining({-6.5f, -6.5f, 3.0f, 3.0f}, [=, &test_failed2]([[maybe_unused]] const m2::RectF& r, m2::Id id, int& value) -> bool {
+	auto count2 = m.ForEachEncapsulated({-6.5f, -6.5f, 3.0f, 3.0f}, [=, &test_failed2]([[maybe_unused]] const m2::RectF& r, m2::Id id, int& value) -> bool {
 		if (id == id1) {
 			if (value != value1) {
 				test_failed2 = true;
@@ -134,7 +134,7 @@ TEST(MapF, for_each_containing) {
 
 	// In-map search
 	bool test_failed3 = false;
-	auto count3 = m.ForEachContaining({-5.0f, -5.0f, 4.0f, 4.0f}, [=, &test_failed3]([[maybe_unused]] const m2::RectF& r, m2::Id id, int& value) -> bool {
+	auto count3 = m.ForEachEncapsulated({-5.0f, -5.0f, 4.0f, 4.0f}, [=, &test_failed3]([[maybe_unused]] const m2::RectF& r, m2::Id id, int& value) -> bool {
 		if (id == id3) {
 			if (value != value3) {
 				test_failed3 = true;
@@ -149,7 +149,7 @@ TEST(MapF, for_each_containing) {
 
 	// In-object search
 	bool test_failed4 = false;
-	auto count4 = m.ForEachContaining({-0.25f, -0.25f, 0.2f, 0.2f}, [=, &test_failed4]([[maybe_unused]] const m2::RectF& r, m2::Id, int&) -> bool {
+	auto count4 = m.ForEachEncapsulated({-0.25f, -0.25f, 0.2f, 0.2f}, [=, &test_failed4]([[maybe_unused]] const m2::RectF& r, m2::Id, int&) -> bool {
 		test_failed4 = true;
 		return true;
 	});

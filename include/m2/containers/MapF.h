@@ -29,7 +29,7 @@ namespace m2 {
 			// Accessors
 
 			[[nodiscard]] const RectF& GetArea() const { return _area; }
-			uint64_t ForEachContaining(const RectF& area, const std::function<bool(const RectF&,Id,T&)>& op) const;
+			uint64_t ForEachEncapsulated(const RectF& area, const std::function<bool(const RectF&,Id,T&)>& op) const;
 			uint64_t ForEachIntersecting(const RectF& area, const std::function<bool(const RectF&,Id,T&)>& op) const;
 
 			// Modifiers
@@ -80,10 +80,12 @@ namespace m2 {
 		const T& UnsafeGetObject(Id id) const;
 		[[nodiscard]] const RectF& GetArea() const { return _rootQuadrant.GetArea(); }
 
-		/// Iterate over all objects in the container. The iteration continues as long as `op` returns true. Returns the
-		/// number items iterated for which op returned true.
+		/// Iterates over all objects in the container. The iteration continues as long as `op` returns true. Returns
+		/// the number of items iterated for which op returned true.
 		uint64_t ForEach(const std::function<bool(const RectF&,Id,T&)>& op);
-		uint64_t ForEachContaining(const RectF& area, const std::function<bool(const RectF&,Id,T&)>& op);
+		/// Iterates over all objects in the container that is completely encapsulated inside the given area.
+		uint64_t ForEachEncapsulated(const RectF& area, const std::function<bool(const RectF&,Id,T&)>& op);
+		/// Iterates over all objects in the container that intersects with the given area.
 		uint64_t ForEachIntersecting(const RectF& area, const std::function<bool(const RectF&,Id,T&)>& op);
 
 		template <typename... Args>
@@ -112,7 +114,7 @@ m2::detail::Quadrant<T,Capacity,ComparisonTolerance>::Quadrant(MapF<T,Capacity,C
 }
 
 template <typename T, uint64_t Capacity, float ComparisonTolerance>
-uint64_t m2::detail::Quadrant<T,Capacity,ComparisonTolerance>::ForEachContaining(const RectF& area, const std::function<bool(const RectF&,Id,T&)>& op) const {
+uint64_t m2::detail::Quadrant<T,Capacity,ComparisonTolerance>::ForEachEncapsulated(const RectF& area, const std::function<bool(const RectF&,Id,T&)>& op) const {
 	uint64_t count = 0;
 	// Search in items
 	for (auto& item : _items) {
@@ -127,7 +129,7 @@ uint64_t m2::detail::Quadrant<T,Capacity,ComparisonTolerance>::ForEachContaining
 	// Search in quadrants
 	for (auto& [child_area, child] : _children) {
 		if (child && area.GetIntersection(child_area, ComparisonTolerance)) {
-			count += child->ForEachContaining(area, op);
+			count += child->ForEachEncapsulated(area, op);
 		}
 	}
 	return count;
@@ -149,7 +151,7 @@ uint64_t m2::detail::Quadrant<T,Capacity,ComparisonTolerance>::ForEachIntersecti
 	// Search in quadrants
 	for (auto& [child_area, child] : _children) {
 		if (child && area.GetIntersection(child_area, ComparisonTolerance)) {
-			count += child->ForEachContaining(area, op);
+			count += child->ForEachIntersecting(area, op);
 		}
 	}
 	return count;
@@ -272,7 +274,7 @@ uint64_t m2::MapF<T,Capacity,ComparisonTolerance>::ForEach(const std::function<b
 }
 
 template <typename T, uint64_t Capacity, float ComparisonTolerance>
-uint64_t m2::MapF<T,Capacity,ComparisonTolerance>::ForEachContaining(const RectF& area, const std::function<bool(const RectF&,Id,T&)>& op) {
+uint64_t m2::MapF<T,Capacity,ComparisonTolerance>::ForEachEncapsulated(const RectF& area, const std::function<bool(const RectF&,Id,T&)>& op) {
 	uint64_t count = 0;
 	// Iterate over foreign items
 	for (auto& item : _foreignItems) {
@@ -284,7 +286,7 @@ uint64_t m2::MapF<T,Capacity,ComparisonTolerance>::ForEachContaining(const RectF
 			}
 		}
 	}
-	return count + _rootQuadrant.ForEachContaining(area, op); // Search in quadrants
+	return count + _rootQuadrant.ForEachEncapsulated(area, op); // Search in quadrants
 }
 
 template <typename T, uint64_t Capacity, float ComparisonTolerance>
