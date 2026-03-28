@@ -7,13 +7,17 @@ namespace m2 {
 	public:
 		virtual ~Rng() = default;
 
+		/// Following functions return void by design. This ensures that they aren't called from function parameters
+		/// (ex. Func(GenerateNextNumber(), GenerateNextNumber()) because different platforms may call such these
+		/// functions in different order, which could break the determinism of the RNG.
+
 		/// Generates random bits
-		virtual uint64_t GenerateNextNumber64() = 0;
+		virtual void GenerateNextNumber64(uint64_t& out) = 0;
 		/// Generates numbers in [Exact::Min, Exact::Max]
-		virtual Exact GenerateNextExact() = 0;
+		virtual void GenerateNextExact(Exact& out) = 0;
 		/// Generates numbers in [0, 1]
-		virtual Exact GenerateNextNormalizedExact() = 0;
+		virtual void GenerateNextNormalizedExact(Exact& out) = 0;
 		/// Generates numbers in [-1, 1]
-		virtual Exact GenerateNextFractionalExact() = 0;
+		virtual void GenerateNextFractionalExact(Exact& out) = 0;
 	};
 }

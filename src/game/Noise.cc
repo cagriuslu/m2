@@ -142,7 +142,10 @@ std::pair<std::vector<VecE>, int> m2::GeneratePointField(const RectE& inclusiveR
 
 void m2::ApplyNoiseToAllPoints(std::vector<VecE>& points, Distribution& offsetDistribution, Rng& rng) {
 	for (auto& point : points) {
-		const auto offset = VecE{offsetDistribution.GenerateNextExact(rng), offsetDistribution.GenerateNextExact(rng)};
+		Exact first, second;
+		offsetDistribution.GenerateNextExact(rng, first);
+		offsetDistribution.GenerateNextExact(rng, second);
+		const auto offset = VecE{first, second};
 		point += offset;
 	}
 }

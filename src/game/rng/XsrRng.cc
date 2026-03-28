@@ -10,7 +10,7 @@ m2::XsrRng::XsrRng(const uint64_t seed1, const uint64_t seed2, const uint64_t se
 	_xoshiro256ppState[3] = seed4;
 }
 
-uint64_t m2::XsrRng::GenerateNextNumber64() {
+void m2::XsrRng::GenerateNextNumber64(uint64_t& out) {
 	// xoshiro256++ algorithm
 
 	const auto result = RotateLeft64(_xoshiro256ppState[0] + _xoshiro256ppState[3], 23) + _xoshiro256ppState[0];
@@ -21,23 +21,26 @@ uint64_t m2::XsrRng::GenerateNextNumber64() {
 	_xoshiro256ppState[0] ^= _xoshiro256ppState[3];
 	_xoshiro256ppState[2] ^= tmp;
 	_xoshiro256ppState[3] = RotateLeft64(_xoshiro256ppState[3], 45);
-	return result;
+	out = result;
 }
 
-m2::Exact m2::XsrRng::GenerateNextExact() {
+void m2::XsrRng::GenerateNextExact(Exact& out) {
 	// It's recommended that the upper 53 bits is used for fractional numbers
-	const auto nextNumber = GenerateNextNumber64();
+	uint64_t nextNumber;
+	GenerateNextNumber64(nextNumber);
 	const auto onlyHigherBits = nextNumber >> (64 - 53);
-	return Exact{std::in_place, static_cast<int32_t>(onlyHigherBits)};
+	out = Exact{std::in_place, static_cast<int32_t>(onlyHigherBits)};
 }
 
-m2::Exact m2::XsrRng::GenerateNextNormalizedExact() {
-	const auto nextNumber = GenerateNextNumber64();
+void m2::XsrRng::GenerateNextNormalizedExact(Exact& out) {
+	uint64_t nextNumber;
+	GenerateNextNumber64(nextNumber);
 	const auto onlyHigherBits = nextNumber >> (64 - Exact::PRECISION);
-	return Exact{std::in_place, static_cast<int32_t>(onlyHigherBits)};
+	out = Exact{std::in_place, static_cast<int32_t>(onlyHigherBits)};
 }
 
-m2::Exact m2::XsrRng::GenerateNextFractionalExact() {
-	const auto normalized = GenerateNextNormalizedExact();
-	return normalized * Exact{2} - Exact{1};
+void m2::XsrRng::GenerateNextFractionalExact(Exact& out) {
+	Exact normalized;
+	GenerateNextNormalizedExact(normalized);
+	out = normalized * Exact{2} - Exact{1};
 }

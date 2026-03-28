@@ -2,6 +2,8 @@
 
 using namespace m2;
 
-Exact CustomOptionDistribution::GenerateNextExact(Rng& rng) {
-	return _options[rng.GenerateNextNumber64() % _options.size()];
+void CustomOptionDistribution::GenerateNextExact(Rng& rng, Exact& out) {
+	uint64_t nextNumber;
+	rng.GenerateNextNumber64(nextNumber);
+	out = _options[nextNumber % _options.size()];
 }

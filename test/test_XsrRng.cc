@@ -17,7 +17,9 @@ TEST(XsrRng, GenerateNextNumber64) {
 	std::ranges::fill(buckets, 0);
 
 	m2Repeat(100000) {
-		const auto bucketIdx = rng.GenerateNextNumber64() % 10;
+		uint64_t number;
+		rng.GenerateNextNumber64(number);
+		const auto bucketIdx = number % 10;
 		++buckets[bucketIdx];
 	}
 

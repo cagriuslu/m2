@@ -10,9 +10,9 @@ namespace m2 {
 		XsrRng(uint64_t seed1, uint64_t seed2, uint64_t seed3, uint64_t seed4);
 		~XsrRng() override = default;
 
-		uint64_t GenerateNextNumber64() override;
-		Exact GenerateNextExact() override;
-		Exact GenerateNextNormalizedExact() override;
-		Exact GenerateNextFractionalExact() override;
+		void GenerateNextNumber64(uint64_t&) override;
+		void GenerateNextExact(Exact&) override;
+		void GenerateNextNormalizedExact(Exact&) override;
+		void GenerateNextFractionalExact(Exact&) override;
 	};
 }
