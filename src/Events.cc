@@ -64,10 +64,16 @@ bool Events::Gather() {
 				break;
 			case SDL_MOUSEMOTION:
 				mouse_moved = true;
+				// Store the latest mouse position again
+				_mouse_position.x = e.motion.x;
+				_mouse_position.y = e.motion.y;
 				break;
 			case SDL_MOUSEBUTTONDOWN:
 				++mouse_button_press_count;
 				++mouse_buttons_pressed[u(button_to_mouse_button(e.button.button))];
+				// It is possible that the button was pressed after querying mouse state, but before polling this event.
+				// If button down was pressed, also make sure mouse_buttons_down reflects that.
+				mouse_buttons_down[u(button_to_mouse_button(e.button.button))] = true;
 				if (M2_GAME.HasLevel()) {
 					if (auto* primarySelection = M2_LEVEL.GetPrimarySelection();
 						primarySelection && PeekMouseButtonPress(MouseButton::PRIMARY, primarySelection->ScreenBoundaryPx())) {
@@ -88,6 +94,9 @@ bool Events::Gather() {
 			case SDL_MOUSEBUTTONUP:
 				++mouse_button_release_count;
 				++mouse_buttons_released[u(button_to_mouse_button(e.button.button))];
+				// It is possible that the button was released after querying mouse state, but before polling this event.
+				// If button down was released, also make sure mouse_buttons_down reflects that.
+				mouse_buttons_down[u(button_to_mouse_button(e.button.button))] = false;
 				if (M2_GAME.HasLevel()) {
 					if (auto* primarySelection = M2_LEVEL.GetPrimarySelection();
 						primarySelection && PeekMouseButtonRelease(MouseButton::PRIMARY, primarySelection->ScreenBoundaryPx())) {
@@ -179,7 +188,9 @@ bool Events::PopKeyRelease(const m2g::pb::KeyType key) {
 	return false;
 }
 
-bool Events::PeekMouseButtonPress(const MouseButton mb) const { return mouse_buttons_pressed[u(mb)]; }
+bool Events::PeekMouseButtonPress(const MouseButton mb) const {
+	return mouse_buttons_pressed[u(mb)];
+}
 bool Events::PopMouseButtonPress(const MouseButton mb) {
 	if (mouse_buttons_pressed[u(mb)]) {
 		--mouse_buttons_pressed[u(mb)];
@@ -266,15 +277,19 @@ void Events::ClearMouseWheelScrolls(const RectI& rect) {
 }
 
 std::optional<std::string> Events::PopTextInput() {
-	if (const auto str = text_input.str(); not str.empty()) {
+	if (auto str = text_input.str(); not str.empty()) {
 		text_input = std::stringstream();
 		return str;
 	}
 	return {};
 }
 
-bool Events::IsKeyDown(const m2g::pb::KeyType key) const { return keys_down[pb::enum_index(key)]; }
-bool Events::IsMouseButtonDown(const MouseButton mb) const { return mouse_buttons_down[u(mb)]; }
+bool Events::IsKeyDown(const m2g::pb::KeyType key) const {
+	return keys_down[pb::enum_index(key)];
+}
+bool Events::IsMouseButtonDown(const MouseButton mb) const {
+	return mouse_buttons_down[u(mb)];
+}
 void Events::ClearMouseButtonDown(const RectI& rect) {
 	if (rect.DoesContain(MousePosition())) {
 		mouse_buttons_down = {};
