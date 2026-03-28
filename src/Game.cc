@@ -1058,14 +1058,14 @@ void Game::FlipBuffers() const { SDL_RenderPresent(renderer); }
 void Game::OnWindowResize() {
 	_dimensions->OnWindowResize();
 	if (_level) {
-		IF(_level->_leftHudUiPanel)->RecalculateRects();
-		IF(_level->_rightHudUiPanel)->RecalculateRects();
-		IF(_level->_messageBoxUiPanel)->RecalculateRects();
+		IF(_level->_leftHudUiPanel)->UpdatePosition();
+		IF(_level->_rightHudUiPanel)->UpdatePosition();
+		IF(_level->_messageBoxUiPanel)->UpdatePosition();
 		for (auto &panel : _level->_customNonblockingUiPanels) {
-			panel.RecalculateRects();
+			panel.UpdatePosition();
 		}
-		IF(_level->_mouseHoverUiPanel)->RecalculateRects();
-		IF (_level->_semiBlockingUiPanel)->RecalculateRects();
+		IF(_level->_mouseHoverUiPanel)->UpdatePosition();
+		IF (_level->_semiBlockingUiPanel)->UpdatePosition();
 
 		// Clear text label rectangles so that they are regenerated with new size
 		for (auto& gfx : _level->uprightGraphics) {

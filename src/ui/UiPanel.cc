@@ -1,11 +1,9 @@
 #include <m2/ui/UiPanel.h>
 #include <m2/Game.h>
 #include <m2/Log.h>
-#include <m2/String.h>
 #include <m2/sdl/Detail.h>
 #include <m2/ui/Console.h>
 #include <m2/ui/UiPanelBlueprint.h>
-#include <m2/ui/UiPanel.h>
 #include <m2/ui/UiWidgetBlueprint.h>
 #include <m2/ui/widget/CheckboxWithText.h>
 #include <m2/ui/widget/Hidden.h>
@@ -26,9 +24,6 @@ using namespace m2;
 namespace {
 	// Filters
 	constexpr auto is_widget_enabled = [](const auto &w) { return w->enabled; };
-	constexpr auto IsWidgetFocused = [](const auto &w) { return w->IsFocused(); };
-	// Actions
-	constexpr auto draw_widget = [](const auto &w) { w->Draw(); };
 }  // namespace
 
 UiPanel::RelativeToWindow UiPanel::RelativeToWindow::CreateAnchoredToPosition(const RectI& positionWithinToGameAndHud) {
@@ -102,7 +97,7 @@ UiAction UiPanel::run_blocking() {
 			if (const auto window_resize = events.PopWindowResize(); window_resize) {
 				M2_GAME.OnWindowResize();
 				// TODO what about the other sync panels in the stack?
-				RecalculateRects();
+				UpdatePosition();
 			}
 
 			// Handle events
@@ -168,10 +163,8 @@ UiPanel::UiPanel(std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBl
 			set_widget_focus_state(*widgets.back(), true);
 		}
 	}
-
-	// Update initial positions
-	RecalculateRects();
-
+	// Initial positions
+	UpdatePosition();
 	IF(blueprint->onCreate)(*this);
 }
 
@@ -253,7 +246,7 @@ void UiPanel::SetTopLeftPosition(const VecI& newPosition) {
 	} else {
 		throw M2_ERROR("Not yet implemented");
 	}
-	RecalculateRects();
+	UpdatePosition();
 }
 void UiPanel::SetTimeout(const float timeoutS) {
 	if (timeoutS < 0.0f) {
@@ -265,16 +258,21 @@ void UiPanel::ClearTimeout() {
 	_timeout_s.reset();
 }
 
-void UiPanel::RecalculateRects() {
+void UiPanel::UpdatePosition() {
+	if (std::holds_alternative<RelativeToWorld>(_panelPosition)) {
+		const auto& centeredAt = std::get<RelativeToWorld>(_panelPosition).centeredAt;
+		const auto centerOfPanel = ScreenOriginToPositionVecPx(centeredAt).RoundI();
+		_lastScreenPositionOfCenterIfRelativeToWorld = centerOfPanel;
+	}
+
+
 	auto rect = Rect();
-	for (const auto &widget_state : widgets) {
-		auto widget_rect = CalculateWidgetRect(
-		    rect, blueprint->w, blueprint->h, widget_state->blueprint->x, widget_state->blueprint->y,
-		    widget_state->blueprint->w, widget_state->blueprint->h);
-		widget_state->SetRect(widget_rect);
+	for (const auto &widget : widgets) {
+		const auto widgetRect = CalculateWidgetRect(rect, blueprint->w, blueprint->h, widget->blueprint->x,
+			widget->blueprint->y, widget->blueprint->w, widget->blueprint->h);
+		widget->SetRect(widgetRect);
 	}
 }
-
 UiAction UiPanel::HandleEvents(Events& events, bool IsPanning) {
 	// Return if UiPanel not enabled
 	if (IsKilled() || not enabled) {
@@ -284,10 +282,17 @@ UiAction UiPanel::HandleEvents(Events& events, bool IsPanning) {
 	if (blueprint->ignore_events) {
 		return MakeContinueAction();
 	}
-
 	// If the UI is cancellable, check if MENU button is pressed
 	if (blueprint->cancellable && events.PopKeyPress(m2g::pb::KeyType::PAUSE)) {
 		return MakeReturnAction();
+	}
+
+	if (std::holds_alternative<RelativeToWorld>(_panelPosition) && _lastScreenPositionOfCenterIfRelativeToWorld) {
+		const auto& centeredAt = std::get<RelativeToWorld>(_panelPosition).centeredAt;
+		const auto centerOfPanel = ScreenOriginToPositionVecPx(centeredAt).RoundI();
+		if (centerOfPanel != *_lastScreenPositionOfCenterIfRelativeToWorld) {
+			UpdatePosition();
+		}
 	}
 
 	std::optional<UiAction> action;
@@ -296,7 +301,6 @@ UiAction UiPanel::HandleEvents(Events& events, bool IsPanning) {
 	if (blueprint->onEvent) {
 		action = blueprint->onEvent(*this, events);
 	}
-
 	if (not action || action->IsContinue()) {
 		// Then, deliver the event to the widgets
 		for (auto &widget : widgets | std::views::filter(is_widget_enabled)) {
@@ -323,7 +327,6 @@ UiAction UiPanel::HandleEvents(Events& events, bool IsPanning) {
 	}
 	return std::move(*action);
 }
-
 UiAction UiPanel::UpdateContents(float delta_time_s) {
 	// Return if UiPanel not enabled
 	if (IsKilled() || not enabled) {
@@ -354,7 +357,6 @@ UiAction UiPanel::UpdateContents(float delta_time_s) {
 
 	return MakeContinueAction();
 }
-
 void UiPanel::Draw() {
 	if (IsKilled() || not enabled) {
 		return;
@@ -362,7 +364,7 @@ void UiPanel::Draw() {
 
 	auto rect = Rect();
 	UiWidget::draw_rectangle(rect, blueprint->background_color);
-	std::ranges::for_each(widgets | std::views::filter(is_widget_enabled), draw_widget);
+	std::ranges::for_each(widgets | std::views::filter(is_widget_enabled), &UiWidget::Draw);
 	UiWidget::draw_border(rect, vertical_border_width_px(), horizontal_border_width_px());
 }
 
@@ -415,18 +417,19 @@ std::unique_ptr<UiWidget> UiPanel::create_widget_state(const UiWidgetBlueprint &
 	return state;
 }
 
-void UiPanel::set_widget_focus_state(UiWidget &w, const bool state) {
+void UiPanel::set_widget_focus_state(UiWidget &w, const bool state_) {
 	// Clear the other focused widget
-	if (state && not w.IsFocused()) {
+	if (state_ && not w.IsFocused()) {
 		clear_focus();
 	}
-	w.SetFocusState(state);
+	w.SetFocusState(state_);
 }
 
 void UiPanel::clear_focus() {
 	// Check if there's an already focused widget
 	std::ranges::for_each(
-	    widgets | std::views::filter(IsWidgetFocused), [&](const auto &it) { set_widget_focus_state(*it, false); });
+		widgets | std::views::filter(&UiWidget::IsFocused),
+		[&](const auto &it) { set_widget_focus_state(*it, false); });
 }
 
 RectI m2::CalculateWidgetRect(

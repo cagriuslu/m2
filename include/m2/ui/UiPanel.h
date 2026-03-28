@@ -27,6 +27,7 @@ namespace m2 {
 		bool _prev_text_input_state{};
 		std::unique_ptr<UiPanelBlueprint> _owned_blueprint; // `blueprint` will point here if this object exists
 		PanelPosition _panelPosition;
+		std::optional<VecI> _lastScreenPositionOfCenterIfRelativeToWorld;
 		sdl::TextureUniquePtr _background_texture; // TODO if the screen is resized, background looks bad
 		std::optional<float> _timeout_s;
 
@@ -80,7 +81,7 @@ namespace m2 {
 
 		// Lifecycle Management
 
-        void RecalculateRects();
+        void UpdatePosition();
 		/// Handle the events. If `IsPanning` is true, the mouse state (button states) are not cleared after the
 		/// handling so that the game objects can still observe that the mouse buttons are down.
         UiAction HandleEvents(Events& events, bool IsPanning = false);
@@ -92,7 +93,7 @@ namespace m2 {
 		[[nodiscard]] int horizontal_border_width_px() const;
 
 		std::unique_ptr<UiWidget> create_widget_state(const UiWidgetBlueprint& widget_blueprint);
-		void set_widget_focus_state(UiWidget& w, bool state);
+		void set_widget_focus_state(UiWidget& w, bool);
 		void clear_focus();
 
 	public:
