@@ -46,7 +46,7 @@ std::optional<m2g::pb::CardType> ask_for_industry_selection(m2g::pb::CardType in
 
 	std::optional<m2g::pb::CardType> selected_industry;
 	auto background = M2_GAME.DrawGameToTexture(M2_LEVEL.GetCamera()->InferPositionF());
-	UiPanel::create_and_run_blocking(std::make_unique<m2::UiPanelBlueprint>(blueprint), RectF{0.15f, 0.15f, 0.7f, 0.7f}, std::move(background))
+	UiPanel::create_and_run_blocking(std::make_unique<m2::UiPanelBlueprint>(blueprint), UiPanel::RelativeToWindow{RectF{0.15f, 0.15f, 0.7f, 0.7f}}, std::move(background))
 			.IfQuit([] { M2_GAME.quit = true; })
 			.IfVoidReturn([&]() {
 				LOG_INFO("Industry selection cancelled");

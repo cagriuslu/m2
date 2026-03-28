@@ -267,7 +267,7 @@ const UiPanelBlueprint m2::sheet_editor_left_hud = {
 				.text = "Foreground Companion",
 				.wrapped_font_size_in_units = 2.4f,
 				.onAction = [](MAYBE const widget::Text& self) -> UiAction {
-					M2_LEVEL.ReplaceRightHud(&foregroundCompanionModeRightHud, M2_GAME.Dimensions().RightHud());
+					M2_LEVEL.ReplaceRightHud(&foregroundCompanionModeRightHud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().RightHud()));
 					return MakeContinueAction();
 				}
 			}
@@ -278,7 +278,7 @@ const UiPanelBlueprint m2::sheet_editor_left_hud = {
 				.text = "Rect",
 				.wrapped_font_size_in_units = 2.4f,
 				.onAction = [](MAYBE const widget::Text& self) -> UiAction {
-					M2_LEVEL.ReplaceRightHud(&rectModeRightHud, M2_GAME.Dimensions().RightHud());
+					M2_LEVEL.ReplaceRightHud(&rectModeRightHud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().RightHud()));
 					return MakeContinueAction();
 				}
 			}
@@ -289,7 +289,7 @@ const UiPanelBlueprint m2::sheet_editor_left_hud = {
 				.text = "Fixture",
 				.wrapped_font_size_in_units = 2.4f,
 				.onAction = [](MAYBE const widget::Text& self) -> UiAction {
-					M2_LEVEL.ReplaceRightHud(&fixtureModeRightHud, M2_GAME.Dimensions().RightHud());
+					M2_LEVEL.ReplaceRightHud(&fixtureModeRightHud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().RightHud()));
 					return MakeContinueAction();
 				}
 			}
@@ -300,7 +300,7 @@ const UiPanelBlueprint m2::sheet_editor_left_hud = {
 				.text = "Cancel",
 				.wrapped_font_size_in_units = 2.4f,
 				.onAction = [](MAYBE const widget::Text& self) -> UiAction {
-					M2_LEVEL.ReplaceRightHud(&sheet_editor_right_hud, M2_GAME.Dimensions().RightHud());
+					M2_LEVEL.ReplaceRightHud(&sheet_editor_right_hud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().RightHud()));
 					return MakeContinueAction();
 				}
 			}
@@ -381,7 +381,7 @@ const UiPanelBlueprint m2::sheet_editor_main_menu = {
 				.onAction = [](MAYBE const widget::Text& self) -> UiAction {
 					if (const auto selections = self.Parent().FindWidget<widget::TextSelection>("SpriteTypeSelection")->GetSelectedOptions();
 							not selections.empty()) {
-						M2_LEVEL.ReplaceRightHud(&sheet_editor_right_hud, M2_GAME.Dimensions().RightHud());
+						M2_LEVEL.ReplaceRightHud(&sheet_editor_right_hud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().RightHud()));
 						const auto selectedSprite = static_cast<m2g::pb::SpriteType>(I(selections[0]));
 						std::get<sheet_editor::State>(M2_LEVEL.stateVariant).Select(selectedSprite);
 						return MakeReturnAction();

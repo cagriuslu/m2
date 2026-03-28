@@ -31,15 +31,15 @@ namespace {
 	constexpr auto draw_widget = [](const auto &w) { w->Draw(); };
 }  // namespace
 
-UiPanel::RelativeToWindow UiPanel::RelativeToWindow::CreateAnchoredToPosition(const RectI& positionRelativeToGameAndHud) {
+UiPanel::RelativeToWindow UiPanel::RelativeToWindow::CreateAnchoredToPosition(const RectI& positionWithinToGameAndHud) {
 	// Convert pixel positions to "relativeToGameAndHudDimensions"
 	const auto& gameAndHud = M2_GAME.Dimensions().GameAndHud();
 	return RelativeToWindow{
 		.ratioToGameAndHudDimensions = RectF{
-			ToFloat(positionRelativeToGameAndHud.x - gameAndHud.x) / ToFloat(gameAndHud.w),
-			ToFloat(positionRelativeToGameAndHud.y - gameAndHud.y) / ToFloat(gameAndHud.h),
-			ToFloat(positionRelativeToGameAndHud.w) / ToFloat(gameAndHud.w),
-			ToFloat(positionRelativeToGameAndHud.h) / ToFloat(gameAndHud.h)
+			ToFloat(positionWithinToGameAndHud.x - gameAndHud.x) / ToFloat(gameAndHud.w),
+			ToFloat(positionWithinToGameAndHud.y - gameAndHud.y) / ToFloat(gameAndHud.h),
+			ToFloat(positionWithinToGameAndHud.w) / ToFloat(gameAndHud.w),
+			ToFloat(positionWithinToGameAndHud.h) / ToFloat(gameAndHud.h)
 		}
 	};
 }
@@ -138,8 +138,7 @@ UiAction UiPanel::run_blocking() {
 }
 
 UiPanel::UiPanel(std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> static_or_unique_blueprint,
-		const std::variant<std::monostate, RectI, RectF>& fullscreen_or_pixel_rect_or_relation_to_game_and_hud,
-		sdl::TextureUniquePtr background_texture)
+		const PanelPosition& panelPosition, sdl::TextureUniquePtr background_texture)
 		: _prev_text_input_state(SDL_IsTextInputActive()), _background_texture(std::move(background_texture)) {
 	if (std::holds_alternative<const UiPanelBlueprint*>(static_or_unique_blueprint)) {
 		// Static blueprint
@@ -149,19 +148,9 @@ UiPanel::UiPanel(std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBl
 		_owned_blueprint = std::move(std::get<std::unique_ptr<UiPanelBlueprint>>(static_or_unique_blueprint));
 		blueprint = _owned_blueprint.get(); // Point `blueprint` to owned_blueprint
 	}
-
 	LOG_DEBUG("Initializing UI", blueprint->name);
 
-	if (std::holds_alternative<std::monostate>(fullscreen_or_pixel_rect_or_relation_to_game_and_hud)) {
-		_panelPosition = Fullscreen{};
-	} else if (std::holds_alternative<RectI>(fullscreen_or_pixel_rect_or_relation_to_game_and_hud)) {
-		const auto& pixelRect = std::get<RectI>(fullscreen_or_pixel_rect_or_relation_to_game_and_hud);
-		_panelPosition = RelativeToWindow::CreateAnchoredToPosition(pixelRect);
-	} else {
-		_panelPosition = RelativeToWindow{
-			.ratioToGameAndHudDimensions = std::get<RectF>(fullscreen_or_pixel_rect_or_relation_to_game_and_hud)
-		};
-	}
+	_panelPosition = panelPosition;
 
 	// Previous text input state is saved. We can now disable it to start with a clean slate
 	SDL_StopTextInput();
@@ -186,21 +175,17 @@ UiPanel::UiPanel(std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBl
 	IF(blueprint->onCreate)(*this);
 }
 
-UiAction UiPanel::create_and_run_blocking(std::variant<const UiPanelBlueprint*,
-		std::unique_ptr<UiPanelBlueprint>> static_or_unique_blueprint,
-		const std::variant<std::monostate, RectI, RectF>& fullscreen_or_pixel_rect_or_relation_to_game_and_hud,
-		sdl::TextureUniquePtr background_texture) {
+UiAction UiPanel::create_and_run_blocking(std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> static_or_unique_blueprint,
+		const PanelPosition& panelPosition, sdl::TextureUniquePtr background_texture) {
 	// Check if there is already a blocking UI panel
 	if (not M2_GAME.HasLevel() || M2_LEVEL.IsPaused()) {
 		// Execute panel without pausing the level as it's paused already
-		return UiPanel{std::move(static_or_unique_blueprint), fullscreen_or_pixel_rect_or_relation_to_game_and_hud,
-				std::move(background_texture)}.run_blocking();
+		return UiPanel{std::move(static_or_unique_blueprint), panelPosition, std::move(background_texture)}.run_blocking();
 	}
 
 	// Execute panel after pausing the level
 	M2_LEVEL.Pause();
-	auto action = UiPanel{std::move(static_or_unique_blueprint),
-			fullscreen_or_pixel_rect_or_relation_to_game_and_hud, std::move(background_texture)}.run_blocking();
+	auto action = UiPanel{std::move(static_or_unique_blueprint), panelPosition, std::move(background_texture)}.run_blocking();
 	M2_LEVEL.Unpause();
 
 	return action;

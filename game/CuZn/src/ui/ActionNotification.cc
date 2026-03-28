@@ -63,5 +63,5 @@ void display_action_notification(const m2g::pb::TurnBasedServerCommand::ActionNo
 		M2G_PROXY.actionNotificationPanel.reset();
 	}
 	M2G_PROXY.actionNotificationPanel = M2_LEVEL.AddCustomNonblockingUiPanel(
-			std::make_unique<UiPanelBlueprint>(blueprint), area);
+			std::make_unique<UiPanelBlueprint>(blueprint), UiPanel::RelativeToWindow{area});
 }

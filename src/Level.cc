@@ -86,7 +86,7 @@ void_expected Level::InitLevelEditor(const std::filesystem::path& lb_path) {
 	stateVariant.emplace<level_editor::State>();
 
 	// Create message box initially disabled
-	_messageBoxUiPanel.emplace(&DefaultMessageBoxBlueprint, DefaultMessageBoxArea);
+	_messageBoxUiPanel.emplace(&DefaultMessageBoxBlueprint, UiPanel::RelativeToWindow{DefaultMessageBoxArea});
 	_messageBoxUiPanel->enabled = false;
 
 	if (exists(*_lbPath)) {
@@ -103,9 +103,9 @@ void_expected Level::InitLevelEditor(const std::filesystem::path& lb_path) {
 	obj::CreateOrigin();
 
 	// UI Hud
-	_leftHudUiPanel.emplace(&level_editor::gLeftHudBlueprint, M2_GAME.Dimensions().LeftHud());
+	_leftHudUiPanel.emplace(&level_editor::gLeftHudBlueprint, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().LeftHud()));
 	_leftHudUiPanel->UpdateContents(0.0f);
-	_rightHudUiPanel.emplace(&level_editor::gRightHudBlueprint, M2_GAME.Dimensions().RightHud());
+	_rightHudUiPanel.emplace(&level_editor::gRightHudBlueprint, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().RightHud()));
 	_rightHudUiPanel->UpdateContents(0.0f);
 	_messageBoxUiPanel->UpdateContents(0.0f);
 
@@ -118,7 +118,7 @@ void_expected Level::InitSheetEditor(const std::filesystem::path& path) {
 	stateVariant.emplace<sheet_editor::State>(std::move(*state));
 
 	// Create message box initially disabled
-	_messageBoxUiPanel.emplace(&DefaultMessageBoxBlueprint, DefaultMessageBoxArea);
+	_messageBoxUiPanel.emplace(&DefaultMessageBoxBlueprint, UiPanel::RelativeToWindow{DefaultMessageBoxArea});
 	_messageBoxUiPanel->enabled = false;
 
 	// Create default objects
@@ -127,9 +127,9 @@ void_expected Level::InitSheetEditor(const std::filesystem::path& path) {
 	obj::CreateOrigin();
 
 	// UI Hud
-	_leftHudUiPanel.emplace(&sheet_editor_left_hud, M2_GAME.Dimensions().LeftHud());
+	_leftHudUiPanel.emplace(&sheet_editor_left_hud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().LeftHud()));
 	_leftHudUiPanel->UpdateContents(0.0f);
-	_rightHudUiPanel.emplace(&sheet_editor_right_hud, M2_GAME.Dimensions().RightHud());
+	_rightHudUiPanel.emplace(&sheet_editor_right_hud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().RightHud()));
 	_rightHudUiPanel->UpdateContents(0.0f);
 	_messageBoxUiPanel->UpdateContents(0.0f);
 
@@ -142,7 +142,7 @@ void_expected Level::InitBulkSheetEditor(const std::filesystem::path& path) {
 	stateVariant.emplace<bulk_sheet_editor::State>(std::move(*state));
 
 	// Create message box initially disabled
-	_messageBoxUiPanel.emplace(&DefaultMessageBoxBlueprint, DefaultMessageBoxArea);
+	_messageBoxUiPanel.emplace(&DefaultMessageBoxBlueprint, UiPanel::RelativeToWindow{DefaultMessageBoxArea});
 	_messageBoxUiPanel->enabled = false;
 
 	// Create default objects
@@ -393,7 +393,7 @@ void Level::RemoveCustomNonblockingUiPanelDeferred(std::list<UiPanel>::iterator 
 	M2_DEFER(([this,it] { _customNonblockingUiPanels.erase(it); }));
 }
 void Level::ShowSemiBlockingUiPanel(RectF position_ratio, std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> blueprint) {
-	_semiBlockingUiPanel.emplace(std::move(blueprint), position_ratio);
+	_semiBlockingUiPanel.emplace(std::move(blueprint), UiPanel::RelativeToWindow{position_ratio});
 }
 void Level::DismissSemiBlockingUiPanel() {
 	_semiBlockingUiPanel.reset();
@@ -444,8 +444,8 @@ void_expected Level::InitAnyPlayer(
 
 	preLevelInit(_name, *_lb);
 
-	_leftHudUiPanel.emplace(M2G_PROXY.LeftHudBlueprint(), M2_GAME.Dimensions().LeftHud());
-	_rightHudUiPanel.emplace(M2G_PROXY.RightHudBlueprint(), M2_GAME.Dimensions().RightHud());
+	_leftHudUiPanel.emplace(M2G_PROXY.LeftHudBlueprint(), UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().LeftHud()));
+	_rightHudUiPanel.emplace(M2G_PROXY.RightHudBlueprint(), UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().RightHud()));
 	if (const auto [blueprint, area] = M2G_PROXY.MessageBoxBlueprintAndArea(); blueprint) {
 		_messageBoxUiPanel.emplace(blueprint, area);
 		_messageBoxUiPanel->enabled = false;

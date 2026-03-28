@@ -15,6 +15,7 @@
 #include "network/Types.h"
 #include "ui/MessageBox.h"
 #include "ObjectBlueprint.h"
+#include "ui/UiPanel.h"
 #include <span>
 
 namespace m2 {
@@ -90,7 +91,7 @@ namespace m2 {
 		const UiPanelBlueprint* RightHudBlueprint() { return nullptr; }
 		/// The MessageBox blueprint should contain a Widget named "MessageText" of variant TextBlueprint. This widget
 		/// will be filled with the message text.
-		std::pair<const UiPanelBlueprint*, std::variant<std::monostate,RectI,RectF>> MessageBoxBlueprintAndArea() { return std::make_pair(&DefaultMessageBoxBlueprint, DefaultMessageBoxArea); }
+		std::pair<const UiPanelBlueprint*, UiPanel::PanelPosition> MessageBoxBlueprintAndArea() { return std::make_pair(&DefaultMessageBoxBlueprint, UiPanel::RelativeToWindow{DefaultMessageBoxArea}); }
 
 		/// Called before/after a single player level is loaded
 		void pre_single_player_level_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}

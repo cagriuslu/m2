@@ -76,7 +76,7 @@ void m2g::Proxy::postTurnBasedLevelClientInit(MAYBE const std::string& name, MAY
 	// Add status bar panel to the level
 	_status_bar_panel = M2_LEVEL.AddCustomNonblockingUiPanel(
 		std::make_unique<m2::UiPanelBlueprint>(generate_status_bar_blueprint()),
-		status_bar_window_ratio());
+		UiPanel::RelativeToWindow{status_bar_window_ratio()});
 }
 
 void m2g::Proxy::turnBasedServerPopulate(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {
@@ -365,14 +365,14 @@ void m2g::Proxy::post_server_update(m2::network::SequenceNo, const bool shutdown
 	M2_LEVEL.RemoveCustomNonblockingUiPanel(_status_bar_panel);
 	_status_bar_panel = M2_LEVEL.AddCustomNonblockingUiPanel(
 			std::make_unique<m2::UiPanelBlueprint>(generate_status_bar_blueprint()),
-			status_bar_window_ratio());
+			UiPanel::RelativeToWindow{status_bar_window_ratio()});
 
 	if (cards_panel) {
 		LOG_DEBUG("Refreshing cards panel");
 		M2_LEVEL.RemoveCustomNonblockingUiPanel(*M2G_PROXY.cards_panel);
 		M2G_PROXY.cards_panel = M2_LEVEL.AddCustomNonblockingUiPanel(
 				std::make_unique<m2::UiPanelBlueprint>(generate_cards_window("Cards")),
-				cards_panel_ratio());
+				UiPanel::RelativeToWindow{cards_panel_ratio()});
 	}
 
 	if (shutdown) {

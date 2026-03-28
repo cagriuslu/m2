@@ -121,8 +121,8 @@ const UiPanelBlueprint m2::bulk_sheet_editor::gMainMenu = {
 	                if (const auto selections = self.Parent().FindWidget<widget::TextSelection>("ResourceSelection")->GetSelectedOptions();
 	                		not selections.empty()) {
 		                if (const auto spriteSheet = std::get<State>(M2_LEVEL.stateVariant).SelectResource(std::get<std::string>(selections[0]))) {
-		                	M2_LEVEL.ReplaceLeftHud(std::make_unique<UiPanelBlueprint>(GenerateLeftHud(*spriteSheet)), M2_GAME.Dimensions().LeftHud());
-	                		M2_LEVEL.ReplaceRightHud(&gRightHud, M2_GAME.Dimensions().RightHud());
+		                	M2_LEVEL.ReplaceLeftHud(std::make_unique<UiPanelBlueprint>(GenerateLeftHud(*spriteSheet)), UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().LeftHud()));
+	                		M2_LEVEL.ReplaceRightHud(&gRightHud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().RightHud()));
 	                		return MakeReturnAction();
 	                	}
                 	}

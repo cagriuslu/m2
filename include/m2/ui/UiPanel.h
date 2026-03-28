@@ -10,7 +10,7 @@ namespace m2 {
 		struct Fullscreen {};
 		struct RelativeToWindow {
 			RectF ratioToGameAndHudDimensions;
-			static RelativeToWindow CreateAnchoredToPosition(const RectI& positionRelativeToGameAndHud);
+			static RelativeToWindow CreateAnchoredToPosition(const RectI& positionWithinToGameAndHud);
 		};
 		struct RelativeToWorld {
 			VecF centeredAt;
@@ -44,11 +44,11 @@ namespace m2 {
 
 		/// Use this constructor for non-blocking operation
 		explicit UiPanel(std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> static_or_unique_blueprint,
-				const std::variant<std::monostate, RectI, RectF>& fullscreen_or_pixel_rect_or_relation_to_game_and_hud = {},
+				const PanelPosition& panelPosition = {},
 				sdl::TextureUniquePtr background_texture = {});
 		/// Use this constructor for blocking operation
 		static UiAction create_and_run_blocking(std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> static_or_unique_blueprint,
-				const std::variant<std::monostate, RectI, RectF>& fullscreen_or_pixel_rect_or_relation_to_game_and_hud = {},
+				const PanelPosition& panelPosition = {},
 				sdl::TextureUniquePtr background_texture = {});
 		// Copy not allowed
 		UiPanel(const UiPanel& other) = delete;

@@ -50,7 +50,7 @@ bool ask_for_confirmation(const std::string& question1, const std::string& quest
 
 	bool selection;
 	auto background = M2_GAME.DrawGameToTexture(M2_LEVEL.GetCamera()->InferPositionF());
-	UiPanel::create_and_run_blocking(&blueprint, RectF{0.15f, 0.15f, 0.7f, 0.7f}, std::move(background))
+	UiPanel::create_and_run_blocking(&blueprint, UiPanel::RelativeToWindow{RectF{0.15f, 0.15f, 0.7f, 0.7f}}, std::move(background))
 			.IfQuit([] { M2_GAME.quit = true; })
 			.IfReturn<bool>([&](auto result) { selection = result; });
 	return selection;
@@ -107,7 +107,7 @@ std::optional<bool> ask_for_confirmation_with_cancellation(const std::string& qu
 
 	std::optional<bool> selection;
 	auto background = M2_GAME.DrawGameToTexture(M2_LEVEL.GetCamera()->InferPositionF());
-	UiPanel::create_and_run_blocking(&blueprint, RectF{0.25f, 0.25f, 0.5f, 0.5f}, std::move(background))
+	UiPanel::create_and_run_blocking(&blueprint, UiPanel::RelativeToWindow{RectF{0.25f, 0.25f, 0.5f, 0.5f}}, std::move(background))
 			.IfQuit([] { M2_GAME.quit = true; })
 			.IfReturn<bool>([&](auto result) { selection = result; });
 	return selection;
@@ -149,7 +149,7 @@ bool ask_for_confirmation_bottom(const std::string& question, const std::string&
 	}; // 1 + 32 + 1 + 4 + 1 + 4 + 1
 
 	bool selection;
-	UiPanel::create_and_run_blocking(&blueprint, M2_GAME.Dimensions().Game().ApplyRatio({0.0f, 0.9f, 1.0f, 0.1f}), std::move(background_texture))
+	UiPanel::create_and_run_blocking(&blueprint, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().Game().ApplyRatio({0.0f, 0.9f, 1.0f, 0.1f})), std::move(background_texture))
 			.IfQuit([] { M2_GAME.quit = true; })
 			.IfReturn<bool>([&](auto result) { selection = result; });
 	return selection;

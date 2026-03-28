@@ -27,7 +27,7 @@ UiPanelBlueprint generate_status_bar_blueprint() {
 				if (not M2G_PROXY.custom_hud_panel) {
 					M2G_PROXY.custom_hud_panel = M2_LEVEL.AddCustomNonblockingUiPanel(
 							std::make_unique<UiPanelBlueprint>(generate_custom_hud_blueprint()),
-							custom_hud_window_ratio());
+							UiPanel::RelativeToWindow{custom_hud_window_ratio()});
 				}
 			} else {
 				if (M2G_PROXY.custom_hud_panel) {

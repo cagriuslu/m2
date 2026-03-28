@@ -143,7 +143,7 @@ std::optional<m2g::pb::CardType> ask_for_card_selection(m2g::pb::CardType exclud
 	std::optional<m2g::pb::CardType> selected_card;
 	auto background = M2_GAME.DrawGameToTexture(M2_LEVEL.GetCamera()->InferPositionF());
 	UiPanel::create_and_run_blocking(std::make_unique<UiPanelBlueprint>(
-			generate_cards_window("Select card to discard", exclude_card_1, exclude_card_2, true)), cards_window_ratio(), std::move(background))
+			generate_cards_window("Select card to discard", exclude_card_1, exclude_card_2, true)), UiPanel::RelativeToWindow{cards_window_ratio()}, std::move(background))
 			.IfQuit([] { M2_GAME.quit = true; })
 			.IfVoidReturn([&]() {
 				LOG_INFO("Card selection cancelled");

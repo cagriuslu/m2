@@ -463,7 +463,7 @@ namespace {
 					.onAction = [](MAYBE const Text& self) -> UiAction {
 						if (const auto* selection = M2_LEVEL.GetPrimarySelection(); selection->IsComplete()) {
 							const auto area = selection->IntegerSelectionRectM();
-							const auto action = UiPanel::create_and_run_blocking(&gFillDialog, RectF{0.2f, 0.1f, 0.6f, 0.8f});
+							const auto action = UiPanel::create_and_run_blocking(&gFillDialog, UiPanel::RelativeToWindow{RectF{0.2f, 0.1f, 0.6f, 0.8f}});
 							(void) action.IfReturn<std::vector<m2g::pb::SpriteType>>([&](const auto& selectedSprites) {
 								std::get<level_editor::State>(M2_LEVEL.stateVariant).RandomFillBackground(*area, selectedSprites);
 							});
@@ -565,7 +565,7 @@ namespace {
 				.variant = TextBlueprint{
 					.text = "Place",
 					.onAction = [](const Text&) -> UiAction {
-						(void) UiPanel::create_and_run_blocking(&gCoordinateDialog, RectF{0.25f, 0.4f, 0.5f, 0.3f})
+						(void) UiPanel::create_and_run_blocking(&gCoordinateDialog, UiPanel::RelativeToWindow{RectF{0.25f, 0.4f, 0.5f, 0.3f}})
 								.IfReturn<VecF>([](const auto& vec) {
 									std::get<level_editor::State>(M2_LEVEL.stateVariant).HandleMouseSecondaryButton(vec);
 								});
@@ -672,7 +672,7 @@ namespace {
 							const auto& leditState = std::get<level_editor::State>(M2_LEVEL.stateVariant);
 							const auto& drawFgState = dynamic_cast<level_editor::DrawFgRightHudState&>(*self.Parent().state);
 							const auto fixtureName = leditState.GetSpritePb(drawFgState.SelectedObjectMainSpriteType()).regular().fixtures(*indexUnderMouse).name();
-							M2_LEVEL.SetMouseHoverUiPanel(std::make_unique<UiPanelBlueprint>(CreateTextTooltipBlueprint(fixtureName)), gTextTooltipRatio);
+							M2_LEVEL.SetMouseHoverUiPanel(std::make_unique<UiPanelBlueprint>(CreateTextTooltipBlueprint(fixtureName)), UiPanel::RelativeToWindow{gTextTooltipRatio});
 						}
 					},
 					.offHover = [](MAYBE TextSelection& self) {
@@ -762,7 +762,7 @@ namespace {
 								const auto& state = dynamic_cast<level_editor::DrawFgRightHudState&>(*self.Parent().state);
 								if (const auto fixtureType = std::get<level_editor::State>(M2_LEVEL.stateVariant).GetSpriteFixtureTypes(state.SelectedObjectMainSpriteType())[selectedIndex];
 										fixtureType == pb::Fixture::FixtureTypeCase::kChain) {
-									UiPanel::create_and_run_blocking(&gAngleDialog, RectF{0.27f, 0.37f, 0.46f, 0.26f})
+									UiPanel::create_and_run_blocking(&gAngleDialog, UiPanel::RelativeToWindow{RectF{0.27f, 0.37f, 0.46f, 0.26f}})
 										.IfReturn<level_editor::ArcDescription>([=](const auto& arcDesc) {
 											std::get<level_editor::State>(M2_LEVEL.stateVariant).StoreArc(selectedIndex, point, arcDesc);
 										});
@@ -790,7 +790,7 @@ namespace {
 								// There are same number of line segments as number of points
 								if (const auto pointCount = leditState.GetSpritePb(drawFgState.SelectedObjectMainSpriteType()).regular().fixtures(selectedIndex).chain().points_size(); 1 < pointCount) {
 									UiPanel::create_and_run_blocking(
-										std::make_unique<UiPanelBlueprint>(CreateDistinctIntegerSelectionDialog(0, pointCount - 1)), RectF{0.27f, 0.37f, 0.46f, 0.26f})
+										std::make_unique<UiPanelBlueprint>(CreateDistinctIntegerSelectionDialog(0, pointCount - 1)), UiPanel::RelativeToWindow{RectF{0.27f, 0.37f, 0.46f, 0.26f}})
 											.IfReturn<level_editor::TangentDescription>([=](const auto& tangent) {
 												std::get<level_editor::State>(M2_LEVEL.stateVariant).StoreTangent(selectedIndex, tangent);
 											});
@@ -834,7 +834,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
         	.variant = TextBlueprint{
         		.text = "Paint Bg",
 				.onAction = [](MAYBE const Text& self) -> UiAction {
-					M2_LEVEL.ReplaceRightHud(&gPaintBgRightHud, M2_GAME.Dimensions().RightHud());
+					M2_LEVEL.ReplaceRightHud(&gPaintBgRightHud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().RightHud()));
 					return MakeContinueAction();
         		}
         	}
@@ -844,7 +844,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
         	.variant = TextBlueprint{
         		.text = "Sample Bg",
 				.onAction = [](MAYBE const Text& self) -> UiAction {
-					M2_LEVEL.ReplaceRightHud(&gSampleBgRightHud, M2_GAME.Dimensions().RightHud());
+					M2_LEVEL.ReplaceRightHud(&gSampleBgRightHud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().RightHud()));
 					return MakeContinueAction();
         		}
         	}
@@ -854,7 +854,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
         	.variant = TextBlueprint{
         		.text = "Select Bg",
 				.onAction = [](MAYBE const Text& self) -> UiAction {
-					M2_LEVEL.ReplaceRightHud(&gSelectBgRightHud, M2_GAME.Dimensions().RightHud());
+					M2_LEVEL.ReplaceRightHud(&gSelectBgRightHud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().RightHud()));
 					return MakeContinueAction();
         		}
         	}
@@ -865,7 +865,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
         	.variant = TextBlueprint{
         		.text = "Place Fg",
 				.onAction = [](MAYBE const Text& self) -> UiAction {
-					M2_LEVEL.ReplaceRightHud(&gPlaceFgRightHud, M2_GAME.Dimensions().RightHud());
+					M2_LEVEL.ReplaceRightHud(&gPlaceFgRightHud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().RightHud()));
 					return MakeContinueAction();
         		}
         	}
@@ -875,7 +875,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
             .variant = TextBlueprint{
 				.text = "Sample Fg",
 				.onAction = [](MAYBE const Text& self) -> UiAction {
-					M2_LEVEL.ReplaceRightHud(&gSampleFgRightHud, M2_GAME.Dimensions().RightHud());
+					M2_LEVEL.ReplaceRightHud(&gSampleFgRightHud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().RightHud()));
 					return MakeContinueAction();
 				}
 			}
@@ -885,7 +885,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
         	.variant = TextBlueprint{
         		.text = "Select Fg",
 				.onAction = [](MAYBE const Text& self) -> UiAction {
-					M2_LEVEL.ReplaceRightHud(&gSelectFgRightHud, M2_GAME.Dimensions().RightHud());
+					M2_LEVEL.ReplaceRightHud(&gSelectFgRightHud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().RightHud()));
 					return MakeContinueAction();
         		}
         	}
@@ -895,7 +895,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
 			.variant = TextBlueprint{
 				.text = "Draw Fg",
 				.onAction = [](MAYBE const Text& self) -> UiAction {
-					(void) UiPanel::create_and_run_blocking(&gObjectTypeSelectionDialog, RectF{0.25f, 0.4f, 0.5f, 0.3f})
+					(void) UiPanel::create_and_run_blocking(&gObjectTypeSelectionDialog, UiPanel::RelativeToWindow{RectF{0.25f, 0.4f, 0.5f, 0.3f}})
 						.IfReturn<m2g::pb::ObjectType>([](const auto& typ) {
 							if (not M2_GAME.GetMainSpriteOfObject(typ)) {
 								M2_LEVEL.ShowMessage("Selected object doesn't have a main sprite", 8.0f);
@@ -905,7 +905,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
 								M2_LEVEL.ShowMessage("Only one instance of selected object type must be present in the level", 8.0f);
 								return;
 							}
-							M2_LEVEL.ReplaceRightHud(&gDrawFgRightHud, M2_GAME.Dimensions().RightHud());
+							M2_LEVEL.ReplaceRightHud(&gDrawFgRightHud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().RightHud()));
 							M2_LEVEL.GetRightHud()->state = std::make_unique<DrawFgRightHudState>(typ);
 						});
 					return MakeContinueAction();
@@ -918,7 +918,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
 			.variant = TextBlueprint{
 				.text = "Cancel",
 				.onAction = [](MAYBE const Text& self) -> UiAction {
-					M2_LEVEL.ReplaceRightHud(&gRightHudBlueprint, M2_GAME.Dimensions().RightHud());
+					M2_LEVEL.ReplaceRightHud(&gRightHudBlueprint, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().RightHud()));
 					return MakeContinueAction();
 				}
 			}
@@ -949,7 +949,7 @@ const UiPanelBlueprint level_editor::gLeftHudBlueprint = {
 			.variant = TextBlueprint{
 				.text = "Display Options",
 				.onAction = [](MAYBE const Text& self) -> UiAction {
-					UiPanel::create_and_run_blocking(&gDisplayOptionsDialog, RectF{0.3f, 0.1f, 0.4f, 0.8f});
+					UiPanel::create_and_run_blocking(&gDisplayOptionsDialog, UiPanel::RelativeToWindow{RectF{0.3f, 0.1f, 0.4f, 0.8f}});
 					return MakeContinueAction();
 				}
 			}

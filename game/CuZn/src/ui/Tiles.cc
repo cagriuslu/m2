@@ -273,7 +273,7 @@ std::optional<m2g::pb::CardType> ask_for_tile_selection(m2g::pb::CardType exclud
 
 	std::optional<m2g::pb::CardType> selected_tile;
 	UiPanel::create_and_run_blocking(std::make_unique<UiPanelBlueprint>(generate_tiles_window("Select tile to develop", exclude_tile)),
-			tiles_window_ratio(), M2_GAME.DrawGameToTexture(M2_LEVEL.GetCamera()->InferPositionF()))
+			UiPanel::RelativeToWindow{tiles_window_ratio()}, M2_GAME.DrawGameToTexture(M2_LEVEL.GetCamera()->InferPositionF()))
 			.IfQuit([] { M2_GAME.quit = true; })
 			.IfVoidReturn([&]() { LOG_INFO("Tile selection cancelled"); })
 			.IfReturn<m2g::pb::CardType>([&selected_tile](auto picked_tile) {
