@@ -14,6 +14,7 @@ namespace m2 {
 		};
 		struct RelativeToWorld {
 			VecF centeredAt;
+			VecF dimensionsRelativeToGameAndHud;
 		};
 		using PanelPosition = std::variant<Fullscreen, RelativeToWindow, RelativeToWorld>;
 

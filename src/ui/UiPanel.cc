@@ -226,7 +226,10 @@ RectI UiPanel::Rect() const {
 			RoundI(relation.w * ToFloat(gameAndHud.w)),
 			RoundI(relation.h * ToFloat(gameAndHud.h))};
 	} else {
-		throw M2_ERROR("Not yet implemented");
+		const auto& [centeredAt, dimensionsRelativeToGameAndHud] = std::get<RelativeToWorld>(_panelPosition);
+		const auto centerOfPanel = ScreenOriginToPositionVecPx(centeredAt).RoundI();
+		return RectI::CreateCenteredAround(centerOfPanel, RoundI(dimensionsRelativeToGameAndHud.GetX() * ToFloat(gameAndHud.w)),
+			RoundI(dimensionsRelativeToGameAndHud.GetY() * ToFloat(gameAndHud.h)));
 	}
 }
 
