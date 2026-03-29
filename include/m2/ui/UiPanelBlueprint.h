@@ -28,6 +28,8 @@ namespace m2 {
 		bool ignore_events{false};
 
 		float timeout_s{}; // If set, the UiPanel is destroyed once the timeout runs out
+		/// If set, the panel state should be cleaned as soon as the panel returns. This applies to only certain panel types.
+		bool autoClean{};
 
 		std::function<void(UiPanel&)> onCreate{};
 		std::function<UiAction(UiPanel&, Events&)> onEvent{};

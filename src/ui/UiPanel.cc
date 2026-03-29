@@ -202,10 +202,13 @@ const std::string& UiPanel::Name() const {
 	return blueprint->name;
 }
 bool UiPanel::IsKilled() const {
-	return static_cast<bool>(_returnValueContainer);
+	return static_cast<bool>(_undeadContainer);
 }
 const AnyReturnContainer* UiPanel::PeekReturnValueContainer() const {
-	return IsKilled() ? &*_returnValueContainer : nullptr;
+	return IsKilled() ? &_undeadContainer->returnValue : nullptr;
+}
+bool UiPanel::IsAutoClean() const {
+	return (blueprint && blueprint->autoClean) || (_undeadContainer && _undeadContainer->wasAutoClose);
 }
 RectI UiPanel::Rect() const {
 	const auto& gameAndHud = M2_GAME.Dimensions().GameAndHud();
@@ -227,10 +230,11 @@ RectI UiPanel::Rect() const {
 }
 
 void UiPanel::KillWithReturnValue(AnyReturnContainer&& arc) {
+	const auto autoClose = blueprint->autoClean;
 	// Destruct self
 	this->~UiPanel();
 	// Re-construct self in-place with return value
-	new (this) UiPanel(std::move(arc));
+	new (this) UiPanel(std::move(arc), autoClose);
 }
 
 void UiPanel::SetTopLeftPosition(const VecI& newPosition) {

@@ -661,6 +661,10 @@ void Game::HandleHudEvents() {
 				panel.KillWithReturnValue(std::move(*anyReturnContainer));
 			}
 		}
+		// Remove panels that have returned and has auto-clean property
+		std::erase_if(_level->_customNonblockingUiPanels, [](const auto& panel) {
+			return panel.IsKilled() && panel.IsAutoClean();
+		});
 		IF(_level->_messageBoxUiPanel)->HandleEvents(events, _level->IsPanning());
 		IF(_level->_rightHudUiPanel)->HandleEvents(events, _level->IsPanning());
 		IF(_level->_leftHudUiPanel)->HandleEvents(events, _level->IsPanning());

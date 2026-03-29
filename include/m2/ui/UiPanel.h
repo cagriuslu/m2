@@ -19,11 +19,15 @@ namespace m2 {
 		using PanelPosition = std::variant<Fullscreen, RelativeToWindow, RelativeToWorld>;
 
 	private:
-		/// If this field contains an object, the UiPanel has returned a Return value, but the panel wasn't destroyed
-		/// completely. Instead, the Panel is destroyed, recreated without any content, and the return value is stored
-		/// inside, to be extracted later. HUD UI panels can't be destroyed right away, because the Proxy code may
-		/// contain references to them.
-		std::optional<AnyReturnContainer> _returnValueContainer;
+		/// If this field contains an object, the UiPanel has returned a Return value, but the panel wasn't freed.
+		/// Instead, the Panel is destructed and recreated without any content, and the return value is stored to be
+		/// extracted later. This mechanism is usually used for Custom UI panels because they can't be destroyed right
+		/// away, as the game code may contain references to them.
+		struct Undead {
+			AnyReturnContainer returnValue;
+			bool wasAutoClose;
+		};
+		std::optional<Undead> _undeadContainer;
 		bool _prev_text_input_state{};
 		std::unique_ptr<UiPanelBlueprint> _owned_blueprint; // `blueprint` will point here if this object exists
 		PanelPosition _panelPosition;
@@ -32,8 +36,7 @@ namespace m2 {
 		std::optional<float> _timeout_s;
 
 		/// Used by KillWithReturnValue()
-		explicit UiPanel(AnyReturnContainer&& returnValueContainer)
-				: _returnValueContainer(std::move(returnValueContainer)) {}
+		explicit UiPanel(AnyReturnContainer&& returnValueContainer, const bool autoClose) : _undeadContainer(Undead{std::move(returnValueContainer), autoClose}) {}
 
 		UiAction run_blocking();
 
@@ -67,6 +70,7 @@ namespace m2 {
 		[[nodiscard]] bool IsKilled() const;
 		/// Peek the return value contained inside the killed panel
 		[[nodiscard]] const AnyReturnContainer* PeekReturnValueContainer() const;
+		[[nodiscard]] bool IsAutoClean() const;
 		[[nodiscard]] RectI Rect() const;
 
 		// Modifiers
