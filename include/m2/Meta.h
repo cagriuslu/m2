@@ -43,6 +43,14 @@ namespace m2 {
 	constexpr int I(const std::variant<Types...>& v) {
 		return std::get<int>(v);
 	}
+	template <typename... Types>
+	constexpr int64_t L(const std::tuple<Types...>& v) {
+		return std::get<int64_t>(v);
+	}
+	template <typename... Types>
+	constexpr int64_t L(const std::variant<Types...>& v) {
+		return std::get<int64_t>(v);
+	}
 
 	inline std::string ToString(const bool b) { return b ? "true" : "false"; }
 	inline std::string ToString(const short s) { return std::to_string(s); }

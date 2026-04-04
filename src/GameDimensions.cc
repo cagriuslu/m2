@@ -124,7 +124,7 @@ void m2::GameDimensions::SetScale(const float scale) {
 	if (scale <= 0.0f) {
 		throw M2_ERROR("Given scale is invalid: " + m2::ToString(scale));
 	}
-	LOG_INFO("Setting scale to", scale);
+	LOG_DEBUG("Setting scale to", scale);
 
 	_scale = scale;
 	ReadjustAfterScaleChange();

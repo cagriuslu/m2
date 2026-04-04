@@ -8,10 +8,10 @@ namespace m2::widget {
 	class TextSelection;
 
 	struct TextSelectionBlueprint {
-		using ReturnValue = std::variant<std::string, int>;
+		using ReturnValue = std::variant<std::monostate, std::string, int32_t, int64_t>;
 		struct Option {
 			std::string text;
-			ReturnValue return_value;
+			ReturnValue return_value{};
 			bool initiallySelected{};
 			RGB text_color{255, 255, 255};
 		};
