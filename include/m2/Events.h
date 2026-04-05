@@ -1,5 +1,4 @@
 #pragma once
-#include <m2/Controls.h>
 #include "math/RectI.h"
 #include <m2/math/VecI.h>
 #include <m2/math/VecF.h>
@@ -8,10 +7,15 @@
 #include <array>
 #include <optional>
 #include <sstream>
-#include <array>
-#include <deque>
 
 namespace m2 {
+	enum class MouseButton {
+		PRIMARY,
+		SECONDARY,
+		MIDDLE,
+		end
+	};
+
 	/// Stateful event manager
 	class Events {
 		bool quit{};
@@ -24,11 +28,13 @@ namespace m2 {
 		uint32_t key_release_count{};
 		std::vector<uint16_t> keys_released = std::vector<uint16_t>(pb::enum_value_count<m2g::pb::KeyType>());
 
-		uint32_t mouse_button_press_count{};
-		std::array<uint16_t, u(MouseButton::end)> mouse_buttons_pressed{};
-
-		uint32_t mouse_button_release_count{};
-		std::array<uint16_t, u(MouseButton::end)> mouse_buttons_released{};
+		enum class MouseAction {
+			NO_ACTION = 0,
+			PRESSED,
+			RELEASED
+		};
+		/// For each button, only one actions is stored per loop
+		std::array<MouseAction, U(MouseButton::end)> _mouseActions{};
 
 		int32_t mouse_wheel_vertical_scroll_count{};
 		int32_t mouse_wheel_horizontal_scroll_count{};
@@ -37,7 +43,7 @@ namespace m2 {
 
 		// Persistent states
 		std::vector<bool> keys_down = std::vector<bool>(pb::enum_value_count<m2g::pb::KeyType>());
-		std::array<bool, u(MouseButton::end)> mouse_buttons_down{};
+		std::array<bool, U(MouseButton::end)> mouse_buttons_down{};
 		VecI _mouse_position;
 
 	public:
@@ -58,12 +64,11 @@ namespace m2 {
 		bool PopMouseButtonPress(MouseButton mb);
 		bool PeekMouseButtonPress(MouseButton mb, const RectI& rect) const;
 		bool PopMouseButtonPress(MouseButton mb, const RectI& rect);
-		void ClearMouseButtonPresses(const RectI& rect);
 		bool PeekMouseButtonRelease(MouseButton mb) const;
 		bool PopMouseButtonRelease(MouseButton mb);
 		bool PeekMouseButtonRelease(MouseButton mb, const RectI& rect) const;
 		bool PopMouseButtonRelease(MouseButton mb, const RectI& rect);
-		void ClearMouseButtonReleases(const RectI& rect);
+		void ClearMouseButtonActions(const RectI& rect);
 		// Mouse scroll
 		int32_t PopMouseWheelVerticalScroll();
 		int32_t PopMouseWheelVerticalScroll(const RectI& rect);

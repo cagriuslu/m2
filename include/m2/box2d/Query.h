@@ -4,7 +4,6 @@
 #include <m2/math/AABB.h>
 #include <m2/component/Physique.h>
 #include <m2/math/VecF.h>
-#include <m2/Controls.h>
 #include <functional>
 
 namespace m2::box2d {

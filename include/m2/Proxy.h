@@ -1,5 +1,4 @@
 #pragma once
-#include "Controls.h"
 #include "Group.h"
 #include "ObjectId.h"
 #include <m2/third_party/physics/RigidBody.h>

@@ -1,6 +1,7 @@
-#include "m2/Controls.h"
+#include <m2/third_party/video/Mouse.h>
+#include <SDL2/SDL.h>
 
-m2::MouseButton m2::button_to_mouse_button(int button) {
+std::optional<m2::MouseButton> m2::thirdparty::video::SystemButtonToMouseButton(const int button) {
 	switch (button) {
 		case SDL_BUTTON_LEFT:
 			return MouseButton::PRIMARY;
@@ -9,6 +10,6 @@ m2::MouseButton m2::button_to_mouse_button(int button) {
 		case SDL_BUTTON_MIDDLE:
 			return MouseButton::MIDDLE;
 		default:
-			return MouseButton::UNKNOWN;
+			return std::nullopt;
 	}
 }

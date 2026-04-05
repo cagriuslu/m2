@@ -319,8 +319,7 @@ UiAction UiPanel::HandleEvents(Events& events, bool IsPanning) {
 	// Clear mouse events if the mouse is inside the UI element so that it isn't delivered to game objects. This
 	// behavior can partially be overwritten with Game::EnablePanning().
 	const auto rect = Rect();
-	events.ClearMouseButtonPresses(rect);
-	events.ClearMouseButtonReleases(rect);
+	events.ClearMouseButtonActions(rect);
 	events.ClearMouseWheelScrolls(rect);
 	if (not IsPanning) {
 		events.ClearMouseButtonDown(rect);

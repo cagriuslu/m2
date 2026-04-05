@@ -5,7 +5,6 @@
 #include "m2/Game.h"
 #include <rpg/Graphic.h>
 #include <rpg/Detail.h>
-#include "m2/Controls.h"
 #include <m2/game/CharacterMovement.h>
 #include <rpg/Objects.h>
 #include <m2/M2.h>

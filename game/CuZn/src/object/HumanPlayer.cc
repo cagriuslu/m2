@@ -2,7 +2,6 @@
 #include <cuzn/journeys/BuildJourney.h>
 #include <cuzn/journeys/NetworkJourney.h>
 #include <cuzn/ui/MouseHover.h>
-#include <m2/Controls.h>
 #include <m2/Log.h>
 #include <m2/Game.h>
 #include <m2/protobuf/Detail.h>
