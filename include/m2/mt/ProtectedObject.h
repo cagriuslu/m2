@@ -17,7 +17,7 @@ namespace m2 {
 		explicit ProtectedObject(T&& obj) : _obj(std::move(obj)) {}
 
 		template <typename... TArgs>
-		explicit ProtectedObject(TArgs... args) : _obj(args...) {}
+		explicit ProtectedObject(TArgs... args) : _obj(std::forward<TArgs>(args)...) {}
 
 		template <typename ReaderF>
 		void Read(ReaderF reader) const {

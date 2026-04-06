@@ -83,7 +83,7 @@ namespace m2::pb {
 			for (const auto& protoItem : *protoItems) {
 				const auto key = protoItem.type(); // Enum value
 				const auto keyIndex = pb::enum_index(key); // Index of the enum value
-				items[keyIndex] = LoadedItemT{protoItem, args...};
+				items[keyIndex] = LoadedItemT{protoItem, std::forward<LoadedItemArgs>(args)...};
 			}
 			return MessageLUT{std::move(items)};
 		}

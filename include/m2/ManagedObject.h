@@ -16,7 +16,7 @@ namespace m2 {
 		explicit ManagedObject(std::function<void(T&)> writeHook, T&& obj) : _obj(std::move(obj)), _writeHook(std::move(writeHook)) {}
 
 		template <typename... TArgs>
-		explicit ManagedObject(std::function<void(T&)> writeHook, TArgs... args) : _obj(args...), _writeHook(std::move(writeHook)) {}
+		explicit ManagedObject(std::function<void(T&)> writeHook, TArgs... args) : _obj(std::forward<TArgs>(args)...), _writeHook(std::move(writeHook)) {}
 
 		/// Access the object
 		const T& Get() const { return _obj; }

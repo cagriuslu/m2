@@ -2,7 +2,7 @@
 #include <m2/Log.h>
 #include <m2/LogHelpers.h>
 #include <cstdlib>
-#include <m2/mt/WaitOnCondition.h>
+#include <m2/mt/WaitUntilConditionTrue.h>
 
 using namespace m2;
 using namespace m2::network;
@@ -46,7 +46,7 @@ void PingBroadcastThread::thread_func(PingBroadcastThread* context) {
 		}
 
 		// Wait some time before pinging again
-		m2::mt::WaitOnCondition(5000, [&context]() -> bool {
+		WaitUntilConditionTrue(5000, [&context]() -> bool {
 			return context->IsQuit();
 		});
 	}
