@@ -8,7 +8,7 @@ namespace m2 {
 
 	/// A VariableValue container that can hold a fixed number of variable types from a given set
 	template <PossibleVariableTypes possibleVariableTypes, std::size_t maxVariableCount>
-	class StrictVariableTypeCountCharacter {
+	class StrictVariableTypeCountContainer {
 		// Verify that variable types are unique
 		static_assert(AreArrayElementsUnique(possibleVariableTypes), "VariableTypes are not unique");
 		static_assert(maxVariableCount <= possibleVariableTypes.size());
