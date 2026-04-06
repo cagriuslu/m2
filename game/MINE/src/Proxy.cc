@@ -1,11 +1,11 @@
-#include <m2/third_party/physics/ColliderCategory.h>
+#include <m2/thirdparty/physics/ColliderCategory.h>
 #include <m2g/ProxyEx.h>
 #include <m2g/Proxy.h>
 #include <mine/object/Dwarf.h>
 #include <mine/object/Blacksmith.h>
 #include <m2/ObjectEx.h>
 
-using namespace m2::third_party::physics;
+using namespace m2::thirdparty::physics;
 
 FixtureDefinition m2g::Proxy::TileFixtureDefinition(MAYBE pb::SpriteType spriteType) {
 	return FixtureDefinition{

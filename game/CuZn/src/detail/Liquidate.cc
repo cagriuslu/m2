@@ -71,7 +71,7 @@ m2::expected<std::pair<std::vector<m2::Object*>, int>> CanPlayerLiquidateFactori
 		// Search for a factory in the given location
 		if (auto* factory = FindFactoryAtLocation(location)) {
 			// Check if the factory belongs to the player
-			if (factory->GetParentId() == player.Owner().GetId()) {
+			if (factory->GetParentId() == player.GetOwner().GetId()) {
 				factoryObjects.emplace_back(factory);
 				const auto liquidation_return = LiquidationReturnOfFactoryCharacter(factory->GetCharacter());
 				ordered_location_and_liquidation_return_pairs.emplace(LocationAndLiquidationReturnPair{location, liquidation_return});

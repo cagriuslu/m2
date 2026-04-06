@@ -80,7 +80,7 @@ void m2::TurnBasedServerActor::ProcessInbox(MessageBox<TurnBasedServerActorInput
 			if (_state != pb::SERVER_LOBBY_OPEN) {
 				throw M2_ERROR("Received unexpected lobby closure command");
 			}
-			if (not std::ranges::all_of(_clients, network::is_client_ready)) {
+			if (not std::ranges::all_of(_clients, &network::TurnBasedClientConnectionManager::is_ready)) {
 				LOG_WARN("Unable to close lobby, not every client is ready");
 			} else {
 				_pingBroadcastThread.reset();
@@ -334,7 +334,7 @@ void m2::TurnBasedServerActor::PublishStateUpdate(MessageBox<TurnBasedServerActo
 	outbox.PushMessage(TurnBasedServerActorOutput{.variant = TurnBasedServerActorOutput::StateUpdate{
 		.threadState = _state,
 		.clientCount = I(_clients.size()),
-		.readyClientCount = I(std::ranges::count_if(_clients, network::is_client_ready))
+		.readyClientCount = I(std::ranges::count_if(_clients, &network::TurnBasedClientConnectionManager::is_ready))
 	}});
 }
 void m2::TurnBasedServerActor::HandleDisconnectedClient(MessageBox<TurnBasedServerActorOutput>& outbox, const int clientIndex) {

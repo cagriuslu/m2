@@ -1,4 +1,4 @@
-#include <m2/third_party/video/TextRendering.h>
+#include <m2/thirdparty/video/TextRendering.h>
 
 int m2::thirdparty::video::CalculateMaxRenderedUtf8Length(TTF_Font* font, const int fontSize, const char* utf8Text, const int widthInPixels) {
 	TTF_SetFontSize(font, fontSize);

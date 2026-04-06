@@ -5,7 +5,7 @@
 #include <rpg/Objects.h>
 #include <m2/M2.h>
 #include <m2/Log.h>
-#include <m2/third_party/physics/ColliderCategory.h>
+#include <m2/thirdparty/physics/ColliderCategory.h>
 
 using namespace m2g;
 using namespace m2g::pb;
@@ -44,14 +44,14 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& positi
 	phy.position = position;
 	phy.orientation = m2::FE{angle};
 	auto rigidBodyDef = BasicBulletRigidBodyDefinition();
-	rigidBodyDef.fixtures = {m2::third_party::physics::FixtureDefinition{
-		.shape = m2::third_party::physics::CircleShape::FromSpriteCircleFixture(sprite.OriginalPb().regular().fixtures(0).circle(), sprite.Ppm()),
+	rigidBodyDef.fixtures = {m2::thirdparty::physics::FixtureDefinition{
+		.shape = m2::thirdparty::physics::CircleShape::FromSpriteCircleFixture(sprite.OriginalPb().regular().fixtures(0).circle(), sprite.Ppm()),
 		.isSensor = true,
-		.colliderFilter = m2::third_party::physics::gColliderCategoryToParams[m2::I(is_friend
-				? m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_FRIENDLY_DAMAGE
-				: m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_HOSTILE_DAMAGE)]
+		.colliderFilter = m2::thirdparty::physics::gColliderCategoryToParams[m2::I(is_friend
+				? m2::thirdparty::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_FRIENDLY_DAMAGE
+				: m2::thirdparty::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_HOSTILE_DAMAGE)]
 	}};
-	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, angle, m2::pb::PhysicsLayer::SEA_LEVEL);
+	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, angle, m2::pb::PhysicsLayer::SEA_LEVEL);
 	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->SetLinearVelocity(direction * linear_speed);
 
 	// Add graphics
@@ -71,17 +71,17 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& positi
 			if (is_explosive) {
 				LOG_DEBUG("Exploding...");
 				auto explosionBodyDef = BasicBulletRigidBodyDefinition();
-				explosionBodyDef.fixtures = {m2::third_party::physics::FixtureDefinition{
-					.shape = m2::third_party::physics::CircleShape{.radius = damage_radius},
+				explosionBodyDef.fixtures = {m2::thirdparty::physics::FixtureDefinition{
+					.shape = m2::thirdparty::physics::CircleShape{.radius = damage_radius},
 					.isSensor = true,
-					.colliderFilter = m2::third_party::physics::gColliderCategoryToParams[m2::I(m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_FRIENDLY_DAMAGE)]
+					.colliderFilter = m2::thirdparty::physics::gColliderCategoryToParams[m2::I(m2::thirdparty::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_FRIENDLY_DAMAGE)]
 				}};
-				phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(explosionBodyDef, obj.GetPhysiqueId(), obj.GetPhysique().position, phy.orientation.ToFloat(), m2::pb::PhysicsLayer::SEA_LEVEL);
+				phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(explosionBodyDef, obj.GetPhysiqueId(), obj.GetPhysique().position, phy.orientation.ToFloat(), m2::pb::PhysicsLayer::SEA_LEVEL);
 				// RESOURCE_EXPLOSION_TTL only means the object is currently exploding
 				chr.UnsafeSetVariable(RESOURCE_EXPLOSION_TTL, 1.0f); // 1.0f is just symbolic
 			} else {
 				LOG_DEBUG("Destroying self");
-				M2_DEFER(m2::CreateObjectDeleter(chr.OwnerId()));
+				M2_DEFER(m2::CreateObjectDeleter(chr.GetOwnerId()));
 			}
 		}
 	};
@@ -90,11 +90,11 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& positi
 			LOG_DEBUG("Explosive hit a target during flight, will explode next step");
 			chr.ClearVariable(RESOURCE_TTL); // Clear TTL, chr.update will create the explosion
 		} else {
-			if (auto* other_char = other.Owner().TryGetCharacter(); other_char) {
+			if (auto* other_char = other.GetOwner().TryGetCharacter(); other_char) {
 				float damage = 0.0f;
 				if (is_explosive && chr.GetVariable(RESOURCE_EXPLOSION_TTL)) {
 					LOG_DEBUG("Explosive damage");
-					auto distance = chr.Owner().GetPhysique().position.GetDistanceTo(other.position);
+					auto distance = chr.GetOwner().GetPhysique().position.GetDistanceTo(other.position);
 					auto damage_ratio = distance / damage_radius;
 					if (damage_ratio < 1.1f) {
 						damage = m2::ApplyAccuracy(average_damage, average_damage, damage_accuracy) * damage_ratio;
@@ -111,7 +111,7 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& positi
 	phy.postStep = [&chr](m2::Physique& phy, const m2::Stopwatch::Duration&) {
 		if (chr.GetVariable(RESOURCE_EXPLOSION_TTL)) {
 			LOG_DEBUG("Exploded");
-			M2_DEFER(m2::CreateObjectDeleter(phy.OwnerId()));
+			M2_DEFER(m2::CreateObjectDeleter(phy.GetOwnerId()));
 		}
 	};
 

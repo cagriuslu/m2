@@ -1,4 +1,4 @@
-#include <m2/third_party/video/Mouse.h>
+#include <m2/thirdparty/video/Mouse.h>
 #include <SDL2/SDL.h>
 
 std::optional<m2::MouseButton> m2::thirdparty::video::SystemButtonToMouseButton(const int button) {

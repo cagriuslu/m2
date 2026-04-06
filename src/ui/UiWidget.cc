@@ -1,7 +1,7 @@
 #include <m2/Game.h>
 #include <m2/ui/UiWidget.h>
 #include <m2/ui/UiPanel.h>
-#include <m2/third_party/video/TextRendering.h>
+#include <m2/thirdparty/video/TextRendering.h>
 
 using namespace m2;
 

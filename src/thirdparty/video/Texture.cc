@@ -1,5 +1,5 @@
-#include <m2/third_party/video/Texture.h>
-#include <m2/third_party/video/Window.h>
+#include <m2/thirdparty/video/Texture.h>
+#include <m2/thirdparty/video/Window.h>
 #include <m2/Game.h>
 #include <SDL2/SDL.h>
 

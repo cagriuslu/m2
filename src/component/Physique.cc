@@ -3,12 +3,12 @@
 #include <box2d/b2_contact.h>
 #include <m2/Object.h>
 #include <m2/box2d/Shape.h>
-#include <m2/third_party/physics/ColliderCategory.h>
+#include <m2/thirdparty/physics/ColliderCategory.h>
 
 m2::Physique::Physique(const Id ownerId, const VecFE& position) : Component(ownerId), position(position) {}
 
 m2::Physique::Physique(Physique&& other) noexcept
-		: Component(other._owner_id), position(std::move(other.position)), orientation(other.orientation),
+		: Component(other._ownerId), position(std::move(other.position)), orientation(other.orientation),
 		preStep(std::move(other.preStep)), postStep(std::move(other.postStep)),
 		body(std::move(other.body)), rigidBodyIndex(std::move(other.rigidBodyIndex)),
 		onCollision(std::move(other.onCollision)), offCollision(std::move(other.offCollision)) {
@@ -19,7 +19,7 @@ m2::Physique::Physique(Physique&& other) noexcept
 }
 
 m2::Physique& m2::Physique::operator=(Physique&& other) noexcept {
-    std::swap(_owner_id, other._owner_id);
+    std::swap(_ownerId, other._ownerId);
     std::swap(position, other.position);
     std::swap(orientation, other.orientation);
     std::swap(preStep, other.preStep);

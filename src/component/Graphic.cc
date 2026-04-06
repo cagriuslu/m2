@@ -161,7 +161,7 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 		};
 
 		// Dim the sprite if dimming mode is enabled. TODO Dimming is implemented only for default variant.
-		const bool dimmed = DimRenderingIfNecessary(gfx.OwnerId(), sprite.GetTexture());
+		const bool dimmed = DimRenderingIfNecessary(gfx.GetOwnerId(), sprite.GetTexture());
 
 		spriteDrawer(gfx.drawForegroundCompanion);
 
@@ -179,7 +179,7 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 		}
 
 		// Dim the sprite if dimming mode is enabled.
-		const bool dimmed = DimRenderingIfNecessary(gfx.OwnerId(), M2_GAME.GetTextLabelCache().Texture());
+		const bool dimmed = DimRenderingIfNecessary(gfx.GetOwnerId(), M2_GAME.GetTextLabelCache().Texture());
 
 		// Draw background
 		if (textLabel.background_color().a()) {

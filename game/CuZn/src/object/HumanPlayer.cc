@@ -217,7 +217,7 @@ std::vector<m2g::pb::CardType> PlayerCards(const m2::Character& player) {
 
 int PlayerLinkCount(const m2::Character& player) {
 	auto road_characters = GetCharacterPool()
-			| std::views::filter(m2::IsComponentOfAnyDescendant(player.OwnerId()))
+			| std::views::filter(m2::IsComponentOfAnyDescendant(player.GetOwnerId()))
 			| std::views::filter(IsRoadCharacter);
 	return std::accumulate(road_characters.begin(), road_characters.end(), 0, [](int acc, m2::Character& road_char) -> int {
 		return acc + LinkCountOfRoadCharacter(road_char);
@@ -225,7 +225,7 @@ int PlayerLinkCount(const m2::Character& player) {
 }
 int PlayerEstimatedVictoryPoints(const m2::Character& player) {
 	auto soldFactories = GetCharacterPool()
-			| std::views::filter(m2::IsComponentOfAnyDescendant(player.OwnerId()))
+			| std::views::filter(m2::IsComponentOfAnyDescendant(player.GetOwnerId()))
 			| std::views::filter(IsFactoryCharacter)
 			| std::views::filter(IsFactorySold);
 	return std::accumulate(soldFactories.begin(), soldFactories.end(), 0, [](int acc, m2::Character& factoryCharacter) -> int {
@@ -265,20 +265,20 @@ std::optional<m2g::pb::CardType> PlayerNextIndustryTileOfIndustry(const m2::Char
 }
 size_t PlayerBuiltFactoryCount(const m2::Character& player) {
 	auto factories_view = GetCharacterPool()
-		| std::views::filter(m2::IsComponentOfAnyDescendant(player.OwnerId()))
+		| std::views::filter(m2::IsComponentOfAnyDescendant(player.GetOwnerId()))
 		| std::views::filter(IsFactoryCharacter);
 	return std::distance(factories_view.begin(), factories_view.end());
 }
 std::set<IndustryLocation> PlayerBuiltFactoryLocations(const m2::Character& player) {
 	auto factories_view = GetCharacterPool()
-		| std::views::filter(m2::IsComponentOfAnyDescendant(player.OwnerId()))
+		| std::views::filter(m2::IsComponentOfAnyDescendant(player.GetOwnerId()))
 		| std::views::filter(IsFactoryCharacter)
 		| std::views::transform(ToIndustryLocationOfFactoryCharacter);
 	return {factories_view.begin(), factories_view.end()};
 }
 std::set<IndustryLocation> PlayerSellableFactoryLocations(const m2::Character& player) {
 	auto factories_view = GetCharacterPool()
-		| std::views::filter(m2::IsComponentOfAnyDescendant(player.OwnerId()))
+		| std::views::filter(m2::IsComponentOfAnyDescendant(player.GetOwnerId()))
 		| std::views::filter(IsFactoryCharacter)
 		| std::views::filter(IsFactoryNotSold)
 		| std::views::filter([](const m2::Character& c) {
@@ -301,7 +301,7 @@ m2::void_expected PlayerCanOverbuild(const m2::Character& player, const Industry
 	}
 
 	// Check if the factory belongs to the player
-	if (player.OwnerId() == factory->GetParentId()) {
+	if (player.GetOwnerId() == factory->GetParentId()) {
 		// Any industry can be overbuilt
 		return {};
 	}
@@ -327,13 +327,13 @@ std::set<m2g::pb::CardType> PlayerCitiesInNetwork(const m2::Character& player) {
 	std::set<m2g::pb::CardType> cities;
 
 	auto cities_view = GetCharacterPool()
-		| std::views::filter(m2::IsComponentOfAnyDescendant(player.OwnerId()))
+		| std::views::filter(m2::IsComponentOfAnyDescendant(player.GetOwnerId()))
 		| std::views::filter(IsFactoryCharacter)
 		| std::views::transform(ToCityOfFactoryCharacter);
 	cities.insert(cities_view.begin(), cities_view.end());
 
 	auto roads_view = GetCharacterPool()
-		| std::views::filter(m2::IsComponentOfAnyDescendant(player.OwnerId()))
+		| std::views::filter(m2::IsComponentOfAnyDescendant(player.GetOwnerId()))
 		| std::views::filter(IsRoadCharacter)
 		| std::views::transform(ToCitiesOfRoadCharacter);
 	for (const auto& road_cities : roads_view) {

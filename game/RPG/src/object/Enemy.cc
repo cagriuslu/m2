@@ -9,7 +9,7 @@
 #include <rpg/Objects.h>
 #include <rpg/object/Enemy.h>
 #include <deque>
-#include <m2/third_party/physics/ColliderCategory.h>
+#include <m2/thirdparty/physics/ColliderCategory.h>
 #include "m2/Game.h"
 #include "m2/game/Pathfinder.h"
 #include <rpg/Graphic.h>
@@ -42,16 +42,16 @@ m2::void_expected Enemy::init(m2::Object& obj, const m2::VecF& position) {
 
 	auto& phy = obj.AddPhysique();
 	phy.position = position;
-	m2::third_party::physics::RigidBodyDefinition rigidBodyDef{
-		.bodyType = m2::third_party::physics::RigidBodyType::DYNAMIC,
+	m2::thirdparty::physics::RigidBodyDefinition rigidBodyDef{
+		.bodyType = m2::thirdparty::physics::RigidBodyType::DYNAMIC,
 		.fixtures = {
-			m2::third_party::physics::FixtureDefinition{
-				.shape = m2::third_party::physics::CircleShape::FromSpriteCircleFixture(mainSprite.OriginalPb().regular().fixtures(0).circle(), mainSprite.Ppm()),
-				.colliderFilter = m2::third_party::physics::gColliderCategoryToParams[m2::I(m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_BACKGROUND_HOSTILE_OBJECT)]
+			m2::thirdparty::physics::FixtureDefinition{
+				.shape = m2::thirdparty::physics::CircleShape::FromSpriteCircleFixture(mainSprite.OriginalPb().regular().fixtures(0).circle(), mainSprite.Ppm()),
+				.colliderFilter = m2::thirdparty::physics::gColliderCategoryToParams[m2::I(m2::thirdparty::physics::ColliderCategory::COLLIDER_CATEGORY_BACKGROUND_HOSTILE_OBJECT)]
 			},
-			m2::third_party::physics::FixtureDefinition{
-				.shape = m2::third_party::physics::CircleShape::FromSpriteCircleFixture(mainSprite.OriginalPb().regular().fixtures(1).circle(), mainSprite.Ppm()),
-				.colliderFilter = m2::third_party::physics::gColliderCategoryToParams[m2::I(m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_HOSTILE_OBJECT)]
+			m2::thirdparty::physics::FixtureDefinition{
+				.shape = m2::thirdparty::physics::CircleShape::FromSpriteCircleFixture(mainSprite.OriginalPb().regular().fixtures(1).circle(), mainSprite.Ppm()),
+				.colliderFilter = m2::thirdparty::physics::gColliderCategoryToParams[m2::I(m2::thirdparty::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_HOSTILE_OBJECT)]
 			}
 		},
 		.linearDamping = 5.0f,
@@ -61,7 +61,7 @@ m2::void_expected Enemy::init(m2::Object& obj, const m2::VecF& position) {
 		.initiallyAwake = false,
 		.isBullet = false
 	};
-	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2::pb::PhysicsLayer::SEA_LEVEL);
+	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2::pb::PhysicsLayer::SEA_LEVEL);
 
 	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::FastCharacterStorageIndex>(obj);
 	chr.UnsafeAddCard(m2g::pb::CARD_REUSABLE_GUN);
@@ -115,7 +115,7 @@ m2::void_expected Enemy::init(m2::Object& obj, const m2::VecF& position) {
 			// Check if we died
 			if (not self.GetVariable(RESOURCE_HP)) {
 				// Drop card
-				auto drop_position = self.Owner().GetPhysique().position;
+				auto drop_position = self.GetOwner().GetPhysique().position;
 				if (m2::Group* group = obj.TryGetGroup()) {
 					// Check if the object belongs to card group
 					auto* card_group = dynamic_cast<CardGroup*>(group);
@@ -132,7 +132,7 @@ m2::void_expected Enemy::init(m2::Object& obj, const m2::VecF& position) {
 				M2G_PROXY.alive_enemy_count--;
 				// Delete self
 				LOG_INFO("Enemy died");
-				M2_DEFER(m2::CreateObjectDeleter(self.OwnerId()));
+				M2_DEFER(m2::CreateObjectDeleter(self.GetOwnerId()));
 				// Create corpse
 				if (obj_type == ObjectType::SKELETON) {
 					M2_DEFER([pos = drop_position]() {

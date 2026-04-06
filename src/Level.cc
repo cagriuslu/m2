@@ -11,7 +11,7 @@
 #include <m2/game/object/Tile.h>
 #include <m2/protobuf/Detail.h>
 #include <m2/sheet_editor/Ui.h>
-#include <m2/third_party/physics/box2d/DebugDraw.h>
+#include <m2/thirdparty/physics/box2d/DebugDraw.h>
 #include <m2/ui/widget/Text.h>
 #include <m2/Log.h>
 #include <M2.orm.h>
@@ -36,7 +36,7 @@ Level::~Level() {
 	_characterStorage.ClearPools();
 
 	if (_debugDraw) {
-		delete static_cast<third_party::physics::box2d::DebugDraw*>(_debugDraw);
+		delete static_cast<thirdparty::physics::box2d::DebugDraw*>(_debugDraw);
 		_debugDraw = nullptr;
 	}
 	delete contactListener;
@@ -211,7 +211,7 @@ DrawLayer Level::GetDrawLayer(const GraphicId gfxId) {
 	if (uprightGraphics.GetShiftedPoolId() == shiftedGfxPoolId) {
 		const auto& gfx = uprightGraphics[gfxId];
 		for (auto i = 0zu; i < uprightDrawLists.size(); ++i) {
-			if (uprightDrawLists[i].ContainsObject(gfx.OwnerId())) {
+			if (uprightDrawLists[i].ContainsObject(gfx.GetOwnerId())) {
 				return static_cast<pb::UprightGraphicsLayer>(i);
 			}
 		}
@@ -229,7 +229,7 @@ std::pair<Pool<Graphic>&, DrawList*> Level::GetGraphicPoolAndDrawList(const Grap
 	if (uprightGraphics.GetShiftedPoolId() == shiftedGfxPoolId) {
 		const auto& gfx = uprightGraphics[gfxId];
 		for (auto& uprightDrawList : uprightDrawLists) {
-			if (uprightDrawList.ContainsObject(gfx.OwnerId())) {
+			if (uprightDrawList.ContainsObject(gfx.GetOwnerId())) {
 				return std::pair<Pool<Graphic>&,DrawList*>{uprightGraphics, &uprightDrawList};
 			}
 		}
@@ -469,7 +469,7 @@ void_expected Level::InitAnyPlayer(
 		world[I(pb::PhysicsLayer::AIRBORNE)]->SetContactListener(contactListener);
 		world[I(pb::PhysicsLayer::SPACE)]->SetContactListener(contactListener);
 #ifdef DEBUG
-		auto* debugDraw = new third_party::physics::box2d::DebugDraw{};
+		auto* debugDraw = new thirdparty::physics::box2d::DebugDraw{};
 		_debugDraw = debugDraw;
 		world[I(pb::PhysicsLayer::BEDROCK)]->SetDebugDraw(debugDraw);
 		world[I(pb::PhysicsLayer::SEABED)]->SetDebugDraw(debugDraw);

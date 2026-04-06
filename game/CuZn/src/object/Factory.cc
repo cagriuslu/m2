@@ -12,7 +12,7 @@ using namespace m2g::pb;
 m2::Object* FindFactoryAtLocation(Location location) {
 	auto factories = GetCharacterPool()
 		| std::views::filter(IsFactoryCharacter)
-		| std::views::transform(m2::ToOwner)
+		| std::views::transform(&m2::Component::GetOwner)
 		| std::views::filter(m2::IsObjectInArea(std::get<m2::RectF>(M2G_PROXY.industry_positions[location])));
 	if (auto factory_it = factories.begin(); factory_it != factories.end()) {
 		return &*factory_it;
@@ -36,7 +36,7 @@ void RemoveObsoleteFactories() {
 		GetCharacterPool()
 		| std::views::filter(IsFactoryCharacter)
 		| std::views::filter(IsFactoryLevel1)
-		| std::views::transform(m2::ToOwnerId),
+		| std::views::transform(&m2::Component::GetOwnerId),
 		std::back_inserter(ids));
 
 	// Delete objects immediately
@@ -68,8 +68,8 @@ void SellFactory(m2::Character& factory_chr) {
 	const auto& tileTtem = M2_GAME.GetCard(tileType);
 	// Earn income points
 	const auto incomeBonus = tileTtem.GetConstant(INCOME_POINTS_BONUS).GetIntOrZero();
-	const auto currIncomePoints = factory_chr.Owner().TryGetParent()->GetCharacter().GetVariable(INCOME_POINTS).GetIntOrZero();
-	factory_chr.Owner().TryGetParent()->GetCharacter().UnsafeSetVariable(INCOME_POINTS, m2::VariableValue{ClampIncomePoints(currIncomePoints + incomeBonus)});
+	const auto currIncomePoints = factory_chr.GetOwner().TryGetParent()->GetCharacter().GetVariable(INCOME_POINTS).GetIntOrZero();
+	factory_chr.GetOwner().TryGetParent()->GetCharacter().UnsafeSetVariable(INCOME_POINTS, m2::VariableValue{ClampIncomePoints(currIncomePoints + incomeBonus)});
 	// Flip the tile
 	factory_chr.UnsafeSetVariable(IS_SOLD, m2::VariableValue{1});
 }
@@ -114,7 +114,7 @@ IndustryLocation ToIndustryLocationOfFactoryCharacter(m2::Character& chr) {
 	if (not IsFactoryCharacter(chr)) {
 		throw M2_ERROR("Character doesn't belong to a factory");
 	}
-	return *industry_location_on_position(chr.Owner().InferPositionF());
+	return *industry_location_on_position(chr.GetOwner().InferPositionF());
 }
 
 m2::void_expected InitFactory(m2::Object& obj, const m2::VecF& position, City city, IndustryTile industry_tile) {
@@ -145,12 +145,12 @@ m2::void_expected InitFactory(m2::Object& obj, const m2::VecF& position, City ci
 		auto cell_rect = m2::RectF{top_left_cell_pos - 0.5f, 2.0f, 2.0f};
 
 		// Draw background with player's color
-		auto background_color = (M2_LEVEL.GetDimmingExceptions() && not M2_LEVEL.GetDimmingExceptions()->contains(gfx.OwnerId()))
+		auto background_color = (M2_LEVEL.GetDimmingExceptions() && not M2_LEVEL.GetDimmingExceptions()->contains(gfx.GetOwnerId()))
 			? color * M2G_PROXY.dimming_factor : color;
 		m2::Graphic::ColorRect(cell_rect, background_color);
 
 		// If sold, draw the black bottom half
-		if (gfx.Owner().GetCharacter().GetVariable(IS_SOLD).GetIntOrZero() == 1) {
+		if (gfx.GetOwner().GetCharacter().GetVariable(IS_SOLD).GetIntOrZero() == 1) {
 			const auto bottom_half_cell_rect = m2::RectF{top_left_cell_pos.GetX() - 0.5f, top_left_cell_pos.GetY() + 0.5f, 2.0f, 1.0f};
 			m2::Graphic::ColorRect(bottom_half_cell_rect, m2::RGB{0, 0, 0});
 		}
@@ -159,7 +159,7 @@ m2::void_expected InitFactory(m2::Object& obj, const m2::VecF& position, City ci
 		m2::Graphic::DefaultDrawCallback(gfx);
 
 		// Draw the resources
-		DrawResources(gfx.Owner().GetCharacter());
+		DrawResources(gfx.GetOwner().GetCharacter());
 	};
 
 	return {};

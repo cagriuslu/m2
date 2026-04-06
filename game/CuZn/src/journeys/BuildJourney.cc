@@ -660,7 +660,7 @@ std::pair<m2g::pb::CardType,int> ExecuteBuildAction(m2::Character& player, const
 		M2_DEFER(m2::CreateObjectDeleter(factory->GetId()));
 	}
 	// Create factory on the map
-	auto it = m2::CreateObject(m2g::pb::FACTORY, player.OwnerId());
+	auto it = m2::CreateObject(m2g::pb::FACTORY, player.GetOwnerId());
 	auto city = city_of_location(build_action.industry_location());
 	InitFactory(*it, position_of_industry_location(build_action.industry_location()), city, build_action.industry_tile());
 	// Give resources to factory, sell to market at the same time

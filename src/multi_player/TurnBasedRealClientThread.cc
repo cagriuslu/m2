@@ -92,14 +92,14 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::network::SequenceNo>>
 				return "Local level has more characters than server";
 			}
 			const auto& serverChr = server_update.objects_with_character(i);
-			if (chr.Owner().InferPositionF() != VecF{serverChr.position()}) {
+			if (chr.GetOwner().InferPositionF() != VecF{serverChr.position()}) {
 				return "Server and local object position mismatch";
 			}
-			if (chr.Owner().GetType() != serverChr.object_type()) {
+			if (chr.GetOwner().GetType() != serverChr.object_type()) {
 				return "Server and local object type mismatch";
 			}
 			// Map server ObjectIDs to local ObjectIDs
-			_server_to_local_map[serverChr.object_id()] = std::make_pair(chr.OwnerId(), true);
+			_server_to_local_map[serverChr.object_id()] = std::make_pair(chr.GetOwnerId(), true);
 			++i;
 			return std::nullopt;
 		});

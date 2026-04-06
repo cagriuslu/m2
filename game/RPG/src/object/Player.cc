@@ -11,7 +11,7 @@
 #include <Character.pb.h>
 #include <rpg/Defs.h>
 #include <array>
-#include <m2/third_party/physics/ColliderCategory.h>
+#include <m2/thirdparty/physics/ColliderCategory.h>
 
 using namespace rpg;
 using namespace m2g;
@@ -25,16 +25,16 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 	const auto& mainSprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(main_sprite_type));
 
 	auto& phy = obj.AddPhysique();
-	m2::third_party::physics::RigidBodyDefinition rigidBodyDef{
-		.bodyType = m2::third_party::physics::RigidBodyType::DYNAMIC,
+	m2::thirdparty::physics::RigidBodyDefinition rigidBodyDef{
+		.bodyType = m2::thirdparty::physics::RigidBodyType::DYNAMIC,
 		.fixtures = {
-			m2::third_party::physics::FixtureDefinition{
-				.shape = m2::third_party::physics::CircleShape::FromSpriteCircleFixture(mainSprite.OriginalPb().regular().fixtures(0).circle(), mainSprite.Ppm()),
-				.colliderFilter = m2::third_party::physics::gColliderCategoryToParams[m2::I(m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_BACKGROUND_FRIENDLY_OBJECT)]
+			m2::thirdparty::physics::FixtureDefinition{
+				.shape = m2::thirdparty::physics::CircleShape::FromSpriteCircleFixture(mainSprite.OriginalPb().regular().fixtures(0).circle(), mainSprite.Ppm()),
+				.colliderFilter = m2::thirdparty::physics::gColliderCategoryToParams[m2::I(m2::thirdparty::physics::ColliderCategory::COLLIDER_CATEGORY_BACKGROUND_FRIENDLY_OBJECT)]
 			},
-			m2::third_party::physics::FixtureDefinition{
-				.shape = m2::third_party::physics::CircleShape::FromSpriteCircleFixture(mainSprite.OriginalPb().regular().fixtures(1).circle(), mainSprite.Ppm()),
-				.colliderFilter = m2::third_party::physics::gColliderCategoryToParams[m2::I(m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_FRIENDLY_OBJECT)]
+			m2::thirdparty::physics::FixtureDefinition{
+				.shape = m2::thirdparty::physics::CircleShape::FromSpriteCircleFixture(mainSprite.OriginalPb().regular().fixtures(1).circle(), mainSprite.Ppm()),
+				.colliderFilter = m2::thirdparty::physics::gColliderCategoryToParams[m2::I(m2::thirdparty::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_FRIENDLY_OBJECT)]
 			}
 		},
 		.linearDamping = PLAYER_LINEAR_DAMPING,
@@ -45,7 +45,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 		.isBullet = false
 	};
 	phy.position = position;
-	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2::pb::PhysicsLayer::SEA_LEVEL);
+	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2::pb::PhysicsLayer::SEA_LEVEL);
 
 	auto& gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, main_sprite_type, position);
 	gfx.position = position;
@@ -151,7 +151,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 		M2G_PROXY.set_ammo_display_state(dynamic_cast<const m2::FastCharacter&>(chr).GetFirstCard(CARD_CATEGORY_SPECIAL_RANGED_WEAPON));
 	};
 	phy.onCollision = [](MAYBE m2::Physique& me, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
-		if (auto* other_char = other.Owner().TryGetCharacter(); other_char && 10.0f < m2::VecF{me.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->GetLinearVelocity()}.GetLength()) {
+		if (auto* other_char = other.GetOwner().TryGetCharacter(); other_char && 10.0f < m2::VecF{me.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->GetLinearVelocity()}.GetLength()) {
 			other_char->ExecuteInteraction(std::make_unique<m2g::Proxy::StunDuration>(2.0f));
 		}
 	};

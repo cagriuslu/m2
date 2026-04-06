@@ -4,7 +4,7 @@
 #include "m2/Game.h"
 #include <rpg/Objects.h>
 #include <m2/Log.h>
-#include <m2/third_party/physics/ColliderCategory.h>
+#include <m2/thirdparty/physics/ColliderCategory.h>
 #include <rpg/Physics.h>
 #include <m2g/Proxy.h>
 
@@ -36,15 +36,15 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF& position, c
 	phy.orientation = m2::FE{start_angle};
 
 	auto rigidBodyDef = BasicBulletRigidBodyDefinition();
-	rigidBodyDef.fixtures = {m2::third_party::physics::FixtureDefinition{
-		.shape = m2::third_party::physics::RectangleShape::FromSpriteRectangleFixture(sprite.OriginalPb().regular().fixtures(0).rectangle(), sprite.Ppm()),
+	rigidBodyDef.fixtures = {m2::thirdparty::physics::FixtureDefinition{
+		.shape = m2::thirdparty::physics::RectangleShape::FromSpriteRectangleFixture(sprite.OriginalPb().regular().fixtures(0).rectangle(), sprite.Ppm()),
 		.restitution = 0.0f,
 		.isSensor = true,
-		.colliderFilter = m2::third_party::physics::gColliderCategoryToParams[m2::I(is_friend
-			? m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_FRIENDLY_DAMAGE
-			: m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_HOSTILE_DAMAGE)]
+		.colliderFilter = m2::thirdparty::physics::gColliderCategoryToParams[m2::I(is_friend
+			? m2::thirdparty::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_FRIENDLY_DAMAGE
+			: m2::thirdparty::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_HOSTILE_DAMAGE)]
 	}};
-	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, start_angle, m2::pb::PhysicsLayer::SEA_LEVEL);
+	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, start_angle, m2::pb::PhysicsLayer::SEA_LEVEL);
 	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->SetAngularVelocity(-swing_speed);
 
 	// Add graphics
@@ -60,11 +60,11 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF& position, c
 	chr.update = [](m2::Character& chr, const m2::Stopwatch::Duration& delta) {
 		chr.UnsafeSubtractVariable(RESOURCE_TTL, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count(), 0.0f);
 		if (not chr.GetVariable(RESOURCE_TTL)) {
-			M2_DEFER(m2::CreateObjectDeleter(chr.OwnerId()));
+			M2_DEFER(m2::CreateObjectDeleter(chr.GetOwnerId()));
 		}
 	};
 	phy.onCollision = [average_damage, damage_accuracy](MAYBE m2::Physique& phy, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
-		if (auto* other_char = other.Owner().TryGetCharacter(); other_char) {
+		if (auto* other_char = other.GetOwner().TryGetCharacter(); other_char) {
 			other_char->ExecuteInteraction(std::make_unique<Proxy::HitDamage>(m2::ApplyAccuracy(average_damage, average_damage, damage_accuracy)));
 		}
 	};
@@ -73,7 +73,7 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF& position, c
 			phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->SetPosition(originator->GetPhysique().position);
 		} else {
 			// Originator died
-			M2_DEFER(m2::CreateObjectDeleter(phy.OwnerId()));
+			M2_DEFER(m2::CreateObjectDeleter(phy.GetOwnerId()));
 		}
 	};
 

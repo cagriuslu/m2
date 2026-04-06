@@ -815,7 +815,7 @@ void Game::ExecuteStep(const Stopwatch::Duration& delta) {
 		for (auto& phy : _level->physics) {
 			for (const auto& body : phy.body) {
 				if (body && body->IsEnabled()) {
-					auto& obj = phy.Owner();
+					auto& obj = phy.GetOwner();
 					phy.position = VecFE{body->GetPosition()};
 					phy.orientation = FE{body->GetAngle()};
 					// Update other components
@@ -827,7 +827,7 @@ void Game::ExecuteStep(const Stopwatch::Duration& delta) {
 						if (oldGfxPosition != body->GetPosition()) {
 							const auto gfxId = obj.GetGraphicId();
 							const auto poolAndDrawList = _level->GetGraphicPoolAndDrawList(gfxId);
-							poolAndDrawList.second->QueueUpdate(phy.OwnerId(), body->GetPosition());
+							poolAndDrawList.second->QueueUpdate(phy.GetOwnerId(), body->GetPosition());
 						}
 					}
 					if (auto* lig = obj.TryGetLight()) {

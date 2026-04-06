@@ -97,7 +97,4 @@ namespace m2::network {
 		std::queue<pb::TurnBasedNetworkMessage>& incoming_queue();
 		std::queue<pb::TurnBasedNetworkMessage>& outgoing_queue();
 	};
-
-	// Filters
-	inline bool is_client_ready(const TurnBasedClientConnectionManager& c) { return c.is_ready(); }
 }

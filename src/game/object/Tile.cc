@@ -1,11 +1,11 @@
 #include <m2/game/object/Tile.h>
 #include <m2/Game.h>
 #include <m2/Object.h>
-#include <m2/third_party/physics/RigidBody.h>
+#include <m2/thirdparty/physics/RigidBody.h>
 #include <M2.pb.h>
 
 using namespace google::protobuf;
-using namespace m2::third_party::physics;
+using namespace m2::thirdparty::physics;
 
 namespace {
 	std::vector<FixtureDefinition> ToFixtures(const RepeatedPtrField<m2::pb::Fixture>& pbFixtures,
@@ -39,7 +39,7 @@ m2::Pool<m2::Object>::Iterator m2::obj::CreateTile(const pb::FlatGraphicsLayer l
 				.initiallyEnabled = true
 			};
 			auto& phy = it->AddPhysique();
-			phy.body[I(pb::PhysicsLayer::SEA_LEVEL)] = third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, it->GetPhysiqueId(), position, 0.0f, pb::PhysicsLayer::SEA_LEVEL);
+			phy.body[I(pb::PhysicsLayer::SEA_LEVEL)] = thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, it->GetPhysiqueId(), position, 0.0f, pb::PhysicsLayer::SEA_LEVEL);
 		}
 
 		// Add foreground companion if necessary

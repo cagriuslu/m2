@@ -63,6 +63,6 @@ namespace m2 {
 
 	// Transformers
 
-	inline Object& ToOwnerOfCharacter(const Character& chr) { return chr.Owner(); }
+	inline Object& ToOwnerOfCharacter(const Character& chr) { return chr.GetOwner(); }
 	m2g::pb::CardCategory ToCategoryOfCard(m2g::pb::CardType);
 }

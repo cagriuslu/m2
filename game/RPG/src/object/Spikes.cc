@@ -1,7 +1,7 @@
 #include <rpg/Objects.h>
 #include <m2/Game.h>
 #include <m2/game/Timer.h>
-#include <m2/third_party/physics/ColliderCategory.h>
+#include <m2/thirdparty/physics/ColliderCategory.h>
 
 struct Spikes : public m2::HeapObjectImpl {
 	std::optional<m2::Timer> trigger_timer;
@@ -16,18 +16,18 @@ m2::void_expected rpg::create_spikes(m2::Object& obj, const m2::VecF& position) 
 	// Create physique component
 	auto& phy = obj.AddPhysique();
 	phy.position = position;
-	m2::third_party::physics::RigidBodyDefinition rigidBodyDef{
-		.bodyType = m2::third_party::physics::RigidBodyType::STATIC,
-		.fixtures = {m2::third_party::physics::FixtureDefinition{
-			.shape = m2::third_party::physics::CircleShape::FromSpriteCircleFixture(spikes_in.OriginalPb().regular().fixtures(0).circle(), spikes_in.Ppm()),
+	m2::thirdparty::physics::RigidBodyDefinition rigidBodyDef{
+		.bodyType = m2::thirdparty::physics::RigidBodyType::STATIC,
+		.fixtures = {m2::thirdparty::physics::FixtureDefinition{
+			.shape = m2::thirdparty::physics::CircleShape::FromSpriteCircleFixture(spikes_in.OriginalPb().regular().fixtures(0).circle(), spikes_in.Ppm()),
 			.isSensor = true,
-			.colliderFilter = m2::third_party::physics::gColliderCategoryToParams[m2::I(m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_BACKGROUND_OBSTACLE)]
+			.colliderFilter = m2::thirdparty::physics::gColliderCategoryToParams[m2::I(m2::thirdparty::physics::ColliderCategory::COLLIDER_CATEGORY_BACKGROUND_OBSTACLE)]
 		}},
 		.allowSleeping = true,
 		.initiallyAwake = false,
 		.isBullet = false
 	};
-	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2::pb::PhysicsLayer::SEA_LEVEL);
+	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2::pb::PhysicsLayer::SEA_LEVEL);
 
 	// Create graphic component
 	auto& gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, m2g::pb::SPIKES_IN);
@@ -44,7 +44,7 @@ m2::void_expected rpg::create_spikes(m2::Object& obj, const m2::VecF& position) 
 				std::get<const m2::Sprite*>(gfx.visual) = &spikes_out;
 				impl.trigger_timer = m2::Timer{};
 				// Recreate the body so that collision is reset, otherwise the Player standing on the spikes doesn't collide again
-				phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), self.position, {}, m2::pb::PhysicsLayer::SEA_LEVEL);
+				phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), self.position, {}, m2::pb::PhysicsLayer::SEA_LEVEL);
 			}
 		} else if (std::get<const m2::Sprite*>(gfx.visual) == &spikes_out && impl.trigger_timer) {
 			// Spikes are out and triggered
@@ -52,7 +52,7 @@ m2::void_expected rpg::create_spikes(m2::Object& obj, const m2::VecF& position) 
 				std::get<const m2::Sprite*>(gfx.visual) = &spikes_in;
 				impl.trigger_timer.reset();
 				// Recreate the body so that collision is reset, otherwise the Player standing on the spikes doesn't collide again
-				phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), self.position, {}, m2::pb::PhysicsLayer::SEA_LEVEL);
+				phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), self.position, {}, m2::pb::PhysicsLayer::SEA_LEVEL);
 			}
 		}
 	};
@@ -62,7 +62,7 @@ m2::void_expected rpg::create_spikes(m2::Object& obj, const m2::VecF& position) 
 			impl.trigger_timer = m2::Timer{};
 		} else if (std::get<const m2::Sprite*>(gfx.visual) == &spikes_out) {
 			// Spikes are out
-			if (auto* other_char = other.Owner().TryGetCharacter(); other_char){
+			if (auto* other_char = other.GetOwner().TryGetCharacter(); other_char){
 				other_char->ExecuteInteraction(std::make_unique<m2g::Proxy::HitDamage>(1.0f));
 			}
 		}

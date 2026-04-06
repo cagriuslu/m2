@@ -276,7 +276,7 @@ m2::void_expected CanPlayerSell(m2::Character& player, const m2g::pb::TurnBasedC
 	m2ReturnUnexpectedUnless(is_industry_location(sell_action.industry_location()), "Selected location is not an industry location");
 	auto* factory = FindFactoryAtLocation(sell_action.industry_location());
 	m2ReturnUnexpectedUnless(factory, "Selected location does not have a built factory");
-	m2ReturnUnexpectedUnless(factory->GetParentId() == player.OwnerId(), "Selected factory does not belong to the player");
+	m2ReturnUnexpectedUnless(factory->GetParentId() == player.GetOwnerId(), "Selected factory does not belong to the player");
 	m2ReturnUnexpectedUnless(is_sellable_industry(ToIndustryOfFactoryCharacter(factory->GetCharacter())), "Selected factory is not sellable");
 
 	// Validate the merchant

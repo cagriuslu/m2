@@ -1,10 +1,10 @@
-#include <m2/third_party/physics/box2d/DebugDraw.h>
+#include <m2/thirdparty/physics/box2d/DebugDraw.h>
 #include <m2/Game.h>
 #include <m2/component/Graphic.h>
 #include <m2/video/Color.h>
 #include <m2/math/VecF.h>
 
-using namespace m2::third_party::physics::box2d;
+using namespace m2::thirdparty::physics::box2d;
 
 DebugDraw::DebugDraw() {
 	AppendFlags(e_shapeBit);

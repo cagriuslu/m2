@@ -1,5 +1,5 @@
 #include <pinball/Objects.h>
-#include <m2/third_party/physics/ColliderCategory.h>
+#include <m2/thirdparty/physics/ColliderCategory.h>
 #include <m2/Game.h>
 
 m2::void_expected LoadGenericBallSensor(m2::Object& obj, const m2::VecF& position, const m2::pb::PhysicsLayer physicsLayer,
@@ -12,24 +12,24 @@ m2::void_expected LoadGenericBallSensor(m2::Object& obj, const m2::VecF& positio
 
 	auto& phy = obj.AddPhysique();
 	phy.position = position;
-	m2::third_party::physics::RigidBodyDefinition rigidBodyDef{
-		.bodyType = m2::third_party::physics::RigidBodyType::DYNAMIC,
+	m2::thirdparty::physics::RigidBodyDefinition rigidBodyDef{
+		.bodyType = m2::thirdparty::physics::RigidBodyType::DYNAMIC,
 		.fixedRotation = true,
 		.gravityScale = 0.0f,
 		.allowSleeping = false,
 		.isBullet = true
 	};
 	for (const auto& fixturePb : sprite.OriginalPb().regular().fixtures()) {
-		rigidBodyDef.fixtures.emplace_back(m2::third_party::physics::FixtureDefinition{
-			.shape = m2::third_party::physics::ToShape(fixturePb, sprite.Ppm()),
+		rigidBodyDef.fixtures.emplace_back(m2::thirdparty::physics::FixtureDefinition{
+			.shape = m2::thirdparty::physics::ToShape(fixturePb, sprite.Ppm()),
 			.isSensor = true,
-			.colliderFilter = m2::third_party::physics::ColliderParams{
-				.belongsTo = m2::third_party::physics::ColliderLayer::COLLIDER_LAYER_FOREGROUND_FRIENDLY_OBJECT,
-				.collidesWith = m2::third_party::physics::ColliderLayer::COLLIDER_LAYER_FOREGROUND_FRIENDLY_OBJECT
+			.colliderFilter = m2::thirdparty::physics::ColliderParams{
+				.belongsTo = m2::thirdparty::physics::ColliderLayer::COLLIDER_LAYER_FOREGROUND_FRIENDLY_OBJECT,
+				.collidesWith = m2::thirdparty::physics::ColliderLayer::COLLIDER_LAYER_FOREGROUND_FRIENDLY_OBJECT
 			}
 		});
 	}
-	phy.body[m2::I(physicsLayer)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef,
+	phy.body[m2::I(physicsLayer)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef,
 		obj.GetPhysiqueId(), position, {}, physicsLayer);
 
 	obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, spriteType);
@@ -37,14 +37,14 @@ m2::void_expected LoadGenericBallSensor(m2::Object& obj, const m2::VecF& positio
 	// The sensor collides with only the ball
 	phy.onCollision = [onCollisionWithBall](m2::Physique& self, m2::Physique& ball, const m2::box2d::Contact& contact) {
 		if (onCollisionWithBall) {
-			if (ball.Owner().GetType() == m2g::pb::BALL) {
+			if (ball.GetOwner().GetType() == m2g::pb::BALL) {
 				onCollisionWithBall(self, ball, contact);
 			}
 		}
 	};
 	phy.offCollision = [offCollisionWithBall](m2::Physique& self, m2::Physique& ball) {
 		if (offCollisionWithBall) {
-			if (ball.Owner().GetType() == m2g::pb::BALL) {
+			if (ball.GetOwner().GetType() == m2g::pb::BALL) {
 				offCollisionWithBall(self, ball);
 			}
 		}

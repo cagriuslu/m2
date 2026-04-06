@@ -1,7 +1,7 @@
 #pragma once
 #include "Group.h"
 #include "ObjectId.h"
-#include <m2/third_party/physics/RigidBody.h>
+#include <m2/thirdparty/physics/RigidBody.h>
 #include "ui/UiPanelBlueprint.h"
 #include "math/Rational.h"
 #include "component/Graphic.h"
@@ -144,7 +144,7 @@ namespace m2 {
 
 		/// This function is called if a background tile has a fixture. The FixtureDefinition, except the shape, should
 		/// be filled by the game code.
-		third_party::physics::FixtureDefinition TileFixtureDefinition(MAYBE m2g::pb::SpriteType spriteType) { throw M2_ERROR("Proxy is missing tile fixture definition"); }
+		thirdparty::physics::FixtureDefinition TileFixtureDefinition(MAYBE m2g::pb::SpriteType spriteType) { throw M2_ERROR("Proxy is missing tile fixture definition"); }
 		/// Called after a tile is created
 		void post_tile_create(MAYBE m2::Object& obj, MAYBE m2g::pb::SpriteType sprite_type) {}
 

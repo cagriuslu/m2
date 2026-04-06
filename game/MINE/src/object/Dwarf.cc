@@ -3,12 +3,12 @@
 #include <m2g_SpriteType.pb.h>
 #include <m2/box2d/Query.h>
 #include <m2/game/CharacterMovement.h>
-#include <m2/third_party/physics/ColliderCategory.h>
+#include <m2/thirdparty/physics/ColliderCategory.h>
 #include <m2/ObjectEx.h>
 
 using namespace m2g;
 using namespace m2g::pb;
-using namespace m2::third_party::physics;
+using namespace m2::thirdparty::physics;
 
 m2::void_expected create_dwarf(m2::Object& obj, const m2::VecF& position) {
 	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(DWARF_FULL));
@@ -66,7 +66,7 @@ m2::void_expected create_dwarf(m2::Object& obj, const m2::VecF& position) {
 		// Mouse button
 		if (M2_GAME.events.IsMouseButtonDown(m2::MouseButton::PRIMARY)) {
 			m2::box2d::FindObjectsNearPositionUnderMouse(phy.position, 2.0f, [&delta](m2::Physique& other_phy) -> bool {
-				auto& obj_under_mouse = other_phy.Owner();
+				auto& obj_under_mouse = other_phy.GetOwner();
 				// If object under mouse has character
 				if (obj_under_mouse.GetCharacterId()) {
 					auto& chr_under_mouse = obj_under_mouse.GetCharacter();
@@ -79,7 +79,7 @@ m2::void_expected create_dwarf(m2::Object& obj, const m2::VecF& position) {
 						// If object under mouse runs out of HP
 						if (hp == 0.0f) {
 							// Delete object
-							M2_DEFER(m2::CreateObjectDeleter(chr_under_mouse.OwnerId()));
+							M2_DEFER(m2::CreateObjectDeleter(chr_under_mouse.GetOwnerId()));
 						}
 					}
 					// Stop searching

@@ -1,6 +1,6 @@
 #include <pinball/Objects.h>
 #include <m2/Game.h>
-#include <m2/third_party/physics/ColliderCategory.h>
+#include <m2/thirdparty/physics/ColliderCategory.h>
 #include <m2/Log.h>
 
 namespace {
@@ -33,20 +33,20 @@ m2::void_expected LoadDropGate(m2::Object& obj, const m2::VecF& position, float 
 	auto& phy = obj.AddPhysique();
 	phy.position = position;
 	phy.orientation = m2::FE{orientation};
-	m2::third_party::physics::RigidBodyDefinition rigidBodyDef{
-		.bodyType = m2::third_party::physics::RigidBodyType::STATIC,
+	m2::thirdparty::physics::RigidBodyDefinition rigidBodyDef{
+		.bodyType = m2::thirdparty::physics::RigidBodyType::STATIC,
 		.isBullet = true
 	};
 	const auto& fixturePb = sprite.OriginalPb().regular().fixtures(0);
-	rigidBodyDef.fixtures.emplace_back(m2::third_party::physics::FixtureDefinition{
-		.shape = m2::third_party::physics::ToShape(fixturePb, sprite.Ppm()),
+	rigidBodyDef.fixtures.emplace_back(m2::thirdparty::physics::FixtureDefinition{
+		.shape = m2::thirdparty::physics::ToShape(fixturePb, sprite.Ppm()),
 		.isSensor = true,
-		.colliderFilter = m2::third_party::physics::ColliderParams{
-			.belongsTo = m2::third_party::physics::ColliderLayer::COLLIDER_LAYER_FOREGROUND_FRIENDLY_OBJECT,
-			.collidesWith = m2::third_party::physics::ColliderLayer::COLLIDER_LAYER_FOREGROUND_FRIENDLY_OBJECT
+		.colliderFilter = m2::thirdparty::physics::ColliderParams{
+			.belongsTo = m2::thirdparty::physics::ColliderLayer::COLLIDER_LAYER_FOREGROUND_FRIENDLY_OBJECT,
+			.collidesWith = m2::thirdparty::physics::ColliderLayer::COLLIDER_LAYER_FOREGROUND_FRIENDLY_OBJECT
 		}
 	});
-	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef,
+	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef,
 		obj.GetPhysiqueId(), position, orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
 
 	auto& gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, spriteType);

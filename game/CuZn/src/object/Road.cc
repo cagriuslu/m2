@@ -28,7 +28,7 @@ namespace {
 m2::Object* FindRoadAtLocation(const m2g::pb::SpriteType location) {
 	auto roads = GetCharacterPool()
 				 | std::views::filter(IsRoadCharacter)
-				 | std::views::transform(m2::ToOwner)
+				 | std::views::transform(&m2::Component::GetOwner)
 				 | std::views::filter(m2::IsObjectInArea(std::get<m2::RectF>( M2G_PROXY.connection_positions[location])));
 	if (auto road_it = roads.begin(); road_it != roads.end()) {
 		return &*road_it;
@@ -53,7 +53,7 @@ void RemoveAllRoads() {
 	std::ranges::copy(
 			GetCharacterPool()
 				| std::views::filter(IsRoadCharacter)
-				| std::views::transform(m2::ToOwnerId),
+				| std::views::transform(&m2::Component::GetOwnerId),
 			std::back_inserter(ids));
 
 	// Delete objects immediately
@@ -86,7 +86,7 @@ m2::void_expected InitRoad(m2::Object& obj, const m2::VecF& position, const Conn
 
 		// Draw background with player's color
 		const auto background_color =
-				(M2_LEVEL.GetDimmingExceptions() && not M2_LEVEL.GetDimmingExceptions()->contains(gfx.OwnerId()))
+				(M2_LEVEL.GetDimmingExceptions() && not M2_LEVEL.GetDimmingExceptions()->contains(gfx.GetOwnerId()))
 				? color * M2G_PROXY.dimming_factor : color;
 		m2::Graphic::ColorRect(cell_rect, background_color);
 

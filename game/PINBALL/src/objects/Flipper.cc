@@ -1,7 +1,7 @@
 #include <pinball/Objects.h>
 #include <m2/Game.h>
 #include <m2/box2d/Shape.h>
-#include <m2/third_party/physics/ColliderCategory.h>
+#include <m2/thirdparty/physics/ColliderCategory.h>
 
 namespace {
 	constexpr auto MAX_FLIPPER_SWEEP_RADS = m2::ToRadians(55.0f);
@@ -34,18 +34,18 @@ m2::void_expected LoadFlipper(m2::Object& obj, const m2::VecF& position, float o
 	auto& phy = obj.AddPhysique();
 	phy.position = position;
 	phy.orientation = m2::FE{orientation};
-	const m2::third_party::physics::RigidBodyDefinition rigidBodyDef{
-		.bodyType = m2::third_party::physics::RigidBodyType::KINEMATIC,
+	const m2::thirdparty::physics::RigidBodyDefinition rigidBodyDef{
+		.bodyType = m2::thirdparty::physics::RigidBodyType::KINEMATIC,
 		.fixtures = m2::ToVector(
 				sprite.OriginalPb().regular().fixtures() | std::views::transform([&sprite](const auto& fixture) {
-					m2::third_party::physics::FixtureDefinition fixtureDef;
-					fixtureDef.shape = m2::third_party::physics::ToShape(fixture, sprite.Ppm());
+					m2::thirdparty::physics::FixtureDefinition fixtureDef;
+					fixtureDef.shape = m2::thirdparty::physics::ToShape(fixture, sprite.Ppm());
 					fixtureDef.friction = 0.6f;
 					fixtureDef.restitution = 0.60f;
 					fixtureDef.restitutionThresholdVelocity = 0.0f;
 					fixtureDef.isSensor = false;
 					fixtureDef.colliderFilter.belongsTo =
-							m2::third_party::physics::ColliderLayer::COLLIDER_LAYER_FOREGROUND_FRIENDLY_OBJECT;
+							m2::thirdparty::physics::ColliderLayer::COLLIDER_LAYER_FOREGROUND_FRIENDLY_OBJECT;
 					fixtureDef.colliderFilter.collidesWith = 0xFFFF;
 					return fixtureDef;
 				})),
@@ -54,7 +54,7 @@ m2::void_expected LoadFlipper(m2::Object& obj, const m2::VecF& position, float o
 		.isBullet = true,
 		.initiallyEnabled = true
 	};
-	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
+	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
 
 	MAYBE auto& gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, rightFlipper ? m2g::pb::SPRITE_BASIC_FLIPPER_RIGHT : m2g::pb::SPRITE_BASIC_FLIPPER_LEFT);
 	gfx.position = position;

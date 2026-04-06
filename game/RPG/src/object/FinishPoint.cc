@@ -1,6 +1,6 @@
 #include <rpg/Objects.h>
 #include <m2/Log.h>
-#include <m2/third_party/physics/ColliderCategory.h>
+#include <m2/thirdparty/physics/ColliderCategory.h>
 #include <m2/Game.h>
 
 m2::void_expected rpg::init_finish_point(m2::Object& obj, const m2::VecF& position) {
@@ -9,18 +9,18 @@ m2::void_expected rpg::init_finish_point(m2::Object& obj, const m2::VecF& positi
 
 	auto& phy = obj.AddPhysique();
 	phy.position = position;
-	m2::third_party::physics::RigidBodyDefinition rigidBodyDef{
-		.bodyType = m2::third_party::physics::RigidBodyType::STATIC,
-		.fixtures = {m2::third_party::physics::FixtureDefinition{
-			.shape = m2::third_party::physics::CircleShape::FromSpriteCircleFixture(sprite.OriginalPb().regular().fixtures(0).circle(), sprite.Ppm()),
+	m2::thirdparty::physics::RigidBodyDefinition rigidBodyDef{
+		.bodyType = m2::thirdparty::physics::RigidBodyType::STATIC,
+		.fixtures = {m2::thirdparty::physics::FixtureDefinition{
+			.shape = m2::thirdparty::physics::CircleShape::FromSpriteCircleFixture(sprite.OriginalPb().regular().fixtures(0).circle(), sprite.Ppm()),
 			.isSensor = true,
-			.colliderFilter = m2::third_party::physics::gColliderCategoryToParams[m2::I(m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_FRIENDLY_CARD)]
+			.colliderFilter = m2::thirdparty::physics::gColliderCategoryToParams[m2::I(m2::thirdparty::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_FRIENDLY_CARD)]
 		}},
 		.allowSleeping = true,
 		.initiallyAwake = false,
 		.isBullet = false
 	};
-	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2::pb::PhysicsLayer::SEA_LEVEL);
+	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2::pb::PhysicsLayer::SEA_LEVEL);
 
 	auto& gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, sprite_type);
 	gfx.position = position;

@@ -434,10 +434,10 @@ std::pair<m2g::pb::CardType,int> ExecuteNetworkAction(m2::Character& player, con
 	}
 
 	// Create the road on the map
-	auto it = m2::CreateObject(m2g::pb::ROAD, player.OwnerId());
+	auto it = m2::CreateObject(m2g::pb::ROAD, player.GetOwnerId());
 	InitRoad(*it, position_of_connection(network_action.connection_1()), network_action.connection_1());
 	if (network_action.connection_2()) {
-		auto it_2 = m2::CreateObject(m2g::pb::ROAD, player.OwnerId());
+		auto it_2 = m2::CreateObject(m2g::pb::ROAD, player.GetOwnerId());
 		InitRoad(*it_2, position_of_connection(network_action.connection_2()), network_action.connection_2());
 	}
 

@@ -1,6 +1,6 @@
 #include <m2/Game.h>
 #include <m2/ui/widget/TextSelection.h>
-#include <m2/third_party/video/TextRendering.h>
+#include <m2/thirdparty/video/TextRendering.h>
 
 using namespace m2;
 using namespace m2::widget;

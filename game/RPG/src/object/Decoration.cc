@@ -1,6 +1,6 @@
 #include <rpg/Objects.h>
 #include <m2/Game.h>
-#include <m2/third_party/physics/ColliderCategory.h>
+#include <m2/thirdparty/physics/ColliderCategory.h>
 
 m2::void_expected rpg::create_decoration(m2::Object& obj, const m2::VecF& position, m2g::pb::SpriteType sprite_type) {
 	const auto orientation = obj.GetType() == m2g::pb::FENCE_VERTICAL ? m2::PI_DIV2 : 0.0f;
@@ -10,8 +10,8 @@ m2::void_expected rpg::create_decoration(m2::Object& obj, const m2::VecF& positi
 	gfx.position = position;
 	gfx.orientation = orientation;
 
-	m2::third_party::physics::RigidBodyDefinition rigidBodyDef{
-		.bodyType = m2::third_party::physics::RigidBodyType::STATIC,
+	m2::thirdparty::physics::RigidBodyDefinition rigidBodyDef{
+		.bodyType = m2::thirdparty::physics::RigidBodyType::STATIC,
 		.allowSleeping = true,
 		.initiallyAwake = false,
 		.isBullet = false
@@ -22,19 +22,19 @@ m2::void_expected rpg::create_decoration(m2::Object& obj, const m2::VecF& positi
 			auto& phy = obj.AddPhysique();
 			phy.position = position;
 			phy.orientation = m2::FE{orientation};
-			rigidBodyDef.fixtures = {m2::third_party::physics::FixtureDefinition{
-				.shape = m2::third_party::physics::RectangleShape::FromSpriteRectangleFixture(sprite.OriginalPb().regular().fixtures(0).rectangle(), sprite.Ppm()),
-				.colliderFilter = m2::third_party::physics::gColliderCategoryToParams[m2::I(m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_BACKGROUND_OBSTACLE)]
+			rigidBodyDef.fixtures = {m2::thirdparty::physics::FixtureDefinition{
+				.shape = m2::thirdparty::physics::RectangleShape::FromSpriteRectangleFixture(sprite.OriginalPb().regular().fixtures(0).rectangle(), sprite.Ppm()),
+				.colliderFilter = m2::thirdparty::physics::gColliderCategoryToParams[m2::I(m2::thirdparty::physics::ColliderCategory::COLLIDER_CATEGORY_BACKGROUND_OBSTACLE)]
 			}};
-			phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
+			phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
 		} else if (sprite.OriginalPb().regular().fixtures(0).has_circle()) {
 			auto& phy = obj.AddPhysique();
 			phy.position = position;
-			rigidBodyDef.fixtures = {m2::third_party::physics::FixtureDefinition{
-				.shape = m2::third_party::physics::CircleShape::FromSpriteCircleFixture(sprite.OriginalPb().regular().fixtures(0).circle(), sprite.Ppm()),
-				.colliderFilter = m2::third_party::physics::gColliderCategoryToParams[m2::I(m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_BACKGROUND_OBSTACLE)]
+			rigidBodyDef.fixtures = {m2::thirdparty::physics::FixtureDefinition{
+				.shape = m2::thirdparty::physics::CircleShape::FromSpriteCircleFixture(sprite.OriginalPb().regular().fixtures(0).circle(), sprite.Ppm()),
+				.colliderFilter = m2::thirdparty::physics::gColliderCategoryToParams[m2::I(m2::thirdparty::physics::ColliderCategory::COLLIDER_CATEGORY_BACKGROUND_OBSTACLE)]
 			}};
-			phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::third_party::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
+			phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, orientation, m2::pb::PhysicsLayer::SEA_LEVEL);
 		}
 	}
 

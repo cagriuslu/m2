@@ -1,7 +1,7 @@
 #pragma once
 #include <box2d/b2_draw.h>
 
-namespace m2::third_party::physics::box2d {
+namespace m2::thirdparty::physics::box2d {
 	class DebugDraw final : public b2Draw {
 	public:
 		DebugDraw();

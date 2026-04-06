@@ -1,4 +1,4 @@
-#include <m2/third_party/physics/RigidBody.h>
+#include <m2/thirdparty/physics/RigidBody.h>
 #include <m2/Game.h>
 #include <m2/Log.h>
 #include <box2d/b2_body.h>
@@ -7,7 +7,7 @@
 #include <box2d/b2_chain_shape.h>
 #include <box2d/b2_edge_shape.h>
 
-using namespace m2::third_party::physics;
+using namespace m2::thirdparty::physics;
 
 namespace {
 	b2BodyType ToBox2dBodyType(const RigidBodyType rbt) {
@@ -43,7 +43,7 @@ ChainShape ChainShape::FromSpriteChainFixture(const pb::Fixture_ChainFixture& cf
 	});
 	return cs;
 }
-std::variant<PolygonShape,RectangleShape,CircleShape,ChainShape,EdgeShape> m2::third_party::physics::ToShape(const pb::Fixture& pbFixture, const int ppm) {
+std::variant<PolygonShape,RectangleShape,CircleShape,ChainShape,EdgeShape> m2::thirdparty::physics::ToShape(const pb::Fixture& pbFixture, const int ppm) {
 	if (pbFixture.has_rectangle()) {
 		return RectangleShape::FromSpriteRectangleFixture(pbFixture.rectangle(), ppm);
 	}

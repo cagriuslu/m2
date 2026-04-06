@@ -1,9 +1,9 @@
 #pragma once
-#include <m2/third_party/physics/RigidBody.h>
+#include <m2/thirdparty/physics/RigidBody.h>
 #include <array>
 #include <cstdint>
 
-namespace m2::third_party::physics {
+namespace m2::thirdparty::physics {
 	// The physics world contains 16 layers. Only the fixtures that both agree to collide with each other can collide.
 	// One fixture can have presence in multiple layers, and may agree to collide with any other or none of the layers.
 	// It is recommended to use the ColliderCategory abstraction instead of using ColliderLayer directly.

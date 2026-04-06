@@ -13,10 +13,10 @@ m2::pb::TurnBasedNetworkMessage m2::GenerateServerUpdate(uint32_t& nextSequenceN
 	M2_LEVEL.GetCharacterStorage().ForEachCharacter([&](const Character& chr) -> std::optional<std::monostate> {
 		auto* objDesc = message.mutable_server_update()->add_objects_with_character();
 		chr.Store(*objDesc);
-		objDesc->set_object_id(chr.Owner().GetId());
-		objDesc->mutable_position()->CopyFrom(static_cast<pb::VecF>(chr.Owner().InferPositionF()));
-		objDesc->set_object_type(chr.Owner().GetType());
-		objDesc->set_parent_id(chr.Owner().GetParentId());
+		objDesc->set_object_id(chr.GetOwner().GetId());
+		objDesc->mutable_position()->CopyFrom(static_cast<pb::VecF>(chr.GetOwner().InferPositionF()));
+		objDesc->set_object_type(chr.GetOwner().GetType());
+		objDesc->set_parent_id(chr.GetOwner().GetParentId());
 		return std::nullopt;
 	});
 	message.mutable_server_update()->set_shutdown(shutdown);

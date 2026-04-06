@@ -17,7 +17,7 @@ void DrawResources(m2::Character& chr) {
 		throw M2_ERROR("Factory holds more than one type of resources");
 	}
 
-	const auto& pos = chr.Owner().InferPositionF();
+	const auto& pos = chr.GetOwner().InferPositionF();
 	auto count = coal_count + iron_count + beer_count;
 	auto count_sprite_type = static_cast<m2g::pb::SpriteType>(m2g::pb::TEXT_LABEL_1X - 1 + count);
 	auto sprite_type = (coal_count ? m2g::pb::COAL_CUBE : (iron_count ? m2g::pb::IRON_CUBE : m2g::pb::BEER_BARREL));
@@ -26,8 +26,8 @@ void DrawResources(m2::Character& chr) {
 	const auto& sprite_drop_shadow = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(sprite_drop_shadow_type));
 
 	// Dim if necessary
-	m2::Graphic::DimRenderingIfNecessary(chr.OwnerId(), M2_GAME.GetTextLabelCache().Texture());
-	m2::Graphic::DimRenderingIfNecessary(chr.OwnerId(), sprite.GetTexture());
+	m2::Graphic::DimRenderingIfNecessary(chr.GetOwnerId(), M2_GAME.GetTextLabelCache().Texture());
+	m2::Graphic::DimRenderingIfNecessary(chr.GetOwnerId(), sprite.GetTexture());
 	// Draw count
 	const auto& textLabel = std::get<m2::pb::TextLabel>(M2_GAME.GetSpriteOrTextLabel(count_sprite_type));
 	const auto rect = M2_GAME.GetTextLabelCache().Create(textLabel.text(), m2::FontSizeOfTextLabel(textLabel));

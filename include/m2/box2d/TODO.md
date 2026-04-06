@@ -1,1 +1,1 @@
-Move contents to third_party/physics/box2d
+Move contents to thirdparty/physics/box2d

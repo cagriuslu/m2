@@ -7,7 +7,7 @@
 #include <variant>
 #include <vector>
 
-namespace m2::third_party::physics {
+namespace m2::thirdparty::physics {
 	enum class RigidBodyType {
 		STATIC,
 		KINEMATIC,

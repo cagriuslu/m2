@@ -3,7 +3,7 @@
 #include <m2/Log.h>
 #include <m2/Game.h>
 #include <m2/math/VecF.h>
-#include <m2/third_party/physics/ColliderCategory.h>
+#include <m2/thirdparty/physics/ColliderCategory.h>
 #include <rpg/object/Enemy.h>
 
 namespace {
@@ -79,7 +79,7 @@ std::optional<m2::VecF> rpg::EscaperFsm::find_direction_to_escape() {
 	auto can_escape = [=, this](float offset) -> bool {
 		auto radians_offset = angle_from_player_to_obj + offset;
 		auto raycast_target = obj->GetPhysique().position + m2::VecF::CreateUnitVectorWithAngle(radians_offset).WithLength(raycast_length);
-		auto raycast_distance = m2::box2d::CheckDistance(*M2_LEVEL.world[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)], obj->GetPhysique().position, raycast_target, m2::third_party::physics::gColliderCategoryToParams[m2::I(m2::third_party::physics::ColliderCategory::COLLIDER_CATEGORY_OBSTACLE)].belongsTo);
+		auto raycast_distance = m2::box2d::CheckDistance(*M2_LEVEL.world[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)], obj->GetPhysique().position, raycast_target, m2::thirdparty::physics::gColliderCategoryToParams[m2::I(m2::thirdparty::physics::ColliderCategory::COLLIDER_CATEGORY_OBSTACLE)].belongsTo);
 		return (raycast_length - raycast_distance) < 0.1f; // 0.1 comparison error
 	};
 

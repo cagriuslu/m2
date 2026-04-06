@@ -1,7 +1,7 @@
 #pragma once
 #include "../Component.h"
 #include "../box2d/ContactListener.h"
-#include <m2/third_party/physics/RigidBody.h>
+#include <m2/thirdparty/physics/RigidBody.h>
 #include <m2/math/VecF.h>
 #include <m2/math/VecE.h>
 #include <m2/ProxyTypes.h>
@@ -18,7 +18,7 @@ namespace m2 {
 		Callback postStep{};
 
 		// An object has either body or rigidBodyIndex.
-		std::array<std::optional<third_party::physics::RigidBody>, PHYSICS_LAYER_COUNT> body{};
+		std::array<std::optional<thirdparty::physics::RigidBody>, PHYSICS_LAYER_COUNT> body{};
 		std::optional<int> rigidBodyIndex;
 
 		std::function<void(Physique&, Physique&, const box2d::Contact&)> onCollision;

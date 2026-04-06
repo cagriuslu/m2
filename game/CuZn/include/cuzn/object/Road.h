@@ -14,7 +14,7 @@ int LinkCountOfRoadCharacter(const m2::Character& chr);
 void RemoveAllRoads();
 
 // Filters
-constexpr auto IsRoadCharacter = [](const m2::Character& chr) { return chr.Owner().GetType() == m2g::pb::ROAD; };
+constexpr auto IsRoadCharacter = [](const m2::Character& chr) { return chr.GetOwner().GetType() == m2g::pb::ROAD; };
 
 // Transformers
 constexpr auto ToCitiesOfRoadCharacter = [](const m2::Character& chr) -> std::set<m2g::pb::CardType> {

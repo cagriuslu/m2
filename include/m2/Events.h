@@ -18,15 +18,10 @@ namespace m2 {
 
 	/// Stateful event manager
 	class Events {
-		bool quit{};
-
-		bool window_resize{};
-
-		uint32_t key_press_count{};
-		std::vector<uint16_t> keys_pressed = std::vector<uint16_t>(pb::enum_value_count<m2g::pb::KeyType>());
-
-		uint32_t key_release_count{};
-		std::vector<uint16_t> keys_released = std::vector<uint16_t>(pb::enum_value_count<m2g::pb::KeyType>());
+		bool _quit{};
+		bool _windowResized{};
+		std::vector<uint16_t> _keysPressed = std::vector<uint16_t>(pb::enum_value_count<m2g::pb::KeyType>());
+		std::vector<uint16_t> _keysReleased = std::vector<uint16_t>(pb::enum_value_count<m2g::pb::KeyType>());
 
 		enum class MouseAction {
 			NO_ACTION = 0,
@@ -36,15 +31,16 @@ namespace m2 {
 		/// For each button, only one actions is stored per loop
 		std::array<MouseAction, U(MouseButton::end)> _mouseActions{};
 
-		int32_t mouse_wheel_vertical_scroll_count{};
-		int32_t mouse_wheel_horizontal_scroll_count{};
+		int32_t _verticalScrollCount{};
+		int32_t _horizontalScrollCount{};
 
-		std::stringstream text_input;
+		std::stringstream _textInput;
 
 		// Persistent states
-		std::vector<bool> keys_down = std::vector<bool>(pb::enum_value_count<m2g::pb::KeyType>());
-		std::array<bool, U(MouseButton::end)> mouse_buttons_down{};
-		VecI _mouse_position;
+
+		std::vector<bool> _downKeys = std::vector<bool>(pb::enum_value_count<m2g::pb::KeyType>());
+		std::array<bool, U(MouseButton::end)> _downButtons{};
+		VecI _mousePositionPx;
 
 	public:
 		Events() = default;
@@ -52,14 +48,17 @@ namespace m2 {
 		void Clear();
 		bool Gather();
 
-		// Quit
 		bool PopQuit();
-		// Window resize
+
 		bool PopWindowResize();
+
 		// Key presses
+
 		bool PopKeyPress(m2g::pb::KeyType key);
 		bool PopKeyRelease(m2g::pb::KeyType key);
+
 		// Mouse button
+
 		bool PeekMouseButtonPress(MouseButton mb) const;
 		bool PopMouseButtonPress(MouseButton mb);
 		bool PeekMouseButtonPress(MouseButton mb, const RectI& rect) const;
@@ -69,21 +68,23 @@ namespace m2 {
 		bool PeekMouseButtonRelease(MouseButton mb, const RectI& rect) const;
 		bool PopMouseButtonRelease(MouseButton mb, const RectI& rect);
 		void ClearMouseButtonActions(const RectI& rect);
+
 		// Mouse scroll
+
 		int32_t PopMouseWheelVerticalScroll();
 		int32_t PopMouseWheelVerticalScroll(const RectI& rect);
 		int32_t PopMouseWheelHorizontalScroll();
 		int32_t PopMouseWheelHorizontalScroll(const RectI& rect);
 		void ClearMouseWheelScrolls(const RectI& rect);
-		// Text input
+
 		std::optional<std::string> PopTextInput();
 
-		// Continuous states
+		// Persistent states
 
-		bool IsKeyDown(m2g::pb::KeyType key) const;
-		bool IsMouseButtonDown(MouseButton mb) const;
+		bool IsKeyDown(const m2g::pb::KeyType key) const { return _downKeys[pb::enum_index(key)]; }
+		bool IsMouseButtonDown(const MouseButton mb) const { return _downButtons[U(mb)]; }
 		void ClearMouseButtonDown(const RectI& rect);
-		/// Position of the mouse in window coordinates where top left is (0,0).
-		VecI MousePosition() const;
+		/// Position of the mouse in window coordinates where top-left is (0,0).
+		VecI MousePosition() const { return _mousePositionPx; }
 	};
 }
