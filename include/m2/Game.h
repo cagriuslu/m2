@@ -9,13 +9,13 @@
 #include "audio/Song.h"
 #include <m2/video/Sprite.h>
 #include "game/Animation.h"
-#include "multi_player/TurnBasedHostClientThread.h"
+#include "multiplayer/TurnBasedHostClientThread.h"
 #include <m2/video/TextLabel.h>
-#include "multi_player/TurnBasedRealClientThread.h"
-#include "multi_player/TurnBasedBotClientThread.h"
-#include "multi_player/TurnBasedServerActorInterface.h"
-#include "multi_player/TurnBasedServerComponents.h"
-#include <m2/multi_player/lockstep/ReplayComponents.h>
+#include "multiplayer/TurnBasedRealClientThread.h"
+#include "multiplayer/TurnBasedBotClientThread.h"
+#include "multiplayer/TurnBasedServerActorInterface.h"
+#include "multiplayer/TurnBasedServerComponents.h"
+#include <m2/multiplayer/lockstep/ReplayComponents.h>
 #include <m2/ui/Console.h>
 #include "protobuf/MessageLUT.h"
 #include <m2g_ObjectType.pb.h>
@@ -30,8 +30,8 @@
 #include <m2g_KeyType.pb.h>
 #include <m2/video/Shape.h>
 #include <m2/GameResources.h>
-#include <m2/multi_player/lockstep/ServerComponents.h>
-#include <m2/multi_player/lockstep/ClientComponents.h>
+#include <m2/multiplayer/lockstep/ServerComponents.h>
+#include <m2/multiplayer/lockstep/ClientComponents.h>
 
 #define M2_GAME (m2::Game::Instance())
 #define M2_DEFER(f) (M2_GAME.AddDeferredAction(f))

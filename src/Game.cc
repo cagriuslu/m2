@@ -3,9 +3,9 @@
 #include <m2/Error.h>
 #include <m2/Object.h>
 #include <m2/video/Sprite.h>
-#include <m2/bulk_sheet_editor/Ui.h>
+#include <m2/bulksheeteditor/Ui.h>
 #include <m2/sdl/Detail.h>
-#include <m2/sheet_editor/Ui.h>
+#include <m2/sheeteditor/Ui.h>
 #include <m2/component/Graphic.h>
 #include <m2/ui/UiAction.h>
 #include <m2/game/Key.h>
@@ -618,11 +618,11 @@ void Game::HandlePauseEvent() {
 		const UiPanelBlueprint* pauseMenuBlueprint{};
 		if (std::holds_alternative<m2g::Proxy::LevelState>(GetLevel().stateVariant)) {
 			pauseMenuBlueprint = _proxy.PauseMenuBlueprint();
-		} else if (std::holds_alternative<level_editor::State>(GetLevel().stateVariant)) {
+		} else if (std::holds_alternative<leveleditor::State>(GetLevel().stateVariant)) {
 			pauseMenuBlueprint = nullptr;
-		} else if (std::holds_alternative<sheet_editor::State>(GetLevel().stateVariant)) {
+		} else if (std::holds_alternative<sheeteditor::State>(GetLevel().stateVariant)) {
 			pauseMenuBlueprint = &sheet_editor_main_menu;
-		} else if (std::holds_alternative<bulk_sheet_editor::State>(GetLevel().stateVariant)) {
+		} else if (std::holds_alternative<bulksheeteditor::State>(GetLevel().stateVariant)) {
 			pauseMenuBlueprint = nullptr;
 		} else {
 			throw M2_ERROR("Implementation error");
@@ -939,10 +939,10 @@ void Game::ClearBackBuffer() const {
 void Game::Draw() {
 	// Check if only one background layer needs to be drawn
 	const auto onlyBackgroundLayerToDraw = [&]() -> std::optional<pb::FlatGraphicsLayer> {
-		if (std::holds_alternative<level_editor::State>(_level->stateVariant)) {
+		if (std::holds_alternative<leveleditor::State>(_level->stateVariant)) {
 			if (const auto& rightHudName = _level->GetRightHud()->Name();
 					rightHudName == "PaintBgRightHud" || rightHudName == "SampleBgRightHud" || rightHudName == "SelectBgRightHud") {
-				const auto& levelEditorState = std::get<level_editor::State>(_level->stateVariant);
+				const auto& levelEditorState = std::get<leveleditor::State>(_level->stateVariant);
 				return levelEditorState.GetSelectedBackgroundLayer();
 			}
 		}
@@ -1338,7 +1338,7 @@ Game::CommandResult Game::ExecuteCommand(const std::string& cmd) {
 	} else if (*command == "LoadSheetEditor") {
 		if (const auto result = M2_GAME.LoadBulkSheetEditor()) {
 			// Execute main menu the first time the bulk sheet editor is run
-			UiPanel::create_and_run_blocking(&bulk_sheet_editor::gMainMenu);
+			UiPanel::create_and_run_blocking(&bulksheeteditor::gMainMenu);
 			return CommandSuccess{.levelReplaced = true};
 		} else {
 			return CommandFail{.error = result.error()};

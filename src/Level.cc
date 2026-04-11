@@ -2,15 +2,15 @@
 #include <m2/Level.h>
 #include <m2/Meta.h>
 #include <m2/Proxy.h>
-#include <m2/bulk_sheet_editor/Ui.h>
-#include <m2/level_editor/Ui.h>
+#include <m2/bulksheeteditor/Ui.h>
+#include <m2/leveleditor/Ui.h>
 #include <m2/game/object/Camera.h>
 #include <m2/game/object/God.h>
 #include <m2/game/object/Origin.h>
 #include <m2/game/object/Pointer.h>
 #include <m2/game/object/Tile.h>
 #include <m2/protobuf/Detail.h>
-#include <m2/sheet_editor/Ui.h>
+#include <m2/sheeteditor/Ui.h>
 #include <m2/thirdparty/physics/box2d/DebugDraw.h>
 #include <m2/ui/widget/Text.h>
 #include <m2/Log.h>
@@ -83,7 +83,7 @@ void_expected Level::InitLockstepMultiPlayer(const std::variant<std::filesystem:
 }
 void_expected Level::InitLevelEditor(const std::filesystem::path& lb_path) {
 	_lbPath = lb_path;
-	stateVariant.emplace<level_editor::State>();
+	stateVariant.emplace<leveleditor::State>();
 
 	// Create message box initially disabled
 	_messageBoxUiPanel.emplace(&DefaultMessageBoxBlueprint, UiPanel::RelativeToWindow{DefaultMessageBoxArea});
@@ -94,7 +94,7 @@ void_expected Level::InitLevelEditor(const std::filesystem::path& lb_path) {
 		m2ReflectUnexpected(lb);
 		_lb.emplace(*lb);
 
-		std::get<level_editor::State>(stateVariant).LoadLevelBlueprint(*_lb);
+		std::get<leveleditor::State>(stateVariant).LoadLevelBlueprint(*_lb);
 	}
 
 	// Create default objects
@@ -103,9 +103,9 @@ void_expected Level::InitLevelEditor(const std::filesystem::path& lb_path) {
 	obj::CreateOrigin();
 
 	// UI Hud
-	_leftHudUiPanel.emplace(&level_editor::gLeftHudBlueprint, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().LeftHud()));
+	_leftHudUiPanel.emplace(&leveleditor::gLeftHudBlueprint, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().LeftHud()));
 	_leftHudUiPanel->UpdateContents(0.0f);
-	_rightHudUiPanel.emplace(&level_editor::gRightHudBlueprint, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().RightHud()));
+	_rightHudUiPanel.emplace(&leveleditor::gRightHudBlueprint, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().RightHud()));
 	_rightHudUiPanel->UpdateContents(0.0f);
 	_messageBoxUiPanel->UpdateContents(0.0f);
 
@@ -113,9 +113,9 @@ void_expected Level::InitLevelEditor(const std::filesystem::path& lb_path) {
 }
 void_expected Level::InitSheetEditor(const std::filesystem::path& path) {
 	// Create state
-	auto state = sheet_editor::State::create(path);
+	auto state = sheeteditor::State::create(path);
 	m2ReflectUnexpected(state);
-	stateVariant.emplace<sheet_editor::State>(std::move(*state));
+	stateVariant.emplace<sheeteditor::State>(std::move(*state));
 
 	// Create message box initially disabled
 	_messageBoxUiPanel.emplace(&DefaultMessageBoxBlueprint, UiPanel::RelativeToWindow{DefaultMessageBoxArea});
@@ -137,9 +137,9 @@ void_expected Level::InitSheetEditor(const std::filesystem::path& path) {
 }
 void_expected Level::InitBulkSheetEditor(const std::filesystem::path& path) {
 	// Create state
-	auto state = bulk_sheet_editor::State::Create(path);
+	auto state = bulksheeteditor::State::Create(path);
 	m2ReflectUnexpected(state);
-	stateVariant.emplace<bulk_sheet_editor::State>(std::move(*state));
+	stateVariant.emplace<bulksheeteditor::State>(std::move(*state));
 
 	// Create message box initially disabled
 	_messageBoxUiPanel.emplace(&DefaultMessageBoxBlueprint, UiPanel::RelativeToWindow{DefaultMessageBoxArea});
@@ -177,9 +177,9 @@ void_expected Level::ResetBulkSheetEditor() {
 }
 
 bool Level::IsEditor() const {
-	return std::holds_alternative<level_editor::State>(stateVariant)
-			|| std::holds_alternative<sheet_editor::State>(stateVariant)
-			|| std::holds_alternative<bulk_sheet_editor::State>(stateVariant);
+	return std::holds_alternative<leveleditor::State>(stateVariant)
+			|| std::holds_alternative<sheeteditor::State>(stateVariant)
+			|| std::holds_alternative<bulksheeteditor::State>(stateVariant);
 }
 Stopwatch::Duration Level::GetTotalSimulatedDuration() const {
 	const auto durationSinceLevelBegan = _beganAt->GetDurationSince();
@@ -252,9 +252,9 @@ m2g::Proxy::LevelState& Level::GetProxyLevelState() {
 	return std::get<m2g::Proxy::LevelState>(stateVariant);
 }
 pb::ProjectionType Level::GetProjectionType() const {
-	const auto isEditor = std::holds_alternative<level_editor::State>(stateVariant)
-		|| std::holds_alternative<sheet_editor::State>(stateVariant)
-		|| std::holds_alternative<bulk_sheet_editor::State>(stateVariant);
+	const auto isEditor = std::holds_alternative<leveleditor::State>(stateVariant)
+		|| std::holds_alternative<sheeteditor::State>(stateVariant)
+		|| std::holds_alternative<bulksheeteditor::State>(stateVariant);
 	if (isEditor) {
 		return pb::ProjectionType::PARALLEL;
 	}

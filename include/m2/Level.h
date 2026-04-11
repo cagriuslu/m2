@@ -2,17 +2,17 @@
 #include <m2g/Proxy.h>
 #include <m2/Meta.h>
 #include <m2/Object.h>
-#include <m2/bulk_sheet_editor/State.h>
+#include <m2/bulksheeteditor/State.h>
 #include <m2/component/character/CharacterStorage.h>
-#include <m2/multi_player/lockstep/LevelSaverInterface.h>
+#include <m2/multiplayer/lockstep/LevelSaverInterface.h>
 #include <m2/containers/DrawList.h>
 #include <m2/game/Pathfinder.h>
 #include <m2/game/Selection.h>
-#include <m2/level_editor/State.h>
+#include <m2/leveleditor/State.h>
 #include <m2/m3/VecF.h>
 #include <m2/ObjectDebug.h>
 #include <m2/physics/World.h>
-#include <m2/sheet_editor/State.h>
+#include <m2/sheeteditor/State.h>
 #include "network/Types.h"
 #include <m2/ui/UiPanel.h>
 #include <Level.pb.h>
@@ -109,9 +109,9 @@ namespace m2 {
 		std::variant<
 			std::monostate,
 			m2g::Proxy::LevelState,
-			level_editor::State,
-			sheet_editor::State,
-			bulk_sheet_editor::State> stateVariant;
+			leveleditor::State,
+			sheeteditor::State,
+			bulksheeteditor::State> stateVariant;
 
 		// Accessors
 

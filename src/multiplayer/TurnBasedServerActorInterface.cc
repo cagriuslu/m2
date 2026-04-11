@@ -1,0 +1,63 @@
+#include <m2/multiplayer/TurnBasedServerActorInterface.h>
+#include <m2/Log.h>
+#include <m2/multiplayer/TurnBasedServerUpdate.h>
+
+namespace {
+	constexpr auto MAX_MESSAGES_TO_PROCESS_FROM_ACTOR_PER_CALL = 10;
+}
+
+std::optional<m2::pb::TurnBasedNetworkMessage> m2::TurnBasedServerActorInterface::PopCommandFromTurnHolderEvent() {
+	ProcessOutbox();
+	if (_clientEvent && std::holds_alternative<TurnBasedServerActorOutput::ClientEvent::CommandFromTurnHolder>(_clientEvent->eventVariant)) {
+		auto tmp = std::move(std::get<TurnBasedServerActorOutput::ClientEvent::CommandFromTurnHolder>(_clientEvent->eventVariant).turnHolderCommand);
+		_clientEvent.reset();
+
+		const auto json = pb::message_to_json_string(tmp);
+		LOG_NETWORK("Popping client command", _turnHolderIndex, json->c_str());
+
+		return std::move(tmp);
+	}
+	return std::nullopt;
+}
+std::optional<int> m2::TurnBasedServerActorInterface::PopDisconnectedClientEvent() {
+	ProcessOutbox();
+	if (_clientEvent && std::holds_alternative<TurnBasedServerActorOutput::ClientEvent::DisconnectedClient>(_clientEvent->eventVariant)) {
+		const auto clientIndex = std::move(std::get<TurnBasedServerActorOutput::ClientEvent::DisconnectedClient>(_clientEvent->eventVariant).clientIndex);
+		_clientEvent.reset();
+		return clientIndex;
+	}
+	return std::nullopt;
+}
+void m2::TurnBasedServerActorInterface::TryCloseLobby() {
+	GetActorInbox().PushMessage(TurnBasedServerActorInput{.variant = TurnBasedServerActorInput::CloseLobby()});
+}
+void m2::TurnBasedServerActorInterface::SetTurnHolder(const int clientIndex) {
+	LOG_INFO("New turn holder index", clientIndex);
+	_turnHolderIndex = clientIndex;
+	GetActorInbox().PushMessage(TurnBasedServerActorInput{.variant = TurnBasedServerActorInput::UpdateTurnHolder{.clientIndex = clientIndex}});
+}
+m2::network::SequenceNo m2::TurnBasedServerActorInterface::SendServerUpdate(const bool shutdownAfter) {
+	INFO_FN();
+	auto serverUpdate = GenerateServerUpdate(_nextServerUpdateSequenceNo, _turnHolderIndex, shutdownAfter);
+	const auto serverUpdateSequenceNo = serverUpdate.sequence_no();
+	GetActorInbox().PushMessage(TurnBasedServerActorInput{.variant = TurnBasedServerActorInput::SendServerUpdate{.serverUpdate = std::move(serverUpdate)}});
+	return serverUpdateSequenceNo;
+}
+void m2::TurnBasedServerActorInterface::SendServerCommand(const m2g::pb::TurnBasedServerCommand& command, const int receiverIndex) {
+	GetActorInbox().PushMessage(TurnBasedServerActorInput{.variant = TurnBasedServerActorInput::SendServerCommand{.receiverIndex = receiverIndex, .serverCommand = command}});
+}
+
+void m2::TurnBasedServerActorInterface::ProcessOutbox() {
+	GetActorOutbox().TryHandleMessages([this](const TurnBasedServerActorOutput& msg) {
+		if (std::holds_alternative<TurnBasedServerActorOutput::StateUpdate>(msg.variant)) {
+			_serverActorState = std::get<TurnBasedServerActorOutput::StateUpdate>(msg.variant);
+		} else if (std::holds_alternative<TurnBasedServerActorOutput::ClientEvent>(msg.variant)) {
+			if (_clientEvent) {
+				// Do not process messages further until processed
+				return false;
+			}
+			_clientEvent = std::get<TurnBasedServerActorOutput::ClientEvent>(msg.variant);
+		}
+		return true;
+	}, MAX_MESSAGES_TO_PROCESS_FROM_ACTOR_PER_CALL);
+}

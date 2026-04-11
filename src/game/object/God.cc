@@ -8,19 +8,19 @@ using namespace m2;
 namespace {
 	void HandlePrimaryButtonPress(const VecF& position) {
 		std::visit(overloaded{
-				[=](level_editor::State& le) { le.HandleMousePrimaryButton(position); },
+				[=](leveleditor::State& le) { le.HandleMousePrimaryButton(position); },
 				DEFAULT_OVERLOAD},
 			M2_LEVEL.stateVariant);
 	}
 	void HandleSecondaryButtonPress(const VecF& position) {
 		std::visit(overloaded{
-		        [=](level_editor::State& le) { le.HandleMouseSecondaryButton(position); },
+		        [=](leveleditor::State& le) { le.HandleMouseSecondaryButton(position); },
 		        DEFAULT_OVERLOAD},
 		    M2_LEVEL.stateVariant);
 	}
 	void HandlePrimarySelectionComplete(const VecF& firstPosition, const VecF& secondPosition) {
 		std::visit(overloaded{
-				[=](level_editor::State& le) { le.HandleMousePrimarySelectionComplete(firstPosition, secondPosition); },
+				[=](leveleditor::State& le) { le.HandleMousePrimarySelectionComplete(firstPosition, secondPosition); },
 				DEFAULT_OVERLOAD},
 			M2_LEVEL.stateVariant);
 	}
@@ -73,9 +73,9 @@ Id obj::CreateGod() {
 
 	it->AddGraphic(pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT).postDraw = [](MAYBE Graphic& gfx, const Stopwatch::Duration&) {
 		std::visit(overloaded{
-		        [](const level_editor::State& le) { le.Draw(); },
-		        [](const sheet_editor::State& se) { se.Draw(); },
-		        [](const bulk_sheet_editor::State& se) { se.Draw(); },
+		        [](const leveleditor::State& le) { le.Draw(); },
+		        [](const sheeteditor::State& se) { se.Draw(); },
+		        [](const bulksheeteditor::State& se) { se.Draw(); },
 		    	DEFAULT_OVERLOAD},
 		    M2_LEVEL.stateVariant);
 	};
