@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <m2/detail/Bit.h>
+#include <m2/math/Bit.h>
 
 TEST(Bit, RotateLeft64) {
 	EXPECT_EQ(m2::RotateLeft64(0xAA, 8), 0xAA00);

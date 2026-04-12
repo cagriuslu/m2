@@ -1,4 +1,4 @@
-#include <m2/detail/Gaussian.h>
+#include <m2/math/Gaussian.h>
 #include <m2/Error.h>
 #include <m2/M2.h>
 #include <m2/Math.h>
