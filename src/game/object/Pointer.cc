@@ -7,7 +7,7 @@ m2::Id m2::obj::CreatePointer() {
     const auto it = CreateObject();
 
 	it->AddGraphic(pb::FlatGraphicsLayer::FOREGROUND_FLAT).preDraw = [](Graphic& gfx_, const Stopwatch::Duration&) {
-		gfx_.position = M2_GAME.MousePositionWorldM();
+		gfx_.position = M2_GAME.events.GetWorldPositionOfMouse();
 	};
 
     auto& lig = it->AddLight();

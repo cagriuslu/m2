@@ -116,7 +116,7 @@ void m2::leveleditor::State::HandleMouseSecondaryButton(const VecF& position) {
 			const auto orientation = ToRadians(M2_LEVEL.GetRightHud()->FindWidget<widget::IntegerSelection>("OrientationInput")->value());
 			const auto snapToGrid = M2_LEVEL.GetLeftHud()->FindWidget<widget::CheckboxWithText>("SnapToGridCheckbox")->GetState();
 			const auto splitCount = M2_LEVEL.GetLeftHud()->FindWidget<widget::IntegerSelection>("CellSplitCount")->value();
-			const auto placePosition = snapToGrid ? M2_GAME.MousePositionWorldM().RoundToBin(splitCount) : position;
+			const auto placePosition = snapToGrid ? M2_GAME.events.GetWorldPositionOfMouse().RoundToBin(splitCount) : position;
 			PlaceForeground(placePosition, orientation, selectedObjectType, selectedGroupType, selectedGroupInstance);
 		}
 	}

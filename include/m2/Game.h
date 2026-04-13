@@ -49,9 +49,6 @@ namespace m2 {
 		const GameResources _resources{_proxy.gameIdentifier, _proxy.defaultFontPath}; // TODO make public
 		std::optional<GameDimensions> _dimensions;
 
-		mutable std::optional<VecF> _mouse_position_world_m;
-		mutable std::optional<VecF> _screen_center_to_mouse_position_m;  // Doesn't mean much in 2.5D mode
-
 		std::variant<
 			std::monostate,
 			TurnBasedServerComponents,
@@ -197,8 +194,6 @@ namespace m2 {
 		void ForEachObjectWithMainSprite(const std::function<bool(m2g::pb::ObjectType, m2g::pb::SpriteType)>& op) const;
 		[[nodiscard]] bool AreEventsBeingHandled() const { return _eventsAreBeingHandled; }
 		[[nodiscard]] VecI MousePositionPx() const { return events.MousePosition(); }
-		const VecF& MousePositionWorldM() const; // TODO move into Level?
-		const VecF& ScreenCenterToMousePositionM() const; // TODO move into Level?
 		sdl::TextureUniquePtr DrawGameToTexture(const VecF& camera_position); // TODO move into Level?
 		/// This function can be used to check if the mouse is resting on any UI panels. If not, the mouse must be
 		/// inside the game window.
@@ -239,7 +234,6 @@ namespace m2 {
 		void SetScale(float scale);
 		/// Game height in meters can be used to adjust the zoom
 		void SetGameHeightM(float heightM);
-		void ResetMousePosition();
 		void RecalculateDirectionalAudio();
 		void QueueCommand(std::string);
 		void AddDeferredAction(const std::function<void()>& action);
@@ -247,7 +241,6 @@ namespace m2 {
 
 	   private:
 		void ResetState();
-		void RecalculateMousePosition() const;
 
 		struct CommandSuccess { bool levelReplaced{}; };
 		struct CommandFail { std::string error; };

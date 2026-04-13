@@ -57,7 +57,7 @@ Id obj::CreateGod() {
 			M2_GAME.SetScale(M2_GAME.Dimensions().Scale() * 1.5f);
 		}
 
-		if (const auto& mousePosition = M2_GAME.MousePositionWorldM(); not mousePosition.IsNegative()) {
+		if (const auto& mousePosition = M2_GAME.events.GetWorldPositionOfMouse(); not mousePosition.IsNegative()) {
 			if (M2_GAME.events.PopMouseButtonPress(MouseButton::PRIMARY)) {
 				HandlePrimaryButtonPress(mousePosition);
 			}

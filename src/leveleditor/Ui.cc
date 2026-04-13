@@ -1010,7 +1010,7 @@ const UiPanelBlueprint leveleditor::gLeftHudBlueprint = {
         	.variant = TextBlueprint{
         		.text = "0:0",
         		.onUpdate = [](MAYBE Text& self) {
-        			const auto mouse_position = M2_GAME.MousePositionWorldM().RoundI();
+        			const auto mouse_position = M2_GAME.events.GetWorldPositionOfMouse().RoundI();
         			self.set_text(ToString(mouse_position.x) + ':' + m2::ToString(mouse_position.y));
         			return MakeContinueAction();
         		}

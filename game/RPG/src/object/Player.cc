@@ -64,7 +64,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 
 	phy.preStep = [&, id=id](m2::Physique& phy, const m2::Stopwatch::Duration& delta) {
 		auto& chr = obj.GetCharacter();
-		auto vector_to_mouse = (M2_GAME.MousePositionWorldM() - phy.position).Normalize();
+		auto vector_to_mouse = (M2_GAME.events.GetWorldPositionOfMouse() - phy.position).Normalize();
 
 		auto [direction_enum, direction_vector] = m2::calculate_character_movement(MOVE_LEFT, MOVE_RIGHT, MOVE_UP, MOVE_DOWN);
 		float move_force{};

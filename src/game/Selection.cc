@@ -82,5 +82,5 @@ void Selection::SetSecondPositionIfFirstSetM(VecF positionM) {
 }
 
 VecF Selection::SecondPosition() const {
-	return _positionM.second ? *_positionM.second : M2_GAME.MousePositionWorldM();
+	return _positionM.second ? *_positionM.second : M2_GAME.events.GetWorldPositionOfMouse();
 }

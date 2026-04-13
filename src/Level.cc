@@ -248,9 +248,6 @@ std::pair<Pool<Graphic>&, DrawList*> Level::GetGraphicPoolAndDrawList(const Draw
 const m2g::Proxy::LevelState& Level::GetProxyLevelState() const {
 	return std::get<m2g::Proxy::LevelState>(stateVariant);
 }
-m2g::Proxy::LevelState& Level::GetProxyLevelState() {
-	return std::get<m2g::Proxy::LevelState>(stateVariant);
-}
 pb::ProjectionType Level::GetProjectionType() const {
 	const auto isEditor = std::holds_alternative<leveleditor::State>(stateVariant)
 		|| std::holds_alternative<sheeteditor::State>(stateVariant)
@@ -270,6 +267,37 @@ m3::VecF Level::GetCameraOffset() const {
 		_lb->camera_z_offset()};
 }
 float Level::GetHorizontalFov() const { return _lb ? _lb->horizontal_fov() : M2_GAME.Dimensions().GameM().GetX(); }
+VecF Level::GetWorldPositionOfPixel(const VecI& pixelPosition) const {
+	const auto screenCenterToPixelPx = VecI{pixelPosition.x - M2_GAME.Dimensions().WindowDimensions().x / 2, pixelPosition.y - M2_GAME.Dimensions().WindowDimensions().y / 2};
+	const auto screenCenterToPixelM = VecF{ToFloat(screenCenterToPixelPx.x) / M2_GAME.Dimensions().OutputPixelsPerMeter(), ToFloat(screenCenterToPixelPx.y) / M2_GAME.Dimensions().OutputPixelsPerMeter()};
+
+	if (IsProjectionTypePerspective(GetProjectionType())) {
+		// Mouse moves on the plane centered at the player looking towards the camera
+		// Find m3::VecF of the mouse position in the world starting from the player position
+		const auto sin_of_player_to_camera_angle = GetCameraOffset().z / GetCameraOffset().length();
+		const auto cos_of_player_to_camera_angle = sqrtf(1.0f - sin_of_player_to_camera_angle * sin_of_player_to_camera_angle);
+
+		const auto y_offset = ToFloat(screenCenterToPixelPx.y) / m3::Ppm() * sin_of_player_to_camera_angle;
+		const auto z_offset = -(ToFloat(screenCenterToPixelPx.y) / m3::Ppm()) * cos_of_player_to_camera_angle;
+		const auto x_offset = ToFloat(screenCenterToPixelPx.x) / m3::Ppm();
+		const auto player_position = m3::FocusPositionM();
+		const auto mouse_position_world_m = m3::VecF{player_position.x + x_offset, player_position.y + y_offset, player_position.z + z_offset};
+
+		// Create Line from camera to mouse position
+		const auto ray_to_mouse = m3::Line::from_points(m3::CameraPositionM(), mouse_position_world_m);
+		// Get the xy-plane
+		const auto plane = m3::Plane::xy_plane(M2G_PROXY.xy_plane_z_component);
+		// Get the intersection
+		if (const auto [intersection_point, forward_intersection] = plane.intersection(ray_to_mouse); forward_intersection) {
+			return VecF{intersection_point.x, intersection_point.y};
+		} else {
+			return VecF{-intersection_point.x, -10000.0f};  // Infinity is 10KM
+		}
+	} else {
+		const auto camera_position = objects[cameraId].GetPhysique().position;
+		return screenCenterToPixelM + static_cast<VecF>(camera_position);
+	}
+}
 
 void Level::BeginGameLoop() {
 	if (_beganAt) {
@@ -292,6 +320,9 @@ void Level::Unpause() {
 	const auto pauseDuration = _pausedAt->GetDurationSince();
 	_totalPauseDuration += pauseDuration;
 	_pausedAt.reset();
+}
+m2g::Proxy::LevelState& Level::GetProxyLevelState() {
+	return std::get<m2g::Proxy::LevelState>(stateVariant);
 }
 
 void_expected Level::EmplaceLevelSaver(std::optional<multiplayer::lockstep::LevelSaverInterface>& out, const std::string& fpath) {
@@ -334,7 +365,7 @@ void Level::DisableDimmingWithExceptions() {
 }
 
 void Level::BeginPanning() {
-	_panBeginPosition = std::make_pair(M2_GAME.events.MousePosition(), M2_GAME.MousePositionWorldM());
+	_panBeginPosition = std::make_pair(M2_GAME.events.MousePosition(), M2_GAME.events.GetWorldPositionOfMouse());
 }
 bool Level::IsPanning() const {
 	return static_cast<bool>(_panBeginPosition);

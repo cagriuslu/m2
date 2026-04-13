@@ -1110,9 +1110,6 @@ void Game::SetGameHeightM(const float heightM) {
 		}
 	}
 }
-void Game::ResetMousePosition() {
-	_mouse_position_world_m = std::nullopt; _screen_center_to_mouse_position_m = std::nullopt;
-}
 
 void Game::ForEachSprite(const std::function<bool(m2g::pb::SpriteType, const Sprite&)>& op) const {
 	for (int i = 0; i < pb::enum_value_count<m2g::pb::SpriteType>(); ++i) {
@@ -1148,21 +1145,6 @@ void Game::ForEachObjectWithMainSprite(const std::function<bool(m2g::pb::ObjectT
 		}
 	}
 }
-
-const VecF& Game::MousePositionWorldM() const {
-	if (not _mouse_position_world_m) {
-		RecalculateMousePosition();
-	}
-	return *_mouse_position_world_m;
-}
-
-const VecF& Game::ScreenCenterToMousePositionM() const {
-	if (not _screen_center_to_mouse_position_m) {
-		RecalculateMousePosition();
-	}
-	return *_screen_center_to_mouse_position_m;
-}
-
 sdl::TextureUniquePtr Game::DrawGameToTexture(const VecF& camera_position) {
 	// Temporarily change camera position
 	const auto prev_camera_position = GetLevel().GetCamera()->GetPhysique().position;
@@ -1251,43 +1233,6 @@ void Game::ExecuteDeferredActions() {
 	}
 }
 
-void Game::RecalculateMousePosition() const {
-	const auto mouse_position = events.MousePosition();
-	const auto screen_center_to_mouse_position_px =
-		VecI{mouse_position.x - Dimensions().WindowDimensions().x / 2, mouse_position.y - Dimensions().WindowDimensions().y / 2};
-	_screen_center_to_mouse_position_m = VecF{
-		ToFloat(screen_center_to_mouse_position_px.x) / Dimensions().OutputPixelsPerMeter(), ToFloat(screen_center_to_mouse_position_px.y) / Dimensions().OutputPixelsPerMeter()};
-
-	if (IsProjectionTypePerspective(_level->GetProjectionType())) {
-		// Mouse moves on the plane centered at the player looking towards the camera
-		// Find m3::VecF of the mouse position in the world starting from the player position
-		const auto sin_of_player_to_camera_angle = M2_LEVEL.GetCameraOffset().z / M2_LEVEL.GetCameraOffset().length();
-		const auto cos_of_player_to_camera_angle =
-			sqrtf(1.0f - sin_of_player_to_camera_angle * sin_of_player_to_camera_angle);
-
-		const auto y_offset = ToFloat(screen_center_to_mouse_position_px.y) / m3::Ppm() * sin_of_player_to_camera_angle;
-		const auto z_offset = -(ToFloat(screen_center_to_mouse_position_px.y) / m3::Ppm()) * cos_of_player_to_camera_angle;
-		const auto x_offset = ToFloat(screen_center_to_mouse_position_px.x) / m3::Ppm();
-		const auto player_position = m3::FocusPositionM();
-		const auto mouse_position_world_m =
-			m3::VecF{player_position.x + x_offset, player_position.y + y_offset, player_position.z + z_offset};
-
-		// Create Line from camera to mouse position
-		const auto ray_to_mouse = m3::Line::from_points(m3::CameraPositionM(), mouse_position_world_m);
-		// Get the xy-plane
-		const auto plane = m3::Plane::xy_plane(_proxy.xy_plane_z_component);
-		// Get the intersection
-		if (const auto [intersection_point, forward_intersection] = plane.intersection(ray_to_mouse);
-			forward_intersection) {
-			_mouse_position_world_m = VecF{intersection_point.x, intersection_point.y};
-		} else {
-			_mouse_position_world_m = VecF{-intersection_point.x, -10000.0f};  // Infinity is 10KM
-		}
-	} else {
-		const auto camera_position = _level->objects[_level->cameraId].GetPhysique().position;
-		_mouse_position_world_m = *_screen_center_to_mouse_position_m + static_cast<VecF>(camera_position);
-	}
-}
 Game::CommandResult Game::ExecuteCommand(const std::string& cmd) {
 	// Make sure this function is called while the events are being handled
 	if (not _eventsAreBeingHandled) {

@@ -23,10 +23,14 @@ namespace m2 {
 		std::vector<uint16_t> _keysPressed = std::vector<uint16_t>(pb::enum_value_count<m2g::pb::KeyType>());
 		std::vector<uint16_t> _keysReleased = std::vector<uint16_t>(pb::enum_value_count<m2g::pb::KeyType>());
 
-		enum class MouseAction {
+		enum class MouseActionType {
 			NO_ACTION = 0,
 			PRESSED,
 			RELEASED
+		};
+		struct MouseAction {
+			MouseActionType type{};
+			VecI positionPx;
 		};
 		/// For each button, only one actions is stored per loop
 		std::array<MouseAction, U(MouseButton::end)> _mouseActions{};
@@ -40,7 +44,10 @@ namespace m2 {
 
 		std::vector<bool> _downKeys = std::vector<bool>(pb::enum_value_count<m2g::pb::KeyType>());
 		std::array<bool, U(MouseButton::end)> _downButtons{};
+		/// Mouse position in screen coordinates
 		VecI _mousePositionPx;
+		/// Mouse position in world coordinates. Non-zero only if there's an active level.
+		VecF _mousePositionM;
 
 	public:
 		Events() = default;
@@ -48,8 +55,9 @@ namespace m2 {
 		void Clear();
 		bool Gather();
 
-		bool PopQuit();
+		// Global
 
+		bool PopQuit();
 		bool PopWindowResize();
 
 		// Key presses
@@ -84,7 +92,7 @@ namespace m2 {
 		bool IsKeyDown(const m2g::pb::KeyType key) const { return _downKeys[pb::enum_index(key)]; }
 		bool IsMouseButtonDown(const MouseButton mb) const { return _downButtons[U(mb)]; }
 		void ClearMouseButtonDown(const RectI& rect);
-		/// Position of the mouse in window coordinates where top-left is (0,0).
 		VecI MousePosition() const { return _mousePositionPx; }
+		VecF GetWorldPositionOfMouse() const { return _mousePositionM; }
 	};
 }

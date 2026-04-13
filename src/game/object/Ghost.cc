@@ -9,14 +9,14 @@ m2::Id m2::obj::CreateGhost(const m2g::pb::SpriteType spriteType, const int roun
 	auto& gfx = it->AddGraphic(pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, spriteType);
 	if (roundToBin != 0) {
 		gfx.preDraw = [roundToBin](Graphic& gfx, const Stopwatch::Duration&) {
-			gfx.position = M2_GAME.MousePositionWorldM().RoundToBin(roundToBin);
+			gfx.position = M2_GAME.events.GetWorldPositionOfMouse().RoundToBin(roundToBin);
 			if (const auto* orientationInput = M2_LEVEL.GetRightHud()->FindWidget<widget::IntegerSelection>("OrientationInput")) {
 				gfx.orientation = ToRadians(orientationInput->value());
 			}
 		};
 	} else {
 		gfx.preDraw = [](Graphic& gfx, const Stopwatch::Duration&) {
-			gfx.position = M2_GAME.MousePositionWorldM();
+			gfx.position = M2_GAME.events.GetWorldPositionOfMouse();
 			if (const auto* orientationInput = M2_LEVEL.GetRightHud()->FindWidget<widget::IntegerSelection>("OrientationInput")) {
 				gfx.orientation = ToRadians(orientationInput->value());
 			}

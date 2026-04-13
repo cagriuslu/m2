@@ -135,24 +135,27 @@ namespace m2 {
 		[[nodiscard]] const RectI& GetBackgroundBoundary() const { return _backgroundBoundary; }
 		const std::string& GetLevelIdentifier() const { return _lb ? _lb->identifier() : EMPTY_STRING; }
 		const m2g::Proxy::LevelState& GetProxyLevelState() const;
-		m2g::Proxy::LevelState& GetProxyLevelState();
 		pb::ProjectionType GetProjectionType() const;
 		m3::VecF GetCameraOffset() const;
 		float GetHorizontalFov() const;
 		Object* GetPlayer() { return objects.Get(playerId); }
 		Object* GetCamera() { return objects.Get(cameraId); }
+		VecF GetWorldPositionOfPixel(const VecI&) const;
 
 		// Modifiers
 
 		void BeginGameLoop();
 		void Pause();
 		void Unpause();
+		m2g::Proxy::LevelState& GetProxyLevelState();
 		void MarkForDeletion() { _markedForDeletion = true; }
 
 		// Objects
 
 		const CharacterStorage& GetCharacterStorage() const { return _characterStorage; }
 		CharacterStorage& GetCharacterStorage() { return _characterStorage; }
+
+		// Persistence
 
 		void_expected EmplaceLevelSaver(std::optional<multiplayer::lockstep::LevelSaverInterface>& out, const std::string& fpath);
 

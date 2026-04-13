@@ -104,13 +104,13 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj, const m2::VecF& positi
 		if (M2_GAME.events.PopMouseButtonPress(m2::MouseButton::SECONDARY)) {
 			if (M2G_PROXY.main_journeys) {
 				std::visit(m2::overloaded{
-					[](auto& journey) { journey.sub_journey->signal(PositionOrCancelSignal::create_mouse_click_signal(M2_GAME.MousePositionWorldM())); }
+					[](auto& journey) { journey.sub_journey->signal(PositionOrCancelSignal::create_mouse_click_signal(M2_GAME.events.GetWorldPositionOfMouse())); }
 				}, *M2G_PROXY.main_journeys);
 			}
 		}
 
 		// Mouse hover UI panel
-		const auto mousePositionInWorld = M2_GAME.MousePositionWorldM();
+		const auto mousePositionInWorld = M2_GAME.events.GetWorldPositionOfMouse();
 		if (not M2_GAME.IsMouseOnAnyUiPanel()) {
 			if (const auto industry_location = industry_location_on_position(mousePositionInWorld)) {
 				if (not impl.currentMouseHoverLocation || *impl.currentMouseHoverLocation != industry_location) {

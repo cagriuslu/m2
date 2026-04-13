@@ -73,7 +73,7 @@ m2::void_expected LoadBall(m2::Object& obj, const m2::VecF& position) {
 			M2_DEFER(m2::CreateLayerMover(phy_.GetOwnerId(), m2::pb::PhysicsLayer::SEA_LEVEL, m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT));
 		}
 		if (M2_GAME.events.PopMouseButtonRelease(m2::MouseButton::PRIMARY)) {
-			const auto mousePosition = M2_GAME.MousePositionWorldM();
+			const auto mousePosition = M2_GAME.events.GetWorldPositionOfMouse();
 			phy_.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->SetPosition(mousePosition);
 			phy_.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->SetLinearVelocity({});
 			phy_.body[m2::I(m2::pb::PhysicsLayer::ABOVE_GROUND)]->SetPosition(mousePosition);
