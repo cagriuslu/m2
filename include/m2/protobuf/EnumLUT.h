@@ -1,6 +1,7 @@
 #pragma once
 #include <m2/Meta.h>
 #include <array>
+#include <utility>
 
 namespace m2::pb {
 	template <typename ProtoEnum, std::size_t N>
@@ -18,7 +19,7 @@ namespace m2::pb {
 
 		std::array<ValueT, possibleEnumOptions.size()> _values;
 
-		constexpr explicit PartialEnumLUT(std::array<ValueT, possibleEnumOptions.size()> values) : _values(values) {}
+		constexpr explicit PartialEnumLUT(std::array<ValueT, possibleEnumOptions.size()> values) : _values(std::move(values)) {}
 
 	public:
 		template <typename... Args>
@@ -44,6 +45,12 @@ namespace m2::pb {
 		}
 		[[nodiscard]] const ValueT& UnsafeGet(const EnumT enumOption) const {
 			return *TryGet(enumOption);
+		}
+		template <typename Op>
+		void ForEach(Op op) const {
+			for (int i = 0; i < static_cast<int>(possibleEnumOptions.size()); ++i) {
+				op(possibleEnumOptions[i], _values[i]);
+			}
 		}
 	};
 }
