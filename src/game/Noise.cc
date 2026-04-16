@@ -173,7 +173,7 @@ Exact DecayEnvelope::GetValueAt(const Exact t) const {
 	return Exact::Zero() < releaseValue ? releaseValue : Exact::Zero();
 }
 
-void m2::ApplyLinearDecayPointSourceOffset(std::vector<VecE>& points, VecE source, VecE offsetAtUnitGain, const DecayEnvelope& gainEnvelope) {
+void m2::ApplyPointSourceOffset(std::vector<VecE>& points, VecE source, VecE offsetAtUnitGain, const DecayEnvelope& gainEnvelope) {
 	for (auto& point : points) {
 		const auto distanceToSource = source.GetDistanceToFE(point);
 		const auto gainAtPoint = gainEnvelope.GetValueAt(distanceToSource);
@@ -182,7 +182,7 @@ void m2::ApplyLinearDecayPointSourceOffset(std::vector<VecE>& points, VecE sourc
 	}
 }
 
-void m2::ApplyLinearDecayPointSourceAttraction(std::vector<VecE>& points, VecE source, Exact attractionAtUnitGain, const DecayEnvelope& gainEnvelope) {
+void m2::ApplyPointSourceAttraction(std::vector<VecE>& points, VecE source, Exact attractionAtUnitGain, const DecayEnvelope& gainEnvelope) {
 	for (auto& point : points) {
 		const auto vectorToSource = source - point;
 		const auto distanceToSource = vectorToSource.GetLengthFE();

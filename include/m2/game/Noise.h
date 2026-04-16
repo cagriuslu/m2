@@ -33,7 +33,7 @@ namespace m2 {
 	};
 
 	/// Applies offset at a point source with a gain decay
-	void ApplyLinearDecayPointSourceOffset(std::vector<VecE>& points, VecE source, VecE offsetAtUnitGain, const DecayEnvelope& gainEnvelope);
+	void ApplyPointSourceOffset(std::vector<VecE>& points, VecE source, VecE offsetAtUnitGain, const DecayEnvelope& gainEnvelope);
 	/// Applies attraction or repulsion at a point source with a gain decay. If attraction is negative, repulsion is applied.
-	void ApplyLinearDecayPointSourceAttraction(std::vector<VecE>& points, VecE source, Exact attractionAtUnitGain, const DecayEnvelope& gainEnvelope);
+	void ApplyPointSourceAttraction(std::vector<VecE>& points, VecE source, Exact attractionAtUnitGain, const DecayEnvelope& gainEnvelope);
 }
