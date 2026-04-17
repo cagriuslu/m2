@@ -4,6 +4,7 @@
 #include "m2/math/VecE.h"
 #include "rng/Distribution.h"
 #include "rng/Rng.h"
+#include <m2/math/VecI.h>
 
 namespace m2 {
 	// TODO this implementation has a problem
@@ -30,10 +31,37 @@ namespace m2 {
 		Exact releaseDuration;
 
 		Exact GetValueAt(Exact t) const;
+		Exact GetExtend() const;
 	};
 
 	/// Applies offset at a point source with a gain decay
 	void ApplyPointSourceOffset(std::vector<VecE>& points, VecE source, VecE offsetAtUnitGain, const DecayEnvelope& gainEnvelope);
 	/// Applies attraction or repulsion at a point source with a gain decay. If attraction is negative, repulsion is applied.
 	void ApplyPointSourceAttraction(std::vector<VecE>& points, VecE source, Exact attractionAtUnitGain, const DecayEnvelope& gainEnvelope);
+	/// Applies vertical offset at a column of points with gain decay to nearby points. Beware: this function is not
+	/// aware of the positions of the points and may cause overlapping.
+	void ApplyVerticalOffsetToColumnIndex(std::vector<VecE>& points, int stride, int xSource, Exact yOffsetAtUnitGain, const DecayEnvelope& leftGainEnvelope, const DecayEnvelope& rightGainEnvelope);
+	/// Applies horizontal offset at a row of points with gain decay to nearby points. Beware: this function is not
+	/// aware of the positions of the points and may cause overlapping
+	void ApplyHorizontalOffsetToRowIndex(std::vector<VecE>& points, int stride, int ySource, Exact xOffsetAtUnitGain, const DecayEnvelope& topGainEnvelope, const DecayEnvelope& bottomGainEnvelope);
+	/// Applies vertical offset at points that lay near a virtual column with gain decay to nearby area
+	void ApplyVerticalOffsetToColumnPoints(std::vector<VecE>& points, Exact xSource, Exact yOffsetAtUnitGain, const DecayEnvelope& leftGainEnvelope, const DecayEnvelope& rightGainEnvelope);
+	/// Applies horizontal offset at points that lay near a virtual row with gain decay to nearby area
+	void ApplyHorizontalOffsetToColumnPoints(std::vector<VecE>& points, Exact ySource, Exact xOffsetAtUnitGain, const DecayEnvelope& topGainEnvelope, const DecayEnvelope& bottomGainEnvelope);
+
+	// Helpers
+
+	template <typename T, typename Op>
+	void ForEachPointInColumn(std::vector<T>& array, const int stride, const int columnIndex, Op op) {
+		const auto linearSize = I(array.size());
+		for (int i = columnIndex, y = 0; i < linearSize; i += stride, ++y) {
+			op(VecI{columnIndex, y}, array[i]);
+		}
+	}
+	template <typename T, typename Op>
+	void ForEachPointInRow(std::vector<T>& array, const int stride, const int rowIndex, Op op) {
+		for (int i = rowIndex * stride, x = 0; i < (rowIndex + 1) * stride; ++i, ++x) {
+			op(VecI{x, rowIndex}, array[i]);
+		}
+	}
 }
