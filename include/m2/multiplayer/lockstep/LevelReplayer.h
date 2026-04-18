@@ -2,6 +2,7 @@
 #include <m2/network/Types.h>
 #include <M2.orm.h>
 #include <genORM/genORM.h>
+#include <deque>
 
 namespace m2::multiplayer::lockstep {
 	class LevelReplayer {
