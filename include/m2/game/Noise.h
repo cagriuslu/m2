@@ -10,9 +10,19 @@ namespace m2 {
 	// TODO this implementation has a problem
 	float perlin(const VecF& point, float depth); // [0, 1]
 
+	/// Following functions receive their parameters as a struct because these functions are usually called with
+	/// randomly generated numbers. This helps deterministic games as the order of evaluation of struct members is well
+	/// defined (thus the random numbers will be generated in the same order across platforms) whereas the order of
+	/// evaluation of function parameters isn't.
+
 	/// Generates points inside inclusiveRect starting from {inclusiveRext.x, inclusiveRect.y}. Also returns the stride
 	/// of the array.
-	std::pair<std::vector<VecE>, int> GeneratePointField(const RectE& inclusiveRect, Exact step);
+	struct GeneratePointFieldParams {
+		const RectE& inclusiveRect;
+		Exact step;
+	};
+	std::pair<std::vector<VecE>, int> GeneratePointField(const GeneratePointFieldParams& params);
+
 	/// Applies offset to every point in the given array
 	void ApplyNoiseToAllPoints(std::vector<VecE>& points, Distribution& offsetDistribution, Rng&);
 
@@ -35,19 +45,58 @@ namespace m2 {
 	};
 
 	/// Applies offset at a point source with a gain decay
-	void ApplyPointSourceOffset(std::vector<VecE>& points, VecE source, VecE offsetAtUnitGain, const DecayEnvelope& gainEnvelope);
+	struct ApplyPointSourceOffsetParams {
+		VecE source;
+		VecE offsetAtUnitGain;
+		DecayEnvelope gainEnvelope;
+	};
+	void ApplyPointSourceOffset(std::vector<VecE>& points, const ApplyPointSourceOffsetParams& params);
+
 	/// Applies attraction or repulsion at a point source with a gain decay. If attraction is negative, repulsion is applied.
-	void ApplyPointSourceAttraction(std::vector<VecE>& points, VecE source, Exact attractionAtUnitGain, const DecayEnvelope& gainEnvelope);
+	struct ApplyPointSourceAttractionParams {
+		VecE source;
+		Exact attractionAtUnitGain;
+		DecayEnvelope gainEnvelope;
+	};
+	void ApplyPointSourceAttraction(std::vector<VecE>& points, const ApplyPointSourceAttractionParams& params);
+
 	/// Applies vertical offset at a column of points with gain decay to nearby points. Beware: this function is not
 	/// aware of the positions of the points and may cause overlapping.
-	void ApplyVerticalOffsetToColumnIndex(std::vector<VecE>& points, int stride, int xSource, Exact yOffsetAtUnitGain, const DecayEnvelope& leftGainEnvelope, const DecayEnvelope& rightGainEnvelope);
+	struct ApplyVerticalOffsetToColumnIndexParams {
+		int xSource;
+		Exact yOffsetAtUnitGain;
+		DecayEnvelope leftGainEnvelope;
+		DecayEnvelope rightGainEnvelope;
+	};
+	void ApplyVerticalOffsetToColumnIndex(std::vector<VecE>& points, int stride, const ApplyVerticalOffsetToColumnIndexParams& params);
+
 	/// Applies horizontal offset at a row of points with gain decay to nearby points. Beware: this function is not
 	/// aware of the positions of the points and may cause overlapping
-	void ApplyHorizontalOffsetToRowIndex(std::vector<VecE>& points, int stride, int ySource, Exact xOffsetAtUnitGain, const DecayEnvelope& topGainEnvelope, const DecayEnvelope& bottomGainEnvelope);
+	struct ApplyHorizontalOffsetToRowIndexParams {
+		int ySource;
+		Exact xOffsetAtUnitGain;
+		DecayEnvelope topGainEnvelope;
+		DecayEnvelope bottomGainEnvelope;
+	};
+	void ApplyHorizontalOffsetToRowIndex(std::vector<VecE>& points, int stride, const ApplyHorizontalOffsetToRowIndexParams& params);
+
 	/// Applies vertical offset at points that lay near a virtual column with gain decay to nearby area
-	void ApplyVerticalOffsetToColumnPoints(std::vector<VecE>& points, Exact xSource, Exact yOffsetAtUnitGain, const DecayEnvelope& leftGainEnvelope, const DecayEnvelope& rightGainEnvelope);
+	struct ApplyVerticalOffsetToColumnPointsParams {
+		Exact xSource;
+		Exact yOffsetAtUnitGain;
+		DecayEnvelope leftGainEnvelope;
+		DecayEnvelope rightGainEnvelope;
+	};
+	void ApplyVerticalOffsetToColumnPoints(std::vector<VecE>& points, const ApplyVerticalOffsetToColumnPointsParams& params);
+
 	/// Applies horizontal offset at points that lay near a virtual row with gain decay to nearby area
-	void ApplyHorizontalOffsetToColumnPoints(std::vector<VecE>& points, Exact ySource, Exact xOffsetAtUnitGain, const DecayEnvelope& topGainEnvelope, const DecayEnvelope& bottomGainEnvelope);
+	struct ApplyHorizontalOffsetToRowPointsParams {
+		Exact ySource;
+		Exact xOffsetAtUnitGain;
+		DecayEnvelope topGainEnvelope;
+		DecayEnvelope bottomGainEnvelope;
+	};
+	void ApplyHorizontalOffsetToRowPoints(std::vector<VecE>& points, const ApplyHorizontalOffsetToRowPointsParams& params);
 
 	// Helpers
 

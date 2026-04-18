@@ -126,13 +126,13 @@ float m2::perlin(const VecF& point, float depth) {
 	return (std::lerp(y1, y2, w) + 1.0f) / 2.0f;
 }
 
-std::pair<std::vector<VecE>, int> m2::GeneratePointField(const RectE& inclusiveRect, const Exact step) {
+std::pair<std::vector<VecE>, int> m2::GeneratePointField(const GeneratePointFieldParams& params) {
 	std::vector<VecE> points;
 	int stride = 0;
-	for (auto y = inclusiveRect.y; y <= inclusiveRect.GetY2(); y += step) {
-		for (auto x = inclusiveRect.x; x <= inclusiveRect.GetX2(); x += step) {
+	for (auto y = params.inclusiveRect.y; y <= params.inclusiveRect.GetY2(); y += params.step) {
+		for (auto x = params.inclusiveRect.x; x <= params.inclusiveRect.GetX2(); x += params.step) {
 			points.emplace_back(x, y);
-			if (y == inclusiveRect.y) {
+			if (y == params.inclusiveRect.y) {
 				++stride;
 			}
 		}
@@ -185,21 +185,21 @@ Exact DecayEnvelope::GetExtend() const {
 	return attackDuration + decayDuration + sustainDuration + releaseDuration;
 }
 
-void m2::ApplyPointSourceOffset(std::vector<VecE>& points, VecE source, VecE offsetAtUnitGain, const DecayEnvelope& gainEnvelope) {
+void m2::ApplyPointSourceOffset(std::vector<VecE>& points, const ApplyPointSourceOffsetParams& params) {
 	for (auto& point : points) {
-		const auto distanceToSource = source.GetDistanceToFE(point);
-		const auto gainAtPoint = gainEnvelope.GetValueAt(distanceToSource);
-		const auto offsetAtPoint = offsetAtUnitGain * gainAtPoint;
+		const auto distanceToSource = params.source.GetDistanceToFE(point);
+		const auto gainAtPoint = params.gainEnvelope.GetValueAt(distanceToSource);
+		const auto offsetAtPoint = params.offsetAtUnitGain * gainAtPoint;
 		point += offsetAtPoint;
 	}
 }
 
-void m2::ApplyPointSourceAttraction(std::vector<VecE>& points, VecE source, Exact attractionAtUnitGain, const DecayEnvelope& gainEnvelope) {
+void m2::ApplyPointSourceAttraction(std::vector<VecE>& points, const ApplyPointSourceAttractionParams& params) {
 	for (auto& point : points) {
-		const auto vectorToSource = source - point;
+		const auto vectorToSource = params.source - point;
 		const auto distanceToSource = vectorToSource.GetLengthFE();
-		const auto gainAtPoint = gainEnvelope.GetValueAt(distanceToSource);
-		const auto attractionAmplitudeAtPoint = attractionAtUnitGain * gainAtPoint;
+		const auto gainAtPoint = params.gainEnvelope.GetValueAt(distanceToSource);
+		const auto attractionAmplitudeAtPoint = params.attractionAtUnitGain * gainAtPoint;
 		const auto attractionAtPointX = vectorToSource.GetX().MultiplyDivide(attractionAmplitudeAtPoint, distanceToSource);
 		const auto attractionAtPointY = vectorToSource.GetY().MultiplyDivide(attractionAmplitudeAtPoint, distanceToSource);
 		const auto attractionVector = VecE{attractionAtPointX, attractionAtPointY};
@@ -207,8 +207,8 @@ void m2::ApplyPointSourceAttraction(std::vector<VecE>& points, VecE source, Exac
 	}
 }
 
-void m2::ApplyVerticalOffsetToColumnIndex(std::vector<VecE>& points, const int stride, const int xSource, const Exact yOffsetAtUnitGain, const DecayEnvelope& leftGainEnvelope, const DecayEnvelope& rightGainEnvelope) {
-	if (xSource < 0 || stride <= xSource) {
+void m2::ApplyVerticalOffsetToColumnIndex(std::vector<VecE>& points, const int stride, const ApplyVerticalOffsetToColumnIndexParams& params) {
+	if (params.xSource < 0 || stride <= params.xSource) {
 		throw M2_ERROR("xSource out-of-bounds");
 	}
 
@@ -218,30 +218,30 @@ void m2::ApplyVerticalOffsetToColumnIndex(std::vector<VecE>& points, const int s
 		});
 	};
 
-	const auto offsetAtSource = yOffsetAtUnitGain * (leftGainEnvelope.GetValueAt({}) + rightGainEnvelope.GetValueAt({})) / Exact{2};
+	const auto offsetAtSource = params.yOffsetAtUnitGain * (params.leftGainEnvelope.GetValueAt({}) + params.rightGainEnvelope.GetValueAt({})) / Exact{2};
 	// At source
-	ApplyVerticalOffsetToColumnIndex(xSource, offsetAtSource);
+	ApplyVerticalOffsetToColumnIndex(params.xSource, offsetAtSource);
 	// Left of source
-	const auto leftBegin = xSource - 1;
-	const auto leftCount = leftGainEnvelope.GetExtend().ToInteger();
+	const auto leftBegin = params.xSource - 1;
+	const auto leftCount = params.leftGainEnvelope.GetExtend().ToInteger();
 	for (int i = 0, current = leftBegin; i < leftCount && 0 <= current; ++i, --current) {
-		const auto t = xSource - current;
-		const auto offset = yOffsetAtUnitGain * leftGainEnvelope.GetValueAt(Exact{t});
+		const auto t = params.xSource - current;
+		const auto offset = params.yOffsetAtUnitGain * params.leftGainEnvelope.GetValueAt(Exact{t});
 		ApplyVerticalOffsetToColumnIndex(current, offset);
 	}
 	// Right of source
-	const auto rightBegin = xSource + 1;
-	const auto rightCount = rightGainEnvelope.GetExtend().ToInteger();
+	const auto rightBegin = params.xSource + 1;
+	const auto rightCount = params.rightGainEnvelope.GetExtend().ToInteger();
 	for (int i = 0, current = rightBegin; i < rightCount && current < stride; ++i, ++current) {
-		const auto t = current - xSource;
-		const auto offset = yOffsetAtUnitGain * rightGainEnvelope.GetValueAt(Exact{t});
+		const auto t = current - params.xSource;
+		const auto offset = params.yOffsetAtUnitGain * params.rightGainEnvelope.GetValueAt(Exact{t});
 		ApplyVerticalOffsetToColumnIndex(current, offset);
 	}
 }
 
-void m2::ApplyHorizontalOffsetToRowIndex(std::vector<VecE>& points, const int stride, const int ySource, const Exact xOffsetAtUnitGain, const DecayEnvelope& topGainEnvelope, const DecayEnvelope& bottomGainEnvelope) {
+void m2::ApplyHorizontalOffsetToRowIndex(std::vector<VecE>& points, const int stride, const ApplyHorizontalOffsetToRowIndexParams& params) {
 	const auto rowCount = I(points.size()) / stride;
-	if (ySource < 0 || rowCount <= ySource) {
+	if (params.ySource < 0 || rowCount <= params.ySource) {
 		throw M2_ERROR("ySource out-of-bounds");
 	}
 
@@ -251,51 +251,51 @@ void m2::ApplyHorizontalOffsetToRowIndex(std::vector<VecE>& points, const int st
 		});
 	};
 
-	const auto offsetAtSource = xOffsetAtUnitGain * (topGainEnvelope.GetValueAt({}) + bottomGainEnvelope.GetValueAt({})) / Exact{2};
+	const auto offsetAtSource = params.xOffsetAtUnitGain * (params.topGainEnvelope.GetValueAt({}) + params.bottomGainEnvelope.GetValueAt({})) / Exact{2};
 	// At source
-	ApplyHorizontalOffsetToRow(ySource, offsetAtSource);
+	ApplyHorizontalOffsetToRow(params.ySource, offsetAtSource);
 	// Top of source
-	const auto topBegin = ySource - 1;
-	const auto topCount = topGainEnvelope.GetExtend().ToInteger();
+	const auto topBegin = params.ySource - 1;
+	const auto topCount = params.topGainEnvelope.GetExtend().ToInteger();
 	for (int i = 0, current = topBegin; i < topCount && 0 <= current; ++i, --current) {
-		const auto t = ySource - current;
-		const auto offset = xOffsetAtUnitGain * topGainEnvelope.GetValueAt(Exact{t});
+		const auto t = params.ySource - current;
+		const auto offset = params.xOffsetAtUnitGain * params.topGainEnvelope.GetValueAt(Exact{t});
 		ApplyHorizontalOffsetToRow(current, offset);
 	}
 	// Bottom of source
-	const auto bottomBegin = ySource + 1;
-	const auto bottomCount = bottomGainEnvelope.GetExtend().ToInteger();
+	const auto bottomBegin = params.ySource + 1;
+	const auto bottomCount = params.bottomGainEnvelope.GetExtend().ToInteger();
 	for (int i = 0, current = bottomBegin; i < bottomCount && current < rowCount; ++i, ++current) {
-		const auto t = current - ySource;
-		const auto offset = xOffsetAtUnitGain * bottomGainEnvelope.GetValueAt(Exact{t});
+		const auto t = current - params.ySource;
+		const auto offset = params.xOffsetAtUnitGain * params.bottomGainEnvelope.GetValueAt(Exact{t});
 		ApplyHorizontalOffsetToRow(current, offset);
 	}
 }
 
-void m2::ApplyVerticalOffsetToColumnPoints(std::vector<VecE>& points, const Exact xSource, const Exact yOffsetAtUnitGain, const DecayEnvelope& leftGainEnvelope, const DecayEnvelope& rightGainEnvelope) {
-	const auto offsetAtSource = yOffsetAtUnitGain * (leftGainEnvelope.GetValueAt({}) + rightGainEnvelope.GetValueAt({})) / Exact{2};
+void m2::ApplyVerticalOffsetToColumnPoints(std::vector<VecE>& points, const ApplyVerticalOffsetToColumnPointsParams& params) {
+	const auto offsetAtSource = params.yOffsetAtUnitGain * (params.leftGainEnvelope.GetValueAt({}) + params.rightGainEnvelope.GetValueAt({})) / Exact{2};
 	for (auto& point : points) {
-		const auto distanceToSource = (xSource - point.GetX()).AbsoluteValue();
-		const auto gainAtPoint = point.GetX() < xSource
-			? leftGainEnvelope.GetValueAt(distanceToSource)
-			: xSource < point.GetX()
-				? rightGainEnvelope.GetValueAt(distanceToSource)
+		const auto distanceToSource = (params.xSource - point.GetX()).AbsoluteValue();
+		const auto gainAtPoint = point.GetX() < params.xSource
+			? params.leftGainEnvelope.GetValueAt(distanceToSource)
+			: params.xSource < point.GetX()
+				? params.rightGainEnvelope.GetValueAt(distanceToSource)
 				: offsetAtSource;
-		const auto yOffsetAtPoint = yOffsetAtUnitGain * gainAtPoint;
+		const auto yOffsetAtPoint = params.yOffsetAtUnitGain * gainAtPoint;
 		point = VecE{point.GetX(), point.GetY() + yOffsetAtPoint};
 	}
 }
 
-void m2::ApplyHorizontalOffsetToColumnPoints(std::vector<VecE>& points, const Exact ySource, const Exact xOffsetAtUnitGain, const DecayEnvelope& topGainEnvelope, const DecayEnvelope& bottomGainEnvelope) {
-	const auto offsetAtSource = xOffsetAtUnitGain * (topGainEnvelope.GetValueAt({}) + bottomGainEnvelope.GetValueAt({})) / Exact{2};
+void m2::ApplyHorizontalOffsetToRowPoints(std::vector<VecE>& points, const ApplyHorizontalOffsetToRowPointsParams& params) {
+	const auto offsetAtSource = params.xOffsetAtUnitGain * (params.topGainEnvelope.GetValueAt({}) + params.bottomGainEnvelope.GetValueAt({})) / Exact{2};
 	for (auto& point : points) {
-		const auto distanceToSource = (ySource - point.GetY()).AbsoluteValue();
-		const auto gainAtPoint = point.GetY() < ySource
-			? topGainEnvelope.GetValueAt(distanceToSource)
-			: ySource < point.GetY()
-				? bottomGainEnvelope.GetValueAt(distanceToSource)
+		const auto distanceToSource = (params.ySource - point.GetY()).AbsoluteValue();
+		const auto gainAtPoint = point.GetY() < params.ySource
+			? params.topGainEnvelope.GetValueAt(distanceToSource)
+			: params.ySource < point.GetY()
+				? params.bottomGainEnvelope.GetValueAt(distanceToSource)
 				: offsetAtSource;
-		const auto xOffsetAtPoint = xOffsetAtUnitGain * gainAtPoint;
+		const auto xOffsetAtPoint = params.xOffsetAtUnitGain * gainAtPoint;
 		point = VecE{point.GetX() + xOffsetAtPoint, point.GetY()};
 	}
 }
