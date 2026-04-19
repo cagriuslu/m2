@@ -297,9 +297,9 @@ void ServerActor::ProcessOneMessageFromInbox(MessageBox<ServerActorInput>& inbox
 			const auto& lobbyFreezeMsg = std::get<ServerActorInput::FreezeLobby>(msg.variant);
 			if (std::holds_alternative<LobbyOpen>(_state->Get())) {
 				const auto& lobby = std::get<LobbyOpen>(_state->Get());
-				if (std::ranges::all_of(lobby.clientList.begin(), lobby.clientList.end(), [](const ConnectionToClient& client) {
-					return client.GetReadyState() && client.GetIfAllPeersReachable();
-				})) {
+				const auto allClientsReady = std::ranges::all_of(lobby.clientList.begin(), lobby.clientList.end(), &ConnectionToClient::GetReadyState);
+				const auto allClientsCanReachAllPeers = std::ranges::all_of(lobby.clientList.begin(), lobby.clientList.end(), &ConnectionToClient::GetIfAllPeersReachable);
+				if (allClientsReady && allClientsCanReachAllPeers) {
 					LOG_INFO("Freezing lobby");
 					_state->Mutate([&lobbyFreezeMsg](State& state) {
 						state = LobbyFrozen{.clientList = std::move(std::get<LobbyOpen>(state).clientList)};
@@ -308,7 +308,12 @@ void ServerActor::ProcessOneMessageFromInbox(MessageBox<ServerActorInput>& inbox
 						}
 					});
 				} else {
-					LOG_INFO("Lobby closure requested but not every client is ready or connected to each other");
+					if (not allClientsReady) {
+						LOG_INFO("Lobby closure requested but not every client is ready");
+					}
+					if (not allClientsCanReachAllPeers) {
+						LOG_INFO("Lobby closure requested but not every client can reach all peers");
+					}
 				}
 			} else {
 				throw M2_ERROR("Lobby closure requested while lobby isn't open");

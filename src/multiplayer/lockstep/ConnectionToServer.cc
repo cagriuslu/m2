@@ -197,6 +197,7 @@ void ConnectionToServer::QueueOutgoingMessages(const std::optional<network::Time
 			}
 		} else { // nAckedMsgs == N_RESPONSES_TO_ASSUME_CONNECTION
 			// Enough ping-pongs have been made with the server. Assume that we're placed in the server's lobby.
+			LOG_NETWORK("Assuming successful connection to server, moving self into lobby");
 			_state.Mutate([&](auto& state) {
 				state.template emplace<WaitingInLobby>(WaitingInLobby{
 					.peerList = std::move(std::get<SearchForServer>(state).peerList)

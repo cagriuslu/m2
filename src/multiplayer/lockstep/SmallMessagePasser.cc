@@ -125,7 +125,7 @@ pb::LockstepUdpPacket SmallMessagePasser::PeerConnectionParameters::CreateOutgoi
 void SmallMessagePasser::PeerConnectionParameters::QueueOutgoingMessage(pb::LockstepSmallMessage&& in) {
 	// Insert message to non-acknowledged messages
 	const auto orderNo = nextOutgoingOrderNo++;
-	LOG_NETWORK("Queueing outgoing small message for peer, with order number", peerAddress, orderNo);
+	LOG_NETWORK_VERBOSE("Queueing outgoing small message for peer, with order number", peerAddress, orderNo);
 	in.set_order_no(orderNo); // Assign order number
 	outgoingNackMessages.emplace_back(std::move(in), Stopwatch{});
 	connectionStatistics.IncrementOutgoingSmallMessageCount();
@@ -177,7 +177,7 @@ void SmallMessagePasser::PeerConnectionParameters::ProcessPeerAcks(const int32_t
 	connectionStatistics.IncrementAckedOutgoingSmallMessageCount(I(ackCount));
 
 	if (ackCount) {
-		LOG_NETWORK("Peer acknowledged small messages with order number", peerAddress, ackedOrderNos);
+		LOG_NETWORK_VERBOSE("Peer acknowledged small messages with order number", peerAddress, ackedOrderNos);
 	}
 }
 void SmallMessagePasser::PeerConnectionParameters::ProcessReceivedMessages(google::protobuf::RepeatedPtrField<pb::LockstepSmallMessage>* smallMessages,
@@ -185,7 +185,7 @@ void SmallMessagePasser::PeerConnectionParameters::ProcessReceivedMessages(googl
 	lastAnyMessageReceivedAt = Stopwatch{};
 
 	if (smallMessages->empty()) {
-		LOG_NETWORK("Received empty packet from peer", peerAddress);
+		LOG_NETWORK_VERBOSE("Received empty packet from peer", peerAddress);
 		return;
 	}
 
@@ -193,9 +193,10 @@ void SmallMessagePasser::PeerConnectionParameters::ProcessReceivedMessages(googl
 
 	// Move all messages to messagesSinceGap
 	for (auto& msg : *smallMessages) {
+		// Ignore messages whose order number is less or equal to lastOrderlyReceivedOrderNo
 		if (const auto msgOrderNo = msg.order_no(); lastOrderlyReceivedOrderNo < msgOrderNo) {
 			if (const auto [_, inserted] = messagesSinceGap.emplace(msgOrderNo, std::move(msg)); inserted) {
-				LOG_NETWORK("Received new small message from peer, with order number", peerAddress, msgOrderNo);
+				LOG_NETWORK_VERBOSE(std::format("Found new small message inside packet from peer: peer={} orderNumber={}", ToString(peerAddress), ToString(msgOrderNo)).c_str());
 			}
 		}
 	}
@@ -210,7 +211,7 @@ void SmallMessagePasser::PeerConnectionParameters::ProcessReceivedMessages(googl
 			out.emplace(std::move(it->second), peerAddress);
 			++lastOrderlyReceivedOrderNo;
 			it = messagesSinceGap.erase(it);
-			LOG_NETWORK("Returning small message from peer, with order number", peerAddress, msgOrderNo);
+			LOG_NETWORK_VERBOSE("Returning small message from peer, with order number", peerAddress, msgOrderNo);
 		} else {
 			break;
 		}
@@ -247,11 +248,11 @@ void_expected SmallMessagePasser::ReadSmallMessages(std::queue<SmallMessageAndSe
 				LOG_NETWORK("Dropping packet from unknown source", recvResult->second);
 				continue;
 			}
-			LOG_NETWORK("Accepting packet from unknown source, of size", recvResult->second, recvResult->first);
+			LOG_NETWORK(std::format("Received packet from an unknown source: source={} size={}", ToString(recvResult->second), ToString(recvResult->first)).c_str());
 			peer = &FindOrCreatePeerConnectionParameters(recvResult->second);
 			isNewConnection = true;
 		} else {
-			LOG_NETWORK("Received packet from peer, of size", recvResult->second, recvResult->first);
+			LOG_NETWORK_VERBOSE(std::format("Received packet from peer: peer={} size={}", ToString(recvResult->second), ToString(recvResult->first)).c_str());
 		}
 
 		if (pb::LockstepUdpPacket packet; packet.ParseFromArray(_recvBuffer, recvResult->first)) {
@@ -301,7 +302,7 @@ void_expected SmallMessagePasser::SendOutgoingPackets() {
 				const auto bytes = packet.SerializeAsString();
 				const auto success = _socket.Send(peer.GetPeerAddress(), bytes.data(), bytes.size());
 				m2ReflectUnexpected(success);
-				LOG_NETWORK("Sent fresh packet to peer, of size, with small message order numbers", peer.GetPeerAddress(), bytes.size(), packet.small_messages());
+				LOG_NETWORK_VERBOSE("Sent fresh packet to peer, of size, with small message order numbers", peer.GetPeerAddress(), bytes.size(), packet.small_messages());
 				peer.MarkAnyMessageSent();
 			}
 		}
@@ -329,7 +330,7 @@ void_expected SmallMessagePasser::SendOutgoingPackets() {
 				const auto bytes = packet.SerializeAsString();
 				const auto success = _socket.Send(peer.GetPeerAddress(), bytes.data(), bytes.size());
 				m2ReflectUnexpected(success);
-				LOG_NETWORK("Sent keep-alive packet to peer", peer.GetPeerAddress());
+				LOG_NETWORK_VERBOSE("Sent keep-alive packet to peer", peer.GetPeerAddress());
 				peer.MarkAnyMessageSent();
 			}
 		}
