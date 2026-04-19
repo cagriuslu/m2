@@ -186,7 +186,7 @@ Stopwatch::Duration Level::GetTotalSimulatedDuration() const {
 	const auto unsimulatedDuration = _totalPauseDuration + (_pausedAt ? _pausedAt->GetDurationSince() : Stopwatch::Duration{});
 	return durationSinceLevelBegan - unsimulatedDuration;
 }
-int32_t Level::CalculateGameStateHash(const int32 initialValue) {
+int32_t Level::CalculateLockstepGameStateHash(const int32 initialValue) const {
 	// ReSharper disable once CppDFAUnreachableCode
 	if constexpr (not GAME_IS_DETERMINISTIC) {
 		throw M2_ERROR("Game is not deterministic");

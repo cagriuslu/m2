@@ -54,7 +54,7 @@ namespace m2 {
 		[[nodiscard]] ShiftedPoolId GetBaseShiftedPoolId() const { return std::get<0>(_storageTuple)->GetShiftedPoolId(); }
 		[[nodiscard]] PoolId GetBasePoolId() const { return GetBaseShiftedPoolId() >> gPoolIdShiftCount; }
 		[[nodiscard]] int GetTotalCharacterCount() const;
-		int32_t HashCharacters(int32_t hash);
+		int32_t HashCharacters(int32_t hash) const;
 
 		// Modifiers
 

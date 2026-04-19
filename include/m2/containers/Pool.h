@@ -81,6 +81,46 @@ namespace m2 {
 				return temp;
 			}
 		};
+		class ConstIterator {
+			const Pool* _pool{};
+			const T* _data{};
+			Id _id{};
+
+		public:
+			using iterator_category = std::forward_iterator_tag;
+			using value_type = const T;
+			using difference_type = std::ptrdiff_t;
+
+			ConstIterator() = default;
+			ConstIterator(const Pool* pool, const T* data, const Id id) : _pool(pool), _data(data), _id(id) {}
+			explicit operator bool() const { return _data && _id; }
+			bool operator==(const ConstIterator& other) const { return _data == other._data && _id == other._id; }
+			// Accessors
+			[[nodiscard]] Id GetId() const { return _id; }
+			[[nodiscard]] const T* Data() const { return _data; }
+			const T* operator->() const { return _data; }
+			const T& operator*() const { return *_data; }
+			// Modifiers
+			ConstIterator& operator++() {
+				for (uint64_t i = IdToIndex(_id) + 1; i <= _pool->_highestAllocatedIndex; ++i) {
+					const auto& item = _pool->_array[i];
+					if (IdToKey(item.id)) {
+						_data = &item.storage.data;
+						_id = item.id;
+						return *this;
+					}
+				}
+				// Failed
+				_data = nullptr;
+				_id = 0;
+				return *this;
+			}
+			ConstIterator operator++(int) {
+				auto temp = *this;
+				++*this;
+				return temp;
+			}
+		};
 
 		struct Item {
 			union Storage {
@@ -179,6 +219,16 @@ namespace m2 {
 			return end();
 		}
 		Iterator end() { return {this, nullptr, 0}; }
+		ConstIterator begin() const {
+			if (_size) {
+				const Item& item = _array[_lowestAllocatedIndex];
+				return {this, &item.storage.data, item.id};
+			}
+			return end();
+		}
+		ConstIterator end() const { return {this, nullptr, 0}; }
+		ConstIterator cbegin() const { return begin(); }
+		ConstIterator cend() const { return end(); }
 
 		// Modifiers
 

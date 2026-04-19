@@ -57,7 +57,7 @@ int CharacterStorage::GetTotalCharacterCount() const {
 	}, _storageTuple);
 	return count;
 }
-int32_t CharacterStorage::HashCharacters(int32_t hash) {
+int32_t CharacterStorage::HashCharacters(int32_t hash) const {
 	const auto hasher = [](auto& pool, int32_t hash_) -> int32_t {
 		for (const Character& chr : *pool) {
 			hash_ = chr.Hash(hash_);
@@ -65,7 +65,7 @@ int32_t CharacterStorage::HashCharacters(int32_t hash) {
 		return hash_;
 	};
 
-	std::apply([&](auto&... pool) {
+	std::apply([&](const auto&... pool) {
 		(
 			(hash = hasher(pool, hash)), ...
 		);
