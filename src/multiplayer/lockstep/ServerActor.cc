@@ -223,16 +223,21 @@ bool ServerActor::operator()(MessageBox<ServerActorInput>& inbox, MessageBox<Ser
 							for (int i = 0; i < stateReport.player_input_hashes_size(); ++i) {
 								if (i == senderIndex) {
 									if (stateReport.player_input_hashes(i) != 0) {
+										// Client is expected to NOT sent its own input hash
 										client->SetFault(pb::LockstepFaultCode::UNEXPECTED_STATE_REPORT_SELF_PLAYER_INPUT_HASH);
 										return;
 									}
 								} else {
-									const auto expectedInputHash = levelStarted.clientList.At(i)->GetInputHash(stateReport.timecode());
-									if (not expectedInputHash) {
+									const auto* clientThatReportRefersTo = levelStarted.clientList.At(i);
+									const auto inputHashCalculatedByServer = clientThatReportRefersTo->GetInputHash(stateReport.timecode());
+									if (not inputHashCalculatedByServer) {
 										throw M2_ERROR("Unable to find the input hash of client during validation");
 									}
-									if (stateReport.player_input_hashes(i) != *expectedInputHash) {
+									if (stateReport.player_input_hashes(i) != *inputHashCalculatedByServer) {
+										LOG_WARN(std::format("PlayerA reported an input hash for PlayerB that differs from the hash calculated by server, faulting both players: playerA={}, playerB={}, reportedHash={}, calculatedHash={}",
+											ToString(client->GetAddressAndPort()), ToString(clientThatReportRefersTo->GetAddressAndPort()), stateReport.player_input_hashes(i), *inputHashCalculatedByServer).c_str());
 										levelStarted.clientList.At(i)->SetFault(pb::LockstepFaultCode::INCORRECT_STATE_REPORT_PLAYER_INPUT_HASH);
+										client->SetFault(pb::LockstepFaultCode::INCORRECT_STATE_REPORT_PLAYER_INPUT_HASH);
 									}
 								}
 							}
