@@ -24,7 +24,11 @@ namespace m2::multiplayer::lockstep {
 		static constexpr auto InputCapacityInSeconds = 10;
 		static inline auto InputCapacity = m2g::LOCKSTEP_GAME_TICK_FREQUENCY * InputCapacityInSeconds;
 
-		ConnectionToPeer(const network::IpAddressAndPort address, MessagePasser& messagePasser) : _addressAndPort(address), _messagePasser(messagePasser) {}
+		/// This class is constructed as a result of receiving a peer list from the server
+		ConnectionToPeer(const network::IpAddressAndPort address, MessagePasser& messagePasser) : _addressAndPort(address), _messagePasser(messagePasser) {
+			// Make sure message parser allows a connection from the peer
+			_messagePasser.AllowMessagesFromPeer(address);
+		}
 
 		// Accessors
 

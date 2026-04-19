@@ -62,7 +62,7 @@ namespace m2::multiplayer::lockstep {
 		};
 
 		network::UdpSocket _socket;
-		bool _blockUnknownConnections;
+		bool _blockUnknownConnections; // Set for client sockets
 		char _recvBuffer[1520] = {};
 		std::vector<PeerConnectionParameters> _peerConnectionParameters;
 
@@ -78,7 +78,8 @@ namespace m2::multiplayer::lockstep {
 
 		// Modifiers
 
-		void BlockUnknownConnections() { _blockUnknownConnections = true; }
+		/// Used to notify small message parser of possible future connection from peer
+		void AllowMessagesFromPeer(const network::IpAddressAndPort& address) { FindOrCreatePeerConnectionParameters(address); }
 		void_expected ReadSmallMessages(std::queue<SmallMessageAndSender>& out);
 		void QueueSmallMessage(SmallMessageAndReceiver&& in);
 		void_expected SendOutgoingPackets(); //  Also makes retransmissions and Acks

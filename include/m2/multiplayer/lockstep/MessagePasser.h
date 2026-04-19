@@ -29,6 +29,8 @@ namespace m2::multiplayer::lockstep {
 
 		// Modifiers
 
+		/// Used to notify message parser of possible future connection from peer
+		void AllowMessagesFromPeer(const network::IpAddressAndPort& address) { FindOrCreatePeerConnectionParameters(address); _smallMessagePasser.AllowMessagesFromPeer(address); }
 		void_expected ReadMessages(std::queue<MessageAndSender>& out);
 		void_expected QueueMessage(MessageAndReceiver&& in);
 		void_expected SendOutgoingPackets() { return _smallMessagePasser.SendOutgoingPackets(); }
