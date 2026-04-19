@@ -58,7 +58,8 @@ ConnectionToClient* ServerActor::ClientList::At(const int index) {
 	return nullptr;
 }
 ConnectionToClient* ServerActor::ClientList::Add(const network::IpAddressAndPort& address, MessagePasser& msgPasser) {
-	_clients.emplace_back(address, msgPasser);
+	const auto index = I(_clients.size());
+	_clients.emplace_back(address, index, msgPasser);
 	// Prepare peer details
 	pb::LockstepPeerDetails peerDetails;
 	for (const auto& client : _clients) {

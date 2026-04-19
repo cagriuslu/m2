@@ -116,7 +116,8 @@ message LockstepUdpPacket {
 
 message LockstepPlayerInputHashHelper {
   int32 prev_hash = 1;
-  fixed32 ip = 2; // Network order
-  fixed32 port = 3; // Network order
-  LockstepPlayerInputs player_inputs = 4;
+  // IP & Port of the peer isn't included in the hash because peers might see different IPs & Ports for each other
+  // depending on the network configuration.
+  int32 index = 2;
+  LockstepPlayerInputs player_inputs = 3;
 }

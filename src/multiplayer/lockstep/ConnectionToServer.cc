@@ -78,7 +78,7 @@ void ConnectionToServer::PeerList::Update(const network::IpAddressAndPort& serve
 				}
 			} else {
 				LOG_INFO("Adding a new peer with index", newPeerIpPort, i);
-				_peers[i].emplace(ConnectionToPeer{newPeerIpPort, messagePasser});
+				_peers[i].emplace(ConnectionToPeer{newPeerIpPort, i, messagePasser});
 			}
 		}
 	}

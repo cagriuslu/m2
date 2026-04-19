@@ -12,6 +12,7 @@ namespace m2::multiplayer::lockstep {
 		};
 
 		const network::IpAddressAndPort _addressAndPort;
+		const int _index;
 		MessagePasser& _messagePasser;
 		bool _readyState{}, _allPeersReachable{};
 		std::optional<pb::LockstepFaultCode> _detectedFault{};
@@ -21,7 +22,7 @@ namespace m2::multiplayer::lockstep {
 		static constexpr auto RunningInputHashCapacityInSeconds = 10;
 		static inline auto RunningInputHashCapacity = m2g::LOCKSTEP_GAME_TICK_FREQUENCY * RunningInputHashCapacityInSeconds;
 
-		ConnectionToClient(network::IpAddressAndPort address, MessagePasser& messagePasser);
+		ConnectionToClient(network::IpAddressAndPort address, int index, MessagePasser& messagePasser);
 
 		// Accessors
 

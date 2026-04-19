@@ -17,6 +17,7 @@ namespace m2::multiplayer::lockstep {
 		using State = std::variant<SearchForPeer,ConnectedToPeer>;
 
 		const network::IpAddressAndPort _addressAndPort;
+		const int _index;
 		MessagePasser& _messagePasser;
 		State _state;
 
@@ -25,7 +26,8 @@ namespace m2::multiplayer::lockstep {
 		static inline auto InputCapacity = m2g::LOCKSTEP_GAME_TICK_FREQUENCY * InputCapacityInSeconds;
 
 		/// This class is constructed as a result of receiving a peer list from the server
-		ConnectionToPeer(const network::IpAddressAndPort address, MessagePasser& messagePasser) : _addressAndPort(address), _messagePasser(messagePasser) {
+		ConnectionToPeer(const network::IpAddressAndPort address, const int index, MessagePasser& messagePasser)
+				: _addressAndPort(address), _index(index), _messagePasser(messagePasser) {
 			// Make sure message parser allows a connection from the peer
 			_messagePasser.AllowMessagesFromPeer(address);
 		}

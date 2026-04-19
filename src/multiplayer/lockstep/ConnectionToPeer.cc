@@ -75,25 +75,26 @@ void ConnectionToPeer::StorePlayerInputsReceivedFrom(const pb::LockstepPlayerInp
 	if (not std::holds_alternative<ConnectedToPeer>(_state)) {
 		throw M2_ERROR("Player inputs received from unconnected peer");
 	}
-	auto& inputs = std::get<ConnectedToPeer>(_state)._inputs;
+
 	// Calculate hash
+	auto& inputs = std::get<ConnectedToPeer>(_state)._inputs;
 	pb::LockstepPlayerInputHashHelper hashHelper;
 	if (inputs.empty()) {
 		hashHelper.set_prev_hash(0);
 	} else {
 		hashHelper.set_prev_hash(inputs.rbegin()->second.hash);
 	}
-	hashHelper.set_ip(_addressAndPort.ipAddress.GetInNetworkOrder());
-	hashHelper.set_port(_addressAndPort.port.GetInNetworkOrder());
+	hashHelper.set_index(_index);
 	hashHelper.mutable_player_inputs()->CopyFrom(input);
 	const auto serialized = hashHelper.SerializeAsString();
 	const auto hash = HashI(serialized);
-	// Store inputs and hash
+
+	LOG_NETWORK("Storing inputs from peer with timecode and hash", _addressAndPort, input.timecode(), hash);
 	inputs.emplace(input.timecode(), PlayerInputsAndHash{
 		.playerInputs = input,
 		.hash = hash
 	});
-	LOG_NETWORK("Storing inputs from peer with timecode and hash", _addressAndPort, input.timecode(), hash);
+
 	// Keep the list limited to a capacity
 	while (InputCapacity < I(inputs.size())) {
 		inputs.erase(inputs.begin());

@@ -7,8 +7,8 @@ using namespace m2;
 using namespace m2::multiplayer;
 using namespace m2::multiplayer::lockstep;
 
-ConnectionToClient::ConnectionToClient(network::IpAddressAndPort address, MessagePasser& messagePasser)
-	: _addressAndPort(std::move(address)), _messagePasser(messagePasser) {}
+ConnectionToClient::ConnectionToClient(network::IpAddressAndPort address, const int index, MessagePasser& messagePasser)
+	: _addressAndPort(std::move(address)), _index(index), _messagePasser(messagePasser) {}
 
 std::optional<int32_t> ConnectionToClient::GetInputHash(const network::Timecode tc) const {
 	const auto it = std::ranges::find_if(_runningInputHash, [tc](const auto& hash) {
@@ -41,8 +41,7 @@ void ConnectionToClient::StoreRunningInputHash(const pb::LockstepPlayerInputs& p
 	} else {
 		hashHelper.set_prev_hash(_runningInputHash.back().hash);
 	}
-	hashHelper.set_ip(_addressAndPort.ipAddress.GetInNetworkOrder());
-	hashHelper.set_port(_addressAndPort.port.GetInNetworkOrder());
+	hashHelper.set_index(_index);
 	hashHelper.mutable_player_inputs()->CopyFrom(playerInputs);
 	const auto serialized = hashHelper.SerializeAsString();
 	const auto hash = HashI(serialized);
