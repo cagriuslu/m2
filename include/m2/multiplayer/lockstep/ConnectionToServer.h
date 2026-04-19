@@ -29,7 +29,7 @@ namespace m2::multiplayer::lockstep {
 			// Modifiers
 
 			ConnectionToPeer* Find(const network::IpAddressAndPort&);
-			void Update(const pb::LockstepPeerDetails&, MessagePasser& messagePasser);
+			void Update(const network::IpAddressAndPort& serverAddressAndPort , const pb::LockstepPeerDetails&, MessagePasser& messagePasser);
 			void ReportIfAllPeersConnected(MessagePasser& messagePasser, const network::IpAddressAndPort& serverAddressAndPort);
 		};
 

@@ -50,7 +50,7 @@ ConnectionToPeer* ConnectionToServer::PeerList::Find(const network::IpAddressAnd
 	}
 	return nullptr;
 }
-void ConnectionToServer::PeerList::Update(const pb::LockstepPeerDetails& details, MessagePasser& messagePasser) {
+void ConnectionToServer::PeerList::Update(const network::IpAddressAndPort& serverAddressAndPort, const pb::LockstepPeerDetails& details, MessagePasser& messagePasser) {
 	_peers.resize(details.peers_size());
 	for (int i = 0; i < details.peers_size(); ++i) {
 		if (i == details.receiver_index()) {
@@ -61,10 +61,17 @@ void ConnectionToServer::PeerList::Update(const pb::LockstepPeerDetails& details
 			_peers[i] = std::nullopt; // Self
 		} else {
 			const auto& newPeer = details.peers(i);
+			const auto provisionalPeerIp = network::IpAddress::CreateFromNetworkOrder(newPeer.ip());
+			static const auto localhostIp = network::IpAddress::CreateFromString("127.0.0.1");
+			// If peer IP is "127.0.0.1", it must be on the same machine as the server. Use server's IP instead.
+			if (provisionalPeerIp == localhostIp) {
+				LOG_NETWORK(std::format("Peer resides on server machine, using server IP instead: peerIp={} serverIp={}", ToString(provisionalPeerIp), ToString(serverAddressAndPort.ipAddress)).c_str());
+			}
 			const auto newPeerIpPort = network::IpAddressAndPort{
-				.ipAddress = network::IpAddress::CreateFromNetworkOrder(newPeer.ip()),
+				.ipAddress = provisionalPeerIp == localhostIp ? serverAddressAndPort.ipAddress : provisionalPeerIp,
 				.port = network::Port::CreateFromNetworkOrder(newPeer.port())
 			};
+
 			if (_peers[i]) {
 				if (_peers[i]->GetAddressAndPort() != newPeerIpPort) {
 					throw M2_ERROR("Replacing peers is not yet supported");
@@ -257,7 +264,7 @@ ConnectionToServer::Status ConnectionToServer::DeliverIncomingMessage(pb::Lockst
 	if (msg.has_peer_details()) {
 		_state.Mutate([this, &msg](auto& state) {
 			std::visit(overloaded{
-				[this, &msg](StateWithPeerList auto& s) { s.peerList.Update(msg.peer_details(), _messagePasser); },
+				[this, &msg](StateWithPeerList auto& s) { s.peerList.Update(_serverAddressAndPort, msg.peer_details(), _messagePasser); },
 				[](const auto&) { throw M2_ERROR("Received peer details during an invalid state"); }
 			}, state);
 		});
