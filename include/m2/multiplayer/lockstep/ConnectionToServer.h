@@ -12,6 +12,7 @@ namespace m2::multiplayer::lockstep {
 	class ConnectionToServer final {
 	public:
 		class PeerList {
+			/// The index corresponding to self will have nullopt
 			std::vector<std::optional<ConnectionToPeer>> _peers;
 			bool _connectionStateRequiresReporting{true};
 		public:

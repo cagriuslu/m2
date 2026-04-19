@@ -58,13 +58,20 @@ namespace m2::multiplayer::lockstep {
 		/// Tries to queue a player input to be commited later. If the game is lagging, the interface may reject a new
 		/// input. In this case, returns false. If the input is queued successfully, returns true.
 		bool TryQueueInput(m2g::pb::LockstepPlayerInput&&);
+		/// Signifies that physics simulation should be skipped because the necessary inputs haven't arrived from all
+		/// peers yet.
 		struct SkipPhysics {};
+		/// Signifies that physics can be simulated. PopSimulationInputs should be used to check if there are new inputs
+		/// to simulate, or if the simulation should happen without new inputs.
 		struct SimulatePhysics {};
 		using SwapResult = std::variant<SkipPhysics, SimulatePhysics>;
 		/// Commit the inputs queued previously from this player to be sent to peers, and fetches the inputs previously
 		/// received from peers for simulation.
-		SwapResult SwapInputs();
+		SwapResult SwapInputsIfTimeHasCome();
+		/// Returns the player input to execute, if there are any available. Should only be called if SwapInputsIfTimeHasCome
+		/// returned SimulatePhysics.
 		std::optional<ReadyToSimulate> PopSimulationInputs();
+		/// Game state hash is needed for the state report that is sent to the server
 		void StoreGameStateHash(network::Timecode, int32_t);
 
 	private:

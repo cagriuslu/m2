@@ -78,7 +78,7 @@ bool ClientActorInterface::TryQueueInput(m2g::pb::LockstepPlayerInput&& input) {
 		}
 	}, _state);
 }
-ClientActorInterface::SwapResult ClientActorInterface::SwapInputs() {
+ClientActorInterface::SwapResult ClientActorInterface::SwapInputsIfTimeHasCome() {
 	if (std::holds_alternative<GameNotStarted>(_state)) {
 		throw M2_ERROR("Attempt to swap inputs while the game hasn't started");
 	}
@@ -97,7 +97,7 @@ ClientActorInterface::SwapResult ClientActorInterface::SwapInputs() {
 			// Switch to lagging state and check inputs to simulate
 			_state.emplace<Lagging>();
 			// Give some time for client actor to publish the inputs to simulate
-			std::this_thread::sleep_for(std::chrono::milliseconds{5});
+			std::this_thread::sleep_for(std::chrono::milliseconds{5}); // TODO try without this delay, or possibly yield
 		} else {
 			return SimulatePhysics{};
 		}
