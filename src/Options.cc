@@ -4,6 +4,7 @@
 #include <m2/M2.h>
 
 m2::pb::LogLevel m2::current_log_level = m2::pb::LogLevel::INF;
+bool m2::verbose = false;
 bool m2::silent = false;
 int m2::time_slowdown_factor = 1;
 std::string m2::console_command;
@@ -51,6 +52,11 @@ m2::void_expected m2::load_options(int argc, char** argv) {
 			return m2::make_unexpected("Invalid log level");
 		}
 		LOG_INFO("New log level", current_log_level);
+	}
+
+	if (parse_argument(arg_list, "verbose")) {
+		LOG_INFO("Verbose mode activated");
+		verbose = true;
 	}
 
 	if (parse_argument(arg_list, "silent")) {

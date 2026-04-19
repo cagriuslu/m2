@@ -15,22 +15,28 @@
 /// Error: A necessary operation failed, behavior may be unpredictable
 /// Warn: An optional operation failed, behavior may be unpredictable
 /// Info: Minimal indication of expected operation
-/// Debug: Everything that is attempted and completed
-/// Trace: Like Debug, but for each frame
-// TODO it doesn't make sense to have one type of TRACE level. We need to have Network/Game/Physics/etc. types of traces
-// TODO and we should be able to selectively enable them. Also we need to keep them quick if they're disabled. For
-// TODO example, by putting those calls inside if blocks.
+/// Debug: Indication of attempted and completed operations (generic)
+/// Network: Indication of attempted and completed operations (network related)
+/// Physics: Indication of attempted and completed operations (physics related)
+/// Graphics: Indication of attempted and completed operations (graphics related)
+/// Trace: Indication of attempted and completed operations that happen each frame
 
-#define LOG_TRACE(msg, ...) ::m2::detail::Log(::m2::pb::LogLevel::TRC, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
-#define LOG_GRAPHICS(msg, ...) ::m2::detail::Log(::m2::pb::LogLevel::GFX, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
-#define LOG_PHYSICS(msg, ...) ::m2::detail::Log(::m2::pb::LogLevel::PHY, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
-#define LOG_NETWORK(msg, ...) ::m2::detail::Log(::m2::pb::LogLevel::NET, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
-#define LOG_DEBUG(msg, ...) ::m2::detail::Log(::m2::pb::LogLevel::DBG, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
-#define LOG_INFO(msg, ...) ::m2::detail::Log(::m2::pb::LogLevel::INF, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
-#define LOG_WARN(msg, ...) ::m2::detail::Log(::m2::pb::LogLevel::WRN, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
-#define LOG_ERROR(msg, ...) ::m2::detail::Log(::m2::pb::LogLevel::ERR, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
-#define LOG_FATAL(msg, ...) ::m2::detail::Log(::m2::pb::LogLevel::FTL, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
+// TODO use std::format instead of varargs
+#define LOG_TRACE(msg, ...) ::m2::detail::Log(::m2::pb::LogLevel::TRC, false, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
+#define LOG_GRAPHICS(msg, ...) ::m2::detail::Log(::m2::pb::LogLevel::GFX, false, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
+#define LOG_PHYSICS(msg, ...) ::m2::detail::Log(::m2::pb::LogLevel::PHY, false, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
+#define LOG_NETWORK(msg, ...) ::m2::detail::Log(::m2::pb::LogLevel::NET, false, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
+#define LOG_DEBUG(msg, ...) ::m2::detail::Log(::m2::pb::LogLevel::DBG, false, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
+#define LOG_INFO(msg, ...) ::m2::detail::Log(::m2::pb::LogLevel::INF, false, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
+#define LOG_WARN(msg, ...) ::m2::detail::Log(::m2::pb::LogLevel::WRN, false, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
+#define LOG_ERROR(msg, ...) ::m2::detail::Log(::m2::pb::LogLevel::ERR, false, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
+#define LOG_FATAL(msg, ...) ::m2::detail::Log(::m2::pb::LogLevel::FTL, false, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
 
+#define LOG_GRAPHICS_VERBOSE(msg, ...) ::m2::detail::Log(::m2::pb::LogLevel::GFX, true, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
+#define LOG_PHYSICS_VERBOSE(msg, ...) ::m2::detail::Log(::m2::pb::LogLevel::PHY, true, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
+#define LOG_NETWORK_VERBOSE(msg, ...) ::m2::detail::Log(::m2::pb::LogLevel::NET, true, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
+
+// TODO remove these, use std::format instead
 #define LOGF_TRACE(fmt, ...) ::m2::detail::LogF(::m2::pb::LogLevel::TRC, __FILE__, __LINE__, (fmt), ##__VA_ARGS__)
 #define LOGF_GRAPHICS(fmt, ...) ::m2::detail::LogF(::m2::pb::LogLevel::GFX, __FILE__, __LINE__, (fmt), ##__VA_ARGS__)
 #define LOGF_PHYSICS(fmt, ...) ::m2::detail::LogF(::m2::pb::LogLevel::PHY, __FILE__, __LINE__, (fmt), ##__VA_ARGS__)
@@ -58,8 +64,8 @@ namespace m2 {
 		void LogHeader(pb::LogLevel lvl, const char* filePath, int line);
 
 		template <typename ...Ts>
-		void Log(const pb::LogLevel lvl, const char* file, const int line, const char* msg, const Ts& ...ts) {
-			if (lvl < current_log_level) {
+		void Log(const pb::LogLevel lvl, bool msgIsVerbose, const char* file, const int line, const char* msg, const Ts& ...ts) {
+			if (lvl < ::m2::current_log_level || (msgIsVerbose && not ::m2::verbose)) {
 				return;
 			}
 			std::unique_lock lock{gLogMutex};
@@ -83,7 +89,7 @@ namespace m2 {
 			if (pb::LogLevel::DBG < current_log_level || not IsDebugLoggingEnabledForObject(id)) {
 				return;
 			}
-			Log(pb::LogLevel::DBG, file, line, msg, std::forward<const Ts>(ts)...);
+			Log(pb::LogLevel::DBG, false, file, line, msg, std::forward<const Ts>(ts)...);
 		}
 	}
 }

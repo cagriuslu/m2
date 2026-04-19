@@ -5,6 +5,7 @@
 
 namespace m2 {
 	extern pb::LogLevel current_log_level;
+	extern bool verbose;
 
 	extern bool silent;
 
