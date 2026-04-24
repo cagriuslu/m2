@@ -1,4 +1,5 @@
 #include <m2/component/character/CharacterStorage.h>
+#include <m2/Object.h>
 
 using namespace m2;
 
@@ -71,6 +72,24 @@ int32_t CharacterStorage::HashCharacters(int32_t hash) const {
 		);
 	}, _storageTuple);
 	return hash;
+}
+void CharacterStorage::FillDebugStateReport(pb::LockstepDebugStateReport& report) const {
+	const auto reporter = [&](auto& pool) {
+		for (const Character& chr : *pool) {
+			auto* character = report.add_character();
+			character->set_chr_id(chr.GetOwner().GetCharacterId());
+			character->set_owner_id(chr.GetOwnerId());
+			character->set_object_type(chr.GetOwner().GetType());
+			character->set_parent_id(chr.GetOwner().GetParentId());
+			chr.Fill(*character);
+		}
+	};
+
+	std::apply([&](const auto&... pool) {
+		(
+			(reporter(pool)), ...
+		);
+	}, _storageTuple);
 }
 
 void CharacterStorage::UpdateCharacters(const Stopwatch::Duration& delta) {

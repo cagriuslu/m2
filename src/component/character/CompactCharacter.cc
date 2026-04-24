@@ -14,6 +14,14 @@ int32_t CompactCharacter::Hash(const int32_t initialValue) const {
 	}
 	return hash;
 }
+void CompactCharacter::Fill(pb::LockstepDebugStateReport::Character& chrReport) const {
+	if (_card) {
+		chrReport.mutable_cards()->add_card(*_card);
+	}
+	if (_variable.first && _variable.second) {
+		chrReport.mutable_variables()->mutable_variable()->emplace(_variable.first, static_cast<pb::VariableValue>(_variable.second));
+	}
+}
 void CompactCharacter::Store(pb::TurnBasedServerUpdate::ObjectDescriptor& objDesc) const {
 	if (_card) {
 		objDesc.add_cards(*_card);

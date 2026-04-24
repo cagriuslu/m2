@@ -21,6 +21,19 @@ int32_t FastCharacter::Hash(const int32_t initialValue) const {
 	}
 	return hash;
 }
+void FastCharacter::Fill(pb::LockstepDebugStateReport::Character& chrReport) const {
+	for (const auto* card : _cards) {
+		if (card) {
+			chrReport.mutable_cards()->add_card(card->Type());
+		}
+	}
+	for (int i = 0; i < pb::enum_value_count<m2g::pb::VariableType>(); ++i) {
+		if (_variables[i]) {
+			const auto type = static_cast<m2g::pb::VariableType>(i);
+			chrReport.mutable_variables()->mutable_variable()->emplace(type, static_cast<pb::VariableValue>(_variables[i]));
+		}
+	}
+}
 void FastCharacter::Store(pb::TurnBasedServerUpdate::ObjectDescriptor& objDesc) const {
 	for (const auto* card : _cards) {
 		if (card) {

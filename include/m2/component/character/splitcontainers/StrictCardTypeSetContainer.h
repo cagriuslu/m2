@@ -113,6 +113,13 @@ namespace m2 {
 			}
 			return hash;
 		}
+		void FillCards(pb::LockstepDebugStateReport::Character::Cards& cardsReport) const {
+			for (int i = 0; i < I(possibleCardTypes.size()); ++i) {
+				if (_cards[i]) {
+					cardsReport.add_card(possibleCardTypes[i]);
+				}
+			}
+		}
 		void StoreCards(pb::TurnBasedServerUpdate::ObjectDescriptor& objDesc) const {
 			for (int i = 0; i < I(possibleCardTypes.size()); ++i) {
 				const auto possibleCardType = possibleCardTypes[i];

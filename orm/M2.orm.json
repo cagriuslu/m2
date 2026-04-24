@@ -26,6 +26,21 @@
       ]
     },
     {
+      "name": "LockstepDebugStateReport",
+      "description": "Contains the state reports that are normally sent to the server",
+      "members": [
+        {
+          "name": "timecode",
+          "type": "INT32",
+          "index": true
+        },
+        {
+          "name": "report",
+          "type": "BYTEARRAY"
+        }
+      ]
+    },
+    {
       "name": "LockstepGameMetadata",
       "description": "Contains important information about the game. Only one instance must exist.",
       "members": [

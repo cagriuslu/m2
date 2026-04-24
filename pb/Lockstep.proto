@@ -2,6 +2,7 @@ syntax = "proto3";
 package m2.pb;
 
 import "m2g_Lockstep.proto";
+import "VariableValue.proto";
 
 enum LockstepFaultCode {
   NO_LOCKSTEP_FAULT_CODE = 0;
@@ -32,6 +33,46 @@ message LockstepPeerDetails {
 message LockstepPlayerInputs {
   fixed32 timecode = 1;
   repeated m2g.pb.LockstepPlayerInput player_inputs = 2;
+}
+
+message LockstepDebugStateReport {
+  int32 game_state_hash = 1;
+
+  message Physique {
+    uint64 phy_id = 1;
+    uint64 owner_id = 2;
+    int32 object_type = 3;
+    uint64 parent_id = 4;
+    int32 exact_position_x = 5;
+    int32 exact_position_y = 6;
+    int32 exact_orientation = 7;
+  }
+  repeated Physique physique = 2;
+
+  message Character {
+    uint64 chr_id = 1;
+    uint64 owner_id = 2;
+    int32 object_type = 3;
+    uint64 parent_id = 4;
+
+    message Cards {
+      repeated int32 card = 1;
+    }
+    Cards cards = 5;
+
+    message Variables {
+      map<int32, VariableValue> variable = 1;
+    }
+    Variables variables = 6;
+
+    message CustomState {
+      map<int32,string> string_value = 1;
+      map<int32,int32> int_value = 2;
+      map<int32,int64> long_value = 3;
+    }
+    CustomState custom_state = 7;
+  }
+  repeated Character character = 3;
 }
 
 message LockstepStateReport {

@@ -124,6 +124,7 @@ namespace m2 {
 		Stopwatch::Duration GetTotalSimulatedDuration() const;
 		Stopwatch::Duration GetTotalPauseDuration() const { return _totalPauseDuration; }
 		int32_t CalculateLockstepGameStateHash(int32 initialValue) const;
+		pb::LockstepDebugStateReport CalculateLockstepDebugStateReport(int32 initialValue) const;
 		/// Returns the drawable layer that a graphics component belongs to.
 		DrawLayer GetDrawLayer(GraphicId);
 		/// Returns the pool (and optionally, the draw list) that a graphics component belongs to.

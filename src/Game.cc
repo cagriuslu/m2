@@ -722,7 +722,7 @@ void Game::StopHandlingEvents() {
 bool Game::ShouldSimulatePhysics() {
 	if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)
 			|| std::holds_alternative<multiplayer::lockstep::ClientComponents>(_multiPlayerComponents)) {
-		return std::holds_alternative<multiplayer::lockstep::ClientActorInterface::SimulatePhysics>(GetLockstepClientActor().SwapInputs());
+		return std::holds_alternative<multiplayer::lockstep::ClientActorInterface::SimulatePhysics>(GetLockstepClientActor().SwapInputsIfTimeHasCome());
 	}
 	return true;
 }
@@ -788,11 +788,21 @@ void Game::ExecuteStep(const Stopwatch::Duration& delta) {
 			_proxy.HandleLockstepPlayerInputs(simulationInputs->allInputs);
 			// Calculate game state hash if enough time has passed
 			if (0 < simulationInputs->timecode && (simulationInputs->timecode % multiplayer::lockstep::ConnectionToServer::GAME_STATE_REPORT_PERIOD_IN_TICKS) == 0) {
-				const auto gameStateHash = _level->CalculateGameStateHash(simulationInputs->timecode);
+				const auto gameStateHash = [&]() -> int32_t {
+					if constexpr (BUILD_IS_DEBUG) {
+						if (auto* levelSaverInterface = GetLockstepLevelSaverInterface(); levelSaverInterface) {
+							auto debugStateReport = _level->CalculateLockstepDebugStateReport(I(simulationInputs->timecode));
+							const auto retval = debugStateReport.game_state_hash();
+							levelSaverInterface->StoreDebugStateReport(simulationInputs->timecode, std::move(debugStateReport));
+							return retval;
+						}
+					}
+					return _level->CalculateLockstepGameStateHash(I(simulationInputs->timecode));
+				}();
 				LOG_NETWORK("Game state hash for timecode", simulationInputs->timecode, gameStateHash);
 				// This hash will be used during the next report. There should be enough time for the actors to receive and retain them.
 				GetLockstepClientActor().StoreGameStateHash(simulationInputs->timecode, gameStateHash);
-				// Report the game state hash to server as well. That'll be the ground truth.
+				// Report the game state hash to server as well. That'll become the ground truth.
 				if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)) {
 					std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).serverActorInterface->StoreGameStateHash(simulationInputs->timecode, gameStateHash);
 				}

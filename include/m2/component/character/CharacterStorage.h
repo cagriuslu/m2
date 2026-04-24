@@ -55,6 +55,7 @@ namespace m2 {
 		[[nodiscard]] PoolId GetBasePoolId() const { return GetBaseShiftedPoolId() >> gPoolIdShiftCount; }
 		[[nodiscard]] int GetTotalCharacterCount() const;
 		int32_t HashCharacters(int32_t hash) const;
+		void FillDebugStateReport(pb::LockstepDebugStateReport&) const;
 
 		// Modifiers
 

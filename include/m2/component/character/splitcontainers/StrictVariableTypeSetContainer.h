@@ -61,10 +61,22 @@ namespace m2 {
 		}
 
 		[[nodiscard]] int32_t HashVariables(int32_t hash) const {
-			for (const auto& variable : _variables) {
-				if (variable) { hash = variable.Hash(hash); }
+			for (int i = 0; i < I(possibleVariableTypes.size()); ++i) {
+				const auto variableType = possibleVariableTypes[i];
+				if (_variables[i]) {
+					hash = HashI(variableType);
+					hash = _variables[i].Hash(hash);
+				}
 			}
 			return hash;
+		}
+		void FillVariables(pb::LockstepDebugStateReport::Character::Variables& variablesReport) const {
+			for (int i = 0; i < I(possibleVariableTypes.size()); ++i) {
+				const auto variableType = possibleVariableTypes[i];
+				if (_variables[i]) {
+					variablesReport.mutable_variable()->emplace(variableType, static_cast<pb::VariableValue>(_variables[i]));
+				}
+			}
 		}
 		void StoreVariables(pb::TurnBasedServerUpdate::ObjectDescriptor& objDesc) const {
 			for (int i = 0; i < I(possibleVariableTypes.size()); ++i) {

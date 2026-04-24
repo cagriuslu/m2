@@ -63,6 +63,11 @@ namespace m2 {
 			hash = _variables.HashVariables(hash);
 			return CustomStateUtilsImpl::Hash(_customState, hash);
 		}
+		void Fill(pb::LockstepDebugStateReport::Character& chrReport) const override {
+			_cards.FillCards(*chrReport.mutable_cards());
+			_variables.FillVariables(*chrReport.mutable_variables());
+			CustomStateUtilsImpl::Fill(_customState, *chrReport.mutable_custom_state());
+		}
 		void Store(pb::TurnBasedServerUpdate::ObjectDescriptor& objDesc) const override {
 			_cards.StoreCards(objDesc);
 			_variables.StoreVariables(objDesc);

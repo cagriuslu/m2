@@ -23,6 +23,7 @@ namespace m2 {
 		std::unique_ptr<const Proxy::InterCharacterMessage> ExecuteInteraction(std::unique_ptr<const Proxy::InterCharacterMessage>&& data);
 
 		[[nodiscard]] virtual int32_t Hash(int32_t initialValue) const = 0;
+		virtual void Fill(pb::LockstepDebugStateReport::Character&) const = 0;
 		virtual void Store(pb::TurnBasedServerUpdate::ObjectDescriptor& objDesc) const = 0;
 		virtual void Load(const pb::TurnBasedServerUpdate::ObjectDescriptor& objDesc) = 0;
 

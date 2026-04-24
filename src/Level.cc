@@ -200,6 +200,25 @@ int32_t Level::CalculateLockstepGameStateHash(const int32 initialValue) const {
 	hash = _characterStorage.HashCharacters(hash);
 	return hash;
 }
+pb::LockstepDebugStateReport Level::CalculateLockstepDebugStateReport(const int32 initialValue) const {
+	if constexpr (not GAME_IS_DETERMINISTIC) {
+		throw M2_ERROR("Game is not deterministic");
+	}
+	pb::LockstepDebugStateReport debugStateReport;
+	debugStateReport.set_game_state_hash(CalculateLockstepGameStateHash(initialValue));
+	for (const auto& phy : physics) {
+		auto* physique = debugStateReport.add_physique();
+		physique->set_phy_id(phy.GetOwner().GetPhysiqueId());
+		physique->set_owner_id(phy.GetOwnerId());
+		physique->set_object_type(phy.GetOwner().GetType());
+		physique->set_parent_id(phy.GetOwner().GetParentId());
+		physique->set_exact_position_x(phy.position.GetX().ToRawValue());
+		physique->set_exact_position_y(phy.position.GetY().ToRawValue());
+		physique->set_exact_orientation(phy.orientation.ToRawValue());
+	}
+	_characterStorage.FillDebugStateReport(debugStateReport);
+	return debugStateReport;
+}
 DrawLayer Level::GetDrawLayer(const GraphicId gfxId) {
 	const auto shiftedGfxPoolId = ToShiftedPoolId(gfxId);
 

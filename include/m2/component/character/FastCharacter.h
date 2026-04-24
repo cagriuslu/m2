@@ -11,6 +11,7 @@ namespace m2 {
 		explicit FastCharacter(uint64_t object_id);
 
 		[[nodiscard]] int32_t Hash(int32_t initialValue) const override;
+		void Fill(pb::LockstepDebugStateReport::Character&) const override;
 		void Store(pb::TurnBasedServerUpdate::ObjectDescriptor& objDesc) const override;
 		void Load(const pb::TurnBasedServerUpdate::ObjectDescriptor& objDesc) override;
 
