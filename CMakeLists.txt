@@ -101,6 +101,14 @@ set(GENORM_CXX_INCLUDE_DIRS "${CMAKE_CURRENT_BINARY_DIR}/lib/genORM/include")
 set(GENORM_CXX_LIBDIR "${CMAKE_CURRENT_BINARY_DIR}/lib/genORM/lib")
 set(GENORM_CXX_LIBRARIES "${CMAKE_CURRENT_BINARY_DIR}/lib/genORM/lib/libgenORM-cxx.a")
 
+# z
+if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/z/lib")
+    BuildDependency(libz)
+endif()
+set(z_INCLUDE_DIRS "${CMAKE_CURRENT_BINARY_DIR}/lib/z/include")
+set(z_LIBDIR "${CMAKE_CURRENT_BINARY_DIR}/lib/z/lib")
+set(z_LIBRARIES "${CMAKE_CURRENT_BINARY_DIR}/lib/z/lib/libz.a")
+
 if(DEBUG)
     # GTest
     if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/googletest/lib")
@@ -217,9 +225,9 @@ else()
 endif()
 
 target_include_directories(m2 PUBLIC include ${GAME_INCLUDE_DIRS})
-target_include_directories(m2 PUBLIC ${SDL2_INCLUDE_DIRS} ${SDL2_image_INCLUDE_DIRS} ${SDL2_ttf_INCLUDE_DIRS} ${GENORM_CXX_INCLUDE_DIRS})
-target_link_directories(m2 PUBLIC ${SDL2_image_LIBDIR} ${SDL2_ttf_LIBDIR} ${GENORM_CXX_LIBDIR})
-target_link_libraries(m2 box2d ${SDL2_image_LIBNAME} SDL2_ttf ${Freetype_LIBRARIES} ${SDL2_STATIC_LIBRARIES} ${GENORM_CXX_LIBRARIES} sqlite3 ${Protobuf_LIBRARIES} expected)
+target_include_directories(m2 PUBLIC ${SDL2_INCLUDE_DIRS} ${SDL2_image_INCLUDE_DIRS} ${SDL2_ttf_INCLUDE_DIRS} ${GENORM_CXX_INCLUDE_DIRS} ${z_INCLUDE_DIRS})
+target_link_directories(m2 PUBLIC ${SDL2_image_LIBDIR} ${SDL2_ttf_LIBDIR} ${GENORM_CXX_LIBDIR} ${z_LIBDIR})
+target_link_libraries(m2 box2d ${SDL2_image_LIBNAME} SDL2_ttf ${Freetype_LIBRARIES} ${SDL2_STATIC_LIBRARIES} ${GENORM_CXX_LIBRARIES} sqlite3 ${Protobuf_LIBRARIES} ${z_LIBRARIES} expected)
 
 if (WIN32)
     #target_compile_options(m2 PRIVATE /analyze) # Code inspections

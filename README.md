@@ -80,7 +80,7 @@ The following dependencies are included in the repo, and built automatically by 
 * SDL2
 * SDL2_image
 * SDL2_ttf
-* libz (required by libpng)
+* libz
 
 ## Who am I?
 

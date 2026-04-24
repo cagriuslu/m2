@@ -1,5 +1,6 @@
 #include <m2/multiplayer/lockstep/LevelSaver.h>
 #include <m2/Log.h>
+#include <m2/thirdparty/compression/Deflate.h>
 #include <M2.orm.h>
 
 using namespace m2;
@@ -33,8 +34,10 @@ bool LevelSaver::operator()(MessageBox<LevelSaverInput>& inbox, MessageBox<Level
 				const auto& report = std::get<LevelSaverInput::DebugStateReport>(msg->variant).report;
 				LOG_NETWORK("Persisting debug state report for timecode with hash to database", timecode, report.game_state_hash());
 				const auto serialized = report.SerializeAsString();
-				std::vector<uint8_t> bytes{serialized.begin(), serialized.end()};
-				if (const auto createResult = orm::LockstepDebugStateReport::create(*_db, I(timecode), std::move(bytes)); not createResult) {
+				const auto uncompressed = std::vector<uint8_t>{serialized.begin(), serialized.end()};
+				auto compressed = thirdparty::compression::Deflate(uncompressed);
+				m2SucceedOrThrowError(compressed);
+				if (const auto createResult = orm::LockstepDebugStateReport::create(*_db, I(timecode), std::move(*compressed)); not createResult) {
 					LOG_ERROR("Unable to persist LockstepDebugStateReport to database", createResult.error());
 					return false;
 				}
