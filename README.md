@@ -75,7 +75,7 @@ The following dependencies are included in the repo, and built automatically by 
 * mt::expected
 * freetype (required by SDL2_ttf)
 * googletest (aka gtest)
-* libpng (required by SDL2_image)
+* libpng
 * protobuf
 * SDL2
 * SDL2_image
