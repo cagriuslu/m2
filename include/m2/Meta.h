@@ -1,6 +1,5 @@
 #pragma once
 #include "Error.h"
-#include <tl/expected.hpp>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -239,14 +238,14 @@ namespace m2 {
 	}
 
 	struct Void {};
-	using void_expected = tl::expected<void, std::string>;
+	using void_expected = std::expected<void, std::string>;
 
 	template <typename T>
-	using expected = tl::expected<T, std::string>;
-	using unexpect_t = tl::unexpect_t;
+	using expected = std::expected<T, std::string>;
+	using unexpect_t = std::unexpect_t;
 
 	template <typename E>
-	auto make_unexpected(E&& e) { return tl::make_unexpected(std::forward<E>(e)); }
+	auto make_unexpected(E&& e) { return std::unexpected{std::forward<E>(e)}; }
 
 	namespace detail {
 		template <typename T>

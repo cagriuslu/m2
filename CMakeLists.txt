@@ -22,7 +22,7 @@ project(m2 C CXX)
 
 # Load external libraries
 add_subdirectory(lib)
-FetchContent_MakeAvailable(libbox2d libexpected)
+FetchContent_MakeAvailable(libbox2d)
 
 # protobuf
 if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/protobuf/bin")
@@ -225,7 +225,6 @@ if (MSVC)
     # This flag build the target using the static system library, not dynamic.
     # Use MultiThreadedDebugDLL in debug build, otherwise use MultiThreadedDLL.
     set_property(TARGET box2d PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
-    set_property(TARGET expected PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
     set_property(TARGET m2 PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 else()
     # Enable precompiled headers on Posix platforms
@@ -235,7 +234,7 @@ endif()
 target_include_directories(m2 PUBLIC include ${GAME_INCLUDE_DIRS})
 target_include_directories(m2 PUBLIC ${SDL2_ttf_INCLUDE_DIRS} ${SDL2_image_INCLUDE_DIRS} ${SDL2_INCLUDE_DIRS} ${GENORM_CXX_INCLUDE_DIRS} ${png_INCLUDE_DIRS} ${z_INCLUDE_DIRS})
 target_link_directories(m2 PUBLIC ${SDL2_ttf_LIBDIR} ${SDL2_image_LIBDIR} ${GENORM_CXX_LIBDIR} ${png_LIBDIR} ${z_LIBDIR})
-target_link_libraries(m2 box2d SDL2_ttf ${Freetype_LIBRARIES} ${SDL2_image_LIBNAME} ${SDL2_STATIC_LIBRARIES} ${GENORM_CXX_LIBRARIES} sqlite3 ${Protobuf_LIBRARIES} ${png_LIBRARIES} ${z_LIBRARIES} expected)
+target_link_libraries(m2 box2d SDL2_ttf ${Freetype_LIBRARIES} ${SDL2_image_LIBNAME} ${SDL2_STATIC_LIBRARIES} ${GENORM_CXX_LIBRARIES} sqlite3 ${Protobuf_LIBRARIES} ${png_LIBRARIES} ${z_LIBRARIES})
 
 if (WIN32)
     #target_compile_options(m2 PRIVATE /analyze) # Code inspections
@@ -309,7 +308,7 @@ if(GTest_FOUND)
     target_include_directories(test PUBLIC include)
     target_include_directories(test PUBLIC ${SDL2_INCLUDE_DIRS} ${SDL2_image_INCLUDE_DIRS} ${SDL2_ttf_INCLUDE_DIRS})
     target_link_directories(test PUBLIC ${SDL2_image_LIBDIR} ${SDL2_ttf_LIBDIR})
-    target_link_libraries(test box2d ${SDL2_image_LIBRARIES} ${SDL2_ttf_LIBRARIES} ${SDL2_LIBRARIES} ${Protobuf_LIBRARIES} expected)
+    target_link_libraries(test box2d ${SDL2_image_LIBRARIES} ${SDL2_ttf_LIBRARIES} ${SDL2_LIBRARIES} ${Protobuf_LIBRARIES})
     target_link_libraries(test GTest::gtest GTest::gtest_main)
     if(WIN32)
         #target_compile_options(test PRIVATE /analyze) # Code inspections

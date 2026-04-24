@@ -1,5 +1,4 @@
 add_subdirectory(box2d)
-add_subdirectory(expected)
 add_subdirectory(googletest)
 add_subdirectory(protobuf)
 add_subdirectory(SDL2)
