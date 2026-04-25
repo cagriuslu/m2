@@ -16,6 +16,9 @@ int main(const int argc, char **argv) {
 	if (auto success = load_options(argc, argv); not success) {
 		LOG_ERROR("Error while loading program arguments", success.error());
 		return -1;
+	} else if (std::holds_alternative<ExecuteUtility>(*success)) {
+		std::visit([](const auto& util) { util.Execute(); }, std::get<ExecuteUtility>(*success).variant);
+		return 0;
 	}
 
 	Game::InitSystems();

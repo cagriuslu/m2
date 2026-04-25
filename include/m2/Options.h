@@ -17,6 +17,14 @@ namespace m2 {
 
 	extern std::string gOverrideResourceDir;
 
+	struct LoadGame {};
+	struct ExecuteUtility {
+		struct GenerateEmptySpriteSheet {
+			void Execute() const;
+		};
+		std::variant<GenerateEmptySpriteSheet> variant;
+	};
+	using ExecutionStrategy = std::variant<LoadGame, ExecuteUtility>;
 	/// Load options by parsing the program arguments
-	void_expected load_options(int argc, char** argv);
+	expected<ExecutionStrategy> load_options(int argc, char** argv);
 }
