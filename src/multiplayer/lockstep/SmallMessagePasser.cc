@@ -196,7 +196,7 @@ void SmallMessagePasser::PeerConnectionParameters::ProcessReceivedMessages(googl
 		// Ignore messages whose order number is less or equal to lastOrderlyReceivedOrderNo
 		if (const auto msgOrderNo = msg.order_no(); lastOrderlyReceivedOrderNo < msgOrderNo) {
 			if (const auto [_, inserted] = messagesSinceGap.emplace(msgOrderNo, std::move(msg)); inserted) {
-				LOG_NETWORK_VERBOSE(std::format("Found new small message inside packet from peer: peer={} orderNumber={}", ToString(peerAddress), ToString(msgOrderNo)).c_str());
+				LOG_NETWORK_VERBOSE(std::format("Found new small message inside packet from peer: peer={} orderNumber={}", ToString(peerAddress), ToString(msgOrderNo)));
 			}
 		}
 	}
@@ -248,11 +248,11 @@ void_expected SmallMessagePasser::ReadSmallMessages(std::queue<SmallMessageAndSe
 				LOG_NETWORK("Dropping packet from unknown source", recvResult->second);
 				continue;
 			}
-			LOG_NETWORK(std::format("Received packet from an unknown source: source={} size={}", ToString(recvResult->second), ToString(recvResult->first)).c_str());
+			LOG_NETWORK(std::format("Received packet from an unknown source: source={} size={}", ToString(recvResult->second), ToString(recvResult->first)));
 			peer = &FindOrCreatePeerConnectionParameters(recvResult->second);
 			isNewConnection = true;
 		} else {
-			LOG_NETWORK_VERBOSE(std::format("Received packet from peer: peer={} size={}", ToString(recvResult->second), ToString(recvResult->first)).c_str());
+			LOG_NETWORK_VERBOSE(std::format("Received packet from peer: peer={} size={}", ToString(recvResult->second), ToString(recvResult->first)));
 		}
 
 		if (pb::LockstepUdpPacket packet; packet.ParseFromArray(_recvBuffer, recvResult->first)) {

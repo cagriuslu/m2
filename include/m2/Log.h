@@ -63,17 +63,20 @@ namespace m2 {
 
 		void LogHeader(pb::LogLevel lvl, const char* filePath, int line);
 
-		template <typename ...Ts>
-		void Log(const pb::LogLevel lvl, bool msgIsVerbose, const char* file, const int line, const char* msg, const Ts& ...ts) {
+		template <typename Msg, typename ...Ts>
+		void Log(const pb::LogLevel lvl, const bool msgIsVerbose, const char* file, const int line, Msg msg, const Ts& ...ts) {
 			if (lvl < ::m2::current_log_level || (msgIsVerbose && not ::m2::verbose)) {
 				return;
 			}
 			std::unique_lock lock{gLogMutex};
 			LogHeader(lvl, file, line);
-			constexpr auto argsSize = std::tuple_size_v<std::tuple<Ts...>>;
-			fprintf(stderr, argsSize ? "%s: " : "%s", msg);
-			((fprintf(stderr, "%s ", ::m2::ToString(ts).c_str())), ...);
-			fprintf(stderr, "\n");
+			if (constexpr auto argsSize = std::tuple_size_v<std::tuple<Ts...>>) {
+				std::cerr << msg << ": ";
+				((std::cerr << ::m2::ToString(ts) << " "), ...);
+			} else {
+				std::cerr << msg;
+			}
+			std::cerr << std::endl;
 		}
 
 #if _MSC_VER > 1400
