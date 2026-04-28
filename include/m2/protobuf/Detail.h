@@ -39,7 +39,7 @@ namespace m2 {
 			}
 		}
 
-		expected<std::string> message_to_json_string(const google::protobuf::Message& message);
+		expected<std::string> message_to_json_string(const google::protobuf::Message& message); // TODO replace usages with ToJsonString
 		void_expected message_to_json_file(const google::protobuf::Message& message, const std::filesystem::path& path);
 
 		template <typename T>
