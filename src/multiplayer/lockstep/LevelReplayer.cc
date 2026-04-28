@@ -16,7 +16,7 @@ std::optional<LevelReplayer::SimulationInputs> LevelReplayer::GetNextSimulationI
 		const auto timecodeToFetch = _nextTimecode++;
 
 		LOG_NETWORK("Fetching players inputs from save file for timecode...", timecodeToFetch);
-		auto expectPlayerInputs = orm::LocktepPlayerInput::find_all_by_timecode(_db, timecodeToFetch);
+		auto expectPlayerInputs = orm::LockstepPlayerInput::find_all_by_timecode(_db, timecodeToFetch);
 		m2SucceedOrThrowError(expectPlayerInputs);
 
 		SimulationInputs inputs;

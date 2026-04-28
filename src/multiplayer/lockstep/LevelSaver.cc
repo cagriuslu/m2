@@ -23,7 +23,7 @@ bool LevelSaver::operator()(MessageBox<LevelSaverInput>& inbox, MessageBox<Level
 						LOG_NETWORK("Persisting player input for timecode to database", timecode, playerIndex);
 						const auto serialized = playerInput.SerializeAsString();
 						std::vector<uint8_t> bytes{serialized.begin(), serialized.end()};
-						if (const auto createResult = orm::LocktepPlayerInput::create(*_db, I(timecode), playerIndex, std::move(bytes)); not createResult) {
+						if (const auto createResult = orm::LockstepPlayerInput::create(*_db, I(timecode), playerIndex, std::move(bytes)); not createResult) {
 							LOG_ERROR("Unable to persist LockstepPlayerInput to database", createResult.error());
 							return false;
 						}
@@ -37,7 +37,7 @@ bool LevelSaver::operator()(MessageBox<LevelSaverInput>& inbox, MessageBox<Level
 				const auto uncompressed = std::vector<uint8_t>{serialized.begin(), serialized.end()};
 				auto compressed = thirdparty::compression::Deflate(uncompressed);
 				m2SucceedOrThrowError(compressed);
-				if (const auto createResult = orm::LockstepDebugStateReport::create(*_db, I(timecode), std::move(*compressed)); not createResult) {
+				if (const auto createResult = orm::LockstepDebugStateReport::create(*_db, I(timecode), std::move(*compressed), I(uncompressed.size())); not createResult) {
 					LOG_ERROR("Unable to persist LockstepDebugStateReport to database", createResult.error());
 					return false;
 				}

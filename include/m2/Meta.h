@@ -184,6 +184,13 @@ namespace m2 {
 	// each tuple type within a Dummy type. Then, initializes this new variant with the Dummy wrapped version of T.
 	// Then, queries the index of this new variant. Use ::value to get the index of T in TupleT.
 
+	template <typename Tuple, typename Op>
+	auto TransformTuple(Tuple&& t, Op op) {
+		return std::apply([&op](auto&&... args) {
+			return std::make_tuple(op(std::forward<decltype(args)>(args))...);
+		}, std::forward<Tuple>(t));
+	}
+
 	// Algorithms
 
 	template <typename InputIt, typename OutputIt, typename UnaryPredicate, typename UnaryOperation>

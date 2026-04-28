@@ -20,7 +20,6 @@ int main(const int argc, char **argv) {
 		std::visit([](const auto& util) { util.Execute(); }, std::get<ExecuteUtility>(*success).variant);
 		return 0;
 	}
-
 	Game::InitSystems();
 	Game::CreateInstance();
 

@@ -7,7 +7,7 @@
   },
   "object-types": [
     {
-      "name": "LocktepPlayerInput",
+      "name": "LockstepPlayerInput",
       "description": "Represents an action taken by a player in a lockstep game. An instance is stored only if the player has taken an action.",
       "members": [
         {
@@ -37,6 +37,10 @@
         {
           "name": "report",
           "type": "BYTEARRAY"
+        },
+        {
+          "name": "report_uncompressed_size",
+          "type": "INT32"
         }
       ]
     },

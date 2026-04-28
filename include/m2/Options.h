@@ -20,9 +20,13 @@ namespace m2 {
 	struct LoadGame {};
 	struct ExecuteUtility {
 		struct GenerateEmptySpriteSheet {
+			static void Execute();
+		};
+		struct CompareLockstepSaves {
+			std::string a, b;
 			void Execute() const;
 		};
-		std::variant<GenerateEmptySpriteSheet> variant;
+		std::variant<GenerateEmptySpriteSheet, CompareLockstepSaves> variant;
 	};
 	using ExecutionStrategy = std::variant<LoadGame, ExecuteUtility>;
 	/// Load options by parsing the program arguments
