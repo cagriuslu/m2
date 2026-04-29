@@ -2,6 +2,7 @@
 #include <m2/network/Types.h>
 #include <m2g_Lockstep.pb.h>
 #include <deque>
+#include <variant>
 
 namespace m2::multiplayer::lockstep {
 	struct LevelSaverInput {
