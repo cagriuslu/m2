@@ -109,7 +109,7 @@ namespace m2 {
 		friend auto& AddCharacterToObject(Object&);
 	};
 
-	Pool<Object>::Iterator CreateObject(m2g::pb::ObjectType type = {}, ObjectId parent_id = 0); // TODO add orientation to the params
+	Pool<Object>::Iterator CreateObject(m2g::pb::ObjectType type = {}, ObjectId parent_id = 0);
 	std::function<void()> CreateObjectDeleter(ObjectId id);
 	std::function<void()> CreatePhysiqueDeleter(ObjectId id);
 	std::function<void()> CreateGraphicDeleter(ObjectId id);
