@@ -212,9 +212,15 @@ pb::LockstepDebugStateReport Level::CalculateLockstepDebugStateReport(const int3
 		physique->set_owner_id(phy.GetOwnerId());
 		physique->set_object_type(phy.GetOwner().GetType());
 		physique->set_parent_id(phy.GetOwner().GetParentId());
-		physique->set_exact_position_x(phy.position.GetX().ToRawValue());
-		physique->set_exact_position_y(phy.position.GetY().ToRawValue());
-		physique->set_exact_orientation(phy.orientation.ToRawValue());
+		// Do not record the position and orientation information for these objects
+		const auto isHumanPlayer = std::ranges::find(multiPlayerObjectIds, phy.GetOwnerId()) != multiPlayerObjectIds.end();
+		const auto isCamera = phy.GetOwnerId() == cameraId;
+		const auto isPointer = phy.GetOwnerId() == pointer_id;
+		if (not isHumanPlayer && not isCamera && not isPointer) {
+			physique->set_exact_position_x(phy.position.GetX().ToRawValue());
+			physique->set_exact_position_y(phy.position.GetY().ToRawValue());
+			physique->set_exact_orientation(phy.orientation.ToRawValue());
+		}
 	}
 	_characterStorage.FillDebugStateReport(debugStateReport);
 	return debugStateReport;
