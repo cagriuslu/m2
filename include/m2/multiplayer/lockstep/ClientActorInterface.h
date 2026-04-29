@@ -25,7 +25,11 @@ namespace m2::multiplayer::lockstep {
 		/// and should be handled right away. This is a transitional state and the interface never settles on it.
 		struct ReadyToSimulate {
 			network::Timecode timecode;
-			std::vector<std::deque<m2g::pb::LockstepPlayerInput>> allInputs;
+			std::vector<std::deque<m2g::pb::LockstepPlayerInput>> allInputsToSimulate;
+			/// Since the inputs are received from the actor during ShouldSimulatePhysics(), but they are simulated only
+			/// during ExecuteStep(), the player has the opportunity to queue some inputs during PreStep(). We need to
+			/// hold onto these inputs and move them to SimulationInputs.selfInputs.
+			std::deque<m2g::pb::LockstepPlayerInput> selfInputsToCommitLater;
 		};
 	private:
 		std::variant<GameNotStarted, SimulatingInputs, Lagging, ReadyToSimulate> _state;

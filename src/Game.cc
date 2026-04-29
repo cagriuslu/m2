@@ -780,12 +780,12 @@ void Game::ExecuteStep(const Stopwatch::Duration& delta) {
 				if (not levelSaverInterface->IsActorRunning()) {
 					throw M2_ERROR("Level saver stopped running prematurely");
 				}
-				if (std::ranges::any_of(simulationInputs->allInputs, [](const auto& playerInputs) { return not playerInputs.empty(); })) {
-					levelSaverInterface->StorePlayerInputs(simulationInputs->timecode, simulationInputs->allInputs);
+				if (std::ranges::any_of(simulationInputs->allInputsToSimulate, [](const auto& playerInputs) { return not playerInputs.empty(); })) {
+					levelSaverInterface->StorePlayerInputs(simulationInputs->timecode, simulationInputs->allInputsToSimulate);
 				}
 			}
 			LOG_NETWORK("Simulating inputs from all players for timecode", simulationInputs->timecode);
-			_proxy.HandleLockstepPlayerInputs(simulationInputs->allInputs);
+			_proxy.HandleLockstepPlayerInputs(simulationInputs->allInputsToSimulate);
 			// Calculate game state hash if enough time has passed
 			if (0 < simulationInputs->timecode && (simulationInputs->timecode % multiplayer::lockstep::ConnectionToServer::GAME_STATE_REPORT_PERIOD_IN_TICKS) == 0) {
 				const auto gameStateHash = [&]() -> int32_t {

@@ -73,8 +73,10 @@ bool ClientActorInterface::TryQueueInput(m2g::pb::LockstepPlayerInput&& input) {
 			LOG_NETWORK("Unable to queue input from player while lagging");
 			return false;
 		},
-		[](const ReadyToSimulate&) -> bool {
-			throw M2_ERROR("Attempt to queue input while there are player inputs waiting to be simulated");
+		[&](ReadyToSimulate& readyToSimulate) -> bool {
+			LOG_NETWORK("New input queued before previously received all player inputs could be simulated");
+			readyToSimulate.selfInputsToCommitLater.emplace_back(input);
+			return true;
 		}
 	}, _state);
 }
@@ -118,10 +120,18 @@ ClientActorInterface::SwapResult ClientActorInterface::SwapInputsIfTimeHasCome()
 }
 std::optional<ClientActorInterface::ReadyToSimulate> ClientActorInterface::PopSimulationInputs() {
 	if (std::holds_alternative<ReadyToSimulate>(_state)) {
-		LOG_NETWORK("Simulation inputs are popped");
+		LOG_NETWORK_VERBOSE("Popping simulation inputs...");
 		auto retval = std::move(std::get<ReadyToSimulate>(_state));
+		// Take selfInputs out the ReadyToSimulate struct
+		auto selfInputsToCommitLater = std::move(retval.selfInputsToCommitLater);
 		// Return to simulating state
 		_state.emplace<SimulatingInputs>();
+		// Put selfInputs back into SimulatingInputs
+		if (not selfInputsToCommitLater.empty()) {
+			LOG_NETWORK("Found inputs queued between receival and simulation of all player inputs");
+			std::get<SimulatingInputs>(_state).selfInputs = std::move(selfInputsToCommitLater);
+		}
+		LOG_NETWORK_VERBOSE("Simulation inputs are popped");
 		return std::move(retval);
 	}
 	return std::nullopt;
