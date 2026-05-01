@@ -44,7 +44,7 @@ void ConnectionToClient::StoreRunningInputHash(const pb::LockstepPlayerInputs& p
 	hashHelper.set_index(_index);
 	hashHelper.mutable_player_inputs()->CopyFrom(playerInputs);
 	const auto serialized = hashHelper.SerializeAsString();
-	const auto hash = HashI(serialized);
+	const auto hash = HashI(serialized, 0);
 	_runningInputHash.emplace_back(Hash{.timecode = playerInputs.timecode(), .hash = hash});
 	LOG_NETWORK("Calculated client player inputs hash", _addressAndPort, _runningInputHash.back().timecode, _runningInputHash.back().hash);
 	// Keep the list limited to a capacity

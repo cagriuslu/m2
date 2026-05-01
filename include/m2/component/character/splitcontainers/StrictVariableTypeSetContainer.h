@@ -64,7 +64,7 @@ namespace m2 {
 			for (int i = 0; i < I(possibleVariableTypes.size()); ++i) {
 				const auto variableType = possibleVariableTypes[i];
 				if (_variables[i]) {
-					hash = HashI(variableType);
+					hash = HashI(variableType, hash);
 					hash = _variables[i].Hash(hash);
 				}
 			}

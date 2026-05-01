@@ -183,7 +183,7 @@ namespace m2 {
 		// Accessors
 
 		/// Platform independent hash of the game identifier for different peers to recognize each other.
-		int32_t Hash() const { return HashI(_proxy.gameIdentifier); }
+		int32_t Hash() const { return HashI(_proxy.gameIdentifier, 0); }
 		const GameResources& GetResources() const { return _resources; }
 		const GameDimensions& Dimensions() const { return *_dimensions; }
 		const std::variant<Sprite,pb::TextLabel>& GetSpriteOrTextLabel(const m2g::pb::SpriteType sprite_type) const { return _sprites[pb::enum_index(sprite_type)]; }

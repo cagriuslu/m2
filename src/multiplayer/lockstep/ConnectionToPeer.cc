@@ -87,7 +87,7 @@ void ConnectionToPeer::StorePlayerInputsReceivedFrom(const pb::LockstepPlayerInp
 	hashHelper.set_index(_index);
 	hashHelper.mutable_player_inputs()->CopyFrom(input);
 	const auto serialized = hashHelper.SerializeAsString();
-	const auto hash = HashI(serialized);
+	const auto hash = HashI(serialized, 0);
 
 	LOG_NETWORK("Storing inputs from peer with timecode and hash", _addressAndPort, input.timecode(), hash);
 	inputs.emplace(input.timecode(), PlayerInputsAndHash{

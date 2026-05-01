@@ -70,7 +70,7 @@ namespace m2 {
 		[[nodiscard]] int32_t HashVariables(int32_t hash) const {
 			for (const auto& variable : _variables) {
 				if (variable.first && variable.second) {
-					hash = HashI(variable.first);
+					hash = HashI(variable.first, hash);
 					hash = variable.second.Hash(hash);
 				}
 			}
