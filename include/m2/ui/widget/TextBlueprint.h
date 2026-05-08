@@ -28,6 +28,8 @@ namespace m2::widget {
 		m2g::pb::KeyType keyboardShortcut{};
 
 		std::function<void(Text& self)> onCreate{};
+		std::function<void(Text& self)> onHover{};
+		std::function<void(Text& self)> offHover{};
 		std::function<UiAction(Text& self)> onUpdate{};
 		std::function<UiAction(const Text& self)> onAction{};
 	};

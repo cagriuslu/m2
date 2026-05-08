@@ -15,6 +15,8 @@ namespace m2::widget {
 		m2g::pb::KeyType keyboardShortcut{};
 
 		std::function<void(CheckboxWithText& self)> onCreate{};
+		std::function<void(CheckboxWithText& self)> onHover{};
+		std::function<void(CheckboxWithText& self)> offHover{};
 		std::function<UiAction(CheckboxWithText& self)> onAction{};
 	};
 }

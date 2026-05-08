@@ -12,6 +12,8 @@ namespace m2::widget {
 		m2g::pb::KeyType keyboardShortcut{};
 
 		std::function<void(Image& self)> onCreate{};
+		std::function<void(Image& self)> onHover{};
+		std::function<void(Image& self)> offHover{};
 		std::function<std::pair<UiAction,std::optional<m2g::pb::SpriteType>>(const Image& self)> onUpdate{};
 		std::function<UiAction(const Image& self)> onAction{};
 	};

@@ -14,6 +14,8 @@ namespace m2::widget {
 		UiAction trigger_action();
 
 	protected:
+		void OnHover() final;
+		void OffHover() final;
 		UiAction OnEvent(Events& events) final;
 	};
 }

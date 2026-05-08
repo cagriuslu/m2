@@ -19,11 +19,27 @@ AbstractButton::AbstractButton(UiPanel* parent, const UiWidgetBlueprint *bluepri
 		),
 		depressed(false) {}
 
+void AbstractButton::OnHover() {
+	std::visit(overloaded {
+			[&](const TextBlueprint& v) { if (v.onHover) v.onHover(dynamic_cast<Text&>(*this)); },
+			[&](const ImageBlueprint& v) { if (v.onHover) v.onHover(dynamic_cast<Image&>(*this)); },
+			[&](const CheckboxWithTextBlueprint& v) { if (v.onHover) v.onHover(dynamic_cast<CheckboxWithText&>(*this)); },
+			[](MAYBE const auto& v) {}
+	}, blueprint->variant);
+}
+void AbstractButton::OffHover() {
+	std::visit(overloaded {
+			[&](const TextBlueprint& v) { if (v.offHover) v.offHover(dynamic_cast<Text&>(*this)); },
+			[&](const ImageBlueprint& v) { if (v.offHover) v.offHover(dynamic_cast<Image&>(*this)); },
+			[&](const CheckboxWithTextBlueprint& v) { if (v.offHover) v.offHover(dynamic_cast<CheckboxWithText&>(*this)); },
+			[](MAYBE const auto& v) {}
+	}, blueprint->variant);
+}
 UiAction AbstractButton::OnEvent(Events &events) {
 	// Return early if there is no action callback
 	const bool has_action_callback = std::visit(overloaded {
-			[](const TextBlueprint& v) -> bool { return (bool) v.onAction; },
-			[](const ImageBlueprint& v) -> bool { return (bool) v.onAction; },
+			[](const TextBlueprint& v) -> bool { return static_cast<bool>(v.onAction); },
+			[](const ImageBlueprint& v) -> bool { return static_cast<bool>(v.onAction); },
 			[](MAYBE const CheckboxWithTextBlueprint& v) -> bool { return true; }, // Checkbox might change state even if there isn't an onAction callback.
 			[](MAYBE const auto& v) -> bool { return false; }
 	}, blueprint->variant);
