@@ -403,12 +403,18 @@ void Level::EndPanning() {
 }
 
 void Level::EnableHud() {
+	if (not _leftHudUiPanel || not _rightHudUiPanel) {
+		throw M2_ERROR("HUD not found");
+	}
 	LOG_DEBUG("Enabling HUD");
 	_leftHudUiPanel->enabled = true;
 	_rightHudUiPanel->enabled = true;
 }
 
 void Level::DisableHud() {
+	if (not _leftHudUiPanel || not _rightHudUiPanel) {
+		throw M2_ERROR("HUD not found");
+	}
 	LOG_DEBUG("Disabling HUD");
 	_leftHudUiPanel->enabled = false;
 	_rightHudUiPanel->enabled = false;
@@ -500,8 +506,12 @@ void_expected Level::InitAnyPlayer(
 
 	preLevelInit(_name, *_lb);
 
-	_leftHudUiPanel.emplace(M2G_PROXY.LeftHudBlueprint(), UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().LeftHud()));
-	_rightHudUiPanel.emplace(M2G_PROXY.RightHudBlueprint(), UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().RightHud()));
+	if (const auto* blueprint = M2G_PROXY.LeftHudBlueprint()) {
+		_leftHudUiPanel.emplace(blueprint, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().LeftHud()));
+	}
+	if (const auto* blueprint = M2G_PROXY.RightHudBlueprint()) {
+		_rightHudUiPanel.emplace(blueprint, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().RightHud()));
+	}
 	if (const auto [blueprint, area] = M2G_PROXY.MessageBoxBlueprintAndArea(); blueprint) {
 		_messageBoxUiPanel.emplace(blueprint, area);
 		_messageBoxUiPanel->enabled = false;
