@@ -7,6 +7,7 @@
 // Not yet supported
 #else
 #include <execinfo.h>
+#include <unistd.h>
 #endif
 
 namespace {
@@ -43,6 +44,14 @@ namespace {
 		// Final null character
 		out[out.size() - 1] = 0;
 	}
+
+	void SafePrint(const char* msg) {
+#ifdef _WIN32
+		// Not yet supported
+#else
+		write(STDERR_FILENO, msg, strlen(msg));
+#endif
+	}
 }
 
 std::mutex m2::detail::gLogMutex;
@@ -50,19 +59,27 @@ std::mutex m2::detail::gLogMutex;
 void m2::SetThreadNameForLogging(const char* thread_name) {
 	thread_names.emplace_back(std::this_thread::get_id(), thread_name);
 }
-void m2::LogStacktrace() {
+
+void m2::SafeLogStacktrace(const int sig) {
 #ifdef _WIN32
 	// Not yet supported
 #else
-	void* callstack[128];
-	const int frames = backtrace(callstack, 128);
-	char** strs = backtrace_symbols(callstack, frames);
-	for (int i = 0; i < frames; ++i) {
-		fprintf(stderr, "%s\n", strs[i]);
+	void* buffer[64];
+	const int size = backtrace(buffer, 64);
+
+	switch (sig) {
+		case SIGTERM: SafePrint("SIGTERM:\n"); break;
+		case SIGSEGV: SafePrint("SIGSEGV:\n"); break;
+		case SIGILL: SafePrint("SIGILL:\n"); break;
+		case SIGABRT: SafePrint("SIGABRT:\n"); break;
+		case SIGFPE: SafePrint("SIGFPE:\n"); break;
+		default: SafePrint("Unknown signal:\n");
 	}
-	free(strs);
+
+	backtrace_symbols_fd(buffer, size, STDERR_FILENO);
 #endif
 }
+
 const std::string& m2::ToString(const pb::LogLevel& lvl) {
 	return LogLevel_Name(lvl);
 }

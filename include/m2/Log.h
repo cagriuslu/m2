@@ -55,7 +55,8 @@
 #define INFO_FN() LOG_INFO("f", __FUNCTION__)
 
 namespace m2 {
-	void LogStacktrace();
+	void SafeLogStacktrace(int sig);
+
 	const std::string& ToString(const pb::LogLevel&);
 
 	namespace detail {

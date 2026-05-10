@@ -3,12 +3,35 @@
 #include <m2/Log.h>
 #include <CMakeProject.h>
 #include <SDL.h>
+#include <csignal>
+#include <unistd.h>
 
 #define BREAK_IF_QUIT() if (M2_GAME.quit) break
 
 using namespace m2;
 
+namespace {
+#ifdef _WIN32
+	// Not yet supported
+#else
+	extern "C" void SignalHandler(const int sig) {
+		SafeLogStacktrace(sig);
+		_exit(EXIT_FAILURE); // Exit immediately without running global destructors (which may hang)
+	}
+#endif
+}
+
 int main(const int argc, char **argv) {
+#ifdef _WIN32
+	// Not yet supported
+#else
+	std::signal(SIGTERM, SignalHandler);
+	std::signal(SIGSEGV, SignalHandler);
+	std::signal(SIGILL, SignalHandler);
+	std::signal(SIGABRT, SignalHandler);
+	std::signal(SIGFPE, SignalHandler);
+#endif
+
 	StoreInitialStackPosition();
 	SetThreadNameForLogging("MN");
 	LOG_INFO("Commit hash", GIT_SHORT_COMMIT_HASH);
