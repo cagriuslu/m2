@@ -339,7 +339,7 @@ void m2::Vm::execute_recursively(Stack& stack, const std::string& func) const {
 					throw M2_ERROR("Unknown instruction");
 			}
 		} catch (const Error& err) {
-			throw M2_ERROR(S(err.what()) +  "\n   in function " + func + " instruction " + ToString(i));
+			throw M2_ERROR(ToString(err.what()) +  "\n   in function " + func + " instruction " + ToString(i));
 		}
 	}
 }

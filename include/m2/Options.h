@@ -17,6 +17,10 @@ namespace m2 {
 
 	extern std::string gOverrideResourceDir;
 
+	namespace options {
+		uint16_t GetPort();
+	}
+
 	struct LoadGame {};
 	struct ExecuteUtility {
 		struct GenerateEmptySpriteSheet {

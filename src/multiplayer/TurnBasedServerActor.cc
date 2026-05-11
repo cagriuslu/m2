@@ -3,7 +3,6 @@
 #include <m2/Log.h>
 
 namespace {
-	constexpr uint16_t TCP_PORT_NO = 1162;
 	constexpr auto CLIENT_RECONNECT_TIMEOUT_MS = 30000;
 }
 
@@ -36,7 +35,7 @@ bool m2::TurnBasedServerActor::operator()(MessageBox<TurnBasedServerActorInput>&
 }
 
 void m2::TurnBasedServerActor::CreateSocket() {
-	_connectionListeningSocket = network::TcpSocket::CreateServerSideSocket(TCP_PORT_NO);
+	_connectionListeningSocket = network::TcpSocket::CreateServerSideSocket(options::GetPort());
 	if (not _connectionListeningSocket) {
 		throw M2_ERROR("TcpSocket creation failed: " + _connectionListeningSocket.error());
 	}
@@ -62,7 +61,7 @@ void m2::TurnBasedServerActor::StartListening(MessageBox<TurnBasedServerActorOut
 	if (auto listenResult = _connectionListeningSocket->listen(I(_maxConnCount)); not listenResult) {
 		throw M2_ERROR("Listen failed: " + listenResult.error());
 	}
-	LOG_INFO("TcpSocket listening on port", TCP_PORT_NO);
+	LOG_INFO("TcpSocket listening on port", options::GetPort());
 	SetStateAndPublish(outbox, pb::SERVER_LOBBY_OPEN);
 }
 void m2::TurnBasedServerActor::StartPingBroadcast() {

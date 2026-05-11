@@ -51,6 +51,13 @@ namespace {
 	}
 }
 
+namespace {
+	uint16_t gPort = 1162;
+}
+uint16_t options::GetPort() {
+	return gPort;
+}
+
 void ExecuteUtility::GenerateEmptySpriteSheet::Execute() {
 	LOG_INFO("Generating empty sprite sheet");
 	pb::SpriteSheets ss;
@@ -237,6 +244,15 @@ expected<ExecutionStrategy> m2::load_options(const int argc, char** argv) {
 	if (const auto resourceDir = parse_argument(arg_list, "resource-dir")) {
 		LOG_INFO("Overriding resource dir", *resourceDir);
 		gOverrideResourceDir = *resourceDir;
+	}
+
+	if (const auto portStr = parse_argument(arg_list, "port")) {
+		if (auto const port = strtol(std::string{*portStr}.c_str(), nullptr, 0); 0 < port) {
+			gPort = static_cast<uint16_t>(port);
+			LOG_INFO("Port", gPort);
+		} else {
+			return make_unexpected("Invalid port");
+		}
 	}
 
 	if (parse_argument(arg_list, "generate-empty-sprite-sheet")) {

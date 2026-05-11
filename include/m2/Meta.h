@@ -24,7 +24,6 @@ namespace m2 {
 	constexpr size_t Z(const auto t) { return static_cast<size_t>(t); }
 	constexpr float ToFloat(const auto t) { return static_cast<float>(t); }
 	constexpr double D(const auto t) { return static_cast<double>(t); }
-	std::string S(const auto& s) { return std::string(s); }
 	inline int RoundI(const float t) { return static_cast<int>(roundf(t)); }
 	inline int RoundI(const double t) { return static_cast<int>(round(t)); }
 	inline unsigned RoundU(const float t) { return static_cast<unsigned>(roundf(t)); }

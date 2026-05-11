@@ -87,7 +87,7 @@ bool ServerActor::StateValidationState::IsClientSucceeded(const int index) const
 
 bool ServerActor::Initialize(MessageBox<ServerActorInput>&, MessageBox<ServerActorOutput>& outbox) {
 	LOG_INFO("Lockstep ServerActor Initialize");
-	auto expectSocket = network::UdpSocket::CreateServerSideSocket(network::Port::CreateFromHostOrder(1162));
+	auto expectSocket = network::UdpSocket::CreateServerSideSocket(network::Port::CreateFromHostOrder(options::GetPort()));
 	if (not expectSocket) {
 		LOG_WARN("Unable to create a UDP socket", expectSocket.error());
 		return false;

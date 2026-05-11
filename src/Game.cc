@@ -227,7 +227,7 @@ void_expected Game::HostLockstepGame(unsigned max_connection_count) {
 	LOG_INFO("Server is listening, joining the game as host client...");
 	std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).hostClientActorInterface.emplace(network::IpAddressAndPort{
 		.ipAddress = network::IpAddress::CreateFromString("127.0.0.1"),
-		.port = network::Port::CreateFromHostOrder(1162)
+		.port = network::Port::CreateFromHostOrder(options::GetPort())
 	});
 	LOG_DEBUG("Host client created");
 
@@ -266,7 +266,7 @@ void_expected Game::JoinLockstepGame(const std::string& addr) {
 		throw M2_ERROR("Joining game requires no other multiplayer threads to exist");
 	}
 	_multiPlayerComponents.emplace<multiplayer::lockstep::ClientComponents>(
-		network::IpAddressAndPort{network::IpAddress::CreateFromString(addr), network::Port::CreateFromHostOrder(1162)}
+		network::IpAddressAndPort{network::IpAddress::CreateFromString(addr), network::Port::CreateFromHostOrder(options::GetPort())}
 	);
 	return {};
 }
