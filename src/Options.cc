@@ -52,10 +52,24 @@ namespace {
 }
 
 namespace {
-	uint16_t gPort = 1162;
+	uint16_t gPort = 11062;
 }
 uint16_t options::GetPort() {
 	return gPort;
+}
+
+namespace {
+	std::string gMulticastDiscoveryAddress = "239.255.110.63";
+}
+const std::string& options::GetMulticastDiscoveryAddress() {
+	return gMulticastDiscoveryAddress;
+}
+
+namespace {
+	uint16_t gMulticastDiscoveryPort = 11063;
+}
+uint16_t options::GetMulticastDiscoveryPort() {
+	return gMulticastDiscoveryPort;
 }
 
 void ExecuteUtility::GenerateEmptySpriteSheet::Execute() {

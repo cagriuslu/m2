@@ -19,6 +19,8 @@ namespace m2 {
 
 	namespace options {
 		uint16_t GetPort();
+		const std::string& GetMulticastDiscoveryAddress();
+		uint16_t GetMulticastDiscoveryPort();
 	}
 
 	struct LoadGame {};
