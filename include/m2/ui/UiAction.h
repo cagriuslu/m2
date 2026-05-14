@@ -131,6 +131,7 @@ namespace m2 {
 
 	inline UiAction MakeQuitAction() { return UiAction{Quit{}}; }
 
-	/// Converts ReturnAction to ContinueAction. Other return types are passed on unmodified.
+	/// Converts ReturnAction to ContinueAction. Other return types are returned unmodified. Commonly used when PanelA
+	/// wants runs PanelB as a blocking dialog/stack and the execution should continue with PanelA after PanelB returns.
 	inline UiAction ConvertReturnActionToContinue(UiAction&& value) { return value.IsReturn() ? MakeContinueAction() : std::move(value); }
 }  // namespace m2

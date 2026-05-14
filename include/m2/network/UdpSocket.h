@@ -19,6 +19,8 @@ namespace m2::network {
 	public:
 		static expected<UdpSocket> CreateServerSideSocket(const Port& port);
 		static expected<UdpSocket> CreateClientSideSocket();
+		static expected<UdpSocket> CreateSendOnlyMulticastSocket(const IpAddress& interfaceAddr);
+		static expected<UdpSocket> CreateReceiveOnlyMulticastSocket(const IpAddress& groupAddr, const Port& port);
 		UdpSocket(const UdpSocket& other) = delete;
 		UdpSocket& operator=(const UdpSocket& other) = delete;
 		UdpSocket(UdpSocket&& other) noexcept;

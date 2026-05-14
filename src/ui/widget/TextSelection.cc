@@ -11,6 +11,11 @@ TextSelection::TextSelection(UiPanel* parent, const UiWidgetBlueprint* blueprint
 		VariantBlueprint().onCreate(*this);
 	}
 }
+TextSelection::~TextSelection() {
+	if (VariantBlueprint().onDestroy) {
+		VariantBlueprint().onDestroy();
+	}
+}
 
 std::vector<TextSelectionBlueprint::ReturnValue> TextSelection::GetSelectedOptions() const {
 	std::vector<TextSelectionBlueprint::ReturnValue> selections;

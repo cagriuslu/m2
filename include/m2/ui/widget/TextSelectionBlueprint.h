@@ -1,5 +1,6 @@
 #pragma once
 #include <m2/protobuf/Detail.h>
+#include <m2/network/Types.h>
 #include <string>
 #include <vector>
 
@@ -8,7 +9,7 @@ namespace m2::widget {
 	class TextSelection;
 
 	struct TextSelectionBlueprint {
-		using ReturnValue = std::variant<std::monostate, std::string, int32_t, int64_t>;
+		using ReturnValue = std::variant<std::monostate, std::string, int32_t, int64_t, network::IpAddress, network::IpAddressAndPort>;
 		struct Option {
 			std::string text;
 			ReturnValue return_value{};
@@ -36,6 +37,7 @@ namespace m2::widget {
 		std::function<void(TextSelection& self)> offHover{};
 		std::function<UiAction(TextSelection& self)> onUpdate{};
 		std::function<UiAction(TextSelection& self)> onAction{};
+		std::function<void()> onDestroy{};
 	};
 
 	/// Converts a sequence of protobuf enum values into test selection options where the text is the name of the enum,

@@ -1,0 +1,8 @@
+syntax = "proto3";
+package m2.pb;
+
+message NetworkDiscoveryUdpPacket {
+  sfixed32 game_hash = 1;
+  fixed32 version = 2; // Highest 8 bits: Major version. Middle 16 bits: Minor version. Lowest 8 bits: Patch version.
+  fixed32 game_port = 3; // Network order
+}

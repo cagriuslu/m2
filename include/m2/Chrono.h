@@ -20,6 +20,9 @@ namespace m2 {
 		[[nodiscard]] Duration GetDurationSince() const {
 			return std::chrono::steady_clock::now() - _startTimePoint;
 		}
+		[[nodiscard]] std::chrono::milliseconds GetDurationSinceS() const {
+			return std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - _startTimePoint);
+		}
 		[[nodiscard]] std::chrono::milliseconds GetDurationSinceMs() const {
 			return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - _startTimePoint);
 		}
@@ -32,6 +35,9 @@ namespace m2 {
 
 		[[nodiscard]] bool HasTimePassed(const Duration& d) const {
 			return d <= GetDurationSince();
+		}
+		[[nodiscard]] bool HasTimePassed(const std::chrono::seconds s) const {
+			return s <= GetDurationSinceS();
 		}
 		[[nodiscard]] bool HasTimePassed(const std::chrono::milliseconds ms) const {
 			return ms <= GetDurationSinceMs();

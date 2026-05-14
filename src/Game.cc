@@ -205,7 +205,7 @@ void_expected Game::HostTurnBasedGame(unsigned max_connection_count) {
 
 	return {};
 }
-void_expected Game::HostLockstepGame(unsigned max_connection_count) {
+void_expected Game::HostLockstepGame(unsigned max_connection_count, const network::IpAddress& multicastInterface) {
 	if (MAX_LOCKSTEP_CONNECTION_COUNT < max_connection_count) {
 		return make_unexpected("Given max connection count is higher than the limit: " + ToString(max_connection_count));
 	}
@@ -213,10 +213,22 @@ void_expected Game::HostLockstepGame(unsigned max_connection_count) {
 		throw M2_ERROR("Hosting game requires no other multiplayer threads to exist");
 	}
 
-	LOG_INFO("Creating server...");
 	_multiPlayerComponents.emplace<multiplayer::lockstep::ServerComponents>();
+	LOG_DEBUG("Starting network discovery...");
+	std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).networkDiscoveryActorInterface.emplace(network::discovery::NetworkDiscoveryActor::SpeakerParameters{
+		.multicastAddress = network::IpAddressAndPort{
+			.ipAddress = network::IpAddress::CreateFromString(options::GetMulticastDiscoveryAddress()),
+			.port = network::Port::CreateFromHostOrder(options::GetMulticastDiscoveryPort())
+		},
+		.multicastInterface = multicastInterface,
+		.gameHash = Hash(),
+		.gamePort = network::Port::CreateFromHostOrder(options::GetPort())
+	});
+	LOG_INFO("Network discovery started");
+
+	LOG_DEBUG("Creating server...");
 	std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).serverActorInterface.emplace(max_connection_count);
-	LOG_DEBUG("Server created");
+	LOG_INFO("Server created");
 
 	// Wait until the lobby is open
 	while (not GetLockstepServerActor().IsLobbyOpen()) {
@@ -261,14 +273,26 @@ void_expected Game::JoinTurnBasedGame(const std::string& addr) {
 	_multiPlayerComponents.emplace<network::TurnBasedRealClientThread>(addr);
 	return {};
 }
-void_expected Game::JoinLockstepGame(const std::string& addr) {
+void_expected Game::JoinLockstepGame(const network::IpAddressAndPort& addr) {
 	if (not std::holds_alternative<std::monostate>(_multiPlayerComponents)) {
 		throw M2_ERROR("Joining game requires no other multiplayer threads to exist");
 	}
-	_multiPlayerComponents.emplace<multiplayer::lockstep::ClientComponents>(
-		network::IpAddressAndPort{network::IpAddress::CreateFromString(addr), network::Port::CreateFromHostOrder(options::GetPort())}
-	);
+	_multiPlayerComponents.emplace<multiplayer::lockstep::ClientComponents>(addr);
 	return {};
+}
+void Game::EnableServerDiscovery() {
+	LOG_DEBUG("Starting server discovery...");
+	networkDiscoveryActorInterface.emplace(network::discovery::NetworkDiscoveryActor::ListenerParameters{
+		.multicastAddress = network::IpAddressAndPort{
+			.ipAddress = network::IpAddress::CreateFromString(options::GetMulticastDiscoveryAddress()),
+			.port = network::Port::CreateFromHostOrder(options::GetMulticastDiscoveryPort())
+		},
+		.gameHash = Hash(),
+	});
+	LOG_INFO("Server discovery started");
+}
+void Game::DisableServerDiscovery() {
+	networkDiscoveryActorInterface.reset();
 }
 void Game::LeaveGame() {
 	_multiPlayerComponents = std::monostate{};
@@ -317,6 +341,9 @@ multiplayer::lockstep::ClientActorInterface& Game::GetLockstepClientActor() {
 		return std::get<multiplayer::lockstep::ClientComponents>(_multiPlayerComponents).guestClientActorInterface;
 	}
 	throw M2_ERROR("Not a lockstep multiplayer game");
+}
+network::discovery::NetworkDiscoveryActorInterface& Game::GetNetworkDiscoveryActorInterface() {
+	return *networkDiscoveryActorInterface;
 }
 multiplayer::lockstep::LevelSaverInterface* Game::GetLockstepLevelSaverInterface() {
 	if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)) {
@@ -487,6 +514,10 @@ void_expected Game::LoadLockstep(const std::variant<std::filesystem::path, pb::L
 	// Reinit dimensions with proxy in case an editor was initialized before
 	_dimensions->SetGameAspectRatio(_proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
 	_level.emplace();
+
+	if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)) {
+		std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).networkDiscoveryActorInterface.reset();
+	}
 
 	// Make sure the client state is proper. Game should only be loaded when the lobby is frozen. This is a concern only
 	// for the host since the client won't even have access to game init parameters unless the lobby is frozen.

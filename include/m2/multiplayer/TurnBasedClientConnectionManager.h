@@ -1,6 +1,6 @@
 #pragma once
 #include "turnbased/MessagePasser.h"
-#include "../network/IpAddressAndPort.h"
+#include "../network/Interface.h"
 #include <m2/network/Types.h>
 #include "../sdl/Detail.h"
 #include <variant>

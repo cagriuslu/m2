@@ -22,9 +22,11 @@ namespace m2::widget {
 
 	public:
 		explicit TextSelection(UiPanel* parent, const UiWidgetBlueprint* blueprint);
+		~TextSelection() override;
 
 		// Accessors
 
+		[[nodiscard]] int GetOptionCount() const { return I(_options.size()); }
 		[[nodiscard]] const std::vector<Option>& GetOptions() const { return _options; }
 		[[nodiscard]] const Option& GetOption(const int i) const { return _options[i]; }
 		[[nodiscard]] std::vector<TextSelectionBlueprint::ReturnValue> GetSelectedOptions() const;

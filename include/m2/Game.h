@@ -57,6 +57,8 @@ namespace m2 {
 			multiplayer::lockstep::ClientComponents,
 			multiplayer::lockstep::ReplayComponents
 		> _multiPlayerComponents;
+		// This actor can only be instantiated to listen for incoming multicasts. It can't be used to send them.
+		std::optional<network::discovery::NetworkDiscoveryActorInterface> networkDiscoveryActorInterface;
 		bool _server_update_necessary{}, _server_update_with_shutdown{};
 		std::optional<network::SequenceNo> _lastSentOrReceivedServerUpdateSequenceNo;
 
@@ -135,11 +137,13 @@ namespace m2 {
 		bool IsMultiPlayer() const { return not std::holds_alternative<std::monostate>(_multiPlayerComponents); }
 		bool IsTurnBasedMultiPlayer() const { return std::holds_alternative<TurnBasedServerComponents>(_multiPlayerComponents) || std::holds_alternative<network::TurnBasedRealClientThread>(_multiPlayerComponents); }
 		void_expected HostTurnBasedGame(unsigned max_connection_count);
-		void_expected HostLockstepGame(unsigned max_connection_count);
+		void_expected HostLockstepGame(unsigned max_connection_count, const network::IpAddress& multicastInterface);
 		void_expected EnableLevelSaver(const std::string& fpath);
 		/// For client
 		void_expected JoinTurnBasedGame(const std::string& addr);
-		void_expected JoinLockstepGame(const std::string& addr);
+		void_expected JoinLockstepGame(const network::IpAddressAndPort& addr);
+		void EnableServerDiscovery();
+		void DisableServerDiscovery();
 		/// For client
 		void LeaveGame();
 		/// For server
@@ -156,6 +160,7 @@ namespace m2 {
 		multiplayer::lockstep::ClientActorInterface& GetLockstepHostClientActor() { return *std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).hostClientActorInterface; }
 		multiplayer::lockstep::ClientActorInterface& GetLockstepGuestClientActor() { return std::get<multiplayer::lockstep::ClientComponents>(_multiPlayerComponents).guestClientActorInterface; }
 		multiplayer::lockstep::ClientActorInterface& GetLockstepClientActor();
+		network::discovery::NetworkDiscoveryActorInterface& GetNetworkDiscoveryActorInterface();
 		multiplayer::lockstep::LevelSaverInterface* GetLockstepLevelSaverInterface();
 		std::optional<network::SequenceNo> LastServerUpdateSequenceNo() const { return _lastSentOrReceivedServerUpdateSequenceNo; }
 		int GetTotalPlayerCount();

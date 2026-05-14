@@ -7,7 +7,7 @@
 #include <arpa/inet.h>
 
 m2::expected<m2::network::UdpSocket> m2::network::UdpSocket::CreateServerSideSocket(const Port& port) {
-	const auto socketResult = ::socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	const auto socketResult = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (socketResult == -1) {
 		return make_unexpected(strerror(errno));
 	}
@@ -20,7 +20,7 @@ m2::expected<m2::network::UdpSocket> m2::network::UdpSocket::CreateServerSideSoc
 	sin.sin_family = AF_INET;
 	sin.sin_port = port.GetInNetworkOrder();
 	sin.sin_addr.s_addr = INADDR_ANY;
-	if (const auto bindResult = ::bind(socketResult, reinterpret_cast<sockaddr*>(&sin), sizeof(sin)); bindResult == -1) {
+	if (const auto bindResult = bind(socketResult, reinterpret_cast<sockaddr*>(&sin), sizeof(sin)); bindResult == -1) {
 		return make_unexpected(strerror(errno));
 	}
 
@@ -30,12 +30,82 @@ m2::expected<m2::network::UdpSocket> m2::network::UdpSocket::CreateServerSideSoc
 	return std::move(udpSocket);
 }
 m2::expected<m2::network::UdpSocket> m2::network::UdpSocket::CreateClientSideSocket() {
-	const auto socketResult = ::socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	const auto socketResult = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (socketResult == -1) {
 		return make_unexpected(strerror(errno));
 	}
 
 	UdpSocket udpSocket;
+	udpSocket._platformSpecificData = new detail::PlatformSpecificSocketData{.fd = socketResult};
+	return std::move(udpSocket);
+}
+m2::expected<m2::network::UdpSocket> m2::network::UdpSocket::CreateSendOnlyMulticastSocket(const IpAddress& interfaceAddr) {
+	const auto socketResult = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	if (socketResult == -1) {
+		return make_unexpected(strerror(errno));
+	}
+
+	// Setting TTL to 1 has a special meaning that restricts the packets to the local network only
+	constexpr uint8_t ttl = 1;
+	if (const auto ttlResult = setsockopt(socketResult, IPPROTO_IP, IP_MULTICAST_TTL, &ttl, sizeof(ttl)); ttlResult == -1) {
+		return make_unexpected(strerror(errno));
+	}
+
+	if (interfaceAddr == IpAddress::CreateFromString("127.0.0.1")) {
+		LOG_WARN("127.0.0.1 is being used as multicast interface, network discovery may not work on all platforms");
+	}
+
+	// Set the interface that the packets will be sent from
+	in_addr interfaceInAddr{};
+	interfaceInAddr.s_addr = interfaceAddr.GetInNetworkOrder();
+	if (const auto interfaceResult = setsockopt(socketResult, IPPROTO_IP, IP_MULTICAST_IF, &interfaceInAddr, sizeof(interfaceInAddr)); interfaceResult == -1) {
+		return make_unexpected(strerror(errno));
+	}
+
+	// Enable loopback so that clients on this machine can receive the packets
+	constexpr uint8_t loop = 1;
+	if (const auto loopResult = setsockopt(socketResult, IPPROTO_IP, IP_MULTICAST_LOOP, &loop, sizeof(loop)); loopResult == -1) {
+		return make_unexpected(strerror(errno));
+	}
+
+	UdpSocket udpSocket;
+	udpSocket._platformSpecificData = new detail::PlatformSpecificSocketData{.fd = socketResult};
+	return std::move(udpSocket);
+}
+m2::expected<m2::network::UdpSocket> m2::network::UdpSocket::CreateReceiveOnlyMulticastSocket(const IpAddress& groupAddr, const Port& port) {
+	const auto socketResult = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	if (socketResult == -1) {
+		return make_unexpected(strerror(errno));
+	}
+
+	// There could be other clients in this machine, allow them to listen for incoming messages
+	constexpr int reuse = 1;
+	if (const auto reuseResult = setsockopt(socketResult, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse)); reuseResult == -1) {
+		return make_unexpected(strerror(errno));
+	}
+
+	// Bind the socket to the local port
+	sockaddr_in sin{};
+#ifdef __APPLE__
+	sin.sin_len = sizeof(sin);
+#endif
+	sin.sin_family = AF_INET;
+	sin.sin_port = port.GetInNetworkOrder();
+	sin.sin_addr.s_addr = INADDR_ANY;
+	if (const auto bindResult = bind(socketResult, reinterpret_cast<sockaddr*>(&sin), sizeof(sin)); bindResult == -1) {
+		return make_unexpected(strerror(errno));
+	}
+
+	// Join the multicast group on all interfaces
+	ip_mreq mreq{};
+	mreq.imr_multiaddr.s_addr = groupAddr.GetInNetworkOrder();
+	mreq.imr_interface.s_addr = INADDR_ANY;
+	if (const auto membershipResult = ::setsockopt(socketResult, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq)); membershipResult == -1) {
+		return make_unexpected(strerror(errno));
+	}
+
+	UdpSocket udpSocket;
+	udpSocket._selfPort = port;
 	udpSocket._platformSpecificData = new detail::PlatformSpecificSocketData{.fd = socketResult};
 	return std::move(udpSocket);
 }

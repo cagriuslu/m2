@@ -2,7 +2,7 @@
 #include "ClientActorInputOutput.h"
 #include "ConnectionToPeer.h"
 #include "MessagePasser.h"
-#include <m2/network/IpAddressAndPort.h>
+#include <m2/network/Interface.h>
 #include <m2/mt/actor/MessageBox.h>
 #include <m2/ManagedObject.h>
 #include <m2g_Lockstep.pb.h>
