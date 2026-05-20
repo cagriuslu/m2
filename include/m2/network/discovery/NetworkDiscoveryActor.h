@@ -4,7 +4,7 @@
 #include <m2/network/UdpSocket.h>
 
 namespace m2::network::discovery {
-	class NetworkDiscoveryActor final : ActorBase<NetworkDiscoveryActorInput, NetworkDiscoveryActorOutput> {
+	class NetworkDiscoveryActor final : public ActorBase<NetworkDiscoveryActorInput, NetworkDiscoveryActorOutput> {
 	public:
 		struct SpeakerParameters {
 			IpAddressAndPort multicastAddress;

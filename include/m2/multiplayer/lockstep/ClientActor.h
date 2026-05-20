@@ -6,7 +6,7 @@
 #include <m2/network/Select.h>
 
 namespace m2::multiplayer::lockstep {
-	class ClientActor final : ActorBase<ClientActorInput,ClientActorOutput> {
+	class ClientActor final : public ActorBase<ClientActorInput,ClientActorOutput> {
 		const network::IpAddressAndPort _serverAddressAndPort;
 		std::optional<MessagePasser> _messagePasser;
 

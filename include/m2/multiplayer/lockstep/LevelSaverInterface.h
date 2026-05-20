@@ -4,7 +4,7 @@
 #include <genORM/genORM.h>
 
 namespace m2::multiplayer::lockstep {
-	class LevelSaverInterface final : public ActorInterfaceBase<LevelSaver, LevelSaverInput, LevelSaverOutput> {
+	class LevelSaverInterface final : public ActorInterfaceBase<LevelSaver> {
 	public:
 		explicit LevelSaverInterface(std::unique_ptr<genORM::database> db) : ActorInterfaceBase(std::move(db)) {}
 

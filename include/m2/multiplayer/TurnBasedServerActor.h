@@ -40,7 +40,7 @@ namespace m2 {
 		std::variant<StateUpdate,ClientEvent> variant;
 	};
 
-	class TurnBasedServerActor final : ActorBase<TurnBasedServerActorInput, TurnBasedServerActorOutput> {
+	class TurnBasedServerActor final : public ActorBase<TurnBasedServerActorInput, TurnBasedServerActorOutput> {
 		const int _maxConnCount;
 
 		expected<network::TcpSocket> _connectionListeningSocket{unexpect_t{}, "Uninitialized"};

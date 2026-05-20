@@ -6,7 +6,7 @@
 #include <m2/Meta.h>
 
 namespace m2 {
-	class TurnBasedServerActorInterface final : public ActorInterfaceBase<TurnBasedServerActor, TurnBasedServerActorInput, TurnBasedServerActorOutput> {
+	class TurnBasedServerActorInterface final : public ActorInterfaceBase<TurnBasedServerActor> {
 		network::SequenceNo _nextServerUpdateSequenceNo{};
 		int _turnHolderIndex{};
 		TurnBasedServerActorOutput::StateUpdate _serverActorState{};

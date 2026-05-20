@@ -10,12 +10,12 @@
 namespace m2 {
     /// Base class for actor interfaces. The interface manages the communication with the Actor. As an implementation
     /// detail, the interface actually owns the Actor and its thread.
-    template <typename Actor, typename ActorInputType, typename ActorOutputType>
+    template <typename Actor>
     class ActorInterfaceBase : public ActorLifetimeManager {
-        static_assert(std::is_base_of_v<ActorBase<ActorInputType, ActorOutputType>, Actor>, "Actor must be derived from ActorBase");
+        static_assert(std::is_base_of_v<ActorBase<typename Actor::InputType, typename Actor::OutputType>, Actor>, "Actor must be derived from ActorBase");
 
-        MessageBox<ActorInputType> _actorInbox;
-        MessageBox<ActorOutputType> _actorOutbox;
+        MessageBox<typename Actor::InputType> _actorInbox;
+        MessageBox<typename Actor::OutputType> _actorOutbox;
         std::latch _latch{1};
         Actor _actor;
         std::thread _thread;
@@ -39,8 +39,8 @@ namespace m2 {
         [[nodiscard]] bool IsActorRunning() const { return IsRunning(); }
 
     protected:
-        MessageBox<ActorInputType>& GetActorInbox() { return _actorInbox; }
-        MessageBox<ActorOutputType>& GetActorOutbox() { return _actorOutbox; }
+        MessageBox<typename Actor::InputType>& GetActorInbox() { return _actorInbox; }
+        MessageBox<typename Actor::OutputType>& GetActorOutbox() { return _actorOutbox; }
 
     private:
         static void ActorFunc(ActorInterfaceBase* baseActor) {

@@ -4,7 +4,7 @@
 #include <m2g_Lockstep.pb.h>
 
 namespace m2::multiplayer::lockstep {
-	class ClientActorInterface final : public ActorInterfaceBase<ClientActor, ClientActorInput, ClientActorOutput> {
+	class ClientActorInterface final : public ActorInterfaceBase<ClientActor> {
 		ClientActorOutput::ConnectionToServerStateUpdate _connectionToServerState{};
 		std::optional<m2g::pb::LockstepGameInitParams> _gameInitParams;
 

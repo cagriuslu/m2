@@ -9,6 +9,9 @@ namespace m2 {
     template <typename ActorInputT, typename ActorOutputT>
     class ActorBase {
     public:
+        using InputType = ActorInputT;
+        using OutputType = ActorOutputT;
+
         virtual ~ActorBase() = default;
 
         [[nodiscard]] virtual const char* ThreadNameForLogging() const = 0;

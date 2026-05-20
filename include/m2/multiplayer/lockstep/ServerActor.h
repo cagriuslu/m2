@@ -8,7 +8,7 @@
 #include <optional>
 
 namespace m2::multiplayer::lockstep {
-	class ServerActor final : ActorBase<ServerActorInput,ServerActorOutput> {
+	class ServerActor final : public ActorBase<ServerActorInput,ServerActorOutput> {
 	public:
 		class ClientList {
 			std::vector<ConnectionToClient> _clients;

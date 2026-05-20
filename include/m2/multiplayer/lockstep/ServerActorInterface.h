@@ -4,7 +4,7 @@
 #include <m2g_Lockstep.pb.h>
 
 namespace m2::multiplayer::lockstep {
-	class ServerActorInterface final : public ActorInterfaceBase<ServerActor, ServerActorInput, ServerActorOutput> {
+	class ServerActorInterface final : public ActorInterfaceBase<ServerActor> {
 		const std::function<void(const ServerActorOutput&)> _stateUpdateProcessor;
 		ServerActorOutput::ServerStateUpdate _serverStateUpdate{};
 
