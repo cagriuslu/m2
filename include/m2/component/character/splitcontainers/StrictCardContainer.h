@@ -9,7 +9,7 @@ namespace m2 {
 
 	/// A card container that can hold only a strict set of cards.
 	template <PossibleCardTypes possibleCardTypes>
-	class StrictCardTypeSetContainer {
+	class StrictCardContainer {
 		// Verify that card types are unique
 		static_assert(AreArrayElementsUnique(possibleCardTypes), "CardTypes are not unique");
 
@@ -21,7 +21,7 @@ namespace m2 {
 		std::array<bool, possibleCardTypes.size()> _cards;
 
 	public:
-		[[nodiscard]] bool CanHoldCard(const m2g::pb::CardType ct) const {
+		[[nodiscard]] static bool CanHoldCard(const m2g::pb::CardType ct) {
 			return CardTypeIndex(ct) != -1;
 		}
 

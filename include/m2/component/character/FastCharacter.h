@@ -26,7 +26,7 @@ namespace m2 {
 		void RemoveCard(m2g::pb::CardType) override;
 
 		[[nodiscard]] const VariableValue& GetVariable(const m2g::pb::VariableType v) const override { return _variables[pb::enum_index(v)]; }
-		expected<void> TrySetVariable(const m2g::pb::VariableType vt, const VariableValue varVal) override { SetVariable(vt, varVal); return {}; }
+		bool TrySetVariable(const m2g::pb::VariableType vt, const VariableValue varVal) override { SetVariable(vt, varVal); return true; }
 		void UnsafeSetVariable(const m2g::pb::VariableType vt, const VariableValue varVal) override { SetVariable(vt, varVal); }
 		void SetVariable(const m2g::pb::VariableType v, VariableValue varVal) { _variables[pb::enum_index(v)] = std::move(varVal); }
 		void ClearVariable(const m2g::pb::VariableType v) override { _variables[pb::enum_index(v)] = {}; }

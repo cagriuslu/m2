@@ -88,12 +88,12 @@ const VariableValue& CompactCharacter::GetVariable(const m2g::pb::VariableType v
 	}
 	return NULL_VARIABLE_VALUE;
 }
-expected<void> CompactCharacter::TrySetVariable(const m2g::pb::VariableType v, const VariableValue varVal) {
+bool CompactCharacter::TrySetVariable(const m2g::pb::VariableType v, const VariableValue varVal) {
 	if (_variable.first && _variable.first != v) {
-		return make_unexpected("Character cannot hold more than one type of variables");
+		return false;
 	}
 	_variable = std::make_pair(v, varVal);
-	return {};
+	return true;
 }
 void CompactCharacter::UnsafeSetVariable(const m2g::pb::VariableType v, const VariableValue varVal) {
 	if (_variable.first && _variable.first != v) {

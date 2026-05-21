@@ -50,7 +50,7 @@ namespace m2 {
 		void RemoveCard(const m2g::pb::CardType ct) override { _cards.RemoveCard(ct); }
 
 		[[nodiscard]] const VariableValue& GetVariable(const m2g::pb::VariableType vt) const override { return _variables.GetVariable(vt); }
-		[[nodiscard]] expected<void> TrySetVariable(const m2g::pb::VariableType vt, const VariableValue varVal) override { return _variables.TrySetVariable(vt, varVal); }
+		[[nodiscard]] bool TrySetVariable(const m2g::pb::VariableType vt, const VariableValue varVal) override { return _variables.TrySetVariable(vt, varVal); }
 		void UnsafeSetVariable(const m2g::pb::VariableType vt, const VariableValue varVal) override { _variables.UnsafeSetVariable(vt, varVal); }
 		void ClearVariable(const m2g::pb::VariableType vt) override { return _variables.ClearVariable(vt); }
 
