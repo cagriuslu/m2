@@ -8,6 +8,9 @@
 #include <arpa/inet.h>
 #endif
 
+m2::network::IpAddress m2::network::IpAddress::CreateLocalhost() {
+	return CreateFromString("127.0.0.1");
+}
 m2::network::IpAddress m2::network::IpAddress::CreateFromString(const std::string& s) {
 	return IpAddress{inet_addr(s.c_str())};
 }

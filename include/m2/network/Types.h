@@ -16,6 +16,7 @@ namespace m2::network {
 
 	public:
 		IpAddress() = default;
+		static IpAddress CreateLocalhost();
 		static IpAddress CreateFromString(const std::string&);
 		static IpAddress CreateFromNetworkOrder(const uint32_t addr) { return IpAddress{addr}; }
 

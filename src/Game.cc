@@ -238,7 +238,7 @@ void_expected Game::HostLockstepGame(unsigned max_connection_count, const networ
 
 	LOG_INFO("Server is listening, joining the game as host client...");
 	std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).hostClientActorInterface.emplace(network::IpAddressAndPort{
-		.ipAddress = network::IpAddress::CreateFromString("127.0.0.1"),
+		.ipAddress = network::IpAddress::CreateLocalhost(),
 		.port = network::Port::CreateFromHostOrder(options::GetPort())
 	});
 	LOG_DEBUG("Host client created");

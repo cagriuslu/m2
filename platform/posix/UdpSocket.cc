@@ -51,7 +51,7 @@ m2::expected<m2::network::UdpSocket> m2::network::UdpSocket::CreateSendOnlyMulti
 		return make_unexpected(strerror(errno));
 	}
 
-	if (interfaceAddr == IpAddress::CreateFromString("127.0.0.1")) {
+	if (interfaceAddr == IpAddress::CreateLocalhost()) {
 		LOG_WARN("127.0.0.1 is being used as multicast interface, network discovery may not work on all platforms");
 	}
 

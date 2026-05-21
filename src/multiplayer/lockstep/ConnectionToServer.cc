@@ -62,7 +62,7 @@ void ConnectionToServer::PeerList::Update(const network::IpAddressAndPort& serve
 		} else {
 			const auto& newPeer = details.peers(i);
 			const auto provisionalPeerIp = network::IpAddress::CreateFromNetworkOrder(newPeer.ip());
-			static const auto localhostIp = network::IpAddress::CreateFromString("127.0.0.1");
+			static const auto localhostIp = network::IpAddress::CreateLocalhost();
 			// If peer IP is "127.0.0.1", it must be on the same machine as the server. Use server's IP instead.
 			if (provisionalPeerIp == localhostIp) {
 				LOG_NETWORK(std::format("Peer resides on server machine, using server IP instead: peerIp={} serverIp={}", ToString(provisionalPeerIp), ToString(serverAddressAndPort.ipAddress)));
