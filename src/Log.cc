@@ -3,6 +3,7 @@
 #include <m2/M2.h>
 #include <cstdarg>
 #include <thread>
+#include <csignal>
 #ifdef _WIN32
 // Not yet supported
 #else
