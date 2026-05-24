@@ -103,9 +103,6 @@ Light* Object::TryGetLight() const {
 SoundEmitter* Object::TryGetSoundEmitter() const {
 	return _sound_emitter_id ? M2_LEVEL.soundEmitters.Get(_sound_emitter_id) : nullptr;
 }
-Character* Object::TryGetCharacter() const {
-	return M2_LEVEL.GetCharacterStorage().GetCharacter(_character_id);
-}
 
 Physique& Object::GetPhysique() const {
 	return M2_LEVEL.physics[_physique_id];
@@ -122,9 +119,6 @@ Light& Object::GetLight() const {
 }
 SoundEmitter& Object::GetSoundEmitter() const {
 	return M2_LEVEL.soundEmitters[_sound_emitter_id];
-}
-Character& Object::GetCharacter() const {
-	return *TryGetCharacter();
 }
 
 VecF Object::InferPositionF() const {
@@ -261,7 +255,7 @@ void Object::RemoveSoundEmitter() {
 }
 void Object::RemoveCharacter() {
 	if (_character_id) {
-		M2_LEVEL.GetCharacterStorage().FreeCharacter(_character_id);
+		M2_LEVEL.GetCharacterStorage().Free(_character_id);
 		_character_id = 0;
 	}
 }

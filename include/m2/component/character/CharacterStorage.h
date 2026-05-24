@@ -1,6 +1,8 @@
 #pragma once
 #include <m2g/ProxyEx.h>
 #include <m2/containers/Pool.h>
+#include <Lockstep.pb.h>
+#include <Network.pb.h>
 
 namespace m2 {
 	class CharacterStorage {
@@ -8,6 +10,7 @@ namespace m2 {
 		struct WrapTupleInOptionalPool;
 
 		template <typename... Ts>
+		requires (CharacterImpl<Ts> && ...)
 		struct WrapTupleInOptionalPool<std::tuple<Ts...>> {
 			using type = std::tuple<std::optional<Pool<Ts>>...>;
 		};
@@ -18,49 +21,54 @@ namespace m2 {
 	public:
 		CharacterStorage();
 
-		// Direct Pool access
+		// Accessors
+
+		[[nodiscard]] int GetTotalCharacterCount() const;
+		[[nodiscard]] std::optional<ObjectId> GetOwnerId(CharacterId) const;
+		[[nodiscard]] int32_t HashAll(int32_t) const;
+		void FillAll(const Pool<Object>&, pb::LockstepDebugStateReport&) const;
+		void StoreAll(const Pool<Object>&, pb::TurnBasedServerUpdate&) const;
+		[[nodiscard]] std::optional<int> CountCards(CharacterId, m2g::pb::CardType) const;
+		[[nodiscard]] std::optional<int> CountCards(CharacterId, m2g::pb::CardCategory) const;
+		[[nodiscard]] std::optional<m2g::pb::CardType> GetFirstCardType(CharacterId, m2g::pb::CardCategory) const;
+		[[nodiscard]] std::optional<VariableValue> GetVariable(CharacterId, m2g::pb::VariableType) const;
 
 		template <std::size_t CharacterVariantIndex>
 		const std::tuple_element_t<CharacterVariantIndex, StorageTuple>::value_type& GetPoolOfVariant() const {
 			return *std::get<CharacterVariantIndex>(_storageTuple);
 		}
+
 		template <std::size_t CharacterVariantIndex>
-		std::tuple_element_t<CharacterVariantIndex, StorageTuple>::value_type& GetPoolOfVariant() {
-			return *std::get<CharacterVariantIndex>(_storageTuple);
+		const auto* TryGetCharacter(const CharacterId chrId) const {
+			const auto& pool = GetPoolOfVariant<CharacterVariantIndex>();
+			return pool.Get(chrId);
 		}
 
-		// Direct Character access
-
-		[[nodiscard]] const Character* GetCharacter(CharacterId) const;
-		Character* GetCharacter(CharacterId);
-
+		/// Iterate over owner IDs of every character in order
 		template <typename RetType = std::monostate>
-		std::optional<RetType> ForEachCharacter(auto operation) {
-			const auto iterator = [&](auto& pool) -> std::optional<RetType> {
-				for (Character& chr : *pool) {
-					if (std::optional<RetType> opResult = operation(chr)) { return opResult; }
-				}
+		std::optional<RetType> ForEachCharacterOwnerId(auto op) const {
+			const auto iterator = [&](const auto& pool) -> std::optional<RetType> {
+				for (const auto& chr : *pool) { if (std::optional<RetType> opResult = op(chr.GetOwnerId())) { return opResult; } }
 				return std::nullopt;
 			};
 			std::optional<RetType> retval;
-			std::apply([&](auto&... pool) {
-				((!retval && true ? (retval = iterator(pool)) : std::optional<RetType>{}), ...);
-			}, _storageTuple);
+			std::apply([&](const auto&... pool) { ((!retval ? (retval = iterator(pool)) : std::optional<RetType>{}), ...); }, _storageTuple);
 			return retval;
 		}
 
-		// Accessors
-
-		[[nodiscard]] ShiftedPoolId GetBaseShiftedPoolId() const { return std::get<0>(_storageTuple)->GetShiftedPoolId(); }
-		[[nodiscard]] PoolId GetBasePoolId() const { return GetBaseShiftedPoolId() >> gPoolIdShiftCount; }
-		[[nodiscard]] int GetTotalCharacterCount() const;
-		int32_t HashCharacters(int32_t hash) const;
-		void FillDebugStateReport(pb::LockstepDebugStateReport&) const;
-
 		// Modifiers
 
-		void UpdateCharacters(const Stopwatch::Duration& delta);
-		void FreeCharacter(CharacterId);
-		void ClearPools();
+		void UpdateAll(Stopwatch::Duration delta);
+		void DeliverMessage(CharacterId, Interaction);
+		void Load(CharacterId, const pb::TurnBasedServerUpdate::ObjectDescriptor&);
+		void Free(CharacterId);
+		void ClearAll();
+
+	private:
+		[[nodiscard]] ShiftedPoolId GetBaseShiftedPoolId() const { return std::get<0>(_storageTuple)->GetShiftedPoolId(); }
+		[[nodiscard]] PoolId GetBasePoolId() const { return GetBaseShiftedPoolId() >> gPoolIdShiftCount; }
+
+		template <std::size_t CharacterVariantIndex>
+		friend auto& AddCharacterToObject(Object&);
 	};
 }

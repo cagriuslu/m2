@@ -1,5 +1,6 @@
 #pragma once
 #include <m2g/ProxyEx.h>
+#include <m2/component/character/CharacterStorage.h>
 #include <m2/Meta.h>
 #include <functional>
 
@@ -31,6 +32,6 @@ namespace m2 {
 			+ characterMonitor.variableValue.size()
 			+ characterMonitor.customStateMonitor.size()); }
 
-		void ForEachMonitorValue(const Object&, const std::function<void(const std::string&)>&) const;
+		void ForEachMonitorValue(const CharacterStorage& chrStorage, const Object&, const std::function<void(const std::string&)>&) const;
 	};
 }

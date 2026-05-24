@@ -10,15 +10,7 @@ m2::pb::TurnBasedNetworkMessage m2::GenerateServerUpdate(uint32_t& nextSequenceN
 	for (const auto playerId : M2_LEVEL.multiPlayerObjectIds) {
 		message.mutable_server_update()->add_player_object_ids(playerId);
 	}
-	M2_LEVEL.GetCharacterStorage().ForEachCharacter([&](const Character& chr) -> std::optional<std::monostate> {
-		auto* objDesc = message.mutable_server_update()->add_objects_with_character();
-		chr.Store(*objDesc);
-		objDesc->set_object_id(chr.GetOwner().GetId());
-		objDesc->mutable_position()->CopyFrom(static_cast<pb::VecF>(chr.GetOwner().InferPositionF()));
-		objDesc->set_object_type(chr.GetOwner().GetType());
-		objDesc->set_parent_id(chr.GetOwner().GetParentId());
-		return std::nullopt;
-	});
+	M2_LEVEL.GetCharacterStorage().StoreAll(M2_LEVEL.objects, *message.mutable_server_update());
 	message.mutable_server_update()->set_shutdown(shutdown);
 	return message;
 }

@@ -87,19 +87,17 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::network::SequenceNo>>
 		}
 
 		int i = 0;
-		const auto error = M2_LEVEL.GetCharacterStorage().ForEachCharacter<std::string>([&](const Character& chr) -> std::optional<std::string> {
-			if (server_update.objects_with_character_size() <= i) {
-				return "Local level has more characters than server";
-			}
+		const auto error = M2_LEVEL.GetCharacterStorage().ForEachCharacterOwnerId<std::string>([&](const ObjectId localChrOwnerId) -> std::optional<std::string> {
+			const auto& localChr = M2_LEVEL.objects[localChrOwnerId];
 			const auto& serverChr = server_update.objects_with_character(i);
-			if (chr.GetOwner().InferPositionF() != VecF{serverChr.position()}) {
+			if (localChr.InferPositionF() != VecF{serverChr.position()}) {
 				return "Server and local object position mismatch";
 			}
-			if (chr.GetOwner().GetType() != serverChr.object_type()) {
+			if (localChr.GetType() != serverChr.object_type()) {
 				return "Server and local object type mismatch";
 			}
 			// Map server ObjectIDs to local ObjectIDs
-			_server_to_local_map[serverChr.object_id()] = std::make_pair(chr.GetOwnerId(), true);
+			_server_to_local_map[serverChr.object_id()] = std::make_pair(localChrOwnerId, true);
 			++i;
 			return std::nullopt;
 		});
@@ -154,14 +152,13 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::network::SequenceNo>>
 		if (auto it = _server_to_local_map.find(object_desc.object_id()); it != _server_to_local_map.end()) {
 			LOG_TRACE("Server object is still alive", object_desc.object_id(), it->first);
 			// Update the character
-			auto* character = M2_LEVEL.objects.Get(it->second.first)->TryGetCharacter();
-			character->Load(object_desc);
+			M2_LEVEL.GetCharacterStorage().Load(M2_LEVEL.objects.Get(it->second.first)->GetCharacterId(), object_desc);
 			// Mark object as visited
 			it->second.second = true;
 		} else {
 			auto int_list_to_card_list = [](const auto& begin, const auto& end) {
 				std::vector<m2g::pb::CardType> card_list;
-				for (auto it = begin; it != end; ++it) { card_list.emplace_back(static_cast<m2g::pb::CardType>(*it)); }
+				for (auto it_ = begin; it_ != end; ++it_) { card_list.emplace_back(static_cast<m2g::pb::CardType>(*it_)); }
 				return card_list;
 			};
 
@@ -191,8 +188,7 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::network::SequenceNo>>
 				auto load_result = M2G_PROXY.init_server_update_fg_object(*obj_it, m2::VecF{it->position}, it->cards);
 				m2ReflectUnexpected(load_result);
 				// Update the character
-				auto* character = obj_it->TryGetCharacter();
-				character->Load(it->object_descriptor);
+				M2_LEVEL.GetCharacterStorage().Load(obj_it->GetCharacterId(), it->object_descriptor);
 				// Add object to the map, marked as visited
 				_server_to_local_map[it->server_object_id] = std::make_pair(obj_it.GetId(), true);
 				// Delete the object details from the objects_to_be_created vector
@@ -204,8 +200,7 @@ m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::network::SequenceNo>>
 				auto load_result = M2G_PROXY.init_server_update_fg_object(*obj_it, m2::VecF{it->position}, it->cards);
 				m2ReflectUnexpected(load_result);
 				// Update the character
-				auto* character = obj_it->TryGetCharacter();
-				character->Load(it->object_descriptor);
+				M2_LEVEL.GetCharacterStorage().Load(obj_it->GetCharacterId(), it->object_descriptor);
 				// Add object to the map, marked as visited
 				_server_to_local_map[it->server_object_id] = std::make_pair(obj_it.GetId(), true);
 				// Delete the object details from the objects_to_be_created vector

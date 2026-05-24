@@ -765,7 +765,7 @@ void Game::ExecutePreStep(const Stopwatch::Duration& delta) {
 	}
 }
 void Game::UpdateCharacters(const Stopwatch::Duration& delta) {
-	_level->GetCharacterStorage().UpdateCharacters(delta);
+	_level->GetCharacterStorage().UpdateAll(delta);
 }
 void Game::ExecuteStep(const Stopwatch::Duration& delta) {
 	if (IsTurnBasedServer()) {
@@ -1051,7 +1051,7 @@ void Game::DebugDraw() {
 		for (const auto& obj : _level->objects) {
 			if (obj.GetType() == type) {
 				int monitorLine = 0;
-				options.ForEachMonitorValue(obj, [&](const std::string& line) {
+				options.ForEachMonitorValue(_level->GetCharacterStorage(), obj, [&](const std::string& line) {
 					const auto objPosition = obj.InferPositionF();
 					SlowDrawSystemTextIn2dWorld(line.c_str(), objPosition - VecF{0.0f, options.monitorOffsetM + ToFloat(monitorLine) * lineHeightM});
 					++monitorLine;
@@ -1068,7 +1068,7 @@ void Game::DebugDraw() {
 			return objTypeDebugOptions ? objTypeDebugOptions->GetMonitorCount() : 0;
 		}();
 		int monitorLine = initialMonitorLineOffset;
-		options.ForEachMonitorValue(obj, [&](const std::string& line) {
+		options.ForEachMonitorValue(_level->GetCharacterStorage(), obj, [&](const std::string& line) {
 			const auto objPosition = obj.InferPositionF();
 			SlowDrawSystemTextIn2dWorld(line.c_str(), objPosition - VecF{0.0f, options.monitorOffsetM + ToFloat(monitorLine) * lineHeightM});
 			++monitorLine;

@@ -4,6 +4,14 @@
 
 using namespace m2;
 
+bool m2::IsDescendantOf(ObjectId objId, const ObjectId parentId) {
+	while (objId) {
+		if (objId == parentId) { return true; }
+		objId = M2_LEVEL.objects[objId].GetParentId();
+	}
+	return false;
+}
+
 Character::Character(uint64_t object_id) : Component(object_id) {}
 std::unique_ptr<const Proxy::InterCharacterMessage> Character::ExecuteInteraction(std::unique_ptr<const Proxy::InterCharacterMessage>&& data) {
 	if (this->onMessage) {

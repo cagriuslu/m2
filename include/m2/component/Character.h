@@ -4,9 +4,40 @@
 #include <m2/containers/AssociativeList.h>
 #include <m2/math/VariableValue.h>
 #include <m2/Proxy.h>
+#include <Lockstep.pb.h>
 #include <functional>
 
 namespace m2 {
+	/// Define the requirements from a component implementation from the game engine perspective
+	template <typename T>
+	concept ComponentImpl = requires(T t) {
+		{ std::as_const(t).GetOwnerId() } -> std::same_as<ObjectId>;
+	};
+
+	using Interaction = std::unique_ptr<Proxy::InterCharacterMessage>;
+
+	/// Define the requirements from a character implementation from the game engine perspective
+	template <typename T>
+	concept CharacterImpl = requires(T t) {
+		requires ComponentImpl<T>;
+		{ t.OnUpdate(std::declval<Stopwatch::Duration>()) } -> std::same_as<void>;
+		{ t.OnMessage(std::declval<Interaction>()) } -> std::same_as<void>;
+
+		{ std::as_const(t).Hash(std::declval<int32_t>()) } -> std::same_as<int32_t>;
+		{ std::as_const(t).Fill(std::declval<pb::LockstepDebugStateReport::Character&>()) } -> std::same_as<void>;
+		{ std::as_const(t).Store(std::declval<pb::TurnBasedServerUpdate::ObjectDescriptor&>()) } -> std::same_as<void>;
+		{ t.Load(std::declval<const pb::TurnBasedServerUpdate::ObjectDescriptor&>()) } -> std::same_as<void>;
+
+		{ std::as_const(t).CountCards(std::declval<m2g::pb::CardType>()) } -> std::same_as<int>;
+		{ std::as_const(t).CountCards(std::declval<m2g::pb::CardCategory>()) } -> std::same_as<int>;
+		{ std::as_const(t).GetFirstCardType(std::declval<m2g::pb::CardCategory>()) } -> std::same_as<m2g::pb::CardType>;
+		{ std::as_const(t).GetVariable(std::declval<m2g::pb::VariableType>()) } -> std::same_as<VariableValue>;
+	};
+
+	// Helpers
+
+	[[nodiscard]] bool IsDescendantOf(ObjectId objId, ObjectId parentId);
+
 	/// Even though each object has the option to store their data in impl, there are some benefits to storing the data
 	/// inside the character: (1) In turn-based games, the character states are shared automatically. (2) In lockstep
 	/// games, the synchronization of the clients are compared automatically. (3) Enables automatic saving and loading

@@ -33,7 +33,7 @@ Level::~Level() {
 	physics.Clear();
 	lights.Clear();
 	soundEmitters.Clear();
-	_characterStorage.ClearPools();
+	_characterStorage.ClearAll();
 
 	if (_debugDraw) {
 		delete static_cast<thirdparty::physics::box2d::DebugDraw*>(_debugDraw);
@@ -197,7 +197,7 @@ int32_t Level::CalculateLockstepGameStateHash(const int32 initialValue) const {
 		hash = HashI(ToRawValue(phy.position.GetY()), hash);
 		hash = HashI(ToRawValue(phy.orientation), hash);
 	}
-	hash = _characterStorage.HashCharacters(hash);
+	hash = _characterStorage.HashAll(hash);
 	return hash;
 }
 pb::LockstepDebugStateReport Level::CalculateLockstepDebugStateReport(const int32 initialValue) const {
@@ -222,7 +222,7 @@ pb::LockstepDebugStateReport Level::CalculateLockstepDebugStateReport(const int3
 			physique->set_exact_orientation(phy.orientation.ToRawValue());
 		}
 	}
-	_characterStorage.FillDebugStateReport(debugStateReport);
+	_characterStorage.FillAll(objects, debugStateReport);
 	return debugStateReport;
 }
 DrawLayer Level::GetDrawLayer(const GraphicId gfxId) {
@@ -454,7 +454,7 @@ void Level::RemoveCustomNonblockingUiPanelDeferred(std::list<UiPanel>::iterator 
 	TRACE_FN();
 	M2_DEFER(([this,it] { _customNonblockingUiPanels.erase(it); }));
 }
-void Level::ShowSemiBlockingUiPanel(RectF position_ratio, std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> blueprint) {
+void Level::ShowSemiBlockingUiPanel(const RectF position_ratio, std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> blueprint) {
 	_semiBlockingUiPanel.emplace(std::move(blueprint), UiPanel::RelativeToWindow{position_ratio});
 }
 void Level::DismissSemiBlockingUiPanel() {

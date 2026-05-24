@@ -2,13 +2,11 @@
 #include "Group.h"
 #include "ObjectImpl.h"
 #include <m2/containers/Pool.h>
-#include <m2/video/Sprite.h>
 #include "component/Character.h"
 #include "component/Graphic.h"
 #include "component/Light.h"
 #include "component/Physique.h"
 #include "component/SoundEmitter.h"
-#include "m2/Component.h"
 #include "m2/game/Fsm.h"
 #include "m2/math/VecF.h"
 #include "ObjectId.h"
@@ -60,13 +58,11 @@ namespace m2 {
 		[[nodiscard]] Graphic* TryGetGraphic() const;
 		[[nodiscard]] Light* TryGetLight() const;
 		[[nodiscard]] SoundEmitter* TryGetSoundEmitter() const;
-		[[nodiscard]] Character* TryGetCharacter() const;
 
 		[[nodiscard]] Physique& GetPhysique() const;
 		[[nodiscard]] Graphic& GetGraphic() const;
 		[[nodiscard]] Light& GetLight() const;
 		[[nodiscard]] SoundEmitter& GetSoundEmitter() const;
-		[[nodiscard]] Character& GetCharacter() const;
 
 		[[nodiscard]] VecF InferPositionF() const;
 
@@ -126,6 +122,4 @@ namespace m2 {
 
 	Object& ObjectIdToObject(ObjectId id);
 	const Object& ObjectIdToConstObject(ObjectId id);
-	inline Character& UnsafeObjectToCharacter(const Object* o) { return o->GetCharacter(); }
-	inline Character& ObjectToCharacter(const Object& o) { return o.GetCharacter(); }
 }

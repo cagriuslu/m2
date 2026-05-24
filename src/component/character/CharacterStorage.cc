@@ -10,45 +10,6 @@ CharacterStorage::CharacterStorage() {
 	}, _storageTuple);
 }
 
-const Character* CharacterStorage::GetCharacter(const CharacterId chrId) const {
-	const auto baseShiftedPoolId = I(GetBasePoolId());
-	const auto poolIdOfCharacter = I(ToPoolId(chrId));
-	const auto tupleIndex = poolIdOfCharacter - baseShiftedPoolId;
-	if (tupleIndex < 0 || I(std::tuple_size_v<StorageTuple>) <= tupleIndex) {
-		return nullptr;
-	}
-
-	const Character* chr = nullptr;
-	std::apply([&](const auto&... pool) {
-		int poolIndex = 0;
-		// Use a fold expression to look-up the Character in correct Pool
-		(
-			// Query only the pool whose index is the one we're looking for
-			(poolIndex++ == tupleIndex && true ? (chr = pool->Get(chrId)) : nullptr), ...
-		);
-	}, _storageTuple);
-	return chr;
-}
-Character* CharacterStorage::GetCharacter(const CharacterId chrId) {
-	const auto baseShiftedPoolId = I(GetBasePoolId());
-	const auto poolIdOfCharacter = I(ToPoolId(chrId));
-	const auto tupleIndex = poolIdOfCharacter - baseShiftedPoolId;
-	if (tupleIndex < 0 || I(std::tuple_size_v<StorageTuple>) <= tupleIndex) {
-		return nullptr;
-	}
-
-	Character* chr = nullptr;
-	std::apply([&](auto&... pool) {
-		int poolIndex = 0;
-		// Use a fold expression to look-up the Character in correct Pool
-		(
-			// Query only the pool whose index is the one we're looking for
-			(poolIndex++ == tupleIndex && true ? (chr = pool->Get(chrId)) : nullptr), ...
-		);
-	}, _storageTuple);
-	return chr;
-}
-
 int CharacterStorage::GetTotalCharacterCount() const {
 	int count = 0;
 	std::apply([&](const auto&... pool) {
@@ -58,79 +19,87 @@ int CharacterStorage::GetTotalCharacterCount() const {
 	}, _storageTuple);
 	return count;
 }
-int32_t CharacterStorage::HashCharacters(int32_t hash) const {
-	const auto hasher = [](auto& pool, int32_t hash_) -> int32_t {
-		for (const Character& chr : *pool) {
-			hash_ = chr.Hash(hash_);
-		}
+int32_t CharacterStorage::HashAll(int32_t hash) const {
+	const auto hasher = [](const auto& pool, int32_t hash_) -> int32_t {
+		for (const auto& chr : *pool) { hash_ = chr.Hash(hash_); }
 		return hash_;
 	};
-
-	std::apply([&](const auto&... pool) {
-		(
-			(hash = hasher(pool, hash)), ...
-		);
-	}, _storageTuple);
+	std::apply([&](const auto&... pool) { ((hash = hasher(pool, hash)), ...); }, _storageTuple);
 	return hash;
 }
-void CharacterStorage::FillDebugStateReport(pb::LockstepDebugStateReport& report) const {
-	const auto reporter = [&](auto& pool) {
-		for (const Character& chr : *pool) {
+void CharacterStorage::FillAll(const Pool<Object>& objects, pb::LockstepDebugStateReport& report) const {
+	const auto filler = [&](const auto& pool) {
+		for (const auto& chr : *pool) {
 			auto* character = report.add_character();
-			character->set_chr_id(chr.GetOwner().GetCharacterId());
+			const auto& owner = objects[chr.GetOwnerId()];
+			character->set_chr_id(owner.GetCharacterId());
 			character->set_owner_id(chr.GetOwnerId());
-			character->set_object_type(chr.GetOwner().GetType());
-			character->set_parent_id(chr.GetOwner().GetParentId());
+			character->set_object_type(owner.GetType());
+			character->set_parent_id(owner.GetParentId());
 			chr.Fill(*character);
 		}
 	};
-
-	std::apply([&](const auto&... pool) {
-		(
-			(reporter(pool)), ...
-		);
-	}, _storageTuple);
+	std::apply([&](const auto&... pool) { ((filler(pool)), ...); }, _storageTuple);
 }
-
-void CharacterStorage::UpdateCharacters(const Stopwatch::Duration& delta) {
-	const auto updater = [&](auto& pool) {
-		for (Character& chr : *pool) {
-			if (chr.update) {
-				chr.update(chr, delta);
-			}
+void CharacterStorage::StoreAll(const Pool<Object>& objects, pb::TurnBasedServerUpdate& serverUpdate) const {
+	const auto storer = [&](const auto& pool) {
+		for (const auto& chr : *pool) {
+			auto* objDesc = serverUpdate.add_objects_with_character();
+			const auto& owner = objects[chr.GetOwnerId()];
+			objDesc->set_object_id(owner.GetId());
+			objDesc->mutable_position()->CopyFrom(static_cast<pb::VecF>(owner.InferPositionF()));
+			objDesc->set_object_type(owner.GetType());
+			objDesc->set_parent_id(owner.GetParentId());
+			chr.Store(*objDesc);
 		}
 	};
+	std::apply([&](const auto&... pool) { ((storer(pool)), ...); }, _storageTuple);
+}
 
+void CharacterStorage::UpdateAll(const Stopwatch::Duration delta) {
+	const auto updater = [&](auto& pool) {
+		for (auto& chr : *pool) { chr.OnUpdate(delta); }
+	};
+	std::apply([&](auto&... pool) { ((updater(pool)), ...); }, _storageTuple);
+}
+void CharacterStorage::Load(const CharacterId chrId, const pb::TurnBasedServerUpdate::ObjectDescriptor& objDesc) {
+	const auto baseShiftedPoolId = I(GetBasePoolId());
+	const auto poolIdOfCharacter = I(ToPoolId(chrId));
+	const auto tupleIndex = poolIdOfCharacter - baseShiftedPoolId;
+	if (tupleIndex < 0 || I(std::tuple_size_v<StorageTuple>) <= tupleIndex) {
+		throw M2_ERROR("Given character ID doesn't belong to any pool in character storage");
+	}
+	const auto loader = [&](auto* chr) -> bool {
+		if (chr) {
+			chr->Load(objDesc);
+			return true;
+		} else {
+			throw M2_ERROR("Character not found");
+		}
+	};
 	std::apply([&](auto&... pool) {
-		(
-			(updater(pool)), ...
-		);
+		int poolIndex = 0;
+		((poolIndex++ == tupleIndex && loader(pool->Get(chrId))), ...);
+		(void) poolIndex;
 	}, _storageTuple);
 }
-void CharacterStorage::FreeCharacter(const CharacterId chrId) {
+void CharacterStorage::Free(const CharacterId chrId) {
 	const auto baseShiftedPoolId = I(GetBasePoolId());
 	const auto poolIdOfCharacter = I(ToPoolId(chrId));
 	const auto tupleIndex = poolIdOfCharacter - baseShiftedPoolId;
 	if (tupleIndex < 0 || I(std::tuple_size_v<StorageTuple>) <= tupleIndex) {
 		return;
 	}
-
 	const auto remover = [](auto& pool, const CharacterId chrId_) -> bool {
 		pool->Free(chrId_);
 		return true;
 	};
-
 	std::apply([&](auto&... pool) {
 		int poolIndex = 0;
-		(
-			(poolIndex++ == tupleIndex && remover(pool, chrId)), ...
-		);
+		((poolIndex++ == tupleIndex && remover(pool, chrId)), ...);
+		(void) poolIndex;
 	}, _storageTuple);
 }
-void CharacterStorage::ClearPools() {
-	std::apply([&](auto&... pool) {
-		(
-			(pool->Clear()), ...
-		);
-	}, _storageTuple);
+void CharacterStorage::ClearAll() {
+	std::apply([&](auto&... pool) { ((pool->Clear()), ...); }, _storageTuple);
 }
