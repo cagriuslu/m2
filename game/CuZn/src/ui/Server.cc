@@ -4,7 +4,7 @@
 #include <m2/ui/widget/Text.h>
 #include <m2/ui/widget/TextInput.h>
 #include <m2/network/Select.h>
-#include <m2/network/IpAddressAndPort.h>
+#include <m2/network/Interface.h>
 #include <numeric>
 
 using namespace m2;
@@ -68,9 +68,9 @@ const UiPanelBlueprint server_lobby = {
 				.vertical_alignment = m2::TextVerticalAlignment::CENTER,
 				.wrapped_font_size_in_units = 5.0f,
 				.onCreate = [](Text& self) {
-					if (auto addresses = m2::network::get_ip_addresses()) {
-						auto addresses_str = std::accumulate(addresses->begin(), addresses->end(), std::string{}, [](std::string&& ss, const std::string& s) {
-							return ss.empty() ? s : (ss + " " + s);
+					if (auto addresses = m2::network::GetInterfaces()) {
+						auto addresses_str = std::accumulate(addresses->begin(), addresses->end(), std::string{}, [](std::string&& ss, const network::IpAddress& s) {
+							return ss.empty() ? ToString(s) : (ss + " " + ToString(s));
 						});
 						self.set_text(addresses_str);
 					}
