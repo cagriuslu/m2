@@ -5,12 +5,6 @@
 using namespace m2;
 
 Character::Character(uint64_t object_id) : Component(object_id) {}
-std::unique_ptr<const Proxy::InterCharacterMessage> Character::ExecuteInteraction(Character& initiator, std::unique_ptr<const Proxy::InterCharacterMessage>&& data) {
-	if (this->onMessage) {
-		return this->onMessage(*this, &initiator, data);
-	}
-	return {};
-}
 std::unique_ptr<const Proxy::InterCharacterMessage> Character::ExecuteInteraction(std::unique_ptr<const Proxy::InterCharacterMessage>&& data) {
 	if (this->onMessage) {
 		return this->onMessage(*this, nullptr, data);

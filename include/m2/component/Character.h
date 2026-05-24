@@ -19,7 +19,6 @@ namespace m2 {
 		Character() = default;
 		explicit Character(uint64_t object_id);
 
-		std::unique_ptr<const Proxy::InterCharacterMessage> ExecuteInteraction(Character& initiator, std::unique_ptr<const Proxy::InterCharacterMessage>&& data);
 		std::unique_ptr<const Proxy::InterCharacterMessage> ExecuteInteraction(std::unique_ptr<const Proxy::InterCharacterMessage>&& data);
 
 		[[nodiscard]] virtual int32_t Hash(int32_t initialValue) const = 0;
