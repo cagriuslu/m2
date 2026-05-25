@@ -3,7 +3,7 @@
 
 using namespace m2;
 
-CompactCharacter::CompactCharacter(uint64_t object_id) : Character(object_id) {}
+CompactCharacter::CompactCharacter(const uint64_t object_id) : _ownerId(object_id) {}
 int32_t CompactCharacter::Hash(const int32_t initialValue) const {
 	auto hash = initialValue;
 	if (_card) {
@@ -54,14 +54,14 @@ bool CompactCharacter::HasCard(const m2g::pb::CardType ct) const {
 bool CompactCharacter::HasCard(const m2g::pb::CardCategory cc) const {
 	return _card && M2_GAME.GetCard(*_card).Category() == cc;
 }
-size_t CompactCharacter::CountCards(const m2g::pb::CardType ct) const {
+int CompactCharacter::CountCards(const m2g::pb::CardType ct) const {
 	return HasCard(ct) ? 1 : 0;
 }
-size_t CompactCharacter::CountCards(const m2g::pb::CardCategory cc) const {
+int CompactCharacter::CountCards(const m2g::pb::CardCategory cc) const {
 	return HasCard(cc) ? 1 : 0;
 }
-std::optional<m2g::pb::CardType> CompactCharacter::GetFirstCardType(const m2g::pb::CardCategory cc) const {
-	return HasCard(cc) ? _card : std::optional<m2g::pb::CardType>{};
+m2g::pb::CardType CompactCharacter::GetFirstCardType(const m2g::pb::CardCategory cc) const {
+	return HasCard(cc) ? *_card : m2g::pb::CardType{};
 }
 expected<void> CompactCharacter::TryAddCard(const m2g::pb::CardType ct) {
 	if (_card) {
@@ -82,7 +82,7 @@ void CompactCharacter::RemoveCard(const m2g::pb::CardType ct) {
 	}
 }
 
-const VariableValue& CompactCharacter::GetVariable(const m2g::pb::VariableType v) const {
+VariableValue CompactCharacter::GetVariable(const m2g::pb::VariableType v) const {
 	if (_variable.first == v) {
 		return _variable.second;
 	}

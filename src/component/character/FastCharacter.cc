@@ -3,7 +3,7 @@
 
 using namespace m2;
 
-FastCharacter::FastCharacter(uint64_t object_id) : Character(object_id) {}
+FastCharacter::FastCharacter(const uint64_t object_id) : _ownerId(object_id) {}
 int32_t FastCharacter::Hash(const int32_t initialValue) const {
 	if constexpr (not GAME_IS_DETERMINISTIC) {
 		// ReSharper disable once CppDFAUnreachableCode
@@ -74,8 +74,8 @@ bool FastCharacter::HasCard(const m2g::pb::CardCategory cc) const {
 	}
 	return false;
 }
-size_t FastCharacter::CountCards(const m2g::pb::CardType ct) const {
-	size_t count = 0;
+int FastCharacter::CountCards(const m2g::pb::CardType ct) const {
+	int count = 0;
 	for (const auto* card : _cards) {
 		if (card->Type() == ct) {
 			++count;
@@ -83,8 +83,8 @@ size_t FastCharacter::CountCards(const m2g::pb::CardType ct) const {
 	}
 	return count;
 }
-size_t FastCharacter::CountCards(const m2g::pb::CardCategory cc) const {
-	size_t count = 0;
+int FastCharacter::CountCards(const m2g::pb::CardCategory cc) const {
+	int count = 0;
 	for (const auto* card : _cards) {
 		if (card->Category() == cc) {
 			++count;
@@ -92,11 +92,11 @@ size_t FastCharacter::CountCards(const m2g::pb::CardCategory cc) const {
 	}
 	return count;
 }
-std::optional<m2g::pb::CardType> FastCharacter::GetFirstCardType(const m2g::pb::CardCategory cc) const {
+m2g::pb::CardType FastCharacter::GetFirstCardType(const m2g::pb::CardCategory cc) const {
 	if (const auto it = std::ranges::find_if(_cards, [=](const Card* card) { return card->Category() == cc; }); it != _cards.end()) {
 		return (*it)->Type();
 	}
-	return std::nullopt;
+	return {};
 }
 void FastCharacter::AddCard(const m2g::pb::CardType ct) {
 	_cards.emplace_back(&M2_GAME.GetCard(ct));
