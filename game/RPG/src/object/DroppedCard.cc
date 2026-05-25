@@ -25,9 +25,8 @@ m2::void_expected rpg::create_dropped_card(m2::Object &obj, const m2::VecF& posi
 	obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, M2_GAME.GetCard(card_type).UiSprite()).position = position;
 
 	phy.onCollision = [card_type](m2::Physique& phy, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
-		if (auto* other_char = other.GetOwner().TryGetCharacter(); other_char) {
-			other_char->ExecuteInteraction(std::make_unique<m2g::Proxy::Card>(card_type));
-		}
+		const auto otherChrId = other.GetOwner().GetCharacterId();
+		M2_LEVEL.GetCharacterStorage().DeliverMessage<m2g::ProxyEx::PlayerCharacterStorageIndex>(otherChrId, std::make_unique<m2g::Proxy::Card>(card_type));
 		M2_DEFER(m2::CreateObjectDeleter(phy.GetOwnerId()));
 	};
 

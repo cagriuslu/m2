@@ -45,7 +45,7 @@ static widget::ProgressBarBlueprint hp_progress_bar = {
 		.bar_color = SDL_Color{255, 0, 0, 255},
 		.onUpdate = [](widget::ProgressBar& self) {
 			if (M2_LEVEL.GetPlayer()) {
-				self.SetProgress(M2_PLAYER.GetCharacter().GetVariable(m2g::pb::RESOURCE_HP).GetFOrZero());
+				self.SetProgress(M2_LEVEL.GetCharacterStorage().TryGetCharacter<m2g::ProxyEx::PlayerCharacterStorageIndex>(M2_PLAYER.GetCharacterId())->GetVariable(m2g::pb::RESOURCE_HP).GetFOrZero());
 			}
 			self.SetProgress(0.0f);
 		}
@@ -58,7 +58,7 @@ static widget::ProgressBarBlueprint dash_progress_bar = {
 		.bar_color = SDL_Color{255, 255, 0, 255},
 		.onUpdate = [](widget::ProgressBar& self) {
 			if (M2_LEVEL.GetPlayer()) {
-				float counter = M2_PLAYER.GetCharacter().GetVariable(m2g::pb::RESOURCE_DASH_ENERGY).GetFOrZero();
+				float counter = M2_LEVEL.GetCharacterStorage().TryGetCharacter<m2g::ProxyEx::PlayerCharacterStorageIndex>(M2_PLAYER.GetCharacterId())->GetVariable(m2g::pb::RESOURCE_DASH_ENERGY).GetFOrZero();
 				float cooldown = 2.0f;
 				counter = (cooldown <= counter) ? cooldown : counter;
 				self.SetProgress(counter / cooldown);

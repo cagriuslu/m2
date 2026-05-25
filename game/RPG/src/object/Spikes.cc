@@ -62,9 +62,8 @@ m2::void_expected rpg::create_spikes(m2::Object& obj, const m2::VecF& position) 
 			impl.trigger_timer = m2::Timer{};
 		} else if (std::get<const m2::Sprite*>(gfx.visual) == &spikes_out) {
 			// Spikes are out
-			if (auto* other_char = other.GetOwner().TryGetCharacter(); other_char){
-				other_char->ExecuteInteraction(std::make_unique<m2g::Proxy::HitDamage>(1.0f));
-			}
+			const auto otherChrId = other.GetOwner().GetCharacterId();
+			M2_LEVEL.GetCharacterStorage().DeliverMessage(otherChrId, std::make_unique<m2g::Proxy::HitDamage>(1.0f));
 		}
 	};
 

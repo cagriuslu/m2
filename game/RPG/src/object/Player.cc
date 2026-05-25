@@ -17,6 +17,62 @@ using namespace rpg;
 using namespace m2g;
 using namespace m2g::pb;
 
+void PlayerCharacter::OnUpdate(const m2::Stopwatch::Duration delta) {
+	UnsafeAddVariable(*this, RESOURCE_DASH_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
+	UnsafeAddVariable(*this, RESOURCE_RANGED_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
+	UnsafeAddVariable(*this, RESOURCE_MELEE_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
+
+	// Check if died
+	if (not GetVariable(m2g::pb::RESOURCE_HP)) {
+		LOG_INFO("You died");
+		if (m2::UiPanel::create_and_run_blocking(M2G_PROXY.you_died_menu()).IsQuit()) {
+			M2_GAME.quit = true;
+		}
+	}
+	// Check if special ammo finished
+	if (const auto* special = GetFirstCard(CARD_CATEGORY_SPECIAL_RANGED_WEAPON);
+		special && not GetVariable(m2g::pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO)) {
+			// Remove weapon if no ammo left
+			RemoveCard(special->Type());
+		}
+	// Show/hide ammo display
+	M2G_PROXY.set_ammo_display_state(GetFirstCard(CARD_CATEGORY_SPECIAL_RANGED_WEAPON));
+}
+void PlayerCharacter::OnMessage(const m2::Interaction data) {
+	if (const auto* hitDamage = dynamic_cast<const m2g::Proxy::HitDamage*>(data.get())) {
+		// Get hit by an enemy
+		UnsafeSubtractVariable(*this, m2g::pb::RESOURCE_HP, hitDamage->hp, 0.0f);
+	} else if (const auto* receivedCard = dynamic_cast<const m2g::Proxy::Card*>(data.get())) {
+		const auto& card = M2_GAME.GetCard(receivedCard->type);
+		// If the card in a consumable
+		if (const auto consumableIt = M2G_PROXY.CONSUMABLE_BENEFITS.find(card.Type()); consumableIt != M2G_PROXY.CONSUMABLE_BENEFITS.end()) {
+			// Gain the benefits
+			if (consumableIt->second.first == RESOURCE_HP) {
+				const auto current = GetVariable(consumableIt->second.first).GetFOrZero();
+				UnsafeSetVariable(consumableIt->second.first, std::min(current + consumableIt->second.second, 1.0f));
+			}
+		} else {
+			// Player can hold only one special weapon of certain type, get rid of the previous one
+			constexpr std::array<CardCategory, 2> special_categories = {CARD_CATEGORY_SPECIAL_RANGED_WEAPON, CARD_CATEGORY_SPECIAL_MELEE_WEAPON};
+			constexpr std::array<VariableType, 2> special_ammo_type = {RESOURCE_SPECIAL_RANGED_WEAPON_AMMO, NO_VARIABLE};
+			for (size_t i = 0; i < special_categories.size(); ++i) {
+				if (auto sp = special_categories[i]; sp == card.Category()) {
+					if (HasCard(sp)) {
+						RemoveCard(GetFirstCardType(sp)); // Remove weapon
+						ClearVariable(special_ammo_type[i]); // Also remove any ammo
+					}
+					break;
+				}
+			}
+			// Add card
+			UnsafeAddCard(receivedCard->type);
+			if (const auto ammo = card.GetConstant(m2g::pb::CONSTANT_AMMO_GAIN)) {
+				UnsafeSetVariable(m2g::pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO, ammo.GetIntOrZero());
+			}
+		}
+	}
+}
+
 rpg::Player::Player(m2::Object& obj) : HeapObjectImpl(), animation_fsm(m2g::pb::ANIMATION_TYPE_PLAYER_MOVEMENT, obj.GetGraphicId()) {}
 
 m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
@@ -50,7 +106,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 	auto& gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, main_sprite_type, position);
 	gfx.position = position;
 
-	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::FastCharacterStorageIndex>(obj);
+	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::PlayerCharacterStorageIndex>(obj, obj.GetId());
 	if (M2_LEVEL.GetLevelIdentifier() != "MeleeTutorialClosed") {
 		// 4th level is melee tutorial
 		chr.UnsafeAddCard(CARD_REUSABLE_GUN);
@@ -63,7 +119,6 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 	auto& impl = dynamic_cast<Player&>(*std::get<std::unique_ptr<HeapObjectImpl>>(obj.impl));
 
 	phy.preStep = [&, id=id](m2::Physique& phy, const m2::Stopwatch::Duration& delta) {
-		auto& chr = obj.GetCharacter();
 		auto vector_to_mouse = (M2_GAME.events.GetWorldPositionOfMouse() - phy.position).Normalize();
 
 		auto [direction_enum, direction_vector] = m2::calculate_character_movement(MOVE_LEFT, MOVE_RIGHT, MOVE_UP, MOVE_DOWN);
@@ -129,66 +184,11 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 			}
 		}
 	};
-	chr.update = [](MAYBE m2::Character& chr, const m2::Stopwatch::Duration& delta) {
-		chr.UnsafeAddVariable(RESOURCE_DASH_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
-		chr.UnsafeAddVariable(RESOURCE_RANGED_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
-		chr.UnsafeAddVariable(RESOURCE_MELEE_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
-
-		// Check if died
-		if (not chr.GetVariable(m2g::pb::RESOURCE_HP)) {
-			LOG_INFO("You died");
-			if (m2::UiPanel::create_and_run_blocking(M2G_PROXY.you_died_menu()).IsQuit()) {
-				M2_GAME.quit = true;
-			}
-		}
-		// Check if special ammo finished
-		if (const auto* special = dynamic_cast<const m2::FastCharacter&>(chr).GetFirstCard(CARD_CATEGORY_SPECIAL_RANGED_WEAPON);
-			special && not chr.GetVariable(m2g::pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO)) {
-			// Remove weapon if no ammo left
-			chr.RemoveCard(special->Type());
-		}
-		// Show/hide ammo display
-		M2G_PROXY.set_ammo_display_state(dynamic_cast<const m2::FastCharacter&>(chr).GetFirstCard(CARD_CATEGORY_SPECIAL_RANGED_WEAPON));
-	};
 	phy.onCollision = [](MAYBE m2::Physique& me, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
-		if (auto* other_char = other.GetOwner().TryGetCharacter(); other_char && 10.0f < m2::VecF{me.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->GetLinearVelocity()}.GetLength()) {
-			other_char->ExecuteInteraction(std::make_unique<m2g::Proxy::StunDuration>(2.0f));
+		const auto otherChrId = other.GetOwner().GetCharacterId();
+		if (10.0f < m2::VecF{me.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->GetLinearVelocity()}.GetLength()) {
+			M2_LEVEL.GetCharacterStorage().DeliverMessage<m2g::ProxyEx::EnemyCharacterStorageIndex>(otherChrId, std::make_unique<m2g::Proxy::StunDuration>(2.0f));
 		}
-	};
-	chr.onMessage = [](m2::Character& self, MAYBE m2::Character* other, const std::unique_ptr<const m2::Proxy::InterCharacterMessage>& data) -> std::unique_ptr<const m2::Proxy::InterCharacterMessage> {
-		if (const auto* hitDamage = dynamic_cast<const m2g::Proxy::HitDamage*>(data.get())) {
-			// Get hit by an enemy
-			self.UnsafeSubtractVariable(m2g::pb::RESOURCE_HP, hitDamage->hp, 0.0f);
-		} else if (const auto* receivedCard = dynamic_cast<const m2g::Proxy::Card*>(data.get())) {
-			const auto& card = M2_GAME.GetCard(receivedCard->type);
-			// If the card in a consumable
-			if (const auto consumableIt = M2G_PROXY.CONSUMABLE_BENEFITS.find(card.Type()); consumableIt != M2G_PROXY.CONSUMABLE_BENEFITS.end()) {
-				// Gain the benefits
-				if (consumableIt->second.first == RESOURCE_HP) {
-					const auto current = self.GetVariable(consumableIt->second.first).GetFOrZero();
-					self.UnsafeSetVariable(consumableIt->second.first, std::min(current + consumableIt->second.second, 1.0f));
-				}
-			} else {
-				// Player can hold only one special weapon of certain type, get rid of the previous one
-				constexpr std::array<CardCategory, 2> special_categories = {CARD_CATEGORY_SPECIAL_RANGED_WEAPON, CARD_CATEGORY_SPECIAL_MELEE_WEAPON};
-				constexpr std::array<VariableType, 2> special_ammo_type = {RESOURCE_SPECIAL_RANGED_WEAPON_AMMO, NO_VARIABLE};
-				for (size_t i = 0; i < special_categories.size(); ++i) {
-					if (auto sp = special_categories[i]; sp == card.Category()) {
-						if (self.HasCard(sp)) {
-							self.RemoveCard(*self.GetFirstCardType(sp)); // Remove weapon
-							self.ClearVariable(special_ammo_type[i]); // Also remove any ammo
-						}
-						break;
-					}
-				}
-				// Add card
-				self.UnsafeAddCard(receivedCard->type);
-				if (const auto ammo = card.GetConstant(m2g::pb::CONSTANT_AMMO_GAIN)) {
-					self.UnsafeSetVariable(m2g::pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO, ammo.GetIntOrZero());
-				}
-			}
-		}
-		return {};
 	};
 	gfx.preDraw = [&](MAYBE m2::Graphic& gfx, const m2::Stopwatch::Duration& delta) {
 		impl.animation_fsm.time(m2::ToDurationF(delta));

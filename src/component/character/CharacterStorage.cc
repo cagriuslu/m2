@@ -153,6 +153,23 @@ void CharacterStorage::UpdateAll(const Stopwatch::Duration delta) {
 	};
 	std::apply([&](auto&... pool) { ((updater(pool)), ...); }, _storageTuple);
 }
+void CharacterStorage::DeliverMessage(const CharacterId chrId, Interaction interaction) {
+	const auto baseShiftedPoolId = I(GetBasePoolId());
+	const auto poolIdOfCharacter = I(ToPoolId(chrId));
+	const auto tupleIndex = poolIdOfCharacter - baseShiftedPoolId;
+	if (tupleIndex < 0 || I(std::tuple_size_v<StorageTuple>) <= tupleIndex) {
+		return;
+	}
+	const auto deliverer = [&](auto* chr) -> bool {
+		if (chr) { chr->OnMessage(std::move(interaction)); }
+		return true;
+	};
+	std::apply([&](auto&... pool) {
+		int poolIndex = 0;
+		((poolIndex++ == tupleIndex && deliverer(pool->Get(chrId))), ...);
+		(void) poolIndex;
+	}, _storageTuple);
+}
 void CharacterStorage::Load(const CharacterId chrId, const pb::TurnBasedServerUpdate::ObjectDescriptor& objDesc) {
 	const auto baseShiftedPoolId = I(GetBasePoolId());
 	const auto poolIdOfCharacter = I(ToPoolId(chrId));

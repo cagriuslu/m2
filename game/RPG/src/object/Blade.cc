@@ -1,3 +1,4 @@
+#include "rpg/object/Blade.h"
 #include <m2/math/VecF.h>
 #include <m2/ObjectEx.h>
 #include <m2/Object.h>
@@ -10,6 +11,13 @@
 
 using namespace m2g;
 using namespace m2g::pb;
+
+void rpg::BladeCharacter::OnUpdate(const m2::Stopwatch::Duration delta) {
+	UnsafeSubtractVariable(*this, RESOURCE_TTL, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count(), 0.0f);
+	if (not GetVariable(RESOURCE_TTL)) {
+		M2_DEFER(m2::CreateObjectDeleter(GetOwnerId()));
+	}
+}
 
 m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF& position, const m2::VecF &direction, const m2::Card &melee_weapon, bool is_friend) {
 	// Check if weapon has necessary attributes
@@ -54,19 +62,12 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF& position, c
 	gfx.z = 0.5f;
 
 	// Add character
-	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::CompactCharacterStorageIndex>(obj);
+	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::BladeCharacterStorageIndex>(obj, obj.GetId());
 	chr.UnsafeSetVariable(RESOURCE_TTL, average_ttl);
 
-	chr.update = [](m2::Character& chr, const m2::Stopwatch::Duration& delta) {
-		chr.UnsafeSubtractVariable(RESOURCE_TTL, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count(), 0.0f);
-		if (not chr.GetVariable(RESOURCE_TTL)) {
-			M2_DEFER(m2::CreateObjectDeleter(chr.GetOwnerId()));
-		}
-	};
 	phy.onCollision = [average_damage, damage_accuracy](MAYBE m2::Physique& phy, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
-		if (auto* other_char = other.GetOwner().TryGetCharacter(); other_char) {
-			other_char->ExecuteInteraction(std::make_unique<Proxy::HitDamage>(m2::ApplyAccuracy(average_damage, average_damage, damage_accuracy)));
-		}
+		const auto otherChrId = other.GetOwner().GetCharacterId();
+		M2_LEVEL.GetCharacterStorage().DeliverMessage<m2g::ProxyEx::EnemyCharacterStorageIndex>(otherChrId, std::make_unique<Proxy::HitDamage>(m2::ApplyAccuracy(average_damage, average_damage, damage_accuracy)));
 	};
 	phy.postStep = [&](m2::Physique& phy, const m2::Stopwatch::Duration&) {
 		if (auto* originator = obj.TryGetParent()) {

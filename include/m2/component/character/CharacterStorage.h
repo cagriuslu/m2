@@ -58,7 +58,7 @@ namespace m2 {
 		// Modifiers
 
 		void UpdateAll(Stopwatch::Duration delta);
-		void DeliverMessage(CharacterId, Interaction);
+		void DeliverMessage(CharacterId, Interaction interaction);
 		void Load(CharacterId, const pb::TurnBasedServerUpdate::ObjectDescriptor&);
 		void Free(CharacterId);
 		void ClearAll();
@@ -72,6 +72,13 @@ namespace m2 {
 		auto* TryGetCharacter(const CharacterId chrId) {
 			auto& pool = GetPoolOfVariant<CharacterVariantIndex>();
 			return pool.Get(chrId);
+		}
+
+		template <std::size_t CharacterVariantIndex>
+		void DeliverMessage(const CharacterId chrId, Interaction interaction) {
+			if (auto* chr = TryGetCharacter<CharacterVariantIndex>(chrId)) {
+				chr->OnMessage(std::move(interaction));
+			}
 		}
 
 	private:
