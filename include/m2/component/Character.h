@@ -37,7 +37,48 @@ namespace m2 {
 	// Utilities
 
 	template <CharacterImpl C>
-	FE UnsafeSubtractVariable(C& c, const m2g::pb::VariableType vt, FE value, std::optional<FE> minValue = {}) {
+	int32_t UnsafeAddVariable(C& c, const m2g::pb::VariableType vt, const int32_t value, const std::optional<int32_t> maxValue = {}) {
+		if (c.GetVariable(vt).IsNonNull() && not c.GetVariable(vt).IsInt()) {
+			throw M2_ERROR("Variable contains a different type of value");
+		}
+		if (maxValue) {
+			c.UnsafeSetVariable(vt, std::min(c.GetVariable(vt).GetIntOrZero() + value, *maxValue));
+		} else {
+			c.UnsafeSetVariable(vt, c.GetVariable(vt).GetIntOrZero() + value);
+		}
+		return c.GetVariable(vt).UnsafeGetInt();
+	}
+	template <CharacterImpl C>
+	FE UnsafeAddVariable(C& c, const m2g::pb::VariableType vt, const FE value, const std::optional<FE> maxValue = {}) {
+		if (c.GetVariable(vt).IsNonNull() && not c.GetVariable(vt).IsFE()) {
+			throw M2_ERROR("Variable contains a different type of value");
+		}
+		if (maxValue) {
+			c.UnsafeSetVariable(vt, std::min(c.GetVariable(vt).GetFEOrZero() + value, *maxValue));
+		} else {
+			c.UnsafeSetVariable(vt, c.GetVariable(vt).GetFEOrZero() - value);
+		}
+		return c.GetVariable(vt).UnsafeGetFE();
+	}
+	template <CharacterImpl C, bool Enable = not GAME_IS_DETERMINISTIC>
+	constexpr float UnsafeAddVariable(C& c, const m2g::pb::VariableType vt, const float value, const std::optional<float> maxValue = {}) requires (Enable) {
+		return UnsafeAddVariable(c, vt, FE{value}, maxValue ? std::optional{FE{*maxValue}} : std::optional<FE>{}).ToFloat();
+	}
+
+	template <CharacterImpl C>
+	int32_t UnsafeSubtractVariable(C& c, const m2g::pb::VariableType vt, const int32_t value, const std::optional<int32_t> minValue = {}) {
+		if (c.GetVariable(vt).IsNonNull() && not c.GetVariable(vt).IsInt()) {
+			throw M2_ERROR("Variable contains a different type of value");
+		}
+		if (minValue) {
+			c.UnsafeSetVariable(vt, std::max(c.GetVariable(vt).GetIntOrZero() - value, *minValue));
+		} else {
+			c.UnsafeSetVariable(vt, c.GetVariable(vt).GetIntOrZero() - value);
+		}
+		return c.GetVariable(vt).UnsafeGetInt();
+	}
+	template <CharacterImpl C>
+	FE UnsafeSubtractVariable(C& c, const m2g::pb::VariableType vt, const FE value, const std::optional<FE> minValue = {}) {
 		if (c.GetVariable(vt).IsNonNull() && not c.GetVariable(vt).IsFE()) {
 			throw M2_ERROR("Variable contains a different type of value");
 		}
@@ -47,6 +88,10 @@ namespace m2 {
 			c.UnsafeSetVariable(vt, c.GetVariable(vt).GetFEOrZero() - value);
 		}
 		return c.GetVariable(vt).UnsafeGetFE();
+	}
+	template <CharacterImpl C, bool Enable = not GAME_IS_DETERMINISTIC>
+	constexpr float UnsafeSubtractVariable(C& c, const m2g::pb::VariableType vt, const float value, const std::optional<float> minValue = {}) requires (Enable) {
+		return UnsafeSubtractVariable(c, vt, FE{value}, minValue ? std::optional{FE{*minValue}} : std::optional<FE>{}).ToFloat();
 	}
 
 	// Helpers
