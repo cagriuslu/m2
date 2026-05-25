@@ -7,22 +7,28 @@
 namespace m2 {
 	class CharacterStorage {
 		template <typename Tuple>
-		struct WrapElementsInOptionalPool;
+		struct WrapElements;
 		template <typename... Ts>
-		struct WrapElementsInOptionalPool<std::tuple<Ts...>> {
+		struct WrapElements<std::tuple<Ts...>> {
 			static constexpr bool isAllValidCharacter = (CharacterImpl<Ts> && ...);
-			using type = std::tuple<std::optional<Pool<Ts>>...>;
+			using OptionalPools = std::tuple<std::optional<Pool<Ts>>...>;
+			using ConstVariant = std::variant<std::monostate, std::reference_wrapper<const Ts>...>;
+			using Variant = std::variant<std::monostate, std::reference_wrapper<Ts>...>;
 		};
-		static_assert(WrapElementsInOptionalPool<m2g::ProxyEx::CharacterVariants>::isAllValidCharacter);
-		using StorageTuple = WrapElementsInOptionalPool<m2g::ProxyEx::CharacterVariants>::type;
+		static_assert(WrapElements<m2g::ProxyEx::CharacterVariants>::isAllValidCharacter);
+		using StorageTuple = WrapElements<m2g::ProxyEx::CharacterVariants>::OptionalPools;
 		StorageTuple _storageTuple;
 
 	public:
+		using ConstCharacterVariant = WrapElements<m2g::ProxyEx::CharacterVariants>::ConstVariant;
+		using CharacterVariant = WrapElements<m2g::ProxyEx::CharacterVariants>::Variant;
+
 		CharacterStorage();
 
 		// Accessors
 
 		[[nodiscard]] int GetTotalCharacterCount() const;
+		[[nodiscard]] ConstCharacterVariant TryGetCharacter(CharacterId) const;
 		[[nodiscard]] std::optional<ObjectId> TryGetOwnerId(CharacterId) const;
 		[[nodiscard]] int32_t HashAll(int32_t) const;
 		void FillAll(const Pool<Object>&, pb::LockstepDebugStateReport&) const;
@@ -57,6 +63,7 @@ namespace m2 {
 
 		// Modifiers
 
+		[[nodiscard]] CharacterVariant TryGetCharacter(CharacterId);
 		void UpdateAll(Stopwatch::Duration delta);
 		void DeliverMessage(CharacterId, Interaction interaction);
 		void Load(CharacterId, const pb::TurnBasedServerUpdate::ObjectDescriptor&);

@@ -15,6 +15,25 @@ int CharacterStorage::GetTotalCharacterCount() const {
 	std::apply([&](const auto&... pool) { ((count += I(pool->Size())), ...); }, _storageTuple);
 	return count;
 }
+CharacterStorage::ConstCharacterVariant CharacterStorage::TryGetCharacter(const CharacterId chrId) const {
+	const auto baseShiftedPoolId = I(GetBasePoolId());
+	const auto poolIdOfCharacter = I(ToPoolId(chrId));
+	const auto tupleIndex = poolIdOfCharacter - baseShiftedPoolId;
+	if (tupleIndex < 0 || I(std::tuple_size_v<StorageTuple>) <= tupleIndex) {
+		return std::monostate{};
+	}
+	ConstCharacterVariant retval;
+	const auto getter = [&](const auto* chr) -> bool {
+		if (chr) { retval = std::reference_wrapper{*chr}; }
+		return true;
+	};
+	std::apply([&](const auto&... pool) {
+		int poolIndex = 0;
+		((poolIndex++ == tupleIndex && getter(pool->Get(chrId))), ...);
+		(void) poolIndex;
+	}, _storageTuple);
+	return retval;
+}
 std::optional<ObjectId> CharacterStorage::TryGetOwnerId(const CharacterId chrId) const {
 	const auto baseShiftedPoolId = I(GetBasePoolId());
 	const auto poolIdOfCharacter = I(ToPoolId(chrId));
@@ -147,6 +166,25 @@ std::optional<VariableValue> CharacterStorage::TryGetVariable(const CharacterId 
 	return retval;
 }
 
+CharacterStorage::CharacterVariant CharacterStorage::TryGetCharacter(const CharacterId chrId) {
+	const auto baseShiftedPoolId = I(GetBasePoolId());
+	const auto poolIdOfCharacter = I(ToPoolId(chrId));
+	const auto tupleIndex = poolIdOfCharacter - baseShiftedPoolId;
+	if (tupleIndex < 0 || I(std::tuple_size_v<StorageTuple>) <= tupleIndex) {
+		return std::monostate{};
+	}
+	CharacterVariant retval;
+	const auto getter = [&](auto* chr) -> bool {
+		if (chr) { retval = std::reference_wrapper{*chr}; }
+		return true;
+	};
+	std::apply([&](auto&... pool) {
+		int poolIndex = 0;
+		((poolIndex++ == tupleIndex && getter(pool->Get(chrId))), ...);
+		(void) poolIndex;
+	}, _storageTuple);
+	return retval;
+}
 void CharacterStorage::UpdateAll(const Stopwatch::Duration delta) {
 	const auto updater = [&](auto& pool) {
 		for (auto& chr : *pool) { chr.OnUpdate(delta); }
