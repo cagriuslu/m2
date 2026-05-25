@@ -34,6 +34,21 @@ namespace m2 {
 		{ std::as_const(t).GetVariable(std::declval<m2g::pb::VariableType>()) } -> std::same_as<VariableValue>;
 	};
 
+	// Utilities
+
+	template <CharacterImpl C>
+	FE UnsafeSubtractVariable(C& c, const m2g::pb::VariableType vt, FE value, std::optional<FE> minValue = {}) {
+		if (c.GetVariable(vt).IsNonNull() && not c.GetVariable(vt).IsFE()) {
+			throw M2_ERROR("Variable contains a different type of value");
+		}
+		if (minValue) {
+			c.UnsafeSetVariable(vt, std::max(c.GetVariable(vt).GetFEOrZero() - value, *minValue));
+		} else {
+			c.UnsafeSetVariable(vt, c.GetVariable(vt).GetFEOrZero() - value);
+		}
+		return c.GetVariable(vt).UnsafeGetFE();
+	}
+
 	// Helpers
 
 	[[nodiscard]] bool IsDescendantOf(ObjectId objId, ObjectId parentId);

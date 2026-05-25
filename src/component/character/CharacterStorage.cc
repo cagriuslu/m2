@@ -12,12 +12,27 @@ CharacterStorage::CharacterStorage() {
 
 int CharacterStorage::GetTotalCharacterCount() const {
 	int count = 0;
-	std::apply([&](const auto&... pool) {
-		(
-			(count += I(pool->Size())), ...
-		);
-	}, _storageTuple);
+	std::apply([&](const auto&... pool) { ((count += I(pool->Size())), ...); }, _storageTuple);
 	return count;
+}
+std::optional<ObjectId> CharacterStorage::TryGetOwnerId(const CharacterId chrId) const {
+	const auto baseShiftedPoolId = I(GetBasePoolId());
+	const auto poolIdOfCharacter = I(ToPoolId(chrId));
+	const auto tupleIndex = poolIdOfCharacter - baseShiftedPoolId;
+	if (tupleIndex < 0 || I(std::tuple_size_v<StorageTuple>) <= tupleIndex) {
+		return std::nullopt;
+	}
+	std::optional<ObjectId> retval;
+	const auto getter = [&](auto* chr) -> bool {
+		if (chr) { retval = chr->GetOwnerId(); }
+		return true;
+	};
+	std::apply([&](auto&... pool) {
+		int poolIndex = 0;
+		((poolIndex++ == tupleIndex && getter(pool->Get(chrId))), ...);
+		(void) poolIndex;
+	}, _storageTuple);
+	return retval;
 }
 int32_t CharacterStorage::HashAll(int32_t hash) const {
 	const auto hasher = [](const auto& pool, int32_t hash_) -> int32_t {
@@ -54,6 +69,82 @@ void CharacterStorage::StoreAll(const Pool<Object>& objects, pb::TurnBasedServer
 		}
 	};
 	std::apply([&](const auto&... pool) { ((storer(pool)), ...); }, _storageTuple);
+}
+std::optional<int> CharacterStorage::TryCountCards(const CharacterId chrId, const m2g::pb::CardType ct) const {
+	const auto baseShiftedPoolId = I(GetBasePoolId());
+	const auto poolIdOfCharacter = I(ToPoolId(chrId));
+	const auto tupleIndex = poolIdOfCharacter - baseShiftedPoolId;
+	if (tupleIndex < 0 || I(std::tuple_size_v<StorageTuple>) <= tupleIndex) {
+		return std::nullopt;
+	}
+	std::optional<int> retval;
+	const auto getter = [&](auto* chr) -> bool {
+		if (chr) { retval = chr->CountCards(ct); }
+		return true;
+	};
+	std::apply([&](auto&... pool) {
+		int poolIndex = 0;
+		((poolIndex++ == tupleIndex && getter(pool->Get(chrId))), ...);
+		(void) poolIndex;
+	}, _storageTuple);
+	return retval;
+}
+std::optional<int> CharacterStorage::TryCountCards(const CharacterId chrId,  const m2g::pb::CardCategory cc) const {
+	const auto baseShiftedPoolId = I(GetBasePoolId());
+	const auto poolIdOfCharacter = I(ToPoolId(chrId));
+	const auto tupleIndex = poolIdOfCharacter - baseShiftedPoolId;
+	if (tupleIndex < 0 || I(std::tuple_size_v<StorageTuple>) <= tupleIndex) {
+		return std::nullopt;
+	}
+	std::optional<int> retval;
+	const auto getter = [&](auto* chr) -> bool {
+		if (chr) { retval = chr->CountCards(cc); }
+		return true;
+	};
+	std::apply([&](auto&... pool) {
+		int poolIndex = 0;
+		((poolIndex++ == tupleIndex && getter(pool->Get(chrId))), ...);
+		(void) poolIndex;
+	}, _storageTuple);
+	return retval;
+}
+std::optional<m2g::pb::CardType> CharacterStorage::TryGetFirstCardType(const CharacterId chrId, const m2g::pb::CardCategory cc) const {
+	const auto baseShiftedPoolId = I(GetBasePoolId());
+	const auto poolIdOfCharacter = I(ToPoolId(chrId));
+	const auto tupleIndex = poolIdOfCharacter - baseShiftedPoolId;
+	if (tupleIndex < 0 || I(std::tuple_size_v<StorageTuple>) <= tupleIndex) {
+		return std::nullopt;
+	}
+	std::optional<m2g::pb::CardType> retval;
+	const auto getter = [&](auto* chr) -> bool {
+		if (chr) { retval = chr->GetFirstCardType(cc); }
+		return true;
+	};
+	std::apply([&](auto&... pool) {
+		int poolIndex = 0;
+		((poolIndex++ == tupleIndex && getter(pool->Get(chrId))), ...);
+		(void) poolIndex;
+	}, _storageTuple);
+	return retval;
+}
+std::optional<VariableValue> CharacterStorage::TryGetVariable(const CharacterId chrId, const m2g::pb::VariableType vt) const {
+	const auto baseShiftedPoolId = I(GetBasePoolId());
+	const auto poolIdOfCharacter = I(ToPoolId(chrId));
+	const auto tupleIndex = poolIdOfCharacter - baseShiftedPoolId;
+	if (tupleIndex < 0 || I(std::tuple_size_v<StorageTuple>) <= tupleIndex) {
+		return std::nullopt;
+	}
+	std::optional<VariableValue> retval;
+	const auto getter = [&](auto* chr) -> bool {
+		if (chr) { retval = chr->GetVariable(vt); }
+		return true;
+	};
+	std::apply([&](auto&... pool) {
+		int poolIndex = 0;
+		((poolIndex++ == tupleIndex && getter(pool->Get(chrId))), ...);
+		(void) poolIndex;
+	}, _storageTuple);
+	return retval;
 }
 
 void CharacterStorage::UpdateAll(const Stopwatch::Duration delta) {

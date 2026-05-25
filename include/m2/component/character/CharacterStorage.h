@@ -24,14 +24,14 @@ namespace m2 {
 		// Accessors
 
 		[[nodiscard]] int GetTotalCharacterCount() const;
-		[[nodiscard]] std::optional<ObjectId> GetOwnerId(CharacterId) const;
+		[[nodiscard]] std::optional<ObjectId> TryGetOwnerId(CharacterId) const;
 		[[nodiscard]] int32_t HashAll(int32_t) const;
 		void FillAll(const Pool<Object>&, pb::LockstepDebugStateReport&) const;
 		void StoreAll(const Pool<Object>&, pb::TurnBasedServerUpdate&) const;
-		[[nodiscard]] std::optional<int> CountCards(CharacterId, m2g::pb::CardType) const;
-		[[nodiscard]] std::optional<int> CountCards(CharacterId, m2g::pb::CardCategory) const;
-		[[nodiscard]] std::optional<m2g::pb::CardType> GetFirstCardType(CharacterId, m2g::pb::CardCategory) const;
-		[[nodiscard]] std::optional<VariableValue> GetVariable(CharacterId, m2g::pb::VariableType) const;
+		[[nodiscard]] std::optional<int> TryCountCards(CharacterId, m2g::pb::CardType) const;
+		[[nodiscard]] std::optional<int> TryCountCards(CharacterId, m2g::pb::CardCategory) const;
+		[[nodiscard]] std::optional<m2g::pb::CardType> TryGetFirstCardType(CharacterId, m2g::pb::CardCategory) const;
+		[[nodiscard]] std::optional<VariableValue> TryGetVariable(CharacterId, m2g::pb::VariableType) const;
 
 		template <std::size_t CharacterVariantIndex>
 		const std::tuple_element_t<CharacterVariantIndex, StorageTuple>::value_type& GetPoolOfVariant() const {
@@ -63,6 +63,17 @@ namespace m2 {
 		void Load(CharacterId, const pb::TurnBasedServerUpdate::ObjectDescriptor&);
 		void Free(CharacterId);
 		void ClearAll();
+
+		template <std::size_t CharacterVariantIndex>
+		std::tuple_element_t<CharacterVariantIndex, StorageTuple>::value_type& GetPoolOfVariant() {
+			return *std::get<CharacterVariantIndex>(_storageTuple);
+		}
+
+		template <std::size_t CharacterVariantIndex>
+		auto* TryGetCharacter(const CharacterId chrId) {
+			auto& pool = GetPoolOfVariant<CharacterVariantIndex>();
+			return pool.Get(chrId);
+		}
 
 	private:
 		[[nodiscard]] ShiftedPoolId GetBaseShiftedPoolId() const { return std::get<0>(_storageTuple)->GetShiftedPoolId(); }

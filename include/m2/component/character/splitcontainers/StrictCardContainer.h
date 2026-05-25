@@ -70,14 +70,14 @@ namespace m2 {
 			}
 			return count;
 		}
-		[[nodiscard]] std::optional<m2g::pb::CardType> GetFirstCardType(const m2g::pb::CardCategory cc) const {
+		[[nodiscard]] m2g::pb::CardType GetFirstCardType(const m2g::pb::CardCategory cc) const {
 			for (int i = 0; i < I(possibleCardTypes.size()); ++i) {
 				const auto possibleCardType = possibleCardTypes[i];
 				if (const auto cat = ToCategoryOfCard(possibleCardType); cat == cc) {
 					if (_cards[i]) { return possibleCardType; }
 				}
 			}
-			return std::nullopt;
+			return {};
 		}
 		[[nodiscard]] expected<void> TryAddCard(const m2g::pb::CardType ct) {
 			if (const auto cardTypeIndex = CardTypeIndex(ct); cardTypeIndex == -1) {
