@@ -7,15 +7,14 @@
 namespace m2 {
 	class CharacterStorage {
 		template <typename Tuple>
-		struct WrapTupleInOptionalPool;
-
+		struct WrapElementsInOptionalPool;
 		template <typename... Ts>
-		requires (CharacterImpl<Ts> && ...)
-		struct WrapTupleInOptionalPool<std::tuple<Ts...>> {
+		struct WrapElementsInOptionalPool<std::tuple<Ts...>> {
+			static constexpr bool isAllValidCharacter = (CharacterImpl<Ts> && ...);
 			using type = std::tuple<std::optional<Pool<Ts>>...>;
 		};
-
-		using StorageTuple = WrapTupleInOptionalPool<m2g::ProxyEx::CharacterVariants>::type;
+		static_assert(WrapElementsInOptionalPool<m2g::ProxyEx::CharacterVariants>::isAllValidCharacter);
+		using StorageTuple = WrapElementsInOptionalPool<m2g::ProxyEx::CharacterVariants>::type;
 		StorageTuple _storageTuple;
 
 	public:
