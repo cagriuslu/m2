@@ -10,6 +10,10 @@ using namespace m2g;
 using namespace m2g::pb;
 using namespace m2::thirdparty::physics;
 
+void DwarfCharacter::OnUpdate(const m2::Stopwatch::Duration delta) {
+	UnsafeAddVariable(*this, VARIABLE_JUMP_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
+}
+
 m2::void_expected create_dwarf(m2::Object& obj, const m2::VecF& position) {
 	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(DWARF_FULL));
 
@@ -36,7 +40,7 @@ m2::void_expected create_dwarf(m2::Object& obj, const m2::VecF& position) {
 
 	obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, DWARF_FULL).position = position;
 
-	auto& chr = m2::AddCharacterToObject<ProxyEx::FastCharacterStorageIndex>(obj);
+	auto& chr = m2::AddCharacterToObject<ProxyEx::DwarfCharacterStorageIndex>(obj, obj.GetId());
 
 	phy.preStep = [&chr](m2::Physique& phy, const m2::Stopwatch::Duration& delta) {
 		// Character movement
@@ -69,17 +73,17 @@ m2::void_expected create_dwarf(m2::Object& obj, const m2::VecF& position) {
 				auto& obj_under_mouse = other_phy.GetOwner();
 				// If object under mouse has character
 				if (obj_under_mouse.GetCharacterId()) {
-					auto& chr_under_mouse = obj_under_mouse.GetCharacter();
+					auto* chr_under_mouse = M2_LEVEL.GetCharacterStorage().TryGetCharacter<m2g::ProxyEx::CompactCharacterStorageIndex>(obj_under_mouse.GetCharacterId());
 					// If character has HP
-					if (chr_under_mouse.GetVariable(VARIABLE_HP)) {
+					if (chr_under_mouse->GetVariable(VARIABLE_HP)) {
 						// Damage object
-						chr_under_mouse.UnsafeSubtractVariable(VARIABLE_HP, 2.0f * m2::ToDurationF(delta), 0.0f);
+						UnsafeSubtractVariable(*chr_under_mouse, VARIABLE_HP, 2.0f * m2::ToDurationF(delta), 0.0f);
 						// Show health bar
-						auto hp = chr_under_mouse.GetVariable(VARIABLE_HP).GetFEOrZero().ToFloat();
+						auto hp = chr_under_mouse->GetVariable(VARIABLE_HP).GetFEOrZero().ToFloat();
 						// If object under mouse runs out of HP
 						if (hp == 0.0f) {
 							// Delete object
-							M2_DEFER(m2::CreateObjectDeleter(chr_under_mouse.GetOwnerId()));
+							M2_DEFER(m2::CreateObjectDeleter(chr_under_mouse->GetOwnerId()));
 						}
 					}
 					// Stop searching
@@ -89,9 +93,6 @@ m2::void_expected create_dwarf(m2::Object& obj, const m2::VecF& position) {
 				return true;
 			});
 		}
-	};
-	chr.update = [](m2::Character& chr, const m2::Stopwatch::Duration& delta) {
-		chr.UnsafeAddVariable(VARIABLE_JUMP_ENERGY, std::chrono::duration_cast<std::chrono::duration<float>>(delta).count());
 	};
 	phy.onCollision = [&chr](MAYBE m2::Physique& phy, m2::Physique& other, const m2::box2d::Contact& contact) {
 		// Check if in contact with obstacle

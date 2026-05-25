@@ -18,15 +18,15 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 		case pb::SpriteType::DUNGEON_COAL_1:
 		case pb::SpriteType::DUNGEON_COAL_2: {
 			// Add HP to destroyable tiles
-			auto& chr = m2::AddCharacterToObject<ProxyEx::CompactCharacterStorageIndex>(obj);
-			chr.UnsafeAddVariable(m2g::pb::VARIABLE_HP, 2.0f);
+			auto& chr = m2::AddCharacterToObject<ProxyEx::CompactCharacterStorageIndex>(obj, obj.GetId());
+			UnsafeAddVariable(chr, m2g::pb::VARIABLE_HP, 2.0f);
 			break;
 		}
 		case pb::SpriteType::GRASSLAND_DIRT_1:
 		case pb::SpriteType::GRASSLAND_DIRT_2: {
 			// Add HP to destroyable tiles
-			auto& chr = m2::AddCharacterToObject<ProxyEx::CompactCharacterStorageIndex>(obj);
-			chr.UnsafeAddVariable(m2g::pb::VARIABLE_HP, 1.0f);
+			auto& chr = m2::AddCharacterToObject<ProxyEx::CompactCharacterStorageIndex>(obj, obj.GetId());
+			UnsafeAddVariable(chr, m2g::pb::VARIABLE_HP, 1.0f);
 			break;
 		}
 		default:
