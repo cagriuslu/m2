@@ -68,7 +68,7 @@ namespace m2 {
 		[[nodiscard]] ShiftedPoolId GetBaseShiftedPoolId() const { return std::get<0>(_storageTuple)->GetShiftedPoolId(); }
 		[[nodiscard]] PoolId GetBasePoolId() const { return GetBaseShiftedPoolId() >> gPoolIdShiftCount; }
 
-		template <std::size_t CharacterVariantIndex>
-		friend auto& AddCharacterToObject(Object&);
+		template <std::size_t CharacterVariantIndex, typename... Args>
+		friend auto& AddCharacterToObject(Object&, Args&&... args);
 	};
 }

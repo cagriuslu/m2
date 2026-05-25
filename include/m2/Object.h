@@ -101,8 +101,8 @@ namespace m2 {
 		CharacterId _character_id{};
 
 		/// Give friendship to AddCharacterToObject so that it can add a character to the Object
-		template <std::size_t CharacterVariantIndex>
-		friend auto& AddCharacterToObject(Object&);
+		template <std::size_t CharacterVariantIndex, typename... Args>
+		friend auto& AddCharacterToObject(Object&, Args&&... args);
 	};
 
 	Pool<Object>::Iterator CreateObject(m2g::pb::ObjectType type = {}, ObjectId parent_id = 0);
