@@ -698,7 +698,7 @@ m2g::Proxy::LiquidationDetails m2g::Proxy::prepare_railroad_era() {
 
 	// Give roads to players
 	const auto& road_card = M2_GAME.GetCard(pb::ROAD_TILE);
-	auto road_possession_limit = Z(road_card.GetConstant(pb::POSSESSION_LIMIT).GetIntOrZero());
+	auto road_possession_limit = road_card.GetConstant(pb::POSSESSION_LIMIT).GetIntOrZero();
 	std::ranges::for_each(M2_LEVEL.multiPlayerObjectIds
 		| std::views::transform(m2::ObjectIdToObject)
 		| std::views::transform(&m2::Object::GetCharacterId)
