@@ -25,7 +25,7 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj, const m2::VecF& positi
 
 	obj.impl = std::make_unique<HumanPlayer>(obj);
 
-	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::FastCharacterStorageIndex>(obj);
+	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::FastCharacterStorageIndex>(obj, obj.GetId());
 	chr.UnsafeSetVariable(m2g::pb::MONEY, m2::VariableValue{17});
 	chr.UnsafeSetVariable(m2g::pb::INCOME_POINTS, m2::VariableValue{0});
 
@@ -173,7 +173,7 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj, const m2::VecF& positi
 m2::void_expected PlayerInitOtherInstance(m2::Object& obj) {
 	DEBUG_FN();
 
-	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::FastCharacterStorageIndex>(obj);
+	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::FastCharacterStorageIndex>(obj, obj.GetId());
 
 	// TODO check if the following is really necessary. If the TurnBasedServerUpdate is verified, it's necessary.
 	// TODO Otherwise, we don't need to fill the character with cards and resources.
@@ -199,12 +199,12 @@ m2::void_expected PlayerInitOtherInstance(m2::Object& obj) {
 	return {};
 }
 
-size_t PlayerCardCount(const m2::Character& player) {
+size_t PlayerCardCount(const m2::FastCharacter& player) {
 	return player.CountCards(m2g::pb::CardCategory::CARD_CATEGORY_CITY_CARD)
 	+ player.CountCards(m2g::pb::CardCategory::CARD_CATEGORY_WILD_CARD)
 	+ player.CountCards(m2g::pb::CardCategory::CARD_CATEGORY_INDUSTRY_CARD);
 }
-std::vector<m2g::pb::CardType> PlayerCards(const m2::Character& player) {
+std::vector<m2g::pb::CardType> PlayerCards(const m2::FastCharacter& player) {
 	const auto& playerChr = dynamic_cast<const m2::FastCharacter&>(player);
 	const auto cityCards = playerChr.GetCardTypes(m2g::pb::CARD_CATEGORY_CITY_CARD);
 	const auto industryCards = playerChr.GetCardTypes(m2g::pb::CARD_CATEGORY_INDUSTRY_CARD);
@@ -215,35 +215,35 @@ std::vector<m2g::pb::CardType> PlayerCards(const m2::Character& player) {
 	return cards;
 }
 
-int PlayerLinkCount(const m2::Character& player) {
+int PlayerLinkCount(const m2::FastCharacter& player) {
 	auto road_characters = GetCharacterPool()
-			| std::views::filter(m2::IsComponentOfAnyDescendant(player.GetOwnerId()))
+			| std::views::filter([&](auto& chr) { return m2::IsDescendantOf(chr.GetOwnerId(), player.GetOwnerId()); })
 			| std::views::filter(IsRoadCharacter);
-	return std::accumulate(road_characters.begin(), road_characters.end(), 0, [](int acc, m2::Character& road_char) -> int {
+	return std::accumulate(road_characters.begin(), road_characters.end(), 0, [](int acc, m2::FastCharacter& road_char) -> int {
 		return acc + LinkCountOfRoadCharacter(road_char);
 	});
 }
-int PlayerEstimatedVictoryPoints(const m2::Character& player) {
+int PlayerEstimatedVictoryPoints(const m2::FastCharacter& player) {
 	auto soldFactories = GetCharacterPool()
-			| std::views::filter(m2::IsComponentOfAnyDescendant(player.GetOwnerId()))
+			| std::views::filter([&](auto& chr) { return m2::IsDescendantOf(chr.GetOwnerId(), player.GetOwnerId()); })
 			| std::views::filter(IsFactoryCharacter)
 			| std::views::filter(IsFactorySold);
-	return std::accumulate(soldFactories.begin(), soldFactories.end(), 0, [](int acc, m2::Character& factoryCharacter) -> int {
+	return std::accumulate(soldFactories.begin(), soldFactories.end(), 0, [](int acc, m2::FastCharacter& factoryCharacter) -> int {
 		const auto& industryTileCard = M2_GAME.GetCard(ToIndustryTileOfFactoryCharacter(factoryCharacter));
 		return acc + industryTileCard.GetConstant(m2g::pb::VICTORY_POINTS_BONUS).GetIntOrZero();
 	});
 }
-int PlayerVictoryPoints(const m2::Character& player) {
+int PlayerVictoryPoints(const m2::FastCharacter& player) {
 	return player.GetVariable(m2g::pb::VICTORY_POINTS).GetIntOrZero();
 }
-int PlayerIncomePoints(const m2::Character& player) {
+int PlayerIncomePoints(const m2::FastCharacter& player) {
 	return player.GetVariable(m2g::pb::INCOME_POINTS).GetIntOrZero();
 }
-int PlayerMoney(const m2::Character& player) {
+int PlayerMoney(const m2::FastCharacter& player) {
 	return player.GetVariable(m2g::pb::MONEY).GetIntOrZero();
 }
 
-size_t PlayerIndustryTileCount(const m2::Character& player) {
+size_t PlayerIndustryTileCount(const m2::FastCharacter& player) {
 	return player.CountCards(m2g::pb::CardCategory::CARD_CATEGORY_COAL_MINE_TILE)
 		+ player.CountCards(m2g::pb::CardCategory::CARD_CATEGORY_IRON_WORKS_TILE)
 		+ player.CountCards(m2g::pb::CardCategory::CARD_CATEGORY_BREWERY_TILE)
@@ -251,7 +251,7 @@ size_t PlayerIndustryTileCount(const m2::Character& player) {
 		+ player.CountCards(m2g::pb::CardCategory::CARD_CATEGORY_MANUFACTURED_GOODS_TILE)
 		+ player.CountCards(m2g::pb::CardCategory::CARD_CATEGORY_POTTERY_TILE);
 }
-std::optional<m2g::pb::CardType> PlayerNextIndustryTileOfCategory(const m2::Character& player, const m2g::pb::CardCategory tile_category) {
+std::optional<m2g::pb::CardType> PlayerNextIndustryTileOfCategory(const m2::FastCharacter& player, const m2g::pb::CardCategory tile_category) {
 	// Find the card with the category with the smallest integer value
 	auto tiles = dynamic_cast<const m2::FastCharacter&>(player).GetCardTypes(tile_category);
 	if (tiles.empty()) {
@@ -260,38 +260,38 @@ std::optional<m2g::pb::CardType> PlayerNextIndustryTileOfCategory(const m2::Char
 	std::ranges::sort(tiles);
 	return tiles[0];
 }
-std::optional<m2g::pb::CardType> PlayerNextIndustryTileOfIndustry(const m2::Character& player, const Industry industry) {
+std::optional<m2g::pb::CardType> PlayerNextIndustryTileOfIndustry(const m2::FastCharacter& player, const Industry industry) {
 	return PlayerNextIndustryTileOfCategory(player, industry_tile_category_of_industry(industry));
 }
-size_t PlayerBuiltFactoryCount(const m2::Character& player) {
+size_t PlayerBuiltFactoryCount(const m2::FastCharacter& player) {
 	auto factories_view = GetCharacterPool()
-		| std::views::filter(m2::IsComponentOfAnyDescendant(player.GetOwnerId()))
+		| std::views::filter([&](auto& chr) { return m2::IsDescendantOf(chr.GetOwnerId(), player.GetOwnerId()); })
 		| std::views::filter(IsFactoryCharacter);
 	return std::distance(factories_view.begin(), factories_view.end());
 }
-std::set<IndustryLocation> PlayerBuiltFactoryLocations(const m2::Character& player) {
+std::set<IndustryLocation> PlayerBuiltFactoryLocations(const m2::FastCharacter& player) {
 	auto factories_view = GetCharacterPool()
-		| std::views::filter(m2::IsComponentOfAnyDescendant(player.GetOwnerId()))
+		| std::views::filter([&](auto& chr) { return m2::IsDescendantOf(chr.GetOwnerId(), player.GetOwnerId()); })
 		| std::views::filter(IsFactoryCharacter)
 		| std::views::transform(ToIndustryLocationOfFactoryCharacter);
 	return {factories_view.begin(), factories_view.end()};
 }
-std::set<IndustryLocation> PlayerSellableFactoryLocations(const m2::Character& player) {
+std::set<IndustryLocation> PlayerSellableFactoryLocations(const m2::FastCharacter& player) {
 	auto factories_view = GetCharacterPool()
-		| std::views::filter(m2::IsComponentOfAnyDescendant(player.GetOwnerId()))
+		| std::views::filter([&](auto& chr) { return m2::IsDescendantOf(chr.GetOwnerId(), player.GetOwnerId()); })
 		| std::views::filter(IsFactoryCharacter)
 		| std::views::filter(IsFactoryNotSold)
-		| std::views::filter([](const m2::Character& c) {
+		| std::views::filter([](const m2::FastCharacter& c) {
 			return is_sellable_industry(ToIndustryOfFactoryCharacter(c));
 		})
 		| std::views::transform(ToIndustryLocationOfFactoryCharacter);
 	return {factories_view.begin(), factories_view.end()};
 }
-m2::void_expected PlayerCanOverbuild(const m2::Character& player, const IndustryLocation location, const m2g::pb::CardType card) {
+m2::void_expected PlayerCanOverbuild(const m2::FastCharacter& player, const IndustryLocation location, const m2g::pb::CardType card) {
 	// Check the industry type of the already built factory
 	const auto* factory = FindFactoryAtLocation(location);
-	const auto industryOfFactory = ToIndustryOfFactoryCharacter(factory->GetCharacter());
-	const auto cityOfFactory = ToCityOfFactoryCharacter(factory->GetCharacter());
+	const auto industryOfFactory = ToIndustryOfFactoryCharacter(GetCharacter(factory->GetCharacterId()));
+	const auto cityOfFactory = ToCityOfFactoryCharacter(GetCharacter(factory->GetCharacterId()));
 
 	// Check if the selected card can build the same industry
 	if (card == m2g::pb::WILD_LOCATION_CARD || card == m2g::pb::WILD_INDUSTRY_CARD || card == cityOfFactory || card == industryOfFactory) {
@@ -323,17 +323,17 @@ m2::void_expected PlayerCanOverbuild(const m2::Character& player, const Industry
 	return {};
 }
 
-std::set<m2g::pb::CardType> PlayerCitiesInNetwork(const m2::Character& player) {
+std::set<m2g::pb::CardType> PlayerCitiesInNetwork(const m2::FastCharacter& player) {
 	std::set<m2g::pb::CardType> cities;
 
 	auto cities_view = GetCharacterPool()
-		| std::views::filter(m2::IsComponentOfAnyDescendant(player.GetOwnerId()))
+		| std::views::filter([&](auto& chr) { return m2::IsDescendantOf(chr.GetOwnerId(), player.GetOwnerId()); })
 		| std::views::filter(IsFactoryCharacter)
 		| std::views::transform(ToCityOfFactoryCharacter);
 	cities.insert(cities_view.begin(), cities_view.end());
 
 	auto roads_view = GetCharacterPool()
-		| std::views::filter(m2::IsComponentOfAnyDescendant(player.GetOwnerId()))
+		| std::views::filter([&](auto& chr) { return m2::IsDescendantOf(chr.GetOwnerId(), player.GetOwnerId()); })
 		| std::views::filter(IsRoadCharacter)
 		| std::views::transform(ToCitiesOfRoadCharacter);
 	for (const auto& road_cities : roads_view) {
@@ -342,7 +342,7 @@ std::set<m2g::pb::CardType> PlayerCitiesInNetwork(const m2::Character& player) {
 
 	return cities;
 }
-std::set<m2g::pb::SpriteType> PlayerCanalsInNetwork(const m2::Character& player, Connection provisional_extra_connection) {
+std::set<m2g::pb::SpriteType> PlayerCanalsInNetwork(const m2::FastCharacter& player, Connection provisional_extra_connection) {
 	std::set<m2g::pb::SpriteType> canals;
 
 	auto cities_in_network = PlayerCitiesInNetwork(player);
@@ -365,7 +365,7 @@ std::set<m2g::pb::SpriteType> PlayerCanalsInNetwork(const m2::Character& player,
 
 	return canals;
 }
-std::set<m2g::pb::SpriteType> PlayerRailroadsInNetwork(const m2::Character& player, Connection provisional_extra_connection) {
+std::set<m2g::pb::SpriteType> PlayerRailroadsInNetwork(const m2::FastCharacter& player, Connection provisional_extra_connection) {
 	std::set<m2g::pb::SpriteType> railroads;
 
 	auto cities_in_network = PlayerCitiesInNetwork(player);
@@ -388,7 +388,7 @@ std::set<m2g::pb::SpriteType> PlayerRailroadsInNetwork(const m2::Character& play
 
 	return railroads;
 }
-std::set<m2g::pb::SpriteType> PlayerConnectionsInNetwork(const m2::Character& player, Connection provisional_extra_connection) {
+std::set<m2g::pb::SpriteType> PlayerConnectionsInNetwork(const m2::FastCharacter& player, Connection provisional_extra_connection) {
 	if (M2G_PROXY.is_canal_era()) {
 		return PlayerCanalsInNetwork(player, provisional_extra_connection);
 	} else {

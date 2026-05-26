@@ -7,7 +7,7 @@
 #include <cuzn/ui/Cards.h>
 #include <m2/protobuf/Detail.h>
 
-m2::void_expected CanPlayerAttemptToScout(m2::Character& player) {
+m2::void_expected CanPlayerAttemptToScout(m2::FastCharacter& player) {
 	// Player needs to hold at least 3 cards to discard
 	if (PlayerCardCount(player) < 3) {
 		return m2::make_unexpected("Scout action requires at least 3 cards");
@@ -46,7 +46,7 @@ void ExecuteScoutJourney() {
 	LOG_INFO("Scout action cancelled");
 }
 
-m2::void_expected CanPlayerScout(m2::Character& player, const m2g::pb::TurnBasedClientCommand_ScoutAction& scout_action) {
+m2::void_expected CanPlayerScout(m2::FastCharacter& player, const m2g::pb::TurnBasedClientCommand_ScoutAction& scout_action) {
 	// Check if prerequisites are met
 	if (auto prerequisite = CanPlayerAttemptToScout(player); not prerequisite) {
 		return m2::make_unexpected(prerequisite.error());
@@ -65,7 +65,7 @@ m2::void_expected CanPlayerScout(m2::Character& player, const m2g::pb::TurnBased
 	return {};
 }
 
-m2g::pb::CardType ExecuteScoutAction(m2::Character& player, const m2g::pb::TurnBasedClientCommand_ScoutAction& scout_action) {
+m2g::pb::CardType ExecuteScoutAction(m2::FastCharacter& player, const m2g::pb::TurnBasedClientCommand_ScoutAction& scout_action) {
 	player.RemoveCard(scout_action.card_1());
 	player.RemoveCard(scout_action.card_2());
 	player.UnsafeAddCard(m2g::pb::WILD_INDUSTRY_CARD);

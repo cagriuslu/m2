@@ -24,7 +24,7 @@ namespace {
 	}
 
 	TextSelectionBlueprint::Options list_cards_as_selection_options(const m2g::pb::CardType exclude_card_1, const m2g::pb::CardType exclude_card_2) {
-		const auto cards = PlayerCards(M2_PLAYER.GetCharacter());
+		const auto cards = PlayerCards(GetCharacter(M2_PLAYER.GetCharacterId()));
 
 		m2g::pb::CardType filter_card_1 = exclude_card_1, filter_card_2 = exclude_card_2;
 		TextSelectionBlueprint::Options options;

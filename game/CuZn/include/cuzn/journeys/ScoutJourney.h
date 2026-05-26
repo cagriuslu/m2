@@ -3,12 +3,12 @@
 #include <cuzn/Detail.h>
 #include <Network.pb.h>
 
-m2::void_expected CanPlayerAttemptToScout(m2::Character& player);
+m2::void_expected CanPlayerAttemptToScout(m2::FastCharacter& player);
 
 void ExecuteScoutJourney();
 
 // For the server
-m2::void_expected CanPlayerScout(m2::Character& player, const m2g::pb::TurnBasedClientCommand_ScoutAction& scout_action);
+m2::void_expected CanPlayerScout(m2::FastCharacter& player, const m2g::pb::TurnBasedClientCommand_ScoutAction& scout_action);
 
 // For the server, returns the card to be discarded
-m2g::pb::CardType ExecuteScoutAction(m2::Character& player, const m2g::pb::TurnBasedClientCommand_ScoutAction& scout_action);
+m2g::pb::CardType ExecuteScoutAction(m2::FastCharacter& player, const m2g::pb::TurnBasedClientCommand_ScoutAction& scout_action);

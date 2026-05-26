@@ -32,7 +32,7 @@ const UiPanelBlueprint right_hud_blueprint = {
 				.horizontal_alignment = TextHorizontalAlignment::LEFT,
 				.wrapped_font_size_in_units = 1.25f,
 				.onUpdate = [](MAYBE Text& self) {
-					auto vp = M2_PLAYER.GetCharacter().GetVariable(VICTORY_POINTS).GetIntOrZero();
+					auto vp = GetCharacter(M2_PLAYER.GetCharacterId()).GetVariable(VICTORY_POINTS).GetIntOrZero();
 					self.set_text(std::string{"Victory Points: "} + m2::ToString(vp));
 					return MakeContinueAction();
 				}
@@ -49,7 +49,7 @@ const UiPanelBlueprint right_hud_blueprint = {
 				.horizontal_alignment = TextHorizontalAlignment::LEFT,
 				.wrapped_font_size_in_units = 1.25f,
 				.onUpdate = [](MAYBE Text& self) {
-					auto vp = M2_PLAYER.GetCharacter().GetVariable(INCOME_POINTS).GetIntOrZero();
+					auto vp = GetCharacter(M2_PLAYER.GetCharacterId()).GetVariable(INCOME_POINTS).GetIntOrZero();
 					self.set_text(std::string{"Income Points: "} + m2::ToString(vp));
 					return MakeContinueAction();
 				}
@@ -66,7 +66,7 @@ const UiPanelBlueprint right_hud_blueprint = {
 				.horizontal_alignment = TextHorizontalAlignment::LEFT,
 				.wrapped_font_size_in_units = 1.25f,
 				.onUpdate = [](MAYBE Text& self) {
-					const auto income_points = M2_PLAYER.GetCharacter().GetVariable(INCOME_POINTS).GetIntOrZero();
+					const auto income_points = GetCharacter(M2_PLAYER.GetCharacterId()).GetVariable(INCOME_POINTS).GetIntOrZero();
 					const auto income_level = IncomeLevelFromIncomePoints(income_points);
 					self.set_text(std::string{"Income: £"} + m2::ToString(income_level));
 					return MakeContinueAction();
@@ -84,7 +84,7 @@ const UiPanelBlueprint right_hud_blueprint = {
 				.horizontal_alignment = TextHorizontalAlignment::LEFT,
 				.wrapped_font_size_in_units = 1.25f,
 				.onUpdate = [](MAYBE Text& self) {
-					auto money = M2_PLAYER.GetCharacter().GetVariable(MONEY).GetIntOrZero();
+					auto money = GetCharacter(M2_PLAYER.GetCharacterId()).GetVariable(MONEY).GetIntOrZero();
 					self.set_text(std::string{"Cash: £"} + m2::ToString(money));
 					return MakeContinueAction();
 				}

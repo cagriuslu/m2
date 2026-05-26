@@ -11,7 +11,7 @@
 #include <list>
 #include "subjourneys/POISelectionJourney.h"
 
-m2::void_expected CanPlayerAttemptToNetwork(m2::Character& player);
+m2::void_expected CanPlayerAttemptToNetwork(m2::FastCharacter& player);
 
 enum class NetworkJourneyStep {
 	INITIAL_STEP = 0,
@@ -58,7 +58,7 @@ protected:
 };
 
 // For the server
-m2::void_expected CanPlayerNetwork(m2::Character& player, const m2g::pb::TurnBasedClientCommand_NetworkAction& network_action);
+m2::void_expected CanPlayerNetwork(m2::FastCharacter& player, const m2g::pb::TurnBasedClientCommand_NetworkAction& network_action);
 
 // For the server
-std::pair<m2g::pb::CardType,int> ExecuteNetworkAction(m2::Character& player, const m2g::pb::TurnBasedClientCommand_NetworkAction& network_action);
+std::pair<m2g::pb::CardType,int> ExecuteNetworkAction(m2::FastCharacter& player, const m2g::pb::TurnBasedClientCommand_NetworkAction& network_action);

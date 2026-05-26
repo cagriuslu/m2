@@ -8,16 +8,16 @@
 // Accessors
 m2::Object* FindRoadAtLocation(m2g::pb::SpriteType location);
 int LinkCountOfConnectionLocation(Connection conn);
-int LinkCountOfRoadCharacter(const m2::Character& chr);
+int LinkCountOfRoadCharacter(const m2::FastCharacter& chr);
 
 // Modifiers
 void RemoveAllRoads();
 
 // Filters
-constexpr auto IsRoadCharacter = [](const m2::Character& chr) { return chr.GetOwner().GetType() == m2g::pb::ROAD; };
+bool IsRoadCharacter(const m2::FastCharacter& chr);
 
 // Transformers
-constexpr auto ToCitiesOfRoadCharacter = [](const m2::Character& chr) -> std::set<m2g::pb::CardType> {
+constexpr auto ToCitiesOfRoadCharacter = [](const m2::FastCharacter& chr) -> std::set<m2g::pb::CardType> {
 	if (not IsRoadCharacter(chr)) {
 		throw M2_ERROR("Character doesn't belong to canal or railroad");
 	}

@@ -7,7 +7,7 @@
 #include <Network.pb.h>
 #include <list>
 
-m2::void_expected CanPlayerAttemptToDevelop(m2::Character& player);
+m2::void_expected CanPlayerAttemptToDevelop(m2::FastCharacter& player);
 
 enum class DevelopJourneyStep {
 	INITIAL_STEP = 0,
@@ -40,7 +40,7 @@ protected:
 };
 
 // For the server
-m2::void_expected CanPlayerDevelop(m2::Character& player, const m2g::pb::TurnBasedClientCommand_DevelopAction& develop_action);
+m2::void_expected CanPlayerDevelop(m2::FastCharacter& player, const m2g::pb::TurnBasedClientCommand_DevelopAction& develop_action);
 
 // For the server
-std::pair<m2g::pb::CardType,int> ExecuteDevelopAction(m2::Character& player, const m2g::pb::TurnBasedClientCommand_DevelopAction& develop_action);
+std::pair<m2g::pb::CardType,int> ExecuteDevelopAction(m2::FastCharacter& player, const m2g::pb::TurnBasedClientCommand_DevelopAction& develop_action);

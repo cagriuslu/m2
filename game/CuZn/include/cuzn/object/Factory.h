@@ -12,18 +12,18 @@ void RemoveObsoleteFactories();
 void FlipExhaustedFactories();
 
 // Modifiers
-void SellFactory(m2::Character& factory_chr);
+void SellFactory(m2::FastCharacter& factory_chr);
 
 // Filters
-inline bool IsFactoryCharacter(const m2::Character& chr) { return chr.GetOwner().GetType() == m2g::pb::FACTORY; }
-bool IsFactorySold(m2::Character& chr);
-inline bool IsFactoryNotSold(m2::Character& chr) { return not IsFactorySold(chr); }
-bool IsFactoryLevel1(m2::Character& chr);
+bool IsFactoryCharacter(const m2::FastCharacter& chr);
+bool IsFactorySold(m2::FastCharacter& chr);
+inline bool IsFactoryNotSold(m2::FastCharacter& chr) { return not IsFactorySold(chr); }
+bool IsFactoryLevel1(m2::FastCharacter& chr);
 
 // Transformers
-City ToCityOfFactoryCharacter(m2::Character& chr);
-Industry ToIndustryOfFactoryCharacter(const m2::Character& chr);
-IndustryTile ToIndustryTileOfFactoryCharacter(const m2::Character& chr);
-IndustryLocation ToIndustryLocationOfFactoryCharacter(m2::Character& chr);
+City ToCityOfFactoryCharacter(m2::FastCharacter& chr);
+Industry ToIndustryOfFactoryCharacter(const m2::FastCharacter& chr);
+IndustryTile ToIndustryTileOfFactoryCharacter(const m2::FastCharacter& chr);
+IndustryLocation ToIndustryLocationOfFactoryCharacter(m2::FastCharacter& chr);
 
 m2::void_expected InitFactory(m2::Object&, const m2::VecF& position, City, IndustryTile);

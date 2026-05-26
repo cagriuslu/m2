@@ -16,7 +16,7 @@ bool is_there_iron_on_the_board() {
 	// Iterate over factories
 	auto there_is_iron_works_with_iron = std::ranges::any_of(
 		GetCharacterPool() | std::views::filter(IsFactoryCharacter),
-		[](m2::Character& chr) {
+		[](m2::FastCharacter& chr) {
 			return 0 < chr.GetVariable(m2g::pb::IRON_CUBE_COUNT).GetIntOrZero();
 		});
 	// Check the market as well

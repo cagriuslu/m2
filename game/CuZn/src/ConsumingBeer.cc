@@ -4,14 +4,14 @@
 #include <cuzn/detail/Network.h>
 #include <cuzn/object/Merchant.h>
 
-std::set<Location> find_breweries_with_beer(m2::Character& player, City city, std::optional<MerchantLocation> selling_to, City city_2) {
+std::set<Location> find_breweries_with_beer(m2::FastCharacter& player, City city, std::optional<MerchantLocation> selling_to, City city_2) {
 	std::set<Location> locations;
 
 	// Look-up player's own breweries with beer
 	auto player_breweries_with_beer = GetCharacterPool()
-		| std::views::filter(m2::IsComponentOfAnyDescendant(player.GetOwnerId()))
+		| std::views::filter([&](const auto& chr) { return m2::IsDescendantOf(chr.GetOwnerId(), player.GetOwnerId()); })
 		| std::views::filter(IsFactoryCharacter)
-		| std::views::filter([](m2::Character& chr) { return static_cast<bool>(chr.GetVariable(m2g::pb::BEER_BARREL_COUNT)); })
+		| std::views::filter([](m2::FastCharacter& chr) { return static_cast<bool>(chr.GetVariable(m2g::pb::BEER_BARREL_COUNT)); })
 		| std::views::transform(ToIndustryLocationOfFactoryCharacter);
 	locations.insert(player_breweries_with_beer.begin(), player_breweries_with_beer.end());
 
@@ -25,8 +25,8 @@ std::set<Location> find_breweries_with_beer(m2::Character& player, City city, st
 		| std::views::filter(is_industry_location)
 		| std::views::filter(FindFactoryAtLocation)
 		| std::views::transform(FindFactoryAtLocation)
-		| std::views::transform(m2::UnsafeObjectToCharacter)
-		| std::views::filter([](m2::Character& chr) { return static_cast<bool>(chr.GetVariable(m2g::pb::BEER_BARREL_COUNT)); })
+		| std::views::transform([](auto* obj) -> m2::FastCharacter& { return GetCharacter(obj->GetCharacterId()); })
+		| std::views::filter([](m2::FastCharacter& chr) { return static_cast<bool>(chr.GetVariable(m2g::pb::BEER_BARREL_COUNT)); })
 		| std::views::transform(ToIndustryLocationOfFactoryCharacter);
 	locations.insert(reachable_breweries_with_beer.begin(), reachable_breweries_with_beer.end());
 
@@ -34,7 +34,7 @@ std::set<Location> find_breweries_with_beer(m2::Character& player, City city, st
 	if (selling_to) {
 		// Check if merchant is active, has beer, and is connected
 		if (auto merchant = find_merchant_at_location(*selling_to);
-			merchant && merchant->GetCharacter().GetVariable(m2g::pb::BEER_BARREL_COUNT)
+			merchant && GetCharacter(merchant->GetCharacterId()).GetVariable(m2g::pb::BEER_BARREL_COUNT)
 			&& IsIndustryCityConnectedToLocation(city, *selling_to)) {
 			locations.insert(*selling_to);
 		}

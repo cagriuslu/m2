@@ -4,7 +4,7 @@
 #include <m2/ObjectEx.h>
 
 void InitGameStateTracker(m2::Object& obj) {
-	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::FastCharacterStorageIndex>(obj);
+	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::FastCharacterStorageIndex>(obj, obj.GetId());
 	// Hold the resources belonging to the market
 	chr.UnsafeSetVariable(m2g::pb::COAL_CUBE_COUNT, m2::VariableValue{COAL_MARKET_INITIAL_COUNT});
 	chr.UnsafeSetVariable(m2g::pb::IRON_CUBE_COUNT, m2::VariableValue{IRON_MARKET_INITIAL_COUNT});

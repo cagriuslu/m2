@@ -1,8 +1,8 @@
 #pragma once
 
 #include <m2/component/Graphic.h>
-#include <m2/component/Character.h>
+#include <m2/component/character/FastCharacter.h>
 
 // Draws resources to the bottom-right corner of the Factory.
 // Only one type of resource is drawn. If the Factory contains more than one type resource, exception is thrown.
-void DrawResources(m2::Character& chr);
+void DrawResources(m2::FastCharacter& chr);

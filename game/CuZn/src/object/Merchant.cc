@@ -3,14 +3,17 @@
 #include <m2/ObjectEx.h>
 #include <m2/Game.h>
 
-bool can_merchant_buy_sellable_industry(m2::Character& chr, SellableIndustry ind) {
+bool is_merchant_character(m2::FastCharacter& chr) {
+	return M2_LEVEL.objects[chr.GetOwnerId()].GetType() == m2g::pb::MERCHANT;
+}
+bool can_merchant_buy_sellable_industry(m2::FastCharacter& chr, SellableIndustry ind) {
 	return chr.HasCard(m2g::pb::WILD_MERCHANT_LICENSE) || chr.HasCard(merchant_license_type_of_sellable_industry(ind));
 }
 
 m2::Object* find_merchant_at_location(m2g::pb::SpriteType location) {
 	auto merchants = GetCharacterPool()
 		| std::views::filter(is_merchant_character)
-		| std::views::transform(m2::ToOwnerOfCharacter)
+		| std::views::transform([](auto& chr) -> m2::Object& { return M2_LEVEL.objects[chr.GetOwnerId()]; })
 		| std::views::filter(m2::IsObjectInArea(std::get<m2::RectF>( M2G_PROXY.merchant_positions[location])));
 	if (auto merchant_it = merchants.begin(); merchant_it != merchants.end()) {
 		return &*merchant_it;
@@ -19,7 +22,7 @@ m2::Object* find_merchant_at_location(m2g::pb::SpriteType location) {
 }
 
 void init_merchant(m2::Object& obj, const m2::VecF& position) {
-	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::FastCharacterStorageIndex>(obj);
+	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::FastCharacterStorageIndex>(obj, obj.GetId());
 	// Active merchants will be given a merchant license during setup. (CARD_CATEGORY_MERCHANT_LICENSE)
 	// Passive merchants will simply exist without a license.
 

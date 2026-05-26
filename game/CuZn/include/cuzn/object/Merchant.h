@@ -4,8 +4,8 @@
 #include <cuzn/Detail.h>
 
 // Filters
-constexpr auto is_merchant_character = [](m2::Character& chr) { return chr.GetOwner().GetType() == m2g::pb::MERCHANT; };
-bool can_merchant_buy_sellable_industry(m2::Character& chr, SellableIndustry ind);
+bool is_merchant_character(m2::FastCharacter& chr);
+bool can_merchant_buy_sellable_industry(m2::FastCharacter& chr, SellableIndustry ind);
 
 // Accessors
 m2::Object* find_merchant_at_location(m2g::pb::SpriteType location);

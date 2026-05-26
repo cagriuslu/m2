@@ -13,7 +13,7 @@ using namespace m2::widget;
 using namespace m2g;
 using namespace m2g::pb;
 
-m2::void_expected CanPlayerAttemptToLoan(m2::Character& player) {
+m2::void_expected CanPlayerAttemptToLoan(m2::FastCharacter& player) {
 	if (PlayerCardCount(player) < 1) {
 		return m2::make_unexpected("Loan action requires a card");
 	}
@@ -43,7 +43,7 @@ void ExecuteLoanJourney() {
 	LOG_INFO("Loan action cancelled");
 }
 
-m2::void_expected CanPlayerLoan(m2::Character& player, const m2g::pb::TurnBasedClientCommand_LoanAction& loan_action) {
+m2::void_expected CanPlayerLoan(m2::FastCharacter& player, const m2g::pb::TurnBasedClientCommand_LoanAction& loan_action) {
 	// Check if prerequisites are met
 	if (auto prerequisite = CanPlayerAttemptToLoan(player); not prerequisite) {
 		return m2::make_unexpected(prerequisite.error());
@@ -57,7 +57,7 @@ m2::void_expected CanPlayerLoan(m2::Character& player, const m2g::pb::TurnBasedC
 	return {};
 }
 
-m2g::pb::CardType ExecuteLoanAction(m2::Character& player, const TurnBasedClientCommand_LoanAction& loan_action) {
+m2g::pb::CardType ExecuteLoanAction(m2::FastCharacter& player, const TurnBasedClientCommand_LoanAction& loan_action) {
 	const auto currIncomePoints = PlayerIncomePoints(player);
 	const auto currIncomeLevel = IncomeLevelFromIncomePoints(currIncomePoints);
 	const auto newIncomeLevel = ClampIncomeLevel(currIncomeLevel - 3);

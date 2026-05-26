@@ -8,7 +8,7 @@
 #include <cuzn/journeys/subjourneys/POISelectionJourney.h>
 #include <Network.pb.h>
 
-m2::void_expected CanPlayerAttemptToBuild(const m2::Character& player);
+m2::void_expected CanPlayerAttemptToBuild(const m2::FastCharacter& player);
 
 enum class BuildJourneyStep {
 	INITIAL_STEP = 0,
@@ -47,7 +47,7 @@ protected:
 };
 
 // For the server
-m2::void_expected CanPlayerBuild(m2::Character& player, const m2g::pb::TurnBasedClientCommand_BuildAction& build_action);
+m2::void_expected CanPlayerBuild(m2::FastCharacter& player, const m2g::pb::TurnBasedClientCommand_BuildAction& build_action);
 
 // For the server
-std::pair<m2g::pb::CardType,int> ExecuteBuildAction(m2::Character& player, const m2g::pb::TurnBasedClientCommand_BuildAction& build_action);
+std::pair<m2g::pb::CardType,int> ExecuteBuildAction(m2::FastCharacter& player, const m2g::pb::TurnBasedClientCommand_BuildAction& build_action);

@@ -78,7 +78,7 @@ UiPanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::CardType
 					.onAction = [exclude_tile](const TextSelection &self) -> UiAction {
 						if (const auto industry_type_selections = self.GetSelectedOptions(); not industry_type_selections.empty()) {
 							const auto industry_type = static_cast<m2g::pb::CardCategory>(I(industry_type_selections[0]));
-							auto industry_tiles = dynamic_cast<const m2::FastCharacter&>(M2_PLAYER.GetCharacter()).GetCardTypes(industry_type);
+							auto industry_tiles = dynamic_cast<const m2::FastCharacter&>(GetCharacter(M2_PLAYER.GetCharacterId())).GetCardTypes(industry_type);
 							if (const auto it = std::ranges::find(industry_tiles, exclude_tile); it != industry_tiles.end()) {
 								industry_tiles.erase(it);
 							}

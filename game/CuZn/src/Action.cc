@@ -13,7 +13,7 @@
 #include <m2/Log.h>
 #include <m2/Game.h>
 
-m2::void_expected HandleActionWhileLiquidating(m2::Character& turnHolderCharacter, const m2g::pb::TurnBasedClientCommand& clientCommand) {
+m2::void_expected HandleActionWhileLiquidating(m2::FastCharacter& turnHolderCharacter, const m2g::pb::TurnBasedClientCommand& clientCommand) {
 	if (not clientCommand.has_liquidate_action()) {
 		return m2::make_unexpected("Received unexpected command during liquidation");
 	}
@@ -30,7 +30,7 @@ m2::void_expected HandleActionWhileLiquidating(m2::Character& turnHolderCharacte
 	}
 }
 
-m2::expected<int> HandleActionWhileNotLiquidating(m2::Character& turnHolderCharacter, const m2g::pb::TurnBasedClientCommand& clientCommand, m2g::pb::TurnBasedServerCommand::ActionNotification& actionNotification) {
+m2::expected<int> HandleActionWhileNotLiquidating(m2::FastCharacter& turnHolderCharacter, const m2g::pb::TurnBasedClientCommand& clientCommand, m2g::pb::TurnBasedServerCommand::ActionNotification& actionNotification) {
 	if (clientCommand.has_liquidate_action()) {
 		return m2::make_unexpected("Received unexpected liquidation command");
 	}
@@ -66,7 +66,7 @@ m2::expected<int> HandleActionWhileNotLiquidating(m2::Character& turnHolderChara
 			return m2::make_unexpected(sellValidation.error());
 		}
 		actionNotification.set_notification(GenerateSellNotification(
-				ToIndustryOfFactoryCharacter(FindFactoryAtLocation(clientCommand.sell_action().industry_location())->GetCharacter()),
+				ToIndustryOfFactoryCharacter(GetCharacter(FindFactoryAtLocation(clientCommand.sell_action().industry_location())->GetCharacterId())),
 				city_of_location(clientCommand.sell_action().industry_location())));
 		LOG_INFO("Executing sell action");
 		cardToDiscardAndMoneySpent.first = ExecuteSellAction(turnHolderCharacter, clientCommand.sell_action());

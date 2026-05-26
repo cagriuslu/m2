@@ -23,6 +23,7 @@ using POI = m2g::pb::SpriteType; // Location or Connection
 // Characters
 
 m2::Pool<m2::FastCharacter>& GetCharacterPool();
+m2::FastCharacter& GetCharacter(m2::CharacterId chrId);
 
 // Assertions
 

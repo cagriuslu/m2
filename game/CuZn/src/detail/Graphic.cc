@@ -3,7 +3,7 @@
 #include <m2/Object.h>
 #include <m2/Game.h>
 
-void DrawResources(m2::Character& chr) {
+void DrawResources(m2::FastCharacter& chr) {
 	auto coal_count = chr.GetVariable(m2g::pb::COAL_CUBE_COUNT).GetIntOrZero();
 	auto iron_count = chr.GetVariable(m2g::pb::IRON_CUBE_COUNT).GetIntOrZero();
 	auto beer_count = chr.GetVariable(m2g::pb::BEER_BARREL_COUNT).GetIntOrZero();
@@ -17,7 +17,7 @@ void DrawResources(m2::Character& chr) {
 		throw M2_ERROR("Factory holds more than one type of resources");
 	}
 
-	const auto& pos = chr.GetOwner().InferPositionF();
+	const auto& pos = M2_LEVEL.objects[chr.GetOwnerId()].InferPositionF();
 	auto count = coal_count + iron_count + beer_count;
 	auto count_sprite_type = static_cast<m2g::pb::SpriteType>(m2g::pb::TEXT_LABEL_1X - 1 + count);
 	auto sprite_type = (coal_count ? m2g::pb::COAL_CUBE : (iron_count ? m2g::pb::IRON_CUBE : m2g::pb::BEER_BARREL));

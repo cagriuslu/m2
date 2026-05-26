@@ -132,7 +132,7 @@ UiPanelBlueprint generate_custom_hud_blueprint() {
 				}
 			});
 
-			auto& chr = M2_LEVEL.objects[M2_LEVEL.multiPlayerObjectIds[playerIndexOfOrder]].GetCharacter();
+			auto& chr = GetCharacter(M2_LEVEL.objects[M2_LEVEL.multiPlayerObjectIds[playerIndexOfOrder]].GetCharacterId());
 			// Victory points
 			bp.widgets.emplace_back(UiWidgetBlueprint{
 				.x = x, .y = 1, .w = 1, .h = 1,

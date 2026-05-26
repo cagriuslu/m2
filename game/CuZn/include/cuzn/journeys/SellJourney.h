@@ -5,7 +5,7 @@
 #include "Common.h"
 #include <Network.pb.h>
 
-m2::void_expected CanPlayerAttemptToSell(m2::Character& player);
+m2::void_expected CanPlayerAttemptToSell(m2::FastCharacter& player);
 
 enum class SellJourneyStep {
 	INITIAL_STEP = 0,
@@ -48,6 +48,6 @@ private:
 	[[nodiscard]] Industry selected_industry() const;
 };
 
-m2::void_expected CanPlayerSell(m2::Character& player, const m2g::pb::TurnBasedClientCommand_SellAction& sell_action);
+m2::void_expected CanPlayerSell(m2::FastCharacter& player, const m2g::pb::TurnBasedClientCommand_SellAction& sell_action);
 
-m2g::pb::CardType ExecuteSellAction(m2::Character& player, const m2g::pb::TurnBasedClientCommand_SellAction& sell_action);
+m2g::pb::CardType ExecuteSellAction(m2::FastCharacter& player, const m2g::pb::TurnBasedClientCommand_SellAction& sell_action);

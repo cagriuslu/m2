@@ -97,7 +97,7 @@ void m2g::Proxy::turnBasedServerPopulate(MAYBE const std::string& name, MAYBE co
 			if (license != pb::NO_MERCHANT_LICENSE) {
 				// Retrieve merchant object
 				auto merchant_object_id = merchant_object_ids[possibly_active_merchant_loc];
-				auto& merchant_char = M2_LEVEL.objects[merchant_object_id].GetCharacter();
+				auto& merchant_char = GetCharacter(M2_LEVEL.objects[merchant_object_id].GetCharacterId());
 				LOG_DEBUG("Adding license to merchant", m2g::pb::CardType_Name(license));
 				merchant_char.UnsafeAddCard(license);
 				merchant_char.UnsafeSetVariable(pb::BEER_BARREL_COUNT, VariableValue{merchant_char.GetVariable(pb::BEER_BARREL_COUNT).GetIntOrZero() + 1});
@@ -136,7 +136,7 @@ void m2g::Proxy::turnBasedServerPopulate(MAYBE const std::string& name, MAYBE co
 std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYBE const m2g::pb::TurnBasedClientCommand& client_command) {
 	LOG_INFO("Received command from client", turn_holder_index);
 	auto turn_holder_object_id = M2_LEVEL.multiPlayerObjectIds[turn_holder_index];
-	auto& turn_holder_character = M2_LEVEL.objects[turn_holder_object_id].GetCharacter();
+	auto& turn_holder_character = GetCharacter(M2_LEVEL.objects[turn_holder_object_id].GetCharacterId());
 
 	if (_is_liquidating) {
 		if (auto liquidationSuccessful = HandleActionWhileLiquidating(turn_holder_character, client_command); not liquidationSuccessful) {
@@ -499,14 +499,15 @@ unsigned m2g::Proxy::player_index(m2::Id id) const {
 	}
 }
 
-m2::Character& m2g::Proxy::game_state_tracker() const {
-	return M2_LEVEL.objects[_game_state_tracker_id].GetCharacter();
+m2::FastCharacter& m2g::Proxy::game_state_tracker() const {
+	return GetCharacter(M2_LEVEL.objects[_game_state_tracker_id].GetCharacterId());
 }
 int m2g::Proxy::total_card_count() const {
 	const auto player_card_lists = M2_LEVEL.multiPlayerObjectIds
 		| std::views::transform(m2::ObjectIdToObject)
-		| std::views::transform(m2::ObjectToCharacter)
-		| std::views::transform([](m2::Character& chr) {
+		| std::views::transform(&m2::Object::GetCharacterId)
+		| std::views::transform(&GetCharacter)
+		| std::views::transform([](m2::FastCharacter& chr) {
 			return I(chr.CountCards(pb::CARD_CATEGORY_CITY_CARD) + chr.CountCards(pb::CARD_CATEGORY_INDUSTRY_CARD) + chr.CountCards(pb::CARD_CATEGORY_WILD_CARD));
 		});
 	const auto card_count = std::accumulate(player_card_lists.begin(), player_card_lists.end(), 0);
@@ -617,7 +618,7 @@ std::optional<std::pair<m2g::Proxy::PlayerIndex, m2g::pb::TurnBasedServerCommand
 	// Gain incomes
 	for (const auto playerId : M2_LEVEL.multiPlayerObjectIds) {
 		// Lookup player
-		auto& player_character = M2_LEVEL.objects[playerId].GetCharacter();
+		auto& player_character = GetCharacter(M2_LEVEL.objects[playerId].GetCharacterId());
 		const auto incomePoints = player_character.GetVariable(pb::INCOME_POINTS).GetIntOrZero();
 		const auto incomeLevel = IncomeLevelFromIncomePoints(incomePoints);
 		const auto playerMoney = player_character.GetVariable(pb::MONEY).GetIntOrZero();
@@ -672,8 +673,9 @@ m2g::Proxy::LiquidationDetails m2g::Proxy::prepare_railroad_era() {
 	pb::TurnBasedServerCommand canal_era_result_command;
 	std::ranges::for_each(M2_LEVEL.multiPlayerObjectIds
 		| std::views::transform(m2::ObjectIdToObject)
-		| std::views::transform(m2::ObjectToCharacter),
-		[&](const m2::Character& human_player) {
+		| std::views::transform(&m2::Object::GetCharacterId)
+		| std::views::transform(&GetCharacter),
+		[&](const m2::FastCharacter& human_player) {
 			canal_era_result_command.mutable_canal_era_result()->add_victory_points(
 				human_player.GetVariable(pb::VICTORY_POINTS).GetIntOrZero());
 		});
@@ -682,7 +684,7 @@ m2g::Proxy::LiquidationDetails m2g::Proxy::prepare_railroad_era() {
 
 	// Reset merchant beer
 	for (const auto& merchantObjId: merchant_object_ids | std::views::values) {
-		auto& merchantChr = M2_LEVEL.objects[merchantObjId].GetCharacter();
+		auto& merchantChr = GetCharacter(M2_LEVEL.objects[merchantObjId].GetCharacterId());
 		if (merchantChr.HasCard(pb::CARD_CATEGORY_MERCHANT_LICENSE)) {
 			merchantChr.UnsafeSetVariable(pb::BEER_BARREL_COUNT, VariableValue{1});
 		}
@@ -699,8 +701,9 @@ m2g::Proxy::LiquidationDetails m2g::Proxy::prepare_railroad_era() {
 	auto road_possession_limit = Z(road_card.GetConstant(pb::POSSESSION_LIMIT).GetIntOrZero());
 	std::ranges::for_each(M2_LEVEL.multiPlayerObjectIds
 		| std::views::transform(m2::ObjectIdToObject)
-		| std::views::transform(m2::ObjectToCharacter),
-		[&](m2::Character& human_player) {
+		| std::views::transform(&m2::Object::GetCharacterId)
+		| std::views::transform(&GetCharacter),
+		[&](m2::FastCharacter& human_player) {
 			while (human_player.CountCards(pb::ROAD_TILE) < road_possession_limit) {
 				human_player.UnsafeAddCard(pb::ROAD_TILE);
 			}

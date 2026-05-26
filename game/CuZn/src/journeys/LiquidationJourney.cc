@@ -30,7 +30,7 @@ namespace {
 	int sell_return_of_factories(const std::vector<IndustryLocation>& locations) {
 		auto half_costs = locations
 			| std::views::transform(FindFactoryAtLocation)
-			| std::views::transform(m2::UnsafeObjectToCharacter)
+			| std::views::transform([](auto* obj) -> m2::FastCharacter& { return GetCharacter(obj->GetCharacterId()); })
 			| std::views::transform(LiquidationReturnOfFactoryCharacter);
 		return std::accumulate(half_costs.begin(), half_costs.end(), 0);
 	}
@@ -38,7 +38,7 @@ namespace {
 
 std::optional<LiquidationJourneyStep> LiquidationJourney::HandleLocationEnterSignal() {
 	if (sell_return_of_factories(_selected_locations) < _money_to_be_paid) {
-		auto player_factories = PlayerBuiltFactoryLocations(M2_PLAYER.GetCharacter());
+		auto player_factories = PlayerBuiltFactoryLocations(GetCharacter(M2_PLAYER.GetCharacterId()));
 		std::set<IndustryLocation> liquidateable_factories;
 		// Remove selected locations from player's factories
 		std::set_difference(player_factories.begin(), player_factories.end(),

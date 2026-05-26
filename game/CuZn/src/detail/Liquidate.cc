@@ -5,7 +5,7 @@
 #include <cuzn/object/HumanPlayer.h>
 #include <m2/Log.h>
 
-int LiquidationReturnOfFactoryCharacter(m2::Character& chr) {
+int LiquidationReturnOfFactoryCharacter(m2::FastCharacter& chr) {
 	auto industry_tile_type = ToIndustryTileOfFactoryCharacter(chr);
 	const auto& industry_tile_card = M2_GAME.GetCard(industry_tile_type);
 	auto money_cost_i = industry_tile_card.GetConstant(m2g::pb::MONEY_COST).GetIntOrZero();
@@ -13,7 +13,7 @@ int LiquidationReturnOfFactoryCharacter(m2::Character& chr) {
 	return rounded_down_half_cost;
 }
 
-int IsLiquidationNecessaryForPlayer(m2::Character& player_character) {
+int IsLiquidationNecessaryForPlayer(m2::FastCharacter& player_character) {
 	const auto income_points = player_character.GetVariable(m2g::pb::INCOME_POINTS).GetIntOrZero();
 	const auto income_level = IncomeLevelFromIncomePoints(income_points);
 	const auto player_money = player_character.GetVariable(m2g::pb::MONEY).GetIntOrZero();
@@ -27,7 +27,7 @@ int IsLiquidationNecessaryForPlayer(m2::Character& player_character) {
 std::optional<std::pair<m2g::Proxy::PlayerIndex, int>> IsLiquidationNecessary() {
 	for (int i = 0; i < m2::I(M2_LEVEL.multiPlayerObjectIds.size()); ++i) {
 		auto playerId = M2_LEVEL.multiPlayerObjectIds[i];
-		auto& player_character = M2_LEVEL.objects[playerId].GetCharacter();
+		auto& player_character = GetCharacter(M2_LEVEL.objects[playerId].GetCharacterId());
 		auto liquidation_amount = IsLiquidationNecessaryForPlayer(player_character);
 		if (0 < liquidation_amount) {
 			return std::make_pair(i, liquidation_amount);
@@ -49,7 +49,7 @@ namespace {
 	};
 }
 
-m2::expected<std::pair<std::vector<m2::Object*>, int>> CanPlayerLiquidateFactories(m2::Character& player, const m2g::pb::TurnBasedClientCommand_LiquidateAction& liquidate_action) {
+m2::expected<std::pair<std::vector<m2::Object*>, int>> CanPlayerLiquidateFactories(m2::FastCharacter& player, const m2g::pb::TurnBasedClientCommand_LiquidateAction& liquidate_action) {
 	LOG_DEBUG("Validating liquidate command");
 
 	// Check if the player needed a liquidation in the first place
@@ -71,9 +71,9 @@ m2::expected<std::pair<std::vector<m2::Object*>, int>> CanPlayerLiquidateFactori
 		// Search for a factory in the given location
 		if (auto* factory = FindFactoryAtLocation(location)) {
 			// Check if the factory belongs to the player
-			if (factory->GetParentId() == player.GetOwner().GetId()) {
+			if (factory->GetParentId() == M2_LEVEL.objects[player.GetOwnerId()].GetId()) {
 				factoryObjects.emplace_back(factory);
-				const auto liquidation_return = LiquidationReturnOfFactoryCharacter(factory->GetCharacter());
+				const auto liquidation_return = LiquidationReturnOfFactoryCharacter(GetCharacter(factory->GetCharacterId()));
 				ordered_location_and_liquidation_return_pairs.emplace(LocationAndLiquidationReturnPair{location, liquidation_return});
 			} else {
 				return m2::make_unexpected("Factory does not belong to the liquidating player: " + m2g::pb::SpriteType_Name(location));
