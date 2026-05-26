@@ -5,6 +5,8 @@
 #include <Network.pb.h>
 
 namespace m2 {
+	class Level;
+
 	class CharacterStorage {
 		template <typename Tuple>
 		struct WrapElements;
@@ -92,7 +94,6 @@ namespace m2 {
 		[[nodiscard]] ShiftedPoolId GetBaseShiftedPoolId() const { return std::get<0>(_storageTuple)->GetShiftedPoolId(); }
 		[[nodiscard]] PoolId GetBasePoolId() const { return GetBaseShiftedPoolId() >> gPoolIdShiftCount; }
 
-		template <std::size_t CharacterVariantIndex, typename... Args>
-		friend auto& AddCharacterToObject(Object&, Args&&... args);
+		friend class Level;
 	};
 }

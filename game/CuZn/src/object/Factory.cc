@@ -3,7 +3,6 @@
 #include <cuzn/detail/Graphic.h>
 #include <cuzn/detail/Income.h>
 #include <m2g_CardType.pb.h>
-#include <m2/ObjectEx.h>
 #include <m2/Log.h>
 
 using namespace m2g;
@@ -135,7 +134,7 @@ m2::void_expected InitFactory(m2::Object& obj, const m2::VecF& position, City ci
 	auto industry = industry_of_industry_tile(industry_tile);
 
 	// Add all available information to the factories: industry, city, industry tile
-	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::FastCharacterStorageIndex>(obj, obj.GetId());
+	auto& chr = M2_LEVEL.AddCharacterToObject<m2g::ProxyEx::FastCharacterStorageIndex>(obj, obj.GetId());
 	chr.UnsafeAddCard(industry);
 	chr.UnsafeAddCard(city);
 	chr.UnsafeAddCard(industry_tile);

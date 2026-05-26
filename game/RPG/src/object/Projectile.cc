@@ -1,4 +1,3 @@
-#include <m2/ObjectEx.h>
 #include <rpg/object/Projectile.h>
 #include <m2/Object.h>
 #include <rpg/Physics.h>
@@ -89,7 +88,7 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& positi
 	gfx.z = 0.5f;
 
 	// Add character
-	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::CompactCharacterStorageIndex>(obj, obj.GetId());
+	auto& chr = M2_LEVEL.AddCharacterToObject<m2g::ProxyEx::CompactCharacterStorageIndex>(obj, obj.GetId());
 	chr.UnsafeSetVariable(RESOURCE_TTL, ttl);
 
 	phy.onCollision = [=, &chr](m2::Physique& phy, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {

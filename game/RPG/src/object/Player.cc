@@ -1,5 +1,4 @@
 #include <rpg/object/Player.h>
-#include <m2/ObjectEx.h>
 #include <m2/Object.h>
 #include "m2/Log.h"
 #include "m2/Game.h"
@@ -106,7 +105,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 	auto& gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, main_sprite_type, position);
 	gfx.position = position;
 
-	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::PlayerCharacterStorageIndex>(obj, obj.GetId());
+	auto& chr = M2_LEVEL.AddCharacterToObject<m2g::ProxyEx::PlayerCharacterStorageIndex>(obj, obj.GetId());
 	if (M2_LEVEL.GetLevelIdentifier() != "MeleeTutorialClosed") {
 		// 4th level is melee tutorial
 		chr.UnsafeAddCard(CARD_REUSABLE_GUN);

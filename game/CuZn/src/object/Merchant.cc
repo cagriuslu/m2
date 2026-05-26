@@ -1,6 +1,5 @@
 #include <cuzn/object/Merchant.h>
 #include <cuzn/detail/Graphic.h>
-#include <m2/ObjectEx.h>
 #include <m2/Game.h>
 
 bool is_merchant_character(m2::FastCharacter& chr) {
@@ -22,7 +21,7 @@ m2::Object* find_merchant_at_location(m2g::pb::SpriteType location) {
 }
 
 void init_merchant(m2::Object& obj, const m2::VecF& position) {
-	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::FastCharacterStorageIndex>(obj, obj.GetId());
+	auto& chr = M2_LEVEL.AddCharacterToObject<m2g::ProxyEx::FastCharacterStorageIndex>(obj, obj.GetId());
 	// Active merchants will be given a merchant license during setup. (CARD_CATEGORY_MERCHANT_LICENSE)
 	// Passive merchants will simply exist without a license.
 

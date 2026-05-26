@@ -2,7 +2,6 @@
 #include <m2/Game.h>
 #include "m2/Log.h"
 #include <cuzn/object/Factory.h>
-#include <m2/ObjectEx.h>
 #include <numeric>
 
 namespace {
@@ -74,7 +73,7 @@ m2::void_expected InitRoad(m2::Object& obj, const m2::VecF& position, const Conn
 	}
 
 	// Add the city cards to the character
-	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::FastCharacterStorageIndex>(obj, obj.GetId());
+	auto& chr = M2_LEVEL.AddCharacterToObject<m2g::ProxyEx::FastCharacterStorageIndex>(obj, obj.GetId());
 	for (const auto city : cities_from_connection(connection)) {
 		chr.UnsafeAddCard(city);
 	}

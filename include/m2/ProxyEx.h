@@ -4,8 +4,7 @@
 #include <tuple>
 
 namespace m2 {
-	/// Due to circular dependencies, Proxy cannot refer to every type. This class is included much later, thus can
-	/// include way more types.
+	/// This class is separated from ProxyEx to resolve circular dependencies.
 	class ProxyEx {
 	public:
 		/// Describes different kinds of characters to the game engine. Based on this description, the game engine will

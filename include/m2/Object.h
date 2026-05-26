@@ -7,7 +7,6 @@
 #include "component/Light.h"
 #include "component/Physique.h"
 #include "component/SoundEmitter.h"
-#include "m2/game/Fsm.h"
 #include "m2/math/VecF.h"
 #include "ObjectId.h"
 #include <M2.pb.h>
@@ -15,6 +14,8 @@
 #include <memory>
 
 namespace m2 {
+	class Level;
+
 	/// Basis of all objects in the game.
 	/// How to decide if a component should reside in Pool or impl?
 	/// If the component is iterated by the Main Game Loop => Pool
@@ -100,9 +101,7 @@ namespace m2 {
 		SoundEmitterId _sound_emitter_id{};
 		CharacterId _character_id{};
 
-		/// Give friendship to AddCharacterToObject so that it can add a character to the Object
-		template <std::size_t CharacterVariantIndex, typename... Args>
-		friend auto& AddCharacterToObject(Object&, Args&&... args);
+		friend class Level;
 	};
 
 	Pool<Object>::Iterator CreateObject(m2g::pb::ObjectType type = {}, ObjectId parent_id = 0);

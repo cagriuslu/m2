@@ -1,6 +1,5 @@
 #include "rpg/object/Blade.h"
 #include <m2/math/VecF.h>
-#include <m2/ObjectEx.h>
 #include <m2/Object.h>
 #include "m2/Game.h"
 #include <rpg/Objects.h>
@@ -62,7 +61,7 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF& position, c
 	gfx.z = 0.5f;
 
 	// Add character
-	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::BladeCharacterStorageIndex>(obj, obj.GetId());
+	auto& chr = M2_LEVEL.AddCharacterToObject<m2g::ProxyEx::BladeCharacterStorageIndex>(obj, obj.GetId());
 	chr.UnsafeSetVariable(RESOURCE_TTL, average_ttl);
 
 	phy.onCollision = [average_damage, damage_accuracy](MAYBE m2::Physique& phy, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {

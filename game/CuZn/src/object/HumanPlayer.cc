@@ -10,7 +10,6 @@
 #include <cuzn/Detail.h>
 #include <ranges>
 #include <numeric>
-#include <m2/ObjectEx.h>
 #include <cuzn/ConsumingCoal.h>
 #include <cuzn/ConsumingIron.h>
 
@@ -25,7 +24,7 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj, const m2::VecF& positi
 
 	obj.impl = std::make_unique<HumanPlayer>(obj);
 
-	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::FastCharacterStorageIndex>(obj, obj.GetId());
+	auto& chr = M2_LEVEL.AddCharacterToObject<m2g::ProxyEx::FastCharacterStorageIndex>(obj, obj.GetId());
 	chr.UnsafeSetVariable(m2g::pb::MONEY, m2::VariableValue{17});
 	chr.UnsafeSetVariable(m2g::pb::INCOME_POINTS, m2::VariableValue{0});
 
@@ -173,7 +172,7 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj, const m2::VecF& positi
 m2::void_expected PlayerInitOtherInstance(m2::Object& obj) {
 	DEBUG_FN();
 
-	auto& chr = m2::AddCharacterToObject<m2g::ProxyEx::FastCharacterStorageIndex>(obj, obj.GetId());
+	auto& chr = M2_LEVEL.AddCharacterToObject<m2g::ProxyEx::FastCharacterStorageIndex>(obj, obj.GetId());
 
 	// TODO check if the following is really necessary. If the TurnBasedServerUpdate is verified, it's necessary.
 	// TODO Otherwise, we don't need to fill the character with cards and resources.

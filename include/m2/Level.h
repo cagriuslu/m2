@@ -155,6 +155,12 @@ namespace m2 {
 
 		const CharacterStorage& GetCharacterStorage() const { return _characterStorage; }
 		CharacterStorage& GetCharacterStorage() { return _characterStorage; }
+		template <std::size_t CharacterVariantIndex, typename... Args>
+		auto& AddCharacterToObject(Object& obj, Args&&... args) {
+			auto it = std::get<CharacterVariantIndex>(_characterStorage._storageTuple)->Emplace(std::forward<Args>(args)...);
+			obj._character_id = it.GetId();
+			return *it;
+		}
 
 		// Persistence
 
