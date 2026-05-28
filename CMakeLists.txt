@@ -303,12 +303,14 @@ if(GTest_FOUND)
             "src/math/primitives/Exact.cc"
             "src/math/primitives/Float.cc"
             "src/protobuf/Detail.cc"
+            "src/thirdparty/compression/Inflate.cc"
+            "src/thirdparty/protobuf/Json.cc"
     )
-    add_executable(test ${TEST_SOURCES} ${PROTO_SRCS} ${PROTO_HDRS})
+    add_executable(test ${TEST_SOURCES} ${PROTO_SRCS} ${PROTO_HDRS} ${ORM_SOURCES})
     target_include_directories(test PUBLIC include)
-    target_include_directories(test PUBLIC ${SDL2_INCLUDE_DIRS} ${SDL2_image_INCLUDE_DIRS} ${SDL2_ttf_INCLUDE_DIRS})
-    target_link_directories(test PUBLIC ${SDL2_image_LIBDIR} ${SDL2_ttf_LIBDIR})
-    target_link_libraries(test box2d ${SDL2_image_LIBRARIES} ${SDL2_ttf_LIBRARIES} ${SDL2_LIBRARIES} ${Protobuf_LIBRARIES})
+    target_include_directories(test PUBLIC ${SDL2_INCLUDE_DIRS} ${SDL2_image_INCLUDE_DIRS} ${SDL2_ttf_INCLUDE_DIRS} ${GENORM_CXX_INCLUDE_DIRS})
+    target_link_directories(test PUBLIC ${SDL2_image_LIBDIR} ${SDL2_ttf_LIBDIR} ${GENORM_CXX_LIBDIR} ${z_LIBDIR})
+    target_link_libraries(test box2d ${SDL2_image_LIBRARIES} ${SDL2_ttf_LIBRARIES} ${SDL2_LIBRARIES} ${GENORM_CXX_LIBRARIES} sqlite3 ${Protobuf_LIBRARIES} ${z_LIBRARIES})
     target_link_libraries(test GTest::gtest GTest::gtest_main)
     if(WIN32)
         #target_compile_options(test PRIVATE /analyze) # Code inspections

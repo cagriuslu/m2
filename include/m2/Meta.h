@@ -13,6 +13,7 @@
 #include <tuple>
 #include <memory>
 #include <cmath>
+#include <functional>
 
 #define DEFAULT_OVERLOAD [](MAYBE const auto& _){}
 

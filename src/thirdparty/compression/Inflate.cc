@@ -1,5 +1,6 @@
 #include <m2/thirdparty/compression/Inflate.h>
 #include <zlib.h>
+#include <format>
 
 using namespace m2;
 using namespace m2::thirdparty;

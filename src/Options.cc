@@ -7,6 +7,9 @@
 #include <m2/Log.h>
 #include <m2/M2.h>
 #include <M2.orm.h>
+#include <m2g_Lockstep.pb.h>
+#include <Lockstep.pb.h>
+#include <Level.pb.h>
 
 using namespace m2;
 
