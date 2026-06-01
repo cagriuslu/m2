@@ -3,6 +3,7 @@ package m2.pb;
 
 import "m2g_Lockstep.proto";
 import "VariableValue.proto";
+import "Reflective.proto";
 
 enum LockstepFaultCode {
   NO_LOCKSTEP_FAULT_CODE = 0;
@@ -71,6 +72,8 @@ message LockstepDebugStateReport {
       map<string,int64> long_value = 3;
     }
     CustomState custom_state = 7;
+
+    Reflective reflective = 8;
   }
   repeated Character character = 3;
 }
