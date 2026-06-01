@@ -6,7 +6,7 @@ namespace m2 {
 		T* _ptr;
 
 	public:
-		explicit PropagateConstPtr(T* ptr) : _ptr(ptr) {}
+		PropagateConstPtr(T* ptr) : _ptr(ptr) {}
 
 		[[nodiscard]] explicit operator bool() const { return static_cast<bool>(_ptr); }
 
@@ -26,7 +26,7 @@ namespace m2 {
 		T& _ref;
 
 	public:
-		explicit PropagateConstRef(T& ref) : _ref(ref) {}
+		PropagateConstRef(T& ref) : _ref(ref) {}
 
 		[[nodiscard]] explicit operator bool() const { return true; }
 

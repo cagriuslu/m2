@@ -1,0 +1,37 @@
+syntax = "proto3";
+package m2.pb;
+
+message ReflectiveSequence {
+  repeated AnyReflective items = 1;
+}
+
+message ReflectiveStruct {
+  map<int32, AnyReflective> fields = 1;
+}
+message ReflectiveVariant {
+  map<int32, AnyReflective> variants = 1;
+}
+
+message AnyReflective {
+  oneof type {
+    bool empty = 1;
+    bool bool = 2;
+    uint32 byte = 3;
+    int32 int8 = 4;
+    int32 int16 = 5;
+    int32 int32 = 6;
+    int64 int64 = 7;
+    float float = 8;
+    double double = 9;
+    ReflectiveSequence sequence = 10;
+    ReflectiveStruct struct = 11;
+    ReflectiveVariant variant = 12;
+  }
+}
+
+message Reflective {
+  oneof root {
+    ReflectiveStruct struct = 1;
+    ReflectiveVariant variant = 2;
+  }
+}

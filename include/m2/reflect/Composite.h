@@ -6,12 +6,14 @@
 namespace m2::reflect {
 	template <typename Accessor, IsReflective T>
 	void ReflectField(Accessor& accessor, Path& path, int fieldId, const T& value) {
-		path.emplace_back(fieldId);
 		if constexpr (IsPrimitiveReflective<T>) {
+			path.emplace_back(PrimitiveType{}, fieldId);
 			value.ReflectPrimitive(accessor, path);
 		} else if constexpr (IsContainerReflective<T>) {
+			path.emplace_back(ContainerType::Sequence, fieldId);
 			value.ReflectContainer(accessor, path);
 		} else {
+			path.emplace_back(T::Type, fieldId);
 			value.ReflectComposite(accessor, path);
 		}
 		path.pop_back();
@@ -43,17 +45,19 @@ namespace m2::reflect {
 		}
 
 	public:
+		static constexpr auto Type = CompositeType::Struct;
+
 		template <auto FieldId> requires IsScopedEnum<decltype(FieldId)>
 		const auto& Get() const {
 			constexpr auto index = GetIndexOfId<FieldId>();
 			static_assert(index != SIZE_MAX, "Struct does not contain a field with the given FieldId");
-			return std::get<index>(_storage).Get();
+			return std::get<index>(_storage);
 		}
 		template <auto FieldId> requires IsScopedEnum<decltype(FieldId)>
 		auto& Mutate() {
 			constexpr auto index = GetIndexOfId<FieldId>();
 			static_assert(index != SIZE_MAX, "Struct does not contain a field with the given FieldId");
-			return std::get<index>(_storage).Mutate();
+			return std::get<index>(_storage);
 		}
 
 		template <typename Accessor>
@@ -93,6 +97,8 @@ namespace m2::reflect {
 		}
 
 	public:
+		static constexpr auto Type = CompositeType::Variant;
+
 		template <auto FieldId> requires IsScopedEnum<decltype(FieldId)>
 		bool HoldsAlternative() const {
 			constexpr auto index = GetIndexOfId<FieldId>();
@@ -104,39 +110,39 @@ namespace m2::reflect {
 			constexpr auto index = GetIndexOfId<FieldId>();
 			static_assert(index != SIZE_MAX, "Variant does not contain a field variant with the given FieldId");
 			if (_storage.index() == index) {
-				&std::get<index>(_storage).Get();
+				&std::get<index>(_storage);
 			} else {
-				return decltype(&std::get<index>(_storage).Get()){nullptr};
+				return decltype(&std::get<index>(_storage)){nullptr};
 			}
 		}
 		template <auto FieldId> requires IsScopedEnum<decltype(FieldId)>
 		const auto& UnsafeGet() const {
 			constexpr auto index = GetIndexOfId<FieldId>();
 			static_assert(index != SIZE_MAX, "Variant does not contain a field with the given FieldId");
-			return std::get<index>(_storage).Get();
+			return std::get<index>(_storage);
 		}
 		template <auto FieldId> requires IsScopedEnum<decltype(FieldId)>
 		auto* TryMutate() {
 			constexpr auto index = GetIndexOfId<FieldId>();
 			static_assert(index != SIZE_MAX, "Variant does not contain a field variant with the given FieldId");
 			if (_storage.index() == index) {
-				&std::get<index>(_storage).Mutate();
+				&std::get<index>(_storage);
 			} else {
-				return decltype(&std::get<index>(_storage).Mutate()){nullptr};
+				return decltype(&std::get<index>(_storage)){nullptr};
 			}
 		}
 		template <auto FieldId> requires IsScopedEnum<decltype(FieldId)>
 		auto& UnsafeMutate() {
 			constexpr auto index = GetIndexOfId<FieldId>();
 			static_assert(index != SIZE_MAX, "Variant does not contain a field variant with the given FieldId");
-			return std::get<index>(_storage).Mutate();
+			return std::get<index>(_storage);
 		}
 		template <auto FieldId> requires IsScopedEnum<decltype(FieldId)>
 		auto& Emplace() {
 			constexpr auto index = GetIndexOfId<FieldId>();
 			static_assert(index != SIZE_MAX, "Variant does not contain a field variant with the given FieldId");
 			_storage.template emplace<index>();
-			return std::get<index>(_storage).Mutate();
+			return std::get<index>(_storage);
 		}
 
 		template <typename Accessor>

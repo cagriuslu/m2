@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 #include <type_traits>
 
 namespace m2::reflect {
@@ -13,7 +14,7 @@ namespace m2::reflect {
 		return firstIsUnique && restIsUnique;
 	}
 
-	using Path = std::vector<int>;
+	struct PrimitiveType {};
 	enum class ContainerType {
 		Sequence
 	};
@@ -21,6 +22,9 @@ namespace m2::reflect {
 		Struct,
 		Variant
 	};
+	using NodeType = std::variant<PrimitiveType, ContainerType,CompositeType>;
+	using Node = std::tuple<NodeType, int>;
+	using Path = std::vector<Node>;
 
 	template <typename T>
 	concept Accessor = requires(T t, const Path& path) {
@@ -58,10 +62,12 @@ namespace m2::reflect {
 	template <typename T>
 	concept IsContainerReflective = requires(T t, AnyAccessor& accessor, Path& path) {
 		{ std::as_const(t).ReflectContainer(accessor, path) };
+		{ T::Type } -> std::convertible_to<ContainerType>;
 	};
 	template <typename T>
 	concept IsCompositeReflective = requires(T t, AnyAccessor& accessor, Path& path) {
 		{ std::as_const(t).ReflectComposite(accessor, path) };
+		{ T::Type } -> std::convertible_to<CompositeType>;
 	};
 	template <typename T>
 	concept IsReflective = IsPrimitiveReflective<T> || IsContainerReflective<T> || IsCompositeReflective<T>;

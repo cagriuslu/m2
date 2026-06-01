@@ -10,6 +10,8 @@ namespace m2::reflect {
 		Container<T> _storage;
 
 	public:
+		static constexpr auto Type = ContainerType::Sequence;
+
 		SequenceContainer() = default;
 		const auto& Get() const { return _storage; }
 		auto& Mutate() { return _storage; }
@@ -19,7 +21,7 @@ namespace m2::reflect {
 			accessor(path, ContainerType::Sequence);
 			int i = 0;
 			for (auto it = _storage.cbegin(); it != _storage.cend(); ++it) {
-				path.emplace_back(i++);
+				path.emplace_back(ContainerType::Sequence, i++);
 				if constexpr (IsPrimitiveReflective<T>) {
 					it->ReflectPrimitive(accessor, path);
 				} else if constexpr (IsContainerReflective<T>) {
