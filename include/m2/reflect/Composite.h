@@ -103,7 +103,7 @@ namespace m2::reflect {
 		bool HoldsAlternative() const {
 			constexpr auto index = GetIndexOfId<FieldId>();
 			static_assert(index != SIZE_MAX, "Variant does not contain a field variant with the given FieldId");
-			return std::holds_alternative<index>(_storage);
+			return _storage.index() == index;
 		}
 		template <auto FieldId> requires IsScopedEnum<decltype(FieldId)>
 		const auto* TryGet() const {
@@ -121,6 +121,9 @@ namespace m2::reflect {
 			static_assert(index != SIZE_MAX, "Variant does not contain a field with the given FieldId");
 			return std::get<index>(_storage);
 		}
+		template <typename Visitor>
+		decltype(auto) Visit(Visitor&& visitor) const { return std::visit(std::forward<Visitor>(visitor), _storage); }
+
 		template <auto FieldId> requires IsScopedEnum<decltype(FieldId)>
 		auto* TryMutate() {
 			constexpr auto index = GetIndexOfId<FieldId>();
@@ -144,6 +147,8 @@ namespace m2::reflect {
 			_storage.template emplace<index>();
 			return std::get<index>(_storage);
 		}
+		template <typename Visitor>
+		decltype(auto) Visit(Visitor&& visitor) { return std::visit(std::forward<Visitor>(visitor), _storage); }
 
 		template <typename Accessor>
 		void ReflectComposite(Accessor& accessor, Path& path) const {

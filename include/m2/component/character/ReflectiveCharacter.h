@@ -9,6 +9,10 @@ namespace m2 {
 		ObjectId _ownerId;
 		ReflectiveT _storage{};
 
+	protected:
+		[[nodiscard]] const ReflectiveT& Get() const { return _storage; }
+		ReflectiveT& Mutate() { return _storage; }
+
 	public:
 		explicit ReflectiveCharacter(const ObjectId ownerId) : _ownerId(ownerId) {}
 
