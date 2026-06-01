@@ -1,4 +1,5 @@
 #include <m2/math/Hash.h>
+#include <m2/math/primitives/Exact.h>
 
 int32_t m2::HashI(const bool value, const int32_t initialValue) {
     return HashI(static_cast<int32_t>(value), initialValue);
@@ -48,6 +49,9 @@ int32_t m2::HashI(const float value, const int32_t initialValue) {
 }
 int32_t m2::HashI(const double value, const int32_t initialValue) {
     return HashI(*reinterpret_cast<const int64_t*>(&value), initialValue);
+}
+int32_t m2::HashI(const Exact e, const int32_t initialValue) {
+    return HashI(e.ToRawValue(), initialValue);
 }
 int32_t m2::HashI(const std::string& s, const int32_t initialValue) {
     return HashI(reinterpret_cast<const uint8_t*>(s.data()), s.length(), initialValue);

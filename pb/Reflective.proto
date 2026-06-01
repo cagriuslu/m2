@@ -23,9 +23,10 @@ message AnyReflective {
     int64 int64 = 7;
     float float = 8;
     double double = 9;
-    ReflectiveSequence sequence = 10;
-    ReflectiveStruct struct = 11;
-    ReflectiveVariant variant = 12;
+    sfixed32 exact = 10;
+    ReflectiveSequence sequence = 11;
+    ReflectiveStruct struct = 12;
+    ReflectiveVariant variant = 13;
   }
 }
 

@@ -16,6 +16,7 @@ namespace m2::reflect::util {
 			void operator()(const Path&, int64_t);
 			void operator()(const Path&, float);
 			void operator()(const Path&, double);
+			void operator()(const Path&, m2::Exact);
 			void operator()(const Path&, ContainerType);
 			void operator()(const Path&, CompositeType);
 		};

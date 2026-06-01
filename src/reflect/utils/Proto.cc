@@ -1,7 +1,7 @@
 #include <m2/reflect/utils/Proto.h>
+#include <m2/reflect/Composite.h>
+#include <m2/math/primitives/Exact.h>
 #include <m2/Error.h>
-
-#include "m2/reflect/Composite.h"
 
 using namespace m2;
 using namespace m2::reflect;
@@ -99,6 +99,9 @@ void StoreAccessor::operator()(const Path& path, const float v) {
 }
 void StoreAccessor::operator()(const Path& path, const double v) {
 	MutablePath(path, *root)->set_double_(v);
+}
+void StoreAccessor::operator()(const Path& path, const Exact v) {
+	MutablePath(path, *root)->set_exact(v.ToRawValue());
 }
 void StoreAccessor::operator()(const Path& path, ContainerType) {
 	// Make sure path to container is initialized

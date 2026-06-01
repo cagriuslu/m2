@@ -68,6 +68,13 @@ void HashAccessor::operator()(const Path& path, const double d) {
 	hash = HashI(std::get<int>(path.back()), hash);
 	hash = HashI(d, hash);
 }
+void HashAccessor::operator()(const Path& path, const m2::Exact e) {
+	if (path.empty()) {
+		throw M2_ERROR("Implementation error: Path to exact is empty");
+	}
+	hash = HashI(std::get<int>(path.back()), hash);
+	hash = HashI(e, hash);
+}
 void HashAccessor::operator()(const Path& path, const ContainerType ct) {
 	if (path.empty()) {
 		throw M2_ERROR("Implementation error: Path to container is empty");

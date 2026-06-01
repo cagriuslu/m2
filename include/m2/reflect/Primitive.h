@@ -115,6 +115,20 @@ namespace m2::reflect {
 	};
 	static_assert(IsPrimitiveReflective<Double>);
 
+	class Exact {
+		m2::Exact _value{};
+
+	public:
+		Exact() = default;
+		explicit Exact(const m2::Exact v) : _value(v) {}
+		auto Get() const { return _value; }
+		auto& Mutate() { return _value; }
+
+		template <typename Accessor>
+		void ReflectPrimitive(Accessor& accessor, const Path& path) const { accessor(path, _value); }
+	};
+	static_assert(IsPrimitiveReflective<Exact>);
+
 	class Empty {
 	public:
 		template <typename Accessor>

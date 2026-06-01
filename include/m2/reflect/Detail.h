@@ -1,4 +1,5 @@
 #pragma once
+#include <m2/math/primitives/Exact.h>
 #include <vector>
 #include <type_traits>
 
@@ -37,6 +38,7 @@ namespace m2::reflect {
 		{ t(path, static_cast<int64_t>(0)) };
 		{ t(path, 0.0f) };
 		{ t(path, 0.0) };
+		{ t(path, m2::Exact{}) };
 		{ t(path, ContainerType{}) };
 		{ t(path, CompositeType{}) };
 	};
@@ -50,6 +52,7 @@ namespace m2::reflect {
 		void operator()(const Path&, int64_t) {}
 		void operator()(const Path&, float) {}
 		void operator()(const Path&, double) {}
+		void operator()(const Path&, m2::Exact) {}
 		void operator()(const Path&, ContainerType) {}
 		void operator()(const Path&, CompositeType) {}
 	};
