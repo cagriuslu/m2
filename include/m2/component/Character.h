@@ -8,12 +8,6 @@
 #include <functional>
 
 namespace m2 {
-	/// Define the requirements from a component implementation from the game engine perspective
-	template <typename T>
-	concept ComponentImpl = requires(T t) {
-		{ std::as_const(t).GetOwnerId() } -> std::same_as<ObjectId>;
-	};
-
 	using Interaction = std::unique_ptr<Proxy::InterCharacterMessage>;
 
 	/// Even though each object has the option to store their data in impl, there are some benefits to storing the data

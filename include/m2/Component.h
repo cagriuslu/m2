@@ -1,6 +1,7 @@
 #pragma once
 #include <m2/M2.h>
 #include <m2/containers/Pool.h>
+#include <m2/ObjectId.h>
 
 namespace m2 {
     // Forward declaration
@@ -17,6 +18,12 @@ namespace m2 {
 
 		[[nodiscard]] constexpr Id GetOwnerId() const { return _ownerId; }
         [[nodiscard]] Object& GetOwner() const;
+	};
+
+	/// Define the requirements from a component implementation from the game engine perspective
+	template <typename T>
+	concept ComponentImpl = requires(T t) {
+		{ std::as_const(t).GetOwnerId() } -> std::same_as<ObjectId>;
 	};
 
 	// Filters
