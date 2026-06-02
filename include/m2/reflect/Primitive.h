@@ -9,7 +9,7 @@ namespace m2::reflect {
 	public:
 		Bool() = default;
 		explicit Bool(const bool v) : _value(v) {}
-		auto Get() const { return _value; }
+		const auto& Get() const { return _value; }
 		auto& Mutate() { return _value; }
 
 		template <typename Accessor>
@@ -23,7 +23,7 @@ namespace m2::reflect {
 	public:
 		Byte() = default;
 		explicit Byte(const uint8_t v) : _value(v) {}
-		auto Get() const { return _value; }
+		const auto& Get() const { return _value; }
 		auto& Mutate() { return _value; }
 
 		template <typename Accessor>
@@ -37,7 +37,7 @@ namespace m2::reflect {
 	public:
 		Int8() = default;
 		explicit Int8(const int8_t v) : _value(v) {}
-		auto Get() const { return _value; }
+		const auto& Get() const { return _value; }
 		auto& Mutate() { return _value; }
 
 		template <typename Accessor>
@@ -51,7 +51,7 @@ namespace m2::reflect {
 	public:
 		Int16() = default;
 		explicit Int16(const int16_t v) : _value(v) {}
-		auto Get() const { return _value; }
+		const auto& Get() const { return _value; }
 		auto& Mutate() { return _value; }
 
 		template <typename Accessor>
@@ -65,7 +65,7 @@ namespace m2::reflect {
 	public:
 		Int32() = default;
 		explicit Int32(const int32_t v) : _value(v) {}
-		auto Get() const { return _value; }
+		const auto& Get() const { return _value; }
 		auto& Mutate() { return _value; }
 
 		template <typename Accessor>
@@ -79,7 +79,7 @@ namespace m2::reflect {
 	public:
 		Int64() = default;
 		explicit Int64(const int64_t v) : _value(v) {}
-		auto Get() const { return _value; }
+		const auto& Get() const { return _value; }
 		auto& Mutate() { return _value; }
 
 		template <typename Accessor>
@@ -93,7 +93,7 @@ namespace m2::reflect {
 	public:
 		Float() = default;
 		explicit Float(const float v) : _value(v) {}
-		auto Get() const { return _value; }
+		const auto& Get() const { return _value; }
 		auto& Mutate() { return _value; }
 
 		template <typename Accessor>
@@ -107,7 +107,7 @@ namespace m2::reflect {
 	public:
 		Double() = default;
 		explicit Double(const double v) : _value(v) {}
-		auto Get() const { return _value; }
+		const auto& Get() const { return _value; }
 		auto& Mutate() { return _value; }
 
 		template <typename Accessor>
@@ -121,7 +121,7 @@ namespace m2::reflect {
 	public:
 		Exact() = default;
 		explicit Exact(const m2::Exact v) : _value(v) {}
-		auto Get() const { return _value; }
+		const auto& Get() const { return _value; }
 		auto& Mutate() { return _value; }
 
 		template <typename Accessor>

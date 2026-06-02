@@ -24,7 +24,8 @@ namespace m2::reflect {
 		static_assert(IsDerivedFromField<FirstField>::Value && (IsDerivedFromField<RestFields>::Value && ...), "All fields must have been derived from Field");
 		static_assert((std::is_same_v<decltype(FirstField::Id), decltype(RestFields::Id)> && ...), "Field IDs must have the same type");
 		static_assert(IsValuePackUnique(FirstField::Id, RestFields::Id...), "Field IDs must be unique");
-		std::tuple<typename FirstField::Type, typename RestFields::Type...> _storage;
+		using StorageTuple = std::tuple<typename FirstField::Type, typename RestFields::Type...>;
+		StorageTuple _storage;
 
 		template <auto FieldId> requires IsScopedEnum<decltype(FieldId)>
 		static constexpr std::size_t GetIndexOfId() {
@@ -51,13 +52,23 @@ namespace m2::reflect {
 		const auto& Get() const {
 			constexpr auto index = GetIndexOfId<FieldId>();
 			static_assert(index != SIZE_MAX, "Struct does not contain a field with the given FieldId");
-			return std::get<index>(_storage);
+			using FieldType = std::tuple_element_t<index, StorageTuple>;
+			if constexpr (UnwrapsToRawType<FieldType>) {
+				return std::get<index>(_storage).Get();
+			} else {
+				return std::get<index>(_storage);
+			}
 		}
 		template <auto FieldId> requires IsScopedEnum<decltype(FieldId)>
 		auto& Mutate() {
 			constexpr auto index = GetIndexOfId<FieldId>();
 			static_assert(index != SIZE_MAX, "Struct does not contain a field with the given FieldId");
-			return std::get<index>(_storage);
+			using FieldType = std::tuple_element_t<index, StorageTuple>;
+			if constexpr (UnwrapsToRawType<FieldType>) {
+				return std::get<index>(_storage).Mutate();
+			} else {
+				return std::get<index>(_storage);
+			}
 		}
 
 		template <typename Accessor>
@@ -76,7 +87,8 @@ namespace m2::reflect {
 		static_assert(IsDerivedFromField<FirstField>::Value && (IsDerivedFromField<RestFields>::Value && ...), "All fields must have been derived from Field");
 		static_assert((std::is_same_v<decltype(FirstField::Id), decltype(RestFields::Id)> && ...), "Field IDs must have the same type");
 		static_assert(IsValuePackUnique(FirstField::Id, RestFields::Id...), "Field IDs must be unique");
-		std::variant<typename FirstField::Type, typename RestFields::Type...> _storage;
+		using StorageVariant = std::variant<typename FirstField::Type, typename RestFields::Type...>;
+		StorageVariant _storage;
 
 		template <auto FieldId> requires IsScopedEnum<decltype(FieldId)>
 		static constexpr std::size_t GetIndexOfId() {
@@ -100,7 +112,7 @@ namespace m2::reflect {
 		static constexpr auto Type = CompositeType::Variant;
 
 		template <auto FieldId> requires IsScopedEnum<decltype(FieldId)>
-		bool HoldsAlternative() const {
+		[[nodiscard]] bool HoldsAlternative() const {
 			constexpr auto index = GetIndexOfId<FieldId>();
 			static_assert(index != SIZE_MAX, "Variant does not contain a field variant with the given FieldId");
 			return _storage.index() == index;
@@ -109,17 +121,25 @@ namespace m2::reflect {
 		const auto* TryGet() const {
 			constexpr auto index = GetIndexOfId<FieldId>();
 			static_assert(index != SIZE_MAX, "Variant does not contain a field variant with the given FieldId");
-			if (_storage.index() == index) {
-				&std::get<index>(_storage);
+			using FieldType = std::variant_alternative_t<index, StorageVariant>;
+			if constexpr (UnwrapsToRawType<FieldType>) {
+				if (_storage.index() == index) { return &std::get<index>(_storage).Get(); }
+				return nullptr;
 			} else {
-				return decltype(&std::get<index>(_storage)){nullptr};
+				if (_storage.index() == index) { return &std::get<index>(_storage); }
+				return nullptr;
 			}
 		}
 		template <auto FieldId> requires IsScopedEnum<decltype(FieldId)>
 		const auto& UnsafeGet() const {
 			constexpr auto index = GetIndexOfId<FieldId>();
 			static_assert(index != SIZE_MAX, "Variant does not contain a field with the given FieldId");
-			return std::get<index>(_storage);
+			using FieldType = std::variant_alternative_t<index, StorageVariant>;
+			if constexpr (UnwrapsToRawType<FieldType>) {
+				return std::get<index>(_storage).Get();
+			} else {
+				return std::get<index>(_storage);
+			}
 		}
 		template <typename Visitor>
 		decltype(auto) Visit(Visitor&& visitor) const { return std::visit(std::forward<Visitor>(visitor), _storage); }
@@ -128,24 +148,37 @@ namespace m2::reflect {
 		auto* TryMutate() {
 			constexpr auto index = GetIndexOfId<FieldId>();
 			static_assert(index != SIZE_MAX, "Variant does not contain a field variant with the given FieldId");
-			if (_storage.index() == index) {
-				&std::get<index>(_storage);
+			using FieldType = std::variant_alternative_t<index, StorageVariant>;
+			if constexpr (UnwrapsToRawType<FieldType>) {
+				if (_storage.index() == index) { return &std::get<index>(_storage).Mutate(); }
+				return nullptr;
 			} else {
-				return decltype(&std::get<index>(_storage)){nullptr};
+				if (_storage.index() == index) { return &std::get<index>(_storage); }
+				return nullptr;
 			}
 		}
 		template <auto FieldId> requires IsScopedEnum<decltype(FieldId)>
 		auto& UnsafeMutate() {
 			constexpr auto index = GetIndexOfId<FieldId>();
 			static_assert(index != SIZE_MAX, "Variant does not contain a field variant with the given FieldId");
-			return std::get<index>(_storage);
+			using FieldType = std::variant_alternative_t<index, StorageVariant>;
+			if constexpr (UnwrapsToRawType<FieldType>) {
+				return std::get<index>(_storage).Mutate();
+			} else {
+				return std::get<index>(_storage);
+			}
 		}
 		template <auto FieldId> requires IsScopedEnum<decltype(FieldId)>
 		auto& Emplace() {
 			constexpr auto index = GetIndexOfId<FieldId>();
 			static_assert(index != SIZE_MAX, "Variant does not contain a field variant with the given FieldId");
 			_storage.template emplace<index>();
-			return std::get<index>(_storage);
+			using FieldType = std::variant_alternative_t<index, StorageVariant>;
+			if constexpr (UnwrapsToRawType<FieldType>) {
+				return std::get<index>(_storage).Mutate();
+			} else {
+				return std::get<index>(_storage);
+			}
 		}
 		template <typename Visitor>
 		decltype(auto) Visit(Visitor&& visitor) { return std::visit(std::forward<Visitor>(visitor), _storage); }
@@ -154,7 +187,7 @@ namespace m2::reflect {
 		void ReflectComposite(Accessor& accessor, Path& path) const {
 			accessor(path, CompositeType::Variant);
 			std::visit([&]<typename T>(const T& variant) {
-				const auto activeIndex = GetIndexInVariant<T, decltype(_storage)>::value;
+				const auto activeIndex = GetIndexInVariant<T, StorageVariant>::value;
 				ReflectField(accessor, path, static_cast<int>(GetIdOfIndex<activeIndex>()), variant);
 			}, _storage);
 		}

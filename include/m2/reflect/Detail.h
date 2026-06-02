@@ -75,6 +75,11 @@ namespace m2::reflect {
 	template <typename T>
 	concept IsReflective = IsPrimitiveReflective<T> || IsContainerReflective<T> || IsCompositeReflective<T>;
 
+	class Empty;
+	template <typename T>
+	concept UnwrapsToRawType =
+	    IsContainerReflective<T> || (IsPrimitiveReflective<T> && !std::is_same_v<T, Empty>);
+
 	/// Requires T to be enum class
 	template <typename T>
 	concept IsScopedEnum = std::is_enum_v<T> && !std::is_convertible_v<T, std::underlying_type_t<T>>;
