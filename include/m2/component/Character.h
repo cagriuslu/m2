@@ -4,10 +4,17 @@
 #include <m2/containers/AssociativeList.h>
 #include <m2/math/VariableValue.h>
 #include <m2/Proxy.h>
+#include <m2/reflect/Composite.h>
+#include <m2/reflect/Primitive.h>
 #include <Lockstep.pb.h>
 #include <functional>
 
 namespace m2 {
+	namespace detail {
+		enum class SomeScopedEnum { Default };
+		using SomeReflectiveVariant = reflect::Variant<reflect::Field<SomeScopedEnum::Default, reflect::Empty>>;
+	}
+
 	using Interaction = std::unique_ptr<Proxy::InterCharacterMessage>;
 
 	/// Even though each object has the option to store their data in impl, there are some benefits to storing the data
@@ -21,6 +28,7 @@ namespace m2 {
 		requires ComponentImpl<T>;
 		{ t.OnUpdate(std::declval<Stopwatch::Duration>()) } -> std::same_as<void>;
 		{ t.OnMessage(std::declval<Interaction>()) } -> std::same_as<void>;
+		{ t.OnMessage(detail::SomeReflectiveVariant{}) } -> std::same_as<void>;
 
 		{ std::as_const(t).Hash(std::declval<int32_t>()) } -> std::same_as<int32_t>;
 		{ std::as_const(t).Fill(std::declval<pb::LockstepDebugStateReport::Character&>()) } -> std::same_as<void>;

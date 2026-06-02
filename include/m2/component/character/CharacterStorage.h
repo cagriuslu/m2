@@ -89,6 +89,12 @@ namespace m2 {
 				chr->OnMessage(std::move(interaction));
 			}
 		}
+		template <std::size_t CharacterVariantIndex>
+		void DeliverMessage(const CharacterId chrId, reflect::IsVariantReflective auto&& reflectiveVariant) {
+			if (auto* chr = TryGetCharacter<CharacterVariantIndex>(chrId)) {
+				chr->OnMessage(std::forward<decltype(reflectiveVariant)>(reflectiveVariant));
+			}
+		}
 
 	private:
 		[[nodiscard]] ShiftedPoolId GetBaseShiftedPoolId() const { return std::get<0>(_storageTuple)->GetShiftedPoolId(); }

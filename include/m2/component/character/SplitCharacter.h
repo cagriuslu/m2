@@ -26,6 +26,8 @@ namespace m2 {
 
 		void OnUpdate(Stopwatch::Duration) {}
 		void OnMessage(Interaction) {}
+		template <reflect::IsVariantReflective T>
+		void OnMessage(T&&) {}
 
 		[[nodiscard]] int32_t Hash(int32_t hash) const {
 			hash = _cards.HashCards(hash);

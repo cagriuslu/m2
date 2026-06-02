@@ -16,6 +16,7 @@ namespace rpg {
 
 		void OnUpdate(m2::Stopwatch::Duration);
 		void OnMessage(m2::Interaction);
+		using FastCharacter::OnMessage;
 	};
 
 	struct Player : public m2::HeapObjectImpl {

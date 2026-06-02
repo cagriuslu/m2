@@ -73,12 +73,16 @@ namespace m2::reflect {
 		{ T::Type } -> std::convertible_to<CompositeType>;
 	};
 	template <typename T>
+	concept IsVariantReflective = requires(T t) {
+		IsCompositeReflective<T>;
+		requires T::Type == CompositeType::Variant;
+	};
+	template <typename T>
 	concept IsReflective = IsPrimitiveReflective<T> || IsContainerReflective<T> || IsCompositeReflective<T>;
 
 	class Empty;
 	template <typename T>
-	concept UnwrapsToRawType =
-	    IsContainerReflective<T> || (IsPrimitiveReflective<T> && !std::is_same_v<T, Empty>);
+	concept UnwrapsToRawType = IsContainerReflective<T> || (IsPrimitiveReflective<T> && !std::is_same_v<T, Empty>);
 
 	/// Requires T to be enum class
 	template <typename T>
