@@ -16,6 +16,7 @@ namespace m2::reflect {
 	}
 
 	struct PrimitiveType {};
+	struct UserDefinedEnumValue { int32_t value; };
 	enum class ContainerType {
 		Sequence
 	};
@@ -39,6 +40,7 @@ namespace m2::reflect {
 		{ t(path, 0.0f) };
 		{ t(path, 0.0) };
 		{ t(path, m2::Exact{}) };
+		{ t(path, UserDefinedEnumValue{}) };
 		{ t(path, ContainerType{}) };
 		{ t(path, CompositeType{}) };
 	};
@@ -53,6 +55,7 @@ namespace m2::reflect {
 		void operator()(const Path&, float) {}
 		void operator()(const Path&, double) {}
 		void operator()(const Path&, m2::Exact) {}
+		void operator()(const Path&, UserDefinedEnumValue) {}
 		void operator()(const Path&, ContainerType) {}
 		void operator()(const Path&, CompositeType) {}
 	};

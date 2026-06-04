@@ -75,6 +75,13 @@ void HashAccessor::operator()(const Path& path, const m2::Exact e) {
 	hash = HashI(std::get<int>(path.back()), hash);
 	hash = HashI(e, hash);
 }
+void HashAccessor::operator()(const Path& path, const UserDefinedEnumValue e) {
+	if (path.empty()) {
+		throw M2_ERROR("Implementation error: Path to enum is empty");
+	}
+	hash = HashI(std::get<int>(path.back()), hash);
+	hash = HashI(e.value, hash);
+}
 void HashAccessor::operator()(const Path& path, const ContainerType ct) {
 	if (path.empty()) {
 		throw M2_ERROR("Implementation error: Path to container is empty");

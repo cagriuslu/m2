@@ -135,4 +135,21 @@ namespace m2::reflect {
 		void ReflectPrimitive(Accessor& accessor, const Path& path) const { accessor(path); }
 	};
 	static_assert(IsPrimitiveReflective<Empty>);
+
+	template <IsScopedEnum T>
+	class Enum {
+		static_assert(sizeof(T) == 4, "Underlying enum type must fit in int32");
+		T _value{};
+
+	public:
+		Enum() = default;
+		explicit Enum(const T v) : _value(v) {}
+		const T& Get() const { return _value; }
+		T& Mutate() { return _value; }
+
+		template <typename Accessor>
+		void ReflectPrimitive(Accessor& accessor, const Path& path) const {
+			accessor(path, UserDefinedEnumValue{static_cast<int32_t>(_value)});
+		}
+	};
 }

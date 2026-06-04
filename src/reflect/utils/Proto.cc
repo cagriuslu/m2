@@ -103,6 +103,9 @@ void StoreAccessor::operator()(const Path& path, const double v) {
 void StoreAccessor::operator()(const Path& path, const Exact v) {
 	MutablePath(path, *root)->set_exact(v.ToRawValue());
 }
+void StoreAccessor::operator()(const Path& path, const UserDefinedEnumValue e) {
+	MutablePath(path, *root)->set_user_defined_enum(e.value);
+}
 void StoreAccessor::operator()(const Path& path, ContainerType) {
 	// Make sure path to container is initialized
 	MutablePath(path, *root);
