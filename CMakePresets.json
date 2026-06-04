@@ -56,6 +56,13 @@
         "GAME": "WAR"
       }
     },
+    {
+      "name": "QNT",
+      "hidden": true,
+      "cacheVariables": {
+        "GAME": "QNT"
+      }
+    },
 
     {
       "name": "RPG-POSIX-DEBUG",
@@ -140,6 +147,27 @@
       "name": "WAR-WIN-RELEASE",
       "inherits": ["RELEASE", "WAR"],
       "binaryDir": "build/WAR-RELEASE"
+    },
+
+    {
+      "name": "QNT-POSIX-DEBUG",
+      "inherits": ["POSIX", "DEBUG", "QNT"],
+      "binaryDir": "build/QNT-DEBUG"
+    },
+    {
+      "name": "QNT-POSIX-RELEASE",
+      "inherits": ["POSIX", "RELEASE", "QNT"],
+      "binaryDir": "build/QNT-RELEASE"
+    },
+    {
+      "name": "QNT-WIN-DEBUG",
+      "inherits": ["DEBUG", "QNT"],
+      "binaryDir": "build/QNT-DEBUG"
+    },
+    {
+      "name": "QNT-WIN-RELEASE",
+      "inherits": ["RELEASE", "QNT"],
+      "binaryDir": "build/QNT-RELEASE"
     }
   ]
 }
