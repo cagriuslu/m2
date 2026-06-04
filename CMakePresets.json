@@ -34,13 +34,7 @@
         "GAME": "RPG"
       }
     },
-    {
-      "name": "MINE",
-      "hidden": true,
-      "cacheVariables": {
-        "GAME": "MINE"
-      }
-    },
+
     {
       "name": "CuZn",
       "hidden": true,
@@ -84,26 +78,6 @@
       "binaryDir": "build/RPG-RELEASE"
     },
 
-    {
-      "name": "MINE-POSIX-DEBUG",
-      "inherits": ["POSIX", "DEBUG", "MINE"],
-      "binaryDir": "build/MINE-DEBUG"
-    },
-    {
-      "name": "MINE-POSIX-RELEASE",
-      "inherits": ["POSIX", "RELEASE", "MINE"],
-      "binaryDir": "build/MINE-RELEASE"
-    },
-    {
-      "name": "MINE-WIN-DEBUG",
-      "inherits": ["DEBUG", "MINE"],
-      "binaryDir": "build/MINE-DEBUG"
-    },
-    {
-      "name": "MINE-WIN-RELEASE",
-      "inherits": ["RELEASE", "MINE"],
-      "binaryDir": "build/MINE-RELEASE"
-    },
 
     {
       "name": "CuZn-POSIX-DEBUG",

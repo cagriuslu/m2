@@ -39,7 +39,6 @@ The repo contains some game prototypes to showcase the capabilities of the engin
 ### Included Games
 
 * RPG - Simulates a 2D Action RPG game
-* MINE - Simulates a side-scroller game
 * CuZn - Simulates a multi-player turn based top-down board game
 
 ### Provided Tooling
@@ -61,7 +60,7 @@ cmake -DCMAKE_BUILD_TYPE=Debug --preset <game-name>-POSIX-DEBUG
 Windows Debug build:
 cmake -DCMAKE_BUILD_TYPE=Debug --preset <game-name>-WIN-DEBUG
 ```
-Replace `<game-name>` with either RPG, MINE, or CuZn. I haven't created CMake presets for release builds, but that should be fairly easy.
+Replace `<game-name>` with either RPG or CuZn. I haven't created CMake presets for release builds, but that should be fairly easy.
 
 After configuring with CMake, go to the build directory and run Ninja to build the game (which includes the engine): 
 ```
