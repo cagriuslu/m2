@@ -10,3 +10,6 @@
 [submodule "resource/game/SUB"]
 	path = resource/game/SUB
 	url = https://github.com/cagriuslu/SUB-resource
+[submodule "game/QNT"]
+	path = game/QNT
+	url = https://github.com/cagriuslu/QNT.git
