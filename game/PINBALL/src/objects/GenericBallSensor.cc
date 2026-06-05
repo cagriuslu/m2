@@ -2,7 +2,7 @@
 #include <m2/thirdparty/physics/ColliderCategory.h>
 #include <m2/Game.h>
 
-m2::void_expected LoadGenericBallSensor(m2::Object& obj, const m2::VecF& position, const m2::pb::PhysicsLayer physicsLayer,
+m2::void_expected LoadGenericBallSensor(m2::Object& obj, const m2::VecF& position, const m2g::pb::PhysicsLayer physicsLayer,
 	const std::function<void(m2::Physique& sensor, m2::Physique& ball, const m2::box2d::Contact&)>& onCollisionWithBall,
 	const std::function<void(m2::Physique& sensor, m2::Physique& ball)>& offCollisionWithBall) {
 
@@ -32,7 +32,7 @@ m2::void_expected LoadGenericBallSensor(m2::Object& obj, const m2::VecF& positio
 	phy.body[m2::I(physicsLayer)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef,
 		obj.GetPhysiqueId(), position, {}, physicsLayer);
 
-	obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, spriteType);
+	obj.AddGraphic(m2g::pb::UprightGraphicsLayer::UPRIGHT_GRAPHICS_DEFAULT_LAYER, spriteType);
 
 	// The sensor collides with only the ball
 	phy.onCollision = [onCollisionWithBall](m2::Physique& self, m2::Physique& ball, const m2::box2d::Contact& contact) {

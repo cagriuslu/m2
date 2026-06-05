@@ -2,8 +2,6 @@
 #include <m2/Game.h>
 #include <m2/Object.h>
 #include <m2/thirdparty/physics/RigidBody.h>
-#include <M2.pb.h>
-
 using namespace google::protobuf;
 using namespace m2::thirdparty::physics;
 
@@ -20,7 +18,7 @@ namespace {
 	}
 }
 
-m2::Pool<m2::Object>::Iterator m2::obj::CreateTile(const pb::FlatGraphicsLayer layer, const VecF& position, const m2g::pb::SpriteType spriteType) {
+m2::Pool<m2::Object>::Iterator m2::obj::CreateTile(const m2g::pb::FlatGraphicsLayer layer, const VecF& position, const m2g::pb::SpriteType spriteType) {
     const auto it = CreateObject();
 	it->AddGraphic(layer, spriteType, position);
 
@@ -39,13 +37,13 @@ m2::Pool<m2::Object>::Iterator m2::obj::CreateTile(const pb::FlatGraphicsLayer l
 				.initiallyEnabled = true
 			};
 			auto& phy = it->AddPhysique();
-			phy.body[I(pb::PhysicsLayer::SEA_LEVEL)] = thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, it->GetPhysiqueId(), position, 0.0f, pb::PhysicsLayer::SEA_LEVEL);
+			phy.body[I(m2g::pb::PHYSICS_DEFAULT_LAYER)] = thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, it->GetPhysiqueId(), position, 0.0f, m2g::pb::PHYSICS_DEFAULT_LAYER);
 		}
 
 		// Add foreground companion if necessary
 		if (sprite.HasForegroundCompanion()) {
 			const auto fg_it = CreateObject();
-			auto& gfx = fg_it->AddGraphic(pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, spriteType,
+			auto& gfx = fg_it->AddGraphic(m2g::pb::UPRIGHT_GRAPHICS_DEFAULT_LAYER, spriteType,
 				position - sprite.CenterToOriginVecM() + sprite.ForegroundCompanionCenterToOriginVecM());
 			gfx.drawForegroundCompanion = true;
 		}

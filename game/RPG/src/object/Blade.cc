@@ -51,11 +51,11 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF& position, c
 			? m2::thirdparty::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_FRIENDLY_DAMAGE
 			: m2::thirdparty::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_HOSTILE_DAMAGE)]
 	}};
-	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, start_angle, m2::pb::PhysicsLayer::SEA_LEVEL);
-	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->SetAngularVelocity(-swing_speed);
+	phy.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, start_angle, m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER);
+	phy.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]->SetAngularVelocity(-swing_speed);
 
 	// Add graphics
-	auto& gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, melee_weapon.GameSprite());
+	auto& gfx = obj.AddGraphic(m2g::pb::UprightGraphicsLayer::UPRIGHT_GRAPHICS_DEFAULT_LAYER, melee_weapon.GameSprite());
 	gfx.position = position;
 	gfx.orientation = start_angle;
 	gfx.z = 0.5f;
@@ -70,7 +70,7 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF& position, c
 	};
 	phy.postStep = [&](m2::Physique& phy, const m2::Stopwatch::Duration&) {
 		if (auto* originator = obj.TryGetParent()) {
-			phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->SetPosition(originator->GetPhysique().position);
+			phy.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]->SetPosition(originator->GetPhysique().position);
 		} else {
 			// Originator died
 			M2_DEFER(m2::CreateObjectDeleter(phy.GetOwnerId()));

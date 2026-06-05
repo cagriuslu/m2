@@ -20,9 +20,9 @@ m2::void_expected rpg::create_dropped_card(m2::Object &obj, const m2::VecF& posi
 		.initiallyAwake = false,
 		.isBullet = false
 	};
-	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2::pb::PhysicsLayer::SEA_LEVEL);
+	phy.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER);
 
-	obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, M2_GAME.GetCard(card_type).UiSprite()).position = position;
+	obj.AddGraphic(m2g::pb::UprightGraphicsLayer::UPRIGHT_GRAPHICS_DEFAULT_LAYER, M2_GAME.GetCard(card_type).UiSprite()).position = position;
 
 	phy.onCollision = [card_type](m2::Physique& phy, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
 		const auto otherChrId = other.GetOwner().GetCharacterId();

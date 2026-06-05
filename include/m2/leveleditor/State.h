@@ -38,7 +38,7 @@ namespace m2::leveleditor {
 
 		// Accessors
 
-		[[nodiscard]] pb::FlatGraphicsLayer GetSelectedBackgroundLayer() const;
+		[[nodiscard]] m2g::pb::FlatGraphicsLayer GetSelectedBackgroundLayer() const;
 		[[nodiscard]] bool GetSnapToGridStatus() const;
 		[[nodiscard]] std::vector<ForegroundObjectPlaceholderMap::const_iterator> GetForegroundObjectsOfType(m2g::pb::ObjectType) const;
 

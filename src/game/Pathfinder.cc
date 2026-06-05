@@ -179,7 +179,7 @@ m2::Path m2::Pathfinder::smoothen_path(const Path& reverse_path, FE max_distance
 	for (auto point2_it = reverse_path.begin() + 1; point2_it != reverse_path.end(); ++point2_it) {
 		auto* point2 = &(*point2_it);
 
-		bool eyesight = m2::box2d::CheckEyesight(*M2_LEVEL.world[I(pb::PhysicsLayer::SEA_LEVEL)], m2::VecF{*point1}, m2::VecF{*point2}, thirdparty::physics::gColliderCategoryToParams[m2::I(thirdparty::physics::ColliderCategory::COLLIDER_CATEGORY_OBSTACLE)].belongsTo);
+		bool eyesight = m2::box2d::CheckEyesight(*M2_LEVEL.world[I(m2g::pb::PHYSICS_DEFAULT_LAYER)], m2::VecF{*point1}, m2::VecF{*point2}, thirdparty::physics::gColliderCategoryToParams[m2::I(thirdparty::physics::ColliderCategory::COLLIDER_CATEGORY_OBSTACLE)].belongsTo);
 		if (point2_it == std::prev(reverse_path.end(), 1)) {
 			if (not eyesight) {
 				// If we are processing the last point AND there is no eyesight, add the previous point
@@ -206,7 +206,7 @@ m2::Path m2::Pathfinder::smoothen_path(const Path& reverse_path, FE max_distance
 }
 
 bool m2::Pathfinder::check_eyesight(const VecI& from, const VecI& to) {
-	return box2d::CheckEyesight(*M2_LEVEL.world[I(pb::PhysicsLayer::SEA_LEVEL)], VecF{from}, VecF{to}, thirdparty::physics::gColliderCategoryToParams[m2::I(thirdparty::physics::ColliderCategory::COLLIDER_CATEGORY_OBSTACLE)].belongsTo);
+	return box2d::CheckEyesight(*M2_LEVEL.world[I(m2g::pb::PHYSICS_DEFAULT_LAYER)], VecF{from}, VecF{to}, thirdparty::physics::gColliderCategoryToParams[m2::I(thirdparty::physics::ColliderCategory::COLLIDER_CATEGORY_OBSTACLE)].belongsTo);
 }
 
 void m2::Pathfinder::draw_path(const Path& path, SDL_Color color) {

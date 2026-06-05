@@ -17,6 +17,17 @@ namespace m2g {
 		const int gameAspectRatioDiv = 27;
 		const std::string defaultFontPath = "fonts/Share_Tech_Mono/ShareTechMono-Regular.ttf";
 		const m2::VecF gravity{0.0f, 24.0f};
+		const std::vector<m2::DrawLayer> drawOrder = {
+			pb::BACKGROUND_FLAT,
+			pb::BEDROCK_FLAT,    pb::BEDROCK_UPRIGHT,
+			pb::SEABED_FLAT,     pb::SEABED_UPRIGHT,
+			pb::UNDER_WATER_FLAT, pb::UNDER_WATER_UPRIGHT,
+			pb::FLAT_GRAPHICS_DEFAULT_LAYER,  pb::UPRIGHT_GRAPHICS_DEFAULT_LAYER,
+			pb::ABOVE_GROUND_FLAT, pb::ABOVE_GROUND_UPRIGHT,
+			pb::AIRBORNE_FLAT,   pb::AIRBORNE_UPRIGHT,
+			pb::SPACE_FLAT,      pb::SPACE_UPRIGHT,
+			pb::FLAT_GRAPHICS_FOREGROUND_LAYER,
+		};
 		const std::vector<m2::ObjectBlueprint> objectBlueprints = {
 			{.objectType = pb::BALL, .defaultSpriteType = pb::SPRITE_BASIC_BALL},
 			{.objectType = pb::FLIPPER_LEFT, .defaultSpriteType = pb::SPRITE_BASIC_FLIPPER_LEFT},

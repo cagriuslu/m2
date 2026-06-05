@@ -5,7 +5,7 @@
 #include <m2/math/VecF.h>
 #include <m2/math/VecE.h>
 #include <m2/ProxyTypes.h>
-#include <M2.pb.h>
+#include <m2g_Layers.pb.h>
 #include <functional>
 
 namespace m2 {
@@ -35,7 +35,7 @@ namespace m2 {
 
 		// Accessors
 
-		[[nodiscard]] std::optional<pb::PhysicsLayer> GetCurrentPhysicsLayer() const;
+		[[nodiscard]] std::optional<m2g::pb::PhysicsLayer> GetCurrentPhysicsLayer() const;
 
 		static void DefaultBeginContactCallback(b2Contact& b2_contact);
 		static void DefaultEndContactCallback(b2Contact& b2_contact);

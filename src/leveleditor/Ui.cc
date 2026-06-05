@@ -928,17 +928,13 @@ const UiPanelBlueprint leveleditor::gLeftHudBlueprint = {
 			.name = "BackgroundLayerSelection",
 			.h = 3,
 			.variant = TextSelectionBlueprint{
-				.options = {
-					TextSelectionBlueprint::Option{.text = "B0-Back", .return_value = I(pb::FlatGraphicsLayer::BACKGROUND_FLAT)},
-					TextSelectionBlueprint::Option{.text = "B1", .return_value = I(pb::FlatGraphicsLayer::BEDROCK_FLAT)},
-					TextSelectionBlueprint::Option{.text = "B2", .return_value = I(pb::FlatGraphicsLayer::SEABED_FLAT)},
-					TextSelectionBlueprint::Option{.text = "B3", .return_value = I(pb::FlatGraphicsLayer::UNDER_WATER_FLAT)},
-					TextSelectionBlueprint::Option{.text = "B4", .return_value = I(pb::FlatGraphicsLayer::SEA_LEVEL_FLAT)},
-					TextSelectionBlueprint::Option{.text = "B5", .return_value = I(pb::FlatGraphicsLayer::ABOVE_GROUND_FLAT)},
-					TextSelectionBlueprint::Option{.text = "B6", .return_value = I(pb::FlatGraphicsLayer::AIRBORNE_FLAT)},
-					TextSelectionBlueprint::Option{.text = "B7", .return_value = I(pb::FlatGraphicsLayer::SPACE_FLAT)},
-					TextSelectionBlueprint::Option{.text = "B8-Front", .return_value = I(pb::FlatGraphicsLayer::FOREGROUND_FLAT)}
-				},
+				.options = [] {
+					TextSelectionBlueprint::Options opts;
+					for (int i = 0; i < FLAT_GRAPHICS_LAYER_COUNT; ++i) {
+						opts.push_back({.text = pb::enum_name<m2g::pb::FlatGraphicsLayer>(i), .return_value = i});
+					}
+					return opts;
+				}(),
 				.line_count = 0,
 				.allow_multiple_selection = false,
 				.show_scroll_bar = false,

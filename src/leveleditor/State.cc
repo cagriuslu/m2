@@ -22,8 +22,8 @@ namespace {
 
 m2::leveleditor::State::State() : _persistentSpriteSheets(m2MoveOrThrowError(sheeteditor::PersistentSpriteSheets::LoadFile(M2_GAME.GetResources().GetSpriteSheetsPath()))) {}
 
-m2::pb::FlatGraphicsLayer m2::leveleditor::State::GetSelectedBackgroundLayer() const {
-	return static_cast<pb::FlatGraphicsLayer>(
+m2g::pb::FlatGraphicsLayer m2::leveleditor::State::GetSelectedBackgroundLayer() const {
+	return static_cast<m2g::pb::FlatGraphicsLayer>(
 			I(M2_LEVEL.GetLeftHud()->FindWidget<widget::TextSelection>("BackgroundLayerSelection")->GetSelectedOptions()[0]));
 }
 bool m2::leveleditor::State::GetSnapToGridStatus() const {

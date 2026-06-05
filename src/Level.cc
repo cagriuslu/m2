@@ -41,13 +41,9 @@ Level::~Level() {
 	}
 	delete contactListener;
 	contactListener = nullptr;
-	delete world[I(pb::PhysicsLayer::SPACE)];
-	delete world[I(pb::PhysicsLayer::AIRBORNE)];
-	delete world[I(pb::PhysicsLayer::ABOVE_GROUND)];
-	delete world[I(pb::PhysicsLayer::SEA_LEVEL)];
-	delete world[I(pb::PhysicsLayer::UNDER_WATER)];
-	delete world[I(pb::PhysicsLayer::SEABED)];
-	delete world[I(pb::PhysicsLayer::BEDROCK)];
+	for (auto* w : world) {
+		delete w;
+	}
 }
 
 void_expected Level::InitSinglePlayer(
@@ -230,14 +226,14 @@ DrawLayer Level::GetDrawLayer(const GraphicId gfxId) {
 
 	for (int i = 0; i < FLAT_GRAPHICS_LAYER_COUNT; ++i) {
 		if (flatGraphics[i].GetShiftedPoolId() == shiftedGfxPoolId) {
-			return static_cast<pb::FlatGraphicsLayer>(i);
+			return static_cast<m2g::pb::FlatGraphicsLayer>(i);
 		}
 	}
 	if (uprightGraphics.GetShiftedPoolId() == shiftedGfxPoolId) {
 		const auto& gfx = uprightGraphics[gfxId];
 		for (auto i = 0zu; i < uprightDrawLists.size(); ++i) {
 			if (uprightDrawLists[i].ContainsObject(gfx.GetOwnerId())) {
-				return static_cast<pb::UprightGraphicsLayer>(i);
+				return static_cast<m2g::pb::UprightGraphicsLayer>(i);
 			}
 		}
 	}
@@ -263,11 +259,11 @@ std::pair<Pool<Graphic>&, DrawList*> Level::GetGraphicPoolAndDrawList(const Grap
 
 }
 std::pair<Pool<Graphic>&, DrawList*> Level::GetGraphicPoolAndDrawList(const DrawLayer drawLayer) {
-	if (std::holds_alternative<pb::FlatGraphicsLayer>(drawLayer)) {
-		const auto bgLayer = std::get<pb::FlatGraphicsLayer>(drawLayer);
+	if (std::holds_alternative<m2g::pb::FlatGraphicsLayer>(drawLayer)) {
+		const auto bgLayer = std::get<m2g::pb::FlatGraphicsLayer>(drawLayer);
 		return std::pair<Pool<Graphic>&,DrawList*>{flatGraphics.at(I(bgLayer)), nullptr};
 	}
-	const auto fgLayer = std::get<pb::UprightGraphicsLayer>(drawLayer);
+	const auto fgLayer = std::get<m2g::pb::UprightGraphicsLayer>(drawLayer);
 	return std::pair<Pool<Graphic>&,DrawList*>{uprightGraphics, &uprightDrawLists.at(I(fgLayer))};
 }
 const m2g::Proxy::LevelState& Level::GetProxyLevelState() const {
@@ -518,33 +514,20 @@ void_expected Level::InitAnyPlayer(
 	}
 
 	if (physical_world) {
-		world[I(pb::PhysicsLayer::BEDROCK)] = new b2World(static_cast<b2Vec2>(M2G_PROXY.gravity));
-		world[I(pb::PhysicsLayer::SEABED)] = new b2World(static_cast<b2Vec2>(M2G_PROXY.gravity));
-		world[I(pb::PhysicsLayer::UNDER_WATER)] = new b2World(static_cast<b2Vec2>(M2G_PROXY.gravity));
-		world[I(pb::PhysicsLayer::SEA_LEVEL)] = new b2World(static_cast<b2Vec2>(M2G_PROXY.gravity));
-		world[I(pb::PhysicsLayer::ABOVE_GROUND)] = new b2World(static_cast<b2Vec2>(M2G_PROXY.gravity));
-		world[I(pb::PhysicsLayer::AIRBORNE)] = new b2World(static_cast<b2Vec2>(M2G_PROXY.gravity));
-		world[I(pb::PhysicsLayer::SPACE)] = new b2World(static_cast<b2Vec2>(M2G_PROXY.gravity));
+		const auto gravity = static_cast<b2Vec2>(M2G_PROXY.gravity);
 		contactListener = new box2d::ContactListener(
 		    Physique::DefaultBeginContactCallback, Physique::DefaultEndContactCallback);
-		world[I(pb::PhysicsLayer::BEDROCK)]->SetContactListener(contactListener);
-		world[I(pb::PhysicsLayer::SEABED)]->SetContactListener(contactListener);
-		world[I(pb::PhysicsLayer::UNDER_WATER)]->SetContactListener(contactListener);
-		world[I(pb::PhysicsLayer::SEA_LEVEL)]->SetContactListener(contactListener);
-		world[I(pb::PhysicsLayer::ABOVE_GROUND)]->SetContactListener(contactListener);
-		world[I(pb::PhysicsLayer::AIRBORNE)]->SetContactListener(contactListener);
-		world[I(pb::PhysicsLayer::SPACE)]->SetContactListener(contactListener);
 #ifdef DEBUG
 		auto* debugDraw = new thirdparty::physics::box2d::DebugDraw{};
 		_debugDraw = debugDraw;
-		world[I(pb::PhysicsLayer::BEDROCK)]->SetDebugDraw(debugDraw);
-		world[I(pb::PhysicsLayer::SEABED)]->SetDebugDraw(debugDraw);
-		world[I(pb::PhysicsLayer::UNDER_WATER)]->SetDebugDraw(debugDraw);
-		world[I(pb::PhysicsLayer::SEA_LEVEL)]->SetDebugDraw(debugDraw);
-		world[I(pb::PhysicsLayer::ABOVE_GROUND)]->SetDebugDraw(debugDraw);
-		world[I(pb::PhysicsLayer::AIRBORNE)]->SetDebugDraw(debugDraw);
-		world[I(pb::PhysicsLayer::SPACE)]->SetDebugDraw(debugDraw);
 #endif
+		for (auto& w : world) {
+			w = new b2World(gravity);
+			w->SetContactListener(contactListener);
+#ifdef DEBUG
+			w->SetDebugDraw(debugDraw);
+#endif
+		}
 	}
 
 	// Create background tiles
@@ -564,7 +547,7 @@ void_expected Level::InitAnyPlayer(
 					}
 
 					LOGF_TRACE("Creating tile from %d sprite at (%d,%d)...", sprite_type, x, y);
-					auto it = obj::CreateTile(static_cast<pb::FlatGraphicsLayer>(l), VecF{x, y}, sprite_type);
+					auto it = obj::CreateTile(static_cast<m2g::pb::FlatGraphicsLayer>(l), VecF{x, y}, sprite_type);
 					M2G_PROXY.post_tile_create(*it, sprite_type);
 					LOG_TRACE("Created tile", it.GetId());
 				}

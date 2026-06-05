@@ -31,10 +31,10 @@ m2::Physique& m2::Physique::operator=(Physique&& other) noexcept {
     return *this;
 }
 
-std::optional<m2::pb::PhysicsLayer> m2::Physique::GetCurrentPhysicsLayer() const {
+std::optional<m2g::pb::PhysicsLayer> m2::Physique::GetCurrentPhysicsLayer() const {
 	for (int i = 0; i < PHYSICS_LAYER_COUNT; ++i) {
 		if (body[i] && body[i]->IsEnabled()) {
-			return static_cast<pb::PhysicsLayer>(i);
+			return static_cast<m2g::pb::PhysicsLayer>(i);
 		}
 	}
 	return std::nullopt;

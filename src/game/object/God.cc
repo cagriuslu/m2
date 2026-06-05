@@ -71,7 +71,7 @@ Id obj::CreateGod() {
 		}
 	};
 
-	it->AddGraphic(pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT).postDraw = [](MAYBE Graphic& gfx, const Stopwatch::Duration&) {
+	it->AddGraphic(m2g::pb::UPRIGHT_GRAPHICS_DEFAULT_LAYER).postDraw = [](MAYBE Graphic& gfx, const Stopwatch::Duration&) {
 		std::visit(overloaded{
 		        [](const leveleditor::State& le) { le.Draw(); },
 		        [](const sheeteditor::State& se) { se.Draw(); },

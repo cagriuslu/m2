@@ -2,7 +2,7 @@
 #include <m2/protobuf/Detail.h>
 #include "Chrono.h"
 #include "Meta.h"
-#include <M2.pb.h>
+#include <m2g_Layers.pb.h>
 #include <array>
 
 #define MAYBE [[maybe_unused]] // TODO get rid of this
@@ -16,12 +16,10 @@ namespace m2 {
 	constexpr auto PHYSICS_SIMULATION_COUNT_PER_SECOND = I(std::chrono::duration_cast<Stopwatch::Duration>(std::chrono::seconds{1}).count() / TIME_BETWEEN_PHYSICS_SIMULATIONS.count());
 	constexpr auto TIME_BETWEEN_FPS_LOGS{std::chrono::duration_cast<Stopwatch::Duration>(std::chrono::seconds{10})};
 
-	constexpr int FLAT_GRAPHICS_LAYER_COUNT = pb::FlatGraphicsLayer_ARRAYSIZE;
-	constexpr int UPRIGHT_GRAPHICS_LAYER_COUNT = pb::UprightGraphicsLayer_ARRAYSIZE;
-	constexpr int PHYSICS_LAYER_COUNT = pb::PhysicsLayer_ARRAYSIZE;
-
-	using DrawLayer = std::variant<pb::FlatGraphicsLayer, pb::UprightGraphicsLayer>;
-	extern std::array<DrawLayer, 16> gDrawOrder;
+	constexpr int FLAT_GRAPHICS_LAYER_COUNT = m2g::pb::FlatGraphicsLayer_ARRAYSIZE;
+	constexpr int UPRIGHT_GRAPHICS_LAYER_COUNT = m2g::pb::UprightGraphicsLayer_ARRAYSIZE;
+	constexpr int PHYSICS_LAYER_COUNT = m2g::pb::PhysicsLayer_ARRAYSIZE;
+	using DrawLayer = std::variant<m2g::pb::FlatGraphicsLayer, m2g::pb::UprightGraphicsLayer>;
 
 	/// Returns the number of codepoints in a UTF-8 string.
 	/// One codepoint does not always equate to one glyph, but it's a good estimation for most characters.

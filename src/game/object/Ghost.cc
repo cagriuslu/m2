@@ -6,7 +6,7 @@
 
 m2::Id m2::obj::CreateGhost(const m2g::pb::SpriteType spriteType, const int roundToBin) {
 	const auto it = CreateObject();
-	auto& gfx = it->AddGraphic(pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, spriteType);
+	auto& gfx = it->AddGraphic(m2g::pb::UPRIGHT_GRAPHICS_DEFAULT_LAYER, spriteType);
 	if (roundToBin != 0) {
 		gfx.preDraw = [roundToBin](Graphic& gfx, const Stopwatch::Duration&) {
 			gfx.position = M2_GAME.events.GetWorldPositionOfMouse().RoundToBin(roundToBin);

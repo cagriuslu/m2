@@ -140,7 +140,7 @@ m2::void_expected InitFactory(m2::Object& obj, const m2::VecF& position, City ci
 	chr.UnsafeAddCard(industry_tile);
 
 	auto color = M2G_PROXY.player_colors[parent_index];
-	auto& _gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, industry_sprite_of_industry(industry));
+	auto& _gfx = obj.AddGraphic(m2g::pb::UprightGraphicsLayer::UPRIGHT_GRAPHICS_DEFAULT_LAYER, industry_sprite_of_industry(industry));
 	_gfx.position = position;
 	_gfx.onDraw = [color](m2::Graphic& gfx) {
 		auto top_left_cell_pos = gfx.position;

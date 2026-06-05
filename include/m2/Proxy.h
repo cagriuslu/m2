@@ -79,6 +79,13 @@ namespace m2 {
 		/// Describes the details of the objects
 		const std::vector<ObjectBlueprint> objectBlueprints;
 
+		/// Back-to-front draw order of all graphics layers
+		const std::vector<DrawLayer> drawOrder = {
+			m2g::pb::FLAT_GRAPHICS_DEFAULT_LAYER,
+			m2g::pb::UPRIGHT_GRAPHICS_DEFAULT_LAYER,
+			m2g::pb::FLAT_GRAPHICS_FOREGROUND_LAYER,
+		};
+
 		const std::optional<pb::Cards> cards = GenerateEmptyCards();
 
 		void load_resources() {}

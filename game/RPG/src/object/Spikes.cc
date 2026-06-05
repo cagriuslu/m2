@@ -27,10 +27,10 @@ m2::void_expected rpg::create_spikes(m2::Object& obj, const m2::VecF& position) 
 		.initiallyAwake = false,
 		.isBullet = false
 	};
-	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2::pb::PhysicsLayer::SEA_LEVEL);
+	phy.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER);
 
 	// Create graphic component
-	auto& gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, m2g::pb::SPIKES_IN);
+	auto& gfx = obj.AddGraphic(m2g::pb::UprightGraphicsLayer::UPRIGHT_GRAPHICS_DEFAULT_LAYER, m2g::pb::SPIKES_IN);
 	gfx.position = position;
 
 	// Create custom data
@@ -44,7 +44,7 @@ m2::void_expected rpg::create_spikes(m2::Object& obj, const m2::VecF& position) 
 				std::get<const m2::Sprite*>(gfx.visual) = &spikes_out;
 				impl.trigger_timer = m2::Timer{};
 				// Recreate the body so that collision is reset, otherwise the Player standing on the spikes doesn't collide again
-				phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), self.position, {}, m2::pb::PhysicsLayer::SEA_LEVEL);
+				phy.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), self.position, {}, m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER);
 			}
 		} else if (std::get<const m2::Sprite*>(gfx.visual) == &spikes_out && impl.trigger_timer) {
 			// Spikes are out and triggered
@@ -52,7 +52,7 @@ m2::void_expected rpg::create_spikes(m2::Object& obj, const m2::VecF& position) 
 				std::get<const m2::Sprite*>(gfx.visual) = &spikes_in;
 				impl.trigger_timer.reset();
 				// Recreate the body so that collision is reset, otherwise the Player standing on the spikes doesn't collide again
-				phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), self.position, {}, m2::pb::PhysicsLayer::SEA_LEVEL);
+				phy.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), self.position, {}, m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER);
 			}
 		}
 	};

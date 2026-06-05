@@ -14,10 +14,10 @@ namespace {
 	};
 
 	m2::thirdparty::physics::RigidBody& GetActiveRigidBody(m2::Physique& phy) {
-		if (phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->IsEnabled()) {
-			return *phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)];
+		if (phy.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]->IsEnabled()) {
+			return *phy.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)];
 		}
-		return *phy.body[m2::I(m2::pb::PhysicsLayer::ABOVE_GROUND)];
+		return *phy.body[m2::I(m2g::pb::PhysicsLayer::ABOVE_GROUND)];
 	}
 }
 
@@ -51,34 +51,34 @@ m2::void_expected LoadBall(m2::Object& obj, const m2::VecF& position) {
 		.isBullet = true,
 		.initiallyEnabled = true
 	};
-	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2::pb::PhysicsLayer::SEA_LEVEL);
-	phy.body[m2::I(m2::pb::PhysicsLayer::ABOVE_GROUND)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2::pb::PhysicsLayer::ABOVE_GROUND);
-	phy.body[m2::I(m2::pb::PhysicsLayer::ABOVE_GROUND)]->SetEnabled(false);
+	phy.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER);
+	phy.body[m2::I(m2g::pb::PhysicsLayer::ABOVE_GROUND)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2g::pb::PhysicsLayer::ABOVE_GROUND);
+	phy.body[m2::I(m2g::pb::PhysicsLayer::ABOVE_GROUND)]->SetEnabled(false);
 
-	MAYBE auto& gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, m2g::pb::SPRITE_BASIC_BALL);
+	MAYBE auto& gfx = obj.AddGraphic(m2g::pb::UprightGraphicsLayer::UPRIGHT_GRAPHICS_DEFAULT_LAYER, m2g::pb::SPRITE_BASIC_BALL);
 	gfx.position = position;
 
 	phy.preStep = [initialPos = position](m2::Physique& phy_, const m2::Stopwatch::Duration&) {
 		if (M2_GAME.events.PopKeyRelease(m2g::pb::BALL_LAUNCHER) /*&& M2G_PROXY.isOnBallLauncher*/) {
-			if (phy_.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->IsEnabled()) {
-				phy_.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->ApplyForceToCenter({0.0f, -7500.0f});
-			} else if (phy_.body[m2::I(m2::pb::PhysicsLayer::ABOVE_GROUND)]->IsEnabled()) {
-				phy_.body[m2::I(m2::pb::PhysicsLayer::ABOVE_GROUND)]->ApplyForceToCenter({0.0f, -7500.0f});
+			if (phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]->IsEnabled()) {
+				phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]->ApplyForceToCenter({0.0f, -7500.0f});
+			} else if (phy_.body[m2::I(m2g::pb::PhysicsLayer::ABOVE_GROUND)]->IsEnabled()) {
+				phy_.body[m2::I(m2g::pb::PhysicsLayer::ABOVE_GROUND)]->ApplyForceToCenter({0.0f, -7500.0f});
 			}
 			// TODO defer M2_GAME.audio_manager->Play(&M2_GAME.songs[m2g::pb::SONG_CIRCULAR_BUMPER_SOUND], m2::AudioManager::ONCE, 0.25f);
 		}
 		if (M2_GAME.events.PopKeyPress(m2g::pb::RETURN)) {
-			phy_.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->SetPosition(initialPos);
-			phy_.body[m2::I(m2::pb::PhysicsLayer::ABOVE_GROUND)]->SetPosition(initialPos);
-			M2_DEFER(m2::CreateLayerMover(phy_.GetOwnerId(), m2::pb::PhysicsLayer::SEA_LEVEL, m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT));
+			phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]->SetPosition(initialPos);
+			phy_.body[m2::I(m2g::pb::PhysicsLayer::ABOVE_GROUND)]->SetPosition(initialPos);
+			M2_DEFER(m2::CreateLayerMover(phy_.GetOwnerId(), m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER, m2g::pb::UprightGraphicsLayer::UPRIGHT_GRAPHICS_DEFAULT_LAYER));
 		}
 		if (M2_GAME.events.PopMouseButtonRelease(m2::MouseButton::PRIMARY)) {
 			const auto mousePosition = M2_GAME.events.GetWorldPositionOfMouse();
-			phy_.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->SetPosition(mousePosition);
-			phy_.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->SetLinearVelocity({});
-			phy_.body[m2::I(m2::pb::PhysicsLayer::ABOVE_GROUND)]->SetPosition(mousePosition);
-			phy_.body[m2::I(m2::pb::PhysicsLayer::ABOVE_GROUND)]->SetLinearVelocity({});
-			M2_DEFER(m2::CreateLayerMover(phy_.GetOwnerId(), m2::pb::PhysicsLayer::SEA_LEVEL, m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT));
+			phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]->SetPosition(mousePosition);
+			phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]->SetLinearVelocity({});
+			phy_.body[m2::I(m2g::pb::PhysicsLayer::ABOVE_GROUND)]->SetPosition(mousePosition);
+			phy_.body[m2::I(m2g::pb::PhysicsLayer::ABOVE_GROUND)]->SetLinearVelocity({});
+			M2_DEFER(m2::CreateLayerMover(phy_.GetOwnerId(), m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER, m2g::pb::UprightGraphicsLayer::UPRIGHT_GRAPHICS_DEFAULT_LAYER));
 		}
 	};
 	phy.onCollision = [ballImpl](m2::Physique& ball, const m2::Physique& other, const m2::box2d::Contact& contact) {

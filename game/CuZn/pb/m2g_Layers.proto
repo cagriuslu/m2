@@ -1,5 +1,5 @@
 syntax = "proto3";
-package m2.pb;
+package m2g.pb;
 
 // Enum must be sequential because Enum_ARRAYSIZE is used as array size.
 enum FlatGraphicsLayer {
@@ -7,11 +7,11 @@ enum FlatGraphicsLayer {
   BEDROCK_FLAT = 1;
   SEABED_FLAT = 2;
   UNDER_WATER_FLAT = 3;
-  SEA_LEVEL_FLAT = 4;
+  FLAT_GRAPHICS_DEFAULT_LAYER = 4;
   ABOVE_GROUND_FLAT = 5;
   AIRBORNE_FLAT = 6;
   SPACE_FLAT = 7;
-  FOREGROUND_FLAT = 8;
+  FLAT_GRAPHICS_FOREGROUND_LAYER = 8;
 }
 
 // Enum must be sequential because Enum_ARRAYSIZE is used as array size.
@@ -19,7 +19,7 @@ enum UprightGraphicsLayer {
   BEDROCK_UPRIGHT = 0;
   SEABED_UPRIGHT = 1;
   UNDER_WATER_UPRIGHT = 2;
-  SEA_LEVEL_UPRIGHT = 3;
+  UPRIGHT_GRAPHICS_DEFAULT_LAYER = 3;
   ABOVE_GROUND_UPRIGHT = 4;
   AIRBORNE_UPRIGHT = 5;
   SPACE_UPRIGHT = 6;
@@ -30,7 +30,7 @@ enum PhysicsLayer {
   BEDROCK = 0;
   SEABED = 1;
   UNDER_WATER = 2;
-  SEA_LEVEL = 3;
+  PHYSICS_DEFAULT_LAYER = 3;
   ABOVE_GROUND = 4;
   AIRBORNE = 5;
   SPACE = 6;

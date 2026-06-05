@@ -8,6 +8,17 @@ namespace m2g {
 	   public:
 		const std::string gameIdentifier = "RPG";
 		const bool camera_is_listener = true;
+		const std::vector<m2::DrawLayer> drawOrder = {
+			pb::BACKGROUND_FLAT,
+			pb::BEDROCK_FLAT,    pb::BEDROCK_UPRIGHT,
+			pb::SEABED_FLAT,     pb::SEABED_UPRIGHT,
+			pb::UNDER_WATER_FLAT, pb::UNDER_WATER_UPRIGHT,
+			pb::FLAT_GRAPHICS_DEFAULT_LAYER,  pb::UPRIGHT_GRAPHICS_DEFAULT_LAYER,
+			pb::ABOVE_GROUND_FLAT, pb::ABOVE_GROUND_UPRIGHT,
+			pb::AIRBORNE_FLAT,   pb::AIRBORNE_UPRIGHT,
+			pb::SPACE_FLAT,      pb::SPACE_UPRIGHT,
+			pb::FLAT_GRAPHICS_FOREGROUND_LAYER,
+		};
 		const std::vector<m2::ObjectBlueprint> objectBlueprints = {
 			{.objectType = pb::PLAYER, .defaultSpriteType = pb::PLAYER_LOOKDOWN_00, .defaultAnimationType = pb::ANIMATION_TYPE_PLAYER_MOVEMENT},
 			{.objectType = pb::SKELETON, .defaultSpriteType = pb::SKELETON_LOOKDOWN_00, .defaultAnimationType = pb::ANIMATION_TYPE_SKELETON_MOVEMENT},

@@ -5,7 +5,7 @@
 m2::Id m2::obj::CreateOrigin() {
 	const auto it = CreateObject();
 
-	auto& gfx = it->AddGraphic(pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT);
+	auto& gfx = it->AddGraphic(m2g::pb::UPRIGHT_GRAPHICS_DEFAULT_LAYER);
 	gfx.onDraw = [](const Graphic &gfx_) {
 		Graphic::DrawCross(gfx_.position, SDL_Color{255, 0, 0, 255});
 	};

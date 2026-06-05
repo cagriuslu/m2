@@ -106,6 +106,10 @@ Game::Game() : window(CreateWindow(_proxy.gamePpm, _proxy.defaultGameHeightM, _p
 		cursor(CreateCursor()), pixel_format(GetWindowPixelFormat(window)),
 		font(OpenFont(_resources.GetDefaultFontPath().c_str(), _proxy.default_font_size)),
 		systemFont(OpenFont(_resources.GetSystemFontPath().c_str(), systemFontSize)) {
+	if (_proxy.drawOrder.empty()) {
+		throw M2_ERROR("Proxy::drawOrder is empty");
+	}
+
 	// ReSharper disable once CppDFAConstantConditions
 	if (_proxy.areGraphicsPixelated) {
 		// ReSharper disable once CppDFAUnreachableCode
@@ -979,7 +983,7 @@ void Game::ClearBackBuffer() const {
 }
 void Game::Draw() {
 	// Check if only one background layer needs to be drawn
-	const auto onlyBackgroundLayerToDraw = [&]() -> std::optional<pb::FlatGraphicsLayer> {
+	const auto onlyBackgroundLayerToDraw = [&]() -> std::optional<m2g::pb::FlatGraphicsLayer> {
 		if (std::holds_alternative<leveleditor::State>(_level->stateVariant)) {
 			if (const auto& rightHudName = _level->GetRightHud()->Name();
 					rightHudName == "PaintBgRightHud" || rightHudName == "SampleBgRightHud" || rightHudName == "SelectBgRightHud") {
@@ -990,10 +994,10 @@ void Game::Draw() {
 		return std::nullopt;
 	}();
 
-	for (const auto& layer : gDrawOrder) {
+	for (const auto& layer : M2G_PROXY.drawOrder) {
 		// Skip if another background layer needs drawing
-		if (onlyBackgroundLayerToDraw && std::holds_alternative<pb::FlatGraphicsLayer>(layer)
-				&& *onlyBackgroundLayerToDraw != std::get<pb::FlatGraphicsLayer>(layer)) {
+		if (onlyBackgroundLayerToDraw && std::holds_alternative<m2g::pb::FlatGraphicsLayer>(layer)
+				&& *onlyBackgroundLayerToDraw != std::get<m2g::pb::FlatGraphicsLayer>(layer)) {
 			continue;
 		}
 		if (const auto poolAndDrawList = _level->GetGraphicPoolAndDrawList(layer); not poolAndDrawList.second) {

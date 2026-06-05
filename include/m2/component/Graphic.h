@@ -7,7 +7,7 @@
 #include "../m3/Plane.h"
 #include "../math/RectF.h"
 #include <Level.pb.h>
-#include <M2.pb.h>
+#include <m2g_Layers.pb.h>
 #include <functional>
 #include <m2/video/Color.h>
 

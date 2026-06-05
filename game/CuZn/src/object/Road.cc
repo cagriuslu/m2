@@ -81,7 +81,7 @@ m2::void_expected InitRoad(m2::Object& obj, const m2::VecF& position, const Conn
 	const auto parent_id = obj.GetParentId();
 	const auto parent_index = M2G_PROXY.player_index(parent_id);
 	const auto color = M2G_PROXY.player_colors[parent_index];
-	auto& _gfx = obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, M2G_PROXY.is_canal_era() ? m2g::pb::SPRITE_CANAL : m2g::pb::SPRITE_RAILROAD);
+	auto& _gfx = obj.AddGraphic(m2g::pb::UprightGraphicsLayer::UPRIGHT_GRAPHICS_DEFAULT_LAYER, M2G_PROXY.is_canal_era() ? m2g::pb::SPRITE_CANAL : m2g::pb::SPRITE_RAILROAD);
 	_gfx.position = position;
 	_gfx.onDraw = [color](m2::Graphic& gfx) {
 		const auto connection_position = gfx.position;

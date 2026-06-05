@@ -23,16 +23,16 @@ m2::void_expected LoadCircularBumperSensor(m2::Object& obj, const m2::VecF& posi
 			}
 		});
 	}
-	phy.body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2::pb::PhysicsLayer::SEA_LEVEL);
+	phy.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER);
 
-	obj.AddGraphic(m2::pb::UprightGraphicsLayer::SEA_LEVEL_UPRIGHT, spriteType);
+	obj.AddGraphic(m2g::pb::UprightGraphicsLayer::UPRIGHT_GRAPHICS_DEFAULT_LAYER, spriteType);
 
 	// The sensor collides with only the ball
 	phy.onCollision = [](m2::Physique&, m2::Physique& ball, const m2::box2d::Contact& contact) {
 		const auto contactNormal = contact.normal;
 		auto* ballPhy = &ball;
 		M2_DEFER(([contactNormal, ballPhy]() {
-			ballPhy->body[m2::I(m2::pb::PhysicsLayer::SEA_LEVEL)]->ApplyForceToCenter(contactNormal * 6000.0f);
+			ballPhy->body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]->ApplyForceToCenter(contactNormal * 6000.0f);
 			M2_GAME.audio_manager->Play(&M2_GAME.songs[m2g::pb::SONG_CIRCULAR_BUMPER_SOUND], m2::AudioManager::ONCE, 0.25f);
 		}));
 	};

@@ -307,17 +307,17 @@ m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object&
 		case pb::ObjectType::PLATFORM:
 			return LoadPlatform(obj, position);
 		case pb::ObjectType::BALL_LAUNCHER_SENSOR:
-			return LoadGenericBallSensor(obj, position, m2::pb::PhysicsLayer::SEA_LEVEL, BallLauncherSensorOnCollision, BallLauncherSensorOffCollision);
+			return LoadGenericBallSensor(obj, position, m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER, BallLauncherSensorOnCollision, BallLauncherSensorOffCollision);
 		case pb::ObjectType::PLATFORM_ENTRY_SENSOR:
-			return LoadGenericBallSensor(obj, position, m2::pb::PhysicsLayer::SEA_LEVEL, PlatformEntrySensorOnCollision, {});
+			return LoadGenericBallSensor(obj, position, m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER, PlatformEntrySensorOnCollision, {});
 		case pb::ObjectType::PLATFORM_EXIT_SENSOR:
-			return LoadGenericBallSensor(obj, position, m2::pb::PhysicsLayer::ABOVE_GROUND, PlatformExitSensorOnCollision, {});
+			return LoadGenericBallSensor(obj, position, m2g::pb::PhysicsLayer::ABOVE_GROUND, PlatformExitSensorOnCollision, {});
 		case pb::ObjectType::LIGHT_SWITCH_SENSOR:
-			return LoadGenericBallSensor(obj, position, m2::pb::PhysicsLayer::SEA_LEVEL, LightSwitchSensorOnCollision, {});
+			return LoadGenericBallSensor(obj, position, m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER, LightSwitchSensorOnCollision, {});
 		case pb::ObjectType::HEATER_SWITCH_SENSOR:
-			return LoadGenericBallSensor(obj, position, m2::pb::PhysicsLayer::SEA_LEVEL, HeaterSwitchSensorOnCollision, {});
+			return LoadGenericBallSensor(obj, position, m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER, HeaterSwitchSensorOnCollision, {});
 		case pb::ObjectType::WATER_SPRINKLER_SENSOR:
-			return LoadGenericBallSensor(obj, position, m2::pb::PhysicsLayer::SEA_LEVEL, WaterSprinklerSensorOnCollision, {});
+			return LoadGenericBallSensor(obj, position, m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER, WaterSprinklerSensorOnCollision, {});
 		case pb::ObjectType::BUMPER_SENSOR:
 			return LoadBumperSensor(obj, position);
 		case pb::ObjectType::DROP_GATE:

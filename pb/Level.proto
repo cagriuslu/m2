@@ -5,7 +5,7 @@ import "m2g_GroupType.proto";
 import "m2g_ObjectType.proto";
 import "m2g_SpriteType.proto";
 import "VecF.proto";
-import "M2.proto";
+import "m2g_Layers.proto";
 
 message Group {
   m2g.pb.GroupType type = 1;
@@ -44,7 +44,7 @@ enum ProjectionType {
 // TODO not yet implemented
 // A layer that contains densely packed graphic objects. For each object, only the sprite type is described.
 message DenseFlatGraphicsLayer {
-  FlatGraphicsLayer layer = 1;
+  m2g.pb.FlatGraphicsLayer layer = 1;
   repeated SpriteTypeArray first_quadrant_rows = 2;
   repeated SpriteTypeArray second_quadrant_rows = 3;
   repeated SpriteTypeArray third_quadrant_rows = 4;
