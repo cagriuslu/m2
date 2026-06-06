@@ -7,30 +7,6 @@
 
 m2::Physique::Physique(const Id ownerId, const VecFE& position) : Component(ownerId), position(position) {}
 
-m2::Physique::Physique(Physique&& other) noexcept
-		: Component(other._ownerId), position(std::move(other.position)), orientation(other.orientation),
-		preStep(std::move(other.preStep)), postStep(std::move(other.postStep)),
-		body(std::move(other.body)), rigidBodyIndex(std::move(other.rigidBodyIndex)),
-		onCollision(std::move(other.onCollision)), offCollision(std::move(other.offCollision)) {
-	for (auto& b : body) {
-		b.reset();
-	}
-	other.rigidBodyIndex.reset();
-}
-
-m2::Physique& m2::Physique::operator=(Physique&& other) noexcept {
-    std::swap(_ownerId, other._ownerId);
-    std::swap(position, other.position);
-    std::swap(orientation, other.orientation);
-    std::swap(preStep, other.preStep);
-    std::swap(postStep, other.postStep);
-    std::swap(body, other.body);
-    std::swap(rigidBodyIndex, other.rigidBodyIndex);
-	std::swap(onCollision, other.onCollision);
-	std::swap(offCollision, other.offCollision);
-    return *this;
-}
-
 std::optional<m2g::pb::PhysicsLayer> m2::Physique::GetCurrentPhysicsLayer() const {
 	for (int i = 0; i < PHYSICS_LAYER_COUNT; ++i) {
 		if (body[i] && body[i]->IsEnabled()) {

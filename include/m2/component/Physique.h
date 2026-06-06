@@ -5,8 +5,10 @@
 #include <m2/math/VecF.h>
 #include <m2/math/VecE.h>
 #include <m2/ProxyTypes.h>
+#include <m2/BuildOptions.h>
 #include <m2g_Layers.pb.h>
 #include <functional>
+#include <type_traits>
 
 namespace m2 {
 	struct Physique final : Component {
@@ -17,9 +19,11 @@ namespace m2 {
 		Callback preStep{};
 		Callback postStep{};
 
-		// An object has either body or rigidBodyIndex.
-		std::array<std::optional<thirdparty::physics::RigidBody>, PHYSICS_LAYER_COUNT> body{};
-		std::optional<int> rigidBodyIndex;
+		/// Either an array of Box2D bodies (one optional slot per physics layer), or an index into the custom physics
+		/// World's rigid bodies. Which one is active is chosen at compile time, as a component never has both.
+		std::conditional_t<USE_CUSTOM_PHYSICS,
+				std::optional<int>,
+				std::array<std::optional<thirdparty::physics::RigidBody>, PHYSICS_LAYER_COUNT>> body{};
 
 		std::function<void(Physique&, Physique&, const box2d::Contact&)> onCollision;
 		std::function<void(Physique&, Physique&)> offCollision;
@@ -29,9 +33,9 @@ namespace m2 {
 		// Copy not allowed
 		Physique(const Physique& other) = delete;
 		Physique& operator=(const Physique& other) = delete;
-		// Move constructors
-		Physique(Physique&& other) noexcept;
-		Physique& operator=(Physique&& other) noexcept;
+		// Move not allowed
+		Physique(Physique&& other) = delete;
+		Physique& operator=(Physique&& other) = delete;
 
 		// Accessors
 

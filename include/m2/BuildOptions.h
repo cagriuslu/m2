@@ -12,4 +12,10 @@ namespace m2 {
 #else
 	constexpr bool GAME_IS_DETERMINISTIC = false;
 #endif
+
+#ifdef _USE_CUSTOM_PHYSICS
+	constexpr bool USE_CUSTOM_PHYSICS = true;
+#else
+	constexpr bool USE_CUSTOM_PHYSICS = false;
+#endif
 }
