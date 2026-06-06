@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.21)
 
 # Options
 option(GAME_IS_DETERMINISTIC "Compile the game in deterministic mode" OFF) # Usually set by the game's CMakeLists.txt
-option(USE_CUSTOM_PHYSICS "Use the custom physics engine instead of Box2D" OFF) # Usually set by the game's CMakeLists.txt
+option(USE_M2_PHYSICS "Use the M2 physics engine instead of Box2D" OFF) # Usually set by the game's CMakeLists.txt
 option(DEBUG "Enable debug mode" OFF)
 option(BUILDING_DEPS "Signifies that CMake is executed recursively to build the dependencies" OFF)
 if(DEBUG)
@@ -156,9 +156,9 @@ if(GAME_IS_DETERMINISTIC)
     add_compile_definitions(_GAME_IS_DETERMINISTIC)
 endif()
 
-message("USE_CUSTOM_PHYSICS: ${USE_CUSTOM_PHYSICS}")
-if(USE_CUSTOM_PHYSICS)
-    add_compile_definitions(_USE_CUSTOM_PHYSICS)
+message("USE_M2_PHYSICS: ${USE_M2_PHYSICS}")
+if(USE_M2_PHYSICS)
+    add_compile_definitions(_USE_M2_PHYSICS)
 endif()
 
 # Generate protobuf files

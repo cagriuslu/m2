@@ -21,7 +21,7 @@ namespace m2 {
 
 		/// Either an array of Box2D bodies (one optional slot per physics layer), or an index into the custom physics
 		/// World's rigid bodies. Which one is active is chosen at compile time, as a component never has both.
-		std::conditional_t<USE_CUSTOM_PHYSICS,
+		std::conditional_t<USE_M2_PHYSICS,
 				std::optional<int>,
 				std::array<std::optional<thirdparty::physics::RigidBody>, PHYSICS_LAYER_COUNT>> body{};
 
