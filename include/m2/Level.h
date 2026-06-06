@@ -86,7 +86,6 @@ namespace m2 {
 		Pool<Light> lights;
 		Pool<SoundEmitter> soundEmitters;
 		std::array<b2World*, PHYSICS_LAYER_COUNT> world{};
-		World world2;
 		box2d::ContactListener* contactListener{};
 		Id cameraId{}, playerId{}, pointer_id{};
 		std::optional<SoundListener> leftListener, rightListener;
@@ -131,7 +130,6 @@ namespace m2 {
 		std::pair<Pool<Graphic>&, DrawList*> GetGraphicPoolAndDrawList(GraphicId);
 		/// Returns the pool (and optionally, the draw list) corresponding to a drawable layer.
 		std::pair<Pool<Graphic>&, DrawList*> GetGraphicPoolAndDrawList(DrawLayer);
-		World& World2() { return world2; }
 		/// Inclusive rectangle that contains all terrain graphics inside. The unit is meters.
 		[[nodiscard]] const RectI& GetBackgroundBoundary() const { return _backgroundBoundary; }
 		const std::string& GetLevelIdentifier() const { return _lb ? _lb->identifier() : EMPTY_STRING; }

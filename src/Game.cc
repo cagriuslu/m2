@@ -776,6 +776,7 @@ void Game::ExecuteStep(const Stopwatch::Duration& delta) {
 		if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)
 			|| std::holds_alternative<multiplayer::lockstep::ClientComponents>(_multiPlayerComponents)) {
 			if (auto simulationInputs = GetLockstepClientActor().PopSimulationInputs()) {
+				// Save inputs to savefile
 				if (auto* levelSaverInterface = GetLockstepLevelSaverInterface(); levelSaverInterface) {
 					if (not levelSaverInterface->IsActorRunning()) {
 						throw M2_ERROR("Level saver stopped running prematurely");
@@ -784,8 +785,10 @@ void Game::ExecuteStep(const Stopwatch::Duration& delta) {
 						levelSaverInterface->StorePlayerInputs(simulationInputs->timecode, simulationInputs->allInputsToSimulate);
 					}
 				}
+
 				LOG_NETWORK("Simulating inputs from all players for timecode", simulationInputs->timecode);
 				_proxy.HandleLockstepPlayerInputs(simulationInputs->allInputsToSimulate);
+
 				// Calculate game state hash if enough time has passed
 				if (0 < simulationInputs->timecode && (simulationInputs->timecode % multiplayer::lockstep::ConnectionToServer::GAME_STATE_REPORT_PERIOD_IN_TICKS) == 0) {
 					const auto gameStateHash = [&]() -> int32_t {
@@ -814,7 +817,43 @@ void Game::ExecuteStep(const Stopwatch::Duration& delta) {
 				_proxy.HandleLockstepPlayerInputs(simulationInputs->allInputs);
 			}
 		}
+		ExecuteDeferredActions();
+
+		// Deterministic physics
+		for (auto& phy : _level->physics) {
+			for (auto& body : phy.body) {
+				if (body && body->IsEnabled()) {
+					body->OnStep();
+
+					auto& obj = phy.GetOwner();
+					phy.position = VecFE{body->GetPosition()};
+					phy.orientation = FE{body->GetAngle()};
+
+					// Update other components
+					if (auto* gfx = obj.TryGetGraphic()) {
+						const auto oldGfxPosition = gfx->position;
+						gfx->position = body->GetPosition();
+						gfx->orientation = phy.orientation.ToFloat();
+						// Update draw list if necessary
+						if (oldGfxPosition != body->GetPosition()) {
+							const auto gfxId = obj.GetGraphicId();
+							const auto poolAndDrawList = _level->GetGraphicPoolAndDrawList(gfxId);
+							poolAndDrawList.second->QueueUpdate(phy.GetOwnerId(), body->GetPosition());
+						}
+					}
+					if (auto* lig = obj.TryGetLight()) {
+						lig->position = body->GetPosition();
+					}
+					if (auto* snd = obj.TryGetSoundEmitter()) {
+						snd->position = body->GetPosition();
+					}
+					break;
+				}
+			}
+		}
+		ExecuteDeferredActions();
 	} else {
+		// ReSharper disable once CppDFAUnreachableCode
 		if (IsTurnBasedServer()) {
 			// Check if any of the bots need to handle the TurnBasedServerUpdate
 			for (auto& bot : std::get<TurnBasedServerComponents>(_multiPlayerComponents).botClientThreads) {

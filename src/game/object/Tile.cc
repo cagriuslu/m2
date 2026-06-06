@@ -37,7 +37,7 @@ m2::Pool<m2::Object>::Iterator m2::obj::CreateTile(const m2g::pb::FlatGraphicsLa
 				.initiallyEnabled = true
 			};
 			auto& phy = it->AddPhysique();
-			phy.body[I(m2g::pb::PHYSICS_DEFAULT_LAYER)] = thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, it->GetPhysiqueId(), position, 0.0f, m2g::pb::PHYSICS_DEFAULT_LAYER);
+			phy.body[I(m2g::pb::PHYSICS_DEFAULT_LAYER)] = Physique::Body::CreateFromDefinition(rigidBodyDef, it->GetPhysiqueId(), position, 0.0f, m2g::pb::PHYSICS_DEFAULT_LAYER);
 		}
 
 		// Add foreground companion if necessary

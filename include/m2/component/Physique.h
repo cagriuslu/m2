@@ -2,6 +2,7 @@
 #include "../Component.h"
 #include "../box2d/ContactListener.h"
 #include <m2/thirdparty/physics/RigidBody.h>
+#include <m2/physics/DeterministicBody.h>
 #include <m2/math/VecF.h>
 #include <m2/math/VecE.h>
 #include <m2/ProxyTypes.h>
@@ -19,11 +20,14 @@ namespace m2 {
 		Callback preStep{};
 		Callback postStep{};
 
+		using DeterministicBody = physics::DeterministicBody;
+		using M2Body = int;
+		using Box2dBody = thirdparty::physics::RigidBody;
 		/// Either an array of Box2D bodies (one optional slot per physics layer), or an index into the custom physics
 		/// World's rigid bodies. Which one is active is chosen at compile time, as a component never has both.
-		std::conditional_t<USE_M2_PHYSICS,
-				std::optional<int>,
-				std::array<std::optional<thirdparty::physics::RigidBody>, PHYSICS_LAYER_COUNT>> body{};
+		using NondeterministicBody = std::conditional_t<USE_M2_PHYSICS, M2Body, Box2dBody>;
+		using Body = std::conditional_t<GAME_IS_DETERMINISTIC, DeterministicBody, NondeterministicBody>;
+		std::array<std::optional<Body>, PHYSICS_LAYER_COUNT> body{};
 
 		std::function<void(Physique&, Physique&, const box2d::Contact&)> onCollision;
 		std::function<void(Physique&, Physique&)> offCollision;
@@ -44,8 +48,6 @@ namespace m2 {
 		static void DefaultBeginContactCallback(b2Contact& b2_contact);
 		static void DefaultEndContactCallback(b2Contact& b2_contact);
 	};
-
-	// Utilities
 
 	/// Returns a force multiplier that can be applied to a physics object with a speed limit
 	float CalculateLimitedForce(float curr_speed, float speed_limit);

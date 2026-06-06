@@ -130,5 +130,6 @@ namespace m2::thirdparty::physics {
 
 		/// Clone the properties (position, orientation, speed, etc.) of another body to self
 		void TeleportToAnother(const RigidBody& other);
+		void OnStep() {} // No-op
 	};
 }
