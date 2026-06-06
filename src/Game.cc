@@ -772,116 +772,119 @@ void Game::UpdateCharacters(const Stopwatch::Duration& delta) {
 	_level->GetCharacterStorage().UpdateAll(delta);
 }
 void Game::ExecuteStep(const Stopwatch::Duration& delta) {
-	if (IsTurnBasedServer()) {
-		// Check if any of the bots need to handle the TurnBasedServerUpdate
-		for (auto& bot : std::get<TurnBasedServerComponents>(_multiPlayerComponents).botClientThreads) {
-			if (auto server_update = bot.pop_server_update()) {
-				_proxy.bot_handle_server_update(*server_update);
-			}
-		}
-
-		// Handle client command
-		if (const auto client_command = ServerThread().PopCommandFromTurnHolderEvent()) {
-			if (const auto new_turn_holder = _proxy.handle_client_command(ServerThread().GetTurnHolderIndex(), client_command->client_command())) {
-				if (*new_turn_holder < 0) {
-					_server_update_necessary = true;
-					_server_update_with_shutdown = true;
-				} else {
-					ServerThread().SetTurnHolder(*new_turn_holder);
-					_server_update_necessary = true;
-				}
-			}
-		}
-
-		// Handle server command
-		if (const auto server_command = TurnBasedHostClientThread().pop_server_command()) {
-			_proxy.handle_server_command(*server_command);
-		}
-		// Check if any of the bots need to handle the TurnBasedServerCommand
-		for (auto& bot : std::get<TurnBasedServerComponents>(_multiPlayerComponents).botClientThreads) {
-			if (auto server_command = bot.pop_server_command()) {
-				_proxy.bot_handle_server_command(*server_command, *bot.GetReceiverIndex());
-			}
-		}
-	} else if (IsRealTurnBasedClient()) {
-		// Handle server command
-		if (const auto server_command = TurnBasedRealClientThread().pop_server_command()) {
-			_proxy.handle_server_command(*server_command);
-		}
-	} else if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)
+	if constexpr (GAME_IS_DETERMINISTIC) {
+		if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)
 			|| std::holds_alternative<multiplayer::lockstep::ClientComponents>(_multiPlayerComponents)) {
-		if (auto simulationInputs = GetLockstepClientActor().PopSimulationInputs()) {
-			if (auto* levelSaverInterface = GetLockstepLevelSaverInterface(); levelSaverInterface) {
-				if (not levelSaverInterface->IsActorRunning()) {
-					throw M2_ERROR("Level saver stopped running prematurely");
+			if (auto simulationInputs = GetLockstepClientActor().PopSimulationInputs()) {
+				if (auto* levelSaverInterface = GetLockstepLevelSaverInterface(); levelSaverInterface) {
+					if (not levelSaverInterface->IsActorRunning()) {
+						throw M2_ERROR("Level saver stopped running prematurely");
+					}
+					if (std::ranges::any_of(simulationInputs->allInputsToSimulate, [](const auto& playerInputs) { return not playerInputs.empty(); })) {
+						levelSaverInterface->StorePlayerInputs(simulationInputs->timecode, simulationInputs->allInputsToSimulate);
+					}
 				}
-				if (std::ranges::any_of(simulationInputs->allInputsToSimulate, [](const auto& playerInputs) { return not playerInputs.empty(); })) {
-					levelSaverInterface->StorePlayerInputs(simulationInputs->timecode, simulationInputs->allInputsToSimulate);
-				}
-			}
-			LOG_NETWORK("Simulating inputs from all players for timecode", simulationInputs->timecode);
-			_proxy.HandleLockstepPlayerInputs(simulationInputs->allInputsToSimulate);
-			// Calculate game state hash if enough time has passed
-			if (0 < simulationInputs->timecode && (simulationInputs->timecode % multiplayer::lockstep::ConnectionToServer::GAME_STATE_REPORT_PERIOD_IN_TICKS) == 0) {
-				const auto gameStateHash = [&]() -> int32_t {
-					if constexpr (BUILD_IS_DEBUG) {
-						if (auto* levelSaverInterface = GetLockstepLevelSaverInterface(); levelSaverInterface) {
-							auto debugStateReport = _level->CalculateLockstepDebugStateReport(I(simulationInputs->timecode));
-							const auto retval = debugStateReport.game_state_hash();
-							levelSaverInterface->StoreDebugStateReport(simulationInputs->timecode, std::move(debugStateReport));
-							return retval;
+				LOG_NETWORK("Simulating inputs from all players for timecode", simulationInputs->timecode);
+				_proxy.HandleLockstepPlayerInputs(simulationInputs->allInputsToSimulate);
+				// Calculate game state hash if enough time has passed
+				if (0 < simulationInputs->timecode && (simulationInputs->timecode % multiplayer::lockstep::ConnectionToServer::GAME_STATE_REPORT_PERIOD_IN_TICKS) == 0) {
+					const auto gameStateHash = [&]() -> int32_t {
+						if constexpr (BUILD_IS_DEBUG) {
+							if (auto* levelSaverInterface = GetLockstepLevelSaverInterface(); levelSaverInterface) {
+								auto debugStateReport = _level->CalculateLockstepDebugStateReport(I(simulationInputs->timecode));
+								const auto retval = debugStateReport.game_state_hash();
+								levelSaverInterface->StoreDebugStateReport(simulationInputs->timecode, std::move(debugStateReport));
+								return retval;
+							}
 						}
+						return _level->CalculateLockstepGameStateHash(I(simulationInputs->timecode));
+					}();
+					LOG_NETWORK("Game state hash for timecode", simulationInputs->timecode, gameStateHash);
+					// This hash will be used during the next report. There should be enough time for the actors to receive and retain them.
+					GetLockstepClientActor().StoreGameStateHash(simulationInputs->timecode, gameStateHash);
+					// Report the game state hash to server as well. That'll become the ground truth.
+					if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)) {
+						std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).serverActorInterface->StoreGameStateHash(simulationInputs->timecode, gameStateHash);
 					}
-					return _level->CalculateLockstepGameStateHash(I(simulationInputs->timecode));
-				}();
-				LOG_NETWORK("Game state hash for timecode", simulationInputs->timecode, gameStateHash);
-				// This hash will be used during the next report. There should be enough time for the actors to receive and retain them.
-				GetLockstepClientActor().StoreGameStateHash(simulationInputs->timecode, gameStateHash);
-				// Report the game state hash to server as well. That'll become the ground truth.
-				if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)) {
-					std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).serverActorInterface->StoreGameStateHash(simulationInputs->timecode, gameStateHash);
 				}
 			}
-		}
-	} else if (std::holds_alternative<multiplayer::lockstep::ReplayComponents>(_multiPlayerComponents)) {
-		if (auto simulationInputs = std::get<multiplayer::lockstep::ReplayComponents>(_multiPlayerComponents).levelReplayer.GetNextSimulationInputs()) {
-			LOG_NETWORK("Simulating inputs from level replayer");
-			_proxy.HandleLockstepPlayerInputs(simulationInputs->allInputs);
-		}
-	} else if constexpr (not GAME_IS_DETERMINISTIC) {
-		// ReSharper disable once CppDFAUnreachableCode
-		// Integrate physics
-		for (auto* world : _level->world) {
-			if (world) {
-				world->Step(ToDurationF(delta), velocity_iterations, position_iterations);
+		} else if (std::holds_alternative<multiplayer::lockstep::ReplayComponents>(_multiPlayerComponents)) {
+			if (auto simulationInputs = std::get<multiplayer::lockstep::ReplayComponents>(_multiPlayerComponents).levelReplayer.GetNextSimulationInputs()) {
+				LOG_NETWORK("Simulating inputs from level replayer");
+				_proxy.HandleLockstepPlayerInputs(simulationInputs->allInputs);
 			}
 		}
-		// Update positions
-		for (auto& phy : _level->physics) {
-			for (const auto& body : phy.body) {
-				if (body && body->IsEnabled()) {
-					auto& obj = phy.GetOwner();
-					phy.position = VecFE{body->GetPosition()};
-					phy.orientation = FE{body->GetAngle()};
-					// Update other components
-					if (auto* gfx = obj.TryGetGraphic()) {
-						const auto oldGfxPosition = gfx->position;
-						gfx->position = body->GetPosition();
-						gfx->orientation = phy.orientation.ToFloat();
-						// Update draw list if necessary
-						if (oldGfxPosition != body->GetPosition()) {
-							const auto gfxId = obj.GetGraphicId();
-							const auto poolAndDrawList = _level->GetGraphicPoolAndDrawList(gfxId);
-							poolAndDrawList.second->QueueUpdate(phy.GetOwnerId(), body->GetPosition());
+	} else {
+		if (IsTurnBasedServer()) {
+			// Check if any of the bots need to handle the TurnBasedServerUpdate
+			for (auto& bot : std::get<TurnBasedServerComponents>(_multiPlayerComponents).botClientThreads) {
+				if (auto server_update = bot.pop_server_update()) {
+					_proxy.bot_handle_server_update(*server_update);
+				}
+			}
+
+			// Handle client command
+			if (const auto client_command = ServerThread().PopCommandFromTurnHolderEvent()) {
+				if (const auto new_turn_holder = _proxy.handle_client_command(ServerThread().GetTurnHolderIndex(), client_command->client_command())) {
+					if (*new_turn_holder < 0) {
+						_server_update_necessary = true;
+						_server_update_with_shutdown = true;
+					} else {
+						ServerThread().SetTurnHolder(*new_turn_holder);
+						_server_update_necessary = true;
+					}
+				}
+			}
+
+			// Handle server command
+			if (const auto server_command = TurnBasedHostClientThread().pop_server_command()) {
+				_proxy.handle_server_command(*server_command);
+			}
+			// Check if any of the bots need to handle the TurnBasedServerCommand
+			for (auto& bot : std::get<TurnBasedServerComponents>(_multiPlayerComponents).botClientThreads) {
+				if (auto server_command = bot.pop_server_command()) {
+					_proxy.bot_handle_server_command(*server_command, *bot.GetReceiverIndex());
+				}
+			}
+		} else if (IsRealTurnBasedClient()) {
+			// Handle server command
+			if (const auto server_command = TurnBasedRealClientThread().pop_server_command()) {
+				_proxy.handle_server_command(*server_command);
+			}
+		} else {
+			// Integrate physics
+			for (auto* world : _level->world) {
+				if (world) {
+					world->Step(ToDurationF(delta), velocity_iterations, position_iterations);
+				}
+			}
+			// Update positions
+			for (auto& phy : _level->physics) {
+				for (const auto& body : phy.body) {
+					if (body && body->IsEnabled()) {
+						auto& obj = phy.GetOwner();
+						phy.position = VecFE{body->GetPosition()};
+						phy.orientation = FE{body->GetAngle()};
+						// Update other components
+						if (auto* gfx = obj.TryGetGraphic()) {
+							const auto oldGfxPosition = gfx->position;
+							gfx->position = body->GetPosition();
+							gfx->orientation = phy.orientation.ToFloat();
+							// Update draw list if necessary
+							if (oldGfxPosition != body->GetPosition()) {
+								const auto gfxId = obj.GetGraphicId();
+								const auto poolAndDrawList = _level->GetGraphicPoolAndDrawList(gfxId);
+								poolAndDrawList.second->QueueUpdate(phy.GetOwnerId(), body->GetPosition());
+							}
 						}
+						if (auto* lig = obj.TryGetLight()) {
+							lig->position = body->GetPosition();
+						}
+						if (auto* snd = obj.TryGetSoundEmitter()) {
+							snd->position = body->GetPosition();
+						}
+						break;
 					}
-					if (auto* lig = obj.TryGetLight()) {
-						lig->position = body->GetPosition();
-					}
-					if (auto* snd = obj.TryGetSoundEmitter()) {
-						snd->position = body->GetPosition();
-					}
-					break;
 				}
 			}
 		}
