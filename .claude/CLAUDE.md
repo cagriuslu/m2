@@ -28,12 +28,12 @@ For lifecycle hooks, and UI blueprints, the game must provide a class called `m2
 - `m2::Game` singleton instance can be accessed via `M2_GAME` macro. It owns the `Level`, resources (sprites, blueprints), multiplayer state, and more.
 - The currently running level (`m2::Level`) can be accessed via `M2_LEVEL` macro. It owns all runtime objects and component pools for presently loaded level.
 
-## Component System
+### Component System
 
 - `m2::Object` represents an interactive game object. It contains the IDs of the components belonging to that object.
 - Components are stored in `Pool`s, owned by the `Level`. The main loop iterates on these component pools rather than objects.
 
-## Component types
+### Component types
 
 - `Character` — game logic and state. Must implements `CharacterImpl` concept.
 - `Graphic` — sprite rendering.
@@ -52,3 +52,7 @@ Two multiplayer modes:
 ## Platform Layer (`platform/`)
 
 Headers in `include/` that require platform-specific implementations are provided under `platform/macos/`, `platform/linux/`, `platform/windows/`, and `platform/posix/` (shared by macOS and Linux).
+
+## Coding Standards
+
+- Never allow silent failures. Prefer proper error handling or `throw`.
