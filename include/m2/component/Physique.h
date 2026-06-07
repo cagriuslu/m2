@@ -23,7 +23,8 @@ namespace m2 {
 		/// Either a Box2D body, or an index into the custom physics world's rigid bodies. Which one is active is chosen
 		/// at compile time, as a component never has both.
 		using DynamicBody = std::conditional_t<USE_M2_PHYSICS, M2Body, Box2dBody>;
-		std::variant<StaticBody, DynamicBody> body{};
+		using Body = std::conditional_t<GAME_IS_DETERMINISTIC, std::variant<StaticBody>, std::variant<StaticBody, DynamicBody>>;
+		Body body{};
 
 		std::function<void(Physique&, Physique&, const box2d::Contact&)> onCollision;
 		std::function<void(Physique&, Physique&)> offCollision;

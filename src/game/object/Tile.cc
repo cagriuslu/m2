@@ -6,7 +6,7 @@ using namespace google::protobuf;
 using namespace m2::thirdparty::physics;
 
 namespace {
-	std::vector<FixtureDefinition> ToFixtures(const RepeatedPtrField<m2::pb::Fixture>& pbFixtures,
+	[[maybe_unused]] std::vector<FixtureDefinition> ToFixtures(const RepeatedPtrField<m2::pb::Fixture>& pbFixtures,
 			const m2g::pb::SpriteType spriteType, int ppm) {
 		std::vector<FixtureDefinition> fixtures(pbFixtures.size());
 		std::ranges::transform(pbFixtures, fixtures.begin(), [=](const auto& pbFixture) {
@@ -28,6 +28,10 @@ m2::Pool<m2::Object>::Iterator m2::obj::CreateTile(const m2g::pb::FlatGraphicsLa
 
 		// Add collider if necessary
 		if (sprite.OriginalPb().regular().fixtures_size()) {
+#ifdef _GAME_IS_DETERMINISTIC
+			// The deterministic body can't hold fixtures
+			it->AddPhysique(VecFE{position});
+#else
 			const RigidBodyDefinition rigidBodyDef{
 				.bodyType = RigidBodyType::STATIC,
 				.fixtures = ToFixtures(sprite.OriginalPb().regular().fixtures(), spriteType, sprite.Ppm()),
@@ -38,6 +42,7 @@ m2::Pool<m2::Object>::Iterator m2::obj::CreateTile(const m2g::pb::FlatGraphicsLa
 			};
 			auto& phy = it->AddPhysique();
 			phy.body = Physique::DynamicBody::CreateFromDefinition(rigidBodyDef, it->GetPhysiqueId(), position, 0.0f);
+#endif
 		}
 
 		// Add foreground companion if necessary
