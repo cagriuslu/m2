@@ -821,7 +821,7 @@ void Game::ExecuteStep(const Stopwatch::Duration& delta) {
 
 		// Deterministic physics
 		for (auto& phy : _level->physics) {
-			if (auto* body = std::get_if<Physique::Body>(&phy.body); body && body->IsEnabled()) {
+			if (auto* body = std::get_if<Physique::DynamicBody>(&phy.body); body && body->IsEnabled()) {
 				body->OnStep();
 
 				auto& obj = phy.GetOwner();
@@ -894,7 +894,7 @@ void Game::ExecuteStep(const Stopwatch::Duration& delta) {
 			}
 			// Update positions
 			for (auto& phy : _level->physics) {
-				if (const auto* body = std::get_if<Physique::Body>(&phy.body); body && body->IsEnabled()) {
+				if (const auto* body = std::get_if<Physique::DynamicBody>(&phy.body); body && body->IsEnabled()) {
 					auto& obj = phy.GetOwner();
 					phy.position = VecFE{body->GetPosition()};
 					phy.orientation = FE{body->GetAngle()};

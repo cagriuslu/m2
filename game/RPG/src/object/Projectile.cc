@@ -79,7 +79,7 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& positi
 				: m2::thirdparty::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_HOSTILE_DAMAGE)]
 	}};
 	phy.body = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, angle);
-	std::get<m2::Physique::Body>(phy.body).SetLinearVelocity(direction * linear_speed);
+	std::get<m2::Physique::DynamicBody>(phy.body).SetLinearVelocity(direction * linear_speed);
 
 	// Add graphics
 	auto& gfx = obj.AddGraphic(m2g::pb::UprightGraphicsLayer::UPRIGHT_GRAPHICS_DEFAULT_LAYER, ranged_weapon.GameSprite());

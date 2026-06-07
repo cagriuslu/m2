@@ -63,58 +63,58 @@ m2::void_expected LoadFlipper(m2::Object& obj, const m2::VecF& position, float o
 	if (rightFlipper) {
 		phy.preStep = [flipper](m2::Physique& phy_, const m2::Stopwatch::Duration&) {
 			if (flipper->state == FlipperState::RESTING && M2_GAME.events.IsKeyDown(m2g::pb::RIGHT_FLIPPER)) {
-				std::get<m2::Physique::Body>(phy_.body).SetAngularVelocity(FLIPPER_SWEEP_UP_SPEED);
+				std::get<m2::Physique::DynamicBody>(phy_.body).SetAngularVelocity(FLIPPER_SWEEP_UP_SPEED);
 				flipper->state = FlipperState::GOING_UP;
 				// Nudge the ball ever so sligthly to the opposite direction
-				std::get<m2::Physique::Body>(M2_LEVEL.objects[M2G_PROXY.ballId].GetPhysique().body).ApplyForceToCenter({-40.0f, 0.0f});
+				std::get<m2::Physique::DynamicBody>(M2_LEVEL.objects[M2G_PROXY.ballId].GetPhysique().body).ApplyForceToCenter({-40.0f, 0.0f});
 				M2_DEFER([]() {
 					M2_GAME.audio_manager->Play(&M2_GAME.songs[m2g::pb::SONG_FLIPPER_FLIP_UP_SOUND], m2::AudioManager::ONCE, 0.15f);
 				});
 			}
 			if (flipper->state == FlipperState::FULLY_UP && not M2_GAME.events.IsKeyDown(m2g::pb::RIGHT_FLIPPER)) {
-				std::get<m2::Physique::Body>(phy_.body).SetAngularVelocity(-FLIPPER_SWEEP_DOWN_SPEED);
+				std::get<m2::Physique::DynamicBody>(phy_.body).SetAngularVelocity(-FLIPPER_SWEEP_DOWN_SPEED);
 				flipper->state = FlipperState::GOING_DOWN;
 			}
 		};
 		// Lock to up or down position
 		phy.postStep = [flipper](m2::Physique& phy_, const m2::Stopwatch::Duration&) {
-			if (flipper->state == FlipperState::GOING_UP && m2::IsLess(MAX_FLIPPER_SWEEP_RADS, m2::AngleAbsoluteDifference(std::get<m2::Physique::Body>(phy_.body).GetAngle().ToFloat(), flipper->initialRotation), 0.001f)) {
-				std::get<m2::Physique::Body>(phy_.body).SetAngle(flipper->initialRotation + MAX_FLIPPER_SWEEP_RADS);
-				std::get<m2::Physique::Body>(phy_.body).SetAngularVelocity(0.0f);
+			if (flipper->state == FlipperState::GOING_UP && m2::IsLess(MAX_FLIPPER_SWEEP_RADS, m2::AngleAbsoluteDifference(std::get<m2::Physique::DynamicBody>(phy_.body).GetAngle().ToFloat(), flipper->initialRotation), 0.001f)) {
+				std::get<m2::Physique::DynamicBody>(phy_.body).SetAngle(flipper->initialRotation + MAX_FLIPPER_SWEEP_RADS);
+				std::get<m2::Physique::DynamicBody>(phy_.body).SetAngularVelocity(0.0f);
 				flipper->state = FlipperState::FULLY_UP;
 			}
-			if (flipper->state == FlipperState::GOING_DOWN && m2::IsNegative(m2::AngleDifference(std::get<m2::Physique::Body>(phy_.body).GetAngle().ToFloat(), flipper->initialRotation), 0.001f)) {
-				std::get<m2::Physique::Body>(phy_.body).SetAngle(flipper->initialRotation);
-				std::get<m2::Physique::Body>(phy_.body).SetAngularVelocity(0.0f);
+			if (flipper->state == FlipperState::GOING_DOWN && m2::IsNegative(m2::AngleDifference(std::get<m2::Physique::DynamicBody>(phy_.body).GetAngle().ToFloat(), flipper->initialRotation), 0.001f)) {
+				std::get<m2::Physique::DynamicBody>(phy_.body).SetAngle(flipper->initialRotation);
+				std::get<m2::Physique::DynamicBody>(phy_.body).SetAngularVelocity(0.0f);
 				flipper->state = FlipperState::RESTING;
 			}
 		};
 	} else {
 		phy.preStep = [flipper](m2::Physique& phy_, const m2::Stopwatch::Duration&) {
 			if (flipper->state == FlipperState::RESTING && M2_GAME.events.IsKeyDown(m2g::pb::LEFT_FLIPPER)) {
-				std::get<m2::Physique::Body>(phy_.body).SetAngularVelocity(-FLIPPER_SWEEP_UP_SPEED);
+				std::get<m2::Physique::DynamicBody>(phy_.body).SetAngularVelocity(-FLIPPER_SWEEP_UP_SPEED);
 				flipper->state = FlipperState::GOING_UP;
 				// Nudge the ball ever so sligthly to the opposite direction
-				std::get<m2::Physique::Body>(M2_LEVEL.objects[M2G_PROXY.ballId].GetPhysique().body).ApplyForceToCenter({40.0f, 0.0f});
+				std::get<m2::Physique::DynamicBody>(M2_LEVEL.objects[M2G_PROXY.ballId].GetPhysique().body).ApplyForceToCenter({40.0f, 0.0f});
 				M2_DEFER([]() {
 					M2_GAME.audio_manager->Play(&M2_GAME.songs[m2g::pb::SONG_FLIPPER_FLIP_UP_SOUND], m2::AudioManager::ONCE, 0.15f);
 				});
 			}
 			if (flipper->state == FlipperState::FULLY_UP && not M2_GAME.events.IsKeyDown(m2g::pb::LEFT_FLIPPER)) {
-				std::get<m2::Physique::Body>(phy_.body).SetAngularVelocity(FLIPPER_SWEEP_DOWN_SPEED);
+				std::get<m2::Physique::DynamicBody>(phy_.body).SetAngularVelocity(FLIPPER_SWEEP_DOWN_SPEED);
 				flipper->state = FlipperState::GOING_DOWN;
 			}
 		};
 		// Lock to up or down position
 		phy.postStep = [flipper](m2::Physique& phy_, const m2::Stopwatch::Duration&) {
-			if (flipper->state == FlipperState::GOING_UP && m2::IsLess(MAX_FLIPPER_SWEEP_RADS, m2::AngleAbsoluteDifference(std::get<m2::Physique::Body>(phy_.body).GetAngle().ToFloat(), flipper->initialRotation), 0.001f)) {
-				std::get<m2::Physique::Body>(phy_.body).SetAngle(flipper->initialRotation - MAX_FLIPPER_SWEEP_RADS);
-				std::get<m2::Physique::Body>(phy_.body).SetAngularVelocity(0.0f);
+			if (flipper->state == FlipperState::GOING_UP && m2::IsLess(MAX_FLIPPER_SWEEP_RADS, m2::AngleAbsoluteDifference(std::get<m2::Physique::DynamicBody>(phy_.body).GetAngle().ToFloat(), flipper->initialRotation), 0.001f)) {
+				std::get<m2::Physique::DynamicBody>(phy_.body).SetAngle(flipper->initialRotation - MAX_FLIPPER_SWEEP_RADS);
+				std::get<m2::Physique::DynamicBody>(phy_.body).SetAngularVelocity(0.0f);
 				flipper->state = FlipperState::FULLY_UP;
 			}
-			if (flipper->state == FlipperState::GOING_DOWN && m2::IsNegative(m2::AngleDifference(flipper->initialRotation, std::get<m2::Physique::Body>(phy_.body).GetAngle().ToFloat()), 0.001f)) {
-				std::get<m2::Physique::Body>(phy_.body).SetAngle(flipper->initialRotation);
-				std::get<m2::Physique::Body>(phy_.body).SetAngularVelocity(0.0f);
+			if (flipper->state == FlipperState::GOING_DOWN && m2::IsNegative(m2::AngleDifference(flipper->initialRotation, std::get<m2::Physique::DynamicBody>(phy_.body).GetAngle().ToFloat()), 0.001f)) {
+				std::get<m2::Physique::DynamicBody>(phy_.body).SetAngle(flipper->initialRotation);
+				std::get<m2::Physique::DynamicBody>(phy_.body).SetAngularVelocity(0.0f);
 				flipper->state = FlipperState::RESTING;
 			}
 		};

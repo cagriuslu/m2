@@ -37,7 +37,7 @@ m2::Pool<m2::Object>::Iterator m2::obj::CreateTile(const m2g::pb::FlatGraphicsLa
 				.initiallyEnabled = true
 			};
 			auto& phy = it->AddPhysique();
-			phy.body = Physique::Body::CreateFromDefinition(rigidBodyDef, it->GetPhysiqueId(), position, 0.0f);
+			phy.body = Physique::DynamicBody::CreateFromDefinition(rigidBodyDef, it->GetPhysiqueId(), position, 0.0f);
 		}
 
 		// Add foreground companion if necessary

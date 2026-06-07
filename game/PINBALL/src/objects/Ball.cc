@@ -51,7 +51,7 @@ m2::void_expected LoadBall(m2::Object& obj, const m2::VecF& position) {
 	gfx.position = position;
 
 	phy.preStep = [initialPos = position](m2::Physique& phy_, const m2::Stopwatch::Duration&) {
-		auto& body = std::get<m2::Physique::Body>(phy_.body);
+		auto& body = std::get<m2::Physique::DynamicBody>(phy_.body);
 		if (M2_GAME.events.PopKeyRelease(m2g::pb::BALL_LAUNCHER)) {
 			body.ApplyForceToCenter({0.0f, -7500.0f});
 			// TODO defer M2_GAME.audio_manager->Play(&M2_GAME.songs[m2g::pb::SONG_CIRCULAR_BUMPER_SOUND], m2::AudioManager::ONCE, 0.25f);
@@ -70,7 +70,7 @@ m2::void_expected LoadBall(m2::Object& obj, const m2::VecF& position) {
 	phy.onCollision = [ballImpl](m2::Physique& ball, const m2::Physique& other, const m2::box2d::Contact& contact) {
 		if (other.GetOwner().GetType() == m2g::pb::WALLS && (not ballImpl->lastCollidedWallPosition
 				|| not ballImpl->lastCollidedWallPosition->IsNear(ball.position, 0.2f))) {
-			const auto velocity = std::get<m2::Physique::Body>(ball.body).GetLinearVelocity();
+			const auto velocity = std::get<m2::Physique::DynamicBody>(ball.body).GetLinearVelocity();
 			// Find the speed along the collision axis. Dot product with the unit vector is the projection.
 			if (const auto collisionSpeed = abs(velocity.DotProduct(contact.normal)); 5.0f < collisionSpeed) {
 				const auto volume = std::clamp(collisionSpeed / 100.0f, 0.0f, 1.0f);
@@ -95,7 +95,7 @@ std::function<void()> CreateBallLayerSwitcher(const m2::ObjectId ballId, const b
 		}
 		// The ball always lives in the default physics world; only its collision mask and draw layer change so that it
 		// behaves as-if it moved to the elevated platform level.
-		auto& body = std::get<m2::Physique::Body>(object->GetPhysique().body);
+		auto& body = std::get<m2::Physique::DynamicBody>(object->GetPhysique().body);
 		body.SetCollidesWith(toPlatform ? gBallPlatformMask : gBallGroundMask);
 		object->MoveLayer(toPlatform
 			? m2g::pb::UprightGraphicsLayer::AIRBORNE_UPRIGHT

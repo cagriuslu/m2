@@ -52,7 +52,7 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF& position, c
 			: m2::thirdparty::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_HOSTILE_DAMAGE)]
 	}};
 	phy.body = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, start_angle);
-	std::get<m2::Physique::Body>(phy.body).SetAngularVelocity(-swing_speed);
+	std::get<m2::Physique::DynamicBody>(phy.body).SetAngularVelocity(-swing_speed);
 
 	// Add graphics
 	auto& gfx = obj.AddGraphic(m2g::pb::UprightGraphicsLayer::UPRIGHT_GRAPHICS_DEFAULT_LAYER, melee_weapon.GameSprite());
@@ -70,7 +70,7 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF& position, c
 	};
 	phy.postStep = [&](m2::Physique& phy, const m2::Stopwatch::Duration&) {
 		if (auto* originator = obj.TryGetParent()) {
-			std::get<m2::Physique::Body>(phy.body).SetPosition(originator->GetPhysique().position);
+			std::get<m2::Physique::DynamicBody>(phy.body).SetPosition(originator->GetPhysique().position);
 		} else {
 			// Originator died
 			M2_DEFER(m2::CreateObjectDeleter(phy.GetOwnerId()));
