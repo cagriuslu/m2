@@ -7,7 +7,7 @@ DeterministicBody DeterministicBody::CreateFromDefinition(const thirdparty::phys
 	throw M2_ERROR("Not implemented for deterministic games");
 }
 
-VecF DeterministicBody::GetPosition() const {
+VecFE DeterministicBody::GetPosition() const {
 	throw M2_ERROR("Not implemented yet");
 }
 FE DeterministicBody::GetAngle() const {

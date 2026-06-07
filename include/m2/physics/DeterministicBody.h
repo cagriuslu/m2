@@ -1,5 +1,6 @@
 #pragma once
 #include <m2/thirdparty/physics/RigidBody.h>
+#include <m2/math/VecE.h>
 #include <m2/ProxyTypes.h>
 
 namespace m2::physics {
@@ -23,9 +24,9 @@ namespace m2::physics {
 		// Accessors
 
 		[[nodiscard]] bool IsEnabled() const { return static_cast<bool>(_onStep); }
-		[[nodiscard]] VecF GetPosition() const;
+		[[nodiscard]] VecFE GetPosition() const;
 		[[nodiscard]] FE GetAngle() const; // In radians
-		[[nodiscard]] VecF GetLinearVelocity() const;
+		[[nodiscard]] VecFE GetLinearVelocity() const;
 		[[nodiscard]] FE GetAngularVelocity() const;
 
 

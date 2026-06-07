@@ -3,6 +3,7 @@
 #include <m2/math/VecF.h>
 #include <m2/Meta.h>
 #include <m2/M2.h>
+#include <m2/ProxyTypes.h>
 #include <Sprite.pb.h>
 #include <variant>
 #include <vector>
@@ -110,10 +111,10 @@ namespace m2::thirdparty::physics {
 
 		[[nodiscard]] void* GetThirdPartObject() const { return _ptr; }
 		[[nodiscard]] bool IsEnabled() const;
-		[[nodiscard]] VecF GetPosition() const;
-		[[nodiscard]] float GetAngle() const; // In radians
-		[[nodiscard]] VecF GetLinearVelocity() const;
-		[[nodiscard]] float GetAngularVelocity() const;
+		[[nodiscard]] VecFE GetPosition() const;
+		[[nodiscard]] FE GetAngle() const; // In radians
+		[[nodiscard]] VecFE GetLinearVelocity() const;
+		[[nodiscard]] FE GetAngularVelocity() const;
 		[[nodiscard]] bool HasJoint() const;
 
 		[[nodiscard]] uint16_t GetAllLayersBelongingTo() const;
@@ -122,11 +123,11 @@ namespace m2::thirdparty::physics {
 		// Modifiers
 
 		void SetEnabled(bool);
-		void SetPosition(const VecF&);
-		void SetAngle(float angle); // In radians
-		void SetLinearVelocity(const VecF&);
-		void SetAngularVelocity(float w);
-		void ApplyForceToCenter(const VecF&);
+		void SetPosition(const VecFE&);
+		void SetAngle(FE angle); // In radians
+		void SetLinearVelocity(const VecFE&);
+		void SetAngularVelocity(FE w);
+		void ApplyForceToCenter(const VecFE&);
 
 		/// Clone the properties (position, orientation, speed, etc.) of another body to self
 		void TeleportToAnother(const RigidBody& other);

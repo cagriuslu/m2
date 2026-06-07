@@ -832,20 +832,20 @@ void Game::ExecuteStep(const Stopwatch::Duration& delta) {
 					// Update other components
 					if (auto* gfx = obj.TryGetGraphic()) {
 						const auto oldGfxPosition = gfx->position;
-						gfx->position = body->GetPosition();
+						gfx->position = VecF{body->GetPosition()};
 						gfx->orientation = phy.orientation.ToFloat();
 						// Update draw list if necessary
-						if (oldGfxPosition != body->GetPosition()) {
+						if (oldGfxPosition != VecF{body->GetPosition()}) {
 							const auto gfxId = obj.GetGraphicId();
 							const auto poolAndDrawList = _level->GetGraphicPoolAndDrawList(gfxId);
-							poolAndDrawList.second->QueueUpdate(phy.GetOwnerId(), body->GetPosition());
+							poolAndDrawList.second->QueueUpdate(phy.GetOwnerId(), VecF{body->GetPosition()});
 						}
 					}
 					if (auto* lig = obj.TryGetLight()) {
-						lig->position = body->GetPosition();
+						lig->position = VecF{body->GetPosition()};
 					}
 					if (auto* snd = obj.TryGetSoundEmitter()) {
-						snd->position = body->GetPosition();
+						snd->position = VecF{body->GetPosition()};
 					}
 					break;
 				}
@@ -907,20 +907,20 @@ void Game::ExecuteStep(const Stopwatch::Duration& delta) {
 						// Update other components
 						if (auto* gfx = obj.TryGetGraphic()) {
 							const auto oldGfxPosition = gfx->position;
-							gfx->position = body->GetPosition();
+							gfx->position = VecF{body->GetPosition()};
 							gfx->orientation = phy.orientation.ToFloat();
 							// Update draw list if necessary
-							if (oldGfxPosition != body->GetPosition()) {
+							if (oldGfxPosition != VecF{body->GetPosition()}) {
 								const auto gfxId = obj.GetGraphicId();
 								const auto poolAndDrawList = _level->GetGraphicPoolAndDrawList(gfxId);
-								poolAndDrawList.second->QueueUpdate(phy.GetOwnerId(), body->GetPosition());
+								poolAndDrawList.second->QueueUpdate(phy.GetOwnerId(), VecF{body->GetPosition()});
 							}
 						}
 						if (auto* lig = obj.TryGetLight()) {
-							lig->position = body->GetPosition();
+							lig->position = VecF{body->GetPosition()};
 						}
 						if (auto* snd = obj.TryGetSoundEmitter()) {
-							snd->position = body->GetPosition();
+							snd->position = VecF{body->GetPosition()};
 						}
 						break;
 					}

@@ -1,4 +1,5 @@
 #include <m2/thirdparty/physics/RigidBody.h>
+#include <m2/ProxyTypes.h>
 #include <m2/Game.h>
 #include <m2/Log.h>
 #include <box2d/b2_body.h>
@@ -164,17 +165,17 @@ RigidBody::~RigidBody() {
 bool RigidBody::IsEnabled() const {
 	return static_cast<b2Body*>(_ptr)->IsEnabled();
 }
-m2::VecF RigidBody::GetPosition() const {
-	return VecF{static_cast<b2Body*>(_ptr)->GetPosition()};
+m2::VecFE RigidBody::GetPosition() const {
+	return VecFE{VecF{static_cast<b2Body*>(_ptr)->GetPosition()}};
 }
-float RigidBody::GetAngle() const {
-	return static_cast<b2Body*>(_ptr)->GetAngle();
+m2::FE RigidBody::GetAngle() const {
+	return FE{static_cast<b2Body*>(_ptr)->GetAngle()};
 }
-m2::VecF RigidBody::GetLinearVelocity() const {
-	return VecF{static_cast<b2Body*>(_ptr)->GetLinearVelocity()};
+m2::VecFE RigidBody::GetLinearVelocity() const {
+	return VecFE{VecF{static_cast<b2Body*>(_ptr)->GetLinearVelocity()}};
 }
-float RigidBody::GetAngularVelocity() const {
-	return static_cast<b2Body*>(_ptr)->GetAngularVelocity();
+m2::FE RigidBody::GetAngularVelocity() const {
+	return FE{static_cast<b2Body*>(_ptr)->GetAngularVelocity()};
 }
 bool RigidBody::HasJoint() const {
 	return static_cast<b2Body*>(_ptr)->GetJointList();
@@ -200,22 +201,22 @@ uint16_t RigidBody::GetAllLayersCollidingTo() const {
 void RigidBody::SetEnabled(const bool state) {
 	static_cast<b2Body*>(_ptr)->SetEnabled(state);
 }
-void RigidBody::SetPosition(const VecF& pos) {
+void RigidBody::SetPosition(const VecFE& pos) {
 	const auto currentAngle = static_cast<b2Body*>(_ptr)->GetAngle();
-	static_cast<b2Body*>(_ptr)->SetTransform(static_cast<b2Vec2>(pos), currentAngle);
+	static_cast<b2Body*>(_ptr)->SetTransform(static_cast<b2Vec2>(VecF{pos}), currentAngle);
 }
-void RigidBody::SetAngle(const float angle) {
+void RigidBody::SetAngle(const FE angle) {
 	const auto& currentPosition = static_cast<b2Body*>(_ptr)->GetPosition();
-	static_cast<b2Body*>(_ptr)->SetTransform(currentPosition, angle);
+	static_cast<b2Body*>(_ptr)->SetTransform(currentPosition, angle.ToFloat());
 }
-void RigidBody::SetLinearVelocity(const VecF& vel) {
-	static_cast<b2Body*>(_ptr)->SetLinearVelocity(static_cast<b2Vec2>(vel));
+void RigidBody::SetLinearVelocity(const VecFE& vel) {
+	static_cast<b2Body*>(_ptr)->SetLinearVelocity(static_cast<b2Vec2>(VecF{vel}));
 }
-void RigidBody::SetAngularVelocity(const float w) {
-	static_cast<b2Body*>(_ptr)->SetAngularVelocity(w);
+void RigidBody::SetAngularVelocity(const FE w) {
+	static_cast<b2Body*>(_ptr)->SetAngularVelocity(w.ToFloat());
 }
-void RigidBody::ApplyForceToCenter(const VecF& f) {
-	static_cast<b2Body*>(_ptr)->ApplyForceToCenter(static_cast<b2Vec2>(f), true);
+void RigidBody::ApplyForceToCenter(const VecFE& f) {
+	static_cast<b2Body*>(_ptr)->ApplyForceToCenter(static_cast<b2Vec2>(VecF{f}), true);
 }
 
 void RigidBody::TeleportToAnother(const RigidBody& other) {

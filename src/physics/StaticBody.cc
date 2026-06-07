@@ -4,9 +4,9 @@
 using namespace m2;
 using namespace m2::physics;
 
-VecF StaticBody::GetPosition() const { return static_cast<VecF>(position); }
+VecFE StaticBody::GetPosition() const { return position; }
 FE StaticBody::GetAngle() const { return orientation; }
-VecF StaticBody::GetLinearVelocity() const { throw M2_ERROR("Not implemented for static bodies"); }
+VecFE StaticBody::GetLinearVelocity() const { throw M2_ERROR("Not implemented for static bodies"); }
 FE StaticBody::GetAngularVelocity() const { throw M2_ERROR("Not implemented for static bodies"); }
 
 void StaticBody::SetEnabled(const bool enabled) { _enabled = enabled; }

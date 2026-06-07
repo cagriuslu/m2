@@ -15,7 +15,7 @@ namespace m2 {
 		Float() = default;
 		explicit Float(std::in_place_t, const float f) noexcept : _value(f) {}
 		explicit Float(const    int i) : _value(static_cast<float>(i)) {}
-		explicit Float(const  float f) : _value(f) {}
+		Float(const  float f) : _value(f) {}
 		explicit Float(const double d) : _value(static_cast<float>(d)) {}
 
 		// Attributes

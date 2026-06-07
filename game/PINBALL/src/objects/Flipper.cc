@@ -78,12 +78,12 @@ m2::void_expected LoadFlipper(m2::Object& obj, const m2::VecF& position, float o
 		};
 		// Lock to up or down position
 		phy.postStep = [flipper](m2::Physique& phy_, const m2::Stopwatch::Duration&) {
-			if (flipper->state == FlipperState::GOING_UP && m2::IsLess(MAX_FLIPPER_SWEEP_RADS, m2::AngleAbsoluteDifference(std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).GetAngle(), flipper->initialRotation), 0.001f)) {
+			if (flipper->state == FlipperState::GOING_UP && m2::IsLess(MAX_FLIPPER_SWEEP_RADS, m2::AngleAbsoluteDifference(std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).GetAngle().ToFloat(), flipper->initialRotation), 0.001f)) {
 				std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).SetAngle(flipper->initialRotation + MAX_FLIPPER_SWEEP_RADS);
 				std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).SetAngularVelocity(0.0f);
 				flipper->state = FlipperState::FULLY_UP;
 			}
-			if (flipper->state == FlipperState::GOING_DOWN && m2::IsNegative(m2::AngleDifference(std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).GetAngle(), flipper->initialRotation), 0.001f)) {
+			if (flipper->state == FlipperState::GOING_DOWN && m2::IsNegative(m2::AngleDifference(std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).GetAngle().ToFloat(), flipper->initialRotation), 0.001f)) {
 				std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).SetAngle(flipper->initialRotation);
 				std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).SetAngularVelocity(0.0f);
 				flipper->state = FlipperState::RESTING;
@@ -107,12 +107,12 @@ m2::void_expected LoadFlipper(m2::Object& obj, const m2::VecF& position, float o
 		};
 		// Lock to up or down position
 		phy.postStep = [flipper](m2::Physique& phy_, const m2::Stopwatch::Duration&) {
-			if (flipper->state == FlipperState::GOING_UP && m2::IsLess(MAX_FLIPPER_SWEEP_RADS, m2::AngleAbsoluteDifference(std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).GetAngle(), flipper->initialRotation), 0.001f)) {
+			if (flipper->state == FlipperState::GOING_UP && m2::IsLess(MAX_FLIPPER_SWEEP_RADS, m2::AngleAbsoluteDifference(std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).GetAngle().ToFloat(), flipper->initialRotation), 0.001f)) {
 				std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).SetAngle(flipper->initialRotation - MAX_FLIPPER_SWEEP_RADS);
 				std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).SetAngularVelocity(0.0f);
 				flipper->state = FlipperState::FULLY_UP;
 			}
-			if (flipper->state == FlipperState::GOING_DOWN && m2::IsNegative(m2::AngleDifference(flipper->initialRotation, std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).GetAngle()), 0.001f)) {
+			if (flipper->state == FlipperState::GOING_DOWN && m2::IsNegative(m2::AngleDifference(flipper->initialRotation, std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).GetAngle().ToFloat()), 0.001f)) {
 				std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).SetAngle(flipper->initialRotation);
 				std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).SetAngularVelocity(0.0f);
 				flipper->state = FlipperState::RESTING;

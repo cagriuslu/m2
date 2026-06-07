@@ -6,7 +6,7 @@
 namespace m2::physics {
     class StaticBody {
         VecFE position{};
-        FE orientation{};   // In radians
+        FE orientation{}; // In radians
         bool _enabled{};
 
     public:
@@ -19,20 +19,20 @@ namespace m2::physics {
 
         // Accessors
         [[nodiscard]] bool IsEnabled() const { return _enabled; }
-        [[nodiscard]] VecF GetPosition() const;
-        [[nodiscard]] FE GetAngle() const;            // In radians
-        [[nodiscard]] VecF GetLinearVelocity() const;
+        [[nodiscard]] VecFE GetPosition() const;
+        [[nodiscard]] FE GetAngle() const; // In radians
+        [[nodiscard]] VecFE GetLinearVelocity() const;
         [[nodiscard]] FE GetAngularVelocity() const;
 
         // Modifiers
         void SetEnabled(bool);
         void SetPosition(const VecFE&);
-        void SetAngle(FE angle);                      // In radians
+        void SetAngle(FE angle); // In radians
         void SetLinearVelocity(const VecFE&);
         void SetAngularVelocity(FE w);
         void ApplyForceToCenter(const VecFE&);
         void TeleportToAnother(const StaticBody& other);
 
-        void OnStep() {}                              // No-op
+        void OnStep() {} // No-op
     };
 }
