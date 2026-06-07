@@ -2,7 +2,6 @@
 #include "../Component.h"
 #include "../box2d/ContactListener.h"
 #include <m2/thirdparty/physics/RigidBody.h>
-#include <m2/physics/DeterministicBody.h>
 #include <m2/physics/StaticBody.h>
 #include <m2/math/VecF.h>
 #include <m2/math/VecE.h>
@@ -19,13 +18,11 @@ namespace m2 {
 		Callback postStep{};
 
 		using StaticBody = physics::StaticBody;
-		using DeterministicBody = physics::DeterministicBody;
 		using M2Body = int;
 		using Box2dBody = thirdparty::physics::RigidBody;
 		/// Either a Box2D body, or an index into the custom physics world's rigid bodies. Which one is active is chosen
 		/// at compile time, as a component never has both.
-		using NondeterministicBody = std::conditional_t<USE_M2_PHYSICS, M2Body, Box2dBody>;
-		using DynamicBody = std::conditional_t<GAME_IS_DETERMINISTIC, DeterministicBody, NondeterministicBody>;
+		using DynamicBody = std::conditional_t<USE_M2_PHYSICS, M2Body, Box2dBody>;
 		std::variant<StaticBody, DynamicBody> body{};
 
 		std::function<void(Physique&, Physique&, const box2d::Contact&)> onCollision;
