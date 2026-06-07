@@ -15,7 +15,6 @@ m2::void_expected rpg::create_spikes(m2::Object& obj, const m2::VecF& position) 
 
 	// Create physique component
 	auto& phy = obj.AddPhysique();
-	phy.position = position;
 	m2::thirdparty::physics::RigidBodyDefinition rigidBodyDef{
 		.bodyType = m2::thirdparty::physics::RigidBodyType::STATIC,
 		.fixtures = {m2::thirdparty::physics::FixtureDefinition{
@@ -44,7 +43,7 @@ m2::void_expected rpg::create_spikes(m2::Object& obj, const m2::VecF& position) 
 				std::get<const m2::Sprite*>(gfx.visual) = &spikes_out;
 				impl.trigger_timer = m2::Timer{};
 				// Recreate the body so that collision is reset, otherwise the Player standing on the spikes doesn't collide again
-				phy.body = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), self.position, {});
+				phy.body = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), self.GetPosition(), {});
 			}
 		} else if (std::get<const m2::Sprite*>(gfx.visual) == &spikes_out && impl.trigger_timer) {
 			// Spikes are out and triggered
@@ -52,7 +51,7 @@ m2::void_expected rpg::create_spikes(m2::Object& obj, const m2::VecF& position) 
 				std::get<const m2::Sprite*>(gfx.visual) = &spikes_in;
 				impl.trigger_timer.reset();
 				// Recreate the body so that collision is reset, otherwise the Player standing on the spikes doesn't collide again
-				phy.body = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), self.position, {});
+				phy.body = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), self.GetPosition(), {});
 			}
 		}
 	};

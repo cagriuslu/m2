@@ -29,7 +29,7 @@ void rpg::ProjectileCharacter::OnUpdate(const m2::Stopwatch::Duration delta) {
 			}};
 			auto& obj = M2_LEVEL.objects[GetOwnerId()];
 			auto& phy = obj.GetPhysique();
-			phy.body = m2::thirdparty::physics::RigidBody::CreateFromDefinition(explosionBodyDef, obj.GetPhysiqueId(), obj.GetPhysique().position, phy.orientation.ToFloat());
+			phy.body = m2::thirdparty::physics::RigidBody::CreateFromDefinition(explosionBodyDef, obj.GetPhysiqueId(), obj.GetPhysique().GetPosition(), phy.GetOrientation().ToFloat());
 			// RESOURCE_EXPLOSION_TTL only means the object is currently exploding
 			UnsafeSetVariable(RESOURCE_EXPLOSION_TTL, 1.0f); // 1.0f is just symbolic
 		} else {
@@ -68,8 +68,6 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& positi
 
 	// Add physics
 	auto& phy = obj.AddPhysique();
-	phy.position = position;
-	phy.orientation = m2::FE{angle};
 	auto rigidBodyDef = BasicBulletRigidBodyDefinition();
 	rigidBodyDef.fixtures = {m2::thirdparty::physics::FixtureDefinition{
 		.shape = m2::thirdparty::physics::CircleShape::FromSpriteCircleFixture(sprite.OriginalPb().regular().fixtures(0).circle(), sprite.Ppm()),
@@ -100,7 +98,7 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& positi
 				float damage = 0.0f;
 				if (is_explosive && chr.GetVariable(RESOURCE_EXPLOSION_TTL)) {
 					LOG_DEBUG("Explosive damage");
-					auto distance = phy.position.GetDistanceTo(other.position);
+					auto distance = phy.GetPosition().GetDistanceTo(other.GetPosition());
 					auto damage_ratio = distance / damage_radius;
 					if (damage_ratio < 1.1f) {
 						damage = m2::ApplyAccuracy(average_damage, average_damage, damage_accuracy) * damage_ratio;

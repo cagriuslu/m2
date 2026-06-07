@@ -8,7 +8,6 @@ m2::void_expected rpg::create_dropped_card(m2::Object &obj, const m2::VecF& posi
 	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(M2_GAME.GetCard(card_type).UiSprite()));
 
 	auto& phy = obj.AddPhysique();
-	phy.position = position;
 	m2::thirdparty::physics::RigidBodyDefinition rigidBodyDef{
 		.bodyType = m2::thirdparty::physics::RigidBodyType::STATIC,
 		.fixtures = {m2::thirdparty::physics::FixtureDefinition{

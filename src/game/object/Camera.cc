@@ -21,7 +21,7 @@ m2::Id m2::obj::CreateCamera() {
 	phy.postStep = [](MAYBE Physique& phy, const Stopwatch::Duration&) {
 		//		auto* camera_data = dynamic_cast<m2::obj::Camera*>(camera.impl.get());
 		const auto& player = M2_LEVEL.objects[M2_LEVEL.playerId];
-		phy.position = VecFE{player.InferPositionF()};
+		phy.SetPosition(VecFE{player.InferPositionF()});
 
 		// Mouse lookahead disabled temporarily
 		//		if (M2_GAME.level->type() == Level::Type::SINGLE_PLAYER) {
@@ -34,8 +34,8 @@ m2::Id m2::obj::CreateCamera() {
 		//		}
 
 		if (M2G_PROXY.camera_is_listener) {
-			M2_LEVEL.leftListener->position = static_cast<VecF>(phy.position);
-			M2_LEVEL.rightListener->position = static_cast<VecF>(phy.position);
+			M2_LEVEL.leftListener->position = static_cast<VecF>(phy.GetPosition());
+			M2_LEVEL.rightListener->position = static_cast<VecF>(phy.GetPosition());
 		}
 	};
 

@@ -14,9 +14,6 @@
 
 namespace m2 {
 	struct Physique final : Component {
-		VecFE position;
-		FE orientation{}; /// In radians
-
 		using Callback = std::function<void(Physique&, const Stopwatch::Duration&)>;
 		Callback preStep{};
 		Callback postStep{};
@@ -44,6 +41,11 @@ namespace m2 {
 		Physique& operator=(Physique&& other) = delete;
 
 		// Accessors
+
+		[[nodiscard]] VecFE GetPosition() const;
+		[[nodiscard]] FE GetOrientation() const; // In radians
+		void SetPosition(const VecFE&);
+		void SetOrientation(const FE&); // In radians
 
 		static void DefaultBeginContactCallback(b2Contact& b2_contact);
 		static void DefaultEndContactCallback(b2Contact& b2_contact);

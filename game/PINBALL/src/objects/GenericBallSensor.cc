@@ -11,7 +11,6 @@ m2::void_expected LoadGenericBallSensor(m2::Object& obj, const m2::VecF& positio
 	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(spriteType));
 
 	auto& phy = obj.AddPhysique();
-	phy.position = position;
 	m2::thirdparty::physics::RigidBodyDefinition rigidBodyDef{
 		.bodyType = m2::thirdparty::physics::RigidBodyType::DYNAMIC,
 		.fixedRotation = true,

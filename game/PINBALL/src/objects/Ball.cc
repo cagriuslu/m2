@@ -22,7 +22,6 @@ m2::void_expected LoadBall(m2::Object& obj, const m2::VecF& position) {
 	auto* ballImpl = dynamic_cast<BallImpl*>(std::get<std::unique_ptr<m2::HeapObjectImpl>>(obj.impl).get());
 
 	auto& phy = obj.AddPhysique();
-	phy.position = position;
 	m2::thirdparty::physics::RigidBodyDefinition rigidBodyDef{
 		.bodyType = m2::thirdparty::physics::RigidBodyType::DYNAMIC,
 		.fixtures = {m2::thirdparty::physics::FixtureDefinition{
@@ -69,7 +68,7 @@ m2::void_expected LoadBall(m2::Object& obj, const m2::VecF& position) {
 	};
 	phy.onCollision = [ballImpl](m2::Physique& ball, const m2::Physique& other, const m2::box2d::Contact& contact) {
 		if (other.GetOwner().GetType() == m2g::pb::WALLS && (not ballImpl->lastCollidedWallPosition
-				|| not ballImpl->lastCollidedWallPosition->IsNear(ball.position, 0.2f))) {
+				|| not ballImpl->lastCollidedWallPosition->IsNear(ball.GetPosition(), 0.2f))) {
 			const auto velocity = std::get<m2::Physique::DynamicBody>(ball.body).GetLinearVelocity();
 			// Find the speed along the collision axis. Dot product with the unit vector is the projection.
 			if (const auto collisionSpeed = abs(velocity.DotProduct(contact.normal)); 5.0f < collisionSpeed) {
@@ -78,7 +77,7 @@ m2::void_expected LoadBall(m2::Object& obj, const m2::VecF& position) {
 					M2_GAME.audio_manager->Play(&M2_GAME.songs[m2g::pb::SONG_WALL_IMPACT], m2::AudioManager::ONCE, volume);
 				});
 			}
-			ballImpl->lastCollidedWallPosition = ball.position;
+			ballImpl->lastCollidedWallPosition = ball.GetPosition();
 		}
 	};
 

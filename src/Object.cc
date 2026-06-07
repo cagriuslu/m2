@@ -123,7 +123,7 @@ SoundEmitter& Object::GetSoundEmitter() const {
 
 VecF Object::InferPositionF() const {
 	if (_physique_id) {
-		return static_cast<VecF>(GetPhysique().position);
+		return static_cast<VecF>(GetPhysique().GetPosition());
 	} else if (_graphicId) {
 		return GetGraphic().position;
 	} else if (_light_id) {

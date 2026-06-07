@@ -32,8 +32,6 @@ m2::void_expected LoadFlipper(m2::Object& obj, const m2::VecF& position, float o
 	auto* flipper = dynamic_cast<FlipperImpl*>(std::get<std::unique_ptr<m2::HeapObjectImpl>>(obj.impl).get());
 
 	auto& phy = obj.AddPhysique();
-	phy.position = position;
-	phy.orientation = m2::FE{orientation};
 	const m2::thirdparty::physics::RigidBodyDefinition rigidBodyDef{
 		.bodyType = m2::thirdparty::physics::RigidBodyType::KINEMATIC,
 		.fixtures = m2::ToVector(

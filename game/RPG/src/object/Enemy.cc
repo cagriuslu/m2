@@ -53,7 +53,7 @@ void EnemyCharacter::OnMessage(const m2::Interaction data) {
 		// Check if we died
 		if (not GetVariable(RESOURCE_HP)) {
 			// Drop card
-			auto drop_position = GetOwner().GetPhysique().position;
+			auto drop_position = GetOwner().GetPhysique().GetPosition();
 			if (m2::Group* group = GetOwner().TryGetGroup()) {
 				// Check if the object belongs to card group
 				auto* card_group = dynamic_cast<CardGroup*>(group);
@@ -115,7 +115,6 @@ m2::void_expected Enemy::init(m2::Object& obj, const m2::VecF& position) {
 	gfx.position = position;
 
 	auto& phy = obj.AddPhysique();
-	phy.position = position;
 	m2::thirdparty::physics::RigidBodyDefinition rigidBodyDef{
 		.bodyType = m2::thirdparty::physics::RigidBodyType::DYNAMIC,
 		.fixtures = {
@@ -206,12 +205,12 @@ void rpg::Enemy::move_towards(m2::Object& obj, m2::VecF direction, float force) 
 }
 
 void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
-	const auto& selfPosition = obj.GetPhysique().position;
+	const auto selfPosition = obj.GetPhysique().GetPosition();
 	auto& chr = dynamic_cast<Enemy*>(std::get<std::unique_ptr<m2::HeapObjectImpl>>(obj.impl).get())->chr;
 	// If not stunned
 	if (not chr.GetVariable(m2g::pb::RESOURCE_STUN_TTL)) {
 		// Attack if player is close
-		if (selfPosition.IsNear(M2_PLAYER.GetPhysique().position, ai.attack_distance())) {
+		if (selfPosition.IsNear(M2_PLAYER.GetPhysique().GetPosition(), ai.attack_distance())) {
 			// Based on what the capability is
 			auto capability = ai.capabilities(0);
 			switch (capability) {
@@ -219,7 +218,7 @@ void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
 					if (const auto* rangedWeapon = chr.GetFirstCard(CARD_CATEGORY_DEFAULT_RANGED_WEAPON);
 						rangedWeapon && rangedWeapon->GetConstant(CONSTANT_RANGED_ENERGY_REQUIREMENT).GetFOrZero() <= chr.GetVariable(RESOURCE_RANGED_ENERGY).GetFOrZero()) {
 						chr.ClearVariable(RESOURCE_RANGED_ENERGY);
-						const auto shoot_direction = M2_PLAYER.GetPhysique().position - selfPosition;
+						const auto shoot_direction = M2_PLAYER.GetPhysique().GetPosition() - selfPosition;
 						create_projectile(*m2::CreateObject({}, obj.GetId()), selfPosition, shoot_direction, *rangedWeapon, false);
 						// Knock-back
 						std::get<m2::Physique::DynamicBody>(obj.GetPhysique().body).ApplyForceToCenter(m2::VecF::CreateUnitVectorWithAngle(shoot_direction.GetAngle() + m2::PI) * 5000.0f);
@@ -231,7 +230,7 @@ void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
 						meleeWeapon && meleeWeapon->GetConstant(CONSTANT_MELEE_ENERGY_REQUIREMENT).GetFOrZero() <= chr.GetVariable(RESOURCE_MELEE_ENERGY).GetFOrZero()) {
 						chr.ClearVariable(RESOURCE_MELEE_ENERGY);
 						create_blade(*m2::CreateObject({}, obj.GetId()), selfPosition,
-							M2_PLAYER.GetPhysique().position - selfPosition, *meleeWeapon, false);
+							M2_PLAYER.GetPhysique().GetPosition() - selfPosition, *meleeWeapon, false);
 					}
 					break;
 				}

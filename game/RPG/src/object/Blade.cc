@@ -39,8 +39,6 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF& position, c
 
 	// Add physics
 	auto& phy = obj.AddPhysique();
-	phy.position = position;
-	phy.orientation = m2::FE{start_angle};
 
 	auto rigidBodyDef = BasicBulletRigidBodyDefinition();
 	rigidBodyDef.fixtures = {m2::thirdparty::physics::FixtureDefinition{
@@ -70,7 +68,7 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF& position, c
 	};
 	phy.postStep = [&](m2::Physique& phy, const m2::Stopwatch::Duration&) {
 		if (auto* originator = obj.TryGetParent()) {
-			std::get<m2::Physique::DynamicBody>(phy.body).SetPosition(originator->GetPhysique().position);
+			std::get<m2::Physique::DynamicBody>(phy.body).SetPosition(originator->GetPhysique().GetPosition());
 		} else {
 			// Originator died
 			M2_DEFER(m2::CreateObjectDeleter(phy.GetOwnerId()));

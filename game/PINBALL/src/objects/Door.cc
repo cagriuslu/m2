@@ -8,8 +8,6 @@ m2::void_expected LoadDoor(m2::Object& obj, const m2::VecF& position, float orie
 	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(spriteType));
 
 	auto& phy = obj.AddPhysique();
-	phy.position = position;
-	phy.orientation = m2::FE{orientation};
 	m2::thirdparty::physics::RigidBodyDefinition rigidBodyDef{
 		.bodyType = m2::thirdparty::physics::RigidBodyType::STATIC,
 		.isBullet = false

@@ -5,7 +5,22 @@
 #include <m2/box2d/Shape.h>
 #include <m2/thirdparty/physics/ColliderCategory.h>
 
-m2::Physique::Physique(const Id ownerId, const VecFE& position) : Component(ownerId), position(position) {}
+m2::Physique::Physique(const Id ownerId, const VecFE& position) : Component(ownerId) {
+	SetPosition(position);
+}
+
+m2::VecFE m2::Physique::GetPosition() const {
+	return std::visit([](const auto& b) -> VecFE { return b.GetPosition(); }, body);
+}
+m2::FE m2::Physique::GetOrientation() const {
+	return std::visit([](const auto& b) -> FE { return b.GetAngle(); }, body);
+}
+void m2::Physique::SetPosition(const VecFE& position) {
+	std::visit([&](auto& b) { b.SetPosition(position); }, body);
+}
+void m2::Physique::SetOrientation(const FE& orientation) {
+	std::visit([&](auto& b) { b.SetAngle(orientation); }, body);
+}
 
 void m2::Physique::DefaultBeginContactCallback(b2Contact& b2_contact) {
 	box2d::Contact contact{b2_contact};

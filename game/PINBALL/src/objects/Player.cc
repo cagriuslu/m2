@@ -11,7 +11,7 @@ m2::void_expected LoadPlayer(m2::Object& obj) {
 	LoadEdge();
 
 	auto& phy = obj.AddPhysique();
-	phy.position = gLevelCenter; // Put the player on the center
+	phy.SetPosition(gLevelCenter); // Put the player on the center
 	phy.preStep = [](MAYBE m2::Physique& phy, const m2::Stopwatch::Duration&) {
 		if (M2_GAME.events.PopKeyPress(m2g::pb::TOGGLE_LIGHT)) {
 			M2G_PROXY.MutableSimulationInputs().set_light(!M2G_PROXY.SimulationInputs().light());

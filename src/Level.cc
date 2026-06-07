@@ -188,9 +188,11 @@ int32_t Level::CalculateLockstepGameStateHash(const int32 initialValue) const {
 	}
 	int32_t hash = initialValue;
 	for (const auto& phy : physics) {
-		hash = HashI(ToRawValue(phy.position.GetX()), hash);
-		hash = HashI(ToRawValue(phy.position.GetY()), hash);
-		hash = HashI(ToRawValue(phy.orientation), hash);
+		const auto pos = phy.GetPosition();
+		const auto ori = phy.GetOrientation();
+		hash = HashI(ToRawValue(pos.GetX()), hash);
+		hash = HashI(ToRawValue(pos.GetY()), hash);
+		hash = HashI(ToRawValue(ori), hash);
 	}
 	hash = _characterStorage.HashAll(hash);
 	return hash;
@@ -212,9 +214,11 @@ pb::LockstepDebugStateReport Level::CalculateLockstepDebugStateReport(const int3
 		const auto isCamera = phy.GetOwnerId() == cameraId;
 		const auto isPointer = phy.GetOwnerId() == pointer_id;
 		if (not isHumanPlayer && not isCamera && not isPointer) {
-			physique->set_exact_position_x(ToRawValue(phy.position.GetX()));
-			physique->set_exact_position_y(ToRawValue(phy.position.GetY()));
-			physique->set_exact_orientation(phy.orientation.ToRawValue());
+			const auto pos = phy.GetPosition();
+			const auto ori = phy.GetOrientation();
+			physique->set_exact_position_x(ToRawValue(pos.GetX()));
+			physique->set_exact_position_y(ToRawValue(pos.GetY()));
+			physique->set_exact_orientation(ori.ToRawValue());
 		}
 	}
 	_characterStorage.FillAll(objects, debugStateReport);
@@ -314,7 +318,7 @@ VecF Level::GetWorldPositionOfPixel(const VecI& pixelPosition) const {
 			return VecF{-intersection_point.x, -10000.0f};  // Infinity is 10KM
 		}
 	} else {
-		const auto camera_position = objects[cameraId].GetPhysique().position;
+		const auto camera_position = objects[cameraId].GetPhysique().GetPosition();
 		return screenCenterToPixelM + static_cast<VecF>(camera_position);
 	}
 }

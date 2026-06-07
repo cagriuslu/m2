@@ -14,7 +14,7 @@ bool m2::IsProjectionTypePerspective(const pb::ProjectionType pt) {
 
 m2::VecF m2::CameraToPositionVecM(const VecF& position) {
 	const auto* camera = M2_LEVEL.objects.Get(M2_LEVEL.cameraId);
-	return position - static_cast<VecF>(camera->GetPhysique().position);
+	return position - static_cast<VecF>(camera->GetPhysique().GetPosition());
 }
 m2::VecF m2::CameraToPositionVecPx(const VecF& position) {
 	// Find the vector from camera to position and multiply with output PPM to convert into output pixels
@@ -33,7 +33,7 @@ m2::VecF m2::PixelToPositionVecM(const VecI& pixelPosition) {
 	const auto screenCenterToPixelPositionVectorInMeters =
 			VecF{ToFloat(screenCenterToPixelPositionVectorInPixels.x) / M2_GAME.Dimensions().OutputPixelsPerMeter(),
 				ToFloat(screenCenterToPixelPositionVectorInPixels.y) / M2_GAME.Dimensions().OutputPixelsPerMeter()};
-	const auto camera_position = M2_LEVEL.objects[M2_LEVEL.cameraId].GetPhysique().position;
+	const auto camera_position = M2_LEVEL.objects[M2_LEVEL.cameraId].GetPhysique().GetPosition();
 	return screenCenterToPixelPositionVectorInMeters + static_cast<VecF>(camera_position);
 }
 m2::RectF m2::ViewportM() {

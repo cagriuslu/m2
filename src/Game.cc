@@ -825,14 +825,12 @@ void Game::ExecuteStep(const Stopwatch::Duration& delta) {
 				body->OnStep();
 
 				auto& obj = phy.GetOwner();
-				phy.position = VecFE{body->GetPosition()};
-				phy.orientation = FE{body->GetAngle()};
 
 				// Update other components
 				if (auto* gfx = obj.TryGetGraphic()) {
 					const auto oldGfxPosition = gfx->position;
 					gfx->position = VecF{body->GetPosition()};
-					gfx->orientation = phy.orientation.ToFloat();
+					gfx->orientation = body->GetAngle().ToFloat();
 					// Update draw list if necessary
 					if (oldGfxPosition != VecF{body->GetPosition()}) {
 						const auto gfxId = obj.GetGraphicId();
@@ -896,13 +894,11 @@ void Game::ExecuteStep(const Stopwatch::Duration& delta) {
 			for (auto& phy : _level->physics) {
 				if (const auto* body = std::get_if<Physique::DynamicBody>(&phy.body); body && body->IsEnabled()) {
 					auto& obj = phy.GetOwner();
-					phy.position = VecFE{body->GetPosition()};
-					phy.orientation = FE{body->GetAngle()};
 					// Update other components
 					if (auto* gfx = obj.TryGetGraphic()) {
 						const auto oldGfxPosition = gfx->position;
 						gfx->position = VecF{body->GetPosition()};
-						gfx->orientation = phy.orientation.ToFloat();
+						gfx->orientation = body->GetAngle().ToFloat();
 						// Update draw list if necessary
 						if (oldGfxPosition != VecF{body->GetPosition()}) {
 							const auto gfxId = obj.GetGraphicId();
@@ -1224,8 +1220,8 @@ void Game::ForEachObjectWithMainSprite(const std::function<bool(m2g::pb::ObjectT
 }
 sdl::TextureUniquePtr Game::DrawGameToTexture(const VecF& camera_position) {
 	// Temporarily change camera position
-	const auto prev_camera_position = GetLevel().GetCamera()->GetPhysique().position;
-	GetLevel().GetCamera()->GetPhysique().position = VecFE{camera_position};
+	const auto prev_camera_position = GetLevel().GetCamera()->GetPhysique().GetPosition();
+	GetLevel().GetCamera()->GetPhysique().SetPosition(VecFE{camera_position});
 
 	// Create an empty render target
 	auto render_target = sdl::create_drawable_texture_of_screen_size();
@@ -1243,7 +1239,7 @@ sdl::TextureUniquePtr Game::DrawGameToTexture(const VecF& camera_position) {
 	SDL_SetRenderTarget(renderer, prev_render_target);
 
 	// Reinstate old camera position
-	GetLevel().GetCamera()->GetPhysique().position = prev_camera_position;
+	GetLevel().GetCamera()->GetPhysique().SetPosition(prev_camera_position);
 
 	return render_target;
 }

@@ -99,7 +99,6 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 		.initiallyAwake = true,
 		.isBullet = false
 	};
-	phy.position = position;
 	phy.body = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {});
 
 	auto& gfx = obj.AddGraphic(m2g::pb::UprightGraphicsLayer::UPRIGHT_GRAPHICS_DEFAULT_LAYER, main_sprite_type, position);
@@ -118,7 +117,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 	auto& impl = dynamic_cast<Player&>(*std::get<std::unique_ptr<HeapObjectImpl>>(obj.impl));
 
 	phy.preStep = [&, id=id](m2::Physique& phy, const m2::Stopwatch::Duration& delta) {
-		auto vector_to_mouse = (M2_GAME.events.GetWorldPositionOfMouse() - phy.position).Normalize();
+		auto vector_to_mouse = (M2_GAME.events.GetWorldPositionOfMouse() - phy.GetPosition()).Normalize();
 
 		auto [direction_enum, direction_vector] = m2::calculate_character_movement(MOVE_LEFT, MOVE_RIGHT, MOVE_UP, MOVE_DOWN);
 		float move_force{};
@@ -142,7 +141,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 		// Primary weapon
 		if (M2_GAME.events.IsMouseButtonDown(m2::MouseButton::PRIMARY)) {
 			auto shoot = [&](const m2::Card& weapon) {
-				rpg::create_projectile(*m2::CreateObject({}, id), phy.position, vector_to_mouse, weapon, true);
+				rpg::create_projectile(*m2::CreateObject({}, id), phy.GetPosition(), vector_to_mouse, weapon, true);
 				// Knock-back
 				std::get<m2::Physique::DynamicBody>(phy.body).ApplyForceToCenter(m2::VecF::CreateUnitVectorWithAngle(vector_to_mouse.GetAngle() + m2::PI) * 50000.0f);
 			};
@@ -165,7 +164,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 		// Secondary weapon
 		if (M2_GAME.events.IsMouseButtonDown(m2::MouseButton::SECONDARY)) {
 			auto slash = [&](const m2::Card& weapon) {
-				rpg::create_blade(*m2::CreateObject({}, id), phy.position, vector_to_mouse, weapon, true);
+				rpg::create_blade(*m2::CreateObject({}, id), phy.GetPosition(), vector_to_mouse, weapon, true);
 			};
 
 			// Check if there is a special melee weapon and try to use the card
