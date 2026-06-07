@@ -13,13 +13,6 @@ namespace {
 
 		explicit BallImpl(m2::Object&) : HeapObjectImpl() {}
 	};
-
-	m2::thirdparty::physics::RigidBody& GetActiveRigidBody(m2::Physique& phy) {
-		if (std::get<m2::Physique::Body>(phy.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).IsEnabled()) {
-			return std::get<m2::Physique::Body>(phy.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]);
-		}
-		return std::get<m2::Physique::Body>(phy.body[m2::I(m2g::pb::PhysicsLayer::ABOVE_GROUND)]);
-	}
 }
 
 m2::void_expected LoadBall(m2::Object& obj, const m2::VecF& position) {
@@ -52,40 +45,32 @@ m2::void_expected LoadBall(m2::Object& obj, const m2::VecF& position) {
 		.isBullet = true,
 		.initiallyEnabled = true
 	};
-	phy.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER);
-	phy.body[m2::I(m2g::pb::PhysicsLayer::ABOVE_GROUND)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2g::pb::PhysicsLayer::ABOVE_GROUND);
-	std::get<m2::Physique::Body>(phy.body[m2::I(m2g::pb::PhysicsLayer::ABOVE_GROUND)]).SetEnabled(false);
+	phy.body = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {});
 
 	MAYBE auto& gfx = obj.AddGraphic(m2g::pb::UprightGraphicsLayer::UPRIGHT_GRAPHICS_DEFAULT_LAYER, m2g::pb::SPRITE_BASIC_BALL);
 	gfx.position = position;
 
 	phy.preStep = [initialPos = position](m2::Physique& phy_, const m2::Stopwatch::Duration&) {
-		if (M2_GAME.events.PopKeyRelease(m2g::pb::BALL_LAUNCHER) /*&& M2G_PROXY.isOnBallLauncher*/) {
-			if (std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).IsEnabled()) {
-				std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).ApplyForceToCenter({0.0f, -7500.0f});
-			} else if (std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::ABOVE_GROUND)]).IsEnabled()) {
-				std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::ABOVE_GROUND)]).ApplyForceToCenter({0.0f, -7500.0f});
-			}
+		auto& body = std::get<m2::Physique::Body>(phy_.body);
+		if (M2_GAME.events.PopKeyRelease(m2g::pb::BALL_LAUNCHER)) {
+			body.ApplyForceToCenter({0.0f, -7500.0f});
 			// TODO defer M2_GAME.audio_manager->Play(&M2_GAME.songs[m2g::pb::SONG_CIRCULAR_BUMPER_SOUND], m2::AudioManager::ONCE, 0.25f);
 		}
 		if (M2_GAME.events.PopKeyPress(m2g::pb::RETURN)) {
-			std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).SetPosition(initialPos);
-			std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::ABOVE_GROUND)]).SetPosition(initialPos);
+			body.SetPosition(initialPos);
 			M2_DEFER(CreateBallLayerSwitcher(phy_.GetOwnerId(), false));
 		}
 		if (M2_GAME.events.PopMouseButtonRelease(m2::MouseButton::PRIMARY)) {
 			const auto mousePosition = M2_GAME.events.GetWorldPositionOfMouse();
-			std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).SetPosition(mousePosition);
-			std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).SetLinearVelocity({});
-			std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::ABOVE_GROUND)]).SetPosition(mousePosition);
-			std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::ABOVE_GROUND)]).SetLinearVelocity({});
+			body.SetPosition(mousePosition);
+			body.SetLinearVelocity({});
 			M2_DEFER(CreateBallLayerSwitcher(phy_.GetOwnerId(), false));
 		}
 	};
 	phy.onCollision = [ballImpl](m2::Physique& ball, const m2::Physique& other, const m2::box2d::Contact& contact) {
 		if (other.GetOwner().GetType() == m2g::pb::WALLS && (not ballImpl->lastCollidedWallPosition
 				|| not ballImpl->lastCollidedWallPosition->IsNear(ball.position, 0.2f))) {
-			const auto velocity = GetActiveRigidBody(ball).GetLinearVelocity();
+			const auto velocity = std::get<m2::Physique::Body>(ball.body).GetLinearVelocity();
 			// Find the speed along the collision axis. Dot product with the unit vector is the projection.
 			if (const auto collisionSpeed = abs(velocity.DotProduct(contact.normal)); 5.0f < collisionSpeed) {
 				const auto volume = std::clamp(collisionSpeed / 100.0f, 0.0f, 1.0f);
@@ -110,10 +95,9 @@ std::function<void()> CreateBallLayerSwitcher(const m2::ObjectId ballId, const b
 		}
 		// The ball always lives in the default physics world; only its collision mask and draw layer change so that it
 		// behaves as-if it moved to the elevated platform level.
-		auto& body = std::get<m2::Physique::Body>(
-			object->GetPhysique().body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]);
+		auto& body = std::get<m2::Physique::Body>(object->GetPhysique().body);
 		body.SetCollidesWith(toPlatform ? gBallPlatformMask : gBallGroundMask);
-		object->MoveLayer({}, toPlatform
+		object->MoveLayer(toPlatform
 			? m2g::pb::UprightGraphicsLayer::AIRBORNE_UPRIGHT
 			: m2g::pb::UprightGraphicsLayer::UPRIGHT_GRAPHICS_DEFAULT_LAYER);
 	};

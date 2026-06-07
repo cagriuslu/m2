@@ -58,7 +58,7 @@ std::variant<PolygonShape,RectangleShape,CircleShape,ChainShape,EdgeShape> m2::t
 }
 
 RigidBody RigidBody::CreateFromDefinition(const RigidBodyDefinition& definition, PhysiqueId physiqueId,
-		const VecF& position, const float angleInRads, const m2g::pb::PhysicsLayer pl) {
+		const VecF& position, const float angleInRads) {
 	b2BodyDef box2dBodyDef = {};
 	box2dBodyDef.type = ToBox2dBodyType(definition.bodyType);
 	box2dBodyDef.position = static_cast<b2Vec2>(position);
@@ -74,7 +74,7 @@ RigidBody RigidBody::CreateFromDefinition(const RigidBodyDefinition& definition,
 	box2dBodyDef.enabled = definition.initiallyEnabled;
 	box2dBodyDef.userData.pointer = physiqueId;
 	box2dBodyDef.gravityScale = definition.gravityScale;
-	b2Body* body = M2_LEVEL.world[I(pl)]->CreateBody(&box2dBodyDef);
+	b2Body* body = M2_LEVEL.world->CreateBody(&box2dBodyDef);
 
 	for (const auto& fixture : definition.fixtures) {
 		b2FixtureDef box2dFixtureDef = {};
@@ -142,23 +142,22 @@ RigidBody RigidBody::CreateFromDefinition(const RigidBodyDefinition& definition,
 		body->SetMassData(&massData);
 	}
 
-	return RigidBody{body, pl};
+	return RigidBody{body};
 }
-RigidBody::RigidBody(RigidBody&& other) noexcept : _ptr(other._ptr), _phyLayer(other._phyLayer) {
+RigidBody::RigidBody(RigidBody&& other) noexcept : _ptr(other._ptr) {
 	other._ptr = nullptr;
 }
 RigidBody& RigidBody::operator=(RigidBody&& other) noexcept {
 	std::swap(_ptr, other._ptr);
-	std::swap(_phyLayer, other._phyLayer);
 	return *this;
 }
 RigidBody::~RigidBody() {
 	if (_ptr) {
-		if (M2_LEVEL.world[I(_phyLayer)]->IsLocked()) {
+		if (M2_LEVEL.world->IsLocked()) {
 			LOG_FATAL("Body destroyed during physics step");
 			std::terminate();
 		}
-		M2_LEVEL.world[I(_phyLayer)]->DestroyBody(static_cast<b2Body*>(_ptr));
+		M2_LEVEL.world->DestroyBody(static_cast<b2Body*>(_ptr));
 	}
 }
 

@@ -26,7 +26,7 @@ m2::void_expected rpg::create_decoration(m2::Object& obj, const m2::VecF& positi
 				.shape = m2::thirdparty::physics::RectangleShape::FromSpriteRectangleFixture(sprite.OriginalPb().regular().fixtures(0).rectangle(), sprite.Ppm()),
 				.colliderFilter = m2::thirdparty::physics::gColliderCategoryToParams[m2::I(m2::thirdparty::physics::ColliderCategory::COLLIDER_CATEGORY_BACKGROUND_OBSTACLE)]
 			}};
-			phy.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, orientation, m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER);
+			phy.body = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, orientation);
 		} else if (sprite.OriginalPb().regular().fixtures(0).has_circle()) {
 			auto& phy = obj.AddPhysique();
 			phy.position = position;
@@ -34,7 +34,7 @@ m2::void_expected rpg::create_decoration(m2::Object& obj, const m2::VecF& positi
 				.shape = m2::thirdparty::physics::CircleShape::FromSpriteCircleFixture(sprite.OriginalPb().regular().fixtures(0).circle(), sprite.Ppm()),
 				.colliderFilter = m2::thirdparty::physics::gColliderCategoryToParams[m2::I(m2::thirdparty::physics::ColliderCategory::COLLIDER_CATEGORY_BACKGROUND_OBSTACLE)]
 			}};
-			phy.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, orientation, m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER);
+			phy.body = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, orientation);
 		}
 	}
 

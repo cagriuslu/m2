@@ -11,8 +11,3 @@ enum FlatGraphicsLayer {
 enum UprightGraphicsLayer {
   UPRIGHT_GRAPHICS_DEFAULT_LAYER = 0; // More layers can be added before and/or after the default
 }
-
-// Enum must be sequential because Enum_ARRAYSIZE is used as array size.
-enum PhysicsLayer {
-  PHYSICS_DEFAULT_LAYER = 0; // More layers can be added before and/or after the default
-}

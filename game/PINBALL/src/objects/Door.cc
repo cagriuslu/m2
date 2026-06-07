@@ -24,7 +24,7 @@ m2::void_expected LoadDoor(m2::Object& obj, const m2::VecF& position, float orie
 			}
 		});
 	}
-	phy.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, orientation, m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER);
+	phy.body = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, orientation);
 
 	auto& gfx = obj.AddGraphic(m2g::pb::UprightGraphicsLayer::UPRIGHT_GRAPHICS_DEFAULT_LAYER, spriteType);
 	gfx.position = position;

@@ -7,15 +7,6 @@
 
 m2::Physique::Physique(const Id ownerId, const VecFE& position) : Component(ownerId), position(position) {}
 
-std::optional<m2g::pb::PhysicsLayer> m2::Physique::GetCurrentPhysicsLayer() const {
-	for (int i = 0; i < PHYSICS_LAYER_COUNT; ++i) {
-		if (auto* b = std::get_if<Body>(&body[i]); b && b->IsEnabled()) {
-			return static_cast<m2g::pb::PhysicsLayer>(i);
-		}
-	}
-	return std::nullopt;
-}
-
 void m2::Physique::DefaultBeginContactCallback(b2Contact& b2_contact) {
 	box2d::Contact contact{b2_contact};
 

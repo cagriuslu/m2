@@ -20,7 +20,7 @@ m2::void_expected rpg::create_dropped_card(m2::Object &obj, const m2::VecF& posi
 		.initiallyAwake = false,
 		.isBullet = false
 	};
-	phy.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER);
+	phy.body = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {});
 
 	obj.AddGraphic(m2g::pb::UprightGraphicsLayer::UPRIGHT_GRAPHICS_DEFAULT_LAYER, M2_GAME.GetCard(card_type).UiSprite()).position = position;
 

@@ -308,17 +308,17 @@ m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object&
 		case pb::ObjectType::PLATFORM:
 			return LoadPlatform(obj, position);
 		case pb::ObjectType::BALL_LAUNCHER_SENSOR:
-			return LoadGenericBallSensor(obj, position, m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER, BallLauncherSensorOnCollision, BallLauncherSensorOffCollision);
+			return LoadGenericBallSensor(obj, position, BallLauncherSensorOnCollision, BallLauncherSensorOffCollision);
 		case pb::ObjectType::PLATFORM_ENTRY_SENSOR:
-			return LoadGenericBallSensor(obj, position, m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER, PlatformEntrySensorOnCollision, {});
+			return LoadGenericBallSensor(obj, position, PlatformEntrySensorOnCollision, {});
 		case pb::ObjectType::PLATFORM_EXIT_SENSOR:
-			return LoadGenericBallSensor(obj, position, m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER, PlatformExitSensorOnCollision, {}, gPinballPlatformLayer);
+			return LoadGenericBallSensor(obj, position, PlatformExitSensorOnCollision, {}, gPinballPlatformLayer);
 		case pb::ObjectType::LIGHT_SWITCH_SENSOR:
-			return LoadGenericBallSensor(obj, position, m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER, LightSwitchSensorOnCollision, {});
+			return LoadGenericBallSensor(obj, position, LightSwitchSensorOnCollision, {});
 		case pb::ObjectType::HEATER_SWITCH_SENSOR:
-			return LoadGenericBallSensor(obj, position, m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER, HeaterSwitchSensorOnCollision, {});
+			return LoadGenericBallSensor(obj, position, HeaterSwitchSensorOnCollision, {});
 		case pb::ObjectType::WATER_SPRINKLER_SENSOR:
-			return LoadGenericBallSensor(obj, position, m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER, WaterSprinklerSensorOnCollision, {});
+			return LoadGenericBallSensor(obj, position, WaterSprinklerSensorOnCollision, {});
 		case pb::ObjectType::BUMPER_SENSOR:
 			return LoadBumperSensor(obj, position);
 		case pb::ObjectType::DROP_GATE:

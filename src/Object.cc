@@ -176,32 +176,7 @@ SoundEmitter& Object::AddSoundEmitter() {
 	return *sound;
 }
 
-void Object::MoveLayer(const std::optional<m2g::pb::PhysicsLayer> newPhysicsLayer, const std::optional<DrawLayer> newDrawLayer) {
-	if (newPhysicsLayer) {
-		auto* phy = TryGetPhysique();
-		if (not phy) {
-			throw M2_ERROR("Physique component not found");
-		}
-
-		// Check if necessary
-		if (const auto currentLayer = phy->GetCurrentPhysicsLayer(); not currentLayer || *currentLayer != *newPhysicsLayer) {
-			// TODO Mover is not capable of moving all the fixtures from one world to the other, thus the object loader
-			//  must have loaded the same object to both worlds. Bodies with joints cannot be moved as well, for the
-			//  same reason.
-			auto* newRigidBody = std::get_if<Physique::Body>(&phy->body[I(*newPhysicsLayer)]);
-			if (not newRigidBody) {
-				throw M2_ERROR("New physics layer do not have a rigid body");
-			}
-			newRigidBody->SetEnabled(true);
-
-			if (currentLayer) {
-				auto& currRigidBody = std::get<Physique::Body>(phy->body[I(*currentLayer)]);
-				newRigidBody->TeleportToAnother(currRigidBody);
-				currRigidBody.SetEnabled(false);
-			}
-		}
-	}
-
+void Object::MoveLayer(const std::optional<DrawLayer> newDrawLayer) {
 	if (newDrawLayer) {
 		auto* gfx = TryGetGraphic();
 		if (not gfx) {
@@ -303,10 +278,10 @@ std::function<void()> m2::CreateCharacterDeleter(ObjectId id) {
 		}
 	};
 }
-std::function<void()> m2::CreateLayerMover(ObjectId id, std::optional<m2g::pb::PhysicsLayer> phyLayer, std::optional<DrawLayer> drawLayer) {
-	return [id, phyLayer, drawLayer]() {
+std::function<void()> m2::CreateLayerMover(ObjectId id, std::optional<DrawLayer> drawLayer) {
+	return [id, drawLayer]() {
 		if (auto* object = M2_LEVEL.objects.Get(id)) {
-			object->MoveLayer(phyLayer, drawLayer);
+			object->MoveLayer(drawLayer);
 		}
 	};
 }

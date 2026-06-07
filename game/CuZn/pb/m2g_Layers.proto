@@ -24,14 +24,3 @@ enum UprightGraphicsLayer {
   AIRBORNE_UPRIGHT = 5;
   SPACE_UPRIGHT = 6;
 }
-
-// Enum must be sequential because Enum_ARRAYSIZE is used as array size.
-enum PhysicsLayer {
-  BEDROCK = 0;
-  SEABED = 1;
-  UNDER_WATER = 2;
-  PHYSICS_DEFAULT_LAYER = 3;
-  ABOVE_GROUND = 4;
-  AIRBORNE = 5;
-  SPACE = 6;
-}

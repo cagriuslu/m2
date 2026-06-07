@@ -100,7 +100,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 		.isBullet = false
 	};
 	phy.position = position;
-	phy.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER);
+	phy.body = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {});
 
 	auto& gfx = obj.AddGraphic(m2g::pb::UprightGraphicsLayer::UPRIGHT_GRAPHICS_DEFAULT_LAYER, main_sprite_type, position);
 	gfx.position = position;
@@ -136,7 +136,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 		}
 		if (direction_vector) {
 			// Apply force
-			std::get<m2::Physique::Body>(phy.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).ApplyForceToCenter(direction_vector * (move_force * m2::ToDurationF(delta)));
+			std::get<m2::Physique::Body>(phy.body).ApplyForceToCenter(direction_vector * (move_force * m2::ToDurationF(delta)));
 		}
 
 		// Primary weapon
@@ -144,7 +144,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 			auto shoot = [&](const m2::Card& weapon) {
 				rpg::create_projectile(*m2::CreateObject({}, id), phy.position, vector_to_mouse, weapon, true);
 				// Knock-back
-				std::get<m2::Physique::Body>(phy.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).ApplyForceToCenter(m2::VecF::CreateUnitVectorWithAngle(vector_to_mouse.GetAngle() + m2::PI) * 50000.0f);
+				std::get<m2::Physique::Body>(phy.body).ApplyForceToCenter(m2::VecF::CreateUnitVectorWithAngle(vector_to_mouse.GetAngle() + m2::PI) * 50000.0f);
 			};
 
 			// Check if there is a special ranged weapon and try to use the card
@@ -185,7 +185,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj, const m2::VecF& position) {
 	};
 	phy.onCollision = [](MAYBE m2::Physique& me, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
 		const auto otherChrId = other.GetOwner().GetCharacterId();
-		if (10.0f < m2::VecF{std::get<m2::Physique::Body>(me.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).GetLinearVelocity()}.GetLength()) {
+		if (10.0f < m2::VecF{std::get<m2::Physique::Body>(me.body).GetLinearVelocity()}.GetLength()) {
 			M2_LEVEL.GetCharacterStorage().DeliverMessage<m2g::ProxyEx::EnemyCharacterStorageIndex>(otherChrId, std::make_unique<m2g::Proxy::StunDuration>(2.0f));
 		}
 	};

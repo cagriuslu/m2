@@ -46,8 +46,8 @@ m2::void_expected LoadDropGate(m2::Object& obj, const m2::VecF& position, float 
 			.collidesWith = m2::thirdparty::physics::ColliderLayer::COLLIDER_LAYER_FOREGROUND_FRIENDLY_OBJECT
 		}
 	});
-	phy.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef,
-		obj.GetPhysiqueId(), position, orientation, m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER);
+	phy.body = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef,
+		obj.GetPhysiqueId(), position, orientation);
 
 	auto& gfx = obj.AddGraphic(m2g::pb::UprightGraphicsLayer::UPRIGHT_GRAPHICS_DEFAULT_LAYER, spriteType);
 	gfx.position = position;
@@ -67,7 +67,7 @@ m2::void_expected LoadDropGate(m2::Object& obj, const m2::VecF& position, float 
 				if (M2G_PROXY.leftLauncherColumnDoorId) {
 					const auto& door = M2_LEVEL.objects[M2G_PROXY.leftLauncherColumnDoorId];
 					M2_DEFER([&door]() {
-						std::get<m2::Physique::Body>(door.GetPhysique().body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).SetEnabled(false);
+						std::get<m2::Physique::Body>(door.GetPhysique().body).SetEnabled(false);
 						door.GetGraphic().enabled = false;
 					});
 				}

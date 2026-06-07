@@ -4,7 +4,7 @@
 using namespace m2;
 using namespace m2::physics;
 
-DeterministicBody DeterministicBody::CreateFromDefinition(const thirdparty::physics::RigidBodyDefinition&, Id, const VecF&, float, m2g::pb::PhysicsLayer) {
+DeterministicBody DeterministicBody::CreateFromDefinition(const thirdparty::physics::RigidBodyDefinition&, Id, const VecF&, float) {
 	throw M2_ERROR("Not implemented for deterministic games");
 }
 

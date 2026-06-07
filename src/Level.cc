@@ -41,9 +41,8 @@ Level::~Level() {
 	}
 	delete contactListener;
 	contactListener = nullptr;
-	for (auto* w : world) {
-		delete w;
-	}
+	delete world;
+	world = nullptr;
 }
 
 void_expected Level::InitSinglePlayer(
@@ -521,13 +520,11 @@ void_expected Level::InitAnyPlayer(
 		auto* debugDraw = new thirdparty::physics::box2d::DebugDraw{};
 		_debugDraw = debugDraw;
 #endif
-		for (auto& w : world) {
-			w = new b2World(gravity);
-			w->SetContactListener(contactListener);
+		world = new b2World(gravity);
+		world->SetContactListener(contactListener);
 #ifdef DEBUG
-			w->SetDebugDraw(debugDraw);
+		world->SetDebugDraw(debugDraw);
 #endif
-		}
 	}
 
 	// Create background tiles

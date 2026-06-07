@@ -821,33 +821,30 @@ void Game::ExecuteStep(const Stopwatch::Duration& delta) {
 
 		// Deterministic physics
 		for (auto& phy : _level->physics) {
-			for (auto& slot : phy.body) {
-				if (auto* body = std::get_if<Physique::Body>(&slot); body && body->IsEnabled()) {
-					body->OnStep();
+			if (auto* body = std::get_if<Physique::Body>(&phy.body); body && body->IsEnabled()) {
+				body->OnStep();
 
-					auto& obj = phy.GetOwner();
-					phy.position = VecFE{body->GetPosition()};
-					phy.orientation = FE{body->GetAngle()};
+				auto& obj = phy.GetOwner();
+				phy.position = VecFE{body->GetPosition()};
+				phy.orientation = FE{body->GetAngle()};
 
-					// Update other components
-					if (auto* gfx = obj.TryGetGraphic()) {
-						const auto oldGfxPosition = gfx->position;
-						gfx->position = VecF{body->GetPosition()};
-						gfx->orientation = phy.orientation.ToFloat();
-						// Update draw list if necessary
-						if (oldGfxPosition != VecF{body->GetPosition()}) {
-							const auto gfxId = obj.GetGraphicId();
-							const auto poolAndDrawList = _level->GetGraphicPoolAndDrawList(gfxId);
-							poolAndDrawList.second->QueueUpdate(phy.GetOwnerId(), VecF{body->GetPosition()});
-						}
+				// Update other components
+				if (auto* gfx = obj.TryGetGraphic()) {
+					const auto oldGfxPosition = gfx->position;
+					gfx->position = VecF{body->GetPosition()};
+					gfx->orientation = phy.orientation.ToFloat();
+					// Update draw list if necessary
+					if (oldGfxPosition != VecF{body->GetPosition()}) {
+						const auto gfxId = obj.GetGraphicId();
+						const auto poolAndDrawList = _level->GetGraphicPoolAndDrawList(gfxId);
+						poolAndDrawList.second->QueueUpdate(phy.GetOwnerId(), VecF{body->GetPosition()});
 					}
-					if (auto* lig = obj.TryGetLight()) {
-						lig->position = VecF{body->GetPosition()};
-					}
-					if (auto* snd = obj.TryGetSoundEmitter()) {
-						snd->position = VecF{body->GetPosition()};
-					}
-					break;
+				}
+				if (auto* lig = obj.TryGetLight()) {
+					lig->position = VecF{body->GetPosition()};
+				}
+				if (auto* snd = obj.TryGetSoundEmitter()) {
+					snd->position = VecF{body->GetPosition()};
 				}
 			}
 		}
@@ -892,37 +889,32 @@ void Game::ExecuteStep(const Stopwatch::Duration& delta) {
 			}
 		} else {
 			// Integrate physics
-			for (auto* world : _level->world) {
-				if (world) {
-					world->Step(ToDurationF(delta), velocity_iterations, position_iterations);
-				}
+			if (_level->world) {
+				_level->world->Step(ToDurationF(delta), velocity_iterations, position_iterations);
 			}
 			// Update positions
 			for (auto& phy : _level->physics) {
-				for (const auto& slot : phy.body) {
-					if (const auto* body = std::get_if<Physique::Body>(&slot); body && body->IsEnabled()) {
-						auto& obj = phy.GetOwner();
-						phy.position = VecFE{body->GetPosition()};
-						phy.orientation = FE{body->GetAngle()};
-						// Update other components
-						if (auto* gfx = obj.TryGetGraphic()) {
-							const auto oldGfxPosition = gfx->position;
-							gfx->position = VecF{body->GetPosition()};
-							gfx->orientation = phy.orientation.ToFloat();
-							// Update draw list if necessary
-							if (oldGfxPosition != VecF{body->GetPosition()}) {
-								const auto gfxId = obj.GetGraphicId();
-								const auto poolAndDrawList = _level->GetGraphicPoolAndDrawList(gfxId);
-								poolAndDrawList.second->QueueUpdate(phy.GetOwnerId(), VecF{body->GetPosition()});
-							}
+				if (const auto* body = std::get_if<Physique::Body>(&phy.body); body && body->IsEnabled()) {
+					auto& obj = phy.GetOwner();
+					phy.position = VecFE{body->GetPosition()};
+					phy.orientation = FE{body->GetAngle()};
+					// Update other components
+					if (auto* gfx = obj.TryGetGraphic()) {
+						const auto oldGfxPosition = gfx->position;
+						gfx->position = VecF{body->GetPosition()};
+						gfx->orientation = phy.orientation.ToFloat();
+						// Update draw list if necessary
+						if (oldGfxPosition != VecF{body->GetPosition()}) {
+							const auto gfxId = obj.GetGraphicId();
+							const auto poolAndDrawList = _level->GetGraphicPoolAndDrawList(gfxId);
+							poolAndDrawList.second->QueueUpdate(phy.GetOwnerId(), VecF{body->GetPosition()});
 						}
-						if (auto* lig = obj.TryGetLight()) {
-							lig->position = VecF{body->GetPosition()};
-						}
-						if (auto* snd = obj.TryGetSoundEmitter()) {
-							snd->position = VecF{body->GetPosition()};
-						}
-						break;
+					}
+					if (auto* lig = obj.TryGetLight()) {
+						lig->position = VecF{body->GetPosition()};
+					}
+					if (auto* snd = obj.TryGetSoundEmitter()) {
+						snd->position = VecF{body->GetPosition()};
 					}
 				}
 			}
@@ -1073,10 +1065,8 @@ void Game::ExecutePostDraw(const Stopwatch::Duration& delta) {
 }
 void Game::DebugDraw() {
 #ifdef DEBUG
-	for (int i = 0; i < I(PHYSICS_LAYER_COUNT); ++i) {
-		if (_level->world[i]) {
-			_level->world[i]->DebugDraw();
-		}
+	if (_level->world) {
+		_level->world->DebugDraw();
 	}
 
 	if (IsProjectionTypePerspective(_level->GetProjectionType())) {

@@ -85,7 +85,7 @@ namespace m2 {
 		Pool<Physique> physics;
 		Pool<Light> lights;
 		Pool<SoundEmitter> soundEmitters;
-		std::array<b2World*, PHYSICS_LAYER_COUNT> world{};
+		b2World* world{};
 		box2d::ContactListener* contactListener{};
 		Id cameraId{}, playerId{}, pointer_id{};
 		std::optional<SoundListener> leftListener, rightListener;

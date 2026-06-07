@@ -14,7 +14,7 @@ namespace m2::physics {
 		template <typename Op>
 		explicit DeterministicBody(Op op, VecFE pos = {}, FE angle = {})
 		    : _onStep(std::move(op)), _position(pos), _orientation(angle) {}
-		static DeterministicBody CreateFromDefinition(const thirdparty::physics::RigidBodyDefinition&, Id physiqueId, const VecF& position, float angleInRads, m2g::pb::PhysicsLayer pl);
+		static DeterministicBody CreateFromDefinition(const thirdparty::physics::RigidBodyDefinition&, Id physiqueId, const VecF& position, float angleInRads);
 		// Copy not allowed
 		DeterministicBody(const DeterministicBody& other) = delete;
 		DeterministicBody& operator=(const DeterministicBody& other) = delete;

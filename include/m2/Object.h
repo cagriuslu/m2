@@ -78,7 +78,7 @@ namespace m2 {
 		SoundEmitter& AddSoundEmitter();
 
 		/// This method may cause some of the components IDs to change. Must be called from a deferred action.
-		void MoveLayer(std::optional<m2g::pb::PhysicsLayer>, std::optional<DrawLayer>);
+		void MoveLayer(std::optional<DrawLayer>);
 
 		void RemovePhysique();
 		void RemoveGraphic();
@@ -111,7 +111,7 @@ namespace m2 {
 	std::function<void()> CreateLightDeleter(ObjectId id);
 	std::function<void()> CreateSoundEmitterDeleter(ObjectId id);
 	std::function<void()> CreateCharacterDeleter(ObjectId id);
-	std::function<void()> CreateLayerMover(ObjectId id, std::optional<m2g::pb::PhysicsLayer>, std::optional<DrawLayer>);
+	std::function<void()> CreateLayerMover(ObjectId id, std::optional<DrawLayer>);
 
 	// Filter Generators
 

@@ -29,7 +29,7 @@ void rpg::ProjectileCharacter::OnUpdate(const m2::Stopwatch::Duration delta) {
 			}};
 			auto& obj = M2_LEVEL.objects[GetOwnerId()];
 			auto& phy = obj.GetPhysique();
-			phy.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(explosionBodyDef, obj.GetPhysiqueId(), obj.GetPhysique().position, phy.orientation.ToFloat(), m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER);
+			phy.body = m2::thirdparty::physics::RigidBody::CreateFromDefinition(explosionBodyDef, obj.GetPhysiqueId(), obj.GetPhysique().position, phy.orientation.ToFloat());
 			// RESOURCE_EXPLOSION_TTL only means the object is currently exploding
 			UnsafeSetVariable(RESOURCE_EXPLOSION_TTL, 1.0f); // 1.0f is just symbolic
 		} else {
@@ -78,8 +78,8 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& positi
 				? m2::thirdparty::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_FRIENDLY_DAMAGE
 				: m2::thirdparty::physics::ColliderCategory::COLLIDER_CATEGORY_FOREGROUND_HOSTILE_DAMAGE)]
 	}};
-	phy.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, angle, m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER);
-	std::get<m2::Physique::Body>(phy.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).SetLinearVelocity(direction * linear_speed);
+	phy.body = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, angle);
+	std::get<m2::Physique::Body>(phy.body).SetLinearVelocity(direction * linear_speed);
 
 	// Add graphics
 	auto& gfx = obj.AddGraphic(m2g::pb::UprightGraphicsLayer::UPRIGHT_GRAPHICS_DEFAULT_LAYER, ranged_weapon.GameSprite());

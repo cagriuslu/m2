@@ -2,7 +2,7 @@
 #include <m2/thirdparty/physics/ColliderCategory.h>
 #include <m2/Game.h>
 
-m2::void_expected LoadGenericBallSensor(m2::Object& obj, const m2::VecF& position, const m2g::pb::PhysicsLayer physicsLayer,
+m2::void_expected LoadGenericBallSensor(m2::Object& obj, const m2::VecF& position,
 	const std::function<void(m2::Physique& sensor, m2::Physique& ball, const m2::box2d::Contact&)>& onCollisionWithBall,
 	const std::function<void(m2::Physique& sensor, m2::Physique& ball)>& offCollisionWithBall, const uint16_t belongsTo) {
 
@@ -29,8 +29,8 @@ m2::void_expected LoadGenericBallSensor(m2::Object& obj, const m2::VecF& positio
 			}
 		});
 	}
-	phy.body[m2::I(physicsLayer)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef,
-		obj.GetPhysiqueId(), position, {}, physicsLayer);
+	phy.body = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef,
+		obj.GetPhysiqueId(), position, {});
 
 	obj.AddGraphic(m2g::pb::UprightGraphicsLayer::UPRIGHT_GRAPHICS_DEFAULT_LAYER, spriteType);
 

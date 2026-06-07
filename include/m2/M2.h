@@ -18,7 +18,6 @@ namespace m2 {
 
 	constexpr int FLAT_GRAPHICS_LAYER_COUNT = m2g::pb::FlatGraphicsLayer_ARRAYSIZE;
 	constexpr int UPRIGHT_GRAPHICS_LAYER_COUNT = m2g::pb::UprightGraphicsLayer_ARRAYSIZE;
-	constexpr int PHYSICS_LAYER_COUNT = m2g::pb::PhysicsLayer_ARRAYSIZE;
 	using DrawLayer = std::variant<m2g::pb::FlatGraphicsLayer, m2g::pb::UprightGraphicsLayer>;
 
 	/// Returns the number of codepoints in a UTF-8 string.

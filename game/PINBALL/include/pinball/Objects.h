@@ -16,7 +16,7 @@ m2::void_expected LoadPlatform(m2::Object& obj, const m2::VecF& position);
 // Sensors
 
 /// Load a generic sensor from all the fixture. If the fixture of the sensor contains a chain, ghost collisions could occur
-m2::void_expected LoadGenericBallSensor(m2::Object& obj, const m2::VecF& position, m2g::pb::PhysicsLayer physicsLayer,
+m2::void_expected LoadGenericBallSensor(m2::Object& obj, const m2::VecF& position,
 	const std::function<void(m2::Physique& sensor, m2::Physique& ball, const m2::box2d::Contact&)>& onCollisionWithBall,
 	const std::function<void(m2::Physique& sensor, m2::Physique& ball)>& offCollisionWithBall,
 	uint16_t belongsTo = m2::thirdparty::physics::ColliderLayer::COLLIDER_LAYER_FOREGROUND_FRIENDLY_OBJECT);
