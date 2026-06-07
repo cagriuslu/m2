@@ -1,4 +1,5 @@
 #include <pinball/Objects.h>
+#include <pinball/Pinball.h>
 #include <m2/box2d/Shape.h>
 #include <m2/Game.h>
 
@@ -19,12 +20,12 @@ m2::void_expected LoadPlatform(m2::Object& obj, const m2::VecF& position) {
 			.restitution = 0.45f,
 			.restitutionThresholdVelocity = 1.0f,
 			.colliderFilter = m2::thirdparty::physics::ColliderParams{
-				.belongsTo = 1,
+				.belongsTo = gPinballPlatformLayer,
 				.collidesWith = 0xFFFF
 			}
 		});
 	}
-	phy.body[m2::I(m2g::pb::PhysicsLayer::ABOVE_GROUND)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2g::pb::PhysicsLayer::ABOVE_GROUND);
+	phy.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER);
 
 	return {};
 }

@@ -1,5 +1,6 @@
 #include <m2g/Proxy.h>
 #include <pinball/Objects.h>
+#include <pinball/Pinball.h>
 #include <pinball/Simulation.h>
 #include <m2/Game.h>
 #include <m2/ui/widget/ProgressBar.h>
@@ -311,7 +312,7 @@ m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object&
 		case pb::ObjectType::PLATFORM_ENTRY_SENSOR:
 			return LoadGenericBallSensor(obj, position, m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER, PlatformEntrySensorOnCollision, {});
 		case pb::ObjectType::PLATFORM_EXIT_SENSOR:
-			return LoadGenericBallSensor(obj, position, m2g::pb::PhysicsLayer::ABOVE_GROUND, PlatformExitSensorOnCollision, {});
+			return LoadGenericBallSensor(obj, position, m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER, PlatformExitSensorOnCollision, {}, gPinballPlatformLayer);
 		case pb::ObjectType::LIGHT_SWITCH_SENSOR:
 			return LoadGenericBallSensor(obj, position, m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER, LightSwitchSensorOnCollision, {});
 		case pb::ObjectType::HEATER_SWITCH_SENSOR:

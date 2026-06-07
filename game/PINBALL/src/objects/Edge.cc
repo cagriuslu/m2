@@ -13,7 +13,7 @@ void LoadEdge() {
 				.shape = m2::thirdparty::physics::EdgeShape{.pointA = {}, .pointB = {gLevelDimensions.GetX(), 0.0f}},
 				.restitution = 1.0f,
 				.colliderFilter = m2::thirdparty::physics::ColliderParams{
-					.belongsTo = 1,
+					.belongsTo = gPinballSharedLayer,
 					.collidesWith = 0xFFFF
 				}
 			},
@@ -21,7 +21,7 @@ void LoadEdge() {
 				.shape = m2::thirdparty::physics::EdgeShape{.pointA = {}, .pointB = {0.0f, gLevelDimensions.GetY()}},
 				.restitution = 1.0f,
 				.colliderFilter = m2::thirdparty::physics::ColliderParams{
-					.belongsTo = 1,
+					.belongsTo = gPinballSharedLayer,
 					.collidesWith = 0xFFFF
 				}
 			},
@@ -29,7 +29,7 @@ void LoadEdge() {
 				.shape = m2::thirdparty::physics::EdgeShape{.pointA = {gLevelDimensions.GetX(), 0.0f}, .pointB = {gLevelDimensions.GetX(), gLevelDimensions.GetY()}},
 				.restitution = 1.0f,
 				.colliderFilter = m2::thirdparty::physics::ColliderParams{
-					.belongsTo = 1,
+					.belongsTo = gPinballSharedLayer,
 					.collidesWith = 0xFFFF
 				}
 			}

@@ -1,4 +1,5 @@
 #include <pinball/Objects.h>
+#include <pinball/Pinball.h>
 #include <m2/Game.h>
 #include <box2d/b2_circle_shape.h>
 #include <m2/thirdparty/physics/ColliderCategory.h>
@@ -39,7 +40,7 @@ m2::void_expected LoadBall(m2::Object& obj, const m2::VecF& position) {
 			.isSensor = false,
 			.colliderFilter = m2::thirdparty::physics::ColliderParams{
 				.belongsTo = m2::thirdparty::physics::ColliderLayer::COLLIDER_LAYER_FOREGROUND_FRIENDLY_OBJECT,
-				.collidesWith = 0xFFFF
+				.collidesWith = gBallGroundMask
 			}
 		}},
 		.linearDamping = 0.0f,
@@ -70,7 +71,7 @@ m2::void_expected LoadBall(m2::Object& obj, const m2::VecF& position) {
 		if (M2_GAME.events.PopKeyPress(m2g::pb::RETURN)) {
 			std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).SetPosition(initialPos);
 			std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::ABOVE_GROUND)]).SetPosition(initialPos);
-			M2_DEFER(m2::CreateLayerMover(phy_.GetOwnerId(), m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER, m2g::pb::UprightGraphicsLayer::UPRIGHT_GRAPHICS_DEFAULT_LAYER));
+			M2_DEFER(CreateBallLayerSwitcher(phy_.GetOwnerId(), false));
 		}
 		if (M2_GAME.events.PopMouseButtonRelease(m2::MouseButton::PRIMARY)) {
 			const auto mousePosition = M2_GAME.events.GetWorldPositionOfMouse();
@@ -78,7 +79,7 @@ m2::void_expected LoadBall(m2::Object& obj, const m2::VecF& position) {
 			std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).SetLinearVelocity({});
 			std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::ABOVE_GROUND)]).SetPosition(mousePosition);
 			std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::ABOVE_GROUND)]).SetLinearVelocity({});
-			M2_DEFER(m2::CreateLayerMover(phy_.GetOwnerId(), m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER, m2g::pb::UprightGraphicsLayer::UPRIGHT_GRAPHICS_DEFAULT_LAYER));
+			M2_DEFER(CreateBallLayerSwitcher(phy_.GetOwnerId(), false));
 		}
 	};
 	phy.onCollision = [ballImpl](m2::Physique& ball, const m2::Physique& other, const m2::box2d::Contact& contact) {
@@ -99,4 +100,21 @@ m2::void_expected LoadBall(m2::Object& obj, const m2::VecF& position) {
 	M2G_PROXY.ballId = obj.GetId();
 
 	return {};
+}
+
+std::function<void()> CreateBallLayerSwitcher(const m2::ObjectId ballId, const bool toPlatform) {
+	return [ballId, toPlatform]() {
+		auto* object = M2_LEVEL.objects.Get(ballId);
+		if (not object) {
+			return;
+		}
+		// The ball always lives in the default physics world; only its collision mask and draw layer change so that it
+		// behaves as-if it moved to the elevated platform level.
+		auto& body = std::get<m2::Physique::Body>(
+			object->GetPhysique().body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]);
+		body.SetCollidesWith(toPlatform ? gBallPlatformMask : gBallGroundMask);
+		object->MoveLayer({}, toPlatform
+			? m2g::pb::UprightGraphicsLayer::AIRBORNE_UPRIGHT
+			: m2g::pb::UprightGraphicsLayer::UPRIGHT_GRAPHICS_DEFAULT_LAYER);
+	};
 }

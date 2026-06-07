@@ -123,6 +123,7 @@ namespace m2::thirdparty::physics {
 		// Modifiers
 
 		void SetEnabled(bool);
+		void SetCollidesWith(uint16_t collidesWith);
 		void SetPosition(const VecFE&);
 		void SetAngle(FE angle); // In radians
 		void SetLinearVelocity(const VecFE&);

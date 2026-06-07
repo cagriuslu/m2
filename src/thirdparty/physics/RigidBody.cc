@@ -181,6 +181,14 @@ bool RigidBody::HasJoint() const {
 	return static_cast<b2Body*>(_ptr)->GetJointList();
 }
 
+void RigidBody::SetCollidesWith(const uint16_t collidesWith) {
+	auto* body = static_cast<b2Body*>(_ptr);
+	for (auto* fixture = body->GetFixtureList(); fixture; fixture = fixture->GetNext()) {
+		auto filter = fixture->GetFilterData();
+		filter.maskBits = collidesWith;
+		fixture->SetFilterData(filter); // Flags the fixture for re-filtering on the next step
+	}
+}
 uint16_t RigidBody::GetAllLayersBelongingTo() const {
 	uint16_t out{};
 	const auto* body = static_cast<b2Body*>(_ptr);

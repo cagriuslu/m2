@@ -4,7 +4,7 @@
 
 m2::void_expected LoadGenericBallSensor(m2::Object& obj, const m2::VecF& position, const m2g::pb::PhysicsLayer physicsLayer,
 	const std::function<void(m2::Physique& sensor, m2::Physique& ball, const m2::box2d::Contact&)>& onCollisionWithBall,
-	const std::function<void(m2::Physique& sensor, m2::Physique& ball)>& offCollisionWithBall) {
+	const std::function<void(m2::Physique& sensor, m2::Physique& ball)>& offCollisionWithBall, const uint16_t belongsTo) {
 
 	const auto type = obj.GetType();
 	const auto spriteType = *M2_GAME.GetMainSpriteOfObject(type);
@@ -24,7 +24,7 @@ m2::void_expected LoadGenericBallSensor(m2::Object& obj, const m2::VecF& positio
 			.shape = m2::thirdparty::physics::ToShape(fixturePb, sprite.Ppm()),
 			.isSensor = true,
 			.colliderFilter = m2::thirdparty::physics::ColliderParams{
-				.belongsTo = m2::thirdparty::physics::ColliderLayer::COLLIDER_LAYER_FOREGROUND_FRIENDLY_OBJECT,
+				.belongsTo = belongsTo,
 				.collidesWith = m2::thirdparty::physics::ColliderLayer::COLLIDER_LAYER_FOREGROUND_FRIENDLY_OBJECT
 			}
 		});
