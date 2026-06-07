@@ -3,6 +3,7 @@
 #include "../box2d/ContactListener.h"
 #include <m2/thirdparty/physics/RigidBody.h>
 #include <m2/physics/DeterministicBody.h>
+#include <m2/physics/StaticBody.h>
 #include <m2/math/VecF.h>
 #include <m2/math/VecE.h>
 #include <m2/ProxyTypes.h>
@@ -10,6 +11,7 @@
 #include <m2g_Layers.pb.h>
 #include <functional>
 #include <type_traits>
+#include <variant>
 
 namespace m2 {
 	struct Physique final : Component {
@@ -20,6 +22,7 @@ namespace m2 {
 		Callback preStep{};
 		Callback postStep{};
 
+		using StaticBody = physics::StaticBody;
 		using DeterministicBody = physics::DeterministicBody;
 		using M2Body = int;
 		using Box2dBody = thirdparty::physics::RigidBody;
@@ -27,7 +30,7 @@ namespace m2 {
 		/// World's rigid bodies. Which one is active is chosen at compile time, as a component never has both.
 		using NondeterministicBody = std::conditional_t<USE_M2_PHYSICS, M2Body, Box2dBody>;
 		using Body = std::conditional_t<GAME_IS_DETERMINISTIC, DeterministicBody, NondeterministicBody>;
-		std::array<std::optional<Body>, PHYSICS_LAYER_COUNT> body{};
+		std::array<std::variant<StaticBody, Body>, PHYSICS_LAYER_COUNT> body{};
 
 		std::function<void(Physique&, Physique&, const box2d::Contact&)> onCollision;
 		std::function<void(Physique&, Physique&)> offCollision;

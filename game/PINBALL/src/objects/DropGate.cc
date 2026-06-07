@@ -67,7 +67,7 @@ m2::void_expected LoadDropGate(m2::Object& obj, const m2::VecF& position, float 
 				if (M2G_PROXY.leftLauncherColumnDoorId) {
 					const auto& door = M2_LEVEL.objects[M2G_PROXY.leftLauncherColumnDoorId];
 					M2_DEFER([&door]() {
-						door.GetPhysique().body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]->SetEnabled(false);
+						std::get<m2::Physique::Body>(door.GetPhysique().body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).SetEnabled(false);
 						door.GetGraphic().enabled = false;
 					});
 				}

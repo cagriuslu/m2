@@ -31,7 +31,7 @@ m2::void_expected LoadBumperSensor(m2::Object& obj, const m2::VecF& position) {
 		const auto contactNormal = contact.normal;
 		auto* ballPhy = &ball;
 		M2_DEFER(([contactNormal, ballPhy]() {
-			ballPhy->body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]->ApplyForceToCenter(contactNormal * 5000.0f);
+			std::get<m2::Physique::Body>(ballPhy->body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).ApplyForceToCenter(contactNormal * 5000.0f);
 		}));
 	};
 

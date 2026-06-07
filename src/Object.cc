@@ -188,14 +188,14 @@ void Object::MoveLayer(const std::optional<m2g::pb::PhysicsLayer> newPhysicsLaye
 			// TODO Mover is not capable of moving all the fixtures from one world to the other, thus the object loader
 			//  must have loaded the same object to both worlds. Bodies with joints cannot be moved as well, for the
 			//  same reason.
-			auto& newRigidBody = phy->body[I(*newPhysicsLayer)];
+			auto* newRigidBody = std::get_if<Physique::Body>(&phy->body[I(*newPhysicsLayer)]);
 			if (not newRigidBody) {
 				throw M2_ERROR("New physics layer do not have a rigid body");
 			}
 			newRigidBody->SetEnabled(true);
 
 			if (currentLayer) {
-				auto& currRigidBody = *phy->body[I(*currentLayer)];
+				auto& currRigidBody = std::get<Physique::Body>(phy->body[I(*currentLayer)]);
 				newRigidBody->TeleportToAnother(currRigidBody);
 				currRigidBody.SetEnabled(false);
 			}

@@ -160,7 +160,7 @@ m2::void_expected Enemy::init(m2::Object& obj, const m2::VecF& position) {
 		}, impl.ai_fsm);
 	};
 	phy.postStep = [&](MAYBE m2::Physique& phy, const m2::Stopwatch::Duration&) {
-		m2::VecF velocity = m2::VecF{phy.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]->GetLinearVelocity()};
+		m2::VecF velocity = m2::VecF{std::get<m2::Physique::Body>(phy.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).GetLinearVelocity()};
 		if (velocity.IsNear(m2::VecF{}, 0.1f)) {
 			impl.animation_fsm.signal(m2::AnimationFsmSignal{m2g::pb::ANIMATION_STATE_IDLE});
 		}
@@ -201,7 +201,7 @@ void rpg::Enemy::move_towards(m2::Object& obj, m2::VecF direction, float force) 
 		dynamic_cast<Enemy&>(*std::get<std::unique_ptr<HeapObjectImpl>>(obj.impl)).animation_fsm.signal(m2::AnimationFsmSignal{anim_state_type});
 		// Apply force
 		m2::VecF force_direction = direction * (m2::ToDurationF(m2::TIME_BETWEEN_PHYSICS_SIMULATIONS) * force);
-		obj.GetPhysique().body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]->ApplyForceToCenter(force_direction);
+		std::get<m2::Physique::Body>(obj.GetPhysique().body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).ApplyForceToCenter(force_direction);
 	}
 }
 
@@ -222,7 +222,7 @@ void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
 						const auto shoot_direction = M2_PLAYER.GetPhysique().position - selfPosition;
 						create_projectile(*m2::CreateObject({}, obj.GetId()), selfPosition, shoot_direction, *rangedWeapon, false);
 						// Knock-back
-						obj.GetPhysique().body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]->ApplyForceToCenter(m2::VecF::CreateUnitVectorWithAngle(shoot_direction.GetAngle() + m2::PI) * 5000.0f);
+						std::get<m2::Physique::Body>(obj.GetPhysique().body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).ApplyForceToCenter(m2::VecF::CreateUnitVectorWithAngle(shoot_direction.GetAngle() + m2::PI) * 5000.0f);
 					}
 					break;
 				}

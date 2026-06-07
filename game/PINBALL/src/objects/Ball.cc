@@ -14,10 +14,10 @@ namespace {
 	};
 
 	m2::thirdparty::physics::RigidBody& GetActiveRigidBody(m2::Physique& phy) {
-		if (phy.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]->IsEnabled()) {
-			return *phy.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)];
+		if (std::get<m2::Physique::Body>(phy.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).IsEnabled()) {
+			return std::get<m2::Physique::Body>(phy.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]);
 		}
-		return *phy.body[m2::I(m2g::pb::PhysicsLayer::ABOVE_GROUND)];
+		return std::get<m2::Physique::Body>(phy.body[m2::I(m2g::pb::PhysicsLayer::ABOVE_GROUND)]);
 	}
 }
 
@@ -53,31 +53,31 @@ m2::void_expected LoadBall(m2::Object& obj, const m2::VecF& position) {
 	};
 	phy.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER);
 	phy.body[m2::I(m2g::pb::PhysicsLayer::ABOVE_GROUND)] = m2::thirdparty::physics::RigidBody::CreateFromDefinition(rigidBodyDef, obj.GetPhysiqueId(), position, {}, m2g::pb::PhysicsLayer::ABOVE_GROUND);
-	phy.body[m2::I(m2g::pb::PhysicsLayer::ABOVE_GROUND)]->SetEnabled(false);
+	std::get<m2::Physique::Body>(phy.body[m2::I(m2g::pb::PhysicsLayer::ABOVE_GROUND)]).SetEnabled(false);
 
 	MAYBE auto& gfx = obj.AddGraphic(m2g::pb::UprightGraphicsLayer::UPRIGHT_GRAPHICS_DEFAULT_LAYER, m2g::pb::SPRITE_BASIC_BALL);
 	gfx.position = position;
 
 	phy.preStep = [initialPos = position](m2::Physique& phy_, const m2::Stopwatch::Duration&) {
 		if (M2_GAME.events.PopKeyRelease(m2g::pb::BALL_LAUNCHER) /*&& M2G_PROXY.isOnBallLauncher*/) {
-			if (phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]->IsEnabled()) {
-				phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]->ApplyForceToCenter({0.0f, -7500.0f});
-			} else if (phy_.body[m2::I(m2g::pb::PhysicsLayer::ABOVE_GROUND)]->IsEnabled()) {
-				phy_.body[m2::I(m2g::pb::PhysicsLayer::ABOVE_GROUND)]->ApplyForceToCenter({0.0f, -7500.0f});
+			if (std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).IsEnabled()) {
+				std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).ApplyForceToCenter({0.0f, -7500.0f});
+			} else if (std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::ABOVE_GROUND)]).IsEnabled()) {
+				std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::ABOVE_GROUND)]).ApplyForceToCenter({0.0f, -7500.0f});
 			}
 			// TODO defer M2_GAME.audio_manager->Play(&M2_GAME.songs[m2g::pb::SONG_CIRCULAR_BUMPER_SOUND], m2::AudioManager::ONCE, 0.25f);
 		}
 		if (M2_GAME.events.PopKeyPress(m2g::pb::RETURN)) {
-			phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]->SetPosition(initialPos);
-			phy_.body[m2::I(m2g::pb::PhysicsLayer::ABOVE_GROUND)]->SetPosition(initialPos);
+			std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).SetPosition(initialPos);
+			std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::ABOVE_GROUND)]).SetPosition(initialPos);
 			M2_DEFER(m2::CreateLayerMover(phy_.GetOwnerId(), m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER, m2g::pb::UprightGraphicsLayer::UPRIGHT_GRAPHICS_DEFAULT_LAYER));
 		}
 		if (M2_GAME.events.PopMouseButtonRelease(m2::MouseButton::PRIMARY)) {
 			const auto mousePosition = M2_GAME.events.GetWorldPositionOfMouse();
-			phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]->SetPosition(mousePosition);
-			phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]->SetLinearVelocity({});
-			phy_.body[m2::I(m2g::pb::PhysicsLayer::ABOVE_GROUND)]->SetPosition(mousePosition);
-			phy_.body[m2::I(m2g::pb::PhysicsLayer::ABOVE_GROUND)]->SetLinearVelocity({});
+			std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).SetPosition(mousePosition);
+			std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER)]).SetLinearVelocity({});
+			std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::ABOVE_GROUND)]).SetPosition(mousePosition);
+			std::get<m2::Physique::Body>(phy_.body[m2::I(m2g::pb::PhysicsLayer::ABOVE_GROUND)]).SetLinearVelocity({});
 			M2_DEFER(m2::CreateLayerMover(phy_.GetOwnerId(), m2g::pb::PhysicsLayer::PHYSICS_DEFAULT_LAYER, m2g::pb::UprightGraphicsLayer::UPRIGHT_GRAPHICS_DEFAULT_LAYER));
 		}
 	};
