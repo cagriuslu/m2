@@ -1,4 +1,5 @@
 #include <m2/physics/DeterministicBody.h>
+#include <m2/M2.h>
 
 using namespace m2;
 using namespace m2::physics;
@@ -7,16 +8,11 @@ DeterministicBody DeterministicBody::CreateFromDefinition(const thirdparty::phys
 	throw M2_ERROR("Not implemented for deterministic games");
 }
 
-VecFE DeterministicBody::GetPosition() const {
-	throw M2_ERROR("Not implemented yet");
-}
-FE DeterministicBody::GetAngle() const {
-	throw M2_ERROR("Not implemented yet");
-}
+VecFE DeterministicBody::GetLinearVelocity() const { throw M2_ERROR("Not implemented for deterministic games"); }
+FE DeterministicBody::GetAngularVelocity() const { throw M2_ERROR("Not implemented for deterministic games"); }
 
-void DeterministicBody::SetEnabled(bool) {
-	throw M2_ERROR("Not implemented for deterministic games");
-}
-void DeterministicBody::TeleportToAnother(const DeterministicBody&) {
-	throw M2_ERROR("Not implemented for deterministic games");
-}
+void DeterministicBody::SetEnabled(bool) { throw M2_ERROR("Not implemented for deterministic games"); }
+void DeterministicBody::SetLinearVelocity(const VecFE&) { throw M2_ERROR("Not implemented for deterministic games"); }
+void DeterministicBody::SetAngularVelocity(FE) { throw M2_ERROR("Not implemented for deterministic games"); }
+void DeterministicBody::ApplyForceToCenter(const VecFE&) { throw M2_ERROR("Not implemented for deterministic games"); }
+void DeterministicBody::TeleportToAnother(const DeterministicBody&) { throw M2_ERROR("Not implemented for deterministic games"); }
