@@ -818,35 +818,6 @@ void Game::ExecuteStep(const Stopwatch::Duration& delta) {
 			}
 		}
 		ExecuteDeferredActions();
-
-		// Deterministic physics
-		for (auto& phy : _level->physics) {
-			if (auto* body = std::get_if<Physique::DynamicBody>(&phy.body); body && body->IsEnabled()) {
-				body->OnStep();
-
-				auto& obj = phy.GetOwner();
-
-				// Update other components
-				if (auto* gfx = obj.TryGetGraphic()) {
-					const auto oldGfxPosition = gfx->position;
-					gfx->position = VecF{body->GetPosition()};
-					gfx->orientation = body->GetAngle().ToFloat();
-					// Update draw list if necessary
-					if (oldGfxPosition != VecF{body->GetPosition()}) {
-						const auto gfxId = obj.GetGraphicId();
-						const auto poolAndDrawList = _level->GetGraphicPoolAndDrawList(gfxId);
-						poolAndDrawList.second->QueueUpdate(phy.GetOwnerId(), VecF{body->GetPosition()});
-					}
-				}
-				if (auto* lig = obj.TryGetLight()) {
-					lig->position = VecF{body->GetPosition()};
-				}
-				if (auto* snd = obj.TryGetSoundEmitter()) {
-					snd->position = VecF{body->GetPosition()};
-				}
-			}
-		}
-		ExecuteDeferredActions();
 	} else {
 		// ReSharper disable once CppDFAUnreachableCode
 		if (IsTurnBasedServer()) {
@@ -885,37 +856,43 @@ void Game::ExecuteStep(const Stopwatch::Duration& delta) {
 			if (const auto server_command = TurnBasedRealClientThread().pop_server_command()) {
 				_proxy.handle_server_command(*server_command);
 			}
-		} else {
-			// Integrate physics
-			if (_level->world) {
-				_level->world->Step(ToDurationF(delta), velocity_iterations, position_iterations);
-			}
-			// Update positions
-			for (auto& phy : _level->physics) {
-				if (const auto* body = std::get_if<Physique::DynamicBody>(&phy.body); body && body->IsEnabled()) {
+		}
+	}
+
+	if (not IsTurnBasedMultiPlayer()) {
+		// Turn based multiplayer games run no physics simulation locally
+		if (_level->world) {
+			_level->world->Step(ToDurationF(delta), velocity_iterations, position_iterations);
+		}
+		for (auto& phy : _level->physics) {
+			std::visit([&](auto& body) {
+				if (body.IsEnabled()) {
+					body.OnStep();
 					auto& obj = phy.GetOwner();
 					// Update other components
 					if (auto* gfx = obj.TryGetGraphic()) {
 						const auto oldGfxPosition = gfx->position;
-						gfx->position = VecF{body->GetPosition()};
-						gfx->orientation = body->GetAngle().ToFloat();
+						gfx->position = VecF{body.GetPosition()};
+						gfx->orientation = body.GetAngle().ToFloat();
 						// Update draw list if necessary
-						if (oldGfxPosition != VecF{body->GetPosition()}) {
+						if (oldGfxPosition != VecF{body.GetPosition()}) {
 							const auto gfxId = obj.GetGraphicId();
 							const auto poolAndDrawList = _level->GetGraphicPoolAndDrawList(gfxId);
-							poolAndDrawList.second->QueueUpdate(phy.GetOwnerId(), VecF{body->GetPosition()});
+							poolAndDrawList.second->QueueUpdate(phy.GetOwnerId(), VecF{body.GetPosition()});
 						}
 					}
 					if (auto* lig = obj.TryGetLight()) {
-						lig->position = VecF{body->GetPosition()};
+						lig->position = VecF{body.GetPosition()};
 					}
 					if (auto* snd = obj.TryGetSoundEmitter()) {
-						snd->position = VecF{body->GetPosition()};
+						snd->position = VecF{body.GetPosition()};
 					}
 				}
-			}
+			}, phy.body);
 		}
+		ExecuteDeferredActions();
 	}
+
 	// Re-sort draw lists
 	for (auto& drawList : _level->uprightDrawLists) {
 		drawList.Update();
