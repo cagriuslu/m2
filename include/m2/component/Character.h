@@ -63,7 +63,7 @@ namespace m2 {
 		if (maxValue) {
 			c.UnsafeSetVariable(vt, std::min(c.GetVariable(vt).GetFEOrZero() + value, *maxValue));
 		} else {
-			c.UnsafeSetVariable(vt, c.GetVariable(vt).GetFEOrZero() - value);
+			c.UnsafeSetVariable(vt, c.GetVariable(vt).GetFEOrZero() + value);
 		}
 		return c.GetVariable(vt).UnsafeGetFE();
 	}
