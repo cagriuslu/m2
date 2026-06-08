@@ -90,6 +90,10 @@ namespace m2::reflect {
 	/// Requires T to be enum class
 	template <typename T>
 	concept IsScopedEnum = std::is_enum_v<T> && !std::is_convertible_v<T, std::underlying_type_t<T>>;
+	template <typename T>
+	concept IsPlainEnum = std::is_enum_v<T> && std::is_convertible_v<T, std::underlying_type_t<T>>;
+	template <typename T>
+	concept IsEnum = IsScopedEnum<T> || IsPlainEnum<T>;
 
 	template <IsScopedEnum auto Id_, IsReflective T>
 	struct Field {

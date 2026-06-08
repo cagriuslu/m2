@@ -136,7 +136,7 @@ namespace m2::reflect {
 	};
 	static_assert(IsPrimitiveReflective<Empty>);
 
-	template <IsScopedEnum T>
+	template <IsEnum T>
 	class Enum {
 		static_assert(sizeof(T) == 4, "Underlying enum type must fit in int32");
 		T _value{};
