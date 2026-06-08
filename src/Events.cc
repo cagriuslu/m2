@@ -193,8 +193,11 @@ bool Events::PopKeyRelease(const m2g::pb::KeyType key) {
 	return false;
 }
 
-bool Events::PeekMouseButtonPress(const MouseButton mb) const {
-	return _mouseActions[U(mb)].type == MouseActionType::PRESSED;
+std::optional<VecI> Events::PeekMouseButtonPress(const MouseButton mb) const {
+	if (_mouseActions[U(mb)].type == MouseActionType::PRESSED) {
+		return _mouseActions[U(mb)].positionPx;
+	}
+	return std::nullopt;
 }
 bool Events::PopMouseButtonPress(const MouseButton mb) {
 	if (PeekMouseButtonPress(mb)) {
@@ -203,8 +206,11 @@ bool Events::PopMouseButtonPress(const MouseButton mb) {
 	}
 	return false;
 }
-bool Events::PeekMouseButtonPress(const MouseButton mb, const RectI& rect) const {
-	return PeekMouseButtonPress(mb) && rect.DoesContain(_mouseActions[U(mb)].positionPx);
+std::optional<VecI> Events::PeekMouseButtonPress(const MouseButton mb, const RectI& rect) const {
+	if (const auto position = PeekMouseButtonPress(mb); position && rect.DoesContain(*position)) {
+		return position;
+	}
+	return std::nullopt;
 }
 bool Events::PopMouseButtonPress(const MouseButton mb, const RectI& rect) {
 	if (PeekMouseButtonPress(mb) && rect.DoesContain(_mouseActions[U(mb)].positionPx)) {
@@ -213,8 +219,11 @@ bool Events::PopMouseButtonPress(const MouseButton mb, const RectI& rect) {
 	}
 	return false;
 }
-bool Events::PeekMouseButtonRelease(const MouseButton mb) const {
-	return _mouseActions[U(mb)].type == MouseActionType::RELEASED;
+std::optional<VecI> Events::PeekMouseButtonRelease(const MouseButton mb) const {
+	if (_mouseActions[U(mb)].type == MouseActionType::RELEASED) {
+		return _mouseActions[U(mb)].positionPx;
+	}
+	return std::nullopt;
 }
 bool Events::PopMouseButtonRelease(const MouseButton mb) {
 	if (PeekMouseButtonRelease(mb)) {
@@ -223,8 +232,11 @@ bool Events::PopMouseButtonRelease(const MouseButton mb) {
 	}
 	return false;
 }
-bool Events::PeekMouseButtonRelease(const MouseButton mb, const RectI& rect) const {
-	return PeekMouseButtonRelease(mb) && rect.DoesContain(_mouseActions[U(mb)].positionPx);
+std::optional<VecI> Events::PeekMouseButtonRelease(const MouseButton mb, const RectI& rect) const {
+	if (const auto position = PeekMouseButtonRelease(mb); position && rect.DoesContain(*position)) {
+		return position;
+	}
+	return std::nullopt;
 }
 bool Events::PopMouseButtonRelease(const MouseButton mb, const RectI& rect) {
 	if (PeekMouseButtonRelease(mb) && rect.DoesContain(_mouseActions[U(mb)].positionPx)) {

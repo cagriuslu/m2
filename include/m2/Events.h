@@ -67,13 +67,13 @@ namespace m2 {
 
 		// Mouse button
 
-		bool PeekMouseButtonPress(MouseButton mb) const;
+		std::optional<VecI> PeekMouseButtonPress(MouseButton mb) const;
 		bool PopMouseButtonPress(MouseButton mb);
-		bool PeekMouseButtonPress(MouseButton mb, const RectI& rect) const;
+		std::optional<VecI> PeekMouseButtonPress(MouseButton mb, const RectI& rect) const;
 		bool PopMouseButtonPress(MouseButton mb, const RectI& rect);
-		bool PeekMouseButtonRelease(MouseButton mb) const;
+		std::optional<VecI> PeekMouseButtonRelease(MouseButton mb) const;
 		bool PopMouseButtonRelease(MouseButton mb);
-		bool PeekMouseButtonRelease(MouseButton mb, const RectI& rect) const;
+		std::optional<VecI> PeekMouseButtonRelease(MouseButton mb, const RectI& rect) const;
 		bool PopMouseButtonRelease(MouseButton mb, const RectI& rect);
 		void ClearMouseButtonActions(const RectI& rect);
 
