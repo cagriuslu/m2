@@ -13,3 +13,9 @@ m2::Exact m2::VecE::GetLengthSquaredFE() const {
 m2::Exact m2::VecE::GetDistanceToSquaredFE(const VecE& other) const {
 	return (other - *this).GetLengthSquaredFE();
 }
+
+std::string m2::ToString(const VecE& v) {
+	std::stringstream ss;
+	ss << "{x:" << ToString(v.GetX()) << ",y:" << ToString(v.GetY()) << "}";
+	return ss.str();
+}

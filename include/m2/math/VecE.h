@@ -28,6 +28,7 @@ namespace m2 {
 		VecE operator-(const Exact& rhs) const { return {_x - rhs, _y - rhs}; }
 		VecE operator*(const Exact& rhs) const { return {_x * rhs, _y * rhs}; }
 		VecE operator/(const Exact& rhs) const { return {_x / rhs, _y / rhs}; }
+		bool operator==(const VecE& other) const { return _x == other._x && _y == other._y; }
 		explicit operator VecF() const;
 
 		// Accessors
@@ -42,5 +43,13 @@ namespace m2 {
 		// Modifiers
 
 		[[nodiscard]] VecE Normalize() const { const auto len = GetLengthFE(); return len ? VecE{_x / len, _y / len} : VecE{}; }
+	};
+
+	std::string ToString(const VecE&);
+
+	struct VecEHash {
+		size_t operator()(const VecE& a) const {
+			return std::hash<int32_t>{}(a.GetX().ToRawValue()) ^ std::hash<int32_t>{}(a.GetY().ToRawValue());
+		}
 	};
 }
