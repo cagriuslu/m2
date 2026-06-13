@@ -31,6 +31,6 @@ namespace m2::widget {
 		std::function<void(Text& self)> onHover{};
 		std::function<void(Text& self)> offHover{};
 		std::function<UiAction(Text& self)> onUpdate{};
-		std::function<UiAction(const Text& self)> onAction{};
+		std::function<UiAction(Text& self)> onAction{};
 	};
 }  // namespace m2::widget

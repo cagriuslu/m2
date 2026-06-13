@@ -2,6 +2,7 @@
 #include <m2/ui/widget/CheckboxWithText.h>
 #include <m2/ui/widget/Text.h>
 #include <m2/ui/widget/Image.h>
+#include <m2/Log.h>
 #include <m2/M2.h>
 
 using namespace m2;
@@ -73,14 +74,20 @@ UiAction AbstractButton::OnEvent(Events &events) {
 
 UiAction AbstractButton::trigger_action() {
 	return std::visit(overloaded {
-			[&](const TextBlueprint& v) { return v.onAction ? v.onAction(dynamic_cast<const Text&>(*this)) : MakeContinueAction(); },
-			[&](const ImageBlueprint& v) { return v.onAction ? v.onAction(dynamic_cast<const Image&>(*this)) : MakeContinueAction(); },
+			[&](const TextBlueprint& v) {
+				return v.onAction ? v.onAction(dynamic_cast<Text&>(*this)) : MakeContinueAction();
+			},
+			[&](const ImageBlueprint& v) {
+				return v.onAction ? v.onAction(dynamic_cast<Image&>(*this)) : MakeContinueAction();
+			},
 			[&](const CheckboxWithTextBlueprint& v) {
 				// Overloading HandleEvents for CheckboxWithText is too much work, do it here
 				auto& checkbox_with_text_state = dynamic_cast<CheckboxWithText&>(*this);
 				checkbox_with_text_state._state = !checkbox_with_text_state._state;
 				return v.onAction ? v.onAction(checkbox_with_text_state) : MakeContinueAction();
 			},
-			[](MAYBE const auto& v) { return MakeContinueAction(); }
+			[](const auto&) {
+				return MakeContinueAction();
+			}
 	}, blueprint->variant);
 }
