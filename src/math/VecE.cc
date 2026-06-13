@@ -1,10 +1,14 @@
 #include <m2/math/VecE.h>
 #include <m2/math/VecF.h>
+#include <m2/math/VecI.h>
 
 m2::VecE::VecE(const VecF& v) : _x(v.GetX()), _y(v.GetY()) {}
 
 m2::VecE::operator VecF() const {
 	return VecF{_x.ToFloat(), _y.ToFloat()};
+}
+m2::VecE::operator VecI() const {
+	return VecI{_x.ToInteger(), _y.ToInteger()};
 }
 
 m2::Exact m2::VecE::GetLengthSquaredFE() const {

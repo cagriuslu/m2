@@ -5,6 +5,7 @@
 
 namespace m2 {
 	class VecF;
+	struct VecI;
 
 	class VecE {
 		Exact _x, _y;
@@ -30,6 +31,7 @@ namespace m2 {
 		VecE operator/(const Exact& rhs) const { return {_x / rhs, _y / rhs}; }
 		bool operator==(const VecE& other) const { return _x == other._x && _y == other._y; }
 		explicit operator VecF() const;
+		explicit operator VecI() const;
 
 		// Accessors
 
