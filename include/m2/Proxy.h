@@ -167,7 +167,7 @@ namespace m2 {
 		/// A callback that's called every pre-step. Since this callback is not tied to any object, object creating and
 		/// destruction can be done here safely.
 		void OnPreStep(MAYBE const Stopwatch::Duration& delta) {}
-		/// A callback that's called every pre-step.
+		/// A callback that's called every post-step.
 		void OnPostStep(MAYBE const Stopwatch::Duration& delta) {}
 
 		m2::expected<void> ExecuteGameCommand(const std::span<std::string_view>&) { return make_unexpected("Game doesn't support commands"); }
