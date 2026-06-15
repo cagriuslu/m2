@@ -3,6 +3,7 @@
 #include <m2/Game.h>
 #include "m2/component/Graphic.h"
 #include <m2/Object.h>
+#include <m2/thirdparty/video/Shapes.h>
 #include <cmath>
 
 bool m2::IsProjectionTypeParallel(const pb::ProjectionType pt) {
@@ -242,6 +243,13 @@ void m2::Graphic::ColorDisk(const VecF& center_position_m, const float radius_m,
 	const auto center_position_px = ScreenOriginToPositionVecPx(center_position_m);
 	const auto radius_px = radius_m * M2_GAME.Dimensions().OutputPixelsPerMeter();
 	sdl::draw_disk(M2_GAME.renderer, center_position_px, color, radius_px, color);
+}
+void m2::Graphic::ColorTriangle(const VecF& worldPosition0M, const VecF& worldPosition1M, const VecF& worldPosition2M, const RGBA& color) {
+	thirdparty::video::DrawTriangle(
+		ScreenOriginToPositionVecPx(worldPosition0M),
+		ScreenOriginToPositionVecPx(worldPosition1M),
+		ScreenOriginToPositionVecPx(worldPosition2M),
+		color);
 }
 void m2::Graphic::DrawCross(const VecF& world_position, SDL_Color color) {
 	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
