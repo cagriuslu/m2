@@ -244,8 +244,8 @@ void m2::Graphic::ColorDisk(const VecF& center_position_m, const float radius_m,
 	const auto radius_px = radius_m * M2_GAME.Dimensions().OutputPixelsPerMeter();
 	sdl::draw_disk(M2_GAME.renderer, center_position_px, color, radius_px, color);
 }
-void m2::Graphic::ColorTriangle(const VecF& worldPosition0M, const VecF& worldPosition1M, const VecF& worldPosition2M, const RGBA& color) {
-	thirdparty::video::DrawTriangle(
+void m2::Graphic::FillTriangle(const VecF& worldPosition0M, const VecF& worldPosition1M, const VecF& worldPosition2M, const RGBA& color) {
+	thirdparty::video::FillTriangle(
 		ScreenOriginToPositionVecPx(worldPosition0M),
 		ScreenOriginToPositionVecPx(worldPosition1M),
 		ScreenOriginToPositionVecPx(worldPosition2M),

@@ -7,7 +7,7 @@ using namespace m2;
 using namespace m2::thirdparty;
 using namespace m2::thirdparty::video;
 
-void video::DrawTriangle(const VecF& point0, const VecF& point1, const VecF& point2, const RGBA& color) {
+void video::FillTriangle(const VecF& point0, const VecF& point1, const VecF& point2, const RGBA& color) {
 	const auto sdlColor = static_cast<SDL_Color>(color);
 	const SDL_Vertex vertices[3] = {
 		SDL_Vertex{.position = static_cast<SDL_FPoint>(point0), .color = sdlColor, .tex_coord = {}},

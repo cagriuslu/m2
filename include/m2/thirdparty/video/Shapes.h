@@ -4,5 +4,5 @@
 
 namespace m2::thirdparty::video {
 	/// Draws a single filled triangle with a uniform color. The three points are given in screen space (pixels).
-	void DrawTriangle(const VecF& point0, const VecF& point1, const VecF& point2, const RGBA& color);
+	void FillTriangle(const VecF& point0, const VecF& point1, const VecF& point2, const RGBA& color);
 }
