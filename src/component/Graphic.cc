@@ -239,10 +239,10 @@ void m2::Graphic::ColorRect(const RectF& world_coordinates_m, const RGB& color) 
 void m2::Graphic::ColorRect(const RectF& world_coordinates_m, const RGBA& color) {
 	ColorRect(world_coordinates_m, SDL_Color{color.r, color.g, color.b, color.a});
 }
-void m2::Graphic::ColorDisk(const VecF& center_position_m, const float radius_m, const SDL_Color& color) {
+void m2::Graphic::FillDisk(const VecF& center_position_m, const float radius_m, const SDL_Color& color) {
 	const auto center_position_px = ScreenOriginToPositionVecPx(center_position_m);
 	const auto radius_px = radius_m * M2_GAME.Dimensions().OutputPixelsPerMeter();
-	sdl::draw_disk(M2_GAME.renderer, center_position_px, color, radius_px, color);
+	thirdparty::video::FillCircle(center_position_px, RGBA{color}, radius_px, RGBA{color});
 }
 void m2::Graphic::FillTriangle(const VecF& worldPosition0M, const VecF& worldPosition1M, const VecF& worldPosition2M, const RGBA& color) {
 	thirdparty::video::FillTriangle(

@@ -21,8 +21,6 @@ namespace m2::sdl {
 	int get_refresh_rate();
 	VecI mouse_position();
 
-	int draw_disk(SDL_Renderer* renderer, const VecF& center_position_px, const SDL_Color& center_color, float radius_px, const SDL_Color& edge_color, unsigned steps = 96);
-
 	/// Assumes surface is already locked
 	void set_pixel(SDL_Surface* surface, int x, int y, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 	void set_pixel(SDL_Surface* surface, int x, int y, uint32_t pixel);

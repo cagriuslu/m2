@@ -206,7 +206,7 @@ void State::Draw() const {
 				if (const auto halfCellSelection = M2_LEVEL.GetPrimarySelection()->HalfCellSelectionsM()) {
 					const auto center = halfCellSelection->first;
 					const auto radius = center.GetDistanceTo(halfCellSelection->second);
-					Graphic::ColorDisk(center, radius, SELECTION_COLOR);
+					Graphic::FillDisk(center, radius, SELECTION_COLOR);
 				}
 			} else if (fixture.has_chain()) {
 				if (const auto halfCellSelection = M2_LEVEL.GetPrimarySelection()->HalfCellSelectionsM()) {
@@ -226,7 +226,7 @@ void State::Draw() const {
 			} else if (fixture.has_circle()) {
 				const auto& circ = fixture.circle();
 				const auto center = spriteOrigin + VecF{circ.sprite_origin_to_fixture_center_vec_px()};
-				Graphic::ColorDisk(center, circ.radius_px(), CONFIRMED_SELECTION_COLOR);
+				Graphic::FillDisk(center, circ.radius_px(), CONFIRMED_SELECTION_COLOR);
 			} else if (fixture.has_chain()) {
 				if (const auto& points = fixture.chain().points(); points.size() == 1) {
 					Graphic::DrawCross(spriteOrigin + VecF{points[0]}, CONFIRMED_CROSS_COLOR);
