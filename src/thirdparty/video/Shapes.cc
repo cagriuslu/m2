@@ -20,7 +20,6 @@ void video::FillTriangle(const VecF& point0, const VecF& point1, const VecF& poi
 		throw M2_ERROR(std::string{"SDL_RenderGeometry failed: "} + SDL_GetError());
 	}
 }
-
 void video::FillCircle(const VecF& centerPx, const RGBA& centerColor, const float radiusPx, const RGBA& edgeColor, const unsigned steps) {
 	const auto sdlCenterColor = static_cast<SDL_Color>(centerColor);
 	const auto sdlEdgeColor = static_cast<SDL_Color>(edgeColor);
@@ -39,5 +38,21 @@ void video::FillCircle(const VecF& centerPx, const RGBA& centerColor, const floa
 	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
 	if (SDL_RenderGeometry(M2_GAME.renderer, nullptr, vertices.data(), static_cast<int>(vertices.size()), nullptr, 0) < 0) {
 		throw M2_ERROR(std::string{"SDL_RenderGeometry failed: "} + SDL_GetError());
+	}
+}
+void video::FillRectangle(const RectF& rectPx, const RGBA& color) {
+	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
+	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
+	const SDL_FRect rect{rectPx.x, rectPx.y, rectPx.w, rectPx.h};
+	if (SDL_RenderFillRectF(M2_GAME.renderer, &rect) < 0) {
+		throw M2_ERROR(std::string{"SDL_RenderFillRectF failed: "} + SDL_GetError());
+	}
+}
+void video::FillRectangle(const RectI& rectPx, const RGBA& color) {
+	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
+	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
+	const SDL_Rect rect{rectPx.x, rectPx.y, rectPx.w, rectPx.h};
+	if (SDL_RenderFillRect(M2_GAME.renderer, &rect) < 0) {
+		throw M2_ERROR(std::string{"SDL_RenderFillRect failed: "} + SDL_GetError());
 	}
 }

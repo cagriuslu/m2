@@ -204,34 +204,27 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 
 void m2::Graphic::ColorCell(const VecI& cell, const SDL_Color color) {
 	const auto screen_origin_to_cell_center_px = ScreenOriginToPositionVecPx(VecF{cell});
-	const auto rect = SDL_Rect{
+	const auto rect = RectI{
 		RoundI(screen_origin_to_cell_center_px.GetX() - (M2_GAME.Dimensions().OutputPixelsPerMeter() / 2.0f)),
 		RoundI(screen_origin_to_cell_center_px.GetY() - (M2_GAME.Dimensions().OutputPixelsPerMeter() / 2.0f)),
 		RoundI(M2_GAME.Dimensions().OutputPixelsPerMeter()),
 		RoundI(M2_GAME.Dimensions().OutputPixelsPerMeter())
 	};
-
-	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
-	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
-	SDL_RenderFillRect(M2_GAME.renderer, &rect);
+	thirdparty::video::FillRectangle(rect, RGBA{color});
 }
 void m2::Graphic::ColorRect(const RectF& world_coordinates_m, const SDL_Color color) {
 	const auto screen_origin_to_top_left_px = ScreenOriginToPositionVecPx(world_coordinates_m.GetTopLeftPoint());
 	const auto screen_origin_to_bottom_right_px = ScreenOriginToPositionVecPx(world_coordinates_m.GetBottomRightPoint());
-	const auto rect = SDL_Rect{
+	// TODO using I() and CeilI() is not right, but how not to leave no gaps between sprites?
+	// TODO We can't draw pixel perfect sprites with floating point scaling. Avoid flickering by avoiding highly repeating patterns.
+	// TODO Or, try sub-pixel version with RectF.
+	const auto rect = RectI{
 			I(screen_origin_to_top_left_px.GetX()),
 			I(screen_origin_to_top_left_px.GetY()),
 			CeilI(screen_origin_to_bottom_right_px.GetX() - screen_origin_to_top_left_px.GetX()),
 			CeilI(screen_origin_to_bottom_right_px.GetY() - screen_origin_to_top_left_px.GetY())
-			// TODO using I() and ceilf() here is quite problematic, but I couldn't find any other way of ensuring not
-			//  leaving any gaps between sprites
-			// TODO unfortunately, we can't draw pixel perfect sprites with floating point scaling. However, the game can
-			//  avoid flickering by avoiding highly repeating patterns.
 	};
-
-	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
-	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
-	SDL_RenderFillRect(M2_GAME.renderer, &rect);
+	thirdparty::video::FillRectangle(rect, RGBA{color});
 }
 void m2::Graphic::ColorRect(const RectF& world_coordinates_m, const RGB& color) {
 	ColorRect(world_coordinates_m, SDL_Color{color.r, color.g, color.b, 255});
