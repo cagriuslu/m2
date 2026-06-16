@@ -245,32 +245,29 @@ void m2::Graphic::FillTriangle(const VecF& worldPosition0M, const VecF& worldPos
 		color);
 }
 void m2::Graphic::DrawCross(const VecF& world_position, SDL_Color color) {
-	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
 	const auto draw_position = VecI{ScreenOriginToPositionVecPx(world_position)};
-	SDL_RenderDrawLine(M2_GAME.renderer, draw_position.x - 9, draw_position.y - 9, draw_position.x + 10, draw_position.y + 10);
-	SDL_RenderDrawLine(M2_GAME.renderer, draw_position.x - 9, draw_position.y + 9, draw_position.x + 10, draw_position.y - 10);
+	thirdparty::video::DrawLine(draw_position + VecI{-9, -9}, draw_position + VecI{10, 10}, RGBA{color});
+	thirdparty::video::DrawLine(draw_position + VecI{-9, 9}, draw_position + VecI{10, -10}, RGBA{color});
 }
 void m2::Graphic::DrawCross(const VecF& worldPosition, int radiusPx, const RGBA& color) {
-	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
 	const auto draw_position = VecI{ScreenOriginToPositionVecPx(worldPosition)};
-	SDL_RenderDrawLine(M2_GAME.renderer, draw_position.x - radiusPx, draw_position.y - radiusPx, draw_position.x + radiusPx, draw_position.y + radiusPx);
-	SDL_RenderDrawLine(M2_GAME.renderer, draw_position.x - radiusPx, draw_position.y + radiusPx, draw_position.x + radiusPx, draw_position.y - radiusPx);
+	thirdparty::video::DrawLine(draw_position + VecI{-radiusPx, -radiusPx}, draw_position + VecI{radiusPx, radiusPx}, RGBA{color});
+	thirdparty::video::DrawLine(draw_position + VecI{-radiusPx, radiusPx}, draw_position + VecI{radiusPx, -radiusPx}, RGBA{color});
 }
 void m2::Graphic::DrawCross(const VecF& worldPosition, const float radiusM, const RGBA& color) {
 	DrawLine(worldPosition + VecF{-radiusM, -radiusM}, worldPosition + VecF{radiusM, radiusM}, color);
 	DrawLine(worldPosition + VecF{-radiusM, radiusM}, worldPosition + VecF{radiusM, -radiusM}, color);
 }
 void m2::Graphic::DrawLine(const VecF& world_position_1, const VecF& world_position_2, SDL_Color color) {
-	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
 	if (IsProjectionTypeParallel(M2_LEVEL.GetProjectionType())) {
 		const auto p1 = static_cast<VecI>(ScreenOriginToPositionVecPx(world_position_1));
 		const auto p2 = static_cast<VecI>(ScreenOriginToPositionVecPx(world_position_2));
-		SDL_RenderDrawLine(M2_GAME.renderer, p1.x, p1.y, p2.x, p2.y);
+		thirdparty::video::DrawLine(p1, p2, RGBA{color});
 	} else {
 		const auto p1 = m3::ScreenOriginToProjectionAlongCameraPlaneDstpx(m3::VecF{world_position_1});
 		const auto p2 = m3::ScreenOriginToProjectionAlongCameraPlaneDstpx(m3::VecF{world_position_2});
 		if (p1 && p2) {
-			SDL_RenderDrawLineF(M2_GAME.renderer, p1->GetX(), p1->GetY(), p2->GetX(), p2->GetY());
+			thirdparty::video::DrawLine(*p1, *p2, RGBA{color});
 		}
 	}
 }
@@ -279,13 +276,11 @@ void m2::Graphic::DrawLine(const VecF& worldPosition1M, const VecF& worldPositio
 }
 void m2::Graphic::DrawVerticalLine(float x, const RGBA& color) {
 	const auto x_px = static_cast<int>(roundf(ScreenOriginToPositionVecPx(VecF{x, 0.0f}).GetX()));
-	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
-	SDL_RenderDrawLine(M2_GAME.renderer, x_px, M2_GAME.Dimensions().Game().y, x_px, M2_GAME.Dimensions().Game().y + M2_GAME.Dimensions().Game().h);
+	thirdparty::video::DrawLine(VecI{x_px, M2_GAME.Dimensions().Game().y}, VecI{x_px, M2_GAME.Dimensions().Game().y + M2_GAME.Dimensions().Game().h}, color);
 }
 void m2::Graphic::DrawHorizontalLine(float y, const RGBA& color) {
 	const auto y_px = static_cast<int>(roundf(ScreenOriginToPositionVecPx(VecF{0.0f, y}).GetY()));
-	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
-	SDL_RenderDrawLine(M2_GAME.renderer, M2_GAME.Dimensions().Game().x, y_px, M2_GAME.Dimensions().Game().x + M2_GAME.Dimensions().Game().w, y_px);
+	thirdparty::video::DrawLine(VecI{M2_GAME.Dimensions().Game().x, y_px}, VecI{M2_GAME.Dimensions().Game().x + M2_GAME.Dimensions().Game().w, y_px}, color);
 }
 void m2::Graphic::DrawRectangle(const VecF& center, float width, float height, float orientationRads, const RGBA& color) {
 	const auto topLeft = center + VecF{-width / 2.0f, -height / 2.0f}.Rotate(orientationRads);

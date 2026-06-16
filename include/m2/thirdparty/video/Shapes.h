@@ -13,4 +13,15 @@ namespace m2::thirdparty::video {
 	void FillRectangle(const RectF& rectPx, const RGBA& color);
 	/// Draws a filled rectangle. The position is given in screen space (pixels).
 	void FillRectangle(const RectI& rectPx, const RGBA& color);
+
+	/// Draws a line. The positions are in screen space (pixels).
+	void DrawLine(const VecI& point0, const VecI& point1, const RGBA& color);
+	/// Draws a line. The positions are in screen space (pixels).
+	void DrawLine(const VecF& point0, const VecF& point1, const RGBA& color);
+	/// Draws a rectangle outline. The positions are in screen space (pixels).
+	void DrawRectangle(const RectI& rect, const RGBA& color);
+	/// Draws a rectangle outline. The positions are in screen space (pixels).
+	void DrawRectangle(const RectF& rect, const RGBA& color);
+	/// Draws a rectangle outline. The positions are in screen space (pixels).
+	void DrawRectangle(const VecF& center, float width, float height, float orientationRads, const RGBA& color);
 }

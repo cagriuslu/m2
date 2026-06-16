@@ -56,3 +56,44 @@ void video::FillRectangle(const RectI& rectPx, const RGBA& color) {
 		throw M2_ERROR(std::string{"SDL_RenderFillRect failed: "} + SDL_GetError());
 	}
 }
+
+void video::DrawLine(const VecI& point0, const VecI& point1, const RGBA& color) {
+	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
+	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
+	if (SDL_RenderDrawLine(M2_GAME.renderer, point0.x, point0.y, point1.x, point1.y) < 0) {
+		throw M2_ERROR(std::string{"SDL_RenderDrawLine failed: "} + SDL_GetError());
+	}
+}
+void video::DrawLine(const VecF& point0, const VecF& point1, const RGBA& color) {
+	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
+	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
+	if (SDL_RenderDrawLineF(M2_GAME.renderer, point0.GetX(), point0.GetY(), point1.GetX(), point1.GetY()) < 0) {
+		throw M2_ERROR(std::string{"SDL_RenderDrawLineF failed: "} + SDL_GetError());
+	}
+}
+void video::DrawRectangle(const RectI& rect, const RGBA& color) {
+	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
+	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
+	const auto sdlRect = static_cast<SDL_Rect>(rect);
+	if (SDL_RenderDrawRect(M2_GAME.renderer, &sdlRect) < 0) {
+		throw M2_ERROR(std::string{"SDL_RenderDrawRect failed: "} + SDL_GetError());
+	}
+}
+void video::DrawRectangle(const RectF& rect, const RGBA& color) {
+	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
+	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
+	const auto sdlRect = static_cast<SDL_FRect>(rect);
+	if (SDL_RenderDrawRectF(M2_GAME.renderer, &sdlRect) < 0) {
+		throw M2_ERROR(std::string{"SDL_RenderDrawRectF failed: "} + SDL_GetError());
+	}
+}
+void video::DrawRectangle(const VecF& center, const float width, const float height, const float orientationRads, const RGBA& color) {
+	const auto topLeft = center + VecF{-width / 2.0f, -height / 2.0f}.Rotate(orientationRads);
+	const auto topRight = center + VecF{width / 2.0f, -height / 2.0f}.Rotate(orientationRads);
+	const auto bottomLeft = center + VecF{-width / 2.0f, height / 2.0f}.Rotate(orientationRads);
+	const auto bottomRight = center + VecF{width / 2.0f, height / 2.0f}.Rotate(orientationRads);
+	DrawLine(topLeft, topRight, color);
+	DrawLine(topRight, bottomRight, color);
+	DrawLine(bottomRight, bottomLeft, color);
+	DrawLine(bottomLeft, topLeft, color);
+}
