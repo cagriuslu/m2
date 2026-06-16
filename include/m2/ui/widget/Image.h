@@ -1,10 +1,12 @@
 #pragma once
 #include <m2/video/Sprite.h>
 #include "AbstractButton.h"
+#include <variant>
+#include <functional>
 
 namespace m2::widget {
 	class Image : public AbstractButton {
-		m2g::pb::SpriteType _spriteType{};
+		std::variant<m2g::pb::SpriteType, std::function<void(const Image&)>> _content{};
 
 	public:
 		explicit Image(UiPanel* parent, const UiWidgetBlueprint* blueprint);

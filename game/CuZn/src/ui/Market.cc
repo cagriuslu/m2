@@ -62,7 +62,7 @@ m2::UiPanelBlueprint generate_market_window() {
 				.w = 10,
 				.h = 6,
 				.border_width = 0,
-				.variant = ImageBlueprint{ .initial_sprite = m2g::pb::COAL_CUBE }
+				.variant = ImageBlueprint{ .content = m2g::pb::COAL_CUBE }
 			},
 			UiWidgetBlueprint{
 				.x = 1,
@@ -138,7 +138,7 @@ m2::UiPanelBlueprint generate_market_window() {
 				.w = 6,
 				.h = 6,
 				.border_width = 0,
-				.variant = ImageBlueprint{ .initial_sprite = m2g::pb::IRON_CUBE }
+				.variant = ImageBlueprint{ .content = m2g::pb::IRON_CUBE }
 			},
 			UiWidgetBlueprint{
 				.x = 1,

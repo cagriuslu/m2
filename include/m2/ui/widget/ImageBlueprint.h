@@ -2,13 +2,15 @@
 #include "../UiAction.h"
 #include <m2g_SpriteType.pb.h>
 #include <SDL.h>
+#include <variant>
 
 namespace m2::widget {
 	// Forward declaration
 	class Image;
 
 	struct ImageBlueprint {
-		m2g::pb::SpriteType initial_sprite{};
+		// Either a sprite to display, or a callback that draws the button content
+		std::variant<m2g::pb::SpriteType, std::function<void(const Image&)>> content{};
 		m2g::pb::KeyType keyboardShortcut{};
 
 		std::function<void(Image& self)> onCreate{};
