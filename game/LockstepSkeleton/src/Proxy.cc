@@ -16,6 +16,17 @@ namespace {
 			.widgets = *m2::MakeVerticalLayout(160, 90, 1, {
 				m2::DynamicSpacer{},
 				m2::UiWidgetBlueprint{
+					.name = "AddBotButton",
+					.x = 1, .h = 10,
+					.variant = m2::widget::TextBlueprint{
+						.text = "ADD BOT",
+						.onAction = [](const m2::widget::Text&) -> m2::UiAction {
+							M2_GAME.AddLockstepBot();
+							return m2::MakeContinueAction();
+						}
+					}
+				},
+				m2::UiWidgetBlueprint{
 					.name = "StartButton",
 					.x = 1, .h = 10,
 					.variant = m2::widget::TextBlueprint{
@@ -259,6 +270,10 @@ void m2g::Proxy::PostLockstepLevelInit(const std::string&, const m2::pb::Level&,
 	M2_GAME.EnableLevelSaver("LockstepSkeleton.db");
 }
 void m2g::Proxy::HandleLockstepPlayerInputs(const std::vector<std::deque<pb::LockstepPlayerInput>>&) {}
+std::deque<m2g::pb::LockstepPlayerInput> m2g::Proxy::GenerateLockstepBotInput(int) {
+	// No-op bot: stays idle. Meaningful AI can read M2_LEVEL here and emit inputs for the bot's player index.
+	return {};
+}
 
 void m2g::Proxy::LevelState::PostLevelInit() {
 	const auto playerCount = M2_GAME.GetTotalPlayerCount();

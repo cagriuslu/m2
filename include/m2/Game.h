@@ -148,6 +148,9 @@ namespace m2 {
 		void LeaveGame();
 		/// For server
 		bool AddBot();
+		/// For lockstep host. Adds a bot as an additional local network peer. Blocks until the bot reaches the lobby
+		/// (with a timeout). Returns false if the bot couldn't join (e.g. the lobby is full).
+		bool AddLockstepBot();
 		/// For server
 		network::TurnBasedBotClientThread& FindBot(int receiver_index);
 

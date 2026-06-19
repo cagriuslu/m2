@@ -114,6 +114,9 @@ namespace m2 {
 		void PreLockstepLevelInit(MAYBE const std::string& name, MAYBE const m2::pb::Level& level, MAYBE const m2g::pb::LockstepGameInitParams& gameInitParams) {}
 		void PostLockstepLevelInit(MAYBE const std::string& name, MAYBE const m2::pb::Level& level, MAYBE const m2g::pb::LockstepGameInitParams& gameInitParams) {}
 		void HandleLockstepPlayerInputs(MAYBE const std::vector<std::deque<m2g::pb::LockstepPlayerInput>>& inputs) {}
+		/// Called on the host once per game tick, for each bot it owns. Should return the inputs to commit for that
+		/// bot. Empty deque means no action.
+		std::deque<m2g::pb::LockstepPlayerInput> GenerateLockstepBotInput(MAYBE int botPlayerIndex) { return {}; }
 
 		/// Should be implemented from the perspective of a server. Implementation should return the new turn holder
 		/// index if the command is accepted and a TurnBasedServerUpdate is necessary. Implementation should return std::nullopt

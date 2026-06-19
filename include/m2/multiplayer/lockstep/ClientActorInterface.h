@@ -47,6 +47,10 @@ namespace m2::multiplayer::lockstep {
 		/// \details GetGameInitParams can be used to fetch the parameters to build the level.
 		bool IsLobbyFrozen();
 		bool IsGameStarted();
+		/// Returns true if the interface is already holding all peers' inputs ready to be simulated as soon as
+		/// possible. While in this state, SwapInputsIfTimeHasCome must not be called. Consume the inputs via
+		/// PopSimulationInputs first and simulate them.
+		bool IsReadyToSimulate() const { return std::holds_alternative<ReadyToSimulate>(_state); }
 		std::optional<int> GetSelfIndex() const { return _connectionToServerState.selfIndex; }
 		int GetTotalPlayerCount() const { return _connectionToServerState.totalPlayerCount; }
 		bool GetLastSetReadyState() const;

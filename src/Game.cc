@@ -325,6 +325,38 @@ bool Game::AddBot() {
 	botList.erase(it);
 	return false;
 }
+bool Game::AddLockstepBot() {
+	if (not std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)) {
+		throw M2_ERROR("Only the lockstep host can add bots");
+	}
+	auto& serverComponents = std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents);
+	if (not serverComponents.serverActorInterface || not serverComponents.hostClientActorInterface) {
+		throw M2_ERROR("Lockstep host isn't fully initialized");
+	}
+
+	// Create a bot client actor pointed at the local server, at the end of the list.
+	auto& botList = serverComponents.botClientActorInterfaces;
+	auto& bot = botList.emplace_back(network::IpAddressAndPort{
+		.ipAddress = network::IpAddress::CreateLocalhost(),
+		.port = network::Port::CreateFromHostOrder(options::GetPort())
+	});
+	LOG_INFO("Joining the game as bot client...");
+
+	// Wait until the bot reaches the lobby, with a timeout. The server accepts a join only while there's room; if the
+	// lobby is full the bot never reaches the lobby, so a timeout means the player limit was reached.
+	const auto botJoinDeadline = std::chrono::steady_clock::now() + std::chrono::seconds{5};
+	while (not bot.IsWaitingInLobby()) {
+		if (botJoinDeadline < std::chrono::steady_clock::now()) {
+			LOG_WARN("Bot client failed to reach the lobby, destroying it");
+			botList.pop_back();
+			return false;
+		}
+		std::this_thread::sleep_for(std::chrono::milliseconds{25});
+	}
+
+	bot.SetReadyState(true);
+	return true;
+}
 network::TurnBasedBotClientThread& Game::FindBot(const int receiver_index) {
 	if (not IsTurnBasedServer()) {
 		throw M2_ERROR("Only server may hold bots");
@@ -535,6 +567,19 @@ void_expected Game::LoadLockstep(const std::variant<std::filesystem::path, pb::L
 
 	// Send a set of empty player inputs with timecode 0 to signal the beginning of the simulation. This will also help clients synchronize.
 	GetLockstepClientActor().StartInputStreaming();
+
+	// Start input streaming on each bot as well. Bots don't build. They only need their actors to transition out of
+	// LobbyFrozen and emit tick-0 input.
+	if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)) {
+		for (auto& bot : std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).botClientActorInterfaces) {
+			// The server freezes every client together, so the bot's freeze (and game init params) arrives shortly after
+			// the host's. Wait for it before starting the bot's input streaming.
+			while (not bot.IsLobbyFrozen()) {
+				std::this_thread::sleep_for(std::chrono::milliseconds{25});
+			}
+			bot.StartInputStreaming();
+		}
+	}
 
 	return {};
 }
@@ -755,8 +800,25 @@ void Game::StopHandlingEvents() {
 	_eventsAreBeingHandled = false;
 }
 bool Game::ShouldSimulatePhysics() {
-	if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)
-			|| std::holds_alternative<multiplayer::lockstep::ClientComponents>(_multiPlayerComponents)) {
+	if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)) {
+		// SwapInputsIfTimeHasCome increments the physics counter and may decide to block the physics simulation (by
+		// returning SkipPhysics) if the time has come to simulate player inputs but not all inputs have arrived. Since
+		// SwapInputsIfTimeHasCome throws if called unnecessarily, we have to check if a client is already
+		// IsReadyToSimulate and avoid calling SwapInputsIfTimeHasCome again. Physics will be simulated only once every
+		// local client is ready.
+		auto swapInputsIfNecessary = [](multiplayer::lockstep::ClientActorInterface& client) -> bool {
+			if (client.IsReadyToSimulate()) {
+				return true; // Already ready to simulate
+			}
+			return not std::holds_alternative<multiplayer::lockstep::ClientActorInterface::SkipPhysics>(client.SwapInputsIfTimeHasCome());
+		};
+		auto& serverComponents = std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents);
+		bool allReady = swapInputsIfNecessary(*serverComponents.hostClientActorInterface);
+		for (auto& bot : serverComponents.botClientActorInterfaces) {
+			allReady = swapInputsIfNecessary(bot) && allReady;
+		}
+		return allReady; // Swap every client, then require all to be ready.
+	} else if (std::holds_alternative<multiplayer::lockstep::ClientComponents>(_multiPlayerComponents)) {
 		return std::holds_alternative<multiplayer::lockstep::ClientActorInterface::SimulatePhysics>(GetLockstepClientActor().SwapInputsIfTimeHasCome());
 	}
 	return true;
@@ -790,8 +852,9 @@ void Game::ExecuteStep(const Stopwatch::Duration& delta) {
 				_proxy.HandleLockstepPlayerInputs(simulationInputs->allInputsToSimulate);
 
 				// Calculate game state hash if enough time has passed
+				std::optional<int32_t> computedGameStateHash;
 				if (0 < simulationInputs->timecode && (simulationInputs->timecode % multiplayer::lockstep::ConnectionToServer::GAME_STATE_REPORT_PERIOD_IN_TICKS) == 0) {
-					const auto gameStateHash = [&]() -> int32_t {
+					computedGameStateHash = [&]() -> int32_t {
 						if constexpr (BUILD_IS_DEBUG) {
 							if (auto* levelSaverInterface = GetLockstepLevelSaverInterface(); levelSaverInterface) {
 								auto debugStateReport = _level->CalculateLockstepDebugStateReport(I(simulationInputs->timecode));
@@ -802,12 +865,33 @@ void Game::ExecuteStep(const Stopwatch::Duration& delta) {
 						}
 						return _level->CalculateLockstepGameStateHash(I(simulationInputs->timecode));
 					}();
-					LOG_NETWORK("Game state hash for timecode", simulationInputs->timecode, gameStateHash);
+					LOG_NETWORK("Game state hash for timecode", simulationInputs->timecode, *computedGameStateHash);
 					// This hash will be used during the next report. There should be enough time for the actors to receive and retain them.
-					GetLockstepClientActor().StoreGameStateHash(simulationInputs->timecode, gameStateHash);
+					GetLockstepClientActor().StoreGameStateHash(simulationInputs->timecode, *computedGameStateHash);
 					// Report the game state hash to server as well. That'll become the ground truth.
 					if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)) {
-						std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).serverActorInterface->StoreGameStateHash(simulationInputs->timecode, gameStateHash);
+						std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).serverActorInterface->StoreGameStateHash(simulationInputs->timecode, *computedGameStateHash);
+					}
+				}
+
+				if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)) {
+					for (auto& bot : std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).botClientActorInterfaces) {
+						// Reset the bot's state machine back to SimulatingInputs
+						if (not bot.PopSimulationInputs()) {
+							throw M2_ERROR("Bot wasn't ready to simulate at the tick boundary");
+						}
+						// Feed the host-computed hash so the bot's auto-assembled state report validates against the server.
+						if (computedGameStateHash) {
+							bot.StoreGameStateHash(simulationInputs->timecode, *computedGameStateHash);
+						}
+						// Let the game decide the bot's inputs
+						const auto botSelfIndex = bot.GetSelfIndex();
+						if (not botSelfIndex) {
+							throw M2_ERROR("Bot doesn't have a self index during simulation");
+						}
+						for (auto& input : _proxy.GenerateLockstepBotInput(*botSelfIndex)) {
+							bot.TryQueueInput(std::move(input));
+						}
 					}
 				}
 			}
