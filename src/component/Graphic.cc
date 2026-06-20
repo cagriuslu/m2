@@ -244,6 +244,13 @@ void m2::Graphic::FillTriangle(const VecF& worldPosition0M, const VecF& worldPos
 		ScreenOriginToPositionVecPx(worldPosition2M),
 		color);
 }
+void m2::Graphic::FillTriangle(const VecF& worldPosition0M, const VecF& worldPosition1M, const VecF& worldPosition2M, const RGBA& color0, const RGBA& color1, const RGBA& color2) {
+	thirdparty::video::FillTriangle(
+		ScreenOriginToPositionVecPx(worldPosition0M),
+		ScreenOriginToPositionVecPx(worldPosition1M),
+		ScreenOriginToPositionVecPx(worldPosition2M),
+		color0, color1, color2);
+}
 void m2::Graphic::DrawCross(const VecF& world_position, SDL_Color color) {
 	const auto draw_position = VecI{ScreenOriginToPositionVecPx(world_position)};
 	thirdparty::video::DrawLine(draw_position + VecI{-9, -9}, draw_position + VecI{10, 10}, RGBA{color});
@@ -276,20 +283,48 @@ void m2::Graphic::DrawLine(const VecF& worldPosition1M, const VecF& worldPositio
 }
 void m2::Graphic::DrawVerticalLine(float x, const RGBA& color) {
 	const auto x_px = static_cast<int>(roundf(ScreenOriginToPositionVecPx(VecF{x, 0.0f}).GetX()));
-	thirdparty::video::DrawLine(VecI{x_px, M2_GAME.Dimensions().Game().y}, VecI{x_px, M2_GAME.Dimensions().Game().y + M2_GAME.Dimensions().Game().h}, color);
+	thirdparty::video::DrawLine(VecI{x_px, M2_GAME.Dimensions().GameAndHud().y}, VecI{x_px, M2_GAME.Dimensions().GameAndHud().y + M2_GAME.Dimensions().GameAndHud().h}, color);
+}
+void m2::Graphic::DrawVerticalLineAbove(const VecF& positionM, const RGBA& color) {
+	const auto positionPx = ScreenOriginToPositionVecPx(positionM);
+	thirdparty::video::DrawLine(
+		VecF{positionPx.GetX(), ToFloat(M2_GAME.Dimensions().GameAndHud().y)},
+		positionPx,
+		color);
+}
+void m2::Graphic::DrawVerticalLineBelow(const VecF& positionM, const RGBA& color) {
+	const auto positionPx = ScreenOriginToPositionVecPx(positionM);
+	thirdparty::video::DrawLine(
+		positionPx,
+		VecF{positionPx.GetX(), ToFloat(M2_GAME.Dimensions().GameAndHud().GetY2())},
+		color);
 }
 void m2::Graphic::DrawHorizontalLine(float y, const RGBA& color) {
 	const auto y_px = static_cast<int>(roundf(ScreenOriginToPositionVecPx(VecF{0.0f, y}).GetY()));
 	thirdparty::video::DrawLine(VecI{M2_GAME.Dimensions().Game().x, y_px}, VecI{M2_GAME.Dimensions().Game().x + M2_GAME.Dimensions().Game().w, y_px}, color);
 }
+void m2::Graphic::DrawHorizontalLineLeft(const VecF& positionM, const RGBA& color) {
+	const auto positionPx = ScreenOriginToPositionVecPx(positionM);
+	thirdparty::video::DrawLine(
+		VecF{ToFloat(M2_GAME.Dimensions().GameAndHud().x), positionPx.GetY()},
+		positionPx,
+		color);
+}
+void m2::Graphic::DrawHorizontalLineRight(const VecF& positionM, const RGBA& color) {
+	const auto positionPx = ScreenOriginToPositionVecPx(positionM);
+	thirdparty::video::DrawLine(
+		positionPx,
+		VecF{ToFloat(M2_GAME.Dimensions().GameAndHud().GetX2()), positionPx.GetY()},
+		color);
+}
 void m2::Graphic::DrawRectangle(const RectF& positionM, const RGBA& color) {
 	const auto screen_origin_to_top_left_px = ScreenOriginToPositionVecPx(positionM.GetTopLeftPoint());
 	const auto screen_origin_to_bottom_right_px = ScreenOriginToPositionVecPx(positionM.GetBottomRightPoint());
-	const auto rect = RectF{
-		screen_origin_to_top_left_px.GetX(),
-		screen_origin_to_top_left_px.GetY(),
-		ceilf(screen_origin_to_bottom_right_px.GetX() - screen_origin_to_top_left_px.GetX()),
-		ceilf(screen_origin_to_bottom_right_px.GetY() - screen_origin_to_top_left_px.GetY())
+	const auto rect = RectI{
+		I(screen_origin_to_top_left_px.GetX()),
+		I(screen_origin_to_top_left_px.GetY()),
+		CeilI(screen_origin_to_bottom_right_px.GetX() - screen_origin_to_top_left_px.GetX()),
+		CeilI(screen_origin_to_bottom_right_px.GetY() - screen_origin_to_top_left_px.GetY())
 	};
 	thirdparty::video::DrawRectangle(rect, RGBA{color});
 }

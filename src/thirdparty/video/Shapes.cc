@@ -20,6 +20,20 @@ void video::FillTriangle(const VecF& point0, const VecF& point1, const VecF& poi
 		throw M2_ERROR(std::string{"SDL_RenderGeometry failed: "} + SDL_GetError());
 	}
 }
+void video::FillTriangle(const VecF& point0, const VecF& point1, const VecF& point2, const RGBA& color0, const RGBA& color1, const RGBA& color2) {
+	const auto sdlColor0 = static_cast<SDL_Color>(color0);
+	const auto sdlColor1 = static_cast<SDL_Color>(color1);
+	const auto sdlColor2 = static_cast<SDL_Color>(color2);
+	const SDL_Vertex vertices[3] = {
+		SDL_Vertex{.position = static_cast<SDL_FPoint>(point0), .color = sdlColor0, .tex_coord = {}},
+		SDL_Vertex{.position = static_cast<SDL_FPoint>(point1), .color = sdlColor1, .tex_coord = {}},
+		SDL_Vertex{.position = static_cast<SDL_FPoint>(point2), .color = sdlColor2, .tex_coord = {}},
+	};
+	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
+	if (SDL_RenderGeometry(M2_GAME.renderer, nullptr, vertices, 3, nullptr, 0) < 0) {
+		throw M2_ERROR(std::string{"SDL_RenderGeometry failed: "} + SDL_GetError());
+	}
+}
 void video::FillCircle(const VecF& centerPx, const RGBA& centerColor, const float radiusPx, const RGBA& edgeColor, const unsigned steps) {
 	const auto sdlCenterColor = static_cast<SDL_Color>(centerColor);
 	const auto sdlEdgeColor = static_cast<SDL_Color>(edgeColor);
