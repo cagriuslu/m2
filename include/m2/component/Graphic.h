@@ -111,6 +111,7 @@ namespace m2 {
 		static void DrawLine(const VecF& worldPosition1M, const VecF& worldPosition2M, const RGBA& color);
 		static void DrawVerticalLine(float x, const RGBA& color);
 		static void DrawHorizontalLine(float y, const RGBA& color);
+		static void DrawRectangle(const RectF& positionM, const RGBA& color);
 		static void DrawRectangle(const VecF& center, float width, float height, float orientationRads, const RGBA& color);
 		static void DrawGridLines(float startFrom = -0.5f, float frequency = 1.0f, const RGBA& color = {255, 255, 255, 255});
 

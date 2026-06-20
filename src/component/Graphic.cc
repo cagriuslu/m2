@@ -282,6 +282,17 @@ void m2::Graphic::DrawHorizontalLine(float y, const RGBA& color) {
 	const auto y_px = static_cast<int>(roundf(ScreenOriginToPositionVecPx(VecF{0.0f, y}).GetY()));
 	thirdparty::video::DrawLine(VecI{M2_GAME.Dimensions().Game().x, y_px}, VecI{M2_GAME.Dimensions().Game().x + M2_GAME.Dimensions().Game().w, y_px}, color);
 }
+void m2::Graphic::DrawRectangle(const RectF& positionM, const RGBA& color) {
+	const auto screen_origin_to_top_left_px = ScreenOriginToPositionVecPx(positionM.GetTopLeftPoint());
+	const auto screen_origin_to_bottom_right_px = ScreenOriginToPositionVecPx(positionM.GetBottomRightPoint());
+	const auto rect = RectF{
+		screen_origin_to_top_left_px.GetX(),
+		screen_origin_to_top_left_px.GetY(),
+		ceilf(screen_origin_to_bottom_right_px.GetX() - screen_origin_to_top_left_px.GetX()),
+		ceilf(screen_origin_to_bottom_right_px.GetY() - screen_origin_to_top_left_px.GetY())
+	};
+	thirdparty::video::DrawRectangle(rect, RGBA{color});
+}
 void m2::Graphic::DrawRectangle(const VecF& center, float width, float height, float orientationRads, const RGBA& color) {
 	const auto topLeft = center + VecF{-width / 2.0f, -height / 2.0f}.Rotate(orientationRads);
 	const auto topRight = center + VecF{width / 2.0f, -height / 2.0f}.Rotate(orientationRads);
