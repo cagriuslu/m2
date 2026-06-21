@@ -83,7 +83,6 @@ namespace m2 {
 		/// Upright graphics are drawn from back to front, top to bottom
 		std::array<DrawList, UPRIGHT_GRAPHICS_LAYER_COUNT> uprightDrawLists;
 		Pool<Physique> physics;
-		Pool<Light> lights;
 		Pool<SoundEmitter> soundEmitters;
 		b2World* world{};
 		box2d::ContactListener* contactListener{};

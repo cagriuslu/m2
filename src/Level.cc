@@ -31,7 +31,6 @@ Level::~Level() {
 	}
 	uprightGraphics.Clear();
 	physics.Clear();
-	lights.Clear();
 	soundEmitters.Clear();
 	_characterStorage.ClearAll();
 

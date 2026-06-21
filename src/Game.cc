@@ -141,7 +141,7 @@ Game::Game() : window(CreateWindow(_proxy.gamePpm, _proxy.defaultGameHeightM, _p
 	_shapeCache.emplace(renderer);
 
 	audio_manager.emplace();
-	spriteEffectsSheet = SpriteEffectsSheet{renderer, _proxy.lightning};
+	spriteEffectsSheet = SpriteEffectsSheet{renderer};
 
 	{
 		auto sheets_pb = pb::json_file_to_message<pb::SpriteSheets>(_resources.GetSpriteSheetsPath());
@@ -150,7 +150,7 @@ Game::Game() : window(CreateWindow(_proxy.gamePpm, _proxy.defaultGameHeightM, _p
 		}
 		spriteSheetsPb = *sheets_pb;
 	}
-	spriteSheets = SpriteSheet::LoadSpriteSheets(*spriteSheetsPb, renderer, _proxy.lightning);
+	spriteSheets = SpriteSheet::LoadSpriteSheets(*spriteSheetsPb, renderer);
 	_sprites = LoadSprites(spriteSheets, spriteSheetsPb->text_labels(), *spriteEffectsSheet);
 	LOG_INFO("Loaded sprites", _sprites.size());
 
@@ -960,9 +960,6 @@ void Game::ExecuteStep(const Stopwatch::Duration& delta) {
 							poolAndDrawList.second->QueueUpdate(phy.GetOwnerId(), VecF{body.GetPosition()});
 						}
 					}
-					if (auto* lig = obj.TryGetLight()) {
-						lig->position = VecF{body.GetPosition()};
-					}
 					if (auto* snd = obj.TryGetSoundEmitter()) {
 						snd->position = VecF{body.GetPosition()};
 					}
@@ -1101,11 +1098,6 @@ void Game::Draw() {
 				}
 			}
 		}
-	}
-}
-void Game::DrawLights() {
-	for (auto& light : _level->lights) {
-		IF(light.onDraw)(light);
 	}
 }
 void Game::ExecutePostDraw(const Stopwatch::Duration& delta) {
@@ -1283,7 +1275,6 @@ thirdparty::video::Texture Game::DrawGameToTexture(const VecF& camera_position) 
 	render_target.DrawOnto([this] {
 		ClearBackBuffer();
 		Draw();
-		DrawLights();
 		DrawEnvelopes();
 	});
 

@@ -137,10 +137,10 @@ void UiWidget::DrawSpriteOrTextLabel(const std::variant<Sprite, pb::TextLabel>& 
 	SDL_Texture* texture;
 	if (std::holds_alternative<Sprite>(spriteOrTextLabel)) {
 		src_rect = static_cast<SDL_Rect>(std::get<Sprite>(spriteOrTextLabel).GetRect());
-		texture = std::get<Sprite>(spriteOrTextLabel).GetTexture();
+		texture = static_cast<SDL_Texture*>(std::get<Sprite>(spriteOrTextLabel).GetTexture().RawHandle());
 	} else {
 		src_rect = static_cast<SDL_Rect>(M2_GAME.GetTextLabelCache().Create(std::get<pb::TextLabel>(spriteOrTextLabel).text(), M2G_PROXY.default_font_size));
-		texture = M2_GAME.GetTextLabelCache().Texture();
+		texture = static_cast<SDL_Texture*>(M2_GAME.GetTextLabelCache().Texture().RawHandle());
 	}
 
 	const auto sprite_aspect_ratio = ToFloat(src_rect.w) / ToFloat(src_rect.h);

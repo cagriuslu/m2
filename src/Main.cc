@@ -168,7 +168,6 @@ int main(const int argc, char **argv) {
 		M2_GAME.UpdateHudContents(ingameDurationSinceLastGfx);
 		M2_GAME.ClearBackBuffer();
 		M2_GAME.Draw();
-		M2_GAME.DrawLights();
 		M2_GAME.ExecutePostDraw(ingameDurationSinceLastGfx);
 		M2_GAME.DebugDraw();
 		M2_GAME.DrawHud();

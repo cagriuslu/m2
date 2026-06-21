@@ -230,7 +230,6 @@ namespace m2 {
 		void UpdateHudContents(const Stopwatch::Duration& delta);
 		void ClearBackBuffer() const;
 		void Draw();
-		void DrawLights();
 		void ExecutePostDraw(const Stopwatch::Duration& delta);
 		void DebugDraw();
 		void DrawHud();

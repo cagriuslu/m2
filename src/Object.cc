@@ -3,7 +3,6 @@
 #include <m2/Log.h>
 #include "m2/component/Physique.h"
 #include "m2/component/Graphic.h"
-#include "m2/component/Light.h"
 
 using namespace m2;
 
@@ -17,7 +16,6 @@ Object::Object(Object&& other) noexcept :
 		_index_in_group(other._index_in_group),
 		_physique_id(other._physique_id),
 		_graphicId(other._graphicId),
-		_light_id(other._light_id),
 		_sound_emitter_id(other._sound_emitter_id),
 		_character_id(other._character_id) {
 	other._group_id = {};
@@ -26,7 +24,6 @@ Object::Object(Object&& other) noexcept :
 	other._index_in_group = 0;
 	other._physique_id = 0;
 	other._graphicId = 0;
-	other._light_id = 0;
 	other._sound_emitter_id = 0;
     other._character_id = 0;
 }
@@ -38,7 +35,6 @@ Object& Object::operator=(Object&& other) noexcept {
 	std::swap(_index_in_group, other._index_in_group);
 	std::swap(_physique_id, other._physique_id);
 	std::swap(_graphicId, other._graphicId);
-	std::swap(_light_id, other._light_id);
 	std::swap(_sound_emitter_id, other._sound_emitter_id);
 	std::swap(_character_id, other._character_id);
 	return *this;
@@ -50,7 +46,6 @@ Object::~Object() {
 	}
 	RemovePhysique();
 	RemoveGraphic();
-	RemoveLight();
 	RemoveSoundEmitter();
 	RemoveCharacter();
 }
@@ -74,9 +69,6 @@ PhysiqueId Object::GetPhysiqueId() const {
 GraphicId Object::GetGraphicId() const {
 	return _graphicId;
 }
-LightId Object::GetLightId() const {
-	return _light_id;
-}
 SoundEmitterId Object::GetSoundId() const {
 	return _sound_emitter_id;
 }
@@ -97,9 +89,6 @@ Graphic* Object::TryGetGraphic() const {
 	const auto poolAndDrawList = M2_LEVEL.GetGraphicPoolAndDrawList(_graphicId);
 	return poolAndDrawList.first.Get(_graphicId);
 }
-Light* Object::TryGetLight() const {
-	return _light_id ? M2_LEVEL.lights.Get(_light_id) : nullptr;
-}
 SoundEmitter* Object::TryGetSoundEmitter() const {
 	return _sound_emitter_id ? M2_LEVEL.soundEmitters.Get(_sound_emitter_id) : nullptr;
 }
@@ -114,9 +103,6 @@ Graphic& Object::GetGraphic() const {
 	}
 	return *ptr;
 }
-Light& Object::GetLight() const {
-	return M2_LEVEL.lights[_light_id];
-}
 SoundEmitter& Object::GetSoundEmitter() const {
 	return M2_LEVEL.soundEmitters[_sound_emitter_id];
 }
@@ -126,8 +112,6 @@ VecF Object::InferPositionF() const {
 		return static_cast<VecF>(GetPhysique().GetPosition());
 	} else if (_graphicId) {
 		return GetGraphic().position;
-	} else if (_light_id) {
-		return GetLight().position;
 	} else if (_sound_emitter_id) {
 		return GetSoundEmitter().position;
 	}
@@ -164,11 +148,6 @@ Graphic& Object::AddGraphic(const DrawLayer layer, const m2g::pb::SpriteType spr
 		poolAndDrawList.second->Insert(GetId(), _graphicId, position);
 	}
 	return *it.Data();
-}
-Light& Object::AddLight() {
-	const auto light = M2_LEVEL.lights.Emplace(GetId());
-	_light_id = light.GetId();
-	return *light;
 }
 SoundEmitter& Object::AddSoundEmitter() {
 	auto sound = M2_LEVEL.soundEmitters.Emplace(GetId());
@@ -216,12 +195,6 @@ void Object::RemoveGraphic() {
 		_graphicId = 0;
 	}
 }
-void Object::RemoveLight() {
-	if (_light_id) {
-		M2_LEVEL.lights.Free(_light_id);
-		_light_id = 0;
-	}
-}
 void Object::RemoveSoundEmitter() {
 	if (_sound_emitter_id) {
 		M2_LEVEL.soundEmitters.Free(_sound_emitter_id);
@@ -254,13 +227,6 @@ std::function<void()> m2::CreateGraphicDeleter(ObjectId id) {
 	return [id]() {
 		if (auto* object = M2_LEVEL.objects.Get(id); object) {
 			object->RemoveGraphic();
-		}
-	};
-}
-std::function<void()> m2::CreateLightDeleter(ObjectId id) {
-	return [id]() {
-		if (auto* object = M2_LEVEL.objects.Get(id); object) {
-			object->RemoveLight();
 		}
 	};
 }

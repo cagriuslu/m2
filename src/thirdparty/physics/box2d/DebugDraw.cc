@@ -26,7 +26,7 @@ void DebugDraw::DrawCircle(const b2Vec2& center, const float radius, const b2Col
 		// Draw a true circle from the cache
 		const int r = RoundI(M2_GAME.Dimensions().OutputPixelsPerMeter() * radius);
 		const auto srcRect = static_cast<SDL_Rect>(M2_GAME.GetShapeCache().Create(std::make_shared<Circle>(r)));
-		auto* texture = M2_GAME.GetShapeCache().Texture();
+		auto* texture = static_cast<SDL_Texture*>(M2_GAME.GetShapeCache().Texture().RawHandle());
 		const auto screenOriginToSpriteCenter = ScreenOriginToPositionVecPx(VecF{center});
 		const auto dstRect = SDL_Rect{
 			RoundI(screenOriginToSpriteCenter.GetX()) - srcRect.w / 2,

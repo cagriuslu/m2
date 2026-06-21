@@ -1,26 +1,25 @@
 #pragma once
 #include <m2/math/RectI.h>
 #include <m2/sdl/Surface.h>
-#include <m2/sdl/Texture.h>
+#include <m2/thirdparty/video/Texture.h>
+#include <optional>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_surface.h>
-#include <memory>
 
 namespace m2 {
 	/// Sprite sheet that dynamically increases in size on demand
 	class DynamicSheet {
 		SDL_Renderer* _renderer;
-		bool _darkenForLightning;
 		sdl::SurfaceUniquePtr _surface;
-		sdl::TextureUniquePtr _texture;
+		std::optional<thirdparty::video::Texture> _texture;
 		int _lastW{}, _lastH{}, _heightOfCurrentRow{};
 
 	public:
-		DynamicSheet(SDL_Renderer* renderer, bool darkenForLightning);
+		explicit DynamicSheet(SDL_Renderer* renderer);
 
 		// Accessors
 
-		[[nodiscard]] SDL_Texture* Texture() const { return _texture.get(); }
+		[[nodiscard]] const thirdparty::video::Texture& Texture() const { return *_texture; }
 
 		// Modifiers
 

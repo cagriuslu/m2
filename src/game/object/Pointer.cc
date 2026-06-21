@@ -10,8 +10,5 @@ m2::Id m2::obj::CreatePointer() {
 		gfx_.position = M2_GAME.events.GetWorldPositionOfMouse();
 	};
 
-    auto& lig = it->AddLight();
-    lig.radiusM = 3.0f;
-
     return M2_LEVEL.pointer_id = it.GetId();
 }

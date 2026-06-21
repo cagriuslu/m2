@@ -38,8 +38,8 @@ namespace m2 {
 			DynamicSheet _dynamicSheet;
 			TTF_Font* _font;
 		public:
-			explicit TextLabelGenerator(SDL_Renderer* renderer, TTF_Font* font) : _dynamicSheet(renderer, false), _font(font) {}
-			[[nodiscard]] SDL_Texture* Texture() const { return _dynamicSheet.Texture(); }
+			explicit TextLabelGenerator(SDL_Renderer* renderer, TTF_Font* font) : _dynamicSheet(renderer), _font(font) {}
+			[[nodiscard]] const thirdparty::video::Texture& Texture() const { return _dynamicSheet.Texture(); }
 			RectI operator()(const std::tuple<std::string,int>& item);
 		};
 		/// Hash function used in Cache
@@ -59,7 +59,7 @@ namespace m2 {
 
 		// Accessors
 
-		[[nodiscard]] SDL_Texture* Texture() const { return _cache.Generator().Texture(); }
+		[[nodiscard]] const thirdparty::video::Texture& Texture() const { return _cache.Generator().Texture(); }
 
 		// Modifiers
 

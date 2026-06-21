@@ -17,6 +17,7 @@ namespace m2::thirdparty::video {
 		static Texture CaptureWindow();
 		static Texture CreateFromImageFile(const std::filesystem::path& imageFilePath);
 		static Texture AdoptRawTexture(void* rawSdlTexture);
+		static Texture CreateFromSurface(void* sdlRenderer, void* sdlSurface);
 
 		/// Copy not allowed
 		Texture(const Texture& other) = delete;
@@ -27,6 +28,7 @@ namespace m2::thirdparty::video {
 		/// Destructor
 		virtual ~Texture();
 
+		[[nodiscard]] void* RawHandle() const { return _texture; } // TODO remove this, this class should do the drawing instead
 		[[nodiscard]] VecI Dimensions() const;
 
 		/// Sets this texture as the render target, runs `draw`, then restores the previous render target.

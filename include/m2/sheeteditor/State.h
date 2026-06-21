@@ -1,8 +1,10 @@
 #pragma once
 #include <m2/sheeteditor/PersistentSpriteSheets.h>
+#include <m2/thirdparty/video/Texture.h>
 #include <Sprite.pb.h>
 #include <m2g_SpriteType.pb.h>
 #include <filesystem>
+#include <optional>
 #include <m2/common/Meta.h>
 #include "../ui/UiPanel.h"
 
@@ -11,7 +13,7 @@ namespace m2::sheeteditor {
 		PersistentSpriteSheets _persistentSpriteSheets;
 
 		m2g::pb::SpriteType _selected_sprite_type{};
-		sdl::TextureUniquePtr _texture;
+		std::optional<thirdparty::video::Texture> _texture;
 		VecI _textureDimensions;
 		int _ppm{};
 

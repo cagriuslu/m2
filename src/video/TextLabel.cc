@@ -47,7 +47,7 @@ void m2::DrawTextLabelIn2dWorld(const pb::TextLabel& tl, const RectI& sourceRect
 	const auto sourceRectSdl = static_cast<SDL_Rect>(sourceRect);
 	DrawTextureIn2dWorld(
 			M2_GAME.renderer,
-			M2_GAME.GetTextLabelCache().Texture(),
+			static_cast<SDL_Texture*>(M2_GAME.GetTextLabelCache().Texture().RawHandle()),
 			&sourceRectSdl,
 			0.0f,
 			1.0f,
@@ -59,12 +59,12 @@ void m2::DrawTextLabelIn3dWorld(const pb::TextLabel& tl, const RectI& sourceRect
 	const auto sourceRectSdl = static_cast<SDL_Rect>(sourceRect);
 	DrawTextureIn3dWorld(
 			M2_GAME.renderer,
-			M2_GAME.GetTextLabelCache().Texture(),
+			static_cast<SDL_Texture*>(M2_GAME.GetTextLabelCache().Texture().RawHandle()),
 			&sourceRectSdl,
 			M2_GAME.Dimensions().OutputPixelsPerMeter(),
 			TextLabelCenterToOriginVectorInOutputPixels(tl),
 			0.0f,
-			static_cast<VecF>(sdl::texture_dimensions(M2_GAME.GetTextLabelCache().Texture())),
+			static_cast<VecF>(M2_GAME.GetTextLabelCache().Texture().Dimensions()),
 			position,
 			z,
 			angle,
@@ -74,11 +74,10 @@ void m2::SlowDrawSystemTextIn2dWorld(const char* str, const VecF& position) {
 	sdl::SurfaceUniquePtr surface{TTF_RenderUTF8_Solid(M2_GAME.systemFont , str, SDL_Color{255, 255, 255, 255})};
 	m2SucceedOrThrowMessage(surface, TTF_GetError());
 
-	sdl::TextureUniquePtr texture{SDL_CreateTextureFromSurface(M2_GAME.renderer, surface.get())};
-	m2SucceedOrThrowMessage(texture, "Unable to create texture from surface: " + std::string{SDL_GetError()});
+	auto texture = thirdparty::video::Texture::CreateFromSurface(M2_GAME.renderer, surface.get());
 
 	const SDL_Rect srcRect{0, 0, surface->w, surface->h};
-	DrawTextureIn2dWorld(M2_GAME.renderer, texture.get(), &srcRect, 0.0f, 1.0f, {}, ScreenOriginToPositionVecPx(position), 0.0f);
+	DrawTextureIn2dWorld(M2_GAME.renderer, static_cast<SDL_Texture*>(texture.RawHandle()), &srcRect, 0.0f, 1.0f, {}, ScreenOriginToPositionVecPx(position), 0.0f);
 }
 
 m2::RectI m2::TextLabelCache::TextLabelGenerator::operator()(const std::tuple<std::string,int>& item) {

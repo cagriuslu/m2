@@ -1,5 +1,7 @@
 #pragma once
+#include <m2/thirdparty/video/Texture.h>
 #include <filesystem>
+#include <optional>
 
 #include <m2/common/Meta.h>
 
@@ -7,7 +9,7 @@ namespace m2::bulksheeteditor {
 	class State {
 		std::filesystem::path _sprite_sheets_path;
 		std::string _selected_resource;
-		sdl::TextureUniquePtr _texture;
+		std::optional<thirdparty::video::Texture> _texture;
 		VecI _textureDimensions;
 		int _ppm{};
 		std::optional<RectI> _savedSpriteRect;

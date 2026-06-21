@@ -73,7 +73,7 @@ m2::Sprite::Sprite(const std::vector<SpriteSheet>& spriteSheets, const SpriteShe
 	}
 }
 
-SDL_Texture* m2::Sprite::GetTexture(const bool foregroundCompanion) const {
+const m2::thirdparty::video::Texture& m2::Sprite::GetTexture(const bool foregroundCompanion) const {
 	if (foregroundCompanion) {
 		return _effectsSheet->Texture();
 	}
@@ -121,7 +121,7 @@ void m2::Sprite::DrawIn2dWorld(const VecF& position, const bool foregroundCompan
 	const auto sourceRect = static_cast<SDL_Rect>(GetRect(foregroundCompanion));
 	DrawTextureIn2dWorld(
 			M2_GAME.renderer,
-			GetTexture(foregroundCompanion),
+			static_cast<SDL_Texture*>(GetTexture(foregroundCompanion).RawHandle()),
 			&sourceRect,
 			OriginalRotationRadians(),
 			M2_GAME.Dimensions().OutputPixelsPerMeter() / ToFloat(Ppm()),
@@ -134,7 +134,7 @@ void m2::Sprite::DrawIn3dWorld(const VecF& position, const bool foregroundCompan
 	const auto sourceRect = static_cast<SDL_Rect>(GetRect(foregroundCompanion));
 	DrawTextureIn3dWorld(
 			M2_GAME.renderer,
-			GetTexture(foregroundCompanion),
+			static_cast<SDL_Texture*>(GetTexture(foregroundCompanion).RawHandle()),
 			&sourceRect,
 			ToFloat(Ppm()),
 			CenterToOriginVecOutpx(foregroundCompanion),

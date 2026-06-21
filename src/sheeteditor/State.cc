@@ -4,7 +4,6 @@
 #include <m2/game/Selection.h>
 #include <m2/protobuf/Detail.h>
 #include <m2/ui/widget/TextSelection.h>
-#include <SDL2/SDL_image.h>
 #include <m2/sheeteditor/Ui.h>
 
 using namespace m2;
@@ -37,15 +36,8 @@ void State::Select(const m2g::pb::SpriteType spriteType) {
 		_selected_sprite_type = spriteType;
 		// Load image
 		const auto& resourcePath = sheet->resource();
-		const sdl::SurfaceUniquePtr surface(IMG_Load(resourcePath.c_str()));
-		if (!surface) {
-			throw M2_ERROR("Unable to load image: " + resourcePath + ", " + IMG_GetError());
-		}
-		_texture = sdl::TextureUniquePtr{SDL_CreateTextureFromSurface(M2_GAME.renderer, surface.get())};
-		if (!_texture) {
-			throw M2_ERROR("Unable to create texture from surface: " + std::string{SDL_GetError()});
-		}
-		_textureDimensions = {surface->w, surface->h};
+		_texture = thirdparty::video::Texture::CreateFromImageFile(resourcePath);
+		_textureDimensions = _texture->Dimensions();
 		_ppm = sheet->ppm();
 
 		// Move God to center if rect is already selected
@@ -154,10 +146,10 @@ void State::Draw() const {
 	const auto offset = VecF{-0.5f, -0.5f};
 	const auto textureTopLeftOutputPosition = ScreenOriginToPositionVecPx(offset);
 	const auto textureBottomRightOutputPosition = ScreenOriginToPositionVecPx(static_cast<VecF>(_textureDimensions) + offset);
-	const SDL_Rect dstRect = {RoundI(textureTopLeftOutputPosition.GetX()), RoundI(textureTopLeftOutputPosition.GetY()),
+	const RectI dstRect = {RoundI(textureTopLeftOutputPosition.GetX()), RoundI(textureTopLeftOutputPosition.GetY()),
 			RoundI(textureBottomRightOutputPosition.GetX() - textureTopLeftOutputPosition.GetX()),
 			RoundI(textureBottomRightOutputPosition.GetY() - textureTopLeftOutputPosition.GetY())};
-	SDL_RenderCopy(M2_GAME.renderer, _texture.get(), nullptr, &dstRect);
+	if (_texture) { _texture->Render(dstRect); }
 
 	const auto& sprite = SelectedSprite();
 	auto spriteOrigin = SelectedSpriteOrigin();

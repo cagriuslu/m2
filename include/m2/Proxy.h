@@ -61,9 +61,6 @@ namespace m2 {
 		/// Is the world (background, the obstacles) static? If true, pathfinder uses caching.
 		static constexpr bool worldIsStatic = true;
 
-		/// Is lightning enabled? Darkens the textures.
-		const bool lightning = false;
-
 		/// Z component of the focus position, which has the same XY position as the player
 		float focus_point_height = 2.0f;
 

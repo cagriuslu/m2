@@ -41,8 +41,8 @@ namespace m2 {
 		class ShapeGenerator {
 			DynamicSheet _dynamicSheet;
 		public:
-			explicit ShapeGenerator(SDL_Renderer* renderer) : _dynamicSheet(renderer, false) {}
-			[[nodiscard]] SDL_Texture* Texture() const { return _dynamicSheet.Texture(); }
+			explicit ShapeGenerator(SDL_Renderer* renderer) : _dynamicSheet(renderer) {}
+			[[nodiscard]] const thirdparty::video::Texture& Texture() const { return _dynamicSheet.Texture(); }
 			RectI operator()(const std::shared_ptr<Shape>&);
 		};
 		struct ShapeHash {
@@ -65,7 +65,7 @@ namespace m2 {
 
 		// Accessors
 
-		[[nodiscard]] SDL_Texture* Texture() const { return _cache.Generator().Texture(); }
+		[[nodiscard]] const thirdparty::video::Texture& Texture() const { return _cache.Generator().Texture(); }
 
 		// Modifiers
 

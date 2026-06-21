@@ -1,7 +1,7 @@
 #include <m2/video/DynamicSheet.h>
 #include <m2/Log.h>
 
-m2::DynamicSheet::DynamicSheet(SDL_Renderer* renderer, const bool darkenForLightning) : _renderer(renderer), _darkenForLightning(darkenForLightning) {
+m2::DynamicSheet::DynamicSheet(SDL_Renderer* renderer) : _renderer(renderer) {
 	int bpp;
 	uint32_t rMask, gMask, bMask, aMask;
 	SDL_PixelFormatEnumToMasks(SDL_PIXELFORMAT_BGRA32, &bpp, &rMask, &gMask, &bMask, &aMask);
@@ -9,6 +9,8 @@ m2::DynamicSheet::DynamicSheet(SDL_Renderer* renderer, const bool darkenForLight
 	sdl::SurfaceUniquePtr surface{SDL_CreateRGBSurface(0, 1024, 512, bpp, rMask, gMask, bMask, aMask)};
 	m2SucceedOrThrowMessage(surface, "Unable to create surface: " + std::string{SDL_GetError()});
 	_surface = std::move(surface);
+
+	_texture = thirdparty::video::Texture::CreateFromSurface(_renderer, _surface.get());
 }
 
 m2::expected<m2::RectI> m2::DynamicSheet::AllocateAndMutate(const int requestedW, const int requestedH,
@@ -55,13 +57,7 @@ m2::expected<m2::RectI> m2::DynamicSheet::AllocateAndMutate(const int requestedW
 
 	// Recreate the texture from the surface, log the costly operation
 	LOG_DEBUG("Recreating texture from the surface", _surface->h);
-	sdl::TextureUniquePtr newTexture{SDL_CreateTextureFromSurface(_renderer, _surface.get())};
-	m2ReturnUnexpectedUnless(newTexture, "Unable to create texture from surface: " + std::string{SDL_GetError()});
-	_texture = std::move(newTexture);
-
-	if (_darkenForLightning) {
-		SDL_SetTextureColorMod(_texture.get(), 127, 127, 127);
-	}
+	_texture = thirdparty::video::Texture::CreateFromSurface(_renderer, _surface.get());
 
 	return rect;
 }

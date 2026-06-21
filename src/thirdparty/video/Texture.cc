@@ -56,9 +56,14 @@ Texture Texture::CaptureWindow() {
 	SDL_FreeSurface(surface);
 	return Texture{texture};
 }
-
 Texture Texture::AdoptRawTexture(void* rawSdlTexture) { return Texture{rawSdlTexture}; }
-
+Texture Texture::CreateFromSurface(void* sdlRenderer, void* sdlSurface) {
+	auto* texture = SDL_CreateTextureFromSurface(static_cast<SDL_Renderer*>(sdlRenderer), static_cast<SDL_Surface*>(sdlSurface));
+	if (not texture) {
+		throw M2_ERROR("Unable to create texture from surface: " + std::string{SDL_GetError()});
+	}
+	return Texture{texture};
+}
 Texture Texture::CreateFromImageFile(const std::filesystem::path& imageFilePath) {
 	sdl::SurfaceUniquePtr surface{IMG_Load(imageFilePath.string().c_str())};
 	if (not surface) {

@@ -26,8 +26,8 @@ void DrawResources(m2::FastCharacter& chr) {
 	const auto& sprite_drop_shadow = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(sprite_drop_shadow_type));
 
 	// Dim if necessary
-	m2::Graphic::DimRenderingIfNecessary(chr.GetOwnerId(), M2_GAME.GetTextLabelCache().Texture());
-	m2::Graphic::DimRenderingIfNecessary(chr.GetOwnerId(), sprite.GetTexture());
+	m2::Graphic::DimRenderingIfNecessary(chr.GetOwnerId(), static_cast<SDL_Texture*>(M2_GAME.GetTextLabelCache().Texture().RawHandle()));
+	m2::Graphic::DimRenderingIfNecessary(chr.GetOwnerId(), static_cast<SDL_Texture*>(sprite.GetTexture().RawHandle()));
 	// Draw count
 	const auto& textLabel = std::get<m2::pb::TextLabel>(M2_GAME.GetSpriteOrTextLabel(count_sprite_type));
 	const auto rect = M2_GAME.GetTextLabelCache().Create(textLabel.text(), m2::FontSizeOfTextLabel(textLabel));
@@ -37,6 +37,6 @@ void DrawResources(m2::FastCharacter& chr) {
 	sprite_drop_shadow.DrawIn2dWorld(pos + m2::VecF{1.0f, 1.0f}, false, 0.0f);
 	sprite.DrawIn2dWorld(pos + m2::VecF{1.0f, 1.0f}, false, 0.0f);
 	// Undim
-	m2::Graphic::UndimRendering(M2_GAME.GetTextLabelCache().Texture());
-	m2::Graphic::UndimRendering(sprite.GetTexture());
+	m2::Graphic::UndimRendering(static_cast<SDL_Texture*>(M2_GAME.GetTextLabelCache().Texture().RawHandle()));
+	m2::Graphic::UndimRendering(static_cast<SDL_Texture*>(sprite.GetTexture().RawHandle()));
 }

@@ -162,13 +162,13 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 		};
 
 		// Dim the sprite if dimming mode is enabled. TODO Dimming is implemented only for default variant.
-		const bool dimmed = DimRenderingIfNecessary(gfx.GetOwnerId(), sprite.GetTexture());
+		const bool dimmed = DimRenderingIfNecessary(gfx.GetOwnerId(), static_cast<SDL_Texture*>(sprite.GetTexture().RawHandle()));
 
 		spriteDrawer(gfx.drawForegroundCompanion);
 
 		// If dimming was active, we need to un-dim.
 		if (dimmed) {
-			UndimRendering(sprite.GetTexture());
+			UndimRendering(static_cast<SDL_Texture*>(sprite.GetTexture().RawHandle()));
 		}
 	} else if (std::holds_alternative<const pb::TextLabel*>(gfx.visual)) {
 		const auto& textLabel = *std::get<const pb::TextLabel*>(gfx.visual);
@@ -180,7 +180,7 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 		}
 
 		// Dim the sprite if dimming mode is enabled.
-		const bool dimmed = DimRenderingIfNecessary(gfx.GetOwnerId(), M2_GAME.GetTextLabelCache().Texture());
+		const bool dimmed = DimRenderingIfNecessary(gfx.GetOwnerId(), static_cast<SDL_Texture*>(M2_GAME.GetTextLabelCache().Texture().RawHandle()));
 
 		// Draw background
 		if (textLabel.background_color().a()) {
@@ -195,7 +195,7 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 
 		// If dimming was active, we need to un-dim.
 		if (dimmed) {
-			UndimRendering(M2_GAME.GetTextLabelCache().Texture());
+			UndimRendering(static_cast<SDL_Texture*>(M2_GAME.GetTextLabelCache().Texture().RawHandle()));
 		}
 	} else {
 		// This function only draws visuals

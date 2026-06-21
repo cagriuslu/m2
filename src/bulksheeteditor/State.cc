@@ -5,7 +5,6 @@
 #include <m2/game/Selection.h>
 #include <m2/protobuf/Detail.h>
 #include <m2/ui/widget/TextSelection.h>
-#include <SDL2/SDL_image.h>
 
 using namespace m2;
 
@@ -46,17 +45,8 @@ std::optional<pb::SpriteSheet> bulksheeteditor::State::SelectResource(const std:
 
 			// Load image
 			const auto& resourcePath = spriteSheet.resource();
-			const sdl::SurfaceUniquePtr surface(IMG_Load(resourcePath.c_str()));
-			if (!surface) {
-				LOG_ERROR("Unable to load image", resourcePath, IMG_GetError());
-				return std::nullopt;
-			}
-			_texture = sdl::TextureUniquePtr{SDL_CreateTextureFromSurface(M2_GAME.renderer, surface.get())};
-			if (!_texture) {
-				LOG_ERROR("Unable to create texture from surface", SDL_GetError());
-				return std::nullopt;
-			}
-			_textureDimensions = {surface->w, surface->h};
+			_texture = thirdparty::video::Texture::CreateFromImageFile(resourcePath);
+			_textureDimensions = _texture->Dimensions();
 			_ppm = spriteSheet.ppm();
 			_selected_resource = resource;
 
@@ -105,11 +95,11 @@ void bulksheeteditor::State::Draw() const {
 	const auto offset = VecF{-0.5f, -0.5f};
 	const auto textureTopLeftOutputPosition = ScreenOriginToPositionVecPx(offset);
 	const auto textureBottomRightOutputPosition = ScreenOriginToPositionVecPx(static_cast<VecF>(_textureDimensions) + offset);
-	const SDL_Rect dstRect = {
+	const RectI dstRect = {
 			RoundI(textureTopLeftOutputPosition.GetX()), RoundI(textureTopLeftOutputPosition.GetY()),
 			RoundI(textureBottomRightOutputPosition.GetX() - textureTopLeftOutputPosition.GetX()),
 			RoundI(textureBottomRightOutputPosition.GetY() - textureTopLeftOutputPosition.GetY())};
-	SDL_RenderCopy(M2_GAME.renderer, _texture.get(), nullptr, &dstRect);
+	if (_texture) { _texture->Render(dstRect); }
 	// Draw currectly selected sprite's rect
 	if (_savedSpriteRect) {
 		auto world_coordinates_m = RectF{

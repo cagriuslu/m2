@@ -45,7 +45,7 @@ namespace m2 {
 		[[nodiscard]] bool IsBackgroundTile() const { return _originalPb->regular().is_background_tile(); }
 		[[nodiscard]] const std::vector<m2g::pb::CardType>& Cards() const { return _cards; }
 
-		[[nodiscard]] SDL_Texture* GetTexture(bool foregroundCompanion = false) const;
+		[[nodiscard]] const thirdparty::video::Texture& GetTexture(bool foregroundCompanion = false) const;
 		[[nodiscard]] VecF TextureTotalDims(bool foregroundCompanion = false) const;
 		[[nodiscard]] const RectI& GetRect(bool foregroundCompanion = false) const;
 

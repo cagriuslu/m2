@@ -4,7 +4,6 @@
 #include <m2/containers/Pool.h>
 #include "component/Character.h"
 #include "component/Graphic.h"
-#include "component/Light.h"
 #include "component/Physique.h"
 #include "component/SoundEmitter.h"
 #include "m2/math/VecF.h"
@@ -49,7 +48,6 @@ namespace m2 {
 		[[nodiscard]] GroupIdentifier GetGroupIdentifier() const;
 		[[nodiscard]] PhysiqueId GetPhysiqueId() const;
 		[[nodiscard]] GraphicId GetGraphicId() const;
-		[[nodiscard]] LightId GetLightId() const;
 		[[nodiscard]] SoundEmitterId GetSoundId() const;
 		[[nodiscard]] CharacterId GetCharacterId() const { return _character_id; }
 
@@ -57,12 +55,10 @@ namespace m2 {
 		[[nodiscard]] Group* TryGetGroup() const;
 		[[nodiscard]] Physique* TryGetPhysique() const;
 		[[nodiscard]] Graphic* TryGetGraphic() const;
-		[[nodiscard]] Light* TryGetLight() const;
 		[[nodiscard]] SoundEmitter* TryGetSoundEmitter() const;
 
 		[[nodiscard]] Physique& GetPhysique() const;
 		[[nodiscard]] Graphic& GetGraphic() const;
-		[[nodiscard]] Light& GetLight() const;
 		[[nodiscard]] SoundEmitter& GetSoundEmitter() const;
 
 		[[nodiscard]] VecF InferPositionF() const;
@@ -74,7 +70,6 @@ namespace m2 {
 		Physique& AddPhysique(const VecFE& position = {});
 		Graphic& AddGraphic(DrawLayer layer, const VecF& position = {});
 		Graphic& AddGraphic(DrawLayer layer, m2g::pb::SpriteType, const VecF& position = {});
-		Light& AddLight();
 		SoundEmitter& AddSoundEmitter();
 
 		/// This method may cause some of the components IDs to change. Must be called from a deferred action.
@@ -82,7 +77,6 @@ namespace m2 {
 
 		void RemovePhysique();
 		void RemoveGraphic();
-		void RemoveLight();
 		void RemoveSoundEmitter();
 		void RemoveCharacter();
 
@@ -97,7 +91,6 @@ namespace m2 {
 
 		PhysiqueId _physique_id{};
 		GraphicId _graphicId{};
-		LightId _light_id{}; // TODO make part of another component?
 		SoundEmitterId _sound_emitter_id{};
 		CharacterId _character_id{};
 
@@ -108,7 +101,6 @@ namespace m2 {
 	std::function<void()> CreateObjectDeleter(ObjectId id);
 	std::function<void()> CreatePhysiqueDeleter(ObjectId id);
 	std::function<void()> CreateGraphicDeleter(ObjectId id);
-	std::function<void()> CreateLightDeleter(ObjectId id);
 	std::function<void()> CreateSoundEmitterDeleter(ObjectId id);
 	std::function<void()> CreateCharacterDeleter(ObjectId id);
 	std::function<void()> CreateLayerMover(ObjectId id, std::optional<DrawLayer>);
