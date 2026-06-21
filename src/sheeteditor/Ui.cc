@@ -324,7 +324,7 @@ const UiPanelBlueprint m2::sheet_editor_left_hud = {
 				.text = "0.0:0.0",
 				.onUpdate = [](MAYBE widget::Text& self) {
 					const auto mouse_position = M2_GAME.events.GetWorldPositionOfMouse().RoundHalfI();
-					self.set_text(ToString(mouse_position.GetX(), 1) + ':' + ToString(mouse_position.GetY(), 1));
+					self.set_text(ToString(mouse_position.GetX()) + ':' + ToString(mouse_position.GetY()));
 					return MakeContinueAction();
 				}
 			}

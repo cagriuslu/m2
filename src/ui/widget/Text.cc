@@ -26,10 +26,16 @@ void Text::OnDraw() {
 
 	// Generate font texture if necessary
 	if (not _text_texture_and_destination_cache) {
+		const auto roundDownToEven = [](const float f) {
+			const auto ceiled = CeilI(f);
+			return ceiled % 2 // If odd
+					? ceiled - 1 // Subtract one
+					: ceiled;
+		};
 		// Calculate the ideal fontSize
 		const auto fontSize = VariantBlueprint().wrapped_font_size_in_units != 0.0f
 				// Integer rounding because iround might produce too big of a font
-				? RoundDownToEvenI(vertical_pixels_per_unit() * VariantBlueprint().wrapped_font_size_in_units)
+				? roundDownToEven(vertical_pixels_per_unit() * VariantBlueprint().wrapped_font_size_in_units)
 				: calculate_filled_text_rect(drawable_area(), VariantBlueprint().horizontal_alignment, _current_text.c_str()).h;
 		auto textTexture = VariantBlueprint().wrapped_font_size_in_units != 0.0f
 				? m2MoveOrThrowError(sdl::TextTexture::CreateWrapped(M2_GAME.renderer, M2_GAME.font, fontSize, drawable_area().w, VariantBlueprint().horizontal_alignment, _current_text))

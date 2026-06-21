@@ -286,7 +286,6 @@ if(GTest_FOUND)
             "src/FileSystem.cc"
             "src/Log.cc"
             "src/Math.cc"
-            "src/Meta.cc"
             "src/M2.cc"
             "src/Options.cc"
             "src/physics/Particle.cc"

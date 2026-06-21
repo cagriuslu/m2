@@ -32,7 +32,6 @@ namespace m2 {
 	inline size_t RoundZ(const float t) { return static_cast<size_t>(roundf(t)); }
 	inline int FloorI(const float t) { return static_cast<int>(floorf(t)); }
 	inline int CeilI(const float t) { return static_cast<int>(ceilf(t)); }
-	int RoundDownToEvenI(float);
 
 	template <typename... Types>
 	constexpr int I(const std::tuple<Types...>& v) {
@@ -61,7 +60,6 @@ namespace m2 {
 	inline std::string ToString(const long long ll) { return std::to_string(ll); }
 	inline std::string ToString(const unsigned long long ull) { return std::to_string(ull); }
 	inline std::string ToString(const float f) { return std::to_string(f); }
-	std::string ToString(float, unsigned precision);
 	inline std::string ToString(const double d) { return std::to_string(d); }
 	inline std::string ToString(const char* c) { return {c}; }
 	inline std::string ToString(const std::string& s) { return s; }
