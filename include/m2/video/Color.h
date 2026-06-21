@@ -1,6 +1,6 @@
 #pragma once
 #include <cstdint>
-#include "../Meta.h"
+#include <m2/common/Meta.h>
 #include <Sprite.pb.h>
 #include <box2d/b2_draw.h>
 #include <SDL2/SDL_pixels.h>

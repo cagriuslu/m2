@@ -3,7 +3,7 @@
 #include "Type.h"
 #include <m2/network/Types.h>
 #include <m2/mt/actor/ActorInterfaceBase.h>
-#include <m2/Meta.h>
+#include <m2/common/Meta.h>
 
 namespace m2 {
 	class TurnBasedServerActorInterface final : public ActorInterfaceBase<TurnBasedServerActor> {

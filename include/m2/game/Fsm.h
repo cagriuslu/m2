@@ -1,5 +1,5 @@
 #pragma once
-#include "../Error.h"
+#include <m2/common/Error.h>
 #include <optional>
 #include <functional>
 #include <type_traits>

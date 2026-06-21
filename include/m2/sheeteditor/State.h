@@ -3,7 +3,7 @@
 #include <Sprite.pb.h>
 #include <m2g_SpriteType.pb.h>
 #include <filesystem>
-#include "../Meta.h"
+#include <m2/common/Meta.h>
 #include "../ui/UiPanel.h"
 
 namespace m2::sheeteditor {

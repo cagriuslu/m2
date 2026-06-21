@@ -1,5 +1,5 @@
 #pragma once
-#include <m2/Meta.h>
+#include <m2/common/Meta.h>
 #include <m2g_KeyType.pb.h>
 #include <SDL2/SDL_scancode.h>
 #include <map>

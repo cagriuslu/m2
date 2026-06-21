@@ -1,6 +1,6 @@
 #include <m2/Card.h>
 #include <m2/protobuf/Detail.h>
-#include <m2/Error.h>
+#include <m2/common/Error.h>
 #include <m2/Game.h>
 #include <utility>
 

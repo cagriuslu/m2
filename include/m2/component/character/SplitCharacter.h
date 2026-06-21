@@ -1,6 +1,6 @@
 #pragma once
 #include "CustomStateUtils.h"
-#include <m2/Meta.h>
+#include <m2/common/Meta.h>
 #include <m2/component/Character.h>
 #include <m2/math/Hash.h>
 

@@ -1,6 +1,6 @@
 #include <m2/Game.h>
 #include <m2/Level.h>
-#include <m2/Meta.h>
+#include <m2/common/Meta.h>
 #include <m2/Proxy.h>
 #include <m2/bulksheeteditor/Ui.h>
 #include <m2/leveleditor/Ui.h>

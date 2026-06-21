@@ -1,6 +1,6 @@
 #pragma once
 #include "Types.h"
-#include "../Meta.h"
+#include <m2/common/Meta.h>
 
 namespace m2::network {
 	// Forward declarations

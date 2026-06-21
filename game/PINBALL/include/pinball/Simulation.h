@@ -1,6 +1,6 @@
 #pragma once
 #include <Simulation.pb.h>
-#include <m2/Meta.h>
+#include <m2/common/Meta.h>
 
 namespace pinball {
 	using AnimalAllocator = std::function<int64_t(pb::Animal_Type)>;

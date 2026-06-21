@@ -1,6 +1,6 @@
 #include <m2/game/rng/XsrRng.h>
 #include <m2/math/Bit.h>
-#include <m2/Meta.h>
+#include <m2/common/Meta.h>
 #include <array>
 
 m2::XsrRng::XsrRng(const uint64_t seed1, const uint64_t seed2, const uint64_t seed3, const uint64_t seed4) : Rng(), _xoshiro256ppState() {

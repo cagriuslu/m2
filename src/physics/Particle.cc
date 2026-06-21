@@ -1,5 +1,5 @@
 #include <m2/physics/Particle.h>
-#include <m2/Error.h>
+#include <m2/common/Error.h>
 
 m2::Particle::Particle(const PhysicsPrimitive mass, const Vec<PhysicsPrimitive> initialPosition,
 		const Vec<PhysicsPrimitive> gravitationalAcceleration, const PhysicsPrimitive damping)

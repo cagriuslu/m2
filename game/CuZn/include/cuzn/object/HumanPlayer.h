@@ -1,7 +1,7 @@
 #pragma once
 #include <m2/component/Character.h>
 #include <m2/Object.h>
-#include <m2/Meta.h>
+#include <m2/common/Meta.h>
 #include <set>
 #include <cuzn/Detail.h>
 

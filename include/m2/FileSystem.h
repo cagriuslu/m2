@@ -1,5 +1,5 @@
 #pragma once
-#include "Meta.h"
+#include <m2/common/Meta.h>
 #include <filesystem>
 
 namespace m2 {

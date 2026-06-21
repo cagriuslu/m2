@@ -1,5 +1,5 @@
 #pragma once
-#include <m2/Meta.h>
+#include <m2/common/Meta.h>
 #include <vector>
 
 namespace m2::thirdparty::compression {

@@ -4,7 +4,7 @@
 #include "Events.h"
 #include "Card.h"
 #include "Level.h"
-#include "Meta.h"
+#include <m2/common/Meta.h>
 #include "Proxy.h"
 #include "audio/Song.h"
 #include <m2/video/Sprite.h>

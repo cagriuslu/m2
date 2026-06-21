@@ -1,7 +1,7 @@
 #pragma once
 #include <Character.pb.h>
 #include <m2g_CardType.pb.h>
-#include <m2/Meta.h>
+#include <m2/common/Meta.h>
 #include <m2/Object.h>
 #include <m2g_SpriteType.pb.h>
 #include <m2/sdl/Detail.h>

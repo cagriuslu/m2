@@ -1,6 +1,6 @@
 #include <m2/math/RectI.h>
 #include <m2/math/RectF.h>
-#include <m2/Meta.h>
+#include <m2/common/Meta.h>
 #include <sstream>
 
 m2::RectI::RectI() : x(), y(), w(), h() {}

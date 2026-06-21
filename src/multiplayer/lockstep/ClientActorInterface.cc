@@ -1,7 +1,7 @@
 #include <m2/multiplayer/lockstep/ClientActorInterface.h>
 #include <m2/multiplayer/lockstep/ConnectionToServer.h>
 #include <m2/ProxyHelper.h>
-#include <m2/Meta.h>
+#include <m2/common/Meta.h>
 #include <m2/Log.h>
 
 using namespace m2;

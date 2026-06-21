@@ -148,6 +148,7 @@ execute_process(
 )
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/CMakeProject.h.in" "${CMAKE_CURRENT_BINARY_DIR}/CMakeProject.h")
 
+add_subdirectory(common)
 add_subdirectory(game)
 
 # Print options
@@ -240,7 +241,7 @@ endif()
 target_include_directories(m2 PUBLIC include ${GAME_INCLUDE_DIRS})
 target_include_directories(m2 PUBLIC ${SDL2_ttf_INCLUDE_DIRS} ${SDL2_image_INCLUDE_DIRS} ${SDL2_INCLUDE_DIRS} ${GENORM_CXX_INCLUDE_DIRS} ${png_INCLUDE_DIRS} ${z_INCLUDE_DIRS})
 target_link_directories(m2 PUBLIC ${SDL2_ttf_LIBDIR} ${SDL2_image_LIBDIR} ${GENORM_CXX_LIBDIR} ${png_LIBDIR} ${z_LIBDIR})
-target_link_libraries(m2 box2d SDL2_ttf ${Freetype_LIBRARIES} ${SDL2_image_LIBNAME} ${SDL2_STATIC_LIBRARIES} ${GENORM_CXX_LIBRARIES} sqlite3 ${Protobuf_LIBRARIES} ${png_LIBRARIES} ${z_LIBRARIES})
+target_link_libraries(m2 m2_common box2d SDL2_ttf ${Freetype_LIBRARIES} ${SDL2_image_LIBNAME} ${SDL2_STATIC_LIBRARIES} ${GENORM_CXX_LIBRARIES} sqlite3 ${Protobuf_LIBRARIES} ${png_LIBRARIES} ${z_LIBRARIES})
 
 if (WIN32)
     #target_compile_options(m2 PRIVATE /analyze) # Code inspections
@@ -282,7 +283,6 @@ if(GTest_FOUND)
     # Tests (Build with Debug)
     file(GLOB TEST_SOURCES "test/*.cc")
     list(APPEND TEST_SOURCES
-            "src/Error.cc"
             "src/FileSystem.cc"
             "src/Log.cc"
             "src/Math.cc"
@@ -315,7 +315,7 @@ if(GTest_FOUND)
     target_include_directories(test PUBLIC include)
     target_include_directories(test PUBLIC ${SDL2_INCLUDE_DIRS} ${SDL2_image_INCLUDE_DIRS} ${SDL2_ttf_INCLUDE_DIRS} ${GENORM_CXX_INCLUDE_DIRS})
     target_link_directories(test PUBLIC ${SDL2_image_LIBDIR} ${SDL2_ttf_LIBDIR} ${GENORM_CXX_LIBDIR} ${z_LIBDIR})
-    target_link_libraries(test box2d ${SDL2_image_LIBRARIES} ${SDL2_ttf_LIBRARIES} ${SDL2_LIBRARIES} ${GENORM_CXX_LIBRARIES} sqlite3 ${Protobuf_LIBRARIES} ${z_LIBRARIES})
+    target_link_libraries(test m2_common box2d ${SDL2_image_LIBRARIES} ${SDL2_ttf_LIBRARIES} ${SDL2_LIBRARIES} ${GENORM_CXX_LIBRARIES} sqlite3 ${Protobuf_LIBRARIES} ${z_LIBRARIES})
     target_link_libraries(test GTest::gtest GTest::gtest_main)
     if(WIN32)
         #target_compile_options(test PRIVATE /analyze) # Code inspections

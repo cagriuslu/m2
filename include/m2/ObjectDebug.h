@@ -1,7 +1,7 @@
 #pragma once
 #include <m2g/ProxyEx.h>
 #include <m2/component/character/CharacterStorage.h>
-#include <m2/Meta.h>
+#include <m2/common/Meta.h>
 #include <functional>
 
 namespace m2 {

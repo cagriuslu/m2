@@ -1,5 +1,5 @@
 #include <m2/multiplayer/lockstep/Message.h>
-#include <m2/Meta.h>
+#include <m2/common/Meta.h>
 #include <Lockstep.pb.h>
 
 int m2::multiplayer::lockstep::UdpPacketHeaderSize() {

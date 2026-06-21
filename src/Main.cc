@@ -1,3 +1,4 @@
+#include <m2/common/Error.h>
 #include <m2/Proxy.h>
 #include <m2/Game.h>
 #include <m2/Log.h>
@@ -32,6 +33,9 @@ int main(const int argc, char **argv) {
 	std::signal(SIGFPE, SignalHandler);
 #endif
 
+	Error::SetLogger([](const char* file, int line, const std::string& msg) {
+		detail::Log(pb::LogLevel::ERR, false, file, line, msg.c_str());
+	});
 	StoreInitialStackPosition();
 	SetThreadNameForLogging("MN");
 	LOG_INFO("Commit hash", GIT_SHORT_COMMIT_HASH);

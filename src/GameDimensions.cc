@@ -1,5 +1,5 @@
 #include <m2/GameDimensions.h>
-#include <m2/Meta.h>
+#include <m2/common/Meta.h>
 #include <m2/Game.h>
 #include <m2/Log.h>
 

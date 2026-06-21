@@ -1,7 +1,7 @@
 #pragma once
 #include <filesystem>
 
-#include "../Meta.h"
+#include <m2/common/Meta.h>
 
 namespace m2::bulksheeteditor {
 	class State {

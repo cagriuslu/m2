@@ -1,5 +1,5 @@
 #include <m2/physics/World.h>
-#include <m2/Error.h>
+#include <m2/common/Error.h>
 
 const m2::RigidBody& m2::World::GetRigidBody(const size_t index) const {
 	if (_rigidBodies.size() <= index) {

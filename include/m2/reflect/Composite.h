@@ -1,6 +1,6 @@
 #pragma once
 #include "Detail.h"
-#include <m2/Meta.h>
+#include <m2/common/Meta.h>
 #include <variant>
 
 namespace m2::reflect {

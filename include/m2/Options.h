@@ -1,7 +1,7 @@
 #pragma once
 #include <Enums.pb.h>
 
-#include "Meta.h"
+#include <m2/common/Meta.h>
 
 namespace m2 {
 	extern pb::LogLevel current_log_level;

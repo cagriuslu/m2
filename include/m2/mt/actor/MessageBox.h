@@ -1,6 +1,6 @@
 #pragma once
 #include <m2/mt/ProtectedObject.h>
-#include <m2/Meta.h>
+#include <m2/common/Meta.h>
 #include <deque>
 #include <algorithm>
 

@@ -1,4 +1,4 @@
-#include <m2/Meta.h>
+#include <m2/common/Meta.h>
 #include <m2/math/Rational.h>
 #include <m2/math/VecF.h>
 #include <m2/math/VecI.h>

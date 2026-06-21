@@ -1,7 +1,7 @@
 #pragma once
 #include <m2/component/character/FastCharacter.h>
 #include <m2/ProxyEx.h>
-#include <m2/Meta.h>
+#include <m2/common/Meta.h>
 
 namespace m2g {
 	class ProxyEx final : public m2::ProxyEx {

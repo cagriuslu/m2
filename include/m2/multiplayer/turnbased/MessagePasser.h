@@ -1,6 +1,6 @@
 #pragma once
 #include "../../network/TcpSocket.h"
-#include "../../Meta.h"
+#include <m2/common/Meta.h>
 #include <Network.pb.h>
 #include <array>
 #include <queue>

@@ -2,8 +2,8 @@
 #include <random>
 #include <cmath>
 
-#include "m2/Error.h"
-#include "m2/Meta.h"
+#include <m2/common/Error.h>
+#include <m2/common/Meta.h>
 
 namespace {
 	std::random_device rd;

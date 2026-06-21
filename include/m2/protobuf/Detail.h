@@ -5,9 +5,9 @@
 #include <string>
 #include <vector>
 
-#include "../Error.h"
+#include <m2/common/Error.h>
 #include "../FileSystem.h"
-#include "../Meta.h"
+#include <m2/common/Meta.h>
 
 namespace m2 {
 	template <typename T>

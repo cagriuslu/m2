@@ -2,7 +2,7 @@
 #include "Detail.h"
 #include "MixNote.h"
 #include <m2/math/Rational.h>
-#include <m2/Error.h>
+#include <m2/common/Error.h>
 #include <Synth.pb.h>
 #include <type_traits>
 

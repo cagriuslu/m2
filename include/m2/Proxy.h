@@ -5,7 +5,7 @@
 #include "ui/UiPanelBlueprint.h"
 #include "math/Rational.h"
 #include "component/Graphic.h"
-#include "Meta.h"
+#include <m2/common/Meta.h>
 #include <m2g_GroupType.pb.h>
 #include <Network.pb.h>
 #include <Level.pb.h>

@@ -1,6 +1,6 @@
 #include <m2/math/Bit.h>
-#include <m2/Error.h>
-#include <m2/Meta.h>
+#include <m2/common/Error.h>
+#include <m2/common/Meta.h>
 
 uint64_t m2::RotateLeft64(uint64_t n, const uint8_t shiftCount) {
 	return (n << shiftCount) | (n >> (64 - shiftCount));

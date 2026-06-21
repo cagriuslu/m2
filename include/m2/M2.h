@@ -1,7 +1,7 @@
 #pragma once
 #include <m2/protobuf/Detail.h>
 #include "Chrono.h"
-#include "Meta.h"
+#include <m2/common/Meta.h>
 #include <m2g_Layers.pb.h>
 #include <array>
 
