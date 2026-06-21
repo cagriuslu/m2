@@ -28,6 +28,32 @@ Texture Texture::Generate(const int w, const int h, const std::function<RGBA(int
 	SDL_FreeSurface(surface);
 	return Texture{texture};
 }
+Texture Texture::CreateTargetableWindowSized() {
+	const auto windowPixelFormat = GetWindowPixelFormat();
+	if (SDL_BITSPERPIXEL(windowPixelFormat) != 32) {
+		throw M2_ERROR("Unsupported window pixel format");
+	}
+
+	int w, h;
+	SDL_GetRendererOutputSize(M2_GAME.renderer, &w, &h); // Get screen size
+	return Texture{SDL_CreateTexture(M2_GAME.renderer, windowPixelFormat, SDL_TEXTUREACCESS_TARGET, w, h)};
+}
+Texture Texture::CaptureWindow() {
+	const auto windowPixelFormat = GetWindowPixelFormat();
+	if (SDL_BITSPERPIXEL(windowPixelFormat) != 32) {
+		throw M2_ERROR("Unsupported window pixel format");
+	}
+
+	int w, h;
+	SDL_GetRendererOutputSize(M2_GAME.renderer, &w, &h); // Get screen size
+
+	auto* surface = SDL_CreateRGBSurfaceWithFormat(0, w, h, SDL_BITSPERPIXEL(windowPixelFormat), windowPixelFormat);
+	SDL_RenderReadPixels(M2_GAME.renderer, nullptr, windowPixelFormat, surface->pixels, surface->pitch);
+
+	auto* texture = SDL_CreateTextureFromSurface(M2_GAME.renderer, surface);
+	SDL_FreeSurface(surface);
+	return Texture{texture};
+}
 
 Texture::Texture(Texture&& other) noexcept : _texture(other._texture) {
 	other._texture = nullptr;
@@ -41,32 +67,4 @@ Texture::~Texture() {
 		SDL_DestroyTexture(static_cast<SDL_Texture*>(_texture));
 		_texture = nullptr;
 	}
-}
-
-void Texture::Draw2d(const RectI* patchRect, const float scale, const VecF& positionOnScreen) const {
-	SDL_Rect srcRect, destRect;
-
-	if (patchRect) {
-		srcRect = static_cast<SDL_Rect>(*patchRect);
-		destRect = SDL_Rect{
-			I(positionOnScreen.GetX() - ToFloat(patchRect->w) * scale / 2.0f),
-			I(positionOnScreen.GetY() - ToFloat(patchRect->h) * scale / 2.0f),
-			CeilI(ToFloat(patchRect->w) * scale),
-			CeilI(ToFloat(patchRect->h) * scale)
-		};
-	} else {
-		int w, h;
-		SDL_QueryTexture(static_cast<SDL_Texture*>(_texture), nullptr, nullptr, &w, &h);
-		destRect = SDL_Rect{
-			I(positionOnScreen.GetX() - ToFloat(w) * scale / 2.0f),
-			I(positionOnScreen.GetY() - ToFloat(h) * scale / 2.0f),
-			CeilI(ToFloat(w) * scale),
-			CeilI(ToFloat(h) * scale)
-		};
-	}
-
-	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
-	SDL_SetTextureColorMod(static_cast<SDL_Texture*>(_texture), 255, 255, 255);
-	SDL_SetTextureAlphaMod(static_cast<SDL_Texture*>(_texture), 255);
-	SDL_RenderCopyEx(M2_GAME.renderer, static_cast<SDL_Texture*>(_texture), patchRect ? &srcRect : nullptr, &destRect, 0.0, nullptr, SDL_FLIP_NONE);
 }
