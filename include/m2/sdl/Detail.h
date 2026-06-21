@@ -17,11 +17,4 @@ namespace m2::sdl {
 	ticks_t get_ticks_since(ticks_t last_ticks, ticks_t pause_ticks = 0);
 
 	int get_refresh_rate();
-
-	/// Assumes surface is already locked
-	void set_pixel(SDL_Surface* surface, int x, int y, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-	void set_pixel(SDL_Surface* surface, int x, int y, uint32_t pixel);
-	/// Returns the BGRA32 pixel if x,y are in bounds. Returns nullopt if not.
-	/// Assumes surface is already locked
-	std::optional<uint32_t> get_pixel(const SDL_Surface* surface, int x, int y);
 }
