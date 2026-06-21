@@ -1,7 +1,9 @@
 #include <m2/thirdparty/video/Texture.h>
 #include <m2/thirdparty/video/Window.h>
+#include <m2/sdl/Surface.h>
 #include <m2/Game.h>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 using namespace m2;
 using namespace m2::thirdparty;
@@ -55,14 +57,43 @@ Texture Texture::CaptureWindow() {
 	return Texture{texture};
 }
 
+Texture Texture::CreateFromImageFile(const std::filesystem::path& imageFilePath) {
+	sdl::SurfaceUniquePtr surface{IMG_Load(imageFilePath.string().c_str())};
+	if (not surface) {
+		throw M2_ERROR("Unable to load image: " + imageFilePath.string() + ", " + IMG_GetError());
+	}
+	auto* texture = SDL_CreateTextureFromSurface(M2_GAME.renderer, surface.get());
+	if (not texture) {
+		throw M2_ERROR("Unable to create texture from surface: " + std::string{SDL_GetError()});
+	}
+	SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
+	return Texture{texture};
+}
+
+VecI Texture::Dimensions() const {
+	int w = 0, h = 0;
+	SDL_QueryTexture(static_cast<SDL_Texture*>(_texture), nullptr, nullptr, &w, &h);
+	return {w, h};
+}
+
 void Texture::DrawOnto(const std::function<void()>& draw) {
 	auto* const previousTarget = SDL_GetRenderTarget(M2_GAME.renderer);
 	SDL_SetRenderTarget(M2_GAME.renderer, static_cast<SDL_Texture*>(_texture));
 	draw();
 	SDL_SetRenderTarget(M2_GAME.renderer, previousTarget);
 }
+
 void Texture::RenderToWindow() const {
 	SDL_RenderCopy(M2_GAME.renderer, static_cast<SDL_Texture*>(_texture), nullptr, nullptr);
+}
+void Texture::Render(const RectI& destinationPx) const {
+	const auto sdlRect = static_cast<SDL_Rect>(destinationPx);
+	SDL_RenderCopy(M2_GAME.renderer, static_cast<SDL_Texture*>(_texture), nullptr, &sdlRect);
+}
+void Texture::RenderWithColorMod(const RectI& destinationPx, const RGB& mod) const {
+	SDL_SetTextureColorMod(static_cast<SDL_Texture*>(_texture), mod.r, mod.g, mod.b);
+	Texture::Render(destinationPx);
+	SDL_SetTextureColorMod(static_cast<SDL_Texture*>(_texture), 255, 255, 255);
 }
 
 Texture::Texture(Texture&& other) noexcept : _texture(other._texture) {
