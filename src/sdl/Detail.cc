@@ -4,62 +4,6 @@
 #include <m2/M2.h>
 #include <cmath>
 
-SDL_Cursor* SdlUtils_CreateCursor() {
-    const char* str =
-		"                                "
-		"                                "
-		"             XXXXX              "
-		"             X...X              "
-		"             X...X              "
-		"             X...X              "
-		"             X...X              "
-		"             X...X              "
-		"             X...X              "
-		"             X...X              "
-		"             X...X              "
-		"             XXXXX              "
-		"                                "
-		"  XXXXXXXXXX XXXXX XXXXXXXXXX   "
-		"  X........X X...X X........X   "
-		"  X........X X...X X........X   "
-		"  X........X X...X X........X   "
-		"  XXXXXXXXXX XXXXX XXXXXXXXXX   "
-		"                                "
-		"             XXXXX              "
-		"             X...X              "
-		"             X...X              "
-		"             X...X              "
-		"             X...X              "
-		"             X...X              "
-		"             X...X              "
-		"             X...X              "
-		"             X...X              "
-		"             XXXXX              "
-		"                                "
-		"                                "
-		"                                "
-	;
-
-    uint8_t data[128] = { 0 };
-    uint8_t mask[128] = { 0 };
-    const unsigned side_size = 32;
-
-	for (unsigned y = 0; y < side_size; y++) {
-		for (unsigned x = 0; x < side_size; x++) {
-            unsigned index = y * side_size + x;
-            char c = str[index];
-			if (c == 'X') {
-                data[index / 8] |= 0x80 >> (index % 8);
-                mask[index / 8] |= 0x80 >> (index % 8);
-			} else if (c == '.') {
-                mask[index / 8] |= 0x80 >> (index % 8);
-			}
-		}
-	}
-
-	return SDL_CreateCursor(data, mask, side_size, side_size, side_size / 2 - 1, side_size / 2 - 1);
-}
-
 std::string m2::ToString(const SDL_Rect& rf) {
 	std::stringstream ss;
 	ss << "{x:" << rf.x << ",y:" << rf.y << ",w:" << rf.w << ",h:" << rf.h << "}";
@@ -89,12 +33,6 @@ int m2::sdl::get_refresh_rate() {
 	SDL_DisplayMode dm{};
 	SDL_GetWindowDisplayMode(M2_GAME.window, &dm);
 	return dm.refresh_rate;
-}
-
-m2::VecI m2::sdl::mouse_position() {
-	VecI p;
-	SDL_GetMouseState(&p.x, &p.y);
-	return p;
 }
 
 void m2::sdl::set_pixel(SDL_Surface* surface, int x, int y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {

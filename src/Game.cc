@@ -34,12 +34,6 @@ namespace {
 		throw M2_ERROR("SDL error: " + std::string{SDL_GetError()});
 	}
 
-	SDL_Cursor* CreateCursor() {
-		auto* cursor = SdlUtils_CreateCursor();
-		SDL_SetCursor(cursor);
-		return cursor;
-	}
-
 	uint32_t GetWindowPixelFormat(SDL_Window* const window) {
 		if (const auto pixel_format = SDL_GetWindowPixelFormat(window); pixel_format == SDL_PIXELFORMAT_UNKNOWN) {
 			throw M2_ERROR("SDL error: " + std::string{SDL_GetError()});
@@ -103,12 +97,14 @@ void Game::DeinitSystems() {
 }
 
 Game::Game() : window(CreateWindow(_proxy.gamePpm, _proxy.defaultGameHeightM, _proxy.gameFriendlyName.c_str())),
-		cursor(CreateCursor()), pixel_format(GetWindowPixelFormat(window)),
+		cursor(*thirdparty::video::Cursor::Create()), pixel_format(GetWindowPixelFormat(window)),
 		font(OpenFont(_resources.GetDefaultFontPath().c_str(), _proxy.default_font_size)),
 		systemFont(OpenFont(_resources.GetSystemFontPath().c_str(), systemFontSize)) {
 	if (_proxy.drawOrder.empty()) {
 		throw M2_ERROR("Proxy::drawOrder is empty");
 	}
+
+	cursor.Load();
 
 	// ReSharper disable once CppDFAConstantConditions
 	if (_proxy.areGraphicsPixelated) {
@@ -183,7 +179,6 @@ Game::~Game() {
 	_level.reset();
 	audio_manager.reset();
 	SDL_DestroyRenderer(renderer);
-	SDL_FreeCursor(cursor);
 	SDL_DestroyWindow(window);
 }
 

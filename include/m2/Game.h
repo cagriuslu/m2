@@ -32,6 +32,7 @@
 #include <m2/GameResources.h>
 #include <m2/multiplayer/lockstep/ServerComponents.h>
 #include <m2/multiplayer/lockstep/ClientComponents.h>
+#include <m2/thirdparty/video/Cursor.h>
 
 #define M2_GAME (m2::Game::Instance())
 #define M2_DEFER(f) (M2_GAME.AddDeferredAction(f))
@@ -88,7 +89,7 @@ namespace m2 {
 		//////////////////////////////// WINDOW ////////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 		SDL_Window* const window{};
-		SDL_Cursor* const cursor{};
+		const thirdparty::video::Cursor cursor;
 		const uint32_t pixel_format{};
 		SDL_Renderer* renderer{}; // TODO make pointer const
 		SDL_Texture* light_texture{}; // TODO make pointer const

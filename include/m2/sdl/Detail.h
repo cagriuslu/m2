@@ -5,8 +5,6 @@
 #include "../math/RectI.h"
 #include <SDL2/SDL.h>
 
-SDL_Cursor* SdlUtils_CreateCursor();
-
 namespace m2 {
 	std::string ToString(const SDL_Rect& rf);
 	std::string ToString(const SDL_FRect& rf);
@@ -19,7 +17,6 @@ namespace m2::sdl {
 	ticks_t get_ticks_since(ticks_t last_ticks, ticks_t pause_ticks = 0);
 
 	int get_refresh_rate();
-	VecI mouse_position();
 
 	/// Assumes surface is already locked
 	void set_pixel(SDL_Surface* surface, int x, int y, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
