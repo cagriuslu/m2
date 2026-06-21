@@ -1,16 +1,19 @@
 #pragma once
 
 #include "../math/VecI.h"
-#include "Texture.h"
+#include <m2/thirdparty/video/Texture.h>
 #include "../ui/Detail.h"
 #include <SDL2/SDL_ttf.h>
+#include <optional>
 
 namespace m2::sdl {
 	class TextTexture {
-		TextureUniquePtr _texture;
+		std::optional<thirdparty::video::Texture> _texture;
 		std::string _string;
 
-		TextTexture(SDL_Texture* texture, std::string text) : _texture(texture), _string(std::move(text)) {}
+		TextTexture(SDL_Texture* rawTexture, std::string text)
+			: _texture(rawTexture ? std::make_optional(thirdparty::video::Texture::AdoptRawTexture(rawTexture)) : std::nullopt),
+			  _string(std::move(text)) {}
 
 	public:
 		TextTexture() = default;
@@ -26,11 +29,12 @@ namespace m2::sdl {
 
 		// Accessors
 
-		explicit operator bool() const { return Texture(); }
-		/// Can be null if the string is empty
-		[[nodiscard]] SDL_Texture* Texture() const { return _texture.get(); }
-		[[nodiscard]] VecI Dimensions() const { return Texture() ? sdl::texture_dimensions(_texture) : VecI{}; }
+		explicit operator bool() const { return _texture.has_value(); }
+		[[nodiscard]] VecI Dimensions() const { return _texture ? _texture->Dimensions() : VecI{}; }
 		[[nodiscard]] const std::string& String() const { return _string; }
+
+		void Render(const RectI& dst) const { if (_texture) _texture->Render(dst); }
+		void RenderWithColorMod(const RectI& dst, const RGB& mod) const { if (_texture) _texture->RenderWithColorMod(dst, mod); }
 	};
 
 	/// If the text is rendered for a particular destination, the texture and the destination could be stored together

@@ -79,8 +79,7 @@ void TextInput::OnDraw() {
 		_text_texture_and_destination_cache = sdl::TextTextureAndDestination{std::move(textTexture), destination_rect};
 	}
 
-	sdl::render_texture_with_color_mod(_text_texture_and_destination_cache->first.Texture(),
-		_text_texture_and_destination_cache->second);
+	_text_texture_and_destination_cache->first.Render(_text_texture_and_destination_cache->second);
 
 	draw_border(Rect(), vertical_border_width_px(), horizontal_border_width_px());
 }

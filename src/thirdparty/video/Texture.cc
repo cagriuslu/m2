@@ -57,6 +57,8 @@ Texture Texture::CaptureWindow() {
 	return Texture{texture};
 }
 
+Texture Texture::AdoptRawTexture(void* rawSdlTexture) { return Texture{rawSdlTexture}; }
+
 Texture Texture::CreateFromImageFile(const std::filesystem::path& imageFilePath) {
 	sdl::SurfaceUniquePtr surface{IMG_Load(imageFilePath.string().c_str())};
 	if (not surface) {

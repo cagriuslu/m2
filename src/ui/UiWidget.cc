@@ -79,12 +79,11 @@ m2::RectI m2::UiWidget::drawable_area() const {
 	return Rect().TrimLeft(vertical_excess).TrimRight(vertical_excess).TrimTop(horizontal_excess).TrimBottom(horizontal_excess);
 }
 
-m2::RectI m2::UiWidget::calculate_wrapped_text_rect(SDL_Texture* text_texture, RectI drawable_area, TextHorizontalAlignment align_h, TextVerticalAlignment align_v) {
-	auto text_texture_dimensions = sdl::texture_dimensions(text_texture);
-	if (drawable_area.w < text_texture_dimensions.x) {
+m2::RectI m2::UiWidget::calculate_wrapped_text_rect(VecI textTextureDimensions, RectI drawable_area, TextHorizontalAlignment align_h, TextVerticalAlignment align_v) {
+	if (drawable_area.w < textTextureDimensions.x) {
 		throw M2_ERROR("Font should have been generated at most as wide as the drawable area");
 	}
-	RectI unaligned = RectI{-1, -1, text_texture_dimensions.x, text_texture_dimensions.y};
+	RectI unaligned = RectI{-1, -1, textTextureDimensions.x, textTextureDimensions.y};
 
 	RectI horizontally_aligned;
 	switch (align_h) {
@@ -95,7 +94,7 @@ m2::RectI m2::UiWidget::calculate_wrapped_text_rect(SDL_Texture* text_texture, R
 			horizontally_aligned = unaligned.AlignRightTo(drawable_area.GetX2());
 			break;
 		default:
-			horizontally_aligned = unaligned.AlignLeftTo(drawable_area.GetXCenter() - text_texture_dimensions.x / 2);
+			horizontally_aligned = unaligned.AlignLeftTo(drawable_area.GetXCenter() - textTextureDimensions.x / 2);
 			break;
 	}
 
@@ -105,7 +104,7 @@ m2::RectI m2::UiWidget::calculate_wrapped_text_rect(SDL_Texture* text_texture, R
 		case TextVerticalAlignment::BOTTOM:
 			return horizontally_aligned.AlignBottomTo(drawable_area.GetY2());
 		default:
-			return horizontally_aligned.AlignTopTo(drawable_area.GetYCenter() - text_texture_dimensions.y / 2);
+			return horizontally_aligned.AlignTopTo(drawable_area.GetYCenter() - textTextureDimensions.y / 2);
 	}
 }
 

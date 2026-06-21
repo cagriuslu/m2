@@ -20,9 +20,9 @@ void CheckboxWithText::OnDraw() {
 	const auto accentColor = _state ? RGBA{127, 127, 127, 255} : RGBA{255, 255, 255, 255};
 
 	// Text
-	if (auto* texture = _textTexture.Texture(); texture) {
+	if (_textTexture) {
 		const auto destinationRect = calculate_filled_text_rect(Rect(), TextHorizontalAlignment::CENTER, _textTexture.String().c_str());
-		sdl::render_texture_with_color_mod(texture, destinationRect, static_cast<RGB>(accentColor));
+		_textTexture.RenderWithColorMod(destinationRect, static_cast<RGB>(accentColor));
 	}
 
 	// Border

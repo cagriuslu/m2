@@ -77,7 +77,7 @@ void IntegerSelection::OnDraw() {
 			_textTexture.second = calculate_filled_text_rect(Rect().TrimRight(Rect().h / 2), TextHorizontalAlignment::LEFT, valueAsString.c_str());
 			_textTexture.first = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, _textTexture.second.h, valueAsString));
 		}
-		sdl::render_texture_with_color_mod(_textTexture.first.Texture(), _textTexture.second);
+		_textTexture.first.Render(_textTexture.second);
 	}
 
 	const auto [plusArea, minusArea] = CalculatePlusAndMinusButtonDrawArea();
@@ -87,7 +87,7 @@ void IntegerSelection::OnDraw() {
 			_plusTexture.second = calculate_filled_text_rect(plusArea, TextHorizontalAlignment::CENTER, "+");
 			_plusTexture.first = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, _plusTexture.second.h, "+"));
 		}
-		sdl::render_texture_with_color_mod(_plusTexture.first.Texture(), _plusTexture.second);
+		_plusTexture.first.Render(_plusTexture.second);
 		draw_border(plusArea, vertical_border_width_px(), horizontal_border_width_px());
 	}
 	{
@@ -96,7 +96,7 @@ void IntegerSelection::OnDraw() {
 			_minusTexture.second = calculate_filled_text_rect(minusArea, TextHorizontalAlignment::CENTER, "-");
 			_minusTexture.first = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, _minusTexture.second.h, "-"));
 		}
-		sdl::render_texture_with_color_mod(_minusTexture.first.Texture(), _minusTexture.second);
+		_minusTexture.first.Render(_minusTexture.second);
 		draw_border(minusArea, vertical_border_width_px(), horizontal_border_width_px());
 	}
 

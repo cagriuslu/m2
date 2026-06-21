@@ -12,7 +12,4 @@ namespace m2::sdl {
 
 	VecI texture_dimensions(const TextureUniquePtr& texture);
 	VecI texture_dimensions(SDL_Texture* texture);
-
-	void render_texture_with_color_mod(const TextureUniquePtr& texture, const RectI& destination, const RGB& color_mod = {255, 255, 255});
-	void render_texture_with_color_mod(SDL_Texture* texture, const RectI& destination, const RGB& color_mod = {255, 255, 255});
 }  // namespace m2::sdl

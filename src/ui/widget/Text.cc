@@ -41,7 +41,7 @@ void Text::OnDraw() {
 				? m2MoveOrThrowError(sdl::TextTexture::CreateWrapped(M2_GAME.renderer, M2_GAME.font, fontSize, drawable_area().w, VariantBlueprint().horizontal_alignment, _current_text))
 				: m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, _current_text));
 		auto destination_rect = VariantBlueprint().wrapped_font_size_in_units != 0.0f
-				? calculate_wrapped_text_rect(textTexture.Texture(), drawable_area(), VariantBlueprint().horizontal_alignment, VariantBlueprint().vertical_alignment)
+				? calculate_wrapped_text_rect(textTexture.Dimensions(), drawable_area(), VariantBlueprint().horizontal_alignment, VariantBlueprint().vertical_alignment)
 				: calculate_filled_text_rect(drawable_area(), VariantBlueprint().horizontal_alignment, _current_text.c_str());
 		_text_texture_and_destination_cache = sdl::TextTextureAndDestination{std::move(textTexture), destination_rect};
 	}
@@ -51,7 +51,7 @@ void Text::OnDraw() {
 		const auto drawable_area_sdl = static_cast<SDL_Rect>(drawable_area());
 		SDL_RenderSetClipRect(M2_GAME.renderer, &drawable_area_sdl);
 	}
-	sdl::render_texture_with_color_mod(_text_texture_and_destination_cache->first.Texture(),
+	_text_texture_and_destination_cache->first.RenderWithColorMod(
 		_text_texture_and_destination_cache->second, depressed ? _current_color / 2.0f : _current_color);
 	SDL_RenderSetClipRect(M2_GAME.renderer, nullptr);
 

@@ -228,7 +228,7 @@ void TextSelection::OnDraw() {
 				auto destination_rect = calculate_filled_text_rect(drawable_area, TextHorizontalAlignment::LEFT, current_selection->blueprint_option.text.c_str());
 				current_selection->text_texture_and_destination = sdl::TextTextureAndDestination{std::move(textTexture), destination_rect};
 			}
-			sdl::render_texture_with_color_mod(current_selection->text_texture_and_destination->first.Texture(),
+			current_selection->text_texture_and_destination->first.RenderWithColorMod(
 				current_selection->text_texture_and_destination->second, current_selection->blueprint_option.text_color);
 		}
 		// + button
@@ -242,7 +242,7 @@ void TextSelection::OnDraw() {
 				// TODO we may need to move the texture slightly up, check the font properties
 				_plusTexture = {std::move(textTexture), destination_rect};
 			}
-			sdl::render_texture_with_color_mod(_plusTexture->first.Texture(), _plusTexture->second);
+			_plusTexture->first.Render(_plusTexture->second);
 			draw_border(inc_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 		}
 		// - button
@@ -255,7 +255,7 @@ void TextSelection::OnDraw() {
 				// TODO we may need to move the texture slightly up, check the font properties
 				_minusTexture = {std::move(textTexture), destination_rect};
 			}
-			sdl::render_texture_with_color_mod(_minusTexture->first.Texture(), _minusTexture->second);
+			_minusTexture->first.Render(_minusTexture->second);
 			draw_border(dec_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 		}
 	} else if (line_count == 1) {
@@ -285,7 +285,7 @@ void TextSelection::OnDraw() {
 					const auto actualTextRect = calculate_filled_text_rect(textRect, TextHorizontalAlignment::LEFT, textToRender.c_str());
 					current_line.text_texture_and_destination = std::make_pair(std::move(textTexture), actualTextRect);
 				}
-				sdl::render_texture_with_color_mod(current_line.text_texture_and_destination->first.Texture(), current_line.text_texture_and_destination->second, current_line.blueprint_option.text_color);
+				current_line.text_texture_and_destination->first.RenderWithColorMod(current_line.text_texture_and_destination->second, current_line.blueprint_option.text_color);
 			}
 		}
 		// Scroll bar
@@ -303,7 +303,7 @@ void TextSelection::OnDraw() {
 					// TODO we may need to move the texture slightly up, check the font properties
 					_upArrowTexture = {std::move(textTexture), destination_rect};
 				}
-				sdl::render_texture_with_color_mod(_upArrowTexture->first.Texture(), _upArrowTexture->second);
+				_upArrowTexture->first.Render(_upArrowTexture->second);
 				draw_border(up_arrow_rect, vertical_border_width_px(), horizontal_border_width_px());
 			}
 			// Down arrow
@@ -317,7 +317,7 @@ void TextSelection::OnDraw() {
 					// TODO we may need to move the texture slightly up, check the font properties
 					_downArrowTexture = {std::move(textTexture), destination_rect};
 				}
-				sdl::render_texture_with_color_mod(_downArrowTexture->first.Texture(), _downArrowTexture->second);
+				_downArrowTexture->first.Render(_downArrowTexture->second);
 				draw_border(down_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 			}
 		}
