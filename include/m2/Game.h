@@ -33,6 +33,7 @@
 #include <m2/multiplayer/lockstep/ServerComponents.h>
 #include <m2/multiplayer/lockstep/ClientComponents.h>
 #include <m2/thirdparty/video/Cursor.h>
+#include <m2/thirdparty/video/Texture.h>
 
 #define M2_GAME (m2::Game::Instance())
 #define M2_DEFER(f) (M2_GAME.AddDeferredAction(f))
@@ -203,7 +204,7 @@ namespace m2 {
 		void ForEachObjectWithMainSprite(const std::function<bool(m2g::pb::ObjectType, m2g::pb::SpriteType)>& op) const;
 		[[nodiscard]] bool AreEventsBeingHandled() const { return _eventsAreBeingHandled; }
 		[[nodiscard]] VecI MousePositionPx() const { return events.MousePosition(); }
-		sdl::TextureUniquePtr DrawGameToTexture(const VecF& camera_position); // TODO move into Level?
+		thirdparty::video::Texture DrawGameToTexture(const VecF& camera_position); // TODO move into Level?
 		/// This function can be used to check if the mouse is resting on any UI panels. If not, the mouse must be
 		/// inside the game window.
 		[[nodiscard]] bool IsMouseOnAnyUiPanel() const;

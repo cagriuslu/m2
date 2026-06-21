@@ -55,6 +55,16 @@ Texture Texture::CaptureWindow() {
 	return Texture{texture};
 }
 
+void Texture::DrawOnto(const std::function<void()>& draw) {
+	auto* const previousTarget = SDL_GetRenderTarget(M2_GAME.renderer);
+	SDL_SetRenderTarget(M2_GAME.renderer, static_cast<SDL_Texture*>(_texture));
+	draw();
+	SDL_SetRenderTarget(M2_GAME.renderer, previousTarget);
+}
+void Texture::RenderToWindow() const {
+	SDL_RenderCopy(M2_GAME.renderer, static_cast<SDL_Texture*>(_texture), nullptr, nullptr);
+}
+
 Texture::Texture(Texture&& other) noexcept : _texture(other._texture) {
 	other._texture = nullptr;
 }

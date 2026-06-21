@@ -1,6 +1,7 @@
 #pragma once
 #include <m2/video/Color.h>
 #include <m2/math/RectI.h>
+#include <functional>
 
 namespace m2::thirdparty::video {
 	class Texture {
@@ -21,5 +22,10 @@ namespace m2::thirdparty::video {
 		Texture& operator=(Texture&&) noexcept;
 		// Destructor
 		virtual ~Texture();
+
+		// Sets this texture as the render target, runs `draw`, then restores the previous render target.
+		void DrawOnto(const std::function<void()>& draw);
+		// Copies this texture over the whole current render target (the window).
+		void RenderToWindow() const;
 	};
 }

@@ -4,6 +4,8 @@
 #include "UiWidget.h"
 #include "../math/RectI.h"
 #include "../math/RectF.h"
+#include <m2/thirdparty/video/Texture.h>
+#include <optional>
 
 namespace m2 {
 	struct UiPanel {
@@ -32,7 +34,7 @@ namespace m2 {
 		std::unique_ptr<UiPanelBlueprint> _owned_blueprint; // `blueprint` will point here if this object exists
 		PanelPosition _panelPosition;
 		std::optional<VecI> _lastScreenPositionOfCenterIfRelativeToWorld;
-		sdl::TextureUniquePtr _background_texture; // TODO if the screen is resized, background looks bad
+		std::optional<thirdparty::video::Texture> _background_texture; // TODO if the screen is resized, background looks bad
 		std::optional<float> _timeout_s;
 
 		/// Used by KillWithReturnValue()
@@ -50,11 +52,11 @@ namespace m2 {
 		/// Use this constructor for non-blocking operation
 		explicit UiPanel(std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> static_or_unique_blueprint,
 				const PanelPosition& panelPosition = {},
-				sdl::TextureUniquePtr background_texture = {});
+				std::optional<thirdparty::video::Texture> background_texture = std::nullopt);
 		/// Use this constructor for blocking operation
 		static UiAction create_and_run_blocking(std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> static_or_unique_blueprint,
 				const PanelPosition& panelPosition = {},
-				sdl::TextureUniquePtr background_texture = {});
+				std::optional<thirdparty::video::Texture> background_texture = std::nullopt);
 		// Copy not allowed
 		UiPanel(const UiPanel& other) = delete;
 		UiPanel& operator=(const UiPanel& other) = delete;

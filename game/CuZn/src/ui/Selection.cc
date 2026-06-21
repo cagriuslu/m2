@@ -113,7 +113,7 @@ std::optional<bool> ask_for_confirmation_with_cancellation(const std::string& qu
 	return selection;
 }
 
-bool ask_for_confirmation_bottom(const std::string& question, const std::string& accept_text, const std::string& decline_text, m2::sdl::TextureUniquePtr background_texture) {
+bool ask_for_confirmation_bottom(const std::string& question, const std::string& accept_text, const std::string& decline_text, m2::thirdparty::video::Texture background_texture) {
 	auto blueprint = UiPanelBlueprint{
 		.name = "ConfirmationOnBottom",
 		.w = 44, .h = 12,

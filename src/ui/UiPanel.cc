@@ -49,7 +49,7 @@ UiAction UiPanel::run_blocking() {
 
 	// Get a screenshot if background_texture is not already provided
 	if (not _background_texture) {
-		_background_texture = sdl::capture_screen_as_texture();
+		_background_texture = thirdparty::video::Texture::CaptureWindow();
 	}
 
 	// Update initial contents
@@ -119,7 +119,7 @@ UiAction UiPanel::run_blocking() {
 		// Clear screen
 		SDL_SetRenderDrawColor(M2_GAME.renderer, 0, 0, 0, 255);
 		SDL_RenderClear(M2_GAME.renderer);
-		SDL_RenderCopy(M2_GAME.renderer, _background_texture.get(), nullptr, nullptr);
+		_background_texture->RenderToWindow();
 
 		// Draw UI elements
 		Draw();
@@ -133,7 +133,7 @@ UiAction UiPanel::run_blocking() {
 }
 
 UiPanel::UiPanel(std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> static_or_unique_blueprint,
-		const PanelPosition& panelPosition, sdl::TextureUniquePtr background_texture)
+		const PanelPosition& panelPosition, std::optional<thirdparty::video::Texture> background_texture)
 		: _prev_text_input_state(SDL_IsTextInputActive()), _background_texture(std::move(background_texture)) {
 	if (std::holds_alternative<const UiPanelBlueprint*>(static_or_unique_blueprint)) {
 		// Static blueprint
@@ -169,7 +169,7 @@ UiPanel::UiPanel(std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBl
 }
 
 UiAction UiPanel::create_and_run_blocking(std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> static_or_unique_blueprint,
-		const PanelPosition& panelPosition, sdl::TextureUniquePtr background_texture) {
+		const PanelPosition& panelPosition, std::optional<thirdparty::video::Texture> background_texture) {
 	// Check if there is already a blocking UI panel
 	if (not M2_GAME.HasLevel() || M2_LEVEL.IsPaused()) {
 		// Execute panel without pausing the level as it's paused already

@@ -10,12 +10,6 @@ namespace m2::sdl {
 	};
 	using TextureUniquePtr = std::unique_ptr<SDL_Texture, TextureDeleter>;
 
-	/// Creates an empty, drawable texture the same size as the screen
-	TextureUniquePtr create_drawable_texture_of_screen_size();
-
-	/// Captures the current screen contents into a texture
-	TextureUniquePtr capture_screen_as_texture();
-
 	VecI texture_dimensions(const TextureUniquePtr& texture);
 	VecI texture_dimensions(SDL_Texture* texture);
 

@@ -1274,29 +1274,21 @@ void Game::ForEachObjectWithMainSprite(const std::function<bool(m2g::pb::ObjectT
 		}
 	}
 }
-sdl::TextureUniquePtr Game::DrawGameToTexture(const VecF& camera_position) {
+thirdparty::video::Texture Game::DrawGameToTexture(const VecF& camera_position) {
 	// Temporarily change camera position
 	const auto prev_camera_position = GetLevel().GetCamera()->GetPhysique().GetPosition();
 	GetLevel().GetCamera()->GetPhysique().SetPosition(VecFE{camera_position});
 
-	// Create an empty render target
-	auto render_target = sdl::create_drawable_texture_of_screen_size();
-	// Temporarily change render target
-	const auto prev_render_target = SDL_GetRenderTarget(renderer);
-	SDL_SetRenderTarget(renderer, render_target.get());
+	auto render_target = thirdparty::video::Texture::CreateTargetableWindowSized();
+	render_target.DrawOnto([this] {
+		ClearBackBuffer();
+		Draw();
+		DrawLights();
+		DrawEnvelopes();
+	});
 
-	// Draw
-	ClearBackBuffer();
-	Draw();
-	DrawLights();
-	DrawEnvelopes();
-
-	// Reinstate old render target
-	SDL_SetRenderTarget(renderer, prev_render_target);
-
-	// Reinstate old camera position
+	// Restore camera position
 	GetLevel().GetCamera()->GetPhysique().SetPosition(prev_camera_position);
-
 	return render_target;
 }
 bool Game::IsMouseOnAnyUiPanel() const {
