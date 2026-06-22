@@ -134,7 +134,7 @@ UiAction UiPanel::run_blocking() {
 
 UiPanel::UiPanel(std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> static_or_unique_blueprint,
 		const PanelPosition& panelPosition, std::optional<thirdparty::video::Texture> background_texture)
-		: _prev_text_input_state(SDL_IsTextInputActive()), _background_texture(std::move(background_texture)) {
+		: _prev_text_input_state(thirdparty::event::IsTextInputActive()), _background_texture(std::move(background_texture)) {
 	if (std::holds_alternative<const UiPanelBlueprint*>(static_or_unique_blueprint)) {
 		// Static blueprint
 		blueprint = std::get<const UiPanelBlueprint*>(static_or_unique_blueprint);
@@ -148,7 +148,7 @@ UiPanel::UiPanel(std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBl
 	_panelPosition = panelPosition;
 
 	// Previous text input state is saved. We can now disable it to start with a clean slate
-	SDL_StopTextInput();
+	thirdparty::event::StopTextInput();
 
 	// Set timeout if necessary
 	if (blueprint->timeout_s != 0.0f) {
@@ -192,9 +192,9 @@ UiPanel::~UiPanel() {
 	clear_focus();
 
 	if (_prev_text_input_state) {
-		SDL_StartTextInput();
+		thirdparty::event::StartTextInput();
 	} else {
-		SDL_StopTextInput();
+		thirdparty::event::StopTextInput();
 	}
 }
 

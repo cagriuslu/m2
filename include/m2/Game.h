@@ -34,6 +34,7 @@
 #include <m2/multiplayer/lockstep/ClientComponents.h>
 #include <m2/thirdparty/video/Cursor.h>
 #include <m2/thirdparty/video/Texture.h>
+#include <m2/thirdparty/event/Event.h>
 
 #define M2_GAME (m2::Game::Instance())
 #define M2_DEFER(f) (M2_GAME.AddDeferredAction(f))
@@ -110,8 +111,8 @@ namespace m2 {
 		pb::MessageLUT<pb::Card, Card> cards; // TODO make const
 		pb::MessageLUT<pb::Animation, Animation> animations; // TODO make const
 		pb::MessageLUT<pb::Song, Song> songs; // TODO make const
-		std::multimap<m2g::pb::KeyType, SDL_Scancode> keyToScancodeMap; // TODO make const
-		std::map<SDL_Scancode, m2g::pb::KeyType> scancodeToKeyMap; // TODO make const
+		std::multimap<m2g::pb::KeyType, thirdparty::event::Scancode> keyToScancodeMap; // TODO make const
+		std::map<thirdparty::event::Scancode, m2g::pb::KeyType> scancodeToKeyMap; // TODO make const
 		TextLabelCache& GetTextLabelCache() { return *_textLabelCache; }
 		ShapeCache& GetShapeCache() { return *_shapeCache; }
 

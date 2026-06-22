@@ -27,7 +27,7 @@ namespace {
 		if (auto* window = SDL_CreateWindow(gameFriendlyName, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 				minimumWindowDims.x, minimumWindowDims.y, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) {
 			SDL_SetWindowMinimumSize(window, minimumWindowDims.x, minimumWindowDims.y);
-			SDL_StopTextInput(); // Text input begins activated (sometimes)
+			m2::thirdparty::event::StopTextInput(); // Text input begins activated (sometimes)
 			return window;
 		}
 		throw M2_ERROR("SDL error: " + std::string{SDL_GetError()});

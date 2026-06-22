@@ -1,9 +1,11 @@
 #include <m2/Events.h>
 #include <m2/Game.h>
 #include <m2/Log.h>
-#include <m2/thirdparty/video/Mouse.h>
+#include <m2/thirdparty/event/Event.h>
+#include <m2/common/Meta.h>
 
 using namespace m2;
+namespace event = thirdparty::event;
 
 void Events::Clear() { *this = Events(); }
 
@@ -17,147 +19,128 @@ bool Events::Gather() {
 	// postponing the future events to the future frames if a key/button up/down event is encountered.
 
 	bool keyPressed = false, keyReleased = false, mouseMoved = false, mouseButtonPressed = false, mouseButtonReleased = false;
-	SDL_Event e;
-	while (!_quit && SDL_PollEvent(&e) != 0) {
-		switch (e.type) {
-			case SDL_QUIT:
+
+	while (true) {
+		const auto polled = event::PollEvent();
+		if (not polled) { break; }
+
+		const bool postpone = std::visit(m2::overloaded{
+			[&](const event::QuitEvent&) {
 				_quit = true;
-				goto postponeFutureEvents; // Ignore/postpone other events
-			case SDL_WINDOWEVENT:
-				switch (e.window.event) {
-					case SDL_WINDOWEVENT_RESIZED:
-					case SDL_WINDOWEVENT_SIZE_CHANGED:
-						_windowResized = true;
-						break;
-					default: break;
+				return true;
+			},
+			[&](const event::WindowResizeEvent&) {
+				_windowResized = true;
+				return false;
+			},
+			[&](const event::KeyDownEvent& keyDownEvent) {
+				if (keyDownEvent.isRepeat) { return false; }
+				keyPressed = true;
+				if (const auto it = M2_GAME.scancodeToKeyMap.find(keyDownEvent.scancode);
+						it != M2_GAME.scancodeToKeyMap.end()) {
+					++_keysPressed[pb::enum_index(it->second)];
 				}
-				break;
-			case SDL_KEYDOWN:
-				if (e.key.repeat == 0) {
-					keyPressed = true;
-					if (const auto it = M2_GAME.scancodeToKeyMap.find(e.key.keysym.scancode);
-							it != M2_GAME.scancodeToKeyMap.end()) {
-						const auto key = it->second;
-						const auto keyIndex = pb::enum_index(key);
-						++_keysPressed[keyIndex];
-					}
-					goto postponeFutureEvents; // Read the note above the while loop
+				return true;
+			},
+			[&](const event::KeyUpEvent& keyUpEvent) {
+				if (keyUpEvent.isRepeat) { return false; }
+				keyReleased = true;
+				if (const auto it = M2_GAME.scancodeToKeyMap.find(keyUpEvent.scancode);
+						it != M2_GAME.scancodeToKeyMap.end()) {
+					++_keysReleased[pb::enum_index(it->second)];
 				}
-				break;
-			case SDL_KEYUP:
-				if (e.key.repeat == 0) {
-					keyReleased = true;
-					if (const auto it = M2_GAME.scancodeToKeyMap.find(e.key.keysym.scancode); it != M2_GAME.scancodeToKeyMap.end()) {
-						const auto key = it->second;
-						const auto keyIndex = pb::enum_index(key);
-						++_keysReleased[keyIndex];
-					}
-					goto postponeFutureEvents; // Read the note above the while loop
-				}
-				break;
-			case SDL_MOUSEMOTION:
+				return true;
+			},
+			[&](const event::MouseMotionEvent& mouseMotionEvent) {
 				mouseMoved = true;
-				// Store the latest mouse position again
-				_mousePositionPx.x = e.motion.x;
-				_mousePositionPx.y = e.motion.y;
-				break;
-			case SDL_MOUSEBUTTONDOWN:
-				if (const auto mouseButton = thirdparty::video::SystemButtonToMouseButton(e.button.button)) {
-					const auto mousePositionPx = VecI{e.button.x, e.button.y};
-					mouseButtonPressed = true;
-					_mouseActions[U(*mouseButton)] = MouseAction{
-						.type = MouseActionType::PRESSED,
-						.positionPx = mousePositionPx
-					};
-					// It is possible that the button was pressed after querying mouse state, but before polling this event.
-					// If button down was pressed, also make sure mouse_buttons_down reflects that.
-					_downButtons[U(*mouseButton)] = true;
-					if (M2_GAME.HasLevel()) {
-						if (auto* primarySelection = M2_LEVEL.GetPrimarySelection(); primarySelection && PeekMouseButtonPress(MouseButton::PRIMARY, primarySelection->ScreenBoundaryPx())) {
-							primarySelection->SetFirstAndClearSecondPositionM(M2_LEVEL.GetWorldPositionOfPixel(mousePositionPx));
-							if (auto* secondarySelection = M2_LEVEL.GetSecondarySelection()) {
-								secondarySelection->Reset();
-							}
-						}
-						if (auto* secondarySelection = M2_LEVEL.GetSecondarySelection(); secondarySelection && PeekMouseButtonPress(MouseButton::SECONDARY, secondarySelection->ScreenBoundaryPx())) {
-							secondarySelection->SetFirstAndClearSecondPositionM(M2_LEVEL.GetWorldPositionOfPixel(mousePositionPx));
-							if (auto* primarySelection = M2_LEVEL.GetPrimarySelection()) {
-								primarySelection->Reset();
-							}
+				_mousePositionPx = mouseMotionEvent.positionPx;
+				return false;
+			},
+			[&](const event::MouseButtonDownEvent& mouseButtonDownEvent) {
+				const auto mousePositionPx = mouseButtonDownEvent.positionPx;
+				mouseButtonPressed = true;
+				_mouseActions[U(mouseButtonDownEvent.button)] = MouseAction{
+					.type = MouseActionType::PRESSED,
+					.positionPx = mousePositionPx
+				};
+				// It is possible that the button was pressed after querying mouse state, but before polling this event.
+				// If button down was pressed, also make sure mouse_buttons_down reflects that.
+				_downButtons[U(mouseButtonDownEvent.button)] = true;
+				if (M2_GAME.HasLevel()) {
+					if (auto* primarySelection = M2_LEVEL.GetPrimarySelection(); primarySelection && PeekMouseButtonPress(MouseButton::PRIMARY, primarySelection->ScreenBoundaryPx())) {
+						primarySelection->SetFirstAndClearSecondPositionM(M2_LEVEL.GetWorldPositionOfPixel(mousePositionPx));
+						if (auto* secondarySelection = M2_LEVEL.GetSecondarySelection()) {
+							secondarySelection->Reset();
 						}
 					}
-					goto postponeFutureEvents; // Read the note above the while loop
+					if (auto* secondarySelection = M2_LEVEL.GetSecondarySelection(); secondarySelection && PeekMouseButtonPress(MouseButton::SECONDARY, secondarySelection->ScreenBoundaryPx())) {
+						secondarySelection->SetFirstAndClearSecondPositionM(M2_LEVEL.GetWorldPositionOfPixel(mousePositionPx));
+						if (auto* primarySelection = M2_LEVEL.GetPrimarySelection()) {
+							primarySelection->Reset();
+						}
+					}
 				}
-				break;
-			case SDL_MOUSEBUTTONUP:
-				if (const auto mouseButton = thirdparty::video::SystemButtonToMouseButton(e.button.button)) {
-					const auto mousePositionPx = VecI{e.button.x, e.button.y};
-					mouseButtonReleased = true;
-					_mouseActions[U(*mouseButton)] = MouseAction{
-						.type = MouseActionType::RELEASED,
-						.positionPx = mousePositionPx
-					};
-					// It is possible that the button was released after querying mouse state, but before polling this event.
-					// If button down was released, also make sure mouse_buttons_down reflects that.
-					_downButtons[U(*mouseButton)] = false;
-					if (M2_GAME.HasLevel()) {
-						if (auto* primarySelection = M2_LEVEL.GetPrimarySelection(); primarySelection && PeekMouseButtonRelease(MouseButton::PRIMARY, primarySelection->ScreenBoundaryPx())) {
-							primarySelection->SetSecondPositionIfFirstSetM(M2_LEVEL.GetWorldPositionOfPixel(mousePositionPx));
-							if (auto* secondarySelection = M2_LEVEL.GetSecondarySelection()) {
-								secondarySelection->Reset();
-							}
-						}
-						if (auto* secondarySelection = M2_LEVEL.GetSecondarySelection(); secondarySelection && PeekMouseButtonRelease(MouseButton::SECONDARY, secondarySelection->ScreenBoundaryPx())) {
-							secondarySelection->SetSecondPositionIfFirstSetM(M2_LEVEL.GetWorldPositionOfPixel(mousePositionPx));
-							if (auto* primarySelection = M2_LEVEL.GetPrimarySelection()) {
-								primarySelection->Reset();
-							}
+				return true;
+			},
+			[&](const event::MouseButtonUpEvent& mouseButtonUpEvent) {
+				const auto mousePositionPx = mouseButtonUpEvent.positionPx;
+				mouseButtonReleased = true;
+				_mouseActions[U(mouseButtonUpEvent.button)] = MouseAction{
+					.type = MouseActionType::RELEASED,
+					.positionPx = mousePositionPx
+				};
+				// It is possible that the button was released after querying mouse state, but before polling this event.
+				// If button down was released, also make sure mouse_buttons_down reflects that.
+				_downButtons[U(mouseButtonUpEvent.button)] = false;
+				if (M2_GAME.HasLevel()) {
+					if (auto* primarySelection = M2_LEVEL.GetPrimarySelection(); primarySelection && PeekMouseButtonRelease(MouseButton::PRIMARY, primarySelection->ScreenBoundaryPx())) {
+						primarySelection->SetSecondPositionIfFirstSetM(M2_LEVEL.GetWorldPositionOfPixel(mousePositionPx));
+						if (auto* secondarySelection = M2_LEVEL.GetSecondarySelection()) {
+							secondarySelection->Reset();
 						}
 					}
-					goto postponeFutureEvents; // Read the note above the while loop
+					if (auto* secondarySelection = M2_LEVEL.GetSecondarySelection(); secondarySelection && PeekMouseButtonRelease(MouseButton::SECONDARY, secondarySelection->ScreenBoundaryPx())) {
+						secondarySelection->SetSecondPositionIfFirstSetM(M2_LEVEL.GetWorldPositionOfPixel(mousePositionPx));
+						if (auto* primarySelection = M2_LEVEL.GetPrimarySelection()) {
+							primarySelection->Reset();
+						}
+					}
 				}
-				break;
-			case SDL_MOUSEWHEEL:
-				_verticalScrollCount += e.wheel.y;
-				_horizontalScrollCount += e.wheel.x;
-				break;
-			case SDL_TEXTINPUT:
-				if (SDL_IsTextInputActive()) {
-					for (const char c : e.text.text) {
-						if (c != 0) {
-							_textInput << c;
-						} else {
-							break;
-						}
-					}
+				return true;
+			},
+			[&](const event::MouseWheelEvent& mouseWheelEvent) {
+				_verticalScrollCount += mouseWheelEvent.vertical;
+				_horizontalScrollCount += mouseWheelEvent.horizontal;
+				return false;
+			},
+			[&](const event::TextInputEvent& textInputEvent) {
+				if (event::IsTextInputActive()) {
+					_textInput << textInputEvent.text;
 				} else {
 					_textInput = std::stringstream();
 				}
-				break;
-			default:
-				break;
-		}
-	}
-	postponeFutureEvents:
+				return false;
+			},
+		}, *polled);
 
-	int keyCount = 0;
-	const uint8_t* raw_keyboard_state = SDL_GetKeyboardState(&keyCount);
+		if (postpone) { break; }
+	}
+
 	for (int i = 0; i < pb::enum_value_count<m2g::pb::KeyType>(); i++) {
-		// Reset state
 		_downKeys[i] = false;
 
 		const auto key = pb::enum_value<m2g::pb::KeyType>(i);
 		auto [lower, upper] = M2_GAME.keyToScancodeMap.equal_range(key);
 		for (auto it = lower; it != upper; ++it) {
-			_downKeys[i] = _downKeys[i] || (it->second != SDL_SCANCODE_UNKNOWN && raw_keyboard_state[it->second]);
+			_downKeys[i] = _downKeys[i] || event::IsScancodeDown(it->second);
 		}
 	}
 
-	const uint32_t mouseStateBitmask = SDL_GetMouseState(&_mousePositionPx.x, &_mousePositionPx.y);
+	_mousePositionPx = event::GetMousePosition();
 	_mousePositionM = M2_GAME.HasLevel() ? M2_LEVEL.GetWorldPositionOfPixel(_mousePositionPx) : VecF{};
-	_downButtons[U(MouseButton::PRIMARY)] = mouseStateBitmask & SDL_BUTTON(SDL_BUTTON_LEFT);
-	_downButtons[U(MouseButton::SECONDARY)] = mouseStateBitmask & SDL_BUTTON(SDL_BUTTON_RIGHT);
-	_downButtons[U(MouseButton::MIDDLE)] = mouseStateBitmask & SDL_BUTTON(SDL_BUTTON_MIDDLE);
+	_downButtons[U(MouseButton::PRIMARY)]   = event::IsMouseButtonDown(MouseButton::PRIMARY);
+	_downButtons[U(MouseButton::SECONDARY)] = event::IsMouseButtonDown(MouseButton::SECONDARY);
+	_downButtons[U(MouseButton::MIDDLE)]    = event::IsMouseButtonDown(MouseButton::MIDDLE);
 
 	return _quit || _windowResized || keyPressed || keyReleased || mouseMoved || mouseButtonPressed
 			|| mouseButtonReleased || _verticalScrollCount || _horizontalScrollCount
