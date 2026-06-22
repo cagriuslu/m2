@@ -334,7 +334,7 @@ m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object&
 
 void m2g::Proxy::OnPostStep(const m2::Stopwatch::Duration&) {
 	// On first run or enough time passed
-	if (const auto now = m2::sdl::get_ticks(); not _lastSimulationRunTicks
+	if (const auto now = m2::thirdparty::video::GetTicks(); not _lastSimulationRunTicks
 			|| *_lastSimulationRunTicks + pinball::SIMULATION_TICK_PERIOD_TICKS <= now) {
 		// Init simulation state on first run
 		if (not _lastSimulationState) {

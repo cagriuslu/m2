@@ -1,7 +1,7 @@
 #include <m2/ui/UiPanel.h>
 #include <m2/Game.h>
 #include <m2/Log.h>
-#include <m2/sdl/Detail.h>
+#include <m2/thirdparty/video/Detail.h>
 #include <m2/ui/Console.h>
 #include <m2/ui/UiPanelBlueprint.h>
 #include <m2/ui/UiWidgetBlueprint.h>
@@ -59,9 +59,9 @@ UiAction UiPanel::run_blocking() {
 	}
 
 	Events events;
-	auto last_loop_ticks = sdl::get_ticks();
+	auto last_loop_ticks = thirdparty::video::GetTicks();
 	while (true) {
-		auto current_ticks = sdl::get_ticks();
+		auto current_ticks = thirdparty::video::GetTicks();
 		auto delta_time_s = ToFloat(current_ticks - last_loop_ticks) / 1000.0f;
 		last_loop_ticks = current_ticks;
 

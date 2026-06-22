@@ -2,7 +2,7 @@
 #include "turnbased/MessagePasser.h"
 #include "../network/Interface.h"
 #include <m2/network/Types.h>
-#include "../sdl/Detail.h"
+#include <m2/thirdparty/video/Detail.h>
 #include <variant>
 
 namespace m2::network {
@@ -24,14 +24,14 @@ namespace m2::network {
 		// Client has disconnected due to network errors and may reconnect if it presents the same ready token
 		struct HonorablyDisconnected {
 			uint64_t expected_ready_token; // Same as Ready::ready_token
-			sdl::ticks_t disconnected_at;
+			thirdparty::video::Ticks disconnected_at;
 		};
 		// A client has reconnected but hasn't provided the correct ready token yet
 		struct ReconnectedUntrusted {
 			multiplayer::turnbased::MessagePasser socket_manager;
 			std::queue<pb::TurnBasedNetworkMessage> incoming_queue{};
 			uint64_t expected_ready_token; // Same as Ready::ready_token
-			sdl::ticks_t reconnected_at;
+			thirdparty::video::Ticks reconnected_at;
 		};
 		// Client has misbehaved
 		struct Misbehaved {};
@@ -58,7 +58,7 @@ namespace m2::network {
 		[[nodiscard]] bool is_disconnected() const;
 		[[nodiscard]] bool is_untrusted() const;
 		[[nodiscard]] bool is_disconnected_or_untrusted() const;
-		[[nodiscard]] std::optional<sdl::ticks_t> disconnected_or_untrusted_since() const;
+		[[nodiscard]] std::optional<thirdparty::video::Ticks> disconnected_or_untrusted_since() const;
 		[[nodiscard]] bool has_misbehaved() const;
 
 		// Modifiers

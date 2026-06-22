@@ -223,7 +223,7 @@ void m2::TurnBasedServerActor::ProcessReceivedMessages(MessageBox<TurnBasedServe
 void m2::TurnBasedServerActor::CheckDisconnectedClients(MessageBox<TurnBasedServerActorOutput>& outbox) {
 	for (auto i = 0; i < I(_clients.size()); ++i) {
 		if (auto disconnected_since = _clients[i].disconnected_or_untrusted_since();
-			disconnected_since && *disconnected_since + CLIENT_RECONNECT_TIMEOUT_MS < sdl::get_ticks()) {
+			disconnected_since && *disconnected_since + CLIENT_RECONNECT_TIMEOUT_MS < thirdparty::video::GetTicks()) {
 			HandleDisconnectedClient(outbox, i);
 		}
 	}

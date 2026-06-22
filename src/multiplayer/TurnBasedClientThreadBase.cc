@@ -152,7 +152,7 @@ void m2::network::detail::TurnBasedClientThreadBase::base_client_thread_func(Tur
 		return thread_manager->_received_server_update || thread_manager->_received_server_command;
 	};
 
-	std::variant<std::monostate, multiplayer::turnbased::MessagePasser, sdl::ticks_t> socket_manager_or_ticks_disconnected_at;
+	std::variant<std::monostate, multiplayer::turnbased::MessagePasser, thirdparty::video::Ticks> socket_manager_or_ticks_disconnected_at;
 	std::optional<PingBroadcastThread> ping_broadcast_thread;
 	while (locked_should_continue_running(thread_manager)) {
 		if (auto state = thread_manager->locked_get_client_state();
@@ -164,10 +164,10 @@ void m2::network::detail::TurnBasedClientThreadBase::base_client_thread_func(Tur
 
 			// Check if we should give up trying to reconnect
 			if (state == pb::CLIENT_RECONNECTING) {
-				if (not std::holds_alternative<sdl::ticks_t>(socket_manager_or_ticks_disconnected_at)) {
+				if (not std::holds_alternative<thirdparty::video::Ticks>(socket_manager_or_ticks_disconnected_at)) {
 					throw M2_ERROR("Expected ticks disconnected at");
 				}
-				if (std::get<sdl::ticks_t>(socket_manager_or_ticks_disconnected_at) + 30000 < sdl::get_ticks()) {
+				if (std::get<thirdparty::video::Ticks>(socket_manager_or_ticks_disconnected_at) + 30000 < thirdparty::video::GetTicks()) {
 					LOG_WARN("Time out while trying to reconnect to server");
 					thread_manager->unlocked_set_state(pb::CLIENT_RECONNECTION_TIMEOUT_QUIT);
 					continue;
@@ -338,7 +338,7 @@ void m2::network::detail::TurnBasedClientThreadBase::base_client_thread_func(Tur
 				auto read_result = socket_manager.read_incoming_data(thread_manager->_incoming_queue);
 				if (not read_result) {
 					LOG_WARN("Error occurred while reading, closing connection to server", read_result.error());
-					socket_manager_or_ticks_disconnected_at.emplace<sdl::ticks_t>(sdl::get_ticks());
+					socket_manager_or_ticks_disconnected_at.emplace<thirdparty::video::Ticks>(thirdparty::video::GetTicks());
 					thread_manager->unlocked_set_state(pb::CLIENT_RECONNECTING);
 					continue;
 				} else if (*read_result != multiplayer::turnbased::MessagePasser::ReadResult::MESSAGE_RECEIVED && *read_result != multiplayer::turnbased::MessagePasser::ReadResult::INCOMPLETE_MESSAGE_RECEIVED) {
@@ -353,7 +353,7 @@ void m2::network::detail::TurnBasedClientThreadBase::base_client_thread_func(Tur
 				auto send_result = socket_manager.send_outgoing_data(thread_manager->_outgoing_queue);
 				if (not send_result) {
 					LOG_WARN("Error occurred while writing, closing connection to server", send_result.error());
-					socket_manager_or_ticks_disconnected_at.emplace<sdl::ticks_t>(sdl::get_ticks());
+					socket_manager_or_ticks_disconnected_at.emplace<thirdparty::video::Ticks>(thirdparty::video::GetTicks());
 					thread_manager->unlocked_set_state(pb::CLIENT_RECONNECTING);
 					continue;
 				} else if (*send_result != multiplayer::turnbased::MessagePasser::SendResult::OK) {

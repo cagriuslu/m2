@@ -1,11 +1,11 @@
 #pragma once
 #include <Simulation.pb.h>
-#include <m2/sdl/Detail.h>
+#include <m2/thirdparty/video/Detail.h>
 #include <m2/Proxy.h>
 
 namespace m2g {
 	class Proxy : public m2::Proxy {
-		std::optional<m2::sdl::ticks_t> _lastSimulationRunTicks;
+		std::optional<m2::thirdparty::video::Ticks> _lastSimulationRunTicks;
 		std::optional<pinball::pb::SimulationState> _lastSimulationState;
 		pinball::pb::SimulationInputs _simulationInputs;
 

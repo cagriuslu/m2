@@ -4,7 +4,6 @@
 #include <m2/Object.h>
 #include <m2/video/Sprite.h>
 #include <m2/bulksheeteditor/Ui.h>
-#include <m2/sdl/Detail.h>
 #include <m2/sheeteditor/Ui.h>
 #include <m2/component/Graphic.h>
 #include <m2/ui/UiAction.h>

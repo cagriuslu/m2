@@ -33,11 +33,11 @@ bool m2::network::TurnBasedClientConnectionManager::is_disconnected_or_untrusted
 		[](auto&) { return false; },
 	}, _state);
 }
-std::optional<m2::sdl::ticks_t> m2::network::TurnBasedClientConnectionManager::disconnected_or_untrusted_since() const {
+std::optional<m2::thirdparty::video::Ticks> m2::network::TurnBasedClientConnectionManager::disconnected_or_untrusted_since() const {
 	return std::visit(overloaded{
-		[](HonorablyDisconnected& s) -> std::optional<sdl::ticks_t> { return s.disconnected_at; },
-		[](ReconnectedUntrusted& s) -> std::optional<sdl::ticks_t> { return s.reconnected_at; },
-		[](auto&) -> std::optional<sdl::ticks_t> { return std::nullopt; },
+		[](HonorablyDisconnected& s) -> std::optional<thirdparty::video::Ticks> { return s.disconnected_at; },
+		[](ReconnectedUntrusted& s) -> std::optional<thirdparty::video::Ticks> { return s.reconnected_at; },
+		[](auto&) -> std::optional<thirdparty::video::Ticks> { return std::nullopt; },
 	}, _state);
 }
 bool m2::network::TurnBasedClientConnectionManager::has_misbehaved() const {
@@ -71,7 +71,7 @@ void m2::network::TurnBasedClientConnectionManager::honorably_disconnect() {
 		[](const ReconnectedUntrusted& s) -> uint64_t { return s.expected_ready_token; },
 		[](auto&) -> uint64_t { return 0; },
 	}, _state);
-	_state = HonorablyDisconnected{ ready_token, sdl::get_ticks() };
+	_state = HonorablyDisconnected{ ready_token, thirdparty::video::GetTicks() };
 }
 
 
@@ -84,7 +84,7 @@ void m2::network::TurnBasedClientConnectionManager::untrusted_client_reconnected
 		_state = ReconnectedUntrusted{
 			.socket_manager = multiplayer::turnbased::MessagePasser{std::move(socket), _index},
 			.expected_ready_token = readyToken,
-			.reconnected_at = sdl::get_ticks()
+			.reconnected_at = thirdparty::video::GetTicks()
 		};
 	}
 	throw M2_ERROR("Unexpected new socket");

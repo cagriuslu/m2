@@ -1,1 +1,0 @@
-Abstract the types and move files into thirdparty/.../sdl

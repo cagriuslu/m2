@@ -3,7 +3,7 @@
 #include <m2/Log.h>
 #include <m2/Game.h>
 #include <string>
-#include <m2/sdl/Detail.h>
+#include <m2/thirdparty/video/Detail.h>
 
 using namespace m2::multiplayer::turnbased;
 
@@ -129,8 +129,8 @@ void MessagePasser::flush(std::queue<pb::TurnBasedNetworkMessage>& read_from, co
 		return;
 	}
 
-	const auto start_ticks = sdl::get_ticks();
-	while ((sdl::get_ticks() - start_ticks < timeout_ms) && has_anything_to_send()) {
+	const auto start_ticks = thirdparty::video::GetTicks();
+	while ((thirdparty::video::GetTicks() - start_ticks < timeout_ms) && has_anything_to_send()) {
 		if (auto send_result = send_outgoing_data(read_from); not send_result || send_result != SendResult::OK) {
 			LOG_WARN("Error while flushing", send_result.error());
 			break;
