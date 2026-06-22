@@ -1,7 +1,7 @@
 #pragma once
 #include "Song.h"
 #include <m2/containers/Pool.h>
-#include <SDL.h>
+#include <m2/thirdparty/audio/Device.h>
 #include <mutex>
 
 namespace m2 {
@@ -26,13 +26,11 @@ namespace m2 {
 		};
 
 	public:
-		SDL_AudioDeviceID sdlAudioDeviceId{};
-		SDL_AudioSpec sdlAudioSpec{};
+		thirdparty::audio::Device device;
 		Pool<Playback, 32> playbacks;
 		std::mutex playbacksMutex;
 
 		AudioManager();
-		~AudioManager();
 
 		PlaybackId Play(const Song* song, PlayPolicy policy, float volume = 1.0f);
 		void Stop(PlaybackId id);
