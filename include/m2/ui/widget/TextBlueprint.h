@@ -5,7 +5,7 @@
 #include <variant>
 
 #include "../UiAction.h"
-#include "../Detail.h"
+#include <m2/video/TextAlignment.h>
 #include "../../video/Color.h"
 
 namespace m2::widget {

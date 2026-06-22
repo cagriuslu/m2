@@ -7,8 +7,8 @@ using namespace m2::widget;
 
 ImageSelection::ImageSelection(UiPanel* parent, const UiWidgetBlueprint* blueprint)
     : UiWidget(parent, blueprint),
-      _plusTexture(m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "+"))),
-      _minusTexture(m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "-"))) {
+      _plusTexture(m2MoveOrThrowError(thirdparty::video::TextTexture::CreateNoWrap(M2_GAME.font, M2G_PROXY.default_font_size, "+"))),
+      _minusTexture(m2MoveOrThrowError(thirdparty::video::TextTexture::CreateNoWrap(M2_GAME.font, M2G_PROXY.default_font_size, "-"))) {
 	select(0);
 	if (VariantBlueprint().onCreate) {
 		VariantBlueprint().onCreate(*this);

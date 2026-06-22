@@ -56,8 +56,23 @@ Texture Texture::CaptureWindow() {
 	return Texture{texture};
 }
 Texture Texture::AdoptRawTexture(void* rawSdlTexture) { return Texture{rawSdlTexture}; }
-Texture Texture::CreateFromSurface(void* sdlRenderer, void* sdlSurface) {
-	auto* texture = SDL_CreateTextureFromSurface(static_cast<SDL_Renderer*>(sdlRenderer), static_cast<SDL_Surface*>(sdlSurface));
+Texture Texture::CreateFromSurface(void* sdlRenderer, void* sdlSurface, const bool linearFilter) {
+	SDL_Texture* texture{};
+	if (linearFilter) {
+		const char* previousHintPtr = SDL_GetHint(SDL_HINT_RENDER_SCALE_QUALITY);
+		const auto previousHint = previousHintPtr ? std::string{previousHintPtr} : std::string{};
+		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+		texture = SDL_CreateTextureFromSurface(static_cast<SDL_Renderer*>(sdlRenderer), static_cast<SDL_Surface*>(sdlSurface));
+		const char* errorPtr = texture ? nullptr : SDL_GetError();
+		if (not previousHint.empty()) {
+			SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, previousHint.c_str());
+		}
+		if (errorPtr) {
+			SDL_SetError("%s", errorPtr);
+		}
+	} else {
+		texture = SDL_CreateTextureFromSurface(static_cast<SDL_Renderer*>(sdlRenderer), static_cast<SDL_Surface*>(sdlSurface));
+	}
 	if (not texture) {
 		throw M2_ERROR("Unable to create texture from surface: " + std::string{SDL_GetError()});
 	}

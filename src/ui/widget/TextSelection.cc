@@ -224,9 +224,9 @@ void TextSelection::OnDraw() {
 				// Render the text
 				auto drawable_area = Rect().TrimRight(Rect().h / 2);
 				auto fontSize = calculate_filled_text_rect(drawable_area, TextHorizontalAlignment::LEFT, current_selection->blueprint_option.text.c_str()).h;
-				auto textTexture = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, fontSize, current_selection->blueprint_option.text));
+				auto textTexture = m2MoveOrThrowError(thirdparty::video::TextTexture::CreateNoWrap(M2_GAME.font, fontSize, current_selection->blueprint_option.text));
 				auto destination_rect = calculate_filled_text_rect(drawable_area, TextHorizontalAlignment::LEFT, current_selection->blueprint_option.text.c_str());
-				current_selection->text_texture_and_destination = sdl::TextTextureAndDestination{std::move(textTexture), destination_rect};
+				current_selection->text_texture_and_destination = thirdparty::video::TextTextureAndDestination{std::move(textTexture), destination_rect};
 			}
 			current_selection->text_texture_and_destination->first.RenderWithColorMod(
 				current_selection->text_texture_and_destination->second, current_selection->blueprint_option.text_color);
@@ -237,7 +237,7 @@ void TextSelection::OnDraw() {
 			auto inc_button_rect = buttons_rect.TrimBottom(buttons_rect.h / 2);
 			if (not _plusTexture) {
 				auto fontSize = inc_button_rect.h;
-				auto textTexture = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, fontSize, "+"));
+				auto textTexture = m2MoveOrThrowError(thirdparty::video::TextTexture::CreateNoWrap(M2_GAME.font, fontSize, "+"));
 				auto destination_rect = RectI::CreateCenteredAround(inc_button_rect.GetCenterPoint(), textTexture.Dimensions().x, textTexture.Dimensions().y);
 				// TODO we may need to move the texture slightly up, check the font properties
 				_plusTexture = {std::move(textTexture), destination_rect};
@@ -250,7 +250,7 @@ void TextSelection::OnDraw() {
 			auto dec_button_rect = buttons_rect.TrimTop(buttons_rect.h / 2);
 			if (not _minusTexture) {
 				auto fontSize = dec_button_rect.h;
-				auto textTexture = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, fontSize, "-"));
+				auto textTexture = m2MoveOrThrowError(thirdparty::video::TextTexture::CreateNoWrap(M2_GAME.font, fontSize, "-"));
 				auto destination_rect = RectI::CreateCenteredAround(dec_button_rect.GetCenterPoint(), textTexture.Dimensions().x, textTexture.Dimensions().y);
 				// TODO we may need to move the texture slightly up, check the font properties
 				_minusTexture = {std::move(textTexture), destination_rect};
@@ -280,7 +280,7 @@ void TextSelection::OnDraw() {
 					const auto croppedGlyphCount = thirdparty::video::CalculateMaxRenderedUtf8Length(M2_GAME.font, fontSize, current_line.blueprint_option.text.c_str(), textRect.w);
 					const auto uncroppedGlyphCount = I(Utf8CodepointCount(current_line.blueprint_option.text.c_str()));
 					const auto textToRender = uncroppedGlyphCount <= croppedGlyphCount ? current_line.blueprint_option.text : current_line.blueprint_option.text.substr(0, croppedGlyphCount - 1) + "…";
-					auto textTexture = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, fontSize, textToRender));
+					auto textTexture = m2MoveOrThrowError(thirdparty::video::TextTexture::CreateNoWrap(M2_GAME.font, fontSize, textToRender));
 					// Calculate the destination. It might be narrower than the available rect
 					const auto actualTextRect = calculate_filled_text_rect(textRect, TextHorizontalAlignment::LEFT, textToRender.c_str());
 					current_line.text_texture_and_destination = std::make_pair(std::move(textTexture), actualTextRect);
@@ -298,7 +298,7 @@ void TextSelection::OnDraw() {
 				auto up_arrow_rect = scroll_bar_rect.GetRow(VariantBlueprint().line_count, 0);
 				if (not _upArrowTexture) {
 					auto fontSize = up_arrow_rect.h;
-					auto textTexture = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, fontSize, "-"));
+					auto textTexture = m2MoveOrThrowError(thirdparty::video::TextTexture::CreateNoWrap(M2_GAME.font, fontSize, "-"));
 					auto destination_rect = RectI::CreateCenteredAround(up_arrow_rect.GetCenterPoint(), textTexture.Dimensions().x, textTexture.Dimensions().y);
 					// TODO we may need to move the texture slightly up, check the font properties
 					_upArrowTexture = {std::move(textTexture), destination_rect};
@@ -312,7 +312,7 @@ void TextSelection::OnDraw() {
 					VariantBlueprint().line_count - 1);
 				if (not _downArrowTexture) {
 					auto fontSize = down_button_rect.h;
-					auto textTexture = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, fontSize, "+"));
+					auto textTexture = m2MoveOrThrowError(thirdparty::video::TextTexture::CreateNoWrap(M2_GAME.font, fontSize, "+"));
 					auto destination_rect = RectI::CreateCenteredAround(down_button_rect.GetCenterPoint(), textTexture.Dimensions().x, textTexture.Dimensions().y);
 					// TODO we may need to move the texture slightly up, check the font properties
 					_downArrowTexture = {std::move(textTexture), destination_rect};

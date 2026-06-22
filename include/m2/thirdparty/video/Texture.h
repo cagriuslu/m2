@@ -17,7 +17,7 @@ namespace m2::thirdparty::video {
 		static Texture CaptureWindow();
 		static Texture CreateFromImageFile(const std::filesystem::path& imageFilePath);
 		static Texture AdoptRawTexture(void* rawSdlTexture);
-		static Texture CreateFromSurface(void* sdlRenderer, void* sdlSurface);
+		static Texture CreateFromSurface(void* sdlRenderer, void* sdlSurface, bool linearFilter = false);
 
 		/// Copy not allowed
 		Texture(const Texture& other) = delete;

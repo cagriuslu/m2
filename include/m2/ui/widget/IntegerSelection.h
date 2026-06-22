@@ -1,11 +1,11 @@
 #pragma once
 #include "../UiWidget.h"
-#include <m2/sdl/TextTexture.h>
+#include <m2/thirdparty/video/TextTexture.h>
 
 namespace m2::widget {
 	class IntegerSelection : public UiWidget {
 		int _value;
-		sdl::TextTextureAndDestination _textTexture, _plusTexture, _minusTexture;
+		thirdparty::video::TextTextureAndDestination _textTexture, _plusTexture, _minusTexture;
 		bool _inc_depressed{};
 		bool _dec_depressed{};
 

@@ -1,11 +1,11 @@
 #pragma once
 #include "AbstractButton.h"
-#include <m2/sdl/TextTexture.h>
+#include <m2/thirdparty/video/TextTexture.h>
 
 namespace m2::widget {
 	class CheckboxWithText : public AbstractButton {
 		bool _state;
-		sdl::TextTexture _textTexture;
+		thirdparty::video::TextTexture _textTexture;
 
 	public:
 		explicit CheckboxWithText(UiPanel* parent, const UiWidgetBlueprint* blueprint);

@@ -1,6 +1,6 @@
 #pragma once
 #include "AbstractButton.h"
-#include <m2/sdl/TextTexture.h>
+#include <m2/thirdparty/video/TextTexture.h>
 
 namespace m2::widget {
 	class Text : public AbstractButton {
@@ -8,7 +8,7 @@ namespace m2::widget {
 		/// Instead of generating colored font texture, generate white text and color the text before rendering.
 		RGB _current_color;
 		/// During initialization, the destination cannot yet be determined.
-		std::optional<sdl::TextTextureAndDestination> _text_texture_and_destination_cache;
+		std::optional<thirdparty::video::TextTextureAndDestination> _text_texture_and_destination_cache;
 
 	public:
 		explicit Text(UiPanel* parent, const UiWidgetBlueprint* blueprint);

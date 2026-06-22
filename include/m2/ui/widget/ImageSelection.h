@@ -2,11 +2,11 @@
 #include "../UiAction.h"
 #include "../../Events.h"
 #include "../UiWidget.h"
-#include "../../sdl/TextTexture.h"
+#include <m2/thirdparty/video/TextTexture.h>
 
 namespace m2::widget {
 	class ImageSelection : public UiWidget {
-		sdl::TextTexture _plusTexture, _minusTexture;
+		thirdparty::video::TextTexture _plusTexture, _minusTexture;
 		unsigned _selection{};
 		bool _inc_depressed{};
 		bool _dec_depressed{};

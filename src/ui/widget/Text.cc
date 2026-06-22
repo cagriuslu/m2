@@ -1,5 +1,5 @@
 #include <m2/Game.h>
-#include <m2/sdl/TextTexture.h>
+#include <m2/thirdparty/video/TextTexture.h>
 #include <m2/ui/widget/Text.h>
 #include <m2/Log.h>
 
@@ -38,12 +38,12 @@ void Text::OnDraw() {
 				? roundDownToEven(vertical_pixels_per_unit() * VariantBlueprint().wrapped_font_size_in_units)
 				: calculate_filled_text_rect(drawable_area(), VariantBlueprint().horizontal_alignment, _current_text.c_str()).h;
 		auto textTexture = VariantBlueprint().wrapped_font_size_in_units != 0.0f
-				? m2MoveOrThrowError(sdl::TextTexture::CreateWrapped(M2_GAME.renderer, M2_GAME.font, fontSize, drawable_area().w, VariantBlueprint().horizontal_alignment, _current_text))
-				: m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, _current_text));
+				? m2MoveOrThrowError(thirdparty::video::TextTexture::CreateWrapped(M2_GAME.font, fontSize, drawable_area().w, VariantBlueprint().horizontal_alignment, _current_text))
+				: m2MoveOrThrowError(thirdparty::video::TextTexture::CreateNoWrap(M2_GAME.font, M2G_PROXY.default_font_size, _current_text));
 		auto destination_rect = VariantBlueprint().wrapped_font_size_in_units != 0.0f
 				? calculate_wrapped_text_rect(textTexture.Dimensions(), drawable_area(), VariantBlueprint().horizontal_alignment, VariantBlueprint().vertical_alignment)
 				: calculate_filled_text_rect(drawable_area(), VariantBlueprint().horizontal_alignment, _current_text.c_str());
-		_text_texture_and_destination_cache = sdl::TextTextureAndDestination{std::move(textTexture), destination_rect};
+		_text_texture_and_destination_cache = thirdparty::video::TextTextureAndDestination{std::move(textTexture), destination_rect};
 	}
 
 	{

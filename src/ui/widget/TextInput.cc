@@ -1,6 +1,6 @@
 #include <m2/Game.h>
 #include <m2/Log.h>
-#include <m2/sdl/TextTexture.h>
+#include <m2/thirdparty/video/TextTexture.h>
 #include <m2/ui/widget/TextInput.h>
 
 using namespace m2;
@@ -71,12 +71,12 @@ void TextInput::OnDraw() {
 			str += '_';
 		}
 		// Generate text texture
-		auto textTexture = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font,
+		auto textTexture = m2MoveOrThrowError(thirdparty::video::TextTexture::CreateNoWrap(M2_GAME.font,
 				M2G_PROXY.default_font_size, str));
 		// Calculate destination rectangle
 		auto destination_rect = calculate_filled_text_rect(drawable_area(), TextHorizontalAlignment::LEFT, str.c_str());
 		// Save for later
-		_text_texture_and_destination_cache = sdl::TextTextureAndDestination{std::move(textTexture), destination_rect};
+		_text_texture_and_destination_cache = thirdparty::video::TextTextureAndDestination{std::move(textTexture), destination_rect};
 	}
 
 	_text_texture_and_destination_cache->first.Render(_text_texture_and_destination_cache->second);

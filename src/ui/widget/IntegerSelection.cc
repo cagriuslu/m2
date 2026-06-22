@@ -1,5 +1,5 @@
 #include <m2/Game.h>
-#include <m2/sdl/TextTexture.h>
+#include <m2/thirdparty/video/TextTexture.h>
 #include <m2/ui/widget/IntegerSelection.h>
 
 using namespace m2;
@@ -17,7 +17,7 @@ IntegerSelection::IntegerSelection(UiPanel* parent, const UiWidgetBlueprint* blu
 UiAction IntegerSelection::SetValue(const int value) {
 	if (VariantBlueprint().min_value <= value && value < VariantBlueprint().max_value) {
 		_value = value;
-		_textTexture = sdl::TextTextureAndDestination{};
+		_textTexture = thirdparty::video::TextTextureAndDestination{};
 		if (VariantBlueprint().onAction) {
 			return VariantBlueprint().onAction(*this);
 		}
@@ -26,9 +26,9 @@ UiAction IntegerSelection::SetValue(const int value) {
 }
 
 void IntegerSelection::OnResize(const RectI&, const RectI&) {
-	_textTexture = sdl::TextTextureAndDestination{};
-	_plusTexture = sdl::TextTextureAndDestination{};
-	_minusTexture = sdl::TextTextureAndDestination{};
+	_textTexture = thirdparty::video::TextTextureAndDestination{};
+	_plusTexture = thirdparty::video::TextTextureAndDestination{};
+	_minusTexture = thirdparty::video::TextTextureAndDestination{};
 }
 UiAction IntegerSelection::OnEvent(Events& events) {
 	const auto [plusArea, minusArea] = CalculatePlusAndMinusButtonDrawArea();
@@ -75,7 +75,7 @@ void IntegerSelection::OnDraw() {
 		if (not _textTexture.first) {
 			const auto valueAsString = ToString(_value);
 			_textTexture.second = calculate_filled_text_rect(Rect().TrimRight(Rect().h / 2), TextHorizontalAlignment::LEFT, valueAsString.c_str());
-			_textTexture.first = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, _textTexture.second.h, valueAsString));
+			_textTexture.first = m2MoveOrThrowError(thirdparty::video::TextTexture::CreateNoWrap(M2_GAME.font, _textTexture.second.h, valueAsString));
 		}
 		_textTexture.first.Render(_textTexture.second);
 	}
@@ -85,7 +85,7 @@ void IntegerSelection::OnDraw() {
 		// Draw plus texture
 		if (not _plusTexture.first) {
 			_plusTexture.second = calculate_filled_text_rect(plusArea, TextHorizontalAlignment::CENTER, "+");
-			_plusTexture.first = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, _plusTexture.second.h, "+"));
+			_plusTexture.first = m2MoveOrThrowError(thirdparty::video::TextTexture::CreateNoWrap(M2_GAME.font, _plusTexture.second.h, "+"));
 		}
 		_plusTexture.first.Render(_plusTexture.second);
 		draw_border(plusArea, vertical_border_width_px(), horizontal_border_width_px());
@@ -94,7 +94,7 @@ void IntegerSelection::OnDraw() {
 		// Draw minus texture
 		if (not _minusTexture.first) {
 			_minusTexture.second = calculate_filled_text_rect(minusArea, TextHorizontalAlignment::CENTER, "-");
-			_minusTexture.first = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font, _minusTexture.second.h, "-"));
+			_minusTexture.first = m2MoveOrThrowError(thirdparty::video::TextTexture::CreateNoWrap(M2_GAME.font, _minusTexture.second.h, "-"));
 		}
 		_minusTexture.first.Render(_minusTexture.second);
 		draw_border(minusArea, vertical_border_width_px(), horizontal_border_width_px());

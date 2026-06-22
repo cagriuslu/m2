@@ -1,12 +1,12 @@
 #include <m2/Game.h>
-#include <m2/sdl/TextTexture.h>
+#include <m2/thirdparty/video/TextTexture.h>
 #include <m2/ui/widget/CheckboxWithText.h>
 
 using namespace m2::widget;
 
 CheckboxWithText::CheckboxWithText(UiPanel* parent, const UiWidgetBlueprint* blueprint)
     : AbstractButton(parent, blueprint), _state(std::get<CheckboxWithTextBlueprint>(blueprint->variant).initial_state) {
-	_textTexture = m2MoveOrThrowError(sdl::TextTexture::CreateNoWrap(M2_GAME.renderer, M2_GAME.font,
+	_textTexture = m2MoveOrThrowError(thirdparty::video::TextTexture::CreateNoWrap(M2_GAME.font,
 			M2G_PROXY.default_font_size, std::get<CheckboxWithTextBlueprint>(blueprint->variant).text)); // TODO scale the text with the window
 	if (VariantBlueprint().onCreate) {
 		VariantBlueprint().onCreate(*this);
