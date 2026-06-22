@@ -90,7 +90,7 @@ m2::VecF m2::Sprite::TextureTotalDims(const bool foregroundCompanion) const {
 	if (_pb->has_duplicate() && _pb->duplicate().additional_effects_size()) {
 		return {_effectsSheet->texture_width(), _effectsSheet->texture_height()};
 	}
-	return {Sheet().surface()->w, Sheet().surface()->h};
+	return static_cast<VecF>(Sheet().surface().Dimensions());
 }
 
 const m2::RectI& m2::Sprite::GetRect(const bool foregroundCompanion) const {

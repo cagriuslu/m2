@@ -1,9 +1,8 @@
 #include <m2/thirdparty/video/Texture.h>
+#include <m2/thirdparty/video/Surface.h>
 #include <m2/thirdparty/video/Window.h>
-#include <m2/sdl/Surface.h>
 #include <m2/Game.h>
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 
 using namespace m2;
 using namespace m2::thirdparty;
@@ -65,11 +64,8 @@ Texture Texture::CreateFromSurface(void* sdlRenderer, void* sdlSurface) {
 	return Texture{texture};
 }
 Texture Texture::CreateFromImageFile(const std::filesystem::path& imageFilePath) {
-	sdl::SurfaceUniquePtr surface{IMG_Load(imageFilePath.string().c_str())};
-	if (not surface) {
-		throw M2_ERROR("Unable to load image: " + imageFilePath.string() + ", " + IMG_GetError());
-	}
-	auto* texture = SDL_CreateTextureFromSurface(M2_GAME.renderer, surface.get());
+	const auto surface = Surface::CreateFromImageFile(imageFilePath);
+	auto* texture = SDL_CreateTextureFromSurface(M2_GAME.renderer, static_cast<SDL_Surface*>(surface.RawHandle()));
 	if (not texture) {
 		throw M2_ERROR("Unable to create texture from surface: " + std::string{SDL_GetError()});
 	}

@@ -5,29 +5,29 @@
 
 m2::RectI m2::SpriteEffectsSheet::create_mask_effect(const SpriteSheet& sheet, const pb::RectI& rect, const pb::Color& mask_color) {
 	return *AllocateAndMutate(rect.w(), rect.h(), [&](SDL_Surface* surface, const RectI& area) {
-		FillMaskEffect(sheet.surface(), RectI{rect}, surface, area, RGBA{mask_color});
+		FillMaskEffect(static_cast<SDL_Surface*>(sheet.surface().RawHandle()), RectI{rect}, surface, area, RGBA{mask_color});
 	});
 }
 m2::RectI m2::SpriteEffectsSheet::create_foreground_companion_effect(const SpriteSheet& sheet, const pb::RectI& rect,
 	const google::protobuf::RepeatedPtrField<pb::RectI>& rect_pieces) {
 	return *AllocateAndMutate(rect.w(), rect.h(), [&](SDL_Surface* dstSurface, const RectI& area) {
-		FillForegroundCompanion(sheet.surface(), RectI{rect}, dstSurface, area, rect_pieces);
+		FillForegroundCompanion(static_cast<SDL_Surface*>(sheet.surface().RawHandle()), RectI{rect}, dstSurface, area, rect_pieces);
 	}, false);
 }
 m2::RectI m2::SpriteEffectsSheet::create_grayscale_effect(const SpriteSheet& sheet, const pb::RectI& rect) {
 	return *AllocateAndMutate(rect.w(), rect.h(), [&](SDL_Surface* dstSurface, const RectI& area) {
-		FillGrayscaleEffect(sheet.surface(), RectI{rect}, dstSurface, area);
+		FillGrayscaleEffect(static_cast<SDL_Surface*>(sheet.surface().RawHandle()), RectI{rect}, dstSurface, area);
 	});
 }
 m2::RectI m2::SpriteEffectsSheet::create_image_adjustment_effect(const SpriteSheet& sheet, const pb::RectI& rect,
 	const pb::ImageAdjustment& imageAdjustment) {
 	return *AllocateAndMutate(rect.w(), rect.h(), [&](SDL_Surface* dstSurface, const RectI& area) {
-		FillImageAdjustmentEffect(sheet.surface(), RectI{rect}, dstSurface, area, imageAdjustment);
+		FillImageAdjustmentEffect(static_cast<SDL_Surface*>(sheet.surface().RawHandle()), RectI{rect}, dstSurface, area, imageAdjustment);
 	});
 }
 m2::RectI m2::SpriteEffectsSheet::create_blurred_drop_shadow_effect(const SpriteSheet& sheet, const pb::RectI& rect, const pb::BlurredDropShadow& blurredDropShadow) {
 	return *AllocateAndMutate(rect.w(), rect.h(), [&](SDL_Surface* dstSurface, const RectI& area) {
-		FillBlurredDropShadowEffect(sheet.surface(), RectI{rect}, dstSurface, area, blurredDropShadow);
+		FillBlurredDropShadowEffect(static_cast<SDL_Surface*>(sheet.surface().RawHandle()), RectI{rect}, dstSurface, area, blurredDropShadow);
 	});
 }
 

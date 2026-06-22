@@ -1,6 +1,6 @@
 #pragma once
 #include <m2/math/RectI.h>
-#include <m2/sdl/Surface.h>
+#include <m2/thirdparty/video/Surface.h>
 #include <m2/thirdparty/video/Texture.h>
 #include <optional>
 #include <SDL2/SDL_render.h>
@@ -10,7 +10,7 @@ namespace m2 {
 	/// Sprite sheet that dynamically increases in size on demand
 	class DynamicSheet {
 		SDL_Renderer* _renderer;
-		sdl::SurfaceUniquePtr _surface;
+		thirdparty::video::Surface _surface;
 		std::optional<thirdparty::video::Texture> _texture;
 		int _lastW{}, _lastH{}, _heightOfCurrentRow{};
 
@@ -29,7 +29,7 @@ namespace m2 {
 		expected<RectI> AllocateAndMutate(int requestedW, int requestedH, const std::function<void(SDL_Surface*,const RectI&)>& mutator, bool lockSurface = true);
 
 	protected:
-		[[nodiscard]] int Width() const { return _surface->w; }
-		[[nodiscard]] int Height() const { return _surface->h; }
+		[[nodiscard]] int Width() const { return _surface.Dimensions().x; }
+		[[nodiscard]] int Height() const { return _surface.Dimensions().y; }
 	};
 }

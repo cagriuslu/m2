@@ -1,13 +1,9 @@
 #include <m2/video/SpriteSheet.h>
 #include <m2/Game.h>
-#include <SDL2/SDL_image.h>
 
-m2::SpriteSheet::SpriteSheet(const pb::SpriteSheet& spriteSheet, SDL_Renderer* renderer) : _pb(spriteSheet) {
-	_surface.reset(IMG_Load((GetResourceDir() / spriteSheet.resource()).string().c_str()));
-	if (not _surface) {
-		throw M2_ERROR("SDL Error while loading " + spriteSheet.resource() + ": " + IMG_GetError());
-	}
-	_texture = thirdparty::video::Texture::CreateFromSurface(renderer, _surface.get());
+m2::SpriteSheet::SpriteSheet(const pb::SpriteSheet& spriteSheet, SDL_Renderer* renderer)
+		: _pb(spriteSheet), _surface(thirdparty::video::Surface::CreateFromImageFile(GetResourceDir() / spriteSheet.resource())) {
+	_texture = thirdparty::video::Texture::CreateFromSurface(renderer, _surface.RawHandle());
 	auto* rawTexture = static_cast<SDL_Texture*>(_texture->RawHandle());
 	SDL_SetTextureBlendMode(rawTexture, SDL_BLENDMODE_BLEND);
 }

@@ -1,5 +1,5 @@
 #include <m2/video/TextLabel.h>
-#include <m2/sdl/Surface.h>
+#include <m2/thirdparty/video/Surface.h>
 #include <m2/Game.h>
 
 m2::VecI m2::EstimateTextLabelDimensions(TTF_Font* font, const std::string& text, int fontSize) {
@@ -71,12 +71,10 @@ void m2::DrawTextLabelIn3dWorld(const pb::TextLabel& tl, const RectI& sourceRect
 			is_foreground);
 }
 void m2::SlowDrawSystemTextIn2dWorld(const char* str, const VecF& position) {
-	sdl::SurfaceUniquePtr surface{TTF_RenderUTF8_Solid(M2_GAME.systemFont , str, SDL_Color{255, 255, 255, 255})};
-	m2SucceedOrThrowMessage(surface, TTF_GetError());
-
-	auto texture = thirdparty::video::Texture::CreateFromSurface(M2_GAME.renderer, surface.get());
-
-	const SDL_Rect srcRect{0, 0, surface->w, surface->h};
+	auto surface = thirdparty::video::Surface::RenderTextSolid(M2_GAME.systemFont, str, RGBA{255, 255, 255, 255});
+	auto texture = thirdparty::video::Texture::CreateFromSurface(M2_GAME.renderer, surface.RawHandle());
+	const auto dimensions = surface.Dimensions();
+	const SDL_Rect srcRect{0, 0, dimensions.x, dimensions.y};
 	DrawTextureIn2dWorld(M2_GAME.renderer, static_cast<SDL_Texture*>(texture.RawHandle()), &srcRect, 0.0f, 1.0f, {}, ScreenOriginToPositionVecPx(position), 0.0f);
 }
 
@@ -90,13 +88,12 @@ m2::RectI m2::TextLabelCache::TextLabelGenerator::operator()(const std::tuple<st
 	m2ExpectZeroOrThrowMessage(sizeResult, TTF_GetError());
 
 	// Render to new surface
-	sdl::SurfaceUniquePtr renderSurface{TTF_RenderUTF8_Blended(_font, std::get<std::string>(item).c_str(), SDL_Color{255, 255, 255, 255})};
-	m2SucceedOrThrowMessage(renderSurface, TTF_GetError());
+	auto renderSurface = thirdparty::video::Surface::RenderTextBlended(_font, std::get<std::string>(item), RGBA{255, 255, 255, 255});
 
 	// Blit new surface to allocated surface
-	return *_dynamicSheet.AllocateAndMutate(w, h, [&](SDL_Surface* surface,const RectI& area) {
+	return *_dynamicSheet.AllocateAndMutate(w, h, [&](SDL_Surface* surface, const RectI& area) {
 		auto dstRectSdl = static_cast<SDL_Rect>(area);
-		const auto blitResult = SDL_BlitSurface(renderSurface.get(), nullptr, surface, &dstRectSdl);
+		const auto blitResult = SDL_BlitSurface(static_cast<SDL_Surface*>(renderSurface.RawHandle()), nullptr, surface, &dstRectSdl);
 		m2ExpectZeroOrThrowMessage(blitResult, SDL_GetError());
 	}, false);
 }

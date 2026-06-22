@@ -1,13 +1,14 @@
 #pragma once
-#include <m2/sdl/Surface.h>
+#include <m2/thirdparty/video/Surface.h>
 #include <m2/thirdparty/video/Texture.h>
 #include <optional>
 #include <Sprite.pb.h>
+#include <SDL2/SDL_render.h>
 
 namespace m2 {
 	class SpriteSheet final {
 		pb::SpriteSheet _pb;
-		sdl::SurfaceUniquePtr _surface;
+		thirdparty::video::Surface _surface;
 		std::optional<thirdparty::video::Texture> _texture;
 
 		SpriteSheet(const pb::SpriteSheet& spriteSheet, SDL_Renderer* renderer);
@@ -18,7 +19,7 @@ namespace m2 {
 		// Accessors
 
 		[[nodiscard]] const pb::SpriteSheet& Pb() const { return _pb; }
-		[[nodiscard]] SDL_Surface* surface() const { return _surface.get(); }
+		[[nodiscard]] const thirdparty::video::Surface& surface() const { return _surface; }
 		[[nodiscard]] const thirdparty::video::Texture& texture() const { return *_texture; }
 	};
 }

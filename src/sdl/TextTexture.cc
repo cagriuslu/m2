@@ -1,5 +1,5 @@
 #include <m2/sdl/TextTexture.h>
-#include <m2/sdl/Surface.h>
+#include <m2/thirdparty/video/Surface.h>
 
 namespace {
 	int ToTtfWrapAlignment(m2::TextHorizontalAlignment horizontal_alignment) {
@@ -47,10 +47,9 @@ m2::expected<m2::sdl::TextTexture> m2::sdl::TextTexture::CreateNoWrap(SDL_Render
 	// should be fine.
 	TTF_SetFontSize(font, fontSize);
 	// Render to surface
-	SurfaceUniquePtr surface{TTF_RenderUTF8_Blended(font, text.c_str(), color)};
-	m2ReturnUnexpectedUnless(surface, TTF_GetError());
+	const auto surface = thirdparty::video::Surface::RenderTextBlended(font, text, RGBA{color});
 	// Render to texture
-	SDL_Texture* texture = create_texture_with_linear_filtering(renderer, surface.get());
+	SDL_Texture* texture = create_texture_with_linear_filtering(renderer, static_cast<SDL_Surface*>(surface.RawHandle()));
 	m2ReturnUnexpectedUnless(texture, SDL_GetError());
 	return TextTexture{texture, text};
 }
@@ -65,10 +64,9 @@ m2::expected<m2::sdl::TextTexture> m2::sdl::TextTexture::CreateWrapped(SDL_Rende
 	TTF_SetFontSize(font, fontSize);
 	// Render to surface
 	TTF_SetFontWrappedAlign(font, ToTtfWrapAlignment(horizontal_alignment));
-	SurfaceUniquePtr surface{TTF_RenderUTF8_Blended_Wrapped(font, text.c_str(), color, width_px)};
-	m2ReturnUnexpectedUnless(surface, TTF_GetError());
+	const auto surface = thirdparty::video::Surface::RenderTextBlendedWrapped(font, text, RGBA{color}, width_px);
 	// Render to texture
-	SDL_Texture* texture = create_texture_with_linear_filtering(renderer, surface.get());
+	SDL_Texture* texture = create_texture_with_linear_filtering(renderer, static_cast<SDL_Surface*>(surface.RawHandle()));
 	m2ReturnUnexpectedUnless(texture, SDL_GetError());
 	return TextTexture{texture, text};
 }
