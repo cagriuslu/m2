@@ -10,6 +10,15 @@ namespace m2 {
 
 		RGB operator*(const float rhs) const { return RGB{RoundU8(ToFloat(r) * rhs), RoundU8(ToFloat(g) * rhs), RoundU8(ToFloat(b) * rhs)}; }
 		RGB operator/(const float rhs) const { return RGB{RoundU8(ToFloat(r) / rhs), RoundU8(ToFloat(g) / rhs), RoundU8(ToFloat(b) / rhs)}; }
+
+		static RGB White;
+		static RGB Red;
+		static RGB Yellow;
+		static RGB Green;
+		static RGB Cyan;
+		static RGB Blue;
+		static RGB Magenta;
+		static RGB Black;
 	};
 
 	struct RGBA {

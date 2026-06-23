@@ -1,5 +1,14 @@
 #include <m2/video/Color.h>
 
+m2::RGB m2::RGB::White{255, 255, 255};
+m2::RGB m2::RGB::Red{255, 0, 0};
+m2::RGB m2::RGB::Yellow{255, 255, 0};
+m2::RGB m2::RGB::Green{0, 255, 0};
+m2::RGB m2::RGB::Cyan{0, 255, 255};
+m2::RGB m2::RGB::Blue{0, 0, 255};
+m2::RGB m2::RGB::Magenta{255, 0, 255};
+m2::RGB m2::RGB::Black{0, 0, 0};
+
 m2::RGBA m2::RGBA::White{255, 255, 255, 255};
 m2::RGBA m2::RGBA::Red{255, 0, 0, 255};
 m2::RGBA m2::RGBA::Yellow{255, 255, 0, 255};
