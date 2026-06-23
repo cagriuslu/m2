@@ -18,6 +18,11 @@ where <GAME> is the name of the directory of a game. Build directory will be `bu
 ```sh
 cd build/<GAME>-DEBUG && ninja m2
 ```
+or
+```sh
+./build_all.sh
+```
+to configure & build all games all at once.
 
 ## Architecture Overview
 
