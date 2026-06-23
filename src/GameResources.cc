@@ -36,7 +36,6 @@ m2::GameResources::GameResources(const std::string& gameIdentifier, const std::s
 
 	_resourceDir = GetResourceDir();
 	_defaultResourceDir = _resourceDir / "default";
-	_radialWhiteToBlackGradient = _resourceDir / "RadialGradient-WhiteBlack.png";
 
 	// Game Resources
 

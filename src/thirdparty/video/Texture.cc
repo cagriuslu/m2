@@ -87,7 +87,6 @@ Texture Texture::CreateFromImageFile(const std::filesystem::path& imageFilePath)
 	if (not texture) {
 		throw M2_ERROR("Unable to create texture from surface: " + std::string{SDL_GetError()});
 	}
-	SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
 	return Texture{texture};
 }
 

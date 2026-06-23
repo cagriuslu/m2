@@ -93,7 +93,6 @@ namespace m2 {
 		const thirdparty::video::Cursor cursor;
 		const uint32_t pixel_format{};
 		std::optional<thirdparty::video::Renderer> renderer;
-		SDL_Texture* light_texture{}; // TODO make pointer const
 		std::optional<AudioManager> audio_manager; // TODO make private
 		TTF_Font* const font{};
 		const int systemFontSize = 13;

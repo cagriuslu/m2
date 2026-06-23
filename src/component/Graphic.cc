@@ -394,8 +394,6 @@ void m2::DrawTextureIn2dWorld(
 	};
 
 	// Render
-	const auto renderModeResult = SDL_SetRenderDrawBlendMode(rawRenderer, SDL_BLENDMODE_BLEND);
-	m2ExpectZeroOrThrowMessage(renderModeResult, SDL_GetError());
 	const auto sdlSourceRect = thirdparty::video::ToSdlRect(sourceRect);
 	const auto renderResult = SDL_RenderCopyEx(rawRenderer, rawTexture, &sdlSourceRect, &dstRect,
 			ToDegrees(rotationToApplyInRadians - originalRotationOfSourceTextureInRadians), &centerPoint, SDL_FLIP_NONE);
@@ -545,7 +543,6 @@ void m2::DrawTextureIn3dWorld(
 
 		static const int indices[6] = {0, 1, 2, 2, 1, 3};
 
-		SDL_SetRenderDrawBlendMode(rawRenderer, SDL_BLENDMODE_BLEND);
 		SDL_RenderGeometry(rawRenderer, rawTexture, vertices, 4, indices, 6);
 	}
 }

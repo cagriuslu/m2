@@ -89,18 +89,6 @@ Game::Game() : window(CreateWindow(_proxy.gamePpm, _proxy.defaultGameHeightM, _p
 
 	_dimensions.emplace(*renderer, _proxy.gamePpm, _proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
 
-	SDL_Surface* lightSurface = IMG_Load(_resources.GetRadialWhiteToBlackGradientPath().string().c_str());
-	if (lightSurface == nullptr) {
-		throw M2_ERROR("SDL error: " + std::string{IMG_GetError()});
-	}
-	if ((light_texture = SDL_CreateTextureFromSurface(static_cast<SDL_Renderer*>(renderer->RawHandle()), lightSurface)) == nullptr) {
-		throw M2_ERROR("SDL error: " + std::string{SDL_GetError()});
-	}
-	SDL_FreeSurface(lightSurface);
-	SDL_SetTextureBlendMode(light_texture, SDL_BLENDMODE_MUL);
-	SDL_SetTextureAlphaMod(light_texture, 0);
-	SDL_SetTextureColorMod(light_texture, 127, 127, 127);
-
 	_textLabelCache.emplace(*renderer, font);
 	_shapeCache.emplace(*renderer);
 

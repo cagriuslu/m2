@@ -10,7 +10,6 @@ namespace m2 {
 		// Engine Resources
 
 		std::filesystem::path _resourceDir, _defaultResourceDir;
-		std::filesystem::path _radialWhiteToBlackGradient;
 
 		// Game Resources
 
@@ -19,10 +18,6 @@ namespace m2 {
 
 	public:
 		explicit GameResources(const std::string& gameIdentifier, const std::string& defaultFont);
-
-		// Engine Resources
-
-		[[nodiscard]] const std::filesystem::path& GetRadialWhiteToBlackGradientPath() const { return _radialWhiteToBlackGradient; }
 
 		// Game Resources
 

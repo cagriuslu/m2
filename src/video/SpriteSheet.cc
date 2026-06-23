@@ -4,8 +4,6 @@
 m2::SpriteSheet::SpriteSheet(const pb::SpriteSheet& spriteSheet, thirdparty::video::Renderer& renderer)
 		: _pb(spriteSheet), _surface(thirdparty::video::Surface::CreateFromImageFile(GetResourceDir() / spriteSheet.resource())) {
 	_texture = thirdparty::video::Texture::CreateFromSurface(renderer, _surface.RawHandle());
-	auto* rawTexture = static_cast<SDL_Texture*>(_texture->RawHandle());
-	SDL_SetTextureBlendMode(rawTexture, SDL_BLENDMODE_BLEND);
 }
 
 std::vector<m2::SpriteSheet> m2::SpriteSheet::LoadSpriteSheets(const pb::SpriteSheets& spriteSheets, thirdparty::video::Renderer& renderer) {
