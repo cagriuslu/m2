@@ -11,6 +11,8 @@
 #include <functional>
 #include <m2/video/Color.h>
 #include <m2/thirdparty/video/Renderer.h>
+#include <m2/thirdparty/video/Texture.h>
+#include <m2/math/RectI.h>
 #include <SDL2/SDL_render.h>
 
 namespace m2 {
@@ -130,13 +132,13 @@ namespace m2 {
 
 	/// Draws the given texture to the 2D World. Before applying extra rotation to the texture, the rotation of the
 	/// source texture is corrected in case it has a rotation of its own.
-	void DrawTextureIn2dWorld(thirdparty::video::Renderer& renderer, SDL_Texture* sourceTexture, const SDL_Rect* sourceRect,
+	void DrawTextureIn2dWorld(thirdparty::video::Renderer& renderer, const thirdparty::video::Texture& sourceTexture, const RectI& sourceRect,
 			float originalRotationOfSourceTextureInRadians, float outputToSourcePpmRatio,
 			const VecF& textureCenterToTextureOriginVecInOutputPixels,
 			const VecF& screenOriginToTextureCenterVecInOutputPixels, float rotationToApplyInRadians);
 	/// Draws the given texture to the 3D World. Before applying extra rotation to the texture, the rotation of the
 	/// source texture is corrected in case it has a rotation of its own.
-	void DrawTextureIn3dWorld(thirdparty::video::Renderer& renderer, SDL_Texture* sourceTexture, const SDL_Rect* sourceRect,
+	void DrawTextureIn3dWorld(thirdparty::video::Renderer& renderer, const thirdparty::video::Texture& sourceTexture, const RectI& sourceRect,
 			float sourcePpm, const VecF& sourceCenterToOriginVectorInOutputPixels,
 			float originalRotationOfSourceTextureInRadians, const VecF& sourceTextureSheetDimensions,
 			const VecF& xyPositionInWorldM, float zPositionInWorldM, float rotationToApplyInRadians, bool isForeground);

@@ -45,11 +45,10 @@ void m2::DrawTextLabelBackgroundIn2dWorld(const pb::TextLabel& tl, const RectI& 
 	Graphic::ColorRect(rect, trueBackgroundColor);
 }
 void m2::DrawTextLabelIn2dWorld(const pb::TextLabel& tl, const RectI& sourceRect, const VecF& position, const float angle, MAYBE bool is_foreground, MAYBE float z) {
-	const auto sourceRectSdl = thirdparty::video::ToSdlRect(sourceRect);
 	DrawTextureIn2dWorld(
 			*M2_GAME.renderer,
-			static_cast<SDL_Texture*>(M2_GAME.GetTextLabelCache().Texture().RawHandle()),
-			&sourceRectSdl,
+			M2_GAME.GetTextLabelCache().Texture(),
+			sourceRect,
 			0.0f,
 			1.0f,
 			TextLabelCenterToOriginVectorInOutputPixels(tl),
@@ -57,11 +56,10 @@ void m2::DrawTextLabelIn2dWorld(const pb::TextLabel& tl, const RectI& sourceRect
 			angle);
 }
 void m2::DrawTextLabelIn3dWorld(const pb::TextLabel& tl, const RectI& sourceRect, const VecF& position, const float angle, const bool is_foreground, const float z) {
-	const auto sourceRectSdl = thirdparty::video::ToSdlRect(sourceRect);
 	DrawTextureIn3dWorld(
 			*M2_GAME.renderer,
-			static_cast<SDL_Texture*>(M2_GAME.GetTextLabelCache().Texture().RawHandle()),
-			&sourceRectSdl,
+			M2_GAME.GetTextLabelCache().Texture(),
+			sourceRect,
 			M2_GAME.Dimensions().OutputPixelsPerMeter(),
 			TextLabelCenterToOriginVectorInOutputPixels(tl),
 			0.0f,
@@ -75,8 +73,8 @@ void m2::SlowDrawSystemTextIn2dWorld(const char* str, const VecF& position) {
 	auto surface = thirdparty::video::Surface::RenderTextSolid(M2_GAME.systemFont, str, RGBA{255, 255, 255, 255});
 	auto texture = thirdparty::video::Texture::CreateFromSurface(*M2_GAME.renderer, surface.RawHandle());
 	const auto dimensions = surface.Dimensions();
-	const SDL_Rect srcRect{0, 0, dimensions.x, dimensions.y};
-	DrawTextureIn2dWorld(*M2_GAME.renderer, static_cast<SDL_Texture*>(texture.RawHandle()), &srcRect, 0.0f, 1.0f, {}, ScreenOriginToPositionVecPx(position), 0.0f);
+	const RectI srcRect{0, 0, dimensions.x, dimensions.y};
+	DrawTextureIn2dWorld(*M2_GAME.renderer, texture, srcRect, 0.0f, 1.0f, {}, ScreenOriginToPositionVecPx(position), 0.0f);
 }
 
 m2::RectI m2::TextLabelCache::TextLabelGenerator::operator()(const std::tuple<std::string,int>& item) {
