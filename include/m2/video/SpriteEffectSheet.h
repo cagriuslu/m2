@@ -18,9 +18,9 @@ namespace m2 {
 		[[nodiscard]] int texture_height() const { return Height(); }
 	};
 
-	void FillMaskEffect(SDL_Surface* srcSurface, const RectI& srcRect, SDL_Surface* dstSurface, const RectI& dstRect, const RGBA& maskColor);
-	void FillForegroundCompanion(SDL_Surface* srcSurface, const RectI& srcRect, SDL_Surface* dstSurface, const RectI& dstRect, const google::protobuf::RepeatedPtrField<pb::RectI>& rectPieces);
-	void FillGrayscaleEffect(SDL_Surface* srcSurface, const RectI& srcRect, SDL_Surface* dstSurface, const RectI& dstRect);
-	void FillImageAdjustmentEffect(SDL_Surface* srcSurface, const RectI& srcRect, SDL_Surface* dstSurface, const RectI& dstRect, const pb::ImageAdjustment& imageAdjustment);
-	void FillBlurredDropShadowEffect(SDL_Surface* srcSurface, const RectI& srcRect, SDL_Surface* dstSurface, const RectI& dstRect, const pb::BlurredDropShadow& blurredDropShadow);
+	void FillMaskEffect(const thirdparty::video::Surface& srcSurface, const RectI& srcRect, thirdparty::video::Surface& dstSurface, const RectI& dstRect, const RGBA& maskColor);
+	void FillForegroundCompanion(const thirdparty::video::Surface& srcSurface, const RectI& srcRect, thirdparty::video::Surface& dstSurface, const RectI& dstRect, const google::protobuf::RepeatedPtrField<pb::RectI>& rectPieces);
+	void FillGrayscaleEffect(const thirdparty::video::Surface& srcSurface, const RectI& srcRect, thirdparty::video::Surface& dstSurface, const RectI& dstRect);
+	void FillImageAdjustmentEffect(const thirdparty::video::Surface& srcSurface, const RectI& srcRect, thirdparty::video::Surface& dstSurface, const RectI& dstRect, const pb::ImageAdjustment& imageAdjustment);
+	void FillBlurredDropShadowEffect(const thirdparty::video::Surface& srcSurface, const RectI& srcRect, thirdparty::video::Surface& dstSurface, const RectI& dstRect, const pb::BlurredDropShadow& blurredDropShadow);
 }

@@ -1,140 +1,118 @@
 #include <m2/video/SpriteEffectSheet.h>
-#include <m2/thirdparty/video/Detail.h>
 #include <m2/math/Gaussian.h>
 #include <m2/Log.h>
 #include <numeric>
 
 m2::RectI m2::SpriteEffectsSheet::create_mask_effect(const SpriteSheet& sheet, const pb::RectI& rect, const pb::Color& mask_color) {
-	return *AllocateAndMutate(rect.w(), rect.h(), [&](SDL_Surface* surface, const RectI& area) {
-		FillMaskEffect(static_cast<SDL_Surface*>(sheet.surface().RawHandle()), RectI{rect}, surface, area, RGBA{mask_color});
+	return *AllocateAndMutate(rect.w(), rect.h(), [&](thirdparty::video::Surface& surface, const RectI& area) {
+		FillMaskEffect(sheet.surface(), RectI{rect}, surface, area, RGBA{mask_color});
 	});
 }
 m2::RectI m2::SpriteEffectsSheet::create_foreground_companion_effect(const SpriteSheet& sheet, const pb::RectI& rect,
 	const google::protobuf::RepeatedPtrField<pb::RectI>& rect_pieces) {
-	return *AllocateAndMutate(rect.w(), rect.h(), [&](SDL_Surface* dstSurface, const RectI& area) {
-		FillForegroundCompanion(static_cast<SDL_Surface*>(sheet.surface().RawHandle()), RectI{rect}, dstSurface, area, rect_pieces);
+	return *AllocateAndMutate(rect.w(), rect.h(), [&](thirdparty::video::Surface& dstSurface, const RectI& area) {
+		FillForegroundCompanion(sheet.surface(), RectI{rect}, dstSurface, area, rect_pieces);
 	}, false);
 }
 m2::RectI m2::SpriteEffectsSheet::create_grayscale_effect(const SpriteSheet& sheet, const pb::RectI& rect) {
-	return *AllocateAndMutate(rect.w(), rect.h(), [&](SDL_Surface* dstSurface, const RectI& area) {
-		FillGrayscaleEffect(static_cast<SDL_Surface*>(sheet.surface().RawHandle()), RectI{rect}, dstSurface, area);
+	return *AllocateAndMutate(rect.w(), rect.h(), [&](thirdparty::video::Surface& dstSurface, const RectI& area) {
+		FillGrayscaleEffect(sheet.surface(), RectI{rect}, dstSurface, area);
 	});
 }
 m2::RectI m2::SpriteEffectsSheet::create_image_adjustment_effect(const SpriteSheet& sheet, const pb::RectI& rect,
 	const pb::ImageAdjustment& imageAdjustment) {
-	return *AllocateAndMutate(rect.w(), rect.h(), [&](SDL_Surface* dstSurface, const RectI& area) {
-		FillImageAdjustmentEffect(static_cast<SDL_Surface*>(sheet.surface().RawHandle()), RectI{rect}, dstSurface, area, imageAdjustment);
+	return *AllocateAndMutate(rect.w(), rect.h(), [&](thirdparty::video::Surface& dstSurface, const RectI& area) {
+		FillImageAdjustmentEffect(sheet.surface(), RectI{rect}, dstSurface, area, imageAdjustment);
 	});
 }
 m2::RectI m2::SpriteEffectsSheet::create_blurred_drop_shadow_effect(const SpriteSheet& sheet, const pb::RectI& rect, const pb::BlurredDropShadow& blurredDropShadow) {
-	return *AllocateAndMutate(rect.w(), rect.h(), [&](SDL_Surface* dstSurface, const RectI& area) {
-		FillBlurredDropShadowEffect(static_cast<SDL_Surface*>(sheet.surface().RawHandle()), RectI{rect}, dstSurface, area, blurredDropShadow);
+	return *AllocateAndMutate(rect.w(), rect.h(), [&](thirdparty::video::Surface& dstSurface, const RectI& area) {
+		FillBlurredDropShadowEffect(sheet.surface(), RectI{rect}, dstSurface, area, blurredDropShadow);
 	});
 }
 
-void m2::FillMaskEffect(SDL_Surface* srcSurface, const RectI& srcRect, SDL_Surface* dstSurface, const RectI& dstRect, const RGBA& maskColor) {
+void m2::FillMaskEffect(const thirdparty::video::Surface& srcSurface, const RectI& srcRect, thirdparty::video::Surface& dstSurface, const RectI& dstRect, const RGBA& maskColor) {
 	// Check pixel strides
-	if (srcSurface->format->BytesPerPixel != 4 || dstSurface->format->BytesPerPixel != 4) {
+	if (srcSurface.BytesPerPixel() != 4 || dstSurface.BytesPerPixel() != 4) {
 		throw M2_ERROR("Surface has unsupported pixel format");
 	}
 
-	// Prepare mask color
-	uint32_t dst_color = ((maskColor.r >> dstSurface->format->Rloss) << dstSurface->format->Rshift) & dstSurface->format->Rmask;
-	dst_color |= ((maskColor.g >> dstSurface->format->Gloss) << dstSurface->format->Gshift) & dstSurface->format->Gmask;
-	dst_color |= ((maskColor.b >> dstSurface->format->Bloss) << dstSurface->format->Bshift) & dstSurface->format->Bmask;
-	dst_color |= ((maskColor.a >> dstSurface->format->Aloss) << dstSurface->format->Ashift) & dstSurface->format->Amask;
-
-	SDL_LockSurface(srcSurface);
-	SDL_LockSurface(dstSurface);
+	srcSurface.Lock();
+	dstSurface.Lock();
 	for (int y = srcRect.y; y < srcRect.y + srcRect.h; ++y) {
 		for (int x = srcRect.x; x < srcRect.x + srcRect.w; ++x) {
 			// Read src pixel
-			const auto* srcPixels = static_cast<uint32_t*>(srcSurface->pixels);
-			const auto srcPixel = *(srcPixels + (x + y * srcSurface->w));
+			const auto src = srcSurface.GetPixel(x, y);
 
-			// Color dst pixel
-			auto* dst_pixels = static_cast<uint32_t*>(dstSurface->pixels);
-			auto* dst_pixel = dst_pixels + ((x - srcRect.x + dstRect.x) + (y - srcRect.y + dstRect.y) * dstSurface->w);
-			*dst_pixel = (srcPixel & srcSurface->format->Amask) ? dst_color : 0;
+			// Color dst pixel: opaque src pixels get the mask color, transparent ones become fully transparent
+			dstSurface.SetPixel(x - srcRect.x + dstRect.x, y - srcRect.y + dstRect.y, src.a ? maskColor : RGBA{0, 0, 0, 0});
 		}
 	}
-	SDL_UnlockSurface(dstSurface);
-	SDL_UnlockSurface(srcSurface);
+	dstSurface.Unlock();
+	srcSurface.Unlock();
 }
-void m2::FillForegroundCompanion(SDL_Surface* srcSurface, const RectI& srcRect, SDL_Surface* dstSurface, const RectI& dstRect, const google::protobuf::RepeatedPtrField<pb::RectI>& rectPieces) {
+void m2::FillForegroundCompanion(const thirdparty::video::Surface& srcSurface, const RectI& srcRect, thirdparty::video::Surface& dstSurface, const RectI& dstRect, const google::protobuf::RepeatedPtrField<pb::RectI>& rectPieces) {
 	for (const auto& rectPiece : rectPieces) {
-		auto blitSrcRect = thirdparty::video::ToSdlRect(RectI{rectPiece});
-		auto blitDstRect = SDL_Rect{dstRect.x + rectPiece.x() - srcRect.x, dstRect.y + rectPiece.y() - srcRect.y, rectPiece.w(), rectPiece.h()};
-		SDL_BlitSurface(srcSurface, &blitSrcRect, dstSurface, &blitDstRect);
+		const auto sourceRect = RectI{rectPiece};
+		const auto destinationRect = RectI{dstRect.x + rectPiece.x() - srcRect.x, dstRect.y + rectPiece.y() - srcRect.y, rectPiece.w(), rectPiece.h()};
+		m2SucceedOrThrowError(dstSurface.Blit(srcSurface, sourceRect, destinationRect));
 	}
 }
-void m2::FillGrayscaleEffect(SDL_Surface* srcSurface, const RectI& srcRect, SDL_Surface* dstSurface, const RectI& dstRect) {
+void m2::FillGrayscaleEffect(const thirdparty::video::Surface& srcSurface, const RectI& srcRect, thirdparty::video::Surface& dstSurface, const RectI& dstRect) {
 	// Check pixel stride
-	if (srcSurface->format->BytesPerPixel != 4 || dstSurface->format->BytesPerPixel != 4) {
+	if (srcSurface.BytesPerPixel() != 4 || dstSurface.BytesPerPixel() != 4) {
 		throw M2_ERROR("Surface has unsupported pixel format");
 	}
 
-	SDL_LockSurface(srcSurface);
-	SDL_LockSurface(dstSurface);
+	srcSurface.Lock();
+	dstSurface.Lock();
 	for (int y = srcRect.y; y < srcRect.y + srcRect.h; ++y) {
 		for (int x = srcRect.x; x < srcRect.x + srcRect.w; ++x) {
 			// Read src pixel
-			const auto* src_pixels = static_cast<uint32_t*>(srcSurface->pixels);
-			const auto src_pixel = *(src_pixels + (x + y * srcSurface->w));
-			// Decompose to RPG
-			uint8_t r, g, b, a;
-			SDL_GetRGBA(src_pixel, srcSurface->format, &r, &g, &b, &a);
+			const auto src = srcSurface.GetPixel(x, y);
 			// Apply weights
-			const float rf = 0.299f * static_cast<float>(r) / 255.0f;
-			const float gf = 0.587f * static_cast<float>(g) / 255.0f;
-			const float bf = 0.114f * static_cast<float>(b) / 255.0f;
+			const float rf = 0.299f * static_cast<float>(src.r) / 255.0f;
+			const float gf = 0.587f * static_cast<float>(src.g) / 255.0f;
+			const float bf = 0.114f * static_cast<float>(src.b) / 255.0f;
 			// Convert back to int
 			const auto bw = static_cast<uint8_t>(roundf((rf + gf + bf) * 255.0f));
 			// Color dst pixel
-			auto* dst_pixels = static_cast<uint32_t*>(dstSurface->pixels);
-			auto* dst_pixel = dst_pixels + ((x - srcRect.x + dstRect.x) + (y - srcRect.y + dstRect.y) * dstSurface->w);
-			*dst_pixel = SDL_MapRGBA(dstSurface->format, bw, bw, bw, a);
+			dstSurface.SetPixel(x - srcRect.x + dstRect.x, y - srcRect.y + dstRect.y, RGBA{bw, bw, bw, src.a});
 		}
 	}
-	SDL_UnlockSurface(dstSurface);
-	SDL_UnlockSurface(srcSurface);
+	dstSurface.Unlock();
+	srcSurface.Unlock();
 }
-void m2::FillImageAdjustmentEffect(SDL_Surface* srcSurface, const RectI& srcRect, SDL_Surface* dstSurface, const RectI& dstRect, const pb::ImageAdjustment& imageAdjustment) {
+void m2::FillImageAdjustmentEffect(const thirdparty::video::Surface& srcSurface, const RectI& srcRect, thirdparty::video::Surface& dstSurface, const RectI& dstRect, const pb::ImageAdjustment& imageAdjustment) {
 	// Check pixel stride
-	if (srcSurface->format->BytesPerPixel != 4 || dstSurface->format->BytesPerPixel != 4) {
+	if (srcSurface.BytesPerPixel() != 4 || dstSurface.BytesPerPixel() != 4) {
 		throw M2_ERROR("Surface has unsupported pixel format");
 	}
 
-	SDL_LockSurface(srcSurface);
-	SDL_LockSurface(dstSurface);
+	srcSurface.Lock();
+	dstSurface.Lock();
 	for (int y = srcRect.y; y < srcRect.y + srcRect.h; ++y) {
 		for (int x = srcRect.x; x < srcRect.x + srcRect.w; ++x) {
 			// Read src pixel
-			const auto* src_pixels = static_cast<uint32_t*>(srcSurface->pixels);
-			const auto src_pixel = *(src_pixels + (x + y * srcSurface->w));
-			// Decompose to RPG
-			uint8_t r, g, b, a;
-			SDL_GetRGBA(src_pixel, srcSurface->format, &r, &g, &b, &a);
+			const auto src = srcSurface.GetPixel(x, y);
 			// Apply weights
-			const float rf = imageAdjustment.brightness_multiplier() * static_cast<float>(r) / 255.0f;
-			const float gf = imageAdjustment.brightness_multiplier() * static_cast<float>(g) / 255.0f;
-			const float bf = imageAdjustment.brightness_multiplier() * static_cast<float>(b) / 255.0f;
+			const float rf = imageAdjustment.brightness_multiplier() * static_cast<float>(src.r) / 255.0f;
+			const float gf = imageAdjustment.brightness_multiplier() * static_cast<float>(src.g) / 255.0f;
+			const float bf = imageAdjustment.brightness_multiplier() * static_cast<float>(src.b) / 255.0f;
 			// Convert back to int
 			const auto rn = static_cast<uint8_t>(roundf(rf * 255.0f));
 			const auto gn = static_cast<uint8_t>(roundf(gf * 255.0f));
 			const auto bn = static_cast<uint8_t>(roundf(bf * 255.0f));
 			// Color dst pixel
-			auto* dst_pixels = static_cast<uint32_t*>(dstSurface->pixels);
-			auto* dst_pixel = dst_pixels + ((x - srcRect.x + dstRect.x) + (y - srcRect.y + dstRect.y) * dstSurface->w);
-			*dst_pixel = SDL_MapRGBA(dstSurface->format, rn, gn, bn, a);
+			dstSurface.SetPixel(x - srcRect.x + dstRect.x, y - srcRect.y + dstRect.y, RGBA{rn, gn, bn, src.a});
 		}
 	}
-	SDL_UnlockSurface(dstSurface);
-	SDL_UnlockSurface(srcSurface);
+	dstSurface.Unlock();
+	srcSurface.Unlock();
 }
-void m2::FillBlurredDropShadowEffect(SDL_Surface* srcSurface, const RectI& srcRect, SDL_Surface* dstSurface, const RectI& dstRect, const pb::BlurredDropShadow& blurredDropShadow) {
+void m2::FillBlurredDropShadowEffect(const thirdparty::video::Surface& srcSurface, const RectI& srcRect, thirdparty::video::Surface& dstSurface, const RectI& dstRect, const pb::BlurredDropShadow& blurredDropShadow) {
 	// Check pixel stride
-	if (srcSurface->format->BytesPerPixel != 4 || dstSurface->format->BytesPerPixel != 4) {
+	if (srcSurface.BytesPerPixel() != 4 || dstSurface.BytesPerPixel() != 4) {
 		throw M2_ERROR("Surface has unsupported pixel format");
 	}
 
@@ -145,23 +123,17 @@ void m2::FillBlurredDropShadowEffect(SDL_Surface* srcSurface, const RectI& srcRe
 
 	// Returns the normalized alpha channel value of the pixel at the given coordinate. If the coordinates lay outside
 	// the rect, 0 is returned. Assumes that the surface is already locked.
-	auto pixel_alpha_reader = [srcRect](SDL_Surface* surface, const int x, const int y) {
+	auto pixel_alpha_reader = [srcRect](const thirdparty::video::Surface& surface, const int x, const int y) {
 		if (x < srcRect.x || srcRect.x + srcRect.w <= x
 			|| y < srcRect.y || srcRect.y + srcRect.h <= y) {
 			return 0.0f;
 		}
-		// Read src pixel
-		const auto* src_pixels = static_cast<uint32_t*>(surface->pixels);
-		const auto src_pixel = *(src_pixels + (x + y * surface->w));
-		// Decompose to RPG
-		uint8_t r, g, b, a;
-		SDL_GetRGBA(src_pixel, surface->format, &r, &g, &b, &a);
 		// Return the normalized alpha component
-		return static_cast<float>(a) / 255.0f;
+		return static_cast<float>(surface.GetPixel(x, y).a) / 255.0f;
 	};
 
-	SDL_LockSurface(srcSurface);
-	SDL_LockSurface(dstSurface);
+	srcSurface.Lock();
+	dstSurface.Lock();
 	for (int y = srcRect.y; y < srcRect.y + srcRect.h; ++y) {
 		for (int x = srcRect.x; x < srcRect.x + srcRect.w; ++x) {
 			// Apply the kernel only to the alpha channel, other channels are full black
@@ -184,11 +156,9 @@ void m2::FillBlurredDropShadowEffect(SDL_Surface* srcSurface, const RectI& srcRe
 			// Convert back to int
 			const auto an = RoundI(sum * 255.0f);
 			// Color dst pixel
-			auto* dst_pixels = static_cast<uint32_t*>(dstSurface->pixels);
-			auto* dst_pixel = dst_pixels + ((x - srcRect.x + dstRect.x) + (y - srcRect.y + dstRect.y) * dstSurface->w);
-			*dst_pixel = SDL_MapRGBA(dstSurface->format, 0, 0, 0, static_cast<uint8_t>(an));
+			dstSurface.SetPixel(x - srcRect.x + dstRect.x, y - srcRect.y + dstRect.y, RGBA{0, 0, 0, an});
 		}
 	}
-	SDL_UnlockSurface(dstSurface);
-	SDL_UnlockSurface(srcSurface);
+	dstSurface.Unlock();
+	srcSurface.Unlock();
 }

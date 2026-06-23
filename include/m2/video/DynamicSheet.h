@@ -4,7 +4,6 @@
 #include <m2/thirdparty/video/Surface.h>
 #include <m2/thirdparty/video/Texture.h>
 #include <optional>
-#include <SDL2/SDL_surface.h>
 
 namespace m2 {
 	/// Sprite sheet that dynamically increases in size on demand
@@ -26,7 +25,7 @@ namespace m2 {
 		/// Tries to allocate the requested area on the dynamic surface, optionally locks the surface, and calls the
 		/// mutator with the surface and the area. The same area is returned at the end. Surface must be locked only if
 		/// the raw pixels will be mutated. For blitting and similar operations, the surface shouldn't be locked.
-		expected<RectI> AllocateAndMutate(int requestedW, int requestedH, const std::function<void(SDL_Surface*,const RectI&)>& mutator, bool lockSurface = true);
+		expected<RectI> AllocateAndMutate(int requestedW, int requestedH, const std::function<void(thirdparty::video::Surface&,const RectI&)>& mutator, bool lockSurface = true);
 
 	protected:
 		[[nodiscard]] int Width() const { return _surface.Dimensions().x; }

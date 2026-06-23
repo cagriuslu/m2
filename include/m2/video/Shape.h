@@ -15,7 +15,7 @@ namespace m2 {
 		virtual size_t Hash() const = 0;
 		virtual bool operator==(const Shape& other) const = 0;
 		virtual VecI Dimensions() const = 0;
-		virtual void Draw(const SDL_Surface* dstSurface, const RectI& dstRect) const = 0;
+		virtual void Draw(thirdparty::video::Surface& dstSurface, const RectI& dstRect) const = 0;
 	};
 	struct Circle final : Shape {
 		int radiusPx;
@@ -24,7 +24,7 @@ namespace m2 {
 		size_t Hash() const override;
 		bool operator==(const Shape& other) const override;
 		VecI Dimensions() const override;
-		void Draw(const SDL_Surface* dstSurface, const RectI& dstRect) const override;
+		void Draw(thirdparty::video::Surface& dstSurface, const RectI& dstRect) const override;
 	};
 	struct Disk final : Shape {
 		int radiusPx;
@@ -33,7 +33,7 @@ namespace m2 {
 		size_t Hash() const override;
 		bool operator==(const Shape& other) const override;
 		VecI Dimensions() const override;
-		void Draw(const SDL_Surface* dstSurface, const RectI& dstRect) const override;
+		void Draw(thirdparty::video::Surface& dstSurface, const RectI& dstRect) const override;
 	};
 
 	class ShapeCache {

@@ -1,7 +1,6 @@
 #include <m2/video/TextLabel.h>
 #include <m2/thirdparty/video/Surface.h>
 #include <m2/thirdparty/video/TextRendering.h>
-#include <m2/thirdparty/video/Detail.h>
 #include <m2/Game.h>
 
 m2::VecF m2::TextLabelCenterToOriginVectorInSourcePixels(const pb::TextLabel& tl) {
@@ -75,10 +74,8 @@ m2::RectI m2::TextLabelCache::TextLabelGenerator::operator()(const std::tuple<st
 	auto renderSurface = thirdparty::video::Surface::RenderTextBlended(_font, std::get<std::string>(item), RGBA{255, 255, 255, 255});
 
 	// Blit new surface to allocated surface
-	return *_dynamicSheet.AllocateAndMutate(renderedSize.x, renderedSize.y, [&](SDL_Surface* surface, const RectI& area) {
-		auto dstRectSdl = thirdparty::video::ToSdlRect(area);
-		const auto blitResult = SDL_BlitSurface(static_cast<SDL_Surface*>(renderSurface.RawHandle()), nullptr, surface, &dstRectSdl);
-		m2ExpectZeroOrThrowMessage(blitResult, SDL_GetError());
+	return *_dynamicSheet.AllocateAndMutate(renderedSize.x, renderedSize.y, [&](thirdparty::video::Surface& surface, const RectI& area) {
+		m2SucceedOrThrowError(surface.Blit(renderSurface, std::nullopt, area));
 	}, false);
 }
 
