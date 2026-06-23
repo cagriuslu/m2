@@ -1,4 +1,5 @@
 #include <m2/thirdparty/physics/box2d/DebugDraw.h>
+#include <m2/thirdparty/video/Detail.h>
 #include <m2/Game.h>
 #include <m2/component/Graphic.h>
 #include <m2/video/Color.h>
@@ -25,7 +26,7 @@ void DebugDraw::DrawCircle(const b2Vec2& center, const float radius, const b2Col
 	if (IsProjectionTypeParallel(M2_LEVEL.GetProjectionType())) {
 		// Draw a true circle from the cache
 		const int r = RoundI(M2_GAME.Dimensions().OutputPixelsPerMeter() * radius);
-		const auto srcRect = static_cast<SDL_Rect>(M2_GAME.GetShapeCache().Create(std::make_shared<Circle>(r)));
+		const auto srcRect = m2::thirdparty::video::ToSdlRect(M2_GAME.GetShapeCache().Create(std::make_shared<Circle>(r)));
 		auto* texture = static_cast<SDL_Texture*>(M2_GAME.GetShapeCache().Texture().RawHandle());
 		const auto screenOriginToSpriteCenter = ScreenOriginToPositionVecPx(VecF{center});
 		const auto dstRect = SDL_Rect{

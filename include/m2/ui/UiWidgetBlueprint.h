@@ -8,7 +8,7 @@
 #include "widget/TextBlueprint.h"
 #include "widget/TextInputBlueprint.h"
 #include "widget/TextSelectionBlueprint.h"
-#include <SDL.h>
+#include <m2/video/Color.h>
 #include <variant>
 
 namespace m2 {
@@ -24,7 +24,7 @@ namespace m2 {
 		// Unitless padding width. Padding is *inside* the border.
 		float padding_width{0.0f};
 
-		SDL_Color background_color{};
+		RGBA background_color{};
 
 		using Variant = std::variant<
 				widget::HiddenBlueprint,

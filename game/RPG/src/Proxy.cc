@@ -124,7 +124,7 @@ const m2::UiPanelBlueprint* m2g::Proxy::generate_main_menu() {
 		.name = "MainMenu",
 	    .w = 160, .h = 90,
 	    .border_width = 0,
-	    .background_color = SDL_Color{20, 20, 20, 255}
+	    .background_color = m2::RGBA{20, 20, 20, 255}
 	};
 
 	auto level_jsons = m2::ListFiles(M2_GAME.GetResources().GetGameResourceDir() / "levels", ".json");
@@ -194,7 +194,7 @@ const m2::UiPanelBlueprint* m2g::Proxy::generate_right_hud() {
 	    .initially_enabled = false,
 	    .x = 2, .y = 68, .w = 15, .h = 2,
 	    .variant = m2::widget::ProgressBarBlueprint{
-	        .bar_color = SDL_Color{0, 127, 255, 255},
+	        .bar_color = m2::RGBA{0, 127, 255, 255},
 	        .onUpdate = [](m2::widget::ProgressBar& self) {
 	        	self.SetProgress(0.0f);
 	        }
@@ -214,7 +214,7 @@ const m2::UiPanelBlueprint* m2g::Proxy::you_died_menu() {
 		.name = "YouDiedPanel",
 	    .w = 160, .h = 90,
 	    .border_width = 0,
-	    .background_color = SDL_Color{127, 0, 0, 127}
+	    .background_color = m2::RGBA{127, 0, 0, 127}
 	};
 
 	auto lb_path = M2_LEVEL.GetLevelFilePath();

@@ -1,4 +1,5 @@
 #include <m2/video/SpriteEffectSheet.h>
+#include <m2/thirdparty/video/Detail.h>
 #include <m2/math/Gaussian.h>
 #include <m2/Log.h>
 #include <numeric>
@@ -62,7 +63,7 @@ void m2::FillMaskEffect(SDL_Surface* srcSurface, const RectI& srcRect, SDL_Surfa
 }
 void m2::FillForegroundCompanion(SDL_Surface* srcSurface, const RectI& srcRect, SDL_Surface* dstSurface, const RectI& dstRect, const google::protobuf::RepeatedPtrField<pb::RectI>& rectPieces) {
 	for (const auto& rectPiece : rectPieces) {
-		auto blitSrcRect = static_cast<SDL_Rect>(RectI{rectPiece});
+		auto blitSrcRect = thirdparty::video::ToSdlRect(RectI{rectPiece});
 		auto blitDstRect = SDL_Rect{dstRect.x + rectPiece.x() - srcRect.x, dstRect.y + rectPiece.y() - srcRect.y, rectPiece.w(), rectPiece.h()};
 		SDL_BlitSurface(srcSurface, &blitSrcRect, dstSurface, &blitDstRect);
 	}

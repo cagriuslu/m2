@@ -1,4 +1,5 @@
 #include <m2/ui/widget/ProgressBar.h>
+#include <m2/thirdparty/video/Shapes.h>
 #include <m2/Game.h>
 
 using namespace m2;
@@ -23,14 +24,8 @@ void ProgressBar::OnDraw() {
 	// Background
 	draw_background_color();
 	// Bar
-	auto filled_dstrect = SDL_Rect{
-			Rect().x,
-			Rect().y,
-			(int)roundf((float)Rect().w * _progress),
-			Rect().h
-	};
-	SDL_SetRenderDrawColor(M2_GAME.renderer, pb_blueprint.bar_color.r, pb_blueprint.bar_color.g, pb_blueprint.bar_color.b, pb_blueprint.bar_color.a);
-	SDL_RenderFillRect(M2_GAME.renderer, &filled_dstrect);
+	const auto filled_dstrect = m2::RectI{Rect().x, Rect().y, (int)roundf((float)Rect().w * _progress), Rect().h};
+	m2::thirdparty::video::FillRectangle(filled_dstrect, pb_blueprint.bar_color);
 	// Foreground
 	draw_border(Rect(), vertical_border_width_px(), horizontal_border_width_px());
 }

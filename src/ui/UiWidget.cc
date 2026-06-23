@@ -2,6 +2,8 @@
 #include <m2/ui/UiWidget.h>
 #include <m2/ui/UiPanel.h>
 #include <m2/thirdparty/video/TextRendering.h>
+#include <m2/thirdparty/video/Shapes.h>
+#include <m2/thirdparty/video/Detail.h>
 
 using namespace m2;
 
@@ -124,22 +126,18 @@ m2::RectI m2::UiWidget::calculate_filled_text_rect(const RectI drawable_area, co
 	}
 }
 
-void UiWidget::draw_rectangle(const RectI& rect, const SDL_Color& color) {
-	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
-	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
-
-	const auto sdl_rect = static_cast<SDL_Rect>(rect);
-	SDL_RenderFillRect(M2_GAME.renderer, &sdl_rect);
+void UiWidget::draw_rectangle(const RectI& rect, const RGBA& color) {
+	thirdparty::video::FillRectangle(rect, color);
 }
 
 void UiWidget::DrawSpriteOrTextLabel(const std::variant<Sprite, pb::TextLabel>& spriteOrTextLabel, const RectI& dst_rect) {
 	SDL_Rect src_rect;
 	SDL_Texture* texture;
 	if (std::holds_alternative<Sprite>(spriteOrTextLabel)) {
-		src_rect = static_cast<SDL_Rect>(std::get<Sprite>(spriteOrTextLabel).GetRect());
+		src_rect = thirdparty::video::ToSdlRect(std::get<Sprite>(spriteOrTextLabel).GetRect());
 		texture = static_cast<SDL_Texture*>(std::get<Sprite>(spriteOrTextLabel).GetTexture().RawHandle());
 	} else {
-		src_rect = static_cast<SDL_Rect>(M2_GAME.GetTextLabelCache().Create(std::get<pb::TextLabel>(spriteOrTextLabel).text(), M2G_PROXY.default_font_size));
+		src_rect = thirdparty::video::ToSdlRect(M2_GAME.GetTextLabelCache().Create(std::get<pb::TextLabel>(spriteOrTextLabel).text(), M2G_PROXY.default_font_size));
 		texture = static_cast<SDL_Texture*>(M2_GAME.GetTextLabelCache().Texture().RawHandle());
 	}
 
@@ -159,15 +157,9 @@ void UiWidget::DrawSpriteOrTextLabel(const std::variant<Sprite, pb::TextLabel>& 
 	SDL_RenderCopy(M2_GAME.renderer, texture, &src_rect, &actual_dst_rect);
 }
 
-void UiWidget::draw_border(const RectI& rect, int vertical_border_width_px, int horizontal_border_width_px, const SDL_Color& color) {
-	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
-	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
-
-	SDL_Rect left_right_top_bottom[4] = {
-		{.x = rect.x, .y = rect.y, .w = vertical_border_width_px, .h = rect.h},
-		{.x = rect.GetX2() - vertical_border_width_px, .y = rect.y, .w = vertical_border_width_px, .h = rect.h},
-		{.x = rect.x, .y = rect.y, .w = rect.w, .h = horizontal_border_width_px},
-		{.x = rect.x, .y = rect.GetY2() - horizontal_border_width_px, .w = rect.w, .h = horizontal_border_width_px}
-	};
-	SDL_RenderFillRects(M2_GAME.renderer, left_right_top_bottom, 4);
+void UiWidget::draw_border(const RectI& rect, int vertical_border_width_px, int horizontal_border_width_px, const RGBA& color) {
+	thirdparty::video::FillRectangle(RectI{rect.x, rect.y, vertical_border_width_px, rect.h}, color);
+	thirdparty::video::FillRectangle(RectI{rect.GetX2() - vertical_border_width_px, rect.y, vertical_border_width_px, rect.h}, color);
+	thirdparty::video::FillRectangle(RectI{rect.x, rect.y, rect.w, horizontal_border_width_px}, color);
+	thirdparty::video::FillRectangle(RectI{rect.x, rect.GetY2() - horizontal_border_width_px, rect.w, horizontal_border_width_px}, color);
 }

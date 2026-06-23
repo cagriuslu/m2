@@ -180,7 +180,7 @@ m2::void_expected Enemy::init(m2::Object& obj, const m2::VecF& position) {
 		DrawAddons(gfx, chr.GetVariable(RESOURCE_HP).GetFOrZero());
 #ifdef DEBUG
 		std::visit(m2::overloaded {
-				[](ChaserFsm& v) { m2::Pathfinder::draw_path(v.reverse_path(), SDL_Color{127, 127, 255, 255}); },
+				[](ChaserFsm& v) { m2::Pathfinder::draw_path(v.reverse_path(), m2::RGBA{127, 127, 255, 255}); },
 				[](MAYBE auto& v) { }
 		}, impl.ai_fsm);
 #endif

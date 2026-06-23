@@ -3,7 +3,6 @@
 #include <m2g_KeyType.pb.h>
 #include <string>
 #include <functional>
-#include <SDL.h>
 
 namespace m2::widget {
 	// Forward declaration

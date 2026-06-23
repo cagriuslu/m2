@@ -1,6 +1,4 @@
 #pragma once
-#include <SDL.h>
-
 #include <optional>
 
 #include "../video/Color.h"
@@ -73,10 +71,9 @@ namespace m2 {
 		/// Calculate the rect of the text to fill the drawable_area
 		static RectI calculate_filled_text_rect(RectI drawable_area, TextHorizontalAlignment align, const char* text);
 
-		static void draw_rectangle(const RectI& rect, const SDL_Color& color);
+		static void draw_rectangle(const RectI& rect, const RGBA& color);
 		static void DrawSpriteOrTextLabel(const std::variant<Sprite, pb::TextLabel>&, const RectI& dst_rect);
-		static void draw_border(const RectI& rect, int vertical_border_width_px, int horizontal_border_width_px, const SDL_Color& color = {255, 255, 255, 255}); // TODO get rid of this, use the below
-		static void draw_border(const RectI& rect, int vertical_border_width_px, int horizontal_border_width_px, const RGBA& color) { draw_border(rect, vertical_border_width_px, horizontal_border_width_px, SDL_Color{color.r, color.g, color.b, color.a}); }
+		static void draw_border(const RectI& rect, int vertical_border_width_px, int horizontal_border_width_px, const RGBA& color = {255, 255, 255, 255});
 
 		// Allow UiPanel to use the utilities
 		friend struct UiPanel;

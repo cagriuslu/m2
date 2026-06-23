@@ -209,7 +209,7 @@ bool m2::Pathfinder::check_eyesight(const VecI& from, const VecI& to) {
 	return box2d::CheckEyesight(*M2_LEVEL.world, VecF{from}, VecF{to}, thirdparty::physics::gColliderCategoryToParams[m2::I(thirdparty::physics::ColliderCategory::COLLIDER_CATEGORY_OBSTACLE)].belongsTo);
 }
 
-void m2::Pathfinder::draw_path(const Path& path, SDL_Color color) {
+void m2::Pathfinder::draw_path(const Path& path, RGBA color) {
 	ForEachAdjacentPair(path.begin(), path.end(), [color](const VecI& p1, const VecI& p2) {
 		Graphic::DrawLine(static_cast<VecF>(p1), static_cast<VecF>(p2), color);
 	});

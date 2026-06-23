@@ -1,5 +1,6 @@
 #include <m2/Game.h>
 #include <m2/thirdparty/video/TextTexture.h>
+#include <m2/thirdparty/video/Detail.h>
 #include <m2/ui/widget/Text.h>
 #include <m2/Log.h>
 
@@ -48,14 +49,14 @@ void Text::OnDraw() {
 
 	{
 		// Clip to widget area
-		const auto drawable_area_sdl = static_cast<SDL_Rect>(drawable_area());
+		const auto drawable_area_sdl = thirdparty::video::ToSdlRect(drawable_area());
 		SDL_RenderSetClipRect(M2_GAME.renderer, &drawable_area_sdl);
 	}
 	_text_texture_and_destination_cache->first.RenderWithColorMod(
 		_text_texture_and_destination_cache->second, depressed ? _current_color / 2.0f : _current_color);
 	SDL_RenderSetClipRect(M2_GAME.renderer, nullptr);
 
-	auto border_color = depressed ? SDL_Color{127, 127, 127, 255} : SDL_Color{255, 255, 255, 255};
+	const auto border_color = depressed ? RGBA{127, 127, 127, 255} : RGBA{255, 255, 255, 255};
 	draw_border(Rect(), vertical_border_width_px(), horizontal_border_width_px(), border_color);
 }
 

@@ -6,7 +6,6 @@
 m2::RectI::RectI() : x(), y(), w(), h() {}
 m2::RectI::RectI(int x, int y, int w, int h) : x(x), y(y), w(w), h(h) {}
 m2::RectI::RectI(const RectF& r) : x(static_cast<int>(r.x)), y(static_cast<int>(r.y)), w(static_cast<int>(r.w)), h(static_cast<int>(r.h)) {}
-m2::RectI::RectI(const SDL_Rect& r) : x(r.x), y(r.y), w(r.w), h(r.h) {}
 m2::RectI::RectI(const pb::RectI& r) : x(r.x()), y(r.y()), w(r.w()), h(r.h()) {}
 m2::RectI m2::RectI::CreateFromCorners(const m2::VecI &corner1, const m2::VecI &corner2) {
 	auto top_left_x = std::min(corner1.x, corner2.x);
@@ -26,12 +25,6 @@ bool m2::RectI::operator==(const RectI &other) const {
 }
 m2::RectI::operator bool() const {
 	return 0 < w && 0 < h;
-}
-m2::RectI::operator SDL_Rect() const {
-	return SDL_Rect{x, y, w, h};
-}
-m2::RectI::operator SDL_FRect() const {
-	return SDL_FRect{static_cast<float>(x), static_cast<float>(y), static_cast<float>(w), static_cast<float>(h)};
 }
 bool m2::RectI::DoesContain(const VecI& p) const {
 	return (p.x >= x) && (p.x < (x + w)) && (p.y >= y) && (p.y < (y + h));
@@ -213,14 +206,15 @@ m2::RectI m2::RectI::GetRow(const int totalRowCount, const int rowIndex) const {
     return RectI{x, y + h * rowIndex / totalRowCount, w, h / totalRowCount};
 }
 std::optional<m2::RectI> m2::RectI::GetIntersection(const m2::RectI& other) const {
-	auto a = static_cast<SDL_Rect>(*this);
-	auto b = static_cast<SDL_Rect>(other);
-	SDL_Rect result;
-	if (SDL_IntersectRect(&a, &b, &result) == SDL_TRUE) {
-		return RectI{result};
-	} else {
+	if (not (*this) || not other) {
 		return std::nullopt;
 	}
+	const auto left   = std::max(x, other.x);
+	const auto top    = std::max(y, other.y);
+	const auto right  = std::min(x + w, other.x + other.w);
+	const auto bottom = std::min(y + h, other.y + other.h);
+	RectI result{left, top, right - left, bottom - top};
+	return result ? result : std::optional<RectI>{};
 }
 m2::RectI m2::RectI::ApplyRatio(const RectF& ratio_rect) const {
 	return RectI{

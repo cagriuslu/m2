@@ -1,6 +1,5 @@
 #pragma once
 #include <RectI.pb.h>
-#include <SDL2/SDL_rect.h>
 
 #include <functional>
 #include <optional>
@@ -19,7 +18,6 @@ namespace m2 {
 		RectI();
 		RectI(int x, int y, int w, int h);
 		explicit RectI(const RectF& r);
-		explicit RectI(const SDL_Rect& r);
 		explicit RectI(const pb::RectI& r);
 		static RectI CreateCenteredAround(const VecI& center, int w, int h) { return {center.x - w / 2, center.y - h / 2, w, h}; }
 		static RectI CreateFromCorners(const VecI& corner1, const VecI& corner2);
@@ -29,8 +27,6 @@ namespace m2 {
 
 		bool operator==(const RectI& other) const;
 		explicit operator bool() const;
-		explicit operator SDL_Rect() const;
-		explicit operator SDL_FRect() const;
 
 		// Accessors
 

@@ -1,7 +1,6 @@
 #pragma once
 #include "../UiAction.h"
 #include <m2g_SpriteType.pb.h>
-#include <SDL.h>
 #include <variant>
 
 namespace m2::widget {

@@ -364,7 +364,7 @@ std::pair<UiPanelBlueprint,RectF> GenerateMerchantLocationMouseHoverUiBlueprint(
 	const std::string merchantBenefit = GetCharacter(merchant->GetCharacterId()).GetVariable(m2g::pb::BEER_BARREL_COUNT)
 			? "Available" : "Exhausted";
 	const auto merchantBenefitBackgroundColor = GetCharacter(merchant->GetCharacterId()).GetVariable(m2g::pb::BEER_BARREL_COUNT)
-			? SDL_Color{0, 0, 0, 255} : SDL_Color{180, 0, 0, 255};
+			? m2::RGBA{0, 0, 0, 255} : m2::RGBA{180, 0, 0, 255};
 
 	return std::make_pair(
 			UiPanelBlueprint{

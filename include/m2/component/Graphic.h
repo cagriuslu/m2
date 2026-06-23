@@ -98,18 +98,16 @@ namespace m2 {
 		static void DefaultDrawCallback(Graphic& gfx);
 
 		/// Color the world cell with the given color
-		static void ColorCell(const VecI& cell, SDL_Color color);
-		static void ColorRect(const RectF& world_coordinates_m, SDL_Color color);
+		static void ColorCell(const VecI& cell, const RGBA& color);
 		static void ColorRect(const RectF& world_coordinates_m, const RGB& color);
 		static void ColorRect(const RectF& world_coordinates_m, const RGBA& color);
-		static void FillDisk(const VecF& center_position_m, float radius_m, const SDL_Color& color);
+		static void FillDisk(const VecF& center_position_m, float radius_m, const RGBA& color);
 		static void FillTriangle(const VecF& worldPosition0M, const VecF& worldPosition1M, const VecF& worldPosition2M, const RGBA& color);
 		static void FillTriangle(const VecF& worldPosition0M, const VecF& worldPosition1M, const VecF& worldPosition2M, const RGBA& color0, const RGBA& color1, const RGBA& color2);
-		static void DrawCross(const VecF& world_position, SDL_Color color);
+		static void DrawCross(const VecF& world_position, const RGBA& color);
 		static void DrawCross(const VecF& worldPosition, int radiusPx, const RGBA& color);
 		static void DrawCross(const VecF& worldPosition, float radiusM, const RGBA& color);
-		static void DrawLine(const VecF& world_position_1, const VecF& world_position_2, SDL_Color color);
-		static void DrawLine(const VecF& worldPosition1M, const VecF& worldPosition2M, const RGBA& color);
+		static void DrawLine(const VecF& world_position_1, const VecF& world_position_2, const RGBA& color);
 		static void DrawVerticalLine(float x, const RGBA& color);
 		static void DrawVerticalLineAbove(const VecF& positionM, const RGBA& color);
 		static void DrawVerticalLineBelow(const VecF& positionM, const RGBA& color);

@@ -9,6 +9,7 @@
 #include <m2/ui/UiAction.h>
 #include <m2/game/Key.h>
 #include <m2/String.h>
+#include <m2/thirdparty/video/Detail.h>
 #include <M2.orm.h>
 #include <Level.pb.h>
 #include <CMakeProject.h>
@@ -1168,13 +1169,13 @@ void Game::DrawEnvelopes() const {
 	SDL_Rect sdl_rect{};
 
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-	sdl_rect = static_cast<SDL_Rect>(_dimensions->TopEnvelope());
+	sdl_rect = thirdparty::video::ToSdlRect(_dimensions->TopEnvelope());
 	SDL_RenderFillRect(renderer, &sdl_rect);
-	sdl_rect = static_cast<SDL_Rect>(_dimensions->BottomEnvelope());
+	sdl_rect = thirdparty::video::ToSdlRect(_dimensions->BottomEnvelope());
 	SDL_RenderFillRect(renderer, &sdl_rect);
-	sdl_rect = static_cast<SDL_Rect>(_dimensions->LeftEnvelope());
+	sdl_rect = thirdparty::video::ToSdlRect(_dimensions->LeftEnvelope());
 	SDL_RenderFillRect(renderer, &sdl_rect);
-	sdl_rect = static_cast<SDL_Rect>(_dimensions->RightEnvelope());
+	sdl_rect = thirdparty::video::ToSdlRect(_dimensions->RightEnvelope());
 	SDL_RenderFillRect(renderer, &sdl_rect);
 }
 void Game::FlipBuffers() const { SDL_RenderPresent(renderer); }

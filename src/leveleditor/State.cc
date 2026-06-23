@@ -13,7 +13,7 @@
 #include <m2/Log.h>
 
 namespace {
-	constexpr SDL_Color SELECTION_COLOR = {0, 127, 255, 80};
+	constexpr m2::RGBA SELECTION_COLOR = {0, 127, 255, 80};
 
 	/// If the selection state contains this object, the mouse is carrying an object, thus when the selection is ended,
 	/// the object should be placed.

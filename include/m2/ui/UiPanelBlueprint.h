@@ -1,7 +1,7 @@
 #pragma once
 #include "UiWidgetBlueprint.h"
 #include "../Events.h"
-#include <SDL.h>
+#include <m2/video/Color.h>
 #include <vector>
 
 namespace m2 {
@@ -19,7 +19,7 @@ namespace m2 {
 		/// of the UI, thus it behaves like a padding at the same time.
 		float border_width{0.001f};
 
-		SDL_Color background_color{};
+		RGBA background_color{};
 
 		bool cancellable{}; // TODO if there are multiple UI states, it's hard to tell which one needs to be cancelled. Handle cancellations with a hidden button
 

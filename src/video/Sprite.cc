@@ -1,4 +1,5 @@
 #include <m2/video/Sprite.h>
+#include <m2/thirdparty/video/Detail.h>
 #include <m2/Math.h>
 #include <m2/Game.h>
 #include <m2/Log.h>
@@ -118,7 +119,7 @@ m2::VecF m2::Sprite::ScreenOriginToCenterVecOutpx(const VecF& position, const bo
 }
 
 void m2::Sprite::DrawIn2dWorld(const VecF& position, const bool foregroundCompanion, const float angle, MAYBE bool is_foreground, MAYBE float z) const {
-	const auto sourceRect = static_cast<SDL_Rect>(GetRect(foregroundCompanion));
+	const auto sourceRect = thirdparty::video::ToSdlRect(GetRect(foregroundCompanion));
 	DrawTextureIn2dWorld(
 			M2_GAME.renderer,
 			static_cast<SDL_Texture*>(GetTexture(foregroundCompanion).RawHandle()),
@@ -131,7 +132,7 @@ void m2::Sprite::DrawIn2dWorld(const VecF& position, const bool foregroundCompan
 	);
 }
 void m2::Sprite::DrawIn3dWorld(const VecF& position, const bool foregroundCompanion, const float angle, const bool is_foreground, const float z) const {
-	const auto sourceRect = static_cast<SDL_Rect>(GetRect(foregroundCompanion));
+	const auto sourceRect = thirdparty::video::ToSdlRect(GetRect(foregroundCompanion));
 	DrawTextureIn3dWorld(
 			M2_GAME.renderer,
 			static_cast<SDL_Texture*>(GetTexture(foregroundCompanion).RawHandle()),

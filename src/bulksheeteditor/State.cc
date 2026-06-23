@@ -9,8 +9,8 @@
 using namespace m2;
 
 namespace {
-	constexpr SDL_Color SELECTION_COLOR = {0, 127, 255, 180};
-	constexpr SDL_Color CONFIRMED_SELECTION_COLOR = {0, 255, 0, 80};
+	constexpr RGBA SELECTION_COLOR = {0, 127, 255, 180};
+	constexpr RGBA CONFIRMED_SELECTION_COLOR = {0, 255, 0, 80};
 }  // namespace
 
 expected<bulksheeteditor::State> bulksheeteditor::State::Create(const std::filesystem::path& sprite_sheets_path) {

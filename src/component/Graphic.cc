@@ -4,6 +4,7 @@
 #include "m2/component/Graphic.h"
 #include <m2/Object.h>
 #include <m2/thirdparty/video/Shapes.h>
+#include <m2/thirdparty/video/Detail.h>
 #include <cmath>
 
 bool m2::IsProjectionTypeParallel(const pb::ProjectionType pt) {
@@ -202,7 +203,7 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 	}
 }
 
-void m2::Graphic::ColorCell(const VecI& cell, const SDL_Color color) {
+void m2::Graphic::ColorCell(const VecI& cell, const RGBA& color) {
 	const auto screen_origin_to_cell_center_px = ScreenOriginToPositionVecPx(VecF{cell});
 	const auto rect = RectI{
 		RoundI(screen_origin_to_cell_center_px.GetX() - (M2_GAME.Dimensions().OutputPixelsPerMeter() / 2.0f)),
@@ -210,9 +211,9 @@ void m2::Graphic::ColorCell(const VecI& cell, const SDL_Color color) {
 		RoundI(M2_GAME.Dimensions().OutputPixelsPerMeter()),
 		RoundI(M2_GAME.Dimensions().OutputPixelsPerMeter())
 	};
-	thirdparty::video::FillRectangle(rect, RGBA{color});
+	thirdparty::video::FillRectangle(rect, color);
 }
-void m2::Graphic::ColorRect(const RectF& world_coordinates_m, const SDL_Color color) {
+void m2::Graphic::ColorRect(const RectF& world_coordinates_m, const RGBA& color) {
 	const auto screen_origin_to_top_left_px = ScreenOriginToPositionVecPx(world_coordinates_m.GetTopLeftPoint());
 	const auto screen_origin_to_bottom_right_px = ScreenOriginToPositionVecPx(world_coordinates_m.GetBottomRightPoint());
 	// TODO using I() and CeilI() is not right, but how not to leave no gaps between sprites?
@@ -224,18 +225,15 @@ void m2::Graphic::ColorRect(const RectF& world_coordinates_m, const SDL_Color co
 			CeilI(screen_origin_to_bottom_right_px.GetX() - screen_origin_to_top_left_px.GetX()),
 			CeilI(screen_origin_to_bottom_right_px.GetY() - screen_origin_to_top_left_px.GetY())
 	};
-	thirdparty::video::FillRectangle(rect, RGBA{color});
+	thirdparty::video::FillRectangle(rect, color);
 }
 void m2::Graphic::ColorRect(const RectF& world_coordinates_m, const RGB& color) {
-	ColorRect(world_coordinates_m, SDL_Color{color.r, color.g, color.b, 255});
+	ColorRect(world_coordinates_m, RGBA{color.r, color.g, color.b, uint8_t{255}});
 }
-void m2::Graphic::ColorRect(const RectF& world_coordinates_m, const RGBA& color) {
-	ColorRect(world_coordinates_m, SDL_Color{color.r, color.g, color.b, color.a});
-}
-void m2::Graphic::FillDisk(const VecF& center_position_m, const float radius_m, const SDL_Color& color) {
+void m2::Graphic::FillDisk(const VecF& center_position_m, const float radius_m, const RGBA& color) {
 	const auto center_position_px = ScreenOriginToPositionVecPx(center_position_m);
 	const auto radius_px = radius_m * M2_GAME.Dimensions().OutputPixelsPerMeter();
-	thirdparty::video::FillCircle(center_position_px, RGBA{color}, radius_px, RGBA{color});
+	thirdparty::video::FillCircle(center_position_px, color, radius_px, color);
 }
 void m2::Graphic::FillTriangle(const VecF& worldPosition0M, const VecF& worldPosition1M, const VecF& worldPosition2M, const RGBA& color) {
 	thirdparty::video::FillTriangle(
@@ -251,10 +249,10 @@ void m2::Graphic::FillTriangle(const VecF& worldPosition0M, const VecF& worldPos
 		ScreenOriginToPositionVecPx(worldPosition2M),
 		color0, color1, color2);
 }
-void m2::Graphic::DrawCross(const VecF& world_position, SDL_Color color) {
+void m2::Graphic::DrawCross(const VecF& world_position, const RGBA& color) {
 	const auto draw_position = VecI{ScreenOriginToPositionVecPx(world_position)};
-	thirdparty::video::DrawLine(draw_position + VecI{-9, -9}, draw_position + VecI{10, 10}, RGBA{color});
-	thirdparty::video::DrawLine(draw_position + VecI{-9, 9}, draw_position + VecI{10, -10}, RGBA{color});
+	thirdparty::video::DrawLine(draw_position + VecI{-9, -9}, draw_position + VecI{10, 10}, color);
+	thirdparty::video::DrawLine(draw_position + VecI{-9, 9}, draw_position + VecI{10, -10}, color);
 }
 void m2::Graphic::DrawCross(const VecF& worldPosition, int radiusPx, const RGBA& color) {
 	const auto draw_position = VecI{ScreenOriginToPositionVecPx(worldPosition)};
@@ -265,21 +263,18 @@ void m2::Graphic::DrawCross(const VecF& worldPosition, const float radiusM, cons
 	DrawLine(worldPosition + VecF{-radiusM, -radiusM}, worldPosition + VecF{radiusM, radiusM}, color);
 	DrawLine(worldPosition + VecF{-radiusM, radiusM}, worldPosition + VecF{radiusM, -radiusM}, color);
 }
-void m2::Graphic::DrawLine(const VecF& world_position_1, const VecF& world_position_2, SDL_Color color) {
+void m2::Graphic::DrawLine(const VecF& world_position_1, const VecF& world_position_2, const RGBA& color) {
 	if (IsProjectionTypeParallel(M2_LEVEL.GetProjectionType())) {
 		const auto p1 = static_cast<VecI>(ScreenOriginToPositionVecPx(world_position_1));
 		const auto p2 = static_cast<VecI>(ScreenOriginToPositionVecPx(world_position_2));
-		thirdparty::video::DrawLine(p1, p2, RGBA{color});
+		thirdparty::video::DrawLine(p1, p2, color);
 	} else {
 		const auto p1 = m3::ScreenOriginToProjectionAlongCameraPlaneDstpx(m3::VecF{world_position_1});
 		const auto p2 = m3::ScreenOriginToProjectionAlongCameraPlaneDstpx(m3::VecF{world_position_2});
 		if (p1 && p2) {
-			thirdparty::video::DrawLine(*p1, *p2, RGBA{color});
+			thirdparty::video::DrawLine(*p1, *p2, color);
 		}
 	}
-}
-void m2::Graphic::DrawLine(const VecF& worldPosition1M, const VecF& worldPosition2M, const RGBA& color) {
-	DrawLine(worldPosition1M, worldPosition2M, SDL_Color{color.r, color.g, color.b, color.a});
 }
 void m2::Graphic::DrawVerticalLine(float x, const RGBA& color) {
 	const auto x_px = static_cast<int>(roundf(ScreenOriginToPositionVecPx(VecF{x, 0.0f}).GetX()));
@@ -515,28 +510,28 @@ void m2::DrawTextureIn3dWorld(
 
 	if (projected_point_0 && projected_point_1 && projected_point_2 && projected_point_3) {
 		SDL_Vertex vertices[4] = {};
-		vertices[0].position = static_cast<SDL_FPoint>(*projected_point_0);
+		vertices[0].position = thirdparty::video::ToSdlFPoint(*projected_point_0);
 		vertices[0].color = {255, 255, 255, 255};
 		vertices[0].tex_coord = SDL_FPoint{
 				ToFloat(sourceRect->x) / sourceTextureSheetDimensions.GetX(),
 				ToFloat(sourceRect->y) / sourceTextureSheetDimensions.GetY(),
 		};
 
-		vertices[1].position = static_cast<SDL_FPoint>(*projected_point_1);
+		vertices[1].position = thirdparty::video::ToSdlFPoint(*projected_point_1);
 		vertices[1].color = {255, 255, 255, 255};
 		vertices[1].tex_coord = SDL_FPoint{
 				ToFloat(sourceRect->x + sourceRect->w) / sourceTextureSheetDimensions.GetX(),
 				ToFloat(sourceRect->y) / sourceTextureSheetDimensions.GetY(),
 		};
 
-		vertices[2].position = static_cast<SDL_FPoint>(*projected_point_2);
+		vertices[2].position = thirdparty::video::ToSdlFPoint(*projected_point_2);
 		vertices[2].color = {255, 255, 255, 255};
 		vertices[2].tex_coord = SDL_FPoint{
 				ToFloat(sourceRect->x) / sourceTextureSheetDimensions.GetX(),
 				ToFloat(sourceRect->y + sourceRect->h) / sourceTextureSheetDimensions.GetY(),
 		};
 
-		vertices[3].position = static_cast<SDL_FPoint>(*projected_point_3);
+		vertices[3].position = thirdparty::video::ToSdlFPoint(*projected_point_3);
 		vertices[3].color = {255, 255, 255, 255};
 		vertices[3].tex_coord = SDL_FPoint{
 				ToFloat(sourceRect->x + sourceRect->w) / sourceTextureSheetDimensions.GetX(),

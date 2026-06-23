@@ -5,6 +5,7 @@
 #include "m2/ProxyTypes.h"
 #include "m2/math/VecF.h"
 #include "m2/math/VecI.h"
+#include <m2/video/Color.h>
 
 namespace m2 {
 	using Path = std::vector<VecI>;
@@ -33,7 +34,7 @@ namespace m2 {
 		/// If the world is not static, the cache should be cleared after the physics step
 		void clear_cache() { _approach_from_cache.clear(); }
 
-		static void draw_path(const Path& path, SDL_Color color);
+		static void draw_path(const Path& path, RGBA color);
 
 	private:
 		static Path smoothen_path(const Path& reverse_path, FE max_distance_m);

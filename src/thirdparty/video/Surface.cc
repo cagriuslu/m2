@@ -1,4 +1,5 @@
 #include <m2/thirdparty/video/Surface.h>
+#include <m2/thirdparty/video/Detail.h>
 #include <m2/common/Error.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -22,21 +23,21 @@ Surface Surface::CreateBlank(const int w, const int h, const uint32_t pixelForma
 	return Surface{surface};
 }
 Surface Surface::RenderTextSolid(TTF_Font* font, const std::string& text, const RGBA& color) {
-	auto* surface = TTF_RenderUTF8_Solid(font, text.c_str(), static_cast<SDL_Color>(color));
+	auto* surface = TTF_RenderUTF8_Solid(font, text.c_str(), ToSdlColor(color));
 	if (not surface) {
 		throw M2_ERROR(std::string{"Unable to render text: "} + TTF_GetError());
 	}
 	return Surface{surface};
 }
 Surface Surface::RenderTextBlended(TTF_Font* font, const std::string& text, const RGBA& color) {
-	auto* surface = TTF_RenderUTF8_Blended(font, text.c_str(), static_cast<SDL_Color>(color));
+	auto* surface = TTF_RenderUTF8_Blended(font, text.c_str(), ToSdlColor(color));
 	if (not surface) {
 		throw M2_ERROR(std::string{"Unable to render text: "} + TTF_GetError());
 	}
 	return Surface{surface};
 }
 Surface Surface::RenderTextBlendedWrapped(TTF_Font* font, const std::string& text, const RGBA& color, const int wrapWidthPx) {
-	auto* surface = TTF_RenderUTF8_Blended_Wrapped(font, text.c_str(), static_cast<SDL_Color>(color), wrapWidthPx);
+	auto* surface = TTF_RenderUTF8_Blended_Wrapped(font, text.c_str(), ToSdlColor(color), wrapWidthPx);
 	if (not surface) {
 		throw M2_ERROR(std::string{"Unable to render text: "} + TTF_GetError());
 	}

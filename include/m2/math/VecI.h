@@ -2,7 +2,6 @@
 #include <m2/math/primitives/Exact.h>
 #include <m2/math/primitives/Float.h>
 #include <m2/ProxyTypes.h>
-#include <SDL_rect.h>
 #include <VecI.pb.h>
 #include <cstddef>
 #include <cstdint>
@@ -31,7 +30,6 @@ namespace m2 {
 		VecI operator/(const int& rhs) const { return {x / rhs, y / rhs}; }
 		bool operator==(const VecI& other) const { return x == other.x && y == other.y; }
 		explicit operator bool() const { return (x || y); }
-		explicit operator SDL_FPoint() const { return SDL_FPoint{static_cast<float>(x), static_cast<float>(y)}; }
 
 		// Accessors
 		[[nodiscard]] bool IsNear(const VecI& other, int tolerance) const {

@@ -3,7 +3,6 @@
 #include <m2/Game.h>
 #include <m2/Log.h>
 #include <CMakeProject.h>
-#include <SDL.h>
 #include <csignal>
 #include <unistd.h>
 

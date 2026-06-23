@@ -1,4 +1,5 @@
 #include <m2/thirdparty/video/Shapes.h>
+#include <m2/thirdparty/video/Detail.h>
 #include <m2/Game.h>
 #include <m2/common/Error.h>
 #include <m2/Math.h>
@@ -9,11 +10,11 @@ using namespace m2::thirdparty;
 using namespace m2::thirdparty::video;
 
 void video::FillTriangle(const VecF& point0, const VecF& point1, const VecF& point2, const RGBA& color) {
-	const auto sdlColor = static_cast<SDL_Color>(color);
+	const auto sdlColor = ToSdlColor(color);
 	const SDL_Vertex vertices[3] = {
-		SDL_Vertex{.position = static_cast<SDL_FPoint>(point0), .color = sdlColor, .tex_coord = {}},
-		SDL_Vertex{.position = static_cast<SDL_FPoint>(point1), .color = sdlColor, .tex_coord = {}},
-		SDL_Vertex{.position = static_cast<SDL_FPoint>(point2), .color = sdlColor, .tex_coord = {}},
+		SDL_Vertex{.position = ToSdlFPoint(point0), .color = sdlColor, .tex_coord = {}},
+		SDL_Vertex{.position = ToSdlFPoint(point1), .color = sdlColor, .tex_coord = {}},
+		SDL_Vertex{.position = ToSdlFPoint(point2), .color = sdlColor, .tex_coord = {}},
 	};
 	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
 	if (SDL_RenderGeometry(M2_GAME.renderer, nullptr, vertices, 3, nullptr, 0) < 0) {
@@ -21,13 +22,13 @@ void video::FillTriangle(const VecF& point0, const VecF& point1, const VecF& poi
 	}
 }
 void video::FillTriangle(const VecF& point0, const VecF& point1, const VecF& point2, const RGBA& color0, const RGBA& color1, const RGBA& color2) {
-	const auto sdlColor0 = static_cast<SDL_Color>(color0);
-	const auto sdlColor1 = static_cast<SDL_Color>(color1);
-	const auto sdlColor2 = static_cast<SDL_Color>(color2);
+	const auto sdlColor0 = ToSdlColor(color0);
+	const auto sdlColor1 = ToSdlColor(color1);
+	const auto sdlColor2 = ToSdlColor(color2);
 	const SDL_Vertex vertices[3] = {
-		SDL_Vertex{.position = static_cast<SDL_FPoint>(point0), .color = sdlColor0, .tex_coord = {}},
-		SDL_Vertex{.position = static_cast<SDL_FPoint>(point1), .color = sdlColor1, .tex_coord = {}},
-		SDL_Vertex{.position = static_cast<SDL_FPoint>(point2), .color = sdlColor2, .tex_coord = {}},
+		SDL_Vertex{.position = ToSdlFPoint(point0), .color = sdlColor0, .tex_coord = {}},
+		SDL_Vertex{.position = ToSdlFPoint(point1), .color = sdlColor1, .tex_coord = {}},
+		SDL_Vertex{.position = ToSdlFPoint(point2), .color = sdlColor2, .tex_coord = {}},
 	};
 	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
 	if (SDL_RenderGeometry(M2_GAME.renderer, nullptr, vertices, 3, nullptr, 0) < 0) {
@@ -35,19 +36,19 @@ void video::FillTriangle(const VecF& point0, const VecF& point1, const VecF& poi
 	}
 }
 void video::FillCircle(const VecF& centerPx, const RGBA& centerColor, const float radiusPx, const RGBA& edgeColor, const unsigned steps) {
-	const auto sdlCenterColor = static_cast<SDL_Color>(centerColor);
-	const auto sdlEdgeColor = static_cast<SDL_Color>(edgeColor);
+	const auto sdlCenterColor = ToSdlColor(centerColor);
+	const auto sdlEdgeColor = ToSdlColor(edgeColor);
 	std::vector<SDL_Vertex> vertices(steps * 3);
 	VecF spanPx{radiusPx, 0.0f}; // The vector that'll be rotated for the edges
 	for (unsigned i = 0; i < steps; ++i) {
 		// Center point of the triangle
-		vertices.push_back(SDL_Vertex{.position = static_cast<SDL_FPoint>(centerPx), .color = sdlCenterColor, .tex_coord = {}});
+		vertices.push_back(SDL_Vertex{.position = ToSdlFPoint(centerPx), .color = sdlCenterColor, .tex_coord = {}});
 		// Second point of the triangle
-		vertices.push_back(SDL_Vertex{.position = static_cast<SDL_FPoint>(centerPx + spanPx), .color = sdlEdgeColor, .tex_coord = {}});
+		vertices.push_back(SDL_Vertex{.position = ToSdlFPoint(centerPx + spanPx), .color = sdlEdgeColor, .tex_coord = {}});
 		// Rotate spanPx for next iteration
 		spanPx = spanPx.Rotate(PI_MUL2 / static_cast<float>(steps));
 		// Third point of the triangle
-		vertices.push_back(SDL_Vertex{.position = static_cast<SDL_FPoint>(centerPx + spanPx), .color = sdlEdgeColor, .tex_coord = {}});
+		vertices.push_back(SDL_Vertex{.position = ToSdlFPoint(centerPx + spanPx), .color = sdlEdgeColor, .tex_coord = {}});
 	}
 	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
 	if (SDL_RenderGeometry(M2_GAME.renderer, nullptr, vertices.data(), static_cast<int>(vertices.size()), nullptr, 0) < 0) {
@@ -88,7 +89,7 @@ void video::DrawLine(const VecF& point0, const VecF& point1, const RGBA& color) 
 void video::DrawRectangle(const RectI& rect, const RGBA& color) {
 	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
 	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
-	const auto sdlRect = static_cast<SDL_Rect>(rect);
+	const auto sdlRect = ToSdlRect(rect);
 	if (SDL_RenderDrawRect(M2_GAME.renderer, &sdlRect) < 0) {
 		throw M2_ERROR(std::string{"SDL_RenderDrawRect failed: "} + SDL_GetError());
 	}
@@ -96,7 +97,7 @@ void video::DrawRectangle(const RectI& rect, const RGBA& color) {
 void video::DrawRectangle(const RectF& rect, const RGBA& color) {
 	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
 	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
-	const auto sdlRect = static_cast<SDL_FRect>(rect);
+	const auto sdlRect = ToSdlFRect(rect);
 	if (SDL_RenderDrawRectF(M2_GAME.renderer, &sdlRect) < 0) {
 		throw M2_ERROR(std::string{"SDL_RenderDrawRectF failed: "} + SDL_GetError());
 	}

@@ -1,5 +1,6 @@
 #include <m2/video/TextLabel.h>
 #include <m2/thirdparty/video/Surface.h>
+#include <m2/thirdparty/video/Detail.h>
 #include <m2/Game.h>
 
 m2::VecI m2::EstimateTextLabelDimensions(TTF_Font* font, const std::string& text, int fontSize) {
@@ -44,7 +45,7 @@ void m2::DrawTextLabelBackgroundIn2dWorld(const pb::TextLabel& tl, const RectI& 
 	Graphic::ColorRect(rect, trueBackgroundColor);
 }
 void m2::DrawTextLabelIn2dWorld(const pb::TextLabel& tl, const RectI& sourceRect, const VecF& position, const float angle, MAYBE bool is_foreground, MAYBE float z) {
-	const auto sourceRectSdl = static_cast<SDL_Rect>(sourceRect);
+	const auto sourceRectSdl = thirdparty::video::ToSdlRect(sourceRect);
 	DrawTextureIn2dWorld(
 			M2_GAME.renderer,
 			static_cast<SDL_Texture*>(M2_GAME.GetTextLabelCache().Texture().RawHandle()),
@@ -56,7 +57,7 @@ void m2::DrawTextLabelIn2dWorld(const pb::TextLabel& tl, const RectI& sourceRect
 			angle);
 }
 void m2::DrawTextLabelIn3dWorld(const pb::TextLabel& tl, const RectI& sourceRect, const VecF& position, const float angle, const bool is_foreground, const float z) {
-	const auto sourceRectSdl = static_cast<SDL_Rect>(sourceRect);
+	const auto sourceRectSdl = thirdparty::video::ToSdlRect(sourceRect);
 	DrawTextureIn3dWorld(
 			M2_GAME.renderer,
 			static_cast<SDL_Texture*>(M2_GAME.GetTextLabelCache().Texture().RawHandle()),
@@ -92,7 +93,7 @@ m2::RectI m2::TextLabelCache::TextLabelGenerator::operator()(const std::tuple<st
 
 	// Blit new surface to allocated surface
 	return *_dynamicSheet.AllocateAndMutate(w, h, [&](SDL_Surface* surface, const RectI& area) {
-		auto dstRectSdl = static_cast<SDL_Rect>(area);
+		auto dstRectSdl = thirdparty::video::ToSdlRect(area);
 		const auto blitResult = SDL_BlitSurface(static_cast<SDL_Surface*>(renderSurface.RawHandle()), nullptr, surface, &dstRectSdl);
 		m2ExpectZeroOrThrowMessage(blitResult, SDL_GetError());
 	}, false);

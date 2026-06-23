@@ -1,5 +1,5 @@
 #pragma once
-#include <SDL.h>
+#include <m2/video/Color.h>
 #include <functional>
 
 namespace m2::widget {
@@ -8,7 +8,7 @@ namespace m2::widget {
 
 	struct ProgressBarBlueprint {
 		float initial_progress{};
-		SDL_Color bar_color{};
+		RGBA bar_color{};
 
 		std::function<void(ProgressBar& self)> onCreate{};
 		std::function<void(ProgressBar& self)> onUpdate{};

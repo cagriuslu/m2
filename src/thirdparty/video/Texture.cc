@@ -1,6 +1,7 @@
 #include <m2/thirdparty/video/Texture.h>
 #include <m2/thirdparty/video/Surface.h>
 #include <m2/thirdparty/video/Window.h>
+#include <m2/thirdparty/video/Detail.h>
 #include <m2/Game.h>
 #include <SDL2/SDL.h>
 
@@ -105,7 +106,7 @@ void Texture::RenderToWindow() const {
 	SDL_RenderCopy(M2_GAME.renderer, static_cast<SDL_Texture*>(_texture), nullptr, nullptr);
 }
 void Texture::Render(const RectI& destinationPx) const {
-	const auto sdlRect = static_cast<SDL_Rect>(destinationPx);
+	const auto sdlRect = ToSdlRect(destinationPx);
 	SDL_RenderCopy(M2_GAME.renderer, static_cast<SDL_Texture*>(_texture), nullptr, &sdlRect);
 }
 void Texture::RenderWithColorMod(const RectI& destinationPx, const RGB& mod) const {

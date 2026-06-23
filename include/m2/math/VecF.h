@@ -3,7 +3,6 @@
 #include <m2/math/primitives/Float.h>
 #include <m2/ProxyTypes.h>
 #include <Dim2f.pb.h>
-#include <SDL_rect.h>
 #include <VecF.pb.h>
 #include <VecI.pb.h>
 #include <box2d/b2_math.h>
@@ -48,7 +47,6 @@ namespace m2 {
 		explicit operator bool() const { return (_x != 0.0f) || (_y != 0.0f); }
 		explicit operator b2Vec2() const { return b2Vec2{_x, _y}; }
 		explicit operator pb::VecF() const { pb::VecF v; v.set_x(_x); v.set_y(_y); return v; }
-		explicit operator SDL_FPoint() const { return SDL_FPoint{_x, _y}; }
 
 		// Accessors
 

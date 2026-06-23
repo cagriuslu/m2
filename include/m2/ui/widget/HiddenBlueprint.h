@@ -1,6 +1,5 @@
 #pragma once
 #include "../UiAction.h"
-#include <SDL.h>
 
 namespace m2::widget {
     // Forward declaration

@@ -1,5 +1,4 @@
 #pragma once
-#include <SDL2/SDL_rect.h>
 #include <RectI.pb.h>
 #include "../math/VecF.h"
 #include <optional>
@@ -14,8 +13,6 @@ namespace m2 {
 		RectF(float x, float y, float w, float h);
 		RectF(const VecF& xy, float w, float h);
 		explicit RectF(const RectI& r);
-		explicit RectF(const SDL_FRect& r);
-		explicit RectF(const SDL_Rect& r);
 		explicit RectF(const pb::RectI& r);
 		static RectF CreateCenteredAround(const VecF& center, float w, float h) { return {center.GetX() - w / 2.0f, center.GetY() - h / 2.0f, w, h}; }
 		static RectF CreateCenteredAround(const VecF& center, const VecF& dims) { return CreateCenteredAround(center, dims.GetX(), dims.GetY()); }
@@ -24,8 +21,6 @@ namespace m2 {
 		// Operator
 
 		explicit operator bool() const;
-		explicit operator SDL_FRect() const;
-		explicit operator SDL_Rect() const;
 
 		// Accessors
 

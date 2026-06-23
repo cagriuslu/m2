@@ -35,7 +35,7 @@ void Image::OnDraw() {
 			if (onDraw) { onDraw(*this); }
 		}
 	}, _content);
-	draw_border(Rect(), vertical_border_width_px(), horizontal_border_width_px(), depressed ? SDL_Color{127, 127, 127, 255} : SDL_Color{255, 255, 255, 255});
+	draw_border(Rect(), vertical_border_width_px(), horizontal_border_width_px(), depressed ? RGBA{127, 127, 127, 255} : RGBA{255, 255, 255, 255});
 }
 
 void Image::SetSpriteType(const m2g::pb::SpriteType s) {

@@ -7,7 +7,7 @@ m2::Id m2::obj::CreateOrigin() {
 
 	auto& gfx = it->AddGraphic(m2g::pb::UPRIGHT_GRAPHICS_DEFAULT_LAYER);
 	gfx.onDraw = [](const Graphic &gfx_) {
-		Graphic::DrawCross(gfx_.position, SDL_Color{255, 0, 0, 255});
+		Graphic::DrawCross(gfx_.position, RGBA{255, 0, 0, 255});
 	};
 
 	return it.GetId();

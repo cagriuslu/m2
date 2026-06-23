@@ -2,7 +2,6 @@
 #include <m2/M2.h>
 #include <m2/math/RectI.h>
 #include <m2/common/Meta.h>
-#include <SDL2/SDL.h>
 #include <sstream>
 #include <m2/Math.h>
 
@@ -10,8 +9,6 @@ m2::RectF::RectF() : x(), y(), w(), h() {}
 m2::RectF::RectF(float x, float y, float w, float h) : x(x), y(y), w(w), h(h) {}
 m2::RectF::RectF(const VecF& xy, float w, float h) : x(xy.GetX()), y(xy.GetY()), w(w), h(h) {}
 m2::RectF::RectF(const RectI& r) : x(static_cast<float>(r.x)), y(static_cast<float>(r.y)), w(static_cast<float>(r.w)), h(static_cast<float>(r.h)) {}
-m2::RectF::RectF(const SDL_FRect& r) : x(r.x), y(r.y), w(r.w), h(r.h) {}
-m2::RectF::RectF(const SDL_Rect& r) : x(static_cast<float>(r.x)), y(static_cast<float>(r.y)), w(static_cast<float>(r.w)), h(static_cast<float>(r.h)) {}
 m2::RectF::RectF(const pb::RectI& r) : x(static_cast<float>(r.x())), y(static_cast<float>(r.y())), w(static_cast<float>(r.w())), h(static_cast<float>(r.h())) {}
 m2::RectF m2::RectF::CreateFromCorners(const m2::VecF &corner1, const m2::VecF &corner2) {
 	auto top_left_x = std::min(corner1.GetX(), corner2.GetX());
@@ -23,12 +20,6 @@ m2::RectF m2::RectF::CreateFromCorners(const m2::VecF &corner1, const m2::VecF &
 
 m2::RectF::operator bool() const {
 	return 0.0f < w && 0.0f < h;
-}
-m2::RectF::operator SDL_FRect() const {
-	return SDL_FRect{x, y, w, h};
-}
-m2::RectF::operator SDL_Rect() const {
-	return SDL_Rect{static_cast<int>(x), static_cast<int>(y), static_cast<int>(w), static_cast<int>(h)};
 }
 
 float m2::RectF::GetArea() const {

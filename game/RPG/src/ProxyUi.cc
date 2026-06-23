@@ -24,7 +24,7 @@ const UiPanelBlueprint pause_menu_blueprint = {
 	.name = "PauseMenu",
 	.w = 160, .h = 90,
 	.border_width = 0,
-	.background_color = {.r = 20, .g = 20, .b = 20, .a = 255},
+	.background_color = RGBA{20, 20, 20, 255},
 	.widgets = {
 		UiWidgetBlueprint{
 			.x = 75, .y = 42, .w = 10, .h = 6,
@@ -42,7 +42,7 @@ static widget::TextBlueprint hp_label = {
 };
 static widget::ProgressBarBlueprint hp_progress_bar = {
 		.initial_progress = 1.0f,
-		.bar_color = SDL_Color{255, 0, 0, 255},
+		.bar_color = m2::RGBA{255, 0, 0, 255},
 		.onUpdate = [](widget::ProgressBar& self) {
 			if (M2_LEVEL.GetPlayer()) {
 				self.SetProgress(M2_LEVEL.GetCharacterStorage().TryGetCharacter<m2g::ProxyEx::PlayerCharacterStorageIndex>(M2_PLAYER.GetCharacterId())->GetVariable(m2g::pb::RESOURCE_HP).GetFOrZero());
@@ -55,7 +55,7 @@ static widget::TextBlueprint dash_label = {
 };
 static widget::ProgressBarBlueprint dash_progress_bar = {
 		.initial_progress = 1.0f,
-		.bar_color = SDL_Color{255, 255, 0, 255},
+		.bar_color = m2::RGBA{255, 255, 0, 255},
 		.onUpdate = [](widget::ProgressBar& self) {
 			if (M2_LEVEL.GetPlayer()) {
 				float counter = M2_LEVEL.GetCharacterStorage().TryGetCharacter<m2g::ProxyEx::PlayerCharacterStorageIndex>(M2_PLAYER.GetCharacterId())->GetVariable(m2g::pb::RESOURCE_DASH_ENERGY).GetFOrZero();
