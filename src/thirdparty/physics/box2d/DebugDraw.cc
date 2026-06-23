@@ -36,7 +36,7 @@ void DebugDraw::DrawCircle(const b2Vec2& center, const float radius, const b2Col
 			srcRect.h};
 		const RGBA colorU8{color};
 		SDL_SetTextureColorMod(texture, colorU8.r, colorU8.g, colorU8.b);
-		SDL_RenderCopy(M2_GAME.renderer, texture, &srcRect, &dstRect);
+		SDL_RenderCopy(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), texture, &srcRect, &dstRect);
 	} else {
 		const auto centerPosition = m3::VecF{VecF{center}};
 		// Draw an octagon instead of circle
@@ -51,7 +51,7 @@ void DebugDraw::DrawCircle(const b2Vec2& center, const float radius, const b2Col
 		const auto pointTopLeft = ScreenOriginToProjectionAlongCameraPlaneDstpx(centerPosition.offset_x(-corner).offset_y(-corner));
 		if (pointTop && pointTopRight && pointRight && pointBottomRight && pointBottom && pointBottomLeft && pointLeft && pointTopLeft) {
 			const RGBA colorU8{color};
-			SDL_SetRenderDrawColor(M2_GAME.renderer, colorU8.r, colorU8.g, colorU8.b, colorU8.a);
+			SDL_SetRenderDrawColor(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), colorU8.r, colorU8.g, colorU8.b, colorU8.a);
 			const std::array points = {
 				SDL_FPoint{pointTop->GetX(), pointTop->GetY()},
 				SDL_FPoint{pointTopRight->GetX(), pointTopRight->GetY()},
@@ -63,7 +63,7 @@ void DebugDraw::DrawCircle(const b2Vec2& center, const float radius, const b2Col
 				SDL_FPoint{pointTopLeft->GetX(), pointTopLeft->GetY()},
 				SDL_FPoint{pointTop->GetX(), pointTop->GetY()}
 			};
-			SDL_RenderDrawLinesF(M2_GAME.renderer, points.data(), I(points.size()));
+			SDL_RenderDrawLinesF(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), points.data(), I(points.size()));
 		}
 	}
 }

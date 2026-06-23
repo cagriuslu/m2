@@ -1,21 +1,21 @@
 #pragma once
 #include <m2/math/RectI.h>
+#include <m2/thirdparty/video/Renderer.h>
 #include <m2/thirdparty/video/Surface.h>
 #include <m2/thirdparty/video/Texture.h>
 #include <optional>
-#include <SDL2/SDL_render.h>
 #include <SDL2/SDL_surface.h>
 
 namespace m2 {
 	/// Sprite sheet that dynamically increases in size on demand
 	class DynamicSheet {
-		SDL_Renderer* _renderer;
+		thirdparty::video::Renderer& _renderer;
 		thirdparty::video::Surface _surface;
 		std::optional<thirdparty::video::Texture> _texture;
 		int _lastW{}, _lastH{}, _heightOfCurrentRow{};
 
 	public:
-		explicit DynamicSheet(SDL_Renderer* renderer);
+		explicit DynamicSheet(thirdparty::video::Renderer& renderer);
 
 		// Accessors
 

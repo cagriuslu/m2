@@ -154,7 +154,7 @@ void UiWidget::DrawSpriteOrTextLabel(const std::variant<Sprite, pb::TextLabel>& 
 		.w = RoundI(src_rect.w * sprite_size_multiplier),
 		.h = RoundI(src_rect.h * sprite_size_multiplier)};
 
-	SDL_RenderCopy(M2_GAME.renderer, texture, &src_rect, &actual_dst_rect);
+	SDL_RenderCopy(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), texture, &src_rect, &actual_dst_rect);
 }
 
 void UiWidget::draw_border(const RectI& rect, int vertical_border_width_px, int horizontal_border_width_px, const RGBA& color) {

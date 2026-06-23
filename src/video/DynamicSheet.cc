@@ -1,7 +1,7 @@
 #include <m2/video/DynamicSheet.h>
 #include <m2/Log.h>
 
-m2::DynamicSheet::DynamicSheet(SDL_Renderer* renderer)
+m2::DynamicSheet::DynamicSheet(thirdparty::video::Renderer& renderer)
 		: _renderer(renderer), _surface(thirdparty::video::Surface::CreateBlank(1024, 512, SDL_PIXELFORMAT_BGRA32)) {
 	_texture = thirdparty::video::Texture::CreateFromSurface(_renderer, _surface.RawHandle());
 }

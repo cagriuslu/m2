@@ -3,9 +3,11 @@
 #include <m2/math/VecF.h>
 #include <m2/math/VecI.h>
 
+namespace m2::thirdparty::video { class Renderer; }
+
 namespace m2 {
     class GameDimensions final {
-        void* const _renderer;
+        thirdparty::video::Renderer& _renderer;
         int _gamePpm, _gameAspectRatioMul, _gameAspectRatioDiv;
 
         float _scale;
@@ -16,7 +18,7 @@ namespace m2 {
 
     public:
         /// This constructor assumes the initial aspect ratio of the window is exact, thus requires no envelope.
-        GameDimensions(void* renderer, int gamePpm, int gameAspectRatioMul, int gameAspectRatioDiv);
+        GameDimensions(thirdparty::video::Renderer& renderer, int gamePpm, int gameAspectRatioMul, int gameAspectRatioDiv);
 
         // Accessors
 

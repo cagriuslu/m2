@@ -364,7 +364,7 @@ void m2::Graphic::UndimRendering(SDL_Texture* texture) {
 }
 
 void m2::DrawTextureIn2dWorld(
-		SDL_Renderer* renderer,
+		thirdparty::video::Renderer& renderer,
 		SDL_Texture* sourceTexture,
 		const SDL_Rect* sourceRect,
 		const float originalRotationOfSourceTextureInRadians,
@@ -372,6 +372,7 @@ void m2::DrawTextureIn2dWorld(
 		const VecF& textureCenterToTextureOriginVecInOutputPixels,
 		const VecF& screenOriginToTextureCenterVecInOutputPixels,
 		const float rotationToApplyInRadians) {
+	auto* const rawRenderer = static_cast<SDL_Renderer*>(renderer.RawHandle());
 
 	// Calculate the destination
 	const auto dstRect = SDL_Rect{
@@ -392,14 +393,14 @@ void m2::DrawTextureIn2dWorld(
 	};
 
 	// Render
-	const auto renderModeResult = SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+	const auto renderModeResult = SDL_SetRenderDrawBlendMode(rawRenderer, SDL_BLENDMODE_BLEND);
 	m2ExpectZeroOrThrowMessage(renderModeResult, SDL_GetError());
-	const auto renderResult = SDL_RenderCopyEx(renderer, sourceTexture, sourceRect, &dstRect,
+	const auto renderResult = SDL_RenderCopyEx(rawRenderer, sourceTexture, sourceRect, &dstRect,
 			ToDegrees(rotationToApplyInRadians - originalRotationOfSourceTextureInRadians), &centerPoint, SDL_FLIP_NONE);
 	m2ExpectZeroOrThrowMessage(renderResult, SDL_GetError());
 }
 void m2::DrawTextureIn3dWorld(
-		SDL_Renderer* renderer,
+		thirdparty::video::Renderer& renderer,
 		SDL_Texture* sourceTexture,
 		const SDL_Rect* sourceRect,
 		const float sourcePpm,
@@ -410,6 +411,7 @@ void m2::DrawTextureIn3dWorld(
 		const float zPositionInWorldM,
 		const float rotationToApplyInRadians,
 		const bool isForeground) {
+	auto* const rawRenderer = static_cast<SDL_Renderer*>(renderer.RawHandle());
 	// Draw two triangles in one call
 	// 0****1
 	// *   **
@@ -540,7 +542,7 @@ void m2::DrawTextureIn3dWorld(
 
 		static const int indices[6] = {0, 1, 2, 2, 1, 3};
 
-		SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-		SDL_RenderGeometry(renderer, sourceTexture, vertices, 4, indices, 6);
+		SDL_SetRenderDrawBlendMode(rawRenderer, SDL_BLENDMODE_BLEND);
+		SDL_RenderGeometry(rawRenderer, sourceTexture, vertices, 4, indices, 6);
 	}
 }

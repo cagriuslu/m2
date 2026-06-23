@@ -106,30 +106,19 @@ Game::Game() : window(CreateWindow(_proxy.gamePpm, _proxy.defaultGameHeightM, _p
 
 	cursor.Load();
 
-	// ReSharper disable once CppDFAConstantConditions
-	if (_proxy.areGraphicsPixelated) {
-		// ReSharper disable once CppDFAUnreachableCode
-		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
+	if (auto rendererCreation = thirdparty::video::Renderer::Create(window, _proxy.areGraphicsPixelated)) {
+		renderer.emplace(std::move(*rendererCreation));
 	} else {
-		// ReSharper disable once CppDFAUnreachableCode
-		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
+		throw M2_ERROR(rendererCreation.error());
 	}
 
-	if ((renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE)) ==
-		nullptr) {  // TODO: SDL_RENDERER_PRESENTVSYNC
-		throw M2_ERROR("SDL error: " + std::string{SDL_GetError()});
-	}
-	SDL_RendererInfo info;
-	SDL_GetRendererInfo(renderer, &info);
-	LOG_INFO("Renderer", info.name);
-
-	_dimensions.emplace(renderer, _proxy.gamePpm, _proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
+	_dimensions.emplace(*renderer, _proxy.gamePpm, _proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
 
 	SDL_Surface* lightSurface = IMG_Load(_resources.GetRadialWhiteToBlackGradientPath().string().c_str());
 	if (lightSurface == nullptr) {
 		throw M2_ERROR("SDL error: " + std::string{IMG_GetError()});
 	}
-	if ((light_texture = SDL_CreateTextureFromSurface(renderer, lightSurface)) == nullptr) {
+	if ((light_texture = SDL_CreateTextureFromSurface(static_cast<SDL_Renderer*>(renderer->RawHandle()), lightSurface)) == nullptr) {
 		throw M2_ERROR("SDL error: " + std::string{SDL_GetError()});
 	}
 	SDL_FreeSurface(lightSurface);
@@ -137,11 +126,11 @@ Game::Game() : window(CreateWindow(_proxy.gamePpm, _proxy.defaultGameHeightM, _p
 	SDL_SetTextureAlphaMod(light_texture, 0);
 	SDL_SetTextureColorMod(light_texture, 127, 127, 127);
 
-	_textLabelCache.emplace(renderer, font);
-	_shapeCache.emplace(renderer);
+	_textLabelCache.emplace(*renderer, font);
+	_shapeCache.emplace(*renderer);
 
 	audio_manager.emplace();
-	spriteEffectsSheet = SpriteEffectsSheet{renderer};
+	spriteEffectsSheet.emplace(*renderer);
 
 	{
 		auto sheets_pb = pb::json_file_to_message<pb::SpriteSheets>(_resources.GetSpriteSheetsPath());
@@ -150,7 +139,7 @@ Game::Game() : window(CreateWindow(_proxy.gamePpm, _proxy.defaultGameHeightM, _p
 		}
 		spriteSheetsPb = *sheets_pb;
 	}
-	spriteSheets = SpriteSheet::LoadSpriteSheets(*spriteSheetsPb, renderer);
+	spriteSheets = SpriteSheet::LoadSpriteSheets(*spriteSheetsPb, *renderer);
 	_sprites = LoadSprites(spriteSheets, spriteSheetsPb->text_labels(), *spriteEffectsSheet);
 	LOG_INFO("Loaded sprites", _sprites.size());
 
@@ -178,7 +167,7 @@ Game::Game() : window(CreateWindow(_proxy.gamePpm, _proxy.defaultGameHeightM, _p
 Game::~Game() {
 	_level.reset();
 	audio_manager.reset();
-	SDL_DestroyRenderer(renderer);
+	renderer.reset();
 	SDL_DestroyWindow(window);
 }
 
@@ -1061,8 +1050,8 @@ void Game::UpdateHudContents(const Stopwatch::Duration& delta) {
 	}
 }
 void Game::ClearBackBuffer() const {
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-	SDL_RenderClear(renderer);
+	SDL_SetRenderDrawColor(static_cast<SDL_Renderer*>(renderer->RawHandle()), 0, 0, 0, 255);
+	SDL_RenderClear(static_cast<SDL_Renderer*>(renderer->RawHandle()));
 }
 void Game::Draw() {
 	// Check if only one background layer needs to be drawn
@@ -1114,12 +1103,12 @@ void Game::DebugDraw() {
 	}
 
 	if (IsProjectionTypePerspective(_level->GetProjectionType())) {
-		SDL_SetRenderDrawColor(M2_GAME.renderer, 255, 255, 255, 127);
+		SDL_SetRenderDrawColor(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), 255, 255, 255, 127);
 		for (int y = 0; y < 20; ++y) {
 			for (int x = 0; x < 20; ++x) {
 				m3::VecF p = {x, y, 0};
 				if (const auto projected_p = ScreenOriginToProjectionAlongCameraPlaneDstpx(p); projected_p) {
-					SDL_RenderDrawPointF(M2_GAME.renderer, projected_p->GetX(), projected_p->GetY());
+					SDL_RenderDrawPointF(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), projected_p->GetX(), projected_p->GetY());
 				}
 			}
 		}
@@ -1167,18 +1156,19 @@ void Game::DrawHud() {
 }
 void Game::DrawEnvelopes() const {
 	SDL_Rect sdl_rect{};
+	auto* const rawRenderer = static_cast<SDL_Renderer*>(renderer->RawHandle());
 
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+	SDL_SetRenderDrawColor(rawRenderer, 0, 0, 0, 255);
 	sdl_rect = thirdparty::video::ToSdlRect(_dimensions->TopEnvelope());
-	SDL_RenderFillRect(renderer, &sdl_rect);
+	SDL_RenderFillRect(rawRenderer, &sdl_rect);
 	sdl_rect = thirdparty::video::ToSdlRect(_dimensions->BottomEnvelope());
-	SDL_RenderFillRect(renderer, &sdl_rect);
+	SDL_RenderFillRect(rawRenderer, &sdl_rect);
 	sdl_rect = thirdparty::video::ToSdlRect(_dimensions->LeftEnvelope());
-	SDL_RenderFillRect(renderer, &sdl_rect);
+	SDL_RenderFillRect(rawRenderer, &sdl_rect);
 	sdl_rect = thirdparty::video::ToSdlRect(_dimensions->RightEnvelope());
-	SDL_RenderFillRect(renderer, &sdl_rect);
+	SDL_RenderFillRect(rawRenderer, &sdl_rect);
 }
-void Game::FlipBuffers() const { SDL_RenderPresent(renderer); }
+void Game::FlipBuffers() const { SDL_RenderPresent(static_cast<SDL_Renderer*>(renderer->RawHandle())); }
 
 void Game::OnWindowResize() {
 	_dimensions->OnWindowResize();

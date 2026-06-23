@@ -33,6 +33,7 @@
 #include <m2/multiplayer/lockstep/ServerComponents.h>
 #include <m2/multiplayer/lockstep/ClientComponents.h>
 #include <m2/thirdparty/video/Cursor.h>
+#include <m2/thirdparty/video/Renderer.h>
 #include <m2/thirdparty/video/Texture.h>
 #include <m2/thirdparty/event/Event.h>
 
@@ -93,7 +94,7 @@ namespace m2 {
 		SDL_Window* const window{};
 		const thirdparty::video::Cursor cursor;
 		const uint32_t pixel_format{};
-		SDL_Renderer* renderer{}; // TODO make pointer const
+		std::optional<thirdparty::video::Renderer> renderer;
 		SDL_Texture* light_texture{}; // TODO make pointer const
 		std::optional<AudioManager> audio_manager; // TODO make private
 		TTF_Font* const font{};

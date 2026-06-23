@@ -1,9 +1,9 @@
 #pragma once
+#include <m2/thirdparty/video/Renderer.h>
 #include <m2/thirdparty/video/Surface.h>
 #include <m2/thirdparty/video/Texture.h>
 #include <optional>
 #include <Sprite.pb.h>
-#include <SDL2/SDL_render.h>
 
 namespace m2 {
 	class SpriteSheet final {
@@ -11,10 +11,10 @@ namespace m2 {
 		thirdparty::video::Surface _surface;
 		std::optional<thirdparty::video::Texture> _texture;
 
-		SpriteSheet(const pb::SpriteSheet& spriteSheet, SDL_Renderer* renderer);
+		SpriteSheet(const pb::SpriteSheet& spriteSheet, thirdparty::video::Renderer& renderer);
 
 	public:
-		static std::vector<SpriteSheet> LoadSpriteSheets(const pb::SpriteSheets& spriteSheets, SDL_Renderer* renderer);
+		static std::vector<SpriteSheet> LoadSpriteSheets(const pb::SpriteSheets& spriteSheets, thirdparty::video::Renderer& renderer);
 
 		// Accessors
 

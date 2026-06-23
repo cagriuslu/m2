@@ -38,7 +38,7 @@ namespace m2 {
 			DynamicSheet _dynamicSheet;
 			TTF_Font* _font;
 		public:
-			explicit TextLabelGenerator(SDL_Renderer* renderer, TTF_Font* font) : _dynamicSheet(renderer), _font(font) {}
+			explicit TextLabelGenerator(thirdparty::video::Renderer& renderer, TTF_Font* font) : _dynamicSheet(renderer), _font(font) {}
 			[[nodiscard]] const thirdparty::video::Texture& Texture() const { return _dynamicSheet.Texture(); }
 			RectI operator()(const std::tuple<std::string,int>& item);
 		};
@@ -55,7 +55,7 @@ namespace m2 {
 		> _cache;
 
 	public:
-		TextLabelCache(SDL_Renderer* renderer, TTF_Font* font) : _cache(TextLabelGenerator{renderer, font}) {}
+		TextLabelCache(thirdparty::video::Renderer& renderer, TTF_Font* font) : _cache(TextLabelGenerator{renderer, font}) {}
 
 		// Accessors
 

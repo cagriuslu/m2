@@ -6,6 +6,8 @@
 #include <functional>
 
 namespace m2::thirdparty::video {
+	class Renderer;
+
 	class Texture {
 		void* _texture{};
 
@@ -17,7 +19,7 @@ namespace m2::thirdparty::video {
 		static Texture CaptureWindow();
 		static Texture CreateFromImageFile(const std::filesystem::path& imageFilePath);
 		static Texture AdoptRawTexture(void* rawSdlTexture);
-		static Texture CreateFromSurface(void* sdlRenderer, void* sdlSurface, bool linearFilter = false);
+		static Texture CreateFromSurface(Renderer& renderer, void* sdlSurface, bool linearFilter = false);
 
 		/// Copy not allowed
 		Texture(const Texture& other) = delete;

@@ -1,4 +1,5 @@
 #include <m2/GameDimensions.h>
+#include <m2/thirdparty/video/Renderer.h>
 #include <m2/common/Meta.h>
 #include <m2/Game.h>
 #include <m2/Log.h>
@@ -15,11 +16,8 @@ namespace {
 	}
 }
 
-m2::GameDimensions::GameDimensions(void* renderer, const int gamePpm, const int gameAspectRatioMul, const int gameAspectRatioDiv)
+m2::GameDimensions::GameDimensions(thirdparty::video::Renderer& renderer, const int gamePpm, const int gameAspectRatioMul, const int gameAspectRatioDiv)
 		: _renderer(renderer), _gamePpm(gamePpm), _gameAspectRatioMul(gameAspectRatioMul), _gameAspectRatioDiv(gameAspectRatioDiv) {
-	if (renderer == nullptr) {
-		throw M2_ERROR("Given renderer is NULL");
-	}
 	if (gamePpm < 1) {
 		throw M2_ERROR("Given PPM is not positive: " + m2::ToString(gamePpm));
 	}
@@ -54,7 +52,7 @@ m2::GameDimensions::GameDimensions(void* renderer, const int gamePpm, const int 
 
 m2::VecI m2::GameDimensions::WindowDimensions() const {
 	int w, h;
-	SDL_GetRendererOutputSize(static_cast<SDL_Renderer*>(_renderer), &w, &h);
+	SDL_GetRendererOutputSize(static_cast<SDL_Renderer*>(_renderer.RawHandle()), &w, &h);
 	return {w, h};
 }
 float m2::GameDimensions::OutputPixelsPerMeter() const {

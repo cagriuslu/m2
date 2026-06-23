@@ -16,8 +16,8 @@ void video::FillTriangle(const VecF& point0, const VecF& point1, const VecF& poi
 		SDL_Vertex{.position = ToSdlFPoint(point1), .color = sdlColor, .tex_coord = {}},
 		SDL_Vertex{.position = ToSdlFPoint(point2), .color = sdlColor, .tex_coord = {}},
 	};
-	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
-	if (SDL_RenderGeometry(M2_GAME.renderer, nullptr, vertices, 3, nullptr, 0) < 0) {
+	SDL_SetRenderDrawBlendMode(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), SDL_BLENDMODE_BLEND);
+	if (SDL_RenderGeometry(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), nullptr, vertices, 3, nullptr, 0) < 0) {
 		throw M2_ERROR(std::string{"SDL_RenderGeometry failed: "} + SDL_GetError());
 	}
 }
@@ -30,8 +30,8 @@ void video::FillTriangle(const VecF& point0, const VecF& point1, const VecF& poi
 		SDL_Vertex{.position = ToSdlFPoint(point1), .color = sdlColor1, .tex_coord = {}},
 		SDL_Vertex{.position = ToSdlFPoint(point2), .color = sdlColor2, .tex_coord = {}},
 	};
-	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
-	if (SDL_RenderGeometry(M2_GAME.renderer, nullptr, vertices, 3, nullptr, 0) < 0) {
+	SDL_SetRenderDrawBlendMode(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), SDL_BLENDMODE_BLEND);
+	if (SDL_RenderGeometry(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), nullptr, vertices, 3, nullptr, 0) < 0) {
 		throw M2_ERROR(std::string{"SDL_RenderGeometry failed: "} + SDL_GetError());
 	}
 }
@@ -50,55 +50,55 @@ void video::FillCircle(const VecF& centerPx, const RGBA& centerColor, const floa
 		// Third point of the triangle
 		vertices.push_back(SDL_Vertex{.position = ToSdlFPoint(centerPx + spanPx), .color = sdlEdgeColor, .tex_coord = {}});
 	}
-	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
-	if (SDL_RenderGeometry(M2_GAME.renderer, nullptr, vertices.data(), static_cast<int>(vertices.size()), nullptr, 0) < 0) {
+	SDL_SetRenderDrawBlendMode(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), SDL_BLENDMODE_BLEND);
+	if (SDL_RenderGeometry(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), nullptr, vertices.data(), static_cast<int>(vertices.size()), nullptr, 0) < 0) {
 		throw M2_ERROR(std::string{"SDL_RenderGeometry failed: "} + SDL_GetError());
 	}
 }
 void video::FillRectangle(const RectF& rectPx, const RGBA& color) {
-	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
-	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
+	SDL_SetRenderDrawColor(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), color.r, color.g, color.b, color.a);
+	SDL_SetRenderDrawBlendMode(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), SDL_BLENDMODE_BLEND);
 	const SDL_FRect rect{rectPx.x, rectPx.y, rectPx.w, rectPx.h};
-	if (SDL_RenderFillRectF(M2_GAME.renderer, &rect) < 0) {
+	if (SDL_RenderFillRectF(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), &rect) < 0) {
 		throw M2_ERROR(std::string{"SDL_RenderFillRectF failed: "} + SDL_GetError());
 	}
 }
 void video::FillRectangle(const RectI& rectPx, const RGBA& color) {
-	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
-	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
+	SDL_SetRenderDrawColor(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), color.r, color.g, color.b, color.a);
+	SDL_SetRenderDrawBlendMode(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), SDL_BLENDMODE_BLEND);
 	const SDL_Rect rect{rectPx.x, rectPx.y, rectPx.w, rectPx.h};
-	if (SDL_RenderFillRect(M2_GAME.renderer, &rect) < 0) {
+	if (SDL_RenderFillRect(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), &rect) < 0) {
 		throw M2_ERROR(std::string{"SDL_RenderFillRect failed: "} + SDL_GetError());
 	}
 }
 
 void video::DrawLine(const VecI& point0, const VecI& point1, const RGBA& color) {
-	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
-	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
-	if (SDL_RenderDrawLine(M2_GAME.renderer, point0.x, point0.y, point1.x, point1.y) < 0) {
+	SDL_SetRenderDrawColor(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), color.r, color.g, color.b, color.a);
+	SDL_SetRenderDrawBlendMode(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), SDL_BLENDMODE_BLEND);
+	if (SDL_RenderDrawLine(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), point0.x, point0.y, point1.x, point1.y) < 0) {
 		throw M2_ERROR(std::string{"SDL_RenderDrawLine failed: "} + SDL_GetError());
 	}
 }
 void video::DrawLine(const VecF& point0, const VecF& point1, const RGBA& color) {
-	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
-	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
-	if (SDL_RenderDrawLineF(M2_GAME.renderer, point0.GetX(), point0.GetY(), point1.GetX(), point1.GetY()) < 0) {
+	SDL_SetRenderDrawColor(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), color.r, color.g, color.b, color.a);
+	SDL_SetRenderDrawBlendMode(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), SDL_BLENDMODE_BLEND);
+	if (SDL_RenderDrawLineF(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), point0.GetX(), point0.GetY(), point1.GetX(), point1.GetY()) < 0) {
 		throw M2_ERROR(std::string{"SDL_RenderDrawLineF failed: "} + SDL_GetError());
 	}
 }
 void video::DrawRectangle(const RectI& rect, const RGBA& color) {
-	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
-	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
+	SDL_SetRenderDrawColor(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), color.r, color.g, color.b, color.a);
+	SDL_SetRenderDrawBlendMode(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), SDL_BLENDMODE_BLEND);
 	const auto sdlRect = ToSdlRect(rect);
-	if (SDL_RenderDrawRect(M2_GAME.renderer, &sdlRect) < 0) {
+	if (SDL_RenderDrawRect(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), &sdlRect) < 0) {
 		throw M2_ERROR(std::string{"SDL_RenderDrawRect failed: "} + SDL_GetError());
 	}
 }
 void video::DrawRectangle(const RectF& rect, const RGBA& color) {
-	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
-	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
+	SDL_SetRenderDrawColor(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), color.r, color.g, color.b, color.a);
+	SDL_SetRenderDrawBlendMode(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), SDL_BLENDMODE_BLEND);
 	const auto sdlRect = ToSdlFRect(rect);
-	if (SDL_RenderDrawRectF(M2_GAME.renderer, &sdlRect) < 0) {
+	if (SDL_RenderDrawRectF(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), &sdlRect) < 0) {
 		throw M2_ERROR(std::string{"SDL_RenderDrawRectF failed: "} + SDL_GetError());
 	}
 }

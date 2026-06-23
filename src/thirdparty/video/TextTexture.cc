@@ -23,7 +23,7 @@ m2::expected<m2::thirdparty::video::TextTexture> m2::thirdparty::video::TextText
 	}
 	TTF_SetFontSize(font, fontSize);
 	const auto surface = Surface::RenderTextBlended(font, text, color);
-	auto texture = Texture::CreateFromSurface(M2_GAME.renderer, surface.RawHandle(), /*linearFilter=*/true);
+	auto texture = Texture::CreateFromSurface(*M2_GAME.renderer, surface.RawHandle(), /*linearFilter=*/true);
 	return TextTexture{std::make_optional(std::move(texture)), text};
 }
 
@@ -36,6 +36,6 @@ m2::expected<m2::thirdparty::video::TextTexture> m2::thirdparty::video::TextText
 	TTF_SetFontSize(font, fontSize);
 	TTF_SetFontWrappedAlign(font, ToTtfWrapAlignment(horizontalAlignment));
 	const auto surface = Surface::RenderTextBlendedWrapped(font, text, color, widthPx);
-	auto texture = Texture::CreateFromSurface(M2_GAME.renderer, surface.RawHandle(), /*linearFilter=*/true);
+	auto texture = Texture::CreateFromSurface(*M2_GAME.renderer, surface.RawHandle(), /*linearFilter=*/true);
 	return TextTexture{std::make_optional(std::move(texture)), text};
 }
