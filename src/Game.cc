@@ -42,12 +42,6 @@ namespace {
 		}
 	}
 
-	TTF_Font* OpenFont(const char* path, const int fontSize) {
-		if (auto* font = TTF_OpenFont(path, fontSize)) {
-			return font;
-		}
-		throw M2_ERROR("TTF error: " + std::string{TTF_GetError()});
-	}
 }
 
 Game* Game::_instance{};
@@ -73,8 +67,8 @@ void Game::DestroyInstance() {
 
 Game::Game() : window(CreateWindow(_proxy.gamePpm, _proxy.defaultGameHeightM, _proxy.gameFriendlyName.c_str())),
 		cursor(*thirdparty::video::Cursor::Create()), pixel_format(GetWindowPixelFormat(window)),
-		font(OpenFont(_resources.GetDefaultFontPath().c_str(), _proxy.default_font_size)),
-		systemFont(OpenFont(_resources.GetSystemFontPath().c_str(), systemFontSize)) {
+		font(thirdparty::video::Font::CreateFromFontFile(_resources.GetDefaultFontPath(), _proxy.default_font_size)),
+		systemFont(thirdparty::video::Font::CreateFromFontFile(_resources.GetSystemFontPath(), systemFontSize)) {
 	if (_proxy.drawOrder.empty()) {
 		throw M2_ERROR("Proxy::drawOrder is empty");
 	}

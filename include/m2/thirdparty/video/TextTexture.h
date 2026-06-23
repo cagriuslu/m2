@@ -8,7 +8,7 @@
 #include <string>
 #include <utility>
 
-typedef struct _TTF_Font TTF_Font;
+#include <m2/thirdparty/video/Font.h>
 
 namespace m2::thirdparty::video {
 	class TextTexture {
@@ -20,8 +20,8 @@ namespace m2::thirdparty::video {
 	public:
 		TextTexture() = default;
 
-		static expected<TextTexture> CreateNoWrap(TTF_Font* font, int fontSize, const std::string& text, RGBA color = RGBA::White);
-		static expected<TextTexture> CreateWrapped(TTF_Font* font, int fontSize, int widthPx, TextHorizontalAlignment horizontalAlignment, const std::string& text, RGBA color = RGBA::White);
+		static expected<TextTexture> CreateNoWrap(Font& font, int fontSize, const std::string& text, RGBA color = RGBA::White);
+		static expected<TextTexture> CreateWrapped(Font& font, int fontSize, int widthPx, TextHorizontalAlignment horizontalAlignment, const std::string& text, RGBA color = RGBA::White);
 
 		explicit operator bool() const { return _texture.has_value(); }
 		[[nodiscard]] VecI Dimensions() const { return _texture ? _texture->Dimensions() : VecI{}; }

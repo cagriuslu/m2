@@ -1,18 +1,8 @@
 #include <m2/video/TextLabel.h>
 #include <m2/thirdparty/video/Surface.h>
+#include <m2/thirdparty/video/TextRendering.h>
 #include <m2/thirdparty/video/Detail.h>
 #include <m2/Game.h>
-
-m2::VecI m2::EstimateTextLabelDimensions(TTF_Font* font, const std::string& text, int fontSize) {
-	// Change the font size. This operation clears the glyph caches, but that's a sacrifice I'm willing to make.
-	TTF_SetFontSize(font, fontSize);
-
-	// Estimate the size of the final text
-	int w, h;
-	const auto sizeResult = TTF_SizeUTF8(font, text.c_str(), &w, &h);
-	m2ExpectZeroOrThrowMessage(sizeResult, TTF_GetError());
-	return {w, h};
-}
 
 m2::VecF m2::TextLabelCenterToOriginVectorInSourcePixels(const pb::TextLabel& tl) {
 	const auto centerToOriginM = VecF{-tl.push_dimensions().x(), -tl.push_dimensions().y()};
@@ -78,19 +68,14 @@ void m2::SlowDrawSystemTextIn2dWorld(const char* str, const VecF& position) {
 }
 
 m2::RectI m2::TextLabelCache::TextLabelGenerator::operator()(const std::tuple<std::string,int>& item) {
-	// Change the font size. This operation clears the glyph caches, but that's a sacrifice I'm willing to make.
-	TTF_SetFontSize(_font, I(item));
-
-	// Estimate the size of the final text
-	int w, h;
-	const auto sizeResult = TTF_SizeUTF8(_font, std::get<std::string>(item).c_str(), &w, &h);
-	m2ExpectZeroOrThrowMessage(sizeResult, TTF_GetError());
+	// Sets the font size as a side effect, then renders at that size
+	const auto renderedSize = thirdparty::video::CalculateRenderedUtf8Size(_font, I(item), std::get<std::string>(item).c_str());
 
 	// Render to new surface
 	auto renderSurface = thirdparty::video::Surface::RenderTextBlended(_font, std::get<std::string>(item), RGBA{255, 255, 255, 255});
 
 	// Blit new surface to allocated surface
-	return *_dynamicSheet.AllocateAndMutate(w, h, [&](SDL_Surface* surface, const RectI& area) {
+	return *_dynamicSheet.AllocateAndMutate(renderedSize.x, renderedSize.y, [&](SDL_Surface* surface, const RectI& area) {
 		auto dstRectSdl = thirdparty::video::ToSdlRect(area);
 		const auto blitResult = SDL_BlitSurface(static_cast<SDL_Surface*>(renderSurface.RawHandle()), nullptr, surface, &dstRectSdl);
 		m2ExpectZeroOrThrowMessage(blitResult, SDL_GetError());

@@ -2,13 +2,11 @@
 #include <m2/video/DynamicSheet.h>
 #include <m2/containers/Cache.h>
 #include <m2/math/VecF.h>
-#include <SDL2/SDL_ttf.h>
+#include <m2/thirdparty/video/Font.h>
 #include <Sprite.pb.h>
 
 namespace m2 {
 	// Utilities for drawing text labels
-
-	VecI EstimateTextLabelDimensions(TTF_Font* font, const std::string& text, int fontSize);
 
 	/// Returns a vector from the text label's center to the text label's origin in source pixels.
 	VecF TextLabelCenterToOriginVectorInSourcePixels(const pb::TextLabel&);
@@ -36,9 +34,9 @@ namespace m2 {
 		/// Generator used in Cache
 		class TextLabelGenerator {
 			DynamicSheet _dynamicSheet;
-			TTF_Font* _font;
+			thirdparty::video::Font& _font;
 		public:
-			explicit TextLabelGenerator(thirdparty::video::Renderer& renderer, TTF_Font* font) : _dynamicSheet(renderer), _font(font) {}
+			explicit TextLabelGenerator(thirdparty::video::Renderer& renderer, thirdparty::video::Font& font) : _dynamicSheet(renderer), _font(font) {}
 			[[nodiscard]] const thirdparty::video::Texture& Texture() const { return _dynamicSheet.Texture(); }
 			RectI operator()(const std::tuple<std::string,int>& item);
 		};
@@ -55,7 +53,7 @@ namespace m2 {
 		> _cache;
 
 	public:
-		TextLabelCache(thirdparty::video::Renderer& renderer, TTF_Font* font) : _cache(TextLabelGenerator{renderer, font}) {}
+		TextLabelCache(thirdparty::video::Renderer& renderer, thirdparty::video::Font& font) : _cache(TextLabelGenerator{renderer, font}) {}
 
 		// Accessors
 

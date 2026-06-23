@@ -4,7 +4,7 @@
 #include <filesystem>
 #include <string>
 
-typedef struct _TTF_Font TTF_Font;
+#include <m2/thirdparty/video/Font.h>
 
 namespace m2::thirdparty::video {
 	class Surface {
@@ -15,9 +15,9 @@ namespace m2::thirdparty::video {
 	public:
 		static Surface CreateFromImageFile(const std::filesystem::path& imageFilePath);
 		static Surface CreateBlank(int w, int h, uint32_t pixelFormat);
-		static Surface RenderTextSolid(TTF_Font* font, const std::string& text, const RGBA& color);
-		static Surface RenderTextBlended(TTF_Font* font, const std::string& text, const RGBA& color);
-		static Surface RenderTextBlendedWrapped(TTF_Font* font, const std::string& text, const RGBA& color, int wrapWidthPx);
+		static Surface RenderTextSolid(const Font& font, const std::string& text, const RGBA& color);
+		static Surface RenderTextBlended(const Font& font, const std::string& text, const RGBA& color);
+		static Surface RenderTextBlendedWrapped(const Font& font, const std::string& text, const RGBA& color, int wrapWidthPx);
 
 		/// Copy not allowed
 		Surface(const Surface&) = delete;

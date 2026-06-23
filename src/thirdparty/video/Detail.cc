@@ -3,6 +3,7 @@
 #include <m2/Options.h>
 #include <m2/M2.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 #include <sstream>
 
 std::string m2::ToString(const SDL_Rect& rf) {

@@ -20,8 +20,8 @@
 #include "protobuf/MessageLUT.h"
 #include <m2g_ObjectType.pb.h>
 #include <m2g/Proxy.h>
+#include <m2/thirdparty/video/Font.h>
 #include <SDL.h>
-#include <SDL2/SDL_ttf.h>
 #include <filesystem>
 #include <functional>
 #include <vector>
@@ -94,9 +94,9 @@ namespace m2 {
 		const uint32_t pixel_format{};
 		std::optional<thirdparty::video::Renderer> renderer;
 		std::optional<AudioManager> audio_manager; // TODO make private
-		TTF_Font* const font{};
+		thirdparty::video::Font font;
 		const int systemFontSize = 13;
-		TTF_Font* const systemFont{};
+		thirdparty::video::Font systemFont;
 		bool quit{}; // TODO make private
 
 		////////////////////////////////////////////////////////////////////////
