@@ -61,7 +61,6 @@ std::optional<m2::RectF> m2::RectF::GetIntersection(const RectF& other, float to
 		return {};
 	}
 
-	// Stolen from SDL_IntersectRect
 	float a_min, a_max, b_min, b_max;
 	RectF result;
 

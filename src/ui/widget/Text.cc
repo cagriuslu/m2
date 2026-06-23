@@ -47,14 +47,7 @@ void Text::OnDraw() {
 		_text_texture_and_destination_cache = thirdparty::video::TextTextureAndDestination{std::move(textTexture), destination_rect};
 	}
 
-	{
-		// Clip to widget area
-		const auto drawable_area_sdl = thirdparty::video::ToSdlRect(drawable_area());
-		SDL_RenderSetClipRect(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), &drawable_area_sdl);
-	}
-	_text_texture_and_destination_cache->first.RenderWithColorMod(
-		_text_texture_and_destination_cache->second, depressed ? _current_color / 2.0f : _current_color);
-	SDL_RenderSetClipRect(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), nullptr);
+	_text_texture_and_destination_cache->first.RenderWithColorMod(_text_texture_and_destination_cache->second, depressed ? _current_color / 2.0f : _current_color);
 
 	const auto border_color = depressed ? RGBA{127, 127, 127, 255} : RGBA{255, 255, 255, 255};
 	draw_border(Rect(), vertical_border_width_px(), horizontal_border_width_px(), border_color);

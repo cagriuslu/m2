@@ -1,5 +1,6 @@
 #pragma once
 #include "m2/common/Meta.h"
+#include <m2/math/VecI.h>
 
 namespace m2::thirdparty::video {
 	class Renderer {
@@ -17,5 +18,6 @@ namespace m2::thirdparty::video {
 		virtual ~Renderer();
 
 		[[nodiscard]] void* RawHandle() const { return _renderer; } // TODO remove
+		[[nodiscard]] VecI GetOutputSize() const;
 	};
 }

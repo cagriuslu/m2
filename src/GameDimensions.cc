@@ -51,9 +51,7 @@ m2::GameDimensions::GameDimensions(thirdparty::video::Renderer& renderer, const 
 }
 
 m2::VecI m2::GameDimensions::WindowDimensions() const {
-	int w, h;
-	SDL_GetRendererOutputSize(static_cast<SDL_Renderer*>(_renderer.RawHandle()), &w, &h);
-	return {w, h};
+	return _renderer.GetOutputSize();
 }
 float m2::GameDimensions::OutputPixelsPerMeter() const {
 	return ToFloat(_gamePpm) * _scale;

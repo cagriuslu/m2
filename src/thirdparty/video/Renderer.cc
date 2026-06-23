@@ -35,3 +35,9 @@ m2::thirdparty::video::Renderer::~Renderer() {
 		_renderer = nullptr;
 	}
 }
+
+m2::VecI m2::thirdparty::video::Renderer::GetOutputSize() const {
+	int w, h;
+	SDL_GetRendererOutputSize(static_cast<SDL_Renderer*>(_renderer), &w, &h);
+	return {w, h};
+}
