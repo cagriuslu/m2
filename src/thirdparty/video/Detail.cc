@@ -2,6 +2,7 @@
 #include <m2/Game.h>
 #include <m2/Options.h>
 #include <m2/M2.h>
+#include <SDL2/SDL_image.h>
 #include <sstream>
 
 std::string m2::ToString(const SDL_Rect& rf) {
@@ -33,6 +34,32 @@ int m2::thirdparty::video::GetRefreshRate() {
 	SDL_DisplayMode dm{};
 	SDL_GetWindowDisplayMode(M2_GAME.window, &dm);
 	return dm.refresh_rate;
+}
+
+void m2::thirdparty::video::InitAll() {
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_TIMER) != 0) {
+		throw M2_ERROR("SDL_Init error: " + std::string{SDL_GetError()});
+	}
+	if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG) {
+		throw M2_ERROR("IMG_Init error: " + std::string{IMG_GetError()});
+	}
+	if (TTF_Init() != 0) {
+		throw M2_ERROR("TTF_Init error: " + std::string{TTF_GetError()});
+	}
+
+	// Default Metal backend is slow in 2.5D mode, while drawing the rectangle debug shapes
+	if (SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl") == false) {
+		throw M2_ERROR("Failed to set opengl as render hint");
+	}
+	// Use the driver line API
+	if (SDL_SetHint(SDL_HINT_RENDER_LINE_METHOD, "2") == false) {
+		throw M2_ERROR("Failed to set line render method");
+	}
+}
+void m2::thirdparty::video::DeinitAll() {
+	TTF_Quit();
+	IMG_Quit();
+	SDL_Quit();
 }
 
 SDL_Color  m2::thirdparty::video::ToSdlColor (const RGBA& c) { return SDL_Color{c.r, c.g, c.b, c.a}; }

@@ -46,7 +46,7 @@ int main(const int argc, char **argv) {
 		std::visit([](const auto& util) { util.Execute(); }, std::get<ExecuteUtility>(*success).variant);
 		return 0;
 	}
-	Game::InitSystems();
+	thirdparty::video::InitAll();
 	Game::CreateInstance();
 
 	// Used to keep track of when the physics update was last executed. This stopwatch is usually not reset after each
@@ -183,6 +183,6 @@ int main(const int argc, char **argv) {
 	}
 
 	Game::DestroyInstance();
-	Game::DeinitSystems();
+	thirdparty::video::DeinitAll();
 	return 0;
 }

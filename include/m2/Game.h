@@ -79,12 +79,10 @@ namespace m2 {
 	public:
 		std::optional<Level> _level; // TODO make private
 
-		static void InitSystems();
 		static void CreateInstance();
 		static bool HasInstance() { return _instance; }
 		static Game& Instance() { return *_instance; }
 		static void DestroyInstance();
-		static void DeinitSystems();
 
 		::m2g::Proxy& Proxy() { return _proxy; }
 

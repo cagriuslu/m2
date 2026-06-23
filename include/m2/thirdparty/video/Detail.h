@@ -21,6 +21,9 @@ namespace m2::thirdparty::video {
 
 	int GetRefreshRate();
 
+	void InitAll();
+	void DeinitAll();
+
 	// TODO remove these, SDL types shouldn't leak into the game/engine
 	SDL_Color  ToSdlColor (const RGBA& c);
 	SDL_Rect   ToSdlRect  (const RectI& r);
