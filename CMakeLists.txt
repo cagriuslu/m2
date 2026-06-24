@@ -148,7 +148,6 @@ execute_process(
 )
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/CMakeProject.h.in" "${CMAKE_CURRENT_BINARY_DIR}/CMakeProject.h")
 
-add_subdirectory(common)
 add_subdirectory(game)
 
 # Print options
@@ -198,6 +197,20 @@ if (MSVC)
     set_property(TARGET m2_pb PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
     target_compile_options(m2_pb PRIVATE "/MP")
 endif()
+
+add_library(m2_common STATIC
+        common/src/Error.cc
+        common/src/math/Exact.cc
+        common/src/math/Float.cc
+        common/include/m2/common/BuildOptions.h
+        common/include/m2/common/Constants.h
+        common/include/m2/common/Error.h
+        common/include/m2/common/Meta.h
+        common/include/m2/common/math/Exact.h
+        common/include/m2/common/math/Float.h
+)
+target_include_directories(m2_common PUBLIC common/include)
+target_compile_features(m2_common PUBLIC cxx_std_23)
 
 # Post-build actions
 #add_custom_command(
