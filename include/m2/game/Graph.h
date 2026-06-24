@@ -1,6 +1,6 @@
 #pragma once
-#include <m2/math/primitives/Exact.h>
-#include <m2/math/primitives/Float.h>
+#include <m2/common/math/Exact.h>
+#include <m2/common/math/Float.h>
 #include <m2/math/VecE.h>
 #include <m2/math/VecF.h>
 #include <m2/ProxyTypes.h>

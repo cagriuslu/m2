@@ -1,4 +1,4 @@
-#include <m2/math/primitives/Float.h>
+#include <m2/common/math/Float.h>
 #include <array>
 #include <algorithm>
 

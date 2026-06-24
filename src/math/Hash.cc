@@ -1,5 +1,5 @@
 #include <m2/math/Hash.h>
-#include <m2/math/primitives/Exact.h>
+#include <m2/common/math/Exact.h>
 
 int32_t m2::HashI(const bool value, const int32_t initialValue) {
     return HashI(static_cast<int32_t>(value), initialValue);

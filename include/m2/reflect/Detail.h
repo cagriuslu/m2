@@ -1,5 +1,5 @@
 #pragma once
-#include <m2/math/primitives/Exact.h>
+#include <m2/common/math/Exact.h>
 #include <vector>
 #include <type_traits>
 

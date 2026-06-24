@@ -3,6 +3,8 @@
 #include <m2/common/Error.h>
 #include <string>
 #include <cfloat>
+#include <utility>
+#include <cmath>
 
 namespace m2 {
 	class Float {

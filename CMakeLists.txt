@@ -305,8 +305,6 @@ if(GTest_FOUND)
             "src/math/VecE.cc"
             "src/math/VecF.cc"
             "src/math/VecI.cc"
-            "src/math/primitives/Exact.cc"
-            "src/math/primitives/Float.cc"
             "src/protobuf/Detail.cc"
             "src/thirdparty/compression/Inflate.cc"
             "src/thirdparty/protobuf/Json.cc"
