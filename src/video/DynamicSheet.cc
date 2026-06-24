@@ -1,9 +1,9 @@
 #include <m2/video/DynamicSheet.h>
+#include <m2/thirdparty/video/Window.h>
 #include <m2/Log.h>
-#include <SDL2/SDL_pixels.h> // For SDL_PIXELFORMAT_BGRA32; pixel-format constants are not yet abstracted
 
-m2::DynamicSheet::DynamicSheet(thirdparty::video::Renderer& renderer)
-		: _renderer(renderer), _surface(thirdparty::video::Surface::CreateBlank(1024, 512, SDL_PIXELFORMAT_BGRA32)) {
+m2::DynamicSheet::DynamicSheet(thirdparty::video::Renderer& renderer, uint32_t pixelFormat)
+		: _renderer(renderer), _surface(thirdparty::video::Surface::CreateBlank(1024, 512, pixelFormat ? pixelFormat : thirdparty::video::GetWindowPixelFormat())) {
 	_texture = thirdparty::video::Texture::CreateFromSurface(_renderer, _surface.RawHandle());
 }
 

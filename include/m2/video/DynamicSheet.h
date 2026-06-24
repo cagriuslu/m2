@@ -14,7 +14,8 @@ namespace m2 {
 		int _lastW{}, _lastH{}, _heightOfCurrentRow{};
 
 	public:
-		explicit DynamicSheet(thirdparty::video::Renderer& renderer);
+		/// If pixelFormat is zero, the window pixel format is looked up
+		explicit DynamicSheet(thirdparty::video::Renderer& renderer, uint32_t pixelFormat = 0);
 
 		// Accessors
 

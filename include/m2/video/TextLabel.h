@@ -36,7 +36,7 @@ namespace m2 {
 			DynamicSheet _dynamicSheet;
 			thirdparty::video::Font& _font;
 		public:
-			explicit TextLabelGenerator(thirdparty::video::Renderer& renderer, thirdparty::video::Font& font) : _dynamicSheet(renderer), _font(font) {}
+			explicit TextLabelGenerator(thirdparty::video::Renderer& renderer, const uint32_t dynamicSheetPixelFormat, thirdparty::video::Font& font) : _dynamicSheet(renderer, dynamicSheetPixelFormat), _font(font) {}
 			[[nodiscard]] const thirdparty::video::Texture& Texture() const { return _dynamicSheet.Texture(); }
 			RectI operator()(const std::tuple<std::string,int>& item);
 		};
@@ -53,7 +53,7 @@ namespace m2 {
 		> _cache;
 
 	public:
-		TextLabelCache(thirdparty::video::Renderer& renderer, thirdparty::video::Font& font) : _cache(TextLabelGenerator{renderer, font}) {}
+		TextLabelCache(thirdparty::video::Renderer& renderer, const uint32_t dynamicSheetPixelFormat, thirdparty::video::Font& font) : _cache(TextLabelGenerator{renderer, dynamicSheetPixelFormat, font}) {}
 
 		// Accessors
 
