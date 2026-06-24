@@ -1,9 +1,8 @@
 #pragma once
-#include <m2/M2.h>
+#include <m2/common/Constants.h>
+#include <m2/common/Error.h>
 #include <string>
 #include <cfloat>
-
-#include "m2/Math.h"
 
 namespace m2 {
 	class Float {

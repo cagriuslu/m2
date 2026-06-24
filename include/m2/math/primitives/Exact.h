@@ -1,5 +1,5 @@
 #pragma once
-#include <m2/M2.h>
+#include <m2/common/Meta.h>
 #include <string>
 
 namespace m2 {
@@ -10,18 +10,18 @@ namespace m2 {
 		// SIGNIFICANT=18 extends to [-131072, 131071).
 		static constexpr auto SIGNIFICANT = 32 - PRECISION;
 
-		static constexpr int32_t INTEGER_PART_MASK = I(0xFFFFFFFF << PRECISION);
-		static constexpr int32_t FRACTION_PART_MASK = I(0xFFFFFFFFu >> SIGNIFICANT);
-		static constexpr int32_t SIGN_BIT_MASK = I(0x80000000);
-		static constexpr int32_t LEAST_SIGNIFICANT_INTEGER_BIT_MASK = I(1 << PRECISION);
-		static constexpr int32_t MOST_SIGNIFICANT_FRACTION_BIT_MASK = I(1 << (PRECISION - 1));
+		static constexpr int32_t INTEGER_PART_MASK = 0xFFFFFFFF << PRECISION;
+		static constexpr int32_t FRACTION_PART_MASK = 0xFFFFFFFFu >> SIGNIFICANT;
+		static constexpr int32_t SIGN_BIT_MASK = 0x80000000;
+		static constexpr int32_t LEAST_SIGNIFICANT_INTEGER_BIT_MASK = 1 << PRECISION;
+		static constexpr int32_t MOST_SIGNIFICANT_FRACTION_BIT_MASK = 1 << (PRECISION - 1);
 
 	private:
 		int32_t _value{};
 
 		static Exact UnsafeFromInt(const int i)       noexcept { return Exact{std::in_place, i << PRECISION}; }
-		static Exact UnsafeFromFloat(const float f)   noexcept { return Exact{std::in_place, RoundI(::m2::ToFloat(LEAST_SIGNIFICANT_INTEGER_BIT_MASK) * f)}; }
-		static Exact UnsafeFromDouble(const double d) noexcept { return Exact{std::in_place, RoundI(D(LEAST_SIGNIFICANT_INTEGER_BIT_MASK) * d)}; }
+		static Exact UnsafeFromFloat(const float f)   noexcept { return Exact{std::in_place, static_cast<int>(roundf(static_cast<float>(LEAST_SIGNIFICANT_INTEGER_BIT_MASK) * f))}; }
+		static Exact UnsafeFromDouble(const double d) noexcept { return Exact{std::in_place, static_cast<int>(round(static_cast<double>(LEAST_SIGNIFICANT_INTEGER_BIT_MASK) * d))}; }
 
 	public:
 		// Constructors
