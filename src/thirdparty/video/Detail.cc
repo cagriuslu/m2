@@ -14,7 +14,7 @@ void m2::thirdparty::video::Delay(Ticks duration) {
 }
 
 m2::thirdparty::video::Ticks m2::thirdparty::video::GetTicks() {
-	return static_cast<int64_t>(SDL_GetTicks64()) / time_slowdown_factor;
+	return static_cast<int64_t>(SDL_GetTicks64());
 }
 
 m2::thirdparty::video::Ticks m2::thirdparty::video::GetTicksSince(Ticks lastTicks, Ticks pauseTicks) {

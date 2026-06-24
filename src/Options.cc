@@ -16,7 +16,6 @@ using namespace m2;
 m2::pb::LogLevel m2::current_log_level = pb::LogLevel::INF;
 bool m2::verbose = false;
 bool m2::silent = false;
-int m2::time_slowdown_factor = 1;
 std::string m2::console_command;
 bool m2::god_mode = false;
 std::string m2::gOverrideResourceDir;
@@ -236,16 +235,6 @@ expected<ExecutionStrategy> m2::load_options(const int argc, char** argv) {
 	if (parse_argument(arg_list, "silent")) {
 		LOG_INFO("Silent mode activated");
 		silent = true;
-	}
-
-	if (const auto slowdown_opt = parse_argument(arg_list, "slowdown")) {
-		if (auto const slowdown_factor = strtol(std::string{*slowdown_opt}.c_str(), nullptr, 0);
-			1 <= slowdown_factor) {
-			time_slowdown_factor = static_cast<int>(slowdown_factor);
-			LOG_INFO("New slowdown factor", time_slowdown_factor);
-		} else {
-			return make_unexpected("Invalid slowdown factor");
-		}
 	}
 
 	if (auto console_opt = parse_argument(arg_list, "console")) {
