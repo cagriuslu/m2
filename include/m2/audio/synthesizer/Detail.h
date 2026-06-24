@@ -4,8 +4,6 @@
 #include <cstdint>
 
 namespace m2::audio::synthesizer {
-	constexpr uint32_t gDefaultAudioSampleRate = 48000;
-
 	using BeatsPerMinute = uint32_t;
 	using SampleType = float;
 

@@ -1,5 +1,6 @@
 add_library(m2_common STATIC
     src/Error.cc
+    include/m2/common/Constants.h
     include/m2/common/Error.h
     include/m2/common/Meta.h)
 target_include_directories(m2_common PUBLIC include)

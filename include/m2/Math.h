@@ -1,15 +1,10 @@
 #pragma once
+#include <m2/common/Constants.h>
 #include <string>
 #include <optional>
 #include <cstdint>
 
 namespace m2 {
-	constexpr float PI = 3.141592653589793f;
-	constexpr float PI_MUL2 = 6.283185307179586f;
-	constexpr float PI_MUL3_DIV2 = 4.71238898038469f;
-	constexpr float PI_DIV2 = 1.570796326794897f;
-	constexpr float SQROOT_2 = 1.414213562373095f;
-
 	/// Generates a number in [0,max). Max should be much smaller than 2^32.
 	uint32_t Random(uint32_t max);
 	/// Generates a number in [0,max). Max should be much smaller than 2^64.

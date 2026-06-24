@@ -3,19 +3,13 @@
 #include <m2/math/VecI.h>
 #include <m2/math/VecF.h>
 #include <m2/protobuf/Detail.h>
+#include <m2/common/Constants.h>
 #include <m2g_KeyType.pb.h>
 #include <array>
 #include <optional>
 #include <sstream>
 
 namespace m2 {
-	enum class MouseButton {
-		PRIMARY,
-		SECONDARY,
-		MIDDLE,
-		end
-	};
-
 	/// Stateful event manager
 	class Events {
 		bool _quit{};

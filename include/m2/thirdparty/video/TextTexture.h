@@ -3,7 +3,6 @@
 #include <m2/math/VecI.h>
 #include <m2/math/RectI.h>
 #include <m2/video/Color.h>
-#include <m2/video/TextAlignment.h>
 #include <optional>
 #include <string>
 #include <utility>

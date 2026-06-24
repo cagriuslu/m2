@@ -1,5 +1,5 @@
 #include <m2/thirdparty/audio/Device.h>
-#include <m2/audio/synthesizer/Detail.h>
+#include <m2/common/Constants.h>
 #include <m2/common/Error.h>
 #include <SDL2/SDL.h>
 
@@ -13,7 +13,7 @@ namespace {
 
 Device Device::Open(BufferCallback callback, void* userData) {
 	SDL_AudioSpec want{};
-	want.freq = m2::audio::synthesizer::gDefaultAudioSampleRate;
+	want.freq = DEFAULT_AUDIO_SAMPLE_RATE;
 	want.format = AUDIO_F32;
 	want.channels = 2;
 	want.samples = static_cast<uint16_t>(want.freq / AUDIO_CALLBACK_FREQUENCY);

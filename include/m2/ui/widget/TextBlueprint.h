@@ -3,8 +3,8 @@
 #include <variant>
 
 #include "../UiAction.h"
-#include <m2/video/TextAlignment.h>
 #include "../../video/Color.h"
+#include <m2/common/Constants.h>
 
 namespace m2::widget {
 	// Forward declaration

@@ -1,5 +1,5 @@
 #pragma once
-#include <m2/video/TextAlignment.h>
+#include <m2/common/Constants.h>
 #include <filesystem>
 
 namespace m2::thirdparty::video {
