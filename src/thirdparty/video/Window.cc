@@ -36,7 +36,3 @@ uint32_t m2::thirdparty::video::Window::GetPixelFormat() const {
 		return pixelFormat;
 	}
 }
-
-uint32_t m2::thirdparty::video::GetWindowPixelFormat() {
-	return M2_GAME.window.GetPixelFormat();
-}

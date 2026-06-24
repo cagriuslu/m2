@@ -16,9 +16,9 @@ namespace m2::thirdparty::video {
 		explicit Texture(void* texture) : _texture(texture) {}
 
 	public:
-		static Texture Generate(int w, int h, const std::function<RGBA(int x, int y)>&);
-		static Texture CreateTargetableWindowSized();
-		static Texture CaptureWindow();
+		static Texture Generate(uint32_t pixelFormat, int w, int h, const std::function<RGBA(int x, int y)>&);
+		static Texture CreateTargetableWindowSized(uint32_t pixelFormat);
+		static Texture CaptureWindow(uint32_t pixelFormat);
 		static Texture CreateFromImageFile(const std::filesystem::path& imageFilePath);
 		static Texture AdoptRawTexture(void* rawSdlTexture);
 		static Texture CreateFromSurface(Renderer& renderer, void* sdlSurface, bool linearFilter = false);

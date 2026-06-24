@@ -15,7 +15,7 @@ namespace m2 {
 
 	public:
 		/// If pixelFormat is zero, the window pixel format is looked up
-		explicit DynamicSheet(thirdparty::video::Renderer& renderer, uint32_t pixelFormat = 0);
+		explicit DynamicSheet(thirdparty::video::Renderer& renderer, uint32_t pixelFormat);
 
 		// Accessors
 

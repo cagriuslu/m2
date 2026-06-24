@@ -7,8 +7,6 @@ namespace m2::thirdparty::video {
 	Ticks GetTicks();
 	Ticks GetTicksSince(Ticks lastTicks, Ticks pauseTicks = 0);
 
-	int GetRefreshRate();
-
 	void InitAll();
 	void DeinitAll();
 }

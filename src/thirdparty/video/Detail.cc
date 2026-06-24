@@ -21,12 +21,6 @@ m2::thirdparty::video::Ticks m2::thirdparty::video::GetTicksSince(Ticks lastTick
 	return GetTicks() - lastTicks - pauseTicks;
 }
 
-int m2::thirdparty::video::GetRefreshRate() {
-	SDL_DisplayMode dm{};
-	SDL_GetWindowDisplayMode(static_cast<SDL_Window*>(M2_GAME.window.RawHandle()), &dm);
-	return dm.refresh_rate;
-}
-
 void m2::thirdparty::video::InitAll() {
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_TIMER) != 0) {
 		throw M2_ERROR("SDL_Init error: " + std::string{SDL_GetError()});

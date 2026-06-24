@@ -1,7 +1,6 @@
 #include <m2/thirdparty/video/Texture.h>
 #include <m2/thirdparty/video/Renderer.h>
 #include <m2/thirdparty/video/Surface.h>
-#include <m2/thirdparty/video/Window.h>
 #include "SdlConversions.h"
 #include <m2/Game.h>
 #include <SDL2/SDL.h>
@@ -10,13 +9,12 @@ using namespace m2;
 using namespace m2::thirdparty;
 using namespace m2::thirdparty::video;
 
-Texture Texture::Generate(const int w, const int h, const std::function<RGBA(int x, int y)>& pixelGenerator) {
-	const auto windowPixelFormat = GetWindowPixelFormat();
-	if (SDL_BITSPERPIXEL(windowPixelFormat) != 32) {
+Texture Texture::Generate(const uint32_t pixelFormat, const int w, const int h, const std::function<RGBA(int x, int y)>& pixelGenerator) {
+	if (SDL_BITSPERPIXEL(pixelFormat) != 32) {
 		throw M2_ERROR("Unsupported window pixel format");
 	}
 
-	auto* surface = SDL_CreateRGBSurfaceWithFormat(0, w, h, SDL_BITSPERPIXEL(windowPixelFormat), windowPixelFormat);
+	auto* surface = SDL_CreateRGBSurfaceWithFormat(0, w, h, SDL_BITSPERPIXEL(pixelFormat), pixelFormat);
 	SDL_LockSurface(surface);
 	auto* pixels = static_cast<uint32_t*>(surface->pixels);
 	for (int y = 0; y < h; ++y) {
@@ -31,27 +29,25 @@ Texture Texture::Generate(const int w, const int h, const std::function<RGBA(int
 	SDL_FreeSurface(surface);
 	return Texture{texture};
 }
-Texture Texture::CreateTargetableWindowSized() {
-	const auto windowPixelFormat = GetWindowPixelFormat();
-	if (SDL_BITSPERPIXEL(windowPixelFormat) != 32) {
+Texture Texture::CreateTargetableWindowSized(const uint32_t pixelFormat) {
+	if (SDL_BITSPERPIXEL(pixelFormat) != 32) {
 		throw M2_ERROR("Unsupported window pixel format");
 	}
 
 	int w, h;
 	SDL_GetRendererOutputSize(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), &w, &h); // Get screen size
-	return Texture{SDL_CreateTexture(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), windowPixelFormat, SDL_TEXTUREACCESS_TARGET, w, h)};
+	return Texture{SDL_CreateTexture(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), pixelFormat, SDL_TEXTUREACCESS_TARGET, w, h)};
 }
-Texture Texture::CaptureWindow() {
-	const auto windowPixelFormat = GetWindowPixelFormat();
-	if (SDL_BITSPERPIXEL(windowPixelFormat) != 32) {
+Texture Texture::CaptureWindow(const uint32_t pixelFormat) {
+	if (SDL_BITSPERPIXEL(pixelFormat) != 32) {
 		throw M2_ERROR("Unsupported window pixel format");
 	}
 
 	int w, h;
 	SDL_GetRendererOutputSize(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), &w, &h); // Get screen size
 
-	auto* surface = SDL_CreateRGBSurfaceWithFormat(0, w, h, SDL_BITSPERPIXEL(windowPixelFormat), windowPixelFormat);
-	SDL_RenderReadPixels(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), nullptr, windowPixelFormat, surface->pixels, surface->pitch);
+	auto* surface = SDL_CreateRGBSurfaceWithFormat(0, w, h, SDL_BITSPERPIXEL(pixelFormat), pixelFormat);
+	SDL_RenderReadPixels(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), nullptr, pixelFormat, surface->pixels, surface->pitch);
 
 	auto* texture = SDL_CreateTextureFromSurface(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), surface);
 	SDL_FreeSurface(surface);

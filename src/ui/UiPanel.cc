@@ -49,7 +49,7 @@ UiAction UiPanel::run_blocking() {
 
 	// Get a screenshot if background_texture is not already provided
 	if (not _background_texture) {
-		_background_texture = thirdparty::video::Texture::CaptureWindow();
+		_background_texture = thirdparty::video::Texture::CaptureWindow(M2_GAME.window.GetPixelFormat());
 	}
 
 	// Update initial contents

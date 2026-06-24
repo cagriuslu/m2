@@ -1200,7 +1200,7 @@ thirdparty::video::Texture Game::DrawGameToTexture(const VecF& camera_position) 
 	const auto prev_camera_position = GetLevel().GetCamera()->GetPhysique().GetPosition();
 	GetLevel().GetCamera()->GetPhysique().SetPosition(VecFE{camera_position});
 
-	auto render_target = thirdparty::video::Texture::CreateTargetableWindowSized();
+	auto render_target = thirdparty::video::Texture::CreateTargetableWindowSized(window.GetPixelFormat());
 	render_target.DrawOnto([this] {
 		ClearBackBuffer();
 		Draw();

@@ -20,7 +20,4 @@ namespace m2::thirdparty::video {
 		[[nodiscard]] void* RawHandle() const { return _window; } // in-layer only
 		[[nodiscard]] uint32_t GetPixelFormat() const; // throws on UNKNOWN
 	};
-
-	/// Convenience for callers that run after Game construction.
-	uint32_t GetWindowPixelFormat();
 }
