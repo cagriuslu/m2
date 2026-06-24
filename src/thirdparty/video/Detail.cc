@@ -33,7 +33,7 @@ m2::thirdparty::video::Ticks m2::thirdparty::video::GetTicksSince(Ticks lastTick
 
 int m2::thirdparty::video::GetRefreshRate() {
 	SDL_DisplayMode dm{};
-	SDL_GetWindowDisplayMode(M2_GAME.window, &dm);
+	SDL_GetWindowDisplayMode(static_cast<SDL_Window*>(M2_GAME.window.RawHandle()), &dm);
 	return dm.refresh_rate;
 }
 

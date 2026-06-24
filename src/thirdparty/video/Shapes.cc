@@ -67,6 +67,14 @@ void video::FillRectangle(const RectI& rectPx, const RGBA& color) {
 	}
 }
 
+void video::DrawPoint(const VecF& pointPx, const RGBA& color) {
+	SDL_SetRenderDrawColor(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()),
+		color.r, color.g, color.b, color.a);
+	if (SDL_RenderDrawPointF(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()),
+			pointPx.GetX(), pointPx.GetY()) < 0) {
+		throw M2_ERROR(std::string{"SDL_RenderDrawPointF failed: "} + SDL_GetError());
+	}
+}
 void video::DrawLine(const VecI& point0, const VecI& point1, const RGBA& color) {
 	SDL_SetRenderDrawColor(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), color.r, color.g, color.b, color.a);
 	if (SDL_RenderDrawLine(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), point0.x, point0.y, point1.x, point1.y) < 0) {

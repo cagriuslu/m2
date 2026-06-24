@@ -21,7 +21,7 @@
 #include <m2g_ObjectType.pb.h>
 #include <m2g/Proxy.h>
 #include <m2/thirdparty/video/Font.h>
-#include <SDL.h>
+#include <m2/thirdparty/video/Window.h>
 #include <filesystem>
 #include <functional>
 #include <vector>
@@ -89,7 +89,7 @@ namespace m2 {
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////////// WINDOW ////////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		SDL_Window* const window{};
+		const thirdparty::video::Window window;
 		const thirdparty::video::Cursor cursor;
 		const uint32_t pixel_format{};
 		std::optional<thirdparty::video::Renderer> renderer;
@@ -227,13 +227,13 @@ namespace m2 {
 		void UpdateSounds(const Stopwatch::Duration& delta);
 		void ExecutePreDraw(const Stopwatch::Duration& delta);
 		void UpdateHudContents(const Stopwatch::Duration& delta);
-		void ClearBackBuffer() const;
+		void ClearBackBuffer();
 		void Draw();
 		void ExecutePostDraw(const Stopwatch::Duration& delta);
 		void DebugDraw();
 		void DrawHud();
-		void DrawEnvelopes() const;
-		void FlipBuffers() const;
+		void DrawEnvelopes();
+		void FlipBuffers();
 
 		// Modifiers
 

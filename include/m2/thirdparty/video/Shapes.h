@@ -16,6 +16,8 @@ namespace m2::thirdparty::video {
 	/// Draws a filled rectangle. The position is given in screen space (pixels).
 	void FillRectangle(const RectI& rectPx, const RGBA& color);
 
+	/// Draws a single point. The position is in screen space (pixels).
+	void DrawPoint(const VecF& pointPx, const RGBA& color);
 	/// Draws a line. The positions are in screen space (pixels).
 	void DrawLine(const VecI& point0, const VecI& point1, const RGBA& color);
 	/// Draws a line. The positions are in screen space (pixels).

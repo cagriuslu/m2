@@ -10,10 +10,10 @@
 #include <m2/game/Key.h>
 #include <m2/String.h>
 #include <m2/thirdparty/video/Detail.h>
+#include <m2/thirdparty/video/Shapes.h>
 #include <M2.orm.h>
 #include <Level.pb.h>
 #include <CMakeProject.h>
-#include <SDL2/SDL_image.h>
 #include <genORM/genORM.h>
 #include <filesystem>
 #include <ranges>
@@ -23,23 +23,14 @@ using namespace m2;
 namespace {
 	constexpr auto MAX_LOCKSTEP_CONNECTION_COUNT = 4;
 
-	SDL_Window* CreateWindow(const int gamePpm, const float defaultGameHeightM, const char* gameFriendlyName) {
+	m2::thirdparty::video::Window CreateWindow(const int gamePpm, const float defaultGameHeightM, const char* gameFriendlyName) {
 		const auto minimumWindowDims = GameDimensions::EstimateMinimumWindowDimensions(gamePpm, defaultGameHeightM);
-		if (auto* window = SDL_CreateWindow(gameFriendlyName, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-				minimumWindowDims.x, minimumWindowDims.y, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) {
-			SDL_SetWindowMinimumSize(window, minimumWindowDims.x, minimumWindowDims.y);
-			m2::thirdparty::event::StopTextInput(); // Text input begins activated (sometimes)
-			return window;
+		auto windowCreation = thirdparty::video::Window::Create(minimumWindowDims, gameFriendlyName);
+		if (not windowCreation) {
+			throw M2_ERROR("SDL error: " + windowCreation.error());
 		}
-		throw M2_ERROR("SDL error: " + std::string{SDL_GetError()});
-	}
-
-	uint32_t GetWindowPixelFormat(SDL_Window* const window) {
-		if (const auto pixel_format = SDL_GetWindowPixelFormat(window); pixel_format == SDL_PIXELFORMAT_UNKNOWN) {
-			throw M2_ERROR("SDL error: " + std::string{SDL_GetError()});
-		} else {
-			return pixel_format;
-		}
+		thirdparty::event::StopTextInput(); // Text input begins activated (sometimes)
+		return std::move(*windowCreation);
 	}
 
 }
@@ -66,7 +57,7 @@ void Game::DestroyInstance() {
 }
 
 Game::Game() : window(CreateWindow(_proxy.gamePpm, _proxy.defaultGameHeightM, _proxy.gameFriendlyName.c_str())),
-		cursor(*thirdparty::video::Cursor::Create()), pixel_format(GetWindowPixelFormat(window)),
+		cursor(*thirdparty::video::Cursor::Create()), pixel_format(window.GetPixelFormat()),
 		font(thirdparty::video::Font::CreateFromFontFile(_resources.GetDefaultFontPath(), _proxy.default_font_size)),
 		systemFont(thirdparty::video::Font::CreateFromFontFile(_resources.GetSystemFontPath(), systemFontSize)) {
 	if (_proxy.drawOrder.empty()) {
@@ -75,7 +66,7 @@ Game::Game() : window(CreateWindow(_proxy.gamePpm, _proxy.defaultGameHeightM, _p
 
 	cursor.Load();
 
-	if (auto rendererCreation = thirdparty::video::Renderer::Create(window, _proxy.areGraphicsPixelated)) {
+	if (auto rendererCreation = thirdparty::video::Renderer::Create(window.RawHandle(), _proxy.areGraphicsPixelated)) {
 		renderer.emplace(std::move(*rendererCreation));
 	} else {
 		throw M2_ERROR(rendererCreation.error());
@@ -83,11 +74,11 @@ Game::Game() : window(CreateWindow(_proxy.gamePpm, _proxy.defaultGameHeightM, _p
 
 	_dimensions.emplace(*renderer, _proxy.gamePpm, _proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
 
-	_textLabelCache.emplace(*renderer, GetWindowPixelFormat(window), font);
-	_shapeCache.emplace(*renderer, GetWindowPixelFormat(window));
+	_textLabelCache.emplace(*renderer, window.GetPixelFormat(), font);
+	_shapeCache.emplace(*renderer, window.GetPixelFormat());
 
 	audio_manager.emplace();
-	spriteEffectsSheet.emplace(*renderer, GetWindowPixelFormat(window));
+	spriteEffectsSheet.emplace(*renderer, window.GetPixelFormat());
 
 	{
 		auto sheets_pb = pb::json_file_to_message<pb::SpriteSheets>(_resources.GetSpriteSheetsPath());
@@ -125,7 +116,6 @@ Game::~Game() {
 	_level.reset();
 	audio_manager.reset();
 	renderer.reset();
-	SDL_DestroyWindow(window);
 }
 
 void_expected Game::HostTurnBasedGame(unsigned max_connection_count) {
@@ -1006,9 +996,9 @@ void Game::UpdateHudContents(const Stopwatch::Duration& delta) {
 				});
 	}
 }
-void Game::ClearBackBuffer() const {
-	SDL_SetRenderDrawColor(static_cast<SDL_Renderer*>(renderer->RawHandle()), 0, 0, 0, 255);
-	SDL_RenderClear(static_cast<SDL_Renderer*>(renderer->RawHandle()));
+void Game::ClearBackBuffer() {
+	renderer->SetDrawColor(RGBA::Black);
+	renderer->Clear();
 }
 void Game::Draw() {
 	// Check if only one background layer needs to be drawn
@@ -1060,12 +1050,11 @@ void Game::DebugDraw() {
 	}
 
 	if (IsProjectionTypePerspective(_level->GetProjectionType())) {
-		SDL_SetRenderDrawColor(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), 255, 255, 255, 127);
 		for (int y = 0; y < 20; ++y) {
 			for (int x = 0; x < 20; ++x) {
 				m3::VecF p = {x, y, 0};
 				if (const auto projected_p = ScreenOriginToProjectionAlongCameraPlaneDstpx(p); projected_p) {
-					SDL_RenderDrawPointF(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), projected_p->GetX(), projected_p->GetY());
+					thirdparty::video::DrawPoint(*projected_p, RGBA{255, 255, 255, 127});
 				}
 			}
 		}
@@ -1111,21 +1100,13 @@ void Game::DrawHud() {
 	IF(_level->_mouseHoverUiPanel)->Draw();
 	IF(_level->_semiBlockingUiPanel)->Draw();
 }
-void Game::DrawEnvelopes() const {
-	SDL_Rect sdl_rect{};
-	auto* const rawRenderer = static_cast<SDL_Renderer*>(renderer->RawHandle());
-
-	SDL_SetRenderDrawColor(rawRenderer, 0, 0, 0, 255);
-	sdl_rect = thirdparty::video::ToSdlRect(_dimensions->TopEnvelope());
-	SDL_RenderFillRect(rawRenderer, &sdl_rect);
-	sdl_rect = thirdparty::video::ToSdlRect(_dimensions->BottomEnvelope());
-	SDL_RenderFillRect(rawRenderer, &sdl_rect);
-	sdl_rect = thirdparty::video::ToSdlRect(_dimensions->LeftEnvelope());
-	SDL_RenderFillRect(rawRenderer, &sdl_rect);
-	sdl_rect = thirdparty::video::ToSdlRect(_dimensions->RightEnvelope());
-	SDL_RenderFillRect(rawRenderer, &sdl_rect);
+void Game::DrawEnvelopes() {
+	thirdparty::video::FillRectangle(_dimensions->TopEnvelope(), RGBA::Black);
+	thirdparty::video::FillRectangle(_dimensions->BottomEnvelope(), RGBA::Black);
+	thirdparty::video::FillRectangle(_dimensions->LeftEnvelope(), RGBA::Black);
+	thirdparty::video::FillRectangle(_dimensions->RightEnvelope(), RGBA::Black);
 }
-void Game::FlipBuffers() const { SDL_RenderPresent(static_cast<SDL_Renderer*>(renderer->RawHandle())); }
+void Game::FlipBuffers() { renderer->Present(); }
 
 void Game::OnWindowResize() {
 	_dimensions->OnWindowResize();
