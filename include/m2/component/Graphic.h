@@ -13,7 +13,6 @@
 #include <m2/thirdparty/video/Renderer.h>
 #include <m2/thirdparty/video/Texture.h>
 #include <m2/math/RectI.h>
-#include <SDL2/SDL_render.h>
 
 namespace m2 {
 	bool IsProjectionTypeParallel(pb::ProjectionType pt);
@@ -124,21 +123,20 @@ namespace m2 {
 
 		// Global Modifiers
 
-		/// If dimming_with_exceptions is enabled, and the given object_id is not in the exceptions, dim the given texture.
-		static bool DimRenderingIfNecessary(Id object_id, SDL_Texture* texture);
-		/// Undim the given texture
-		static void UndimRendering(SDL_Texture* texture);
+		/// If dimming_with_exceptions is enabled, and the given object_id is not in the exceptions, dims the given
+		/// texture and returns a guard that resets the modulation on destruction.
+		[[nodiscard]] static thirdparty::video::Texture::ColorModGuard DimRenderingIfNecessary(Id object_id, const thirdparty::video::Texture& texture);
 	};
 
 	/// Draws the given texture to the 2D World. Before applying extra rotation to the texture, the rotation of the
 	/// source texture is corrected in case it has a rotation of its own.
-	void DrawTextureIn2dWorld(thirdparty::video::Renderer& renderer, const thirdparty::video::Texture& sourceTexture, const RectI& sourceRect,
+	void DrawTextureIn2dWorld(const thirdparty::video::Texture& sourceTexture, const RectI& sourceRect,
 			float originalRotationOfSourceTextureInRadians, float outputToSourcePpmRatio,
 			const VecF& textureCenterToTextureOriginVecInOutputPixels,
 			const VecF& screenOriginToTextureCenterVecInOutputPixels, float rotationToApplyInRadians);
 	/// Draws the given texture to the 3D World. Before applying extra rotation to the texture, the rotation of the
 	/// source texture is corrected in case it has a rotation of its own.
-	void DrawTextureIn3dWorld(thirdparty::video::Renderer& renderer, const thirdparty::video::Texture& sourceTexture, const RectI& sourceRect,
+	void DrawTextureIn3dWorld(const thirdparty::video::Texture& sourceTexture, const RectI& sourceRect,
 			float sourcePpm, const VecF& sourceCenterToOriginVectorInOutputPixels,
 			float originalRotationOfSourceTextureInRadians, const VecF& sourceTextureSheetDimensions,
 			const VecF& xyPositionInWorldM, float zPositionInWorldM, float rotationToApplyInRadians, bool isForeground);

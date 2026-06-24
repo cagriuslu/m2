@@ -4,7 +4,7 @@
 #include "m2/component/Graphic.h"
 #include <m2/Object.h>
 #include <m2/thirdparty/video/Shapes.h>
-#include <m2/thirdparty/video/Detail.h>
+#include <array>
 #include <cmath>
 
 bool m2::IsProjectionTypeParallel(const pb::ProjectionType pt) {
@@ -162,14 +162,10 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 			(sprite.*projector)(gfx.position, foregroundCompanion, gfx.orientation, is_foreground, gfx.z);
 		};
 
-		// Dim the sprite if dimming mode is enabled. TODO Dimming is implemented only for default variant.
-		const bool dimmed = DimRenderingIfNecessary(gfx.GetOwnerId(), static_cast<SDL_Texture*>(sprite.GetTexture().RawHandle()));
-
-		spriteDrawer(gfx.drawForegroundCompanion);
-
-		// If dimming was active, we need to un-dim.
-		if (dimmed) {
-			UndimRendering(static_cast<SDL_Texture*>(sprite.GetTexture().RawHandle()));
+		{
+			// Dim the sprite if dimming mode is enabled. TODO Dimming is implemented only for default variant.
+			const auto dimGuard = DimRenderingIfNecessary(gfx.GetOwnerId(), sprite.GetTexture());
+			spriteDrawer(gfx.drawForegroundCompanion);
 		}
 	} else if (std::holds_alternative<const pb::TextLabel*>(gfx.visual)) {
 		const auto& textLabel = *std::get<const pb::TextLabel*>(gfx.visual);
@@ -180,23 +176,19 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 			gfx.textLabelRect = M2_GAME.GetTextLabelCache().Create(textLabel.text(), FontSizeOfTextLabel(textLabel));
 		}
 
-		// Dim the sprite if dimming mode is enabled.
-		const bool dimmed = DimRenderingIfNecessary(gfx.GetOwnerId(), static_cast<SDL_Texture*>(M2_GAME.GetTextLabelCache().Texture().RawHandle()));
-
-		// Draw background
-		if (textLabel.background_color().a()) {
-			DrawTextLabelBackgroundIn2dWorld(textLabel, gfx.textLabelRect, gfx.position, dimmed);
-		}
-		// Draw text label
-		const bool is_foreground = M2_LEVEL.uprightGraphics.GetId(&gfx);
-		const auto projector = IsProjectionTypePerspective(M2_LEVEL.GetProjectionType())
-				? &DrawTextLabelIn3dWorld
-				: &DrawTextLabelIn2dWorld;
-		projector(textLabel, gfx.textLabelRect, gfx.position, gfx.orientation, is_foreground, gfx.z);
-
-		// If dimming was active, we need to un-dim.
-		if (dimmed) {
-			UndimRendering(static_cast<SDL_Texture*>(M2_GAME.GetTextLabelCache().Texture().RawHandle()));
+		{
+			// Dim the sprite if dimming mode is enabled.
+			const auto dimGuard = DimRenderingIfNecessary(gfx.GetOwnerId(), M2_GAME.GetTextLabelCache().Texture());
+			// Draw background
+			if (textLabel.background_color().a()) {
+				DrawTextLabelBackgroundIn2dWorld(textLabel, gfx.textLabelRect, gfx.position, bool(dimGuard));
+			}
+			// Draw text label
+			const bool is_foreground = M2_LEVEL.uprightGraphics.GetId(&gfx);
+			const auto projector = IsProjectionTypePerspective(M2_LEVEL.GetProjectionType())
+					? &DrawTextLabelIn3dWorld
+					: &DrawTextLabelIn2dWorld;
+			projector(textLabel, gfx.textLabelRect, gfx.position, gfx.orientation, is_foreground, gfx.z);
 		}
 	} else {
 		// This function only draws visuals
@@ -347,24 +339,17 @@ void m2::Graphic::DrawGridLines(const float startFrom, const float frequency, co
 	}
 }
 
-bool m2::Graphic::DimRenderingIfNecessary(Id object_id, SDL_Texture* texture) {
-	// Dim the sprite if dimming mode is enabled
+m2::thirdparty::video::Texture::ColorModGuard m2::Graphic::DimRenderingIfNecessary(Id object_id, const thirdparty::video::Texture& texture) {
 	if (const auto& DimmingExceptions = M2_LEVEL.GetDimmingExceptions()) {
 		if (not DimmingExceptions->contains(object_id)) {
 			static uint8_t mod = static_cast<uint8_t>(RoundU(M2G_PROXY.dimming_factor * ToFloat(255)));
-			SDL_SetTextureColorMod(texture, mod, mod, mod);
-			return true;
+			return texture.ScopedColorMod(RGB{mod, mod, mod});
 		}
 	}
-	return false;
-}
-
-void m2::Graphic::UndimRendering(SDL_Texture* texture) {
-	SDL_SetTextureColorMod(texture, 255, 255, 255);
+	return {};
 }
 
 void m2::DrawTextureIn2dWorld(
-		thirdparty::video::Renderer& renderer,
 		const thirdparty::video::Texture& sourceTexture,
 		const RectI& sourceRect,
 		const float originalRotationOfSourceTextureInRadians,
@@ -372,35 +357,27 @@ void m2::DrawTextureIn2dWorld(
 		const VecF& textureCenterToTextureOriginVecInOutputPixels,
 		const VecF& screenOriginToTextureCenterVecInOutputPixels,
 		const float rotationToApplyInRadians) {
-	auto* const rawRenderer = static_cast<SDL_Renderer*>(renderer.RawHandle());
-	auto* const rawTexture = static_cast<SDL_Texture*>(sourceTexture.RawHandle());
-
 	// Calculate the destination
-	const auto dstRect = SDL_Rect{
+	// TODO using I() and ceilf() here is quite problematic, but I couldn't find any other way of ensuring not
+	//  leaving any gaps between sprites
+	// TODO unfortunately, we can't draw pixel perfect sprites with floating point scaling. However, the game can
+	//  avoid flickering by avoiding highly repeating patterns.
+	const auto dstRect = RectI{
 		I(screenOriginToTextureCenterVecInOutputPixels.GetX() - ToFloat(sourceRect.w) * outputToSourcePpmRatio / 2.0f),
 		I(screenOriginToTextureCenterVecInOutputPixels.GetY() - ToFloat(sourceRect.h) * outputToSourcePpmRatio / 2.0f),
 		CeilI(ToFloat(sourceRect.w) * outputToSourcePpmRatio),
 		CeilI(ToFloat(sourceRect.h) * outputToSourcePpmRatio)
-		// TODO using I() and ceilf() here is quite problematic, but I couldn't find any other way of ensuring not
-		//  leaving any gaps between sprites
-		// TODO unfortunately, we can't draw pixel perfect sprites with floating point scaling. However, the game can
-		//  avoid flickering by avoiding highly repeating patterns.
 	};
 
 	// Calculate the center point used for rotation origin
-	const auto centerPoint = SDL_Point{
+	const auto centerPoint = VecI{
 		RoundI(textureCenterToTextureOriginVecInOutputPixels.GetX()) + dstRect.w / 2,
 		RoundI(textureCenterToTextureOriginVecInOutputPixels.GetY()) + dstRect.h / 2
 	};
 
-	// Render
-	const auto sdlSourceRect = thirdparty::video::ToSdlRect(sourceRect);
-	const auto renderResult = SDL_RenderCopyEx(rawRenderer, rawTexture, &sdlSourceRect, &dstRect,
-			ToDegrees(rotationToApplyInRadians - originalRotationOfSourceTextureInRadians), &centerPoint, SDL_FLIP_NONE);
-	m2ExpectZeroOrThrowMessage(renderResult, SDL_GetError());
+	sourceTexture.Render(sourceRect, dstRect, ToDegrees(rotationToApplyInRadians - originalRotationOfSourceTextureInRadians), centerPoint);
 }
 void m2::DrawTextureIn3dWorld(
-		thirdparty::video::Renderer& renderer,
 		const thirdparty::video::Texture& sourceTexture,
 		const RectI& sourceRect,
 		const float sourcePpm,
@@ -411,8 +388,6 @@ void m2::DrawTextureIn3dWorld(
 		const float zPositionInWorldM,
 		const float rotationToApplyInRadians,
 		const bool isForeground) {
-	auto* const rawRenderer = static_cast<SDL_Renderer*>(renderer.RawHandle());
-	auto* const rawTexture = static_cast<SDL_Texture*>(sourceTexture.RawHandle());
 	// Draw two triangles in one call
 	// 0****1
 	// *   **
@@ -512,37 +487,13 @@ void m2::DrawTextureIn3dWorld(
 	const auto projected_point_3 = m3::ScreenOriginToProjectionAlongCameraPlaneDstpx(point_3);
 
 	if (projected_point_0 && projected_point_1 && projected_point_2 && projected_point_3) {
-		SDL_Vertex vertices[4] = {};
-		vertices[0].position = thirdparty::video::ToSdlFPoint(*projected_point_0);
-		vertices[0].color = {255, 255, 255, 255};
-		vertices[0].tex_coord = SDL_FPoint{
-				ToFloat(sourceRect.x) / sourceTextureSheetDimensions.GetX(),
-				ToFloat(sourceRect.y) / sourceTextureSheetDimensions.GetY(),
-		};
-
-		vertices[1].position = thirdparty::video::ToSdlFPoint(*projected_point_1);
-		vertices[1].color = {255, 255, 255, 255};
-		vertices[1].tex_coord = SDL_FPoint{
-				ToFloat(sourceRect.x + sourceRect.w) / sourceTextureSheetDimensions.GetX(),
-				ToFloat(sourceRect.y) / sourceTextureSheetDimensions.GetY(),
-		};
-
-		vertices[2].position = thirdparty::video::ToSdlFPoint(*projected_point_2);
-		vertices[2].color = {255, 255, 255, 255};
-		vertices[2].tex_coord = SDL_FPoint{
-				ToFloat(sourceRect.x) / sourceTextureSheetDimensions.GetX(),
-				ToFloat(sourceRect.y + sourceRect.h) / sourceTextureSheetDimensions.GetY(),
-		};
-
-		vertices[3].position = thirdparty::video::ToSdlFPoint(*projected_point_3);
-		vertices[3].color = {255, 255, 255, 255};
-		vertices[3].tex_coord = SDL_FPoint{
-				ToFloat(sourceRect.x + sourceRect.w) / sourceTextureSheetDimensions.GetX(),
-				ToFloat(sourceRect.y + sourceRect.h) / sourceTextureSheetDimensions.GetY(),
-		};
-
-		static const int indices[6] = {0, 1, 2, 2, 1, 3};
-
-		SDL_RenderGeometry(rawRenderer, rawTexture, vertices, 4, indices, 6);
+		const auto sx0 = ToFloat(sourceRect.x) / sourceTextureSheetDimensions.GetX();
+		const auto sx1 = ToFloat(sourceRect.x + sourceRect.w) / sourceTextureSheetDimensions.GetX();
+		const auto sy0 = ToFloat(sourceRect.y) / sourceTextureSheetDimensions.GetY();
+		const auto sy1 = ToFloat(sourceRect.y + sourceRect.h) / sourceTextureSheetDimensions.GetY();
+		const std::array<VecF, 4> positions = {*projected_point_0, *projected_point_1, *projected_point_2, *projected_point_3};
+		const std::array<VecF, 4> texCoords = {VecF{sx0, sy0}, VecF{sx1, sy0}, VecF{sx0, sy1}, VecF{sx1, sy1}};
+		static constexpr std::array<int, 6> indices = {0, 1, 2, 2, 1, 3};
+		sourceTexture.RenderGeometry(positions, texCoords, indices);
 	}
 }

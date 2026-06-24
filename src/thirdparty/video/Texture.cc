@@ -116,6 +116,50 @@ void Texture::RenderWithColorMod(const RectI& destinationPx, const RGB& mod) con
 	Texture::Render(destinationPx);
 	SDL_SetTextureColorMod(static_cast<SDL_Texture*>(_texture), 255, 255, 255);
 }
+void Texture::Render(const RectI& sourceRect, const RectI& destinationRect, const double angleDegrees, const VecI& rotationCenter) const {
+	const auto sdlSrc = ToSdlRect(sourceRect);
+	const auto sdlDst = ToSdlRect(destinationRect);
+	const auto sdlCenter = SDL_Point{rotationCenter.x, rotationCenter.y};
+	if (SDL_RenderCopyEx(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()),
+			static_cast<SDL_Texture*>(_texture), &sdlSrc, &sdlDst, angleDegrees, &sdlCenter,
+			SDL_FLIP_NONE) != 0) {
+		throw M2_ERROR(std::string{"SDL_RenderCopyEx failed: "} + SDL_GetError());
+	}
+}
+void Texture::RenderGeometry(std::span<const VecF> positionsPx, std::span<const VecF> texCoords, std::span<const int> indices) const {
+	std::vector<SDL_Vertex> vertices(positionsPx.size());
+	for (size_t i = 0; i < positionsPx.size(); ++i) {
+		vertices[i] = SDL_Vertex{
+			.position = ToSdlFPoint(positionsPx[i]),
+			.color = SDL_Color{255, 255, 255, 255},
+			.tex_coord = ToSdlFPoint(texCoords[i])};
+	}
+	if (SDL_RenderGeometry(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()),
+			static_cast<SDL_Texture*>(_texture), vertices.data(),
+			static_cast<int>(vertices.size()), indices.data(),
+			static_cast<int>(indices.size())) < 0) {
+		throw M2_ERROR(std::string{"SDL_RenderGeometry failed: "} + SDL_GetError());
+	}
+}
+
+Texture::ColorModGuard::ColorModGuard(void* texture, const RGB& mod) : _texture(texture) {
+	SDL_SetTextureColorMod(static_cast<SDL_Texture*>(_texture), mod.r, mod.g, mod.b);
+}
+Texture::ColorModGuard::ColorModGuard(ColorModGuard&& other) noexcept : _texture(other._texture) {
+	other._texture = nullptr;
+}
+Texture::ColorModGuard& Texture::ColorModGuard::operator=(ColorModGuard&& other) noexcept {
+	std::swap(_texture, other._texture);
+	return *this;
+}
+Texture::ColorModGuard::~ColorModGuard() {
+	if (_texture) {
+		SDL_SetTextureColorMod(static_cast<SDL_Texture*>(_texture), 255, 255, 255);
+	}
+}
+Texture::ColorModGuard Texture::ScopedColorMod(const RGB& mod) const {
+	return ColorModGuard{_texture, mod};
+}
 
 Texture::Texture(Texture&& other) noexcept : _texture(other._texture) {
 	other._texture = nullptr;

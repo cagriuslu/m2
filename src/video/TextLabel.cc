@@ -35,7 +35,6 @@ void m2::DrawTextLabelBackgroundIn2dWorld(const pb::TextLabel& tl, const RectI& 
 }
 void m2::DrawTextLabelIn2dWorld(const pb::TextLabel& tl, const RectI& sourceRect, const VecF& position, const float angle, MAYBE bool is_foreground, MAYBE float z) {
 	DrawTextureIn2dWorld(
-			*M2_GAME.renderer,
 			M2_GAME.GetTextLabelCache().Texture(),
 			sourceRect,
 			0.0f,
@@ -46,7 +45,6 @@ void m2::DrawTextLabelIn2dWorld(const pb::TextLabel& tl, const RectI& sourceRect
 }
 void m2::DrawTextLabelIn3dWorld(const pb::TextLabel& tl, const RectI& sourceRect, const VecF& position, const float angle, const bool is_foreground, const float z) {
 	DrawTextureIn3dWorld(
-			*M2_GAME.renderer,
 			M2_GAME.GetTextLabelCache().Texture(),
 			sourceRect,
 			M2_GAME.Dimensions().OutputPixelsPerMeter(),
@@ -63,7 +61,7 @@ void m2::SlowDrawSystemTextIn2dWorld(const char* str, const VecF& position) {
 	auto texture = thirdparty::video::Texture::CreateFromSurface(*M2_GAME.renderer, surface.RawHandle());
 	const auto dimensions = surface.Dimensions();
 	const RectI srcRect{0, 0, dimensions.x, dimensions.y};
-	DrawTextureIn2dWorld(*M2_GAME.renderer, texture, srcRect, 0.0f, 1.0f, {}, ScreenOriginToPositionVecPx(position), 0.0f);
+	DrawTextureIn2dWorld(texture, srcRect, 0.0f, 1.0f, {}, ScreenOriginToPositionVecPx(position), 0.0f);
 }
 
 m2::RectI m2::TextLabelCache::TextLabelGenerator::operator()(const std::tuple<std::string,int>& item) {
