@@ -41,3 +41,13 @@ m2::VecI m2::thirdparty::video::Renderer::GetOutputSize() const {
 	SDL_GetRendererOutputSize(static_cast<SDL_Renderer*>(_renderer), &w, &h);
 	return {w, h};
 }
+
+void m2::thirdparty::video::Renderer::SetDrawColor(const RGBA& color) {
+	SDL_SetRenderDrawColor(static_cast<SDL_Renderer*>(_renderer), color.r, color.g, color.b, color.a);
+}
+void m2::thirdparty::video::Renderer::Clear() {
+	SDL_RenderClear(static_cast<SDL_Renderer*>(_renderer));
+}
+void m2::thirdparty::video::Renderer::Present() {
+	SDL_RenderPresent(static_cast<SDL_Renderer*>(_renderer));
+}

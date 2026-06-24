@@ -117,9 +117,8 @@ UiAction UiPanel::run_blocking() {
 		}
 
 		// Clear screen
-		auto* const rawRenderer = static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle());
-		SDL_SetRenderDrawColor(rawRenderer, 0, 0, 0, 255);
-		SDL_RenderClear(rawRenderer);
+		M2_GAME.renderer->SetDrawColor(RGBA::Black);
+		M2_GAME.renderer->Clear();
 		_background_texture->RenderToWindow();
 
 		// Draw UI elements
@@ -127,7 +126,7 @@ UiAction UiPanel::run_blocking() {
 		M2_GAME.DrawEnvelopes();
 
 		// Present
-		SDL_RenderPresent(rawRenderer);
+		M2_GAME.renderer->Present();
 		/////////////////////////// END OF GRAPHICS ////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 	}

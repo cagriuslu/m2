@@ -1,6 +1,7 @@
 #pragma once
 #include "m2/common/Meta.h"
 #include <m2/math/VecI.h>
+#include <m2/video/Color.h>
 
 namespace m2::thirdparty::video {
 	class Renderer {
@@ -19,5 +20,12 @@ namespace m2::thirdparty::video {
 
 		[[nodiscard]] void* RawHandle() const { return _renderer; } // TODO remove
 		[[nodiscard]] VecI GetOutputSize() const;
+
+		/// Sets the color used by subsequent clearing and primitive drawing operations.
+		void SetDrawColor(const RGBA& color);
+		/// Clears the whole render target using the current draw color.
+		void Clear();
+		/// Presents the back buffer, making everything drawn since the last present visible on the window.
+		void Present();
 	};
 }
