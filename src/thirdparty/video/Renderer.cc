@@ -11,16 +11,10 @@ m2::expected<m2::thirdparty::video::Renderer> m2::thirdparty::video::Renderer::C
 		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
 	}
 
-	auto* rawRenderer = SDL_CreateRenderer(static_cast<SDL_Window*>(sdlWindow), -1,
-		SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
+	auto* rawRenderer = SDL_CreateRenderer(static_cast<SDL_Window*>(sdlWindow), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
 	if (not rawRenderer) {
 		return make_unexpected(std::string{SDL_GetError()});
 	}
-
-	SDL_RendererInfo info;
-	SDL_GetRendererInfo(rawRenderer, &info);
-	LOG_INFO("Renderer", info.name);
-
 	return Renderer{rawRenderer};
 }
 
@@ -42,6 +36,11 @@ m2::VecI m2::thirdparty::video::Renderer::GetOutputSize() const {
 	int w, h;
 	SDL_GetRendererOutputSize(static_cast<SDL_Renderer*>(_renderer), &w, &h);
 	return {w, h};
+}
+std::string m2::thirdparty::video::Renderer::GetName() const {
+	SDL_RendererInfo info;
+	SDL_GetRendererInfo(static_cast<SDL_Renderer*>(_renderer), &info);
+	return info.name;
 }
 
 void m2::thirdparty::video::Renderer::SetDrawColor(const RGBA& color) {

@@ -68,6 +68,7 @@ Game::Game() : window(CreateWindow(_proxy.gamePpm, _proxy.defaultGameHeightM, _p
 
 	if (auto rendererCreation = thirdparty::video::Renderer::Create(window.RawHandle(), _proxy.areGraphicsPixelated)) {
 		renderer.emplace(std::move(*rendererCreation));
+		LOG_INFO(std::format("Renderer: {}", renderer->GetName()));
 	} else {
 		throw M2_ERROR(rendererCreation.error());
 	}

@@ -22,6 +22,7 @@ namespace m2::thirdparty::video {
 
 		[[nodiscard]] void* RawHandle() const { return _renderer; } // TODO remove
 		[[nodiscard]] VecI GetOutputSize() const;
+		[[nodiscard]] std::string GetName() const;
 
 		/// Sets the color used by subsequent clearing and primitive drawing operations.
 		void SetDrawColor(const RGBA& color);
