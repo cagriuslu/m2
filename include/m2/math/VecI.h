@@ -52,7 +52,6 @@ namespace m2 {
 		[[nodiscard]] VecI GetDimensionsInAspectRatio(int w, int h) const; // TODO too complex of a function, get rid of this, is this really necessary. use RectI::trim_to_aspect_ration instead
 	};
 	std::string ToString(const m2::VecI&);
-	std::string ToString(const std::vector<VecI>&);
 
 	struct VecIHash {
 		size_t operator()(const VecI& a) const {

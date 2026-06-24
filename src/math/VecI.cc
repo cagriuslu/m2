@@ -2,7 +2,6 @@
 #include <m2/math/Rational.h>
 #include <m2/math/VecF.h>
 #include <m2/math/VecI.h>
-#include <m2/Vson.h>
 
 #include <unordered_map>
 
@@ -47,20 +46,4 @@ m2::VecI m2::VecI::GetDimensionsInAspectRatio(int w, int h) const {
 	return VecI{I(correct_width), I(correct_height)};
 }
 
-namespace {
-	m2::Vson to_vson(const m2::VecI& v) {
-		auto vs = m2::Vson::object();
-		vs["x"] = m2::ToString(v.x);
-		vs["y"] = m2::ToString(v.y);
-		return vs;
-	}
-}  // namespace
-
-std::string m2::ToString(const m2::VecI& v) { return to_vson(v).dump_to_string(); }
-std::string m2::ToString(const std::vector<VecI>& vec) {
-	auto vs = Vson::array();
-	for (const auto& v : vec) {
-		vs.push_back(to_vson(v));
-	}
-	return vs.dump_to_string();
-}
+std::string m2::ToString(const VecI& v) { return std::format("{{x:{},y{}}}", v.x, v.y); }
