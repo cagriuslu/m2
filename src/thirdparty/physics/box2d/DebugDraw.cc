@@ -8,6 +8,12 @@
 
 using namespace m2::thirdparty::physics::box2d;
 
+namespace {
+	m2::RGBA ToRgba(const b2Color& c) {
+		return {c.r, c.g, c.b, c.a};
+	}
+}
+
 DebugDraw::DebugDraw() {
 	AppendFlags(e_shapeBit);
 	AppendFlags(e_centerOfMassBit);
@@ -15,12 +21,12 @@ DebugDraw::DebugDraw() {
 
 void DebugDraw::DrawPolygon(const b2Vec2* vertices, const int32 vertexCount, const b2Color& color) {
 	for (int i = 0; i < vertexCount - 1; ++i) {
-		Graphic::DrawLine(ToVecF(vertices[i]), ToVecF(vertices[i + 1]), RGBA{color});
+		Graphic::DrawLine(ToVecF(vertices[i]), ToVecF(vertices[i + 1]), ToRgba(color));
 	}
 }
 void DebugDraw::DrawSolidPolygon(const b2Vec2* vertices, const int32 vertexCount, const b2Color& color) {
 	for (int i = 0; i < vertexCount - 1; ++i) {
-		Graphic::DrawLine(ToVecF(vertices[i]), ToVecF(vertices[i + 1]), RGBA{color});
+		Graphic::DrawLine(ToVecF(vertices[i]), ToVecF(vertices[i + 1]), ToRgba(color));
 	}
 }
 void DebugDraw::DrawCircle(const b2Vec2& center, const float radius, const b2Color& color) {
@@ -35,7 +41,7 @@ void DebugDraw::DrawCircle(const b2Vec2& center, const float radius, const b2Col
 			RoundI(screenOriginToSpriteCenter.GetY()) - srcRect.h / 2,
 			srcRect.w,
 			srcRect.h};
-		const auto colorModGuard = texture.ScopedColorMod(static_cast<RGB>(RGBA{color}));
+		const auto colorModGuard = texture.ScopedColorMod(static_cast<RGB>(ToRgba(color)));
 		texture.Render(*M2_GAME.renderer, srcRect, dstRect);
 	} else {
 		const auto centerPosition = m3::VecF{ToVecF(center)};
@@ -53,7 +59,7 @@ void DebugDraw::DrawCircle(const b2Vec2& center, const float radius, const b2Col
 			const std::array points = {
 				*pointTop, *pointTopRight, *pointRight, *pointBottomRight,
 				*pointBottom, *pointBottomLeft, *pointLeft, *pointTopLeft, *pointTop};
-			M2_GAME.renderer->DrawLineStrip(points, RGBA{color});
+			M2_GAME.renderer->DrawLineStrip(points, ToRgba(color));
 		}
 	}
 }
@@ -70,5 +76,5 @@ void DebugDraw::DrawTransform(const b2Transform& xf) {
 }
 void DebugDraw::DrawPoint(const b2Vec2& p, const float size, const b2Color& color) {
 	// Points of an edge
-	Graphic::DrawCross(ToVecF(p), size, RGBA{color});
+	Graphic::DrawCross(ToVecF(p), size, ToRgba(color));
 }
