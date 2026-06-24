@@ -1,5 +1,6 @@
 #include <m2/thirdparty/physics/RigidBody.h>
-#include <m2/ProxyTypes.h>
+#include <m2/thirdparty/physics/box2d/Detail.h>
+#include <m2/common/BuildOptions.h>
 #include <m2/Game.h>
 #include <m2/Log.h>
 #include <box2d/b2_body.h>
@@ -61,7 +62,7 @@ RigidBody RigidBody::CreateFromDefinition(const RigidBodyDefinition& definition,
 		const VecF& position, const float angleInRads) {
 	b2BodyDef box2dBodyDef = {};
 	box2dBodyDef.type = ToBox2dBodyType(definition.bodyType);
-	box2dBodyDef.position = static_cast<b2Vec2>(position);
+	box2dBodyDef.position = thirdparty::physics::box2d::ToBox2dVec2(position);
 	box2dBodyDef.angle = angleInRads;
 	box2dBodyDef.linearVelocity = {};
 	box2dBodyDef.angularVelocity = {};
@@ -84,7 +85,7 @@ RigidBody RigidBody::CreateFromDefinition(const RigidBodyDefinition& definition,
 			shape.emplace<b2PolygonShape>();
 			std::vector<b2Vec2> points;
 			for (const auto& point : poly.points) {
-				points.emplace_back(static_cast<b2Vec2>(point));
+				points.emplace_back(box2d::ToBox2dVec2(point));
 			}
 			std::get<b2PolygonShape>(shape).Set(points.data(), I(poly.points.size()));
 			box2dFixtureDef.shape = &std::get<b2PolygonShape>(shape);
@@ -92,13 +93,13 @@ RigidBody RigidBody::CreateFromDefinition(const RigidBodyDefinition& definition,
 			const auto& rect = std::get<RectangleShape>(fixture.shape);
 			shape.emplace<b2PolygonShape>();
 			std::get<b2PolygonShape>(shape).SetAsBox(rect.dimensions.GetX() / 2.0f, rect.dimensions.GetY() / 2.0f,
-					static_cast<b2Vec2>(rect.offset), rect.angleInRads);
+					box2d::ToBox2dVec2(rect.offset), rect.angleInRads);
 			box2dFixtureDef.shape = &std::get<b2PolygonShape>(shape);
 		} else if (std::holds_alternative<CircleShape>(fixture.shape)) {
 			const auto& circ = std::get<CircleShape>(fixture.shape);
 			shape.emplace<b2CircleShape>();
 			std::get<b2CircleShape>(shape).m_radius = circ.radius;
-			std::get<b2CircleShape>(shape).m_p = static_cast<b2Vec2>(circ.offset);
+			std::get<b2CircleShape>(shape).m_p = box2d::ToBox2dVec2(circ.offset);
 			box2dFixtureDef.shape = &std::get<b2CircleShape>(shape);
 		} else if (std::holds_alternative<ChainShape>(fixture.shape)) {
 			const auto& chain = std::get<ChainShape>(fixture.shape);
@@ -109,7 +110,7 @@ RigidBody RigidBody::CreateFromDefinition(const RigidBodyDefinition& definition,
 			// Convert to Box2d vertices
 			std::vector<b2Vec2> vertices(chain.points.size());
 			std::ranges::transform(chain.points, vertices.begin(), [&](const auto& point) {
-				return static_cast<b2Vec2>(point);
+				return box2d::ToBox2dVec2(point);
 			});
 			// Create loop
 			std::get<b2ChainShape>(shape).CreateLoop(vertices.data(), I(vertices.size()));
@@ -117,7 +118,7 @@ RigidBody RigidBody::CreateFromDefinition(const RigidBodyDefinition& definition,
 		} else if (std::holds_alternative<EdgeShape>(fixture.shape)) {
 			const auto& edge = std::get<EdgeShape>(fixture.shape);
 			shape.emplace<b2EdgeShape>();
-			std::get<b2EdgeShape>(shape).SetTwoSided(static_cast<b2Vec2>(edge.pointA), static_cast<b2Vec2>(edge.pointB));
+			std::get<b2EdgeShape>(shape).SetTwoSided(box2d::ToBox2dVec2(edge.pointA), box2d::ToBox2dVec2(edge.pointB));
 			box2dFixtureDef.shape = &std::get<b2EdgeShape>(shape);
 		} else {
 			throw M2_ERROR("Unknown shape");
@@ -137,7 +138,7 @@ RigidBody RigidBody::CreateFromDefinition(const RigidBodyDefinition& definition,
 	if (definition.bodyType == RigidBodyType::DYNAMIC) {
 		b2MassData massData{};
 		massData.mass = definition.mass;
-		massData.center = static_cast<b2Vec2>(definition.offsetOfCenterOfMass);
+		massData.center = box2d::ToBox2dVec2(definition.offsetOfCenterOfMass);
 		massData.I = definition.inertia;
 		body->SetMassData(&massData);
 	}
@@ -165,13 +166,13 @@ bool RigidBody::IsEnabled() const {
 	return static_cast<b2Body*>(_ptr)->IsEnabled();
 }
 m2::VecFE RigidBody::GetPosition() const {
-	return VecFE{VecF{static_cast<b2Body*>(_ptr)->GetPosition()}};
+	return VecFE{box2d::ToVecF(static_cast<b2Body*>(_ptr)->GetPosition())};
 }
 m2::FE RigidBody::GetAngle() const {
 	return FE{static_cast<b2Body*>(_ptr)->GetAngle()};
 }
 m2::VecFE RigidBody::GetLinearVelocity() const {
-	return VecFE{VecF{static_cast<b2Body*>(_ptr)->GetLinearVelocity()}};
+	return VecFE{box2d::ToVecF(static_cast<b2Body*>(_ptr)->GetLinearVelocity())};
 }
 m2::FE RigidBody::GetAngularVelocity() const {
 	return FE{static_cast<b2Body*>(_ptr)->GetAngularVelocity()};
@@ -210,20 +211,20 @@ void RigidBody::SetEnabled(const bool state) {
 }
 void RigidBody::SetPosition(const VecFE& pos) {
 	const auto currentAngle = static_cast<b2Body*>(_ptr)->GetAngle();
-	static_cast<b2Body*>(_ptr)->SetTransform(static_cast<b2Vec2>(VecF{pos}), currentAngle);
+	static_cast<b2Body*>(_ptr)->SetTransform(box2d::ToBox2dVec2(VecF{pos}), currentAngle);
 }
 void RigidBody::SetAngle(const FE angle) {
 	const auto& currentPosition = static_cast<b2Body*>(_ptr)->GetPosition();
 	static_cast<b2Body*>(_ptr)->SetTransform(currentPosition, angle.ToFloat());
 }
 void RigidBody::SetLinearVelocity(const VecFE& vel) {
-	static_cast<b2Body*>(_ptr)->SetLinearVelocity(static_cast<b2Vec2>(VecF{vel}));
+	static_cast<b2Body*>(_ptr)->SetLinearVelocity(box2d::ToBox2dVec2(VecF{vel}));
 }
 void RigidBody::SetAngularVelocity(const FE w) {
 	static_cast<b2Body*>(_ptr)->SetAngularVelocity(w.ToFloat());
 }
 void RigidBody::ApplyForceToCenter(const VecFE& f) {
-	static_cast<b2Body*>(_ptr)->ApplyForceToCenter(static_cast<b2Vec2>(VecF{f}), true);
+	static_cast<b2Body*>(_ptr)->ApplyForceToCenter(box2d::ToBox2dVec2(VecF{f}), true);
 }
 
 void RigidBody::TeleportToAnother(const RigidBody& other) {

@@ -5,8 +5,7 @@
 #include <m2/physics/StaticBody.h>
 #include <m2/math/VecF.h>
 #include <m2/math/VecE.h>
-#include <m2/ProxyTypes.h>
-#include <m2/BuildOptions.h>
+#include <m2/common/BuildOptions.h>
 #include <functional>
 #include <type_traits>
 #include <variant>

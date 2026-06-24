@@ -1,6 +1,6 @@
 #include <m2/math/VariableValue.h>
 #include <m2/math/Hash.h>
-#include <m2/BuildOptions.h>
+#include <m2/common/BuildOptions.h>
 #include <m2/protobuf/Detail.h>
 
 using namespace m2;

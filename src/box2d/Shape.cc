@@ -1,4 +1,5 @@
 #include <m2/box2d/Shape.h>
+#include <m2/thirdparty/physics/box2d/Detail.h>
 #include <m2/math/VecF.h>
 #include <m2/M2.h>
 
@@ -9,14 +10,14 @@ b2PolygonShape m2::box2d::GeneratePolygonShape(const pb::Fixture_RectangleFixtur
 	polygonShape.SetAsBox(
 			rectFixture.dims_px().w() / ToFloat(spritePpm) / 2.0f,
 			rectFixture.dims_px().h() / ToFloat(spritePpm) / 2.0f,
-			static_cast<b2Vec2>(VecF{rectFixture.sprite_origin_to_fixture_center_vec_px()} / ToFloat(spritePpm)),
+			thirdparty::physics::box2d::ToBox2dVec2(VecF{rectFixture.sprite_origin_to_fixture_center_vec_px()} / ToFloat(spritePpm)),
 			0.0f);
 	return polygonShape;
 }
 b2CircleShape m2::box2d::GenerateCircleShape(const pb::Fixture_CircleFixture& circFixture, const int spritePpm) {
 	b2CircleShape circleShape;
 	circleShape.m_radius = circFixture.radius_px() / ToFloat(spritePpm);
-	circleShape.m_p = static_cast<b2Vec2>(VecF{circFixture.sprite_origin_to_fixture_center_vec_px()} / ToFloat(spritePpm));
+	circleShape.m_p = thirdparty::physics::box2d::ToBox2dVec2(VecF{circFixture.sprite_origin_to_fixture_center_vec_px()} / ToFloat(spritePpm));
 	return circleShape;
 }
 b2ChainShape m2::box2d::GenerateChainShape(const pb::Fixture_ChainFixture& chainFixture, const int spritePpm) {
@@ -26,7 +27,7 @@ b2ChainShape m2::box2d::GenerateChainShape(const pb::Fixture_ChainFixture& chain
 	// Convert to box2d vertices
 	std::vector<b2Vec2> vertices;
 	std::ranges::transform(chainFixture.points(), std::back_inserter(vertices), [&](const auto& point) {
-		return static_cast<b2Vec2>(VecF{point} / ToFloat(spritePpm));
+		return thirdparty::physics::box2d::ToBox2dVec2(VecF{point} / ToFloat(spritePpm));
 	});
 	// Create loop
 	b2ChainShape chainShape;

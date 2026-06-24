@@ -3,7 +3,7 @@
 #include <m2/common/math/Float.h>
 #include <m2/math/VecE.h>
 #include <m2/math/VecF.h>
-#include <m2/ProxyTypes.h>
+#include <m2/common/BuildOptions.h>
 #include <unordered_map>
 #include <map>
 #include <vector>

@@ -1,12 +1,10 @@
 #pragma once
 #include <m2/common/math/Exact.h>
 #include <m2/common/math/Float.h>
-#include <m2/ProxyTypes.h>
+#include <m2/common/BuildOptions.h>
 #include <Dim2f.pb.h>
 #include <VecF.pb.h>
 #include <VecI.pb.h>
-#include <box2d/b2_math.h>
-
 #include <array>
 #include <string>
 #include <optional>
@@ -26,7 +24,6 @@ namespace m2 {
 		VecF(int x, int y) : _x((float)x), _y((float)y) {}
 		VecF(unsigned x, unsigned y) : _x((float)x), _y((float)y) {}
 		explicit VecF(const VecI& v);
-		explicit VecF(const b2Vec2& v) : VecF(v.x, v.y) {}
 		explicit VecF(const pb::Dim2f& v) : VecF(v.w(), v.h()) {}
 		explicit VecF(const pb::VecF& v) : VecF(v.x(), v.y()) {}
 		explicit VecF(const pb::VecI& v) : VecF(v.x(), v.y()) {}
@@ -45,7 +42,6 @@ namespace m2 {
 		VecF operator/(const unsigned& rhs) const { return {_x / static_cast<float>(rhs), _y / static_cast<float>(rhs)}; }
 		bool operator==(const VecF& other) const { return (_x == other.GetX()) && (_y == other.GetY()); } // TODO use equals(other, tolerance) instead
 		explicit operator bool() const { return (_x != 0.0f) || (_y != 0.0f); }
-		explicit operator b2Vec2() const { return b2Vec2{_x, _y}; }
 		explicit operator pb::VecF() const { pb::VecF v; v.set_x(_x); v.set_y(_y); return v; }
 
 		// Accessors

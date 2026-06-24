@@ -1,4 +1,5 @@
 #include <m2/math/AABB.h>
+#include <m2/thirdparty/physics/box2d/Detail.h>
 
 m2::AABB::AABB() : top_left(), bottom_right() {}
 
@@ -28,5 +29,5 @@ m2::AABB::operator bool() const {
 }
 
 m2::AABB::operator b2AABB() const {
-    return b2AABB{.lowerBound = b2Vec2{top_left}, .upperBound = b2Vec2{bottom_right}};
+    return b2AABB{.lowerBound = thirdparty::physics::box2d::ToBox2dVec2(top_left), .upperBound = thirdparty::physics::box2d::ToBox2dVec2(bottom_right)};
 }

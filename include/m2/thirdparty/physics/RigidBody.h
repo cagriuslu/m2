@@ -3,7 +3,7 @@
 #include <m2/math/VecF.h>
 #include <m2/common/Meta.h>
 #include <m2/M2.h>
-#include <m2/ProxyTypes.h>
+#include <m2/common/BuildOptions.h>
 #include <Sprite.pb.h>
 #include <variant>
 #include <vector>

@@ -1,7 +1,7 @@
 #pragma once
 #include <m2/common/math/Exact.h>
 #include <m2/common/math/Float.h>
-#include <m2/ProxyTypes.h>
+#include <m2/common/BuildOptions.h>
 #include <VariableValue.pb.h>
 
 namespace m2 {

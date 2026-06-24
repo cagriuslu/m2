@@ -2,6 +2,7 @@ add_library(m2_common STATIC
     src/Error.cc
     src/math/Exact.cc
     src/math/Float.cc
+    include/m2/common/BuildOptions.h
     include/m2/common/Constants.h
     include/m2/common/Error.h
     include/m2/common/Meta.h

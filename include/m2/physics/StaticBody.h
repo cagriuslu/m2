@@ -1,7 +1,7 @@
 #pragma once
 #include <m2/math/VecF.h>
 #include <m2/math/VecE.h>
-#include <m2/ProxyTypes.h>
+#include <m2/common/BuildOptions.h>
 
 namespace m2::physics {
     class StaticBody {

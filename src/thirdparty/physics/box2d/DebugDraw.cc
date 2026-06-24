@@ -2,6 +2,7 @@
 #include <m2/Game.h>
 #include <m2/component/Graphic.h>
 #include <m2/video/Color.h>
+#include <m2/thirdparty/physics/box2d/Detail.h>
 #include <m2/math/VecF.h>
 #include <array>
 
@@ -14,12 +15,12 @@ DebugDraw::DebugDraw() {
 
 void DebugDraw::DrawPolygon(const b2Vec2* vertices, const int32 vertexCount, const b2Color& color) {
 	for (int i = 0; i < vertexCount - 1; ++i) {
-		Graphic::DrawLine(VecF{vertices[i]}, VecF{vertices[i + 1]}, RGBA{color});
+		Graphic::DrawLine(ToVecF(vertices[i]), ToVecF(vertices[i + 1]), RGBA{color});
 	}
 }
 void DebugDraw::DrawSolidPolygon(const b2Vec2* vertices, const int32 vertexCount, const b2Color& color) {
 	for (int i = 0; i < vertexCount - 1; ++i) {
-		Graphic::DrawLine(VecF{vertices[i]}, VecF{vertices[i + 1]}, RGBA{color});
+		Graphic::DrawLine(ToVecF(vertices[i]), ToVecF(vertices[i + 1]), RGBA{color});
 	}
 }
 void DebugDraw::DrawCircle(const b2Vec2& center, const float radius, const b2Color& color) {
@@ -28,7 +29,7 @@ void DebugDraw::DrawCircle(const b2Vec2& center, const float radius, const b2Col
 		const int r = RoundI(M2_GAME.Dimensions().OutputPixelsPerMeter() * radius);
 		const RectI srcRect = M2_GAME.GetShapeCache().Create(std::make_shared<Circle>(r));
 		const auto& texture = M2_GAME.GetShapeCache().Texture();
-		const auto screenOriginToSpriteCenter = ScreenOriginToPositionVecPx(VecF{center});
+		const auto screenOriginToSpriteCenter = ScreenOriginToPositionVecPx(ToVecF(center));
 		const RectI dstRect{
 			RoundI(screenOriginToSpriteCenter.GetX()) - srcRect.w / 2,
 			RoundI(screenOriginToSpriteCenter.GetY()) - srcRect.h / 2,
@@ -37,7 +38,7 @@ void DebugDraw::DrawCircle(const b2Vec2& center, const float radius, const b2Col
 		const auto colorModGuard = texture.ScopedColorMod(static_cast<RGB>(RGBA{color}));
 		texture.Render(*M2_GAME.renderer, srcRect, dstRect);
 	} else {
-		const auto centerPosition = m3::VecF{VecF{center}};
+		const auto centerPosition = m3::VecF{ToVecF(center)};
 		// Draw an octagon instead of circle
 		const auto corner = radius / sqrtf(2.0f);
 		const auto pointTop         = ScreenOriginToProjectionAlongCameraPlaneDstpx(centerPosition.offset_y(-radius));
@@ -61,13 +62,13 @@ void DebugDraw::DrawSolidCircle(const b2Vec2& center, const float radius, MAYBE 
 }
 void DebugDraw::DrawSegment(const b2Vec2& p1, const b2Vec2& p2, MAYBE const b2Color& color) {
 	// Segments of a chain
-	Graphic::DrawLine(VecF{p1}, VecF{p2}, RGBA{255, 0, 0, 255});
+	Graphic::DrawLine(ToVecF(p1), ToVecF(p2), RGBA{255, 0, 0, 255});
 }
 void DebugDraw::DrawTransform(const b2Transform& xf) {
 	// Origin of an object
-	Graphic::DrawCross(VecF{xf.p}, 0.25f, {255, 255, 0, 255});
+	Graphic::DrawCross(ToVecF(xf.p), 0.25f, {255, 255, 0, 255});
 }
 void DebugDraw::DrawPoint(const b2Vec2& p, const float size, const b2Color& color) {
 	// Points of an edge
-	Graphic::DrawCross(VecF{p}, size, RGBA{color});
+	Graphic::DrawCross(ToVecF(p), size, RGBA{color});
 }

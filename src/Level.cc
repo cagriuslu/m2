@@ -12,6 +12,7 @@
 #include <m2/protobuf/Detail.h>
 #include <m2/sheeteditor/Ui.h>
 #include <m2/thirdparty/physics/box2d/DebugDraw.h>
+#include <m2/thirdparty/physics/box2d/Detail.h>
 #include <m2/ui/widget/Text.h>
 #include <m2/Log.h>
 #include <M2.orm.h>
@@ -516,7 +517,7 @@ void_expected Level::InitAnyPlayer(
 	}
 
 	if (physical_world) {
-		const auto gravity = static_cast<b2Vec2>(M2G_PROXY.gravity);
+		const auto gravity = thirdparty::physics::box2d::ToBox2dVec2(M2G_PROXY.gravity);
 		contactListener = new box2d::ContactListener(
 		    Physique::DefaultBeginContactCallback, Physique::DefaultEndContactCallback);
 #ifdef DEBUG
