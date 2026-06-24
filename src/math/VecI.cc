@@ -2,10 +2,7 @@
 #include <m2/math/Rational.h>
 #include <m2/math/VecF.h>
 #include <m2/math/VecI.h>
-
-#include <unordered_map>
-
-#include "m2/math/VecE.h"
+#include <m2/common/math/VecE.h>
 
 m2::VecI::VecI(const VecF& v) : VecI(v.GetX(), v.GetY()) {}
 m2::VecI::VecI(const VecE& v) : x(v.GetX().Round().ToInteger()), y(v.GetY().Round().ToInteger()) {}

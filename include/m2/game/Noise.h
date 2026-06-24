@@ -1,7 +1,7 @@
 #pragma once
 #include "m2/math/RectE.h"
 #include "m2/math/VecF.h"
-#include "m2/math/VecE.h"
+#include <m2/common/math/VecE.h>
 #include "rng/Distribution.h"
 #include "rng/Rng.h"
 #include <m2/math/VecI.h>

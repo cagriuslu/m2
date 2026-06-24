@@ -1,4 +1,4 @@
-#include <m2/math/VecE.h>
+#include <m2/common/math/VecE.h>
 #include <m2/math/VecF.h>
 #include <m2/math/VecI.h>
 
