@@ -189,9 +189,7 @@ endif()
 protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS "${PROTO_FILES}" "${GAME_PROTO_FILES}")
 
 add_library(m2_pb OBJECT ${PROTO_SRCS} ${PROTO_HDRS})
-target_include_directories(m2_pb SYSTEM PUBLIC
-    ${CMAKE_CURRENT_BINARY_DIR}
-    ${Protobuf_INCLUDE_DIRS})
+target_include_directories(m2_pb SYSTEM PUBLIC ${CMAKE_CURRENT_BINARY_DIR} ${Protobuf_INCLUDE_DIRS})
 target_link_libraries(m2_pb PUBLIC ${Protobuf_LIBRARIES})
 if (MSVC)
     set_property(TARGET m2_pb PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
@@ -211,6 +209,11 @@ add_library(m2_common STATIC
 )
 target_include_directories(m2_common PUBLIC common/include)
 target_compile_features(m2_common PUBLIC cxx_std_23)
+target_link_libraries(m2_common PUBLIC m2_pb)
+if (MSVC)
+    set_property(TARGET m2_common PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+    target_compile_options(m2_common PRIVATE "/MP")
+endif()
 
 # Post-build actions
 #add_custom_command(
@@ -264,7 +267,7 @@ endif()
 target_include_directories(m2 PUBLIC include ${GAME_INCLUDE_DIRS})
 target_include_directories(m2 PUBLIC ${SDL2_ttf_INCLUDE_DIRS} ${SDL2_image_INCLUDE_DIRS} ${SDL2_INCLUDE_DIRS} ${GENORM_CXX_INCLUDE_DIRS} ${png_INCLUDE_DIRS} ${z_INCLUDE_DIRS})
 target_link_directories(m2 PUBLIC ${SDL2_ttf_LIBDIR} ${SDL2_image_LIBDIR} ${GENORM_CXX_LIBDIR} ${png_LIBDIR} ${z_LIBDIR})
-target_link_libraries(m2 m2_common m2_pb box2d SDL2_ttf ${Freetype_LIBRARIES} ${SDL2_image_LIBNAME} ${SDL2_STATIC_LIBRARIES} ${GENORM_CXX_LIBRARIES} sqlite3 ${png_LIBRARIES} ${z_LIBRARIES})
+target_link_libraries(m2 m2_common box2d SDL2_ttf ${Freetype_LIBRARIES} ${SDL2_image_LIBNAME} ${SDL2_STATIC_LIBRARIES} ${GENORM_CXX_LIBRARIES} sqlite3 ${png_LIBRARIES} ${z_LIBRARIES})
 
 if (WIN32)
     #target_compile_options(m2 PRIVATE /analyze) # Code inspections
@@ -316,7 +319,6 @@ if(GTest_FOUND)
             "src/String.cc"
             "src/VmAddScript.cc"
             "src/VmExecute.cc"
-            "src/Vson.cc"
             "src/containers/MapF.cc"
             "src/containers/Pool.cc"
             "src/game/Graph.cc"
@@ -336,7 +338,7 @@ if(GTest_FOUND)
     target_include_directories(test PUBLIC include)
     target_include_directories(test PUBLIC ${SDL2_INCLUDE_DIRS} ${SDL2_image_INCLUDE_DIRS} ${SDL2_ttf_INCLUDE_DIRS} ${GENORM_CXX_INCLUDE_DIRS})
     target_link_directories(test PUBLIC ${SDL2_image_LIBDIR} ${SDL2_ttf_LIBDIR} ${GENORM_CXX_LIBDIR} ${z_LIBDIR})
-    target_link_libraries(test m2_common m2_pb box2d ${SDL2_image_LIBRARIES} ${SDL2_ttf_LIBRARIES} ${SDL2_LIBRARIES} ${GENORM_CXX_LIBRARIES} sqlite3 ${z_LIBRARIES})
+    target_link_libraries(test m2_common box2d ${SDL2_image_LIBRARIES} ${SDL2_ttf_LIBRARIES} ${SDL2_LIBRARIES} ${GENORM_CXX_LIBRARIES} sqlite3 ${z_LIBRARIES})
     target_link_libraries(test GTest::gtest GTest::gtest_main)
     if(WIN32)
         #target_compile_options(test PRIVATE /analyze) # Code inspections
