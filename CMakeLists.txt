@@ -189,6 +189,16 @@ else()
 endif()
 protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS "${PROTO_FILES}" "${GAME_PROTO_FILES}")
 
+add_library(m2_pb OBJECT ${PROTO_SRCS} ${PROTO_HDRS})
+target_include_directories(m2_pb SYSTEM PUBLIC
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${Protobuf_INCLUDE_DIRS})
+target_link_libraries(m2_pb PUBLIC ${Protobuf_LIBRARIES})
+if (MSVC)
+    set_property(TARGET m2_pb PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+    target_compile_options(m2_pb PRIVATE "/MP")
+endif()
+
 # Post-build actions
 #add_custom_command(
 #        OUTPUT ${CMAKE_SOURCE_DIR}/resource.zip
@@ -223,7 +233,7 @@ if(APPLE)
 endif()
 
 set(ORM_SOURCES "${CMAKE_BINARY_DIR}/M2.orm.h;${CMAKE_BINARY_DIR}/M2.orm.cc")
-add_executable(m2 WIN32 MACOSX_BUNDLE ${M2_PUBLIC_HEADERS} ${M2_PRIVATE_HEADERS} ${M2_SOURCES} ${M2_PLATFORM_SPECIFIC_SOURCES} ${GAME_SOURCES} ${PROTO_SRCS} ${PROTO_HDRS} ${ORM_SOURCES} ${BUNDLE_RESOURCES})
+add_executable(m2 WIN32 MACOSX_BUNDLE ${M2_PUBLIC_HEADERS} ${M2_PRIVATE_HEADERS} ${M2_SOURCES} ${M2_PLATFORM_SPECIFIC_SOURCES} ${GAME_SOURCES} ${ORM_SOURCES} ${BUNDLE_RESOURCES})
 add_dependencies(m2 build_orm_sources)
 
 if (MSVC)
@@ -241,7 +251,7 @@ endif()
 target_include_directories(m2 PUBLIC include ${GAME_INCLUDE_DIRS})
 target_include_directories(m2 PUBLIC ${SDL2_ttf_INCLUDE_DIRS} ${SDL2_image_INCLUDE_DIRS} ${SDL2_INCLUDE_DIRS} ${GENORM_CXX_INCLUDE_DIRS} ${png_INCLUDE_DIRS} ${z_INCLUDE_DIRS})
 target_link_directories(m2 PUBLIC ${SDL2_ttf_LIBDIR} ${SDL2_image_LIBDIR} ${GENORM_CXX_LIBDIR} ${png_LIBDIR} ${z_LIBDIR})
-target_link_libraries(m2 m2_common box2d SDL2_ttf ${Freetype_LIBRARIES} ${SDL2_image_LIBNAME} ${SDL2_STATIC_LIBRARIES} ${GENORM_CXX_LIBRARIES} sqlite3 ${Protobuf_LIBRARIES} ${png_LIBRARIES} ${z_LIBRARIES})
+target_link_libraries(m2 m2_common m2_pb box2d SDL2_ttf ${Freetype_LIBRARIES} ${SDL2_image_LIBNAME} ${SDL2_STATIC_LIBRARIES} ${GENORM_CXX_LIBRARIES} sqlite3 ${png_LIBRARIES} ${z_LIBRARIES})
 
 if (WIN32)
     #target_compile_options(m2 PRIVATE /analyze) # Code inspections
@@ -309,11 +319,11 @@ if(GTest_FOUND)
             "src/thirdparty/compression/Inflate.cc"
             "src/thirdparty/protobuf/Json.cc"
     )
-    add_executable(test ${TEST_SOURCES} ${PROTO_SRCS} ${PROTO_HDRS} ${ORM_SOURCES})
+    add_executable(test ${TEST_SOURCES} ${ORM_SOURCES})
     target_include_directories(test PUBLIC include)
     target_include_directories(test PUBLIC ${SDL2_INCLUDE_DIRS} ${SDL2_image_INCLUDE_DIRS} ${SDL2_ttf_INCLUDE_DIRS} ${GENORM_CXX_INCLUDE_DIRS})
     target_link_directories(test PUBLIC ${SDL2_image_LIBDIR} ${SDL2_ttf_LIBDIR} ${GENORM_CXX_LIBDIR} ${z_LIBDIR})
-    target_link_libraries(test m2_common box2d ${SDL2_image_LIBRARIES} ${SDL2_ttf_LIBRARIES} ${SDL2_LIBRARIES} ${GENORM_CXX_LIBRARIES} sqlite3 ${Protobuf_LIBRARIES} ${z_LIBRARIES})
+    target_link_libraries(test m2_common m2_pb box2d ${SDL2_image_LIBRARIES} ${SDL2_ttf_LIBRARIES} ${SDL2_LIBRARIES} ${GENORM_CXX_LIBRARIES} sqlite3 ${z_LIBRARIES})
     target_link_libraries(test GTest::gtest GTest::gtest_main)
     if(WIN32)
         #target_compile_options(test PRIVATE /analyze) # Code inspections
