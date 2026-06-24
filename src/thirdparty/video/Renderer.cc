@@ -1,6 +1,8 @@
 #include <m2/thirdparty/video/Renderer.h>
+#include "SdlConversions.h"
 #include <m2/Log.h>
 #include <SDL2/SDL.h>
+#include <vector>
 
 m2::expected<m2::thirdparty::video::Renderer> m2::thirdparty::video::Renderer::Create(void* sdlWindow, const bool graphicsPixelated) {
 	if (graphicsPixelated) {
@@ -50,4 +52,19 @@ void m2::thirdparty::video::Renderer::Clear() {
 }
 void m2::thirdparty::video::Renderer::Present() {
 	SDL_RenderPresent(static_cast<SDL_Renderer*>(_renderer));
+}
+
+void m2::thirdparty::video::Renderer::DrawLineStrip(const std::span<const VecF> pointsPx, const RGBA& color) {
+	auto* sdlRenderer = static_cast<SDL_Renderer*>(_renderer);
+	if (SDL_SetRenderDrawColor(sdlRenderer, color.r, color.g, color.b, color.a) != 0) {
+		throw M2_ERROR(std::string{"SDL_SetRenderDrawColor failed: "} + SDL_GetError());
+	}
+	std::vector<SDL_FPoint> sdlPoints;
+	sdlPoints.reserve(pointsPx.size());
+	for (const auto& point : pointsPx) {
+		sdlPoints.push_back(ToSdlFPoint(point));
+	}
+	if (SDL_RenderDrawLinesF(sdlRenderer, sdlPoints.data(), I(sdlPoints.size())) != 0) {
+		throw M2_ERROR(std::string{"SDL_RenderDrawLinesF failed: "} + SDL_GetError());
+	}
 }

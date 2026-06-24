@@ -1,7 +1,9 @@
 #pragma once
 #include "m2/common/Meta.h"
+#include <m2/math/VecF.h>
 #include <m2/math/VecI.h>
 #include <m2/video/Color.h>
+#include <span>
 
 namespace m2::thirdparty::video {
 	class Renderer {
@@ -27,5 +29,7 @@ namespace m2::thirdparty::video {
 		void Clear();
 		/// Presents the back buffer, making everything drawn since the last present visible on the window.
 		void Present();
+		/// Draws a connected strip of line segments through the given screen-pixel points using the given color.
+		void DrawLineStrip(std::span<const VecF> pointsPx, const RGBA& color);
 	};
 }

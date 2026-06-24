@@ -1,10 +1,9 @@
 #include <m2/thirdparty/physics/box2d/DebugDraw.h>
-#include "../../video/SdlConversions.h"
 #include <m2/Game.h>
 #include <m2/component/Graphic.h>
 #include <m2/video/Color.h>
 #include <m2/math/VecF.h>
-#include <SDL2/SDL.h>
+#include <array>
 
 using namespace m2::thirdparty::physics::box2d;
 
@@ -27,44 +26,33 @@ void DebugDraw::DrawCircle(const b2Vec2& center, const float radius, const b2Col
 	if (IsProjectionTypeParallel(M2_LEVEL.GetProjectionType())) {
 		// Draw a true circle from the cache
 		const int r = RoundI(M2_GAME.Dimensions().OutputPixelsPerMeter() * radius);
-		const auto srcRect = m2::thirdparty::video::ToSdlRect(M2_GAME.GetShapeCache().Create(std::make_shared<Circle>(r)));
-		auto* texture = static_cast<SDL_Texture*>(M2_GAME.GetShapeCache().Texture().RawHandle());
+		const RectI srcRect = M2_GAME.GetShapeCache().Create(std::make_shared<Circle>(r));
+		const auto& texture = M2_GAME.GetShapeCache().Texture();
 		const auto screenOriginToSpriteCenter = ScreenOriginToPositionVecPx(VecF{center});
-		const auto dstRect = SDL_Rect{
+		const RectI dstRect{
 			RoundI(screenOriginToSpriteCenter.GetX()) - srcRect.w / 2,
 			RoundI(screenOriginToSpriteCenter.GetY()) - srcRect.h / 2,
 			srcRect.w,
 			srcRect.h};
-		const RGBA colorU8{color};
-		SDL_SetTextureColorMod(texture, colorU8.r, colorU8.g, colorU8.b);
-		SDL_RenderCopy(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), texture, &srcRect, &dstRect);
+		const auto colorModGuard = texture.ScopedColorMod(static_cast<RGB>(RGBA{color}));
+		texture.Render(srcRect, dstRect);
 	} else {
 		const auto centerPosition = m3::VecF{VecF{center}};
 		// Draw an octagon instead of circle
 		const auto corner = radius / sqrtf(2.0f);
-		const auto pointTop = ScreenOriginToProjectionAlongCameraPlaneDstpx(centerPosition.offset_y(-radius));
-		const auto pointTopRight = ScreenOriginToProjectionAlongCameraPlaneDstpx(centerPosition.offset_x(corner).offset_y(-corner));
-		const auto pointRight = ScreenOriginToProjectionAlongCameraPlaneDstpx(centerPosition.offset_x(radius));
+		const auto pointTop         = ScreenOriginToProjectionAlongCameraPlaneDstpx(centerPosition.offset_y(-radius));
+		const auto pointTopRight    = ScreenOriginToProjectionAlongCameraPlaneDstpx(centerPosition.offset_x(corner).offset_y(-corner));
+		const auto pointRight       = ScreenOriginToProjectionAlongCameraPlaneDstpx(centerPosition.offset_x(radius));
 		const auto pointBottomRight = ScreenOriginToProjectionAlongCameraPlaneDstpx(centerPosition.offset_x(corner).offset_y(corner));
-		const auto pointBottom = ScreenOriginToProjectionAlongCameraPlaneDstpx(centerPosition.offset_y(radius));
-		const auto pointBottomLeft = ScreenOriginToProjectionAlongCameraPlaneDstpx(centerPosition.offset_x(-corner).offset_y(corner));
-		const auto pointLeft = ScreenOriginToProjectionAlongCameraPlaneDstpx(centerPosition.offset_x(-radius));
-		const auto pointTopLeft = ScreenOriginToProjectionAlongCameraPlaneDstpx(centerPosition.offset_x(-corner).offset_y(-corner));
+		const auto pointBottom      = ScreenOriginToProjectionAlongCameraPlaneDstpx(centerPosition.offset_y(radius));
+		const auto pointBottomLeft  = ScreenOriginToProjectionAlongCameraPlaneDstpx(centerPosition.offset_x(-corner).offset_y(corner));
+		const auto pointLeft        = ScreenOriginToProjectionAlongCameraPlaneDstpx(centerPosition.offset_x(-radius));
+		const auto pointTopLeft     = ScreenOriginToProjectionAlongCameraPlaneDstpx(centerPosition.offset_x(-corner).offset_y(-corner));
 		if (pointTop && pointTopRight && pointRight && pointBottomRight && pointBottom && pointBottomLeft && pointLeft && pointTopLeft) {
-			const RGBA colorU8{color};
-			SDL_SetRenderDrawColor(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), colorU8.r, colorU8.g, colorU8.b, colorU8.a);
 			const std::array points = {
-				SDL_FPoint{pointTop->GetX(), pointTop->GetY()},
-				SDL_FPoint{pointTopRight->GetX(), pointTopRight->GetY()},
-				SDL_FPoint{pointRight->GetX(), pointRight->GetY()},
-				SDL_FPoint{pointBottomRight->GetX(), pointBottomRight->GetY()},
-				SDL_FPoint{pointBottom->GetX(), pointBottom->GetY()},
-				SDL_FPoint{pointBottomLeft->GetX(), pointBottomLeft->GetY()},
-				SDL_FPoint{pointLeft->GetX(), pointLeft->GetY()},
-				SDL_FPoint{pointTopLeft->GetX(), pointTopLeft->GetY()},
-				SDL_FPoint{pointTop->GetX(), pointTop->GetY()}
-			};
-			SDL_RenderDrawLinesF(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), points.data(), I(points.size()));
+				*pointTop, *pointTopRight, *pointRight, *pointBottomRight,
+				*pointBottom, *pointBottomLeft, *pointLeft, *pointTopLeft, *pointTop};
+			M2_GAME.renderer->DrawLineStrip(points, RGBA{color});
 		}
 	}
 }
