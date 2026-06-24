@@ -3,7 +3,6 @@
 #include <m2/ui/UiPanel.h>
 #include <m2/thirdparty/video/TextRendering.h>
 #include <m2/thirdparty/video/Shapes.h>
-#include <m2/thirdparty/video/Detail.h>
 
 using namespace m2;
 
@@ -131,14 +130,14 @@ void UiWidget::draw_rectangle(const RectI& rect, const RGBA& color) {
 }
 
 void UiWidget::DrawSpriteOrTextLabel(const std::variant<Sprite, pb::TextLabel>& spriteOrTextLabel, const RectI& dst_rect) {
-	SDL_Rect src_rect;
-	SDL_Texture* texture;
+	RectI src_rect;
+	const thirdparty::video::Texture* texture;
 	if (std::holds_alternative<Sprite>(spriteOrTextLabel)) {
-		src_rect = thirdparty::video::ToSdlRect(std::get<Sprite>(spriteOrTextLabel).GetRect());
-		texture = static_cast<SDL_Texture*>(std::get<Sprite>(spriteOrTextLabel).GetTexture().RawHandle());
+		src_rect = std::get<Sprite>(spriteOrTextLabel).GetRect();
+		texture = &std::get<Sprite>(spriteOrTextLabel).GetTexture();
 	} else {
-		src_rect = thirdparty::video::ToSdlRect(M2_GAME.GetTextLabelCache().Create(std::get<pb::TextLabel>(spriteOrTextLabel).text(), M2G_PROXY.default_font_size));
-		texture = static_cast<SDL_Texture*>(M2_GAME.GetTextLabelCache().Texture().RawHandle());
+		src_rect = M2_GAME.GetTextLabelCache().Create(std::get<pb::TextLabel>(spriteOrTextLabel).text(), M2G_PROXY.default_font_size);
+		texture = &M2_GAME.GetTextLabelCache().Texture();
 	}
 
 	const auto sprite_aspect_ratio = ToFloat(src_rect.w) / ToFloat(src_rect.h);
@@ -148,13 +147,13 @@ void UiWidget::DrawSpriteOrTextLabel(const std::variant<Sprite, pb::TextLabel>& 
 		? ToFloat(dst_rect.h) / ToFloat(src_rect.h) // UiWidget is wider than the sprite
 		: ToFloat(dst_rect.w) / ToFloat(src_rect.w); // Sprite is wider than the widget
 
-	const auto actual_dst_rect = SDL_Rect{
-		.x = dst_rect.x + (dst_rect.w - RoundI(src_rect.w * sprite_size_multiplier)) / 2,
-		.y = dst_rect.y + (dst_rect.h - RoundI(src_rect.h * sprite_size_multiplier)) / 2,
-		.w = RoundI(src_rect.w * sprite_size_multiplier),
-		.h = RoundI(src_rect.h * sprite_size_multiplier)};
+	const auto actual_dst_rect = RectI{
+		dst_rect.x + (dst_rect.w - RoundI(src_rect.w * sprite_size_multiplier)) / 2,
+		dst_rect.y + (dst_rect.h - RoundI(src_rect.h * sprite_size_multiplier)) / 2,
+		RoundI(src_rect.w * sprite_size_multiplier),
+		RoundI(src_rect.h * sprite_size_multiplier)};
 
-	SDL_RenderCopy(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), texture, &src_rect, &actual_dst_rect);
+	texture->Render(src_rect, actual_dst_rect);
 }
 
 void UiWidget::draw_border(const RectI& rect, int vertical_border_width_px, int horizontal_border_width_px, const RGBA& color) {

@@ -41,6 +41,7 @@ namespace m2::thirdparty::video {
 		/// Copies this texture over the whole current render target (the window).
 		void RenderToWindow() const;
 		void Render(const RectI& destinationPx) const;
+		void Render(const RectI& sourceRect, const RectI& destinationRect) const;
 		void RenderWithColorMod(const RectI& destinationPx, const RGB& mod) const;
 		void Render(const RectI& sourceRect, const RectI& destinationRect, double angleDegrees, const VecI& rotationCenter) const;
 		void RenderGeometry(std::span<const VecF> positionsPx, std::span<const VecF> texCoords, std::span<const int> indices) const;

@@ -111,6 +111,11 @@ void Texture::Render(const RectI& destinationPx) const {
 	const auto sdlRect = ToSdlRect(destinationPx);
 	SDL_RenderCopy(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), static_cast<SDL_Texture*>(_texture), nullptr, &sdlRect);
 }
+void Texture::Render(const RectI& sourceRect, const RectI& destinationRect) const {
+	const auto sdlSrc = ToSdlRect(sourceRect);
+	const auto sdlDst = ToSdlRect(destinationRect);
+	SDL_RenderCopy(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), static_cast<SDL_Texture*>(_texture), &sdlSrc, &sdlDst);
+}
 void Texture::RenderWithColorMod(const RectI& destinationPx, const RGB& mod) const {
 	SDL_SetTextureColorMod(static_cast<SDL_Texture*>(_texture), mod.r, mod.g, mod.b);
 	Texture::Render(destinationPx);
