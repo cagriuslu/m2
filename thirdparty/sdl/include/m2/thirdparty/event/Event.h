@@ -1,5 +1,5 @@
 #pragma once
-#include <m2/Events.h>
+#include <m2/common/Constants.h>
 #include <m2/common/math/VecI.h>
 #include <cstdint>
 #include <optional>

@@ -1,8 +1,7 @@
 #include <m2/thirdparty/video/Detail.h>
 #include "SdlConversions.h"
-#include <m2/Game.h>
-#include <m2/Options.h>
-#include <m2/M2.h>
+#include <m2/common/Error.h>
+#include <m2/common/Meta.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>

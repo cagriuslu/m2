@@ -1,6 +1,5 @@
 #include <m2/thirdparty/video/Renderer.h>
 #include "SdlConversions.h"
-#include <m2/Log.h>
 #include <SDL2/SDL.h>
 #include <vector>
 

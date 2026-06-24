@@ -1,5 +1,6 @@
 #include <m2/thirdparty/video/Cursor.h>
 #include <SDL_mouse.h>
+#include <format>
 
 m2::expected<m2::thirdparty::video::Cursor> m2::thirdparty::video::Cursor::Create() {
 	auto str =

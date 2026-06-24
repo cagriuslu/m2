@@ -232,6 +232,49 @@ if (MSVC)
     target_compile_options(m2_common PRIVATE "/MP")
 endif()
 
+add_library(m2_thirdparty_sdl STATIC
+        thirdparty/sdl/src/audio/Device.cc
+        thirdparty/sdl/src/event/Event.cc
+        thirdparty/sdl/src/video/Cursor.cc
+        thirdparty/sdl/src/video/Detail.cc
+        thirdparty/sdl/src/video/Font.cc
+        thirdparty/sdl/src/video/Renderer.cc
+        thirdparty/sdl/src/video/SdlConversions.h
+        thirdparty/sdl/src/video/Shapes.cc
+        thirdparty/sdl/src/video/Surface.cc
+        thirdparty/sdl/src/video/TextRendering.cc
+        thirdparty/sdl/src/video/TextTexture.cc
+        thirdparty/sdl/src/video/Texture.cc
+        thirdparty/sdl/src/video/Window.cc
+        thirdparty/sdl/include/m2/thirdparty/audio/Device.h
+        thirdparty/sdl/include/m2/thirdparty/event/Event.h
+        thirdparty/sdl/include/m2/thirdparty/video/Cursor.h
+        thirdparty/sdl/include/m2/thirdparty/video/Detail.h
+        thirdparty/sdl/include/m2/thirdparty/video/Font.h
+        thirdparty/sdl/include/m2/thirdparty/video/Renderer.h
+        thirdparty/sdl/include/m2/thirdparty/video/Shapes.h
+        thirdparty/sdl/include/m2/thirdparty/video/Surface.h
+        thirdparty/sdl/include/m2/thirdparty/video/TextRendering.h
+        thirdparty/sdl/include/m2/thirdparty/video/TextTexture.h
+        thirdparty/sdl/include/m2/thirdparty/video/Texture.h
+        thirdparty/sdl/include/m2/thirdparty/video/Window.h
+)
+target_include_directories(m2_thirdparty_sdl PUBLIC thirdparty/sdl/include)
+# SDL headers are PRIVATE: they're needed to compile this wrapper, but must NOT leak to consumers.
+target_include_directories(m2_thirdparty_sdl SYSTEM PRIVATE ${SDL2_INCLUDE_DIRS} ${SDL2_image_INCLUDE_DIRS} ${SDL2_ttf_INCLUDE_DIRS})
+target_compile_features(m2_thirdparty_sdl PUBLIC cxx_std_23)
+# Link directories are PUBLIC so the final executable can resolve the SDL libraries below; unlike
+# include directories, link directories don't grant header access, so this doesn't leak SDL.
+target_link_directories(m2_thirdparty_sdl PUBLIC ${SDL2_ttf_LIBDIR} ${SDL2_image_LIBDIR})
+target_link_libraries(m2_thirdparty_sdl PUBLIC m2_common)
+# SDL libraries are PRIVATE: because this is a STATIC library, CMake propagates them to consumers as
+# $<LINK_ONLY:...> (the final m2 binary links them, but their include dirs are not inherited).
+target_link_libraries(m2_thirdparty_sdl PRIVATE SDL2_ttf ${Freetype_LIBRARIES} ${SDL2_image_LIBNAME} ${SDL2_STATIC_LIBRARIES})
+if (MSVC)
+    set_property(TARGET m2_thirdparty_sdl PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+    target_compile_options(m2_thirdparty_sdl PRIVATE "/MP")
+endif()
+
 # Post-build actions
 #add_custom_command(
 #        OUTPUT ${CMAKE_SOURCE_DIR}/resource.zip
@@ -282,9 +325,9 @@ else()
 endif()
 
 target_include_directories(m2 PUBLIC include ${GAME_INCLUDE_DIRS})
-target_include_directories(m2 PUBLIC ${SDL2_ttf_INCLUDE_DIRS} ${SDL2_image_INCLUDE_DIRS} ${SDL2_INCLUDE_DIRS} ${GENORM_CXX_INCLUDE_DIRS} ${png_INCLUDE_DIRS} ${z_INCLUDE_DIRS})
-target_link_directories(m2 PUBLIC ${SDL2_ttf_LIBDIR} ${SDL2_image_LIBDIR} ${GENORM_CXX_LIBDIR} ${png_LIBDIR} ${z_LIBDIR})
-target_link_libraries(m2 m2_common box2d SDL2_ttf ${Freetype_LIBRARIES} ${SDL2_image_LIBNAME} ${SDL2_STATIC_LIBRARIES} ${GENORM_CXX_LIBRARIES} sqlite3 ${png_LIBRARIES} ${z_LIBRARIES})
+target_include_directories(m2 PUBLIC ${GENORM_CXX_INCLUDE_DIRS} ${png_INCLUDE_DIRS} ${z_INCLUDE_DIRS})
+target_link_directories(m2 PUBLIC ${GENORM_CXX_LIBDIR} ${png_LIBDIR} ${z_LIBDIR})
+target_link_libraries(m2 m2_thirdparty_sdl box2d ${GENORM_CXX_LIBRARIES} sqlite3 ${png_LIBRARIES} ${z_LIBRARIES})
 
 if (WIN32)
     #target_compile_options(m2 PRIVATE /analyze) # Code inspections
@@ -292,7 +335,7 @@ if (WIN32)
     set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT m2)
     set_target_properties(m2 PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
 elseif(APPLE)
-    target_link_libraries(m2 "-framework Foundation" m)
+    target_link_libraries(m2 "-framework Foundation")
 
 	set_target_properties(m2 PROPERTIES
 			OUTPUT_NAME "${GAME}"
@@ -345,7 +388,7 @@ if(GTest_FOUND)
             "src/thirdparty/protobuf/Json.cc"
     )
     add_executable(test ${TEST_SOURCES} ${ORM_SOURCES})
-    target_include_directories(test PUBLIC include)
+    target_include_directories(test PUBLIC include thirdparty/sdl/include)
     target_include_directories(test PUBLIC ${SDL2_INCLUDE_DIRS} ${SDL2_image_INCLUDE_DIRS} ${SDL2_ttf_INCLUDE_DIRS} ${GENORM_CXX_INCLUDE_DIRS})
     target_link_directories(test PUBLIC ${SDL2_image_LIBDIR} ${SDL2_ttf_LIBDIR} ${GENORM_CXX_LIBDIR} ${z_LIBDIR})
     target_link_libraries(test m2_common box2d ${SDL2_image_LIBRARIES} ${SDL2_ttf_LIBRARIES} ${SDL2_LIBRARIES} ${GENORM_CXX_LIBRARIES} sqlite3 ${z_LIBRARIES})

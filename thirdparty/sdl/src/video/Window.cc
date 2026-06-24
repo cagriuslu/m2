@@ -1,5 +1,4 @@
 #include <m2/thirdparty/video/Window.h>
-#include <m2/Game.h>
 #include <m2/common/Error.h>
 #include <SDL2/SDL.h>
 
