@@ -1055,7 +1055,7 @@ void Game::DebugDraw() {
 			for (int x = 0; x < 20; ++x) {
 				m3::VecF p = {x, y, 0};
 				if (const auto projected_p = ScreenOriginToProjectionAlongCameraPlaneDstpx(p); projected_p) {
-					thirdparty::video::DrawPoint(*projected_p, RGBA{255, 255, 255, 127});
+					thirdparty::video::DrawPoint(*M2_GAME.renderer, *projected_p, RGBA{255, 255, 255, 127});
 				}
 			}
 		}
@@ -1102,10 +1102,10 @@ void Game::DrawHud() {
 	IF(_level->_semiBlockingUiPanel)->Draw();
 }
 void Game::DrawEnvelopes() {
-	thirdparty::video::FillRectangle(_dimensions->TopEnvelope(), RGBA::Black);
-	thirdparty::video::FillRectangle(_dimensions->BottomEnvelope(), RGBA::Black);
-	thirdparty::video::FillRectangle(_dimensions->LeftEnvelope(), RGBA::Black);
-	thirdparty::video::FillRectangle(_dimensions->RightEnvelope(), RGBA::Black);
+	thirdparty::video::FillRectangle(*renderer, _dimensions->TopEnvelope(), RGBA::Black);
+	thirdparty::video::FillRectangle(*renderer, _dimensions->BottomEnvelope(), RGBA::Black);
+	thirdparty::video::FillRectangle(*renderer, _dimensions->LeftEnvelope(), RGBA::Black);
+	thirdparty::video::FillRectangle(*renderer, _dimensions->RightEnvelope(), RGBA::Black);
 }
 void Game::FlipBuffers() { renderer->Present(); }
 
@@ -1200,8 +1200,8 @@ thirdparty::video::Texture Game::DrawGameToTexture(const VecF& camera_position) 
 	const auto prev_camera_position = GetLevel().GetCamera()->GetPhysique().GetPosition();
 	GetLevel().GetCamera()->GetPhysique().SetPosition(VecFE{camera_position});
 
-	auto render_target = thirdparty::video::Texture::CreateTargetableWindowSized(window.GetPixelFormat());
-	render_target.DrawOnto([this] {
+	auto render_target = thirdparty::video::Texture::CreateTargetableWindowSized(*renderer, window.GetPixelFormat());
+	render_target.DrawOnto(*renderer, [this] {
 		ClearBackBuffer();
 		Draw();
 		DrawEnvelopes();

@@ -75,9 +75,9 @@ void IntegerSelection::OnDraw() {
 		if (not _textTexture.first) {
 			const auto valueAsString = ToString(_value);
 			_textTexture.second = calculate_filled_text_rect(Rect().TrimRight(Rect().h / 2), TextHorizontalAlignment::LEFT, valueAsString.c_str());
-			_textTexture.first = m2MoveOrThrowError(thirdparty::video::TextTexture::CreateNoWrap(M2_GAME.font, _textTexture.second.h, valueAsString));
+			_textTexture.first = m2MoveOrThrowError(thirdparty::video::TextTexture::CreateNoWrap(*M2_GAME.renderer, M2_GAME.font, _textTexture.second.h, valueAsString));
 		}
-		_textTexture.first.Render(_textTexture.second);
+		_textTexture.first.Render(*M2_GAME.renderer, _textTexture.second);
 	}
 
 	const auto [plusArea, minusArea] = CalculatePlusAndMinusButtonDrawArea();
@@ -85,18 +85,18 @@ void IntegerSelection::OnDraw() {
 		// Draw plus texture
 		if (not _plusTexture.first) {
 			_plusTexture.second = calculate_filled_text_rect(plusArea, TextHorizontalAlignment::CENTER, "+");
-			_plusTexture.first = m2MoveOrThrowError(thirdparty::video::TextTexture::CreateNoWrap(M2_GAME.font, _plusTexture.second.h, "+"));
+			_plusTexture.first = m2MoveOrThrowError(thirdparty::video::TextTexture::CreateNoWrap(*M2_GAME.renderer, M2_GAME.font, _plusTexture.second.h, "+"));
 		}
-		_plusTexture.first.Render(_plusTexture.second);
+		_plusTexture.first.Render(*M2_GAME.renderer, _plusTexture.second);
 		draw_border(plusArea, vertical_border_width_px(), horizontal_border_width_px());
 	}
 	{
 		// Draw minus texture
 		if (not _minusTexture.first) {
 			_minusTexture.second = calculate_filled_text_rect(minusArea, TextHorizontalAlignment::CENTER, "-");
-			_minusTexture.first = m2MoveOrThrowError(thirdparty::video::TextTexture::CreateNoWrap(M2_GAME.font, _minusTexture.second.h, "-"));
+			_minusTexture.first = m2MoveOrThrowError(thirdparty::video::TextTexture::CreateNoWrap(*M2_GAME.renderer, M2_GAME.font, _minusTexture.second.h, "-"));
 		}
-		_minusTexture.first.Render(_minusTexture.second);
+		_minusTexture.first.Render(*M2_GAME.renderer, _minusTexture.second);
 		draw_border(minusArea, vertical_border_width_px(), horizontal_border_width_px());
 	}
 

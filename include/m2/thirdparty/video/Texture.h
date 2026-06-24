@@ -16,10 +16,10 @@ namespace m2::thirdparty::video {
 		explicit Texture(void* texture) : _texture(texture) {}
 
 	public:
-		static Texture Generate(uint32_t pixelFormat, int w, int h, const std::function<RGBA(int x, int y)>&);
-		static Texture CreateTargetableWindowSized(uint32_t pixelFormat);
-		static Texture CaptureWindow(uint32_t pixelFormat);
-		static Texture CreateFromImageFile(const std::filesystem::path& imageFilePath);
+		static Texture Generate(Renderer& renderer, uint32_t pixelFormat, int w, int h, const std::function<RGBA(int x, int y)>&);
+		static Texture CreateTargetableWindowSized(Renderer& renderer, uint32_t pixelFormat);
+		static Texture CaptureWindow(Renderer& renderer, uint32_t pixelFormat);
+		static Texture CreateFromImageFile(Renderer& renderer, const std::filesystem::path& imageFilePath);
 		static Texture AdoptRawTexture(void* rawSdlTexture);
 		static Texture CreateFromSurface(Renderer& renderer, void* sdlSurface, bool linearFilter = false);
 
@@ -36,15 +36,15 @@ namespace m2::thirdparty::video {
 		[[nodiscard]] VecI Dimensions() const;
 
 		/// Sets this texture as the render target, runs `draw`, then restores the previous render target.
-		void DrawOnto(const std::function<void()>& draw);
+		void DrawOnto(Renderer& renderer, const std::function<void()>& draw);
 
 		/// Copies this texture over the whole current render target (the window).
-		void RenderToWindow() const;
-		void Render(const RectI& destinationPx) const;
-		void Render(const RectI& sourceRect, const RectI& destinationRect) const;
-		void RenderWithColorMod(const RectI& destinationPx, const RGB& mod) const;
-		void Render(const RectI& sourceRect, const RectI& destinationRect, double angleDegrees, const VecI& rotationCenter) const;
-		void RenderGeometry(std::span<const VecF> positionsPx, std::span<const VecF> texCoords, std::span<const int> indices) const;
+		void RenderToWindow(Renderer& renderer) const;
+		void Render(Renderer& renderer, const RectI& destinationPx) const;
+		void Render(Renderer& renderer, const RectI& sourceRect, const RectI& destinationRect) const;
+		void RenderWithColorMod(Renderer& renderer, const RectI& destinationPx, const RGB& mod) const;
+		void Render(Renderer& renderer, const RectI& sourceRect, const RectI& destinationRect, double angleDegrees, const VecI& rotationCenter) const;
+		void RenderGeometry(Renderer& renderer, std::span<const VecF> positionsPx, std::span<const VecF> texCoords, std::span<const int> indices) const;
 
 		class [[nodiscard]] ColorModGuard {
 			void* _texture{};

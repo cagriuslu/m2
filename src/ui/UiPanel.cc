@@ -49,7 +49,7 @@ UiAction UiPanel::run_blocking() {
 
 	// Get a screenshot if background_texture is not already provided
 	if (not _background_texture) {
-		_background_texture = thirdparty::video::Texture::CaptureWindow(M2_GAME.window.GetPixelFormat());
+		_background_texture = thirdparty::video::Texture::CaptureWindow(*M2_GAME.renderer, M2_GAME.window.GetPixelFormat());
 	}
 
 	// Update initial contents
@@ -119,7 +119,7 @@ UiAction UiPanel::run_blocking() {
 		// Clear screen
 		M2_GAME.renderer->SetDrawColor(RGBA::Black);
 		M2_GAME.renderer->Clear();
-		_background_texture->RenderToWindow();
+		_background_texture->RenderToWindow(*M2_GAME.renderer);
 
 		// Draw UI elements
 		Draw();

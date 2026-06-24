@@ -45,7 +45,7 @@ std::optional<pb::SpriteSheet> bulksheeteditor::State::SelectResource(const std:
 
 			// Load image
 			const auto& resourcePath = spriteSheet.resource();
-			_texture = thirdparty::video::Texture::CreateFromImageFile(resourcePath);
+			_texture = thirdparty::video::Texture::CreateFromImageFile(*M2_GAME.renderer, resourcePath);
 			_textureDimensions = _texture->Dimensions();
 			_ppm = spriteSheet.ppm();
 			_selected_resource = resource;
@@ -99,7 +99,7 @@ void bulksheeteditor::State::Draw() const {
 			RoundI(textureTopLeftOutputPosition.GetX()), RoundI(textureTopLeftOutputPosition.GetY()),
 			RoundI(textureBottomRightOutputPosition.GetX() - textureTopLeftOutputPosition.GetX()),
 			RoundI(textureBottomRightOutputPosition.GetY() - textureTopLeftOutputPosition.GetY())};
-	if (_texture) { _texture->Render(dstRect); }
+	if (_texture) { _texture->Render(*M2_GAME.renderer, dstRect); }
 	// Draw currectly selected sprite's rect
 	if (_savedSpriteRect) {
 		auto world_coordinates_m = RectF{

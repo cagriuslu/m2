@@ -25,7 +25,7 @@ void ProgressBar::OnDraw() {
 	draw_background_color();
 	// Bar
 	const auto filled_dstrect = m2::RectI{Rect().x, Rect().y, (int)roundf((float)Rect().w * _progress), Rect().h};
-	m2::thirdparty::video::FillRectangle(filled_dstrect, pb_blueprint.bar_color);
+	m2::thirdparty::video::FillRectangle(*M2_GAME.renderer, filled_dstrect, pb_blueprint.bar_color);
 	// Foreground
 	draw_border(Rect(), vertical_border_width_px(), horizontal_border_width_px());
 }

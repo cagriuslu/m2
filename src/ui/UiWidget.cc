@@ -126,7 +126,7 @@ m2::RectI m2::UiWidget::calculate_filled_text_rect(const RectI drawable_area, co
 }
 
 void UiWidget::draw_rectangle(const RectI& rect, const RGBA& color) {
-	thirdparty::video::FillRectangle(rect, color);
+	thirdparty::video::FillRectangle(*M2_GAME.renderer, rect, color);
 }
 
 void UiWidget::DrawSpriteOrTextLabel(const std::variant<Sprite, pb::TextLabel>& spriteOrTextLabel, const RectI& dst_rect) {
@@ -153,12 +153,12 @@ void UiWidget::DrawSpriteOrTextLabel(const std::variant<Sprite, pb::TextLabel>& 
 		RoundI(src_rect.w * sprite_size_multiplier),
 		RoundI(src_rect.h * sprite_size_multiplier)};
 
-	texture->Render(src_rect, actual_dst_rect);
+	texture->Render(*M2_GAME.renderer, src_rect, actual_dst_rect);
 }
 
 void UiWidget::draw_border(const RectI& rect, int vertical_border_width_px, int horizontal_border_width_px, const RGBA& color) {
-	thirdparty::video::FillRectangle(RectI{rect.x, rect.y, vertical_border_width_px, rect.h}, color);
-	thirdparty::video::FillRectangle(RectI{rect.GetX2() - vertical_border_width_px, rect.y, vertical_border_width_px, rect.h}, color);
-	thirdparty::video::FillRectangle(RectI{rect.x, rect.y, rect.w, horizontal_border_width_px}, color);
-	thirdparty::video::FillRectangle(RectI{rect.x, rect.GetY2() - horizontal_border_width_px, rect.w, horizontal_border_width_px}, color);
+	thirdparty::video::FillRectangle(*M2_GAME.renderer, RectI{rect.x, rect.y, vertical_border_width_px, rect.h}, color);
+	thirdparty::video::FillRectangle(*M2_GAME.renderer, RectI{rect.GetX2() - vertical_border_width_px, rect.y, vertical_border_width_px, rect.h}, color);
+	thirdparty::video::FillRectangle(*M2_GAME.renderer, RectI{rect.x, rect.y, rect.w, horizontal_border_width_px}, color);
+	thirdparty::video::FillRectangle(*M2_GAME.renderer, RectI{rect.x, rect.GetY2() - horizontal_border_width_px, rect.w, horizontal_border_width_px}, color);
 }

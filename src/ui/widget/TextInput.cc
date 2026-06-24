@@ -71,7 +71,7 @@ void TextInput::OnDraw() {
 			str += '_';
 		}
 		// Generate text texture
-		auto textTexture = m2MoveOrThrowError(thirdparty::video::TextTexture::CreateNoWrap(M2_GAME.font,
+		auto textTexture = m2MoveOrThrowError(thirdparty::video::TextTexture::CreateNoWrap(*M2_GAME.renderer, M2_GAME.font,
 				M2G_PROXY.default_font_size, str));
 		// Calculate destination rectangle
 		auto destination_rect = calculate_filled_text_rect(drawable_area(), TextHorizontalAlignment::LEFT, str.c_str());
@@ -79,7 +79,7 @@ void TextInput::OnDraw() {
 		_text_texture_and_destination_cache = thirdparty::video::TextTextureAndDestination{std::move(textTexture), destination_rect};
 	}
 
-	_text_texture_and_destination_cache->first.Render(_text_texture_and_destination_cache->second);
+	_text_texture_and_destination_cache->first.Render(*M2_GAME.renderer, _text_texture_and_destination_cache->second);
 
 	draw_border(Rect(), vertical_border_width_px(), horizontal_border_width_px());
 }

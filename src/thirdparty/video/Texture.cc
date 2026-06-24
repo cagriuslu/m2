@@ -2,14 +2,13 @@
 #include <m2/thirdparty/video/Renderer.h>
 #include <m2/thirdparty/video/Surface.h>
 #include "SdlConversions.h"
-#include <m2/Game.h>
 #include <SDL2/SDL.h>
 
 using namespace m2;
 using namespace m2::thirdparty;
 using namespace m2::thirdparty::video;
 
-Texture Texture::Generate(const uint32_t pixelFormat, const int w, const int h, const std::function<RGBA(int x, int y)>& pixelGenerator) {
+Texture Texture::Generate(Renderer& renderer, const uint32_t pixelFormat, const int w, const int h, const std::function<RGBA(int x, int y)>& pixelGenerator) {
 	if (SDL_BITSPERPIXEL(pixelFormat) != 32) {
 		throw M2_ERROR("Unsupported window pixel format");
 	}
@@ -25,31 +24,31 @@ Texture Texture::Generate(const uint32_t pixelFormat, const int w, const int h, 
 	}
 	SDL_UnlockSurface(surface);
 
-	auto* texture = SDL_CreateTextureFromSurface(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), surface);
+	auto* texture = SDL_CreateTextureFromSurface(static_cast<SDL_Renderer*>(renderer.RawHandle()), surface);
 	SDL_FreeSurface(surface);
 	return Texture{texture};
 }
-Texture Texture::CreateTargetableWindowSized(const uint32_t pixelFormat) {
+Texture Texture::CreateTargetableWindowSized(Renderer& renderer, const uint32_t pixelFormat) {
 	if (SDL_BITSPERPIXEL(pixelFormat) != 32) {
 		throw M2_ERROR("Unsupported window pixel format");
 	}
 
 	int w, h;
-	SDL_GetRendererOutputSize(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), &w, &h); // Get screen size
-	return Texture{SDL_CreateTexture(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), pixelFormat, SDL_TEXTUREACCESS_TARGET, w, h)};
+	SDL_GetRendererOutputSize(static_cast<SDL_Renderer*>(renderer.RawHandle()), &w, &h); // Get screen size
+	return Texture{SDL_CreateTexture(static_cast<SDL_Renderer*>(renderer.RawHandle()), pixelFormat, SDL_TEXTUREACCESS_TARGET, w, h)};
 }
-Texture Texture::CaptureWindow(const uint32_t pixelFormat) {
+Texture Texture::CaptureWindow(Renderer& renderer, const uint32_t pixelFormat) {
 	if (SDL_BITSPERPIXEL(pixelFormat) != 32) {
 		throw M2_ERROR("Unsupported window pixel format");
 	}
 
 	int w, h;
-	SDL_GetRendererOutputSize(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), &w, &h); // Get screen size
+	SDL_GetRendererOutputSize(static_cast<SDL_Renderer*>(renderer.RawHandle()), &w, &h); // Get screen size
 
 	auto* surface = SDL_CreateRGBSurfaceWithFormat(0, w, h, SDL_BITSPERPIXEL(pixelFormat), pixelFormat);
-	SDL_RenderReadPixels(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), nullptr, pixelFormat, surface->pixels, surface->pitch);
+	SDL_RenderReadPixels(static_cast<SDL_Renderer*>(renderer.RawHandle()), nullptr, pixelFormat, surface->pixels, surface->pitch);
 
-	auto* texture = SDL_CreateTextureFromSurface(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), surface);
+	auto* texture = SDL_CreateTextureFromSurface(static_cast<SDL_Renderer*>(renderer.RawHandle()), surface);
 	SDL_FreeSurface(surface);
 	return Texture{texture};
 }
@@ -77,9 +76,9 @@ Texture Texture::CreateFromSurface(Renderer& renderer, void* sdlSurface, const b
 	}
 	return Texture{texture};
 }
-Texture Texture::CreateFromImageFile(const std::filesystem::path& imageFilePath) {
+Texture Texture::CreateFromImageFile(Renderer& renderer, const std::filesystem::path& imageFilePath) {
 	const auto surface = Surface::CreateFromImageFile(imageFilePath);
-	auto* texture = SDL_CreateTextureFromSurface(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), static_cast<SDL_Surface*>(surface.RawHandle()));
+	auto* texture = SDL_CreateTextureFromSurface(static_cast<SDL_Renderer*>(renderer.RawHandle()), static_cast<SDL_Surface*>(surface.RawHandle()));
 	if (not texture) {
 		throw M2_ERROR("Unable to create texture from surface: " + std::string{SDL_GetError()});
 	}
@@ -92,42 +91,42 @@ VecI Texture::Dimensions() const {
 	return {w, h};
 }
 
-void Texture::DrawOnto(const std::function<void()>& draw) {
-	auto* const rawRenderer = static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle());
+void Texture::DrawOnto(Renderer& renderer, const std::function<void()>& draw) {
+	auto* const rawRenderer = static_cast<SDL_Renderer*>(renderer.RawHandle());
 	auto* const previousTarget = SDL_GetRenderTarget(rawRenderer);
 	SDL_SetRenderTarget(rawRenderer, static_cast<SDL_Texture*>(_texture));
 	draw();
 	SDL_SetRenderTarget(rawRenderer, previousTarget);
 }
 
-void Texture::RenderToWindow() const {
-	SDL_RenderCopy(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), static_cast<SDL_Texture*>(_texture), nullptr, nullptr);
+void Texture::RenderToWindow(Renderer& renderer) const {
+	SDL_RenderCopy(static_cast<SDL_Renderer*>(renderer.RawHandle()), static_cast<SDL_Texture*>(_texture), nullptr, nullptr);
 }
-void Texture::Render(const RectI& destinationPx) const {
+void Texture::Render(Renderer& renderer, const RectI& destinationPx) const {
 	const auto sdlRect = ToSdlRect(destinationPx);
-	SDL_RenderCopy(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), static_cast<SDL_Texture*>(_texture), nullptr, &sdlRect);
+	SDL_RenderCopy(static_cast<SDL_Renderer*>(renderer.RawHandle()), static_cast<SDL_Texture*>(_texture), nullptr, &sdlRect);
 }
-void Texture::Render(const RectI& sourceRect, const RectI& destinationRect) const {
+void Texture::Render(Renderer& renderer, const RectI& sourceRect, const RectI& destinationRect) const {
 	const auto sdlSrc = ToSdlRect(sourceRect);
 	const auto sdlDst = ToSdlRect(destinationRect);
-	SDL_RenderCopy(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()), static_cast<SDL_Texture*>(_texture), &sdlSrc, &sdlDst);
+	SDL_RenderCopy(static_cast<SDL_Renderer*>(renderer.RawHandle()), static_cast<SDL_Texture*>(_texture), &sdlSrc, &sdlDst);
 }
-void Texture::RenderWithColorMod(const RectI& destinationPx, const RGB& mod) const {
+void Texture::RenderWithColorMod(Renderer& renderer, const RectI& destinationPx, const RGB& mod) const {
 	SDL_SetTextureColorMod(static_cast<SDL_Texture*>(_texture), mod.r, mod.g, mod.b);
-	Texture::Render(destinationPx);
+	Texture::Render(renderer, destinationPx);
 	SDL_SetTextureColorMod(static_cast<SDL_Texture*>(_texture), 255, 255, 255);
 }
-void Texture::Render(const RectI& sourceRect, const RectI& destinationRect, const double angleDegrees, const VecI& rotationCenter) const {
+void Texture::Render(Renderer& renderer, const RectI& sourceRect, const RectI& destinationRect, const double angleDegrees, const VecI& rotationCenter) const {
 	const auto sdlSrc = ToSdlRect(sourceRect);
 	const auto sdlDst = ToSdlRect(destinationRect);
 	const auto sdlCenter = SDL_Point{rotationCenter.x, rotationCenter.y};
-	if (SDL_RenderCopyEx(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()),
+	if (SDL_RenderCopyEx(static_cast<SDL_Renderer*>(renderer.RawHandle()),
 			static_cast<SDL_Texture*>(_texture), &sdlSrc, &sdlDst, angleDegrees, &sdlCenter,
 			SDL_FLIP_NONE) != 0) {
 		throw M2_ERROR(std::string{"SDL_RenderCopyEx failed: "} + SDL_GetError());
 	}
 }
-void Texture::RenderGeometry(std::span<const VecF> positionsPx, std::span<const VecF> texCoords, std::span<const int> indices) const {
+void Texture::RenderGeometry(Renderer& renderer, std::span<const VecF> positionsPx, std::span<const VecF> texCoords, std::span<const int> indices) const {
 	std::vector<SDL_Vertex> vertices(positionsPx.size());
 	for (size_t i = 0; i < positionsPx.size(); ++i) {
 		vertices[i] = SDL_Vertex{
@@ -135,7 +134,7 @@ void Texture::RenderGeometry(std::span<const VecF> positionsPx, std::span<const 
 			.color = SDL_Color{255, 255, 255, 255},
 			.tex_coord = ToSdlFPoint(texCoords[i])};
 	}
-	if (SDL_RenderGeometry(static_cast<SDL_Renderer*>(M2_GAME.renderer->RawHandle()),
+	if (SDL_RenderGeometry(static_cast<SDL_Renderer*>(renderer.RawHandle()),
 			static_cast<SDL_Texture*>(_texture), vertices.data(),
 			static_cast<int>(vertices.size()), indices.data(),
 			static_cast<int>(indices.size())) < 0) {

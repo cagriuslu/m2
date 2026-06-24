@@ -25,10 +25,10 @@ void DrawAddons(const m2::Graphic& gfx, float health) {
 		}
 
 		// Black background
-		m2::thirdparty::video::FillRectangle(dst_rect, m2::RGBA{0, 0, 0, 255});
+		m2::thirdparty::video::FillRectangle(*M2_GAME.renderer, dst_rect, m2::RGBA{0, 0, 0, 255});
 
 		// Green part
 		const float percentage = health < 0.0f ? 0.0f : (1.0f < health) ? 1.0f : health;
 		const auto green_rect = m2::RectI{dst_rect.x + 1, dst_rect.y + 1, m2::I(roundf(percentage * m2::ToFloat(dst_rect.w - 2))), dst_rect.h - 2};
-		m2::thirdparty::video::FillRectangle(green_rect, m2::RGBA{0, 255, 0, 255});
+		m2::thirdparty::video::FillRectangle(*M2_GAME.renderer, green_rect, m2::RGBA{0, 255, 0, 255});
 }

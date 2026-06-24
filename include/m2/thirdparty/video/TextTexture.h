@@ -19,15 +19,15 @@ namespace m2::thirdparty::video {
 	public:
 		TextTexture() = default;
 
-		static expected<TextTexture> CreateNoWrap(Font& font, int fontSize, const std::string& text, RGBA color = RGBA::White);
-		static expected<TextTexture> CreateWrapped(Font& font, int fontSize, int widthPx, TextHorizontalAlignment horizontalAlignment, const std::string& text, RGBA color = RGBA::White);
+		static expected<TextTexture> CreateNoWrap(Renderer& renderer, Font& font, int fontSize, const std::string& text, RGBA color = RGBA::White);
+		static expected<TextTexture> CreateWrapped(Renderer& renderer, Font& font, int fontSize, int widthPx, TextHorizontalAlignment horizontalAlignment, const std::string& text, RGBA color = RGBA::White);
 
 		explicit operator bool() const { return _texture.has_value(); }
 		[[nodiscard]] VecI Dimensions() const { return _texture ? _texture->Dimensions() : VecI{}; }
 		[[nodiscard]] const std::string& String() const { return _string; }
 
-		void Render(const RectI& dst) const { if (_texture) _texture->Render(dst); }
-		void RenderWithColorMod(const RectI& dst, const RGB& mod) const { if (_texture) _texture->RenderWithColorMod(dst, mod); }
+		void Render(Renderer& renderer, const RectI& dst) const { if (_texture) _texture->Render(renderer, dst); }
+		void RenderWithColorMod(Renderer& renderer, const RectI& dst, const RGB& mod) const { if (_texture) _texture->RenderWithColorMod(renderer, dst, mod); }
 	};
 
 	using TextTextureAndDestination = std::pair<TextTexture, RectI>;

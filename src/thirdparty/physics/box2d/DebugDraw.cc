@@ -35,7 +35,7 @@ void DebugDraw::DrawCircle(const b2Vec2& center, const float radius, const b2Col
 			srcRect.w,
 			srcRect.h};
 		const auto colorModGuard = texture.ScopedColorMod(static_cast<RGB>(RGBA{color}));
-		texture.Render(srcRect, dstRect);
+		texture.Render(*M2_GAME.renderer, srcRect, dstRect);
 	} else {
 		const auto centerPosition = m3::VecF{VecF{center}};
 		// Draw an octagon instead of circle
