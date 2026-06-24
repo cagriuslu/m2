@@ -1,5 +1,5 @@
 #include "rpg/object/Blade.h"
-#include <m2/math/VecF.h>
+#include <m2/common/math/VecF.h>
 #include <m2/Object.h>
 #include "m2/Game.h"
 #include <rpg/Objects.h>

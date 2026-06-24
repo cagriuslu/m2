@@ -3,7 +3,7 @@
 #include <m2/component/Graphic.h>
 #include <m2/video/Color.h>
 #include <m2/thirdparty/physics/box2d/Detail.h>
-#include <m2/math/VecF.h>
+#include <m2/common/math/VecF.h>
 #include <array>
 
 using namespace m2::thirdparty::physics::box2d;

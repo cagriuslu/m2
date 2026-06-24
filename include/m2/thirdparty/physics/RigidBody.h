@@ -1,6 +1,6 @@
 #pragma once
 #include <m2/containers/Pool.h>
-#include <m2/math/VecF.h>
+#include <m2/common/math/VecF.h>
 #include <m2/common/Meta.h>
 #include <m2/M2.h>
 #include <m2/common/BuildOptions.h>

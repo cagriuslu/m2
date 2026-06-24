@@ -1,7 +1,7 @@
 #pragma once
 #include <m2/math/RectI.h>
-#include <m2/math/VecF.h>
-#include <m2/math/VecI.h>
+#include <m2/common/math/VecF.h>
+#include <m2/common/math/VecI.h>
 
 namespace m2::thirdparty::video { class Renderer; }
 

@@ -1,6 +1,6 @@
 #include <m2/common/math/VecE.h>
-#include <m2/math/VecF.h>
-#include <m2/math/VecI.h>
+#include <m2/common/math/VecF.h>
+#include <m2/common/math/VecI.h>
 
 m2::VecE::VecE(const VecF& v) : _x(v.GetX()), _y(v.GetY()) {}
 

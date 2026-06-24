@@ -1,5 +1,5 @@
 #pragma once
-#include <m2/math/Rational.h>
+#include <m2/common/math/Rational.h>
 #include <Synth.pb.h>
 #include <cstdint>
 

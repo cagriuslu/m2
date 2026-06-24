@@ -2,7 +2,7 @@
 #include <m2/box2d/RayCast.h>
 #include <m2/Log.h>
 #include <m2/Game.h>
-#include <m2/math/VecF.h>
+#include <m2/common/math/VecF.h>
 #include <m2/thirdparty/physics/ColliderCategory.h>
 #include <rpg/object/Enemy.h>
 

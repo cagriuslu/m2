@@ -1,7 +1,7 @@
 #pragma once
 #include "m2/common/Meta.h"
-#include <m2/math/VecF.h>
-#include <m2/math/VecI.h>
+#include <m2/common/math/VecF.h>
+#include <m2/common/math/VecI.h>
 #include <m2/video/Color.h>
 #include <span>
 

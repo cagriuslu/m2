@@ -3,7 +3,7 @@
 #include "ObjectId.h"
 #include <m2/thirdparty/physics/RigidBody.h>
 #include "ui/UiPanelBlueprint.h"
-#include "math/Rational.h"
+#include <m2/common/math/Rational.h>
 #include "component/Graphic.h"
 #include <m2/common/Meta.h>
 #include <m2g_GroupType.pb.h>

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Line.h"
-#include "VecF.h"
+#include <m2/common/m3/VecF.h>
 #include <string>
 
 namespace m3 {

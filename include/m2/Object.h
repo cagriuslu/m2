@@ -6,7 +6,7 @@
 #include "component/Graphic.h"
 #include "component/Physique.h"
 #include "component/SoundEmitter.h"
-#include "m2/math/VecF.h"
+#include "m2/common/math/VecF.h"
 #include "ObjectId.h"
 #include <m2g_Layers.pb.h>
 #include <functional>

@@ -1,7 +1,7 @@
 #pragma once
 #include "math/RectI.h"
-#include <m2/math/VecI.h>
-#include <m2/math/VecF.h>
+#include <m2/common/math/VecI.h>
+#include <m2/common/math/VecF.h>
 #include <m2/protobuf/Detail.h>
 #include <m2/common/Constants.h>
 #include <m2g_KeyType.pb.h>

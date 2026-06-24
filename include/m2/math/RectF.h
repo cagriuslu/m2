@@ -1,6 +1,6 @@
 #pragma once
 #include <RectI.pb.h>
-#include "../math/VecF.h"
+#include <m2/common/math/VecF.h>
 #include <optional>
 
 namespace m2 {

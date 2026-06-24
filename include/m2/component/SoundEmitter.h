@@ -1,8 +1,8 @@
 #pragma once
 #include "../Component.h"
 #include "../audio/AudioManager.h"
-#include "../math/VecF.h"
-#include <m2/Math.h>
+#include <m2/common/math/VecF.h>
+#include <m2/common/Math.h>
 #include <functional>
 #include <list>
 

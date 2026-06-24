@@ -198,14 +198,25 @@ endif()
 
 add_library(m2_common STATIC
         common/src/Error.cc
+        common/src/Math.cc
         common/src/math/Exact.cc
         common/src/math/Float.cc
+        common/src/math/Rational.cc
+        common/src/math/VecE.cc
+        common/src/math/VecF.cc
+        common/src/math/VecI.cc
         common/include/m2/common/BuildOptions.h
         common/include/m2/common/Constants.h
         common/include/m2/common/Error.h
+        common/include/m2/common/Math.h
         common/include/m2/common/Meta.h
+        common/include/m2/common/m3/VecF.h
         common/include/m2/common/math/Exact.h
         common/include/m2/common/math/Float.h
+        common/include/m2/common/math/Rational.h
+        common/include/m2/common/math/VecE.h
+        common/include/m2/common/math/VecF.h
+        common/include/m2/common/math/VecI.h
 )
 target_include_directories(m2_common PUBLIC common/include)
 target_compile_features(m2_common PUBLIC cxx_std_23)
@@ -311,7 +322,6 @@ if(GTest_FOUND)
     list(APPEND TEST_SOURCES
             "src/FileSystem.cc"
             "src/Log.cc"
-            "src/Math.cc"
             "src/M2.cc"
             "src/Options.cc"
             "src/physics/Particle.cc"
@@ -324,12 +334,8 @@ if(GTest_FOUND)
             "src/game/Graph.cc"
             "src/game/rng/XsrRng.cc"
             "src/math/Bit.cc"
-            "src/math/Rational.cc"
             "src/math/RectF.cc"
             "src/math/RectI.cc"
-            "src/math/VecE.cc"
-            "src/math/VecF.cc"
-            "src/math/VecI.cc"
             "src/protobuf/Detail.cc"
             "src/thirdparty/compression/Inflate.cc"
             "src/thirdparty/protobuf/Json.cc"

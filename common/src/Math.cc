@@ -1,4 +1,4 @@
-#include <m2/Math.h>
+#include <m2/common/Math.h>
 #include <random>
 #include <cmath>
 

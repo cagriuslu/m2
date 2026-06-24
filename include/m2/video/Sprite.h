@@ -2,7 +2,7 @@
 #include <m2/video/SpriteEffectSheet.h>
 #include <m2/video/SpriteSheet.h>
 #include <m2/thirdparty/video/TextTexture.h>
-#include <m2/math/VecF.h>
+#include <m2/common/math/VecF.h>
 #include <m2/protobuf/Detail.h>
 #include <m2g_ObjectType.pb.h>
 

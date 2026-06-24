@@ -1,6 +1,6 @@
 #pragma once
 #include "m2/common/Meta.h"   // expected
-#include <m2/math/VecI.h>
+#include <m2/common/math/VecI.h>
 #include <cstdint>
 
 namespace m2::thirdparty::video {

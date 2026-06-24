@@ -1,7 +1,7 @@
 #pragma once
 #include <m2/video/DynamicSheet.h>
 #include <m2/containers/Cache.h>
-#include <m2/math/VecF.h>
+#include <m2/common/math/VecF.h>
 #include <m2/thirdparty/video/Font.h>
 #include <Sprite.pb.h>
 

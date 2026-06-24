@@ -1,5 +1,5 @@
 #pragma  once
-#include "../math/VecF.h"
+#include <m2/common/math/VecF.h>
 
 namespace m2 {
 	struct CircF {

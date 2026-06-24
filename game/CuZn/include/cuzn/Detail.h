@@ -3,7 +3,7 @@
 #include <m2g_SpriteType.pb.h>
 #include <m2/component/character/FastCharacter.h>
 #include <m2/component/Character.h>
-#include <m2/math/VecF.h>
+#include <m2/common/math/VecF.h>
 #include <m2/M2.h>
 
 using City = m2g::pb::CardType;

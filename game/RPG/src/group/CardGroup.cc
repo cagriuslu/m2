@@ -1,6 +1,6 @@
 #include <rpg/group/CardGroup.h>
 #include <m2/M2.h>
-#include <m2/Math.h>
+#include <m2/common/Math.h>
 
 rpg::CardGroup::CardGroup(std::initializer_list<std::pair<m2g::pb::CardType, float>>&& card_probabilities) : Group() {
 	// Accumulate probabilities

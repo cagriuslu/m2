@@ -1,6 +1,5 @@
-#include <m2/math/Rational.h>
-#include <m2/M2.h>
-#include <m2/Math.h>
+#include <m2/common/math/Rational.h>
+#include <m2/common/Constants.h>
 #include <numeric>
 #include <cinttypes>
 

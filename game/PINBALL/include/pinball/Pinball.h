@@ -1,5 +1,5 @@
 #pragma once
-#include <m2/math/VecF.h>
+#include <m2/common/math/VecF.h>
 #include <cstdint>
 
 const m2::VecF gLevelDimensions = {16.0f, 27.0f};

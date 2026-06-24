@@ -1,6 +1,6 @@
 #include <m2/box2d/Shape.h>
 #include <m2/thirdparty/physics/box2d/Detail.h>
-#include <m2/math/VecF.h>
+#include <m2/common/math/VecF.h>
 #include <m2/M2.h>
 
 using namespace m2;

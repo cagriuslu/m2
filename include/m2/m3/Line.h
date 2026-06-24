@@ -1,6 +1,6 @@
 #pragma once
 
-#include "VecF.h"
+#include <m2/common/m3/VecF.h>
 
 namespace m3 {
 	struct Line {

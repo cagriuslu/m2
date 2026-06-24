@@ -1,8 +1,8 @@
 #pragma once
 #include "../Component.h"
 #include <m2/video/Sprite.h>
-#include "../math/VecF.h"
-#include "../m3/VecF.h"
+#include <m2/common/math/VecF.h>
+#include <m2/common/m3/VecF.h>
 #include "../m3/Line.h"
 #include "../m3/Plane.h"
 #include "../math/RectF.h"

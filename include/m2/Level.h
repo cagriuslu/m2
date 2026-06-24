@@ -9,7 +9,7 @@
 #include <m2/game/Pathfinder.h>
 #include <m2/game/Selection.h>
 #include <m2/leveleditor/State.h>
-#include <m2/m3/VecF.h>
+#include <m2/common/m3/VecF.h>
 #include <m2/ObjectDebug.h>
 #include <m2/physics/World.h>
 #include <m2/sheeteditor/State.h>

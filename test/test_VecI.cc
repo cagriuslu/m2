@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include <m2/math/VecI.h>
-#include <m2/math/VecF.h>
+#include <m2/common/math/VecI.h>
+#include <m2/common/math/VecF.h>
 
 TEST(VecI, basic) {
 	using namespace m2;

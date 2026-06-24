@@ -4,8 +4,8 @@
 #include <m2/common/Meta.h>
 #include <algorithm>
 
-#include "m2/Math.h"
-#include "m2/m3/VecF.h"
+#include "m2/common/Math.h"
+#include "m2/common/m3/VecF.h"
 
 TEST(XsrRng, GenerateNextNumber64) {
 	m2::XsrRng rng{0x6c9af76788f04b6e,

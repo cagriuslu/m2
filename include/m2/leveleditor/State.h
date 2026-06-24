@@ -2,8 +2,8 @@
 #include "../ui/UiAction.h"
 #include "m2/containers/Pool.h"
 #include "m2/math/RectI.h"
-#include "m2/math/VecF.h"
-#include "m2/math/VecI.h"
+#include "m2/common/math/VecF.h"
+#include "m2/common/math/VecI.h"
 #include <m2g_SpriteType.pb.h>
 #include <m2/sheeteditor/PersistentSpriteSheets.h>
 #include <Level.pb.h>

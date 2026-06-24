@@ -2,7 +2,7 @@
 #include <m2/thirdparty/video/Renderer.h>
 #include "SdlConversions.h"
 #include <m2/common/Error.h>
-#include <m2/Math.h>
+#include <m2/common/Math.h>
 #include <SDL2/SDL.h>
 
 using namespace m2;

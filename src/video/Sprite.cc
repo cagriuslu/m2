@@ -1,6 +1,6 @@
 #include <m2/video/Sprite.h>
 #include <m2/thirdparty/video/Detail.h>
-#include <m2/Math.h>
+#include <m2/common/Math.h>
 #include <m2/Game.h>
 #include <m2/Log.h>
 

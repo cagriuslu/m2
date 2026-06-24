@@ -1,6 +1,6 @@
 #pragma once
 #include "../Events.h"
-#include "../math/VecF.h"
+#include <m2/common/math/VecF.h>
 
 namespace m2 {
 	// Base class of all Selection states

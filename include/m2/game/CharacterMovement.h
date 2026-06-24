@@ -1,6 +1,6 @@
 #pragma once
 #include <m2g_KeyType.pb.h>
-#include "../math/VecF.h"
+#include <m2/common/math/VecF.h>
 
 namespace m2 {
 	enum CharacterMovementDirection {

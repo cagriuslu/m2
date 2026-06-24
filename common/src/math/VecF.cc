@@ -1,7 +1,7 @@
-#include <m2/math/VecF.h>
-#include <m2/Math.h>
-#include <m2/m3/VecF.h>
-#include <m2/math/VecI.h>
+#include <m2/common/math/VecF.h>
+#include <m2/common/Math.h>
+#include <m2/common/m3/VecF.h>
+#include <m2/common/math/VecI.h>
 #include <sstream>
 
 m2::VecF::VecF(const VecI& v) : VecF(v.x, v.y) {}

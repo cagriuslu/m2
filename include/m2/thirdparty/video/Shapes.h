@@ -1,7 +1,7 @@
 #pragma once
 #include <m2/math/RectF.h>
 #include <m2/math/RectI.h>
-#include <m2/math/VecF.h>
+#include <m2/common/math/VecF.h>
 #include <m2/video/Color.h>
 
 namespace m2::thirdparty::video {

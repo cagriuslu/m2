@@ -1,5 +1,5 @@
 #pragma once
-#include <m2/math/VecI.h>
+#include <m2/common/math/VecI.h>
 #include <m2/thirdparty/video/Font.h>
 
 namespace m2::thirdparty::video {

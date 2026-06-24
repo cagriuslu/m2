@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../math/VecF.h"
+#include <m2/common/math/VecF.h>
 #include <VecF.pb.h>
 
 namespace m3 {

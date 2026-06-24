@@ -5,7 +5,7 @@
 #include <optional>
 #include <string>
 
-#include "VecI.h"
+#include <m2/common/math/VecI.h>
 
 namespace m2 {
 	struct RectF;

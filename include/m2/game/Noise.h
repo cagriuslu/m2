@@ -1,10 +1,10 @@
 #pragma once
 #include "m2/math/RectE.h"
-#include "m2/math/VecF.h"
+#include "m2/common/math/VecF.h"
 #include <m2/common/math/VecE.h>
 #include "rng/Distribution.h"
 #include "rng/Rng.h"
-#include <m2/math/VecI.h>
+#include <m2/common/math/VecI.h>
 
 namespace m2 {
 	// TODO this implementation has a problem

@@ -1,5 +1,5 @@
 #pragma once
-#include <m2/math/VecF.h>
+#include <m2/common/math/VecF.h>
 #include <box2d/b2_math.h>
 
 namespace m2::thirdparty::physics::box2d {

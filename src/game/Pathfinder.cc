@@ -4,7 +4,7 @@
 #include <m2/thirdparty/physics/ColliderCategory.h>
 #include "m2/Game.h"
 #include "m2/M2.h"
-#include "m2/math/VecI.h"
+#include "m2/common/math/VecI.h"
 #include "m2/box2d/RayCast.h"
 #include <list>
 #include <map>

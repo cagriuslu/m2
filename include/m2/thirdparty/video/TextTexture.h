@@ -1,6 +1,6 @@
 #pragma once
 #include <m2/thirdparty/video/Texture.h>
-#include <m2/math/VecI.h>
+#include <m2/common/math/VecI.h>
 #include <m2/math/RectI.h>
 #include <m2/video/Color.h>
 #include <optional>

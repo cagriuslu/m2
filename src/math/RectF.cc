@@ -3,7 +3,7 @@
 #include <m2/math/RectI.h>
 #include <m2/common/Meta.h>
 #include <sstream>
-#include <m2/Math.h>
+#include <m2/common/Math.h>
 
 m2::RectF::RectF() : x(), y(), w(), h() {}
 m2::RectF::RectF(float x, float y, float w, float h) : x(x), y(y), w(w), h(h) {}

@@ -1,5 +1,5 @@
 #pragma once
-#include <m2/math/VecF.h>
+#include <m2/common/math/VecF.h>
 #include <m2/common/math/VecE.h>
 #include <m2/common/BuildOptions.h>
 

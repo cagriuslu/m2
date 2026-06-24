@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-#include "m2/math/VecI.h"
+#include "m2/common/math/VecI.h"
 
 using namespace m2;
 

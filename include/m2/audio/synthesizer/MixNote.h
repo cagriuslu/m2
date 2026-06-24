@@ -1,7 +1,7 @@
 #pragma once
 #include "Detail.h"
 #include <m2/common/Meta.h>
-#include <m2/Math.h>
+#include <m2/common/Math.h>
 #include <m2/common/Error.h>
 #include <Synth.pb.h>
 #include <type_traits>

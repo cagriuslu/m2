@@ -1,6 +1,6 @@
 #pragma once
 #include <m2/Events.h>
-#include <m2/math/VecI.h>
+#include <m2/common/math/VecI.h>
 #include <cstdint>
 #include <optional>
 #include <string>
