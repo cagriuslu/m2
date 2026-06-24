@@ -1,9 +1,10 @@
 #include <m2/thirdparty/physics/box2d/DebugDraw.h>
-#include <m2/thirdparty/video/Detail.h>
+#include "../../video/SdlConversions.h"
 #include <m2/Game.h>
 #include <m2/component/Graphic.h>
 #include <m2/video/Color.h>
 #include <m2/math/VecF.h>
+#include <SDL2/SDL.h>
 
 using namespace m2::thirdparty::physics::box2d;
 

@@ -1,5 +1,5 @@
 #include <m2/thirdparty/video/Shapes.h>
-#include <m2/thirdparty/video/Detail.h>
+#include "SdlConversions.h"
 #include <m2/Game.h>
 #include <m2/common/Error.h>
 #include <m2/Math.h>

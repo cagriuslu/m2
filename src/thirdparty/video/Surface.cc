@@ -1,5 +1,5 @@
 #include <m2/thirdparty/video/Surface.h>
-#include <m2/thirdparty/video/Detail.h>
+#include "SdlConversions.h"
 #include <m2/common/Error.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>

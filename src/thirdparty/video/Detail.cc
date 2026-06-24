@@ -1,21 +1,11 @@
 #include <m2/thirdparty/video/Detail.h>
+#include "SdlConversions.h"
 #include <m2/Game.h>
 #include <m2/Options.h>
 #include <m2/M2.h>
+#include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
-#include <sstream>
-
-std::string m2::ToString(const SDL_Rect& rf) {
-	std::stringstream ss;
-	ss << "{x:" << rf.x << ",y:" << rf.y << ",w:" << rf.w << ",h:" << rf.h << "}";
-	return ss.str();
-}
-std::string m2::ToString(const SDL_FRect& rf) {
-	std::stringstream ss;
-	ss << "{x:" << rf.x << ",y:" << rf.y << ",w:" << rf.w << ",h:" << rf.h << "}";
-	return ss.str();
-}
 
 void m2::thirdparty::video::Delay(Ticks duration) {
 	if (0 < duration) {

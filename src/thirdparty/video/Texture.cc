@@ -2,7 +2,7 @@
 #include <m2/thirdparty/video/Renderer.h>
 #include <m2/thirdparty/video/Surface.h>
 #include <m2/thirdparty/video/Window.h>
-#include <m2/thirdparty/video/Detail.h>
+#include "SdlConversions.h"
 #include <m2/Game.h>
 #include <SDL2/SDL.h>
 
