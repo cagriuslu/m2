@@ -8,7 +8,7 @@
 #include "widget/TextBlueprint.h"
 #include "widget/TextInputBlueprint.h"
 #include "widget/TextSelectionBlueprint.h"
-#include <m2/video/Color.h>
+#include <m2/common/video/Color.h>
 #include <variant>
 
 namespace m2 {

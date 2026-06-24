@@ -5,14 +5,13 @@
 #include <m2/common/m3/VecF.h>
 #include "../m3/Line.h"
 #include "../m3/Plane.h"
-#include "../math/RectF.h"
 #include <Level.pb.h>
 #include <m2g_Layers.pb.h>
 #include <functional>
-#include <m2/video/Color.h>
+#include <m2/common/video/Color.h>
 #include <m2/thirdparty/video/Renderer.h>
 #include <m2/thirdparty/video/Texture.h>
-#include <m2/math/RectI.h>
+#include <m2/common/math/RectI.h>
 
 namespace m2 {
 	bool IsProjectionTypeParallel(pb::ProjectionType pt);

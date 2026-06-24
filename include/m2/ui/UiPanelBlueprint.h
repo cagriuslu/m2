@@ -1,7 +1,7 @@
 #pragma once
 #include "UiWidgetBlueprint.h"
 #include "../Events.h"
-#include <m2/video/Color.h>
+#include <m2/common/video/Color.h>
 #include <vector>
 
 namespace m2 {

@@ -5,7 +5,7 @@
 #include "m2/common/BuildOptions.h"
 #include "m2/common/math/VecF.h"
 #include "m2/common/math/VecI.h"
-#include <m2/video/Color.h>
+#include <m2/common/video/Color.h>
 
 namespace m2 {
 	using Path = std::vector<VecI>;

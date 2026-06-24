@@ -1,4 +1,4 @@
-#include <m2/video/Color.h>
+#include <m2/common/video/Color.h>
 
 m2::RGB m2::RGB::White{255, 255, 255};
 m2::RGB m2::RGB::Red{255, 0, 0};

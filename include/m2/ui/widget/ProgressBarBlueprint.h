@@ -1,5 +1,5 @@
 #pragma once
-#include <m2/video/Color.h>
+#include <m2/common/video/Color.h>
 #include <functional>
 
 namespace m2::widget {

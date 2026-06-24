@@ -1,5 +1,5 @@
 #pragma once
-#include "math/RectI.h"
+#include <m2/common/math/RectI.h>
 #include <m2/common/math/VecI.h>
 #include <m2/common/math/VecF.h>
 #include <m2/protobuf/Detail.h>

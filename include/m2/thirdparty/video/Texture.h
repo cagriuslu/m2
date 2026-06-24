@@ -1,6 +1,6 @@
 #pragma once
-#include <m2/video/Color.h>
-#include <m2/math/RectI.h>
+#include <m2/common/video/Color.h>
+#include <m2/common/math/RectI.h>
 #include <m2/common/math/VecI.h>
 #include <m2/common/math/VecF.h>
 #include <filesystem>

@@ -1,7 +1,7 @@
 #pragma once
 #include <cuzn/Detail.h>
 #include <m2/ui/UiPanelBlueprint.h>
-#include <m2/math/RectF.h>
+#include <m2/common/math/RectF.h>
 #include <m2g_CardType.pb.h>
 
 m2::RectF tiles_window_ratio();

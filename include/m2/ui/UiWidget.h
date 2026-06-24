@@ -1,7 +1,6 @@
 #pragma once
 #include <optional>
 
-#include "../video/Color.h"
 #include "../Events.h"
 #include <m2/video/Sprite.h>
 #include "UiAction.h"

@@ -1,5 +1,5 @@
 #include <m2/ui/MessageBox.h>
-#include <m2/math/RectF.h>
+#include <m2/common/math/RectF.h>
 
 const m2::UiPanelBlueprint m2::DefaultMessageBoxBlueprint = {
 	.name = "MessageBox",

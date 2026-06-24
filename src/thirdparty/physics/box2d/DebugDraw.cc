@@ -1,7 +1,7 @@
 #include <m2/thirdparty/physics/box2d/DebugDraw.h>
 #include <m2/Game.h>
 #include <m2/component/Graphic.h>
-#include <m2/video/Color.h>
+#include <m2/common/video/Color.h>
 #include <m2/thirdparty/physics/box2d/Detail.h>
 #include <m2/common/math/VecF.h>
 #include <array>

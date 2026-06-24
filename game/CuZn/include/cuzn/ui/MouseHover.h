@@ -1,6 +1,6 @@
 #pragma once
 #include <cuzn/Detail.h>
-#include <m2/math/RectF.h>
+#include <m2/common/math/RectF.h>
 #include <m2/ui/UiPanelBlueprint.h>
 
 // These functions return the blueprint and associated RectF which corresponds to "relation_to_game_and_hud".

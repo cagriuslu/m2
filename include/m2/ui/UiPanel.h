@@ -2,8 +2,7 @@
 #include "UiPanelBlueprint.h"
 #include "UiPanelState.h"
 #include "UiWidget.h"
-#include "../math/RectI.h"
-#include "../math/RectF.h"
+#include <m2/common/math/RectF.h>
 #include <m2/thirdparty/video/Texture.h>
 #include <optional>
 

@@ -1,8 +1,8 @@
 #pragma once
-#include <m2/math/RectF.h>
-#include <m2/math/RectI.h>
+#include <m2/common/math/RectF.h>
+#include <m2/common/math/RectI.h>
 #include <m2/common/math/VecF.h>
-#include <m2/video/Color.h>
+#include <m2/common/video/Color.h>
 
 namespace m2::thirdparty::video {
 	class Renderer;

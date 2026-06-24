@@ -1,6 +1,6 @@
 #include <m2/Game.h>
 #include <m2/Log.h>
-#include <m2/math/RectF.h>
+#include <m2/common/math/RectF.h>
 #include <m2/bulksheeteditor/State.h>
 #include <m2/game/Selection.h>
 #include <m2/protobuf/Detail.h>

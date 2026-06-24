@@ -1,5 +1,5 @@
 #pragma once
-#include <m2/math/RectI.h>
+#include <m2/common/math/RectI.h>
 #include <m2/thirdparty/video/Renderer.h>
 #include <m2/thirdparty/video/Surface.h>
 #include <m2/thirdparty/video/Texture.h>

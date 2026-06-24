@@ -202,9 +202,12 @@ add_library(m2_common STATIC
         common/src/math/Exact.cc
         common/src/math/Float.cc
         common/src/math/Rational.cc
+        common/src/math/RectF.cc
+        common/src/math/RectI.cc
         common/src/math/VecE.cc
         common/src/math/VecF.cc
         common/src/math/VecI.cc
+        common/src/video/Color.cc
         common/include/m2/common/BuildOptions.h
         common/include/m2/common/Constants.h
         common/include/m2/common/Error.h
@@ -214,9 +217,12 @@ add_library(m2_common STATIC
         common/include/m2/common/math/Exact.h
         common/include/m2/common/math/Float.h
         common/include/m2/common/math/Rational.h
+        common/include/m2/common/math/RectF.h
+        common/include/m2/common/math/RectI.h
         common/include/m2/common/math/VecE.h
         common/include/m2/common/math/VecF.h
         common/include/m2/common/math/VecI.h
+        common/include/m2/common/video/Color.h
 )
 target_include_directories(m2_common PUBLIC common/include)
 target_compile_features(m2_common PUBLIC cxx_std_23)
@@ -334,8 +340,6 @@ if(GTest_FOUND)
             "src/game/Graph.cc"
             "src/game/rng/XsrRng.cc"
             "src/math/Bit.cc"
-            "src/math/RectF.cc"
-            "src/math/RectI.cc"
             "src/protobuf/Detail.cc"
             "src/thirdparty/compression/Inflate.cc"
             "src/thirdparty/protobuf/Json.cc"
