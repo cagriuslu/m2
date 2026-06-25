@@ -1305,7 +1305,7 @@ Game::CommandResult Game::ExecuteCommand(const std::string& cmd) {
 	}
 	LOG_INFO("Executing command with arguments", *command, arguments);
 
-	if (*command == "game") {
+	if (*command == "Game") {
 		if (const auto result = _proxy.ExecuteGameCommand(argument)) {
 			return CommandSuccess{};
 		} else {
