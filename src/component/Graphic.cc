@@ -205,6 +205,9 @@ void m2::Graphic::ColorCell(const VecI& cell, const RGBA& color) {
 	};
 	thirdparty::video::FillRectangle(*M2_GAME.renderer, rect, color);
 }
+void m2::Graphic::ColorRect(const RectF& world_coordinates_m, const RGB& color) {
+	ColorRect(world_coordinates_m, RGBA{color.r, color.g, color.b, uint8_t{255}});
+}
 void m2::Graphic::ColorRect(const RectF& world_coordinates_m, const RGBA& color) {
 	const auto screen_origin_to_top_left_px = ScreenOriginToPositionVecPx(world_coordinates_m.GetTopLeftPoint());
 	const auto screen_origin_to_bottom_right_px = ScreenOriginToPositionVecPx(world_coordinates_m.GetBottomRightPoint());
@@ -218,9 +221,6 @@ void m2::Graphic::ColorRect(const RectF& world_coordinates_m, const RGBA& color)
 			CeilI(screen_origin_to_bottom_right_px.GetY() - screen_origin_to_top_left_px.GetY())
 	};
 	thirdparty::video::FillRectangle(*M2_GAME.renderer, rect, color);
-}
-void m2::Graphic::ColorRect(const RectF& world_coordinates_m, const RGB& color) {
-	ColorRect(world_coordinates_m, RGBA{color.r, color.g, color.b, uint8_t{255}});
 }
 void m2::Graphic::FillDisk(const VecF& center_position_m, const float radius_m, const RGBA& color) {
 	const auto center_position_px = ScreenOriginToPositionVecPx(center_position_m);
