@@ -114,7 +114,7 @@ bool Events::Gather() {
 				return false;
 			},
 			[&](const event::TextInputEvent& textInputEvent) {
-				if (event::IsTextInputActive()) {
+				if (event::IsTextInputActive(M2_GAME.window.RawHandle())) {
 					_textInput << textInputEvent.text;
 				} else {
 					_textInput = std::stringstream();

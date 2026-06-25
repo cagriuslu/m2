@@ -29,7 +29,7 @@ namespace {
 		if (not windowCreation) {
 			throw M2_ERROR("SDL error: " + windowCreation.error());
 		}
-		thirdparty::event::StopTextInput(); // Text input begins activated (sometimes)
+		thirdparty::event::StopTextInput((*windowCreation).RawHandle()); // Text input begins activated (sometimes)
 		return std::move(*windowCreation);
 	}
 
@@ -66,7 +66,7 @@ Game::Game() : window(CreateWindow(_proxy.gamePpm, _proxy.defaultGameHeightM, _p
 
 	cursor.Load();
 
-	if (auto rendererCreation = thirdparty::video::Renderer::Create(window.RawHandle(), _proxy.areGraphicsPixelated)) {
+	if (auto rendererCreation = thirdparty::video::Renderer::Create(window.RawHandle())) {
 		renderer.emplace(std::move(*rendererCreation));
 		LOG_INFO(std::format("Renderer: {}", renderer->GetName()));
 	} else {

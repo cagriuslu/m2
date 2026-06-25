@@ -1,4 +1,5 @@
 #include <m2/ui/widget/Hidden.h>
+#include <m2/Game.h>
 #include <m2/thirdparty/event/Event.h>
 
 using namespace m2;
@@ -14,7 +15,7 @@ Hidden::Hidden(UiPanel* parent, const UiWidgetBlueprint* blueprint) : UiWidget(p
 UiAction Hidden::OnEvent(Events& events) {
     if (const auto& onAction = VariantBlueprint().onAction) {
         if (const auto kb_shortcut = VariantBlueprint().keyboardShortcut) {
-            if (not m2::thirdparty::event::IsTextInputActive() && events.PopKeyPress(kb_shortcut)) {
+            if (not m2::thirdparty::event::IsTextInputActive(M2_GAME.window.RawHandle()) && events.PopKeyPress(kb_shortcut)) {
                 return onAction(*this);
             }
         }

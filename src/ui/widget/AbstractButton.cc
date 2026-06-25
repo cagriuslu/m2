@@ -4,6 +4,7 @@
 #include <m2/ui/widget/Image.h>
 #include <m2/Log.h>
 #include <m2/M2.h>
+#include <m2/Game.h>
 #include <m2/thirdparty/event/Event.h>
 
 using namespace m2;
@@ -50,7 +51,7 @@ UiAction AbstractButton::OnEvent(Events &events) {
 	}
 
 	auto run_action = false;
-	if (keyboardShortcut && not m2::thirdparty::event::IsTextInputActive() && events.PopKeyPress(keyboardShortcut)) {
+	if (keyboardShortcut && not m2::thirdparty::event::IsTextInputActive(M2_GAME.window.RawHandle()) && events.PopKeyPress(keyboardShortcut)) {
 		run_action = true;
 	} else {
 		if (not depressed) {

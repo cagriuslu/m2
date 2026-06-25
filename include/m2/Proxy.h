@@ -35,8 +35,6 @@ namespace m2 {
 		const int gamePpm = 16;
 		const int gameAspectRatioMul = 5;
 		const int gameAspectRatioDiv = 4;
-		/// Determines if nearest neighbor should be used while resizing sprites
-		const bool areGraphicsPixelated = true;
 		/// Determines the initial and minimum window size.
 		const float defaultGameHeightM = 18.0f;
 

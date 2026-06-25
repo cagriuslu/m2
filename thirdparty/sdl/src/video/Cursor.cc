@@ -1,5 +1,5 @@
 #include <m2/thirdparty/video/Cursor.h>
-#include <SDL_mouse.h>
+#include <SDL3/SDL_mouse.h>
 #include <format>
 
 m2::expected<m2::thirdparty::video::Cursor> m2::thirdparty::video::Cursor::Create() {
@@ -70,7 +70,7 @@ m2::thirdparty::video::Cursor& m2::thirdparty::video::Cursor::operator=(Cursor&&
 }
 m2::thirdparty::video::Cursor::~Cursor() {
 	if (_cursor) {
-		SDL_FreeCursor(static_cast<SDL_Cursor*>(_cursor));
+		SDL_DestroyCursor(static_cast<SDL_Cursor*>(_cursor));
 		_cursor = nullptr;
 	}
 }

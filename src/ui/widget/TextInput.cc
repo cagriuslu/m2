@@ -9,7 +9,7 @@ using namespace m2::widget;
 namespace {
 	void reset_focus() {
 		LOG_DEBUG("Stopping text input");
-		m2::thirdparty::event::StopTextInput();
+		m2::thirdparty::event::StopTextInput(M2_GAME.window.RawHandle());
 	}
 }  // namespace
 
@@ -55,7 +55,7 @@ UiAction TextInput::OnEvent(Events& events) {
 void TextInput::OnFocusChange() {
 	if (IsFocused()) {
 		LOG_DEBUG("Starting text input");
-		m2::thirdparty::event::StartTextInput();
+		m2::thirdparty::event::StartTextInput(M2_GAME.window.RawHandle());
 	} else {
 		reset_focus();
 	}

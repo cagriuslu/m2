@@ -38,56 +38,29 @@ find_package(Protobuf REQUIRED)
 include_directories(SYSTEM ${Protobuf_INCLUDE_DIRS})
 include_directories(SYSTEM ${CMAKE_CURRENT_BINARY_DIR})
 
-# SDL2
-if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL2/lib")
-    BuildDependency(libSDL2)
+# SDL3
+if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL3/lib")
+    BuildDependency(libSDL3)
 endif()
-list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL2")
-find_package(SDL2 REQUIRED)
-if (WIN32)
-    set(SDL2_INCLUDE_DIRS "${SDL2_DIR}/../include;${SDL2_DIR}/../include/SDL2") # On Windows, SDL2_INCLUDE_DIRS is not populated?!
-endif()
+list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL3")
+find_package(SDL3 REQUIRED)
 
-# SDL2_image
-if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL2_image/lib")
-    BuildDependency(libSDL2_image)
+# SDL3_image
+if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL3_image/lib")
+    BuildDependency(libSDL3_image)
 endif()
-list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL2_image")
+list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL3_image")
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/lib/z")
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/lib/png")
-find_package(SDL2_image REQUIRED)
-if (WIN32)
-    set(SDL2_image_INCLUDE_DIRS "${SDL2_image_DIR}/../include")
-    set(SDL2_image_LIBDIR "${SDL2_image_DIR}/../lib")
-    set(SDL2_image_LIBNAME "SDL2_image::SDL2_image-static")
-elseif(APPLE)
-    set(SDL2_image_INCLUDE_DIRS "${SDL2_image_DIR}/../../include")
-    set(SDL2_image_LIBDIR "${SDL2_image_DIR}/../../lib")
-    set(SDL2_image_LIBNAME "SDL2_image")
-else()
-    set(SDL2_image_INCLUDE_DIRS "${SDL2_image_DIR}/../../../include")
-    set(SDL2_image_LIBDIR "${SDL2_image_DIR}/../../../lib")
-    set(SDL2_image_LIBNAME "SDL2_image")
-endif()
+find_package(SDL3_image REQUIRED)
 
-# SDL2_ttf
-if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL2_ttf/lib")
-    BuildDependency(libSDL2_ttf)
+# SDL3_ttf
+if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL3_ttf/lib")
+    BuildDependency(libSDL3_ttf)
 endif()
-list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL2_ttf")
+list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL3_ttf")
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/lib/freetype")
-find_package(SDL2_ttf REQUIRED)
-if (WIN32)
-    set(SDL2_ttf_INCLUDE_DIRS "${SDL2_ttf_DIR}/../include")
-    set(SDL2_ttf_LIBDIR "${SDL2_ttf_DIR}/../lib")
-    # Since we're statically linking to SDL2_ttf, we need to statically link to freetype as well
-    set(Freetype_LIBRARIES "${CMAKE_CURRENT_BINARY_DIR}/lib/freetype/lib/freetype.lib")
-else()
-    set(SDL2_ttf_INCLUDE_DIRS "${SDL2_ttf_DIR}/../../../include")
-    set(SDL2_ttf_LIBDIR "${SDL2_ttf_DIR}/../../../lib")
-	# Since we're statically linking to SDL2_ttf, we need to statically link to freetype as well
-	set(Freetype_LIBRARIES "${CMAKE_CURRENT_BINARY_DIR}/lib/freetype/lib/libfreetype.a")
-endif()
+find_package(SDL3_ttf REQUIRED)
 
 # sqlite
 if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/sqlite/libsqlite3.a")
@@ -260,16 +233,13 @@ add_library(m2_thirdparty_sdl STATIC
         thirdparty/sdl/include/m2/thirdparty/video/Window.h
 )
 target_include_directories(m2_thirdparty_sdl PUBLIC thirdparty/sdl/include)
-# SDL headers are PRIVATE: they're needed to compile this wrapper, but must NOT leak to consumers.
-target_include_directories(m2_thirdparty_sdl SYSTEM PRIVATE ${SDL2_INCLUDE_DIRS} ${SDL2_image_INCLUDE_DIRS} ${SDL2_ttf_INCLUDE_DIRS})
 target_compile_features(m2_thirdparty_sdl PUBLIC cxx_std_23)
-# Link directories are PUBLIC so the final executable can resolve the SDL libraries below; unlike
-# include directories, link directories don't grant header access, so this doesn't leak SDL.
-target_link_directories(m2_thirdparty_sdl PUBLIC ${SDL2_ttf_LIBDIR} ${SDL2_image_LIBDIR})
 target_link_libraries(m2_thirdparty_sdl PUBLIC m2_common)
-# SDL libraries are PRIVATE: because this is a STATIC library, CMake propagates them to consumers as
-# $<LINK_ONLY:...> (the final m2 binary links them, but their include dirs are not inherited).
-target_link_libraries(m2_thirdparty_sdl PRIVATE SDL2_ttf ${Freetype_LIBRARIES} ${SDL2_image_LIBNAME} ${SDL2_STATIC_LIBRARIES})
+# SDL3 imported targets are PRIVATE: their headers are needed to compile this wrapper but must NOT leak to
+# consumers, and because this is a STATIC library CMake propagates the link requirements to consumers as
+# $<LINK_ONLY:...> (the final m2 binary links them, but their include dirs are not inherited). The imported
+# targets carry their own include dirs and transitive dependencies (SDL3, freetype, system frameworks).
+target_link_libraries(m2_thirdparty_sdl PRIVATE SDL3_ttf::SDL3_ttf SDL3_image::SDL3_image SDL3::SDL3-static)
 if (MSVC)
     set_property(TARGET m2_thirdparty_sdl PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
     target_compile_options(m2_thirdparty_sdl PRIVATE "/MP")
@@ -360,7 +330,7 @@ elseif(APPLE)
         )
     endif()
 else()
-    # The following packages must be install before BUILDING SDL2 in Ubuntu: libxext-dev libgl-dev libasound2-dev libpulse-dev
+    # The following packages must be install before BUILDING SDL3 in Ubuntu: libxext-dev libgl-dev libasound2-dev libpulse-dev
     target_link_libraries(m2 GL)
 endif()
 
@@ -389,9 +359,9 @@ if(GTest_FOUND)
     )
     add_executable(test ${TEST_SOURCES} ${ORM_SOURCES})
     target_include_directories(test PUBLIC include thirdparty/sdl/include)
-    target_include_directories(test PUBLIC ${SDL2_INCLUDE_DIRS} ${SDL2_image_INCLUDE_DIRS} ${SDL2_ttf_INCLUDE_DIRS} ${GENORM_CXX_INCLUDE_DIRS})
-    target_link_directories(test PUBLIC ${SDL2_image_LIBDIR} ${SDL2_ttf_LIBDIR} ${GENORM_CXX_LIBDIR} ${z_LIBDIR})
-    target_link_libraries(test m2_common box2d ${SDL2_image_LIBRARIES} ${SDL2_ttf_LIBRARIES} ${SDL2_LIBRARIES} ${GENORM_CXX_LIBRARIES} sqlite3 ${z_LIBRARIES})
+    target_include_directories(test PUBLIC ${GENORM_CXX_INCLUDE_DIRS})
+    target_link_directories(test PUBLIC ${GENORM_CXX_LIBDIR} ${z_LIBDIR})
+    target_link_libraries(test m2_common box2d SDL3_image::SDL3_image SDL3_ttf::SDL3_ttf SDL3::SDL3-static ${GENORM_CXX_LIBRARIES} sqlite3 ${z_LIBRARIES})
     target_link_libraries(test GTest::gtest GTest::gtest_main)
     if(WIN32)
         #target_compile_options(test PRIVATE /analyze) # Code inspections

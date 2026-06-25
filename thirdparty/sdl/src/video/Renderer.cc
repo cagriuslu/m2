@@ -1,19 +1,15 @@
 #include <m2/thirdparty/video/Renderer.h>
 #include "SdlConversions.h"
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 #include <vector>
+#include <format>
 
-m2::expected<m2::thirdparty::video::Renderer> m2::thirdparty::video::Renderer::Create(void* sdlWindow, const bool graphicsPixelated) {
-	if (graphicsPixelated) {
-		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
-	} else {
-		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
-	}
-
-	auto* rawRenderer = SDL_CreateRenderer(static_cast<SDL_Window*>(sdlWindow), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
+m2::expected<m2::thirdparty::video::Renderer> m2::thirdparty::video::Renderer::Create(void* sdlWindow) {
+	auto* rawRenderer = SDL_CreateRenderer(static_cast<SDL_Window*>(sdlWindow), nullptr);
 	if (not rawRenderer) {
-		return make_unexpected(std::string{SDL_GetError()});
+		return make_unexpected(std::format("SDL_CreateRenderer error: {}", SDL_GetError()));
 	}
+	SDL_SetRenderDrawBlendMode(rawRenderer, SDL_BLENDMODE_BLEND);
 	return Renderer{rawRenderer};
 }
 
@@ -33,13 +29,12 @@ m2::thirdparty::video::Renderer::~Renderer() {
 
 m2::VecI m2::thirdparty::video::Renderer::GetOutputSize() const {
 	int w, h;
-	SDL_GetRendererOutputSize(static_cast<SDL_Renderer*>(_renderer), &w, &h);
+	SDL_GetCurrentRenderOutputSize(static_cast<SDL_Renderer*>(_renderer), &w, &h);
 	return {w, h};
 }
 std::string m2::thirdparty::video::Renderer::GetName() const {
-	SDL_RendererInfo info;
-	SDL_GetRendererInfo(static_cast<SDL_Renderer*>(_renderer), &info);
-	return info.name;
+	const char* name = SDL_GetRendererName(static_cast<SDL_Renderer*>(_renderer));
+	return name ? std::string{name} : std::string{};
 }
 
 void m2::thirdparty::video::Renderer::SetDrawColor(const RGBA& color) {
@@ -54,15 +49,15 @@ void m2::thirdparty::video::Renderer::Present() {
 
 void m2::thirdparty::video::Renderer::DrawLineStrip(const std::span<const VecF> pointsPx, const RGBA& color) {
 	auto* sdlRenderer = static_cast<SDL_Renderer*>(_renderer);
-	if (SDL_SetRenderDrawColor(sdlRenderer, color.r, color.g, color.b, color.a) != 0) {
-		throw M2_ERROR(std::string{"SDL_SetRenderDrawColor failed: "} + SDL_GetError());
+	if (not SDL_SetRenderDrawColor(sdlRenderer, color.r, color.g, color.b, color.a)) {
+		throw M2_ERROR(std::string{"SDL_SetRenderDrawColor error: "} + SDL_GetError());
 	}
 	std::vector<SDL_FPoint> sdlPoints;
 	sdlPoints.reserve(pointsPx.size());
 	for (const auto& point : pointsPx) {
 		sdlPoints.push_back(ToSdlFPoint(point));
 	}
-	if (SDL_RenderDrawLinesF(sdlRenderer, sdlPoints.data(), I(sdlPoints.size())) != 0) {
-		throw M2_ERROR(std::string{"SDL_RenderDrawLinesF failed: "} + SDL_GetError());
+	if (not SDL_RenderLines(sdlRenderer, sdlPoints.data(), I(sdlPoints.size()))) {
+		throw M2_ERROR(std::string{"SDL_RenderLines error: "} + SDL_GetError());
 	}
 }

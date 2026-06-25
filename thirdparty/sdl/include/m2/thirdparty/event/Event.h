@@ -29,9 +29,9 @@ namespace m2::thirdparty::event {
 
 	bool IsScancodeDown(Scancode scancode);
 
-	void StartTextInput();
-	void StopTextInput();
-	bool IsTextInputActive();
+	void StartTextInput(void* sdlWindow);
+	void StopTextInput(void* sdlWindow);
+	bool IsTextInputActive(void* sdlWindow);
 
 	std::optional<MouseButton> SystemButtonToMouseButton(int sdlButton);
 	VecI GetMousePosition();

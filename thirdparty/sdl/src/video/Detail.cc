@@ -2,9 +2,9 @@
 #include "SdlConversions.h"
 #include <m2/common/Error.h>
 #include <m2/common/Meta.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
+#include <SDL3/SDL.h>
+#include <SDL3_image/SDL_image.h>
+#include <SDL3_ttf/SDL_ttf.h>
 
 void m2::thirdparty::video::Delay(Ticks duration) {
 	if (0 < duration) {
@@ -13,7 +13,7 @@ void m2::thirdparty::video::Delay(Ticks duration) {
 }
 
 m2::thirdparty::video::Ticks m2::thirdparty::video::GetTicks() {
-	return static_cast<int64_t>(SDL_GetTicks64());
+	return static_cast<int64_t>(SDL_GetTicks());
 }
 
 m2::thirdparty::video::Ticks m2::thirdparty::video::GetTicksSince(Ticks lastTicks, Ticks pauseTicks) {
@@ -21,20 +21,13 @@ m2::thirdparty::video::Ticks m2::thirdparty::video::GetTicksSince(Ticks lastTick
 }
 
 void m2::thirdparty::video::InitAll() {
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_TIMER) != 0) {
+	if (not SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS)) {
 		throw M2_ERROR("SDL_Init error: " + std::string{SDL_GetError()});
 	}
-	if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG) {
-		throw M2_ERROR("IMG_Init error: " + std::string{IMG_GetError()});
-	}
-	if (TTF_Init() != 0) {
-		throw M2_ERROR("TTF_Init error: " + std::string{TTF_GetError()});
+	if (not TTF_Init()) {
+		throw M2_ERROR("TTF_Init error: " + std::string{SDL_GetError()});
 	}
 
-	// Default Metal backend is slow in 2.5D mode, while drawing the rectangle debug shapes
-	if (SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl") == false) {
-		throw M2_ERROR("Failed to set opengl as render hint");
-	}
 	// Use the driver line API
 	if (SDL_SetHint(SDL_HINT_RENDER_LINE_METHOD, "2") == false) {
 		throw M2_ERROR("Failed to set line render method");
@@ -42,11 +35,11 @@ void m2::thirdparty::video::InitAll() {
 }
 void m2::thirdparty::video::DeinitAll() {
 	TTF_Quit();
-	IMG_Quit();
 	SDL_Quit();
 }
 
 SDL_Color  m2::thirdparty::video::ToSdlColor (const RGBA& c) { return SDL_Color{c.r, c.g, c.b, c.a}; }
+SDL_FColor m2::thirdparty::video::ToSdlFColor(const RGBA& c) { return SDL_FColor{c.r / 255.0f, c.g / 255.0f, c.b / 255.0f, c.a / 255.0f}; }
 SDL_Rect   m2::thirdparty::video::ToSdlRect  (const RectI& r) { return SDL_Rect{r.x, r.y, r.w, r.h}; }
 SDL_Rect   m2::thirdparty::video::ToSdlRect  (const RectF& r) { return SDL_Rect{static_cast<int>(r.x), static_cast<int>(r.y), static_cast<int>(r.w), static_cast<int>(r.h)}; }
 SDL_FRect  m2::thirdparty::video::ToSdlFRect (const RectF& r) { return SDL_FRect{r.x, r.y, r.w, r.h}; }
