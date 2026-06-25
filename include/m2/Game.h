@@ -160,6 +160,7 @@ namespace m2 {
 		TurnBasedServerActorInterface& ServerThread() { return *std::get<TurnBasedServerComponents>(_multiPlayerComponents).serverActorInterface; }
 		network::TurnBasedHostClientThread& TurnBasedHostClientThread() { return *std::get<TurnBasedServerComponents>(_multiPlayerComponents).hostClientThread; }
 		network::TurnBasedRealClientThread& TurnBasedRealClientThread() { return std::get<network::TurnBasedRealClientThread>(_multiPlayerComponents); }
+		bool IsLockstepServer() const { return std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents); }
 		multiplayer::lockstep::ServerActorInterface& GetLockstepServerActor() { return *std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).serverActorInterface; }
 		multiplayer::lockstep::ClientActorInterface& GetLockstepHostClientActor() { return *std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).hostClientActorInterface; }
 		multiplayer::lockstep::ClientActorInterface& GetLockstepGuestClientActor() { return std::get<multiplayer::lockstep::ClientComponents>(_multiPlayerComponents).guestClientActorInterface; }
