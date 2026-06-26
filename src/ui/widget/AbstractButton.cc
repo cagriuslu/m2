@@ -51,7 +51,7 @@ UiAction AbstractButton::OnEvent(Events &events) {
 	}
 
 	auto run_action = false;
-	if (keyboardShortcut && not m2::thirdparty::event::IsTextInputActive(M2_GAME.window.RawHandle()) && events.PopKeyPress(keyboardShortcut)) {
+	if (keyboardShortcut && not m2::thirdparty::event::IsTextInputActive(M2_GAME.GetWindow().RawHandle()) && events.PopKeyPress(keyboardShortcut)) {
 		run_action = true;
 	} else {
 		if (not depressed) {

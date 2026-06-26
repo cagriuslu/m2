@@ -42,7 +42,7 @@ void DebugDraw::DrawCircle(const b2Vec2& center, const float radius, const b2Col
 			srcRect.w,
 			srcRect.h};
 		const auto colorModGuard = texture.ScopedColorMod(static_cast<RGB>(ToRgba(color)));
-		texture.Render(*M2_GAME.renderer, srcRect, dstRect);
+		texture.Render(M2_GAME.GetRenderer(), srcRect, dstRect);
 	} else {
 		const auto centerPosition = m3::VecF{ToVecF(center)};
 		// Draw an octagon instead of circle
@@ -59,7 +59,7 @@ void DebugDraw::DrawCircle(const b2Vec2& center, const float radius, const b2Col
 			const std::array points = {
 				*pointTop, *pointTopRight, *pointRight, *pointBottomRight,
 				*pointBottom, *pointBottomLeft, *pointLeft, *pointTopLeft, *pointTop};
-			M2_GAME.renderer->DrawLineStrip(points, ToRgba(color));
+			M2_GAME.GetRenderer().DrawLineStrip(points, ToRgba(color));
 		}
 	}
 }

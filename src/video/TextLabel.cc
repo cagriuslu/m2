@@ -58,7 +58,7 @@ void m2::DrawTextLabelIn3dWorld(const pb::TextLabel& tl, const RectI& sourceRect
 }
 void m2::SlowDrawSystemTextIn2dWorld(const char* str, const VecF& position) {
 	auto surface = thirdparty::video::Surface::RenderTextSolid(M2_GAME.systemFont, str, RGBA{255, 255, 255, 255});
-	auto texture = thirdparty::video::Texture::CreateFromSurface(*M2_GAME.renderer, surface.RawHandle());
+	auto texture = thirdparty::video::Texture::CreateFromSurface(M2_GAME.GetRenderer(), surface.RawHandle());
 	const auto dimensions = surface.Dimensions();
 	const RectI srcRect{0, 0, dimensions.x, dimensions.y};
 	DrawTextureIn2dWorld(texture, srcRect, 0.0f, 1.0f, {}, ScreenOriginToPositionVecPx(position), 0.0f);

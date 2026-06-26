@@ -51,6 +51,7 @@ namespace m2 {
 		static Game* _instance;
 		::m2g::Proxy _proxy{};
 		const GameResources _resources{_proxy.gameIdentifier, _proxy.defaultFontPath}; // TODO make public
+		std::pair<thirdparty::video::Window, thirdparty::video::Renderer> _windowAndRenderer;
 		std::optional<GameDimensions> _dimensions;
 
 		std::variant<
@@ -85,14 +86,14 @@ namespace m2 {
 		static void DestroyInstance();
 
 		::m2g::Proxy& Proxy() { return _proxy; }
+		thirdparty::video::Window& GetWindow() { return _windowAndRenderer.first; }
+		thirdparty::video::Renderer& GetRenderer() { return _windowAndRenderer.second; }
 
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////////// WINDOW ////////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		const thirdparty::video::Window window;
 		const thirdparty::video::Cursor cursor;
 		const uint32_t pixel_format{};
-		std::optional<thirdparty::video::Renderer> renderer;
 		std::optional<AudioManager> audio_manager; // TODO make private
 		thirdparty::video::Font font;
 		const int systemFontSize = 13;

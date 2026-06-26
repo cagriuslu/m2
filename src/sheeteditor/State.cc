@@ -36,7 +36,7 @@ void State::Select(const m2g::pb::SpriteType spriteType) {
 		_selected_sprite_type = spriteType;
 		// Load image
 		const auto& resourcePath = sheet->resource();
-		_texture = thirdparty::video::Texture::CreateFromImageFile(*M2_GAME.renderer, resourcePath);
+		_texture = thirdparty::video::Texture::CreateFromImageFile(M2_GAME.GetRenderer(), resourcePath);
 		_textureDimensions = _texture->Dimensions();
 		_ppm = sheet->ppm();
 
@@ -149,7 +149,7 @@ void State::Draw() const {
 	const RectI dstRect = {RoundI(textureTopLeftOutputPosition.GetX()), RoundI(textureTopLeftOutputPosition.GetY()),
 			RoundI(textureBottomRightOutputPosition.GetX() - textureTopLeftOutputPosition.GetX()),
 			RoundI(textureBottomRightOutputPosition.GetY() - textureTopLeftOutputPosition.GetY())};
-	if (_texture) { _texture->Render(*M2_GAME.renderer, dstRect); }
+	if (_texture) { _texture->Render(M2_GAME.GetRenderer(), dstRect); }
 
 	const auto& sprite = SelectedSprite();
 	auto spriteOrigin = SelectedSpriteOrigin();

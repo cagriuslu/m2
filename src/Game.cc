@@ -33,6 +33,14 @@ namespace {
 		return std::move(*windowCreation);
 	}
 
+	std::pair<thirdparty::video::Window, thirdparty::video::Renderer> CreateWindow2(const int initialPointsPerMeter, const float initialGameHeightM, const char* gameFriendlyName) {
+		const auto minimumWindowDims = GameDimensions::EstimateMinimumWindowDimensions(initialPointsPerMeter, initialGameHeightM);
+		auto creation = thirdparty::video::Window::Create2(minimumWindowDims, gameFriendlyName);
+		if (not creation) {
+			throw M2_ERROR("Window & renderer creation failed: " + creation.error());
+		}
+		return std::move(*creation);
+	}
 }
 
 Game* Game::_instance{};
@@ -56,8 +64,9 @@ void Game::DestroyInstance() {
 	_instance = nullptr;
 }
 
-Game::Game() : window(CreateWindow(_proxy.gamePpm, _proxy.defaultGameHeightM, _proxy.gameFriendlyName.c_str())),
-		cursor(*thirdparty::video::Cursor::Create()), pixel_format(window.GetPixelFormat()),
+// TODO use _proxy.minimumPointsPerMeter, _proxy.initialGameHeightM
+Game::Game() : _windowAndRenderer(CreateWindow2(_proxy.gamePpm, _proxy.defaultGameHeightM, _proxy.gameFriendlyName.c_str())),
+		cursor(*thirdparty::video::Cursor::Create()), pixel_format(GetWindow().GetPixelFormat()),
 		font(thirdparty::video::Font::CreateFromFontFile(_resources.GetDefaultFontPath(), _proxy.default_font_size)),
 		systemFont(thirdparty::video::Font::CreateFromFontFile(_resources.GetSystemFontPath(), systemFontSize)) {
 	if (_proxy.drawOrder.empty()) {
@@ -66,20 +75,13 @@ Game::Game() : window(CreateWindow(_proxy.gamePpm, _proxy.defaultGameHeightM, _p
 
 	cursor.Load();
 
-	if (auto rendererCreation = thirdparty::video::Renderer::Create(window.RawHandle())) {
-		renderer.emplace(std::move(*rendererCreation));
-		LOG_INFO(std::format("Renderer: {}", renderer->GetName()));
-	} else {
-		throw M2_ERROR(rendererCreation.error());
-	}
+	_dimensions.emplace(GetWindow(), GetRenderer(), _proxy.gamePpm, _proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
 
-	_dimensions.emplace(*renderer, _proxy.gamePpm, _proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
-
-	_textLabelCache.emplace(*renderer, window.GetPixelFormat(), font);
-	_shapeCache.emplace(*renderer, window.GetPixelFormat());
+	_textLabelCache.emplace(GetRenderer(), GetWindow().GetPixelFormat(), font);
+	_shapeCache.emplace(GetRenderer(), GetWindow().GetPixelFormat());
 
 	audio_manager.emplace();
-	spriteEffectsSheet.emplace(*renderer, window.GetPixelFormat());
+	spriteEffectsSheet.emplace(GetRenderer(), GetWindow().GetPixelFormat());
 
 	{
 		auto sheets_pb = pb::json_file_to_message<pb::SpriteSheets>(_resources.GetSpriteSheetsPath());
@@ -88,7 +90,7 @@ Game::Game() : window(CreateWindow(_proxy.gamePpm, _proxy.defaultGameHeightM, _p
 		}
 		spriteSheetsPb = *sheets_pb;
 	}
-	spriteSheets = SpriteSheet::LoadSpriteSheets(*spriteSheetsPb, *renderer);
+	spriteSheets = SpriteSheet::LoadSpriteSheets(*spriteSheetsPb, GetRenderer());
 	_sprites = LoadSprites(spriteSheets, spriteSheetsPb->text_labels(), *spriteEffectsSheet);
 	LOG_INFO("Loaded sprites", _sprites.size());
 
@@ -116,7 +118,6 @@ Game::Game() : window(CreateWindow(_proxy.gamePpm, _proxy.defaultGameHeightM, _p
 Game::~Game() {
 	_level.reset();
 	audio_manager.reset();
-	renderer.reset();
 }
 
 void_expected Game::HostTurnBasedGame(unsigned max_connection_count) {
@@ -998,8 +999,8 @@ void Game::UpdateHudContents(const Stopwatch::Duration& delta) {
 	}
 }
 void Game::ClearBackBuffer() {
-	renderer->SetDrawColor(RGBA::Black);
-	renderer->Clear();
+	GetRenderer().SetDrawColor(RGBA::Black);
+	GetRenderer().Clear();
 }
 void Game::Draw() {
 	// Check if only one background layer needs to be drawn
@@ -1055,7 +1056,7 @@ void Game::DebugDraw() {
 			for (int x = 0; x < 20; ++x) {
 				m3::VecF p = {x, y, 0};
 				if (const auto projected_p = ScreenOriginToProjectionAlongCameraPlaneDstpx(p); projected_p) {
-					thirdparty::video::DrawPoint(*M2_GAME.renderer, *projected_p, RGBA{255, 255, 255, 127});
+					thirdparty::video::DrawPoint(M2_GAME.GetRenderer(), *projected_p, RGBA{255, 255, 255, 127});
 				}
 			}
 		}
@@ -1102,12 +1103,12 @@ void Game::DrawHud() {
 	IF(_level->_semiBlockingUiPanel)->Draw();
 }
 void Game::DrawEnvelopes() {
-	thirdparty::video::FillRectangle(*renderer, _dimensions->TopEnvelope(), RGBA::Black);
-	thirdparty::video::FillRectangle(*renderer, _dimensions->BottomEnvelope(), RGBA::Black);
-	thirdparty::video::FillRectangle(*renderer, _dimensions->LeftEnvelope(), RGBA::Black);
-	thirdparty::video::FillRectangle(*renderer, _dimensions->RightEnvelope(), RGBA::Black);
+	thirdparty::video::FillRectangle(GetRenderer(), _dimensions->TopEnvelope(), RGBA::Black);
+	thirdparty::video::FillRectangle(GetRenderer(), _dimensions->BottomEnvelope(), RGBA::Black);
+	thirdparty::video::FillRectangle(GetRenderer(), _dimensions->LeftEnvelope(), RGBA::Black);
+	thirdparty::video::FillRectangle(GetRenderer(), _dimensions->RightEnvelope(), RGBA::Black);
 }
-void Game::FlipBuffers() { renderer->Present(); }
+void Game::FlipBuffers() { GetRenderer().Present(); }
 
 void Game::OnWindowResize() {
 	_dimensions->OnWindowResize();
@@ -1200,8 +1201,8 @@ thirdparty::video::Texture Game::DrawGameToTexture(const VecF& camera_position) 
 	const auto prev_camera_position = GetLevel().GetCamera()->GetPhysique().GetPosition();
 	GetLevel().GetCamera()->GetPhysique().SetPosition(VecFE{camera_position});
 
-	auto render_target = thirdparty::video::Texture::CreateTargetableWindowSized(*renderer, window.GetPixelFormat());
-	render_target.DrawOnto(*renderer, [this] {
+	auto render_target = thirdparty::video::Texture::CreateTargetableWindowSized(GetRenderer(), GetWindow().GetPixelFormat());
+	render_target.DrawOnto(GetRenderer(), [this] {
 		ClearBackBuffer();
 		Draw();
 		DrawEnvelopes();

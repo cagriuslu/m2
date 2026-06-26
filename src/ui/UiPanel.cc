@@ -49,7 +49,7 @@ UiAction UiPanel::run_blocking() {
 
 	// Get a screenshot if background_texture is not already provided
 	if (not _background_texture) {
-		_background_texture = thirdparty::video::Texture::CaptureWindow(*M2_GAME.renderer, M2_GAME.window.GetPixelFormat());
+		_background_texture = thirdparty::video::Texture::CaptureWindow(M2_GAME.GetRenderer(), M2_GAME.GetWindow().GetPixelFormat());
 	}
 
 	// Update initial contents
@@ -117,16 +117,16 @@ UiAction UiPanel::run_blocking() {
 		}
 
 		// Clear screen
-		M2_GAME.renderer->SetDrawColor(RGBA::Black);
-		M2_GAME.renderer->Clear();
-		_background_texture->RenderToWindow(*M2_GAME.renderer);
+		M2_GAME.GetRenderer().SetDrawColor(RGBA::Black);
+		M2_GAME.GetRenderer().Clear();
+		_background_texture->RenderToWindow(M2_GAME.GetRenderer());
 
 		// Draw UI elements
 		Draw();
 		M2_GAME.DrawEnvelopes();
 
 		// Present
-		M2_GAME.renderer->Present();
+		M2_GAME.GetRenderer().Present();
 		/////////////////////////// END OF GRAPHICS ////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 	}
@@ -134,7 +134,7 @@ UiAction UiPanel::run_blocking() {
 
 UiPanel::UiPanel(std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> static_or_unique_blueprint,
 		const PanelPosition& panelPosition, std::optional<thirdparty::video::Texture> background_texture)
-		: _prev_text_input_state(thirdparty::event::IsTextInputActive(M2_GAME.window.RawHandle())), _background_texture(std::move(background_texture)) {
+		: _prev_text_input_state(thirdparty::event::IsTextInputActive(M2_GAME.GetWindow().RawHandle())), _background_texture(std::move(background_texture)) {
 	if (std::holds_alternative<const UiPanelBlueprint*>(static_or_unique_blueprint)) {
 		// Static blueprint
 		blueprint = std::get<const UiPanelBlueprint*>(static_or_unique_blueprint);
@@ -148,7 +148,7 @@ UiPanel::UiPanel(std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBl
 	_panelPosition = panelPosition;
 
 	// Previous text input state is saved. We can now disable it to start with a clean slate
-	thirdparty::event::StopTextInput(M2_GAME.window.RawHandle());
+	thirdparty::event::StopTextInput(M2_GAME.GetWindow().RawHandle());
 
 	// Set timeout if necessary
 	if (blueprint->timeout_s != 0.0f) {
@@ -192,9 +192,9 @@ UiPanel::~UiPanel() {
 	clear_focus();
 
 	if (_prev_text_input_state) {
-		thirdparty::event::StartTextInput(M2_GAME.window.RawHandle());
+		thirdparty::event::StartTextInput(M2_GAME.GetWindow().RawHandle());
 	} else {
-		thirdparty::event::StopTextInput(M2_GAME.window.RawHandle());
+		thirdparty::event::StopTextInput(M2_GAME.GetWindow().RawHandle());
 	}
 }
 

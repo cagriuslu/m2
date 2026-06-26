@@ -9,7 +9,7 @@ using namespace m2::widget;
 namespace {
 	void reset_focus() {
 		LOG_DEBUG("Stopping text input");
-		m2::thirdparty::event::StopTextInput(M2_GAME.window.RawHandle());
+		m2::thirdparty::event::StopTextInput(M2_GAME.GetWindow().RawHandle());
 	}
 }  // namespace
 
@@ -55,7 +55,7 @@ UiAction TextInput::OnEvent(Events& events) {
 void TextInput::OnFocusChange() {
 	if (IsFocused()) {
 		LOG_DEBUG("Starting text input");
-		m2::thirdparty::event::StartTextInput(M2_GAME.window.RawHandle());
+		m2::thirdparty::event::StartTextInput(M2_GAME.GetWindow().RawHandle());
 	} else {
 		reset_focus();
 	}
@@ -71,7 +71,7 @@ void TextInput::OnDraw() {
 			str += '_';
 		}
 		// Generate text texture
-		auto textTexture = m2MoveOrThrowError(thirdparty::video::TextTexture::CreateNoWrap(*M2_GAME.renderer, M2_GAME.font,
+		auto textTexture = m2MoveOrThrowError(thirdparty::video::TextTexture::CreateNoWrap(M2_GAME.GetRenderer(), M2_GAME.font,
 				M2G_PROXY.default_font_size, str));
 		// Calculate destination rectangle
 		auto destination_rect = calculate_filled_text_rect(drawable_area(), TextHorizontalAlignment::LEFT, str.c_str());
@@ -79,7 +79,7 @@ void TextInput::OnDraw() {
 		_text_texture_and_destination_cache = thirdparty::video::TextTextureAndDestination{std::move(textTexture), destination_rect};
 	}
 
-	_text_texture_and_destination_cache->first.Render(*M2_GAME.renderer, _text_texture_and_destination_cache->second);
+	_text_texture_and_destination_cache->first.Render(M2_GAME.GetRenderer(), _text_texture_and_destination_cache->second);
 
 	draw_border(Rect(), vertical_border_width_px(), horizontal_border_width_px());
 }
