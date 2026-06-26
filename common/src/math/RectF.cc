@@ -46,6 +46,53 @@ bool m2::RectF::DoesContain(const RectF& other, float tolerance) const {
 		&& IsLessOrEqual(other.y + other.h, y + h, tolerance);
 }
 
+m2::RectF m2::RectF::TrimLeft(const float amount) const {
+	return (amount < w) ? RectF{x + amount, y, w - amount, h} : RectF{x + w, y, 0.0f, h};
+}
+m2::RectF m2::RectF::TrimRight(const float amount) const {
+	return (amount < w) ? RectF{x, y, w - amount, h} : RectF{x, y, 0.0f, h};
+}
+m2::RectF m2::RectF::TrimTop(const float amount) const {
+	return (amount < h) ? RectF{x, y + amount, w, h - amount} : RectF{x, y + h, w, 0.0f};
+}
+m2::RectF m2::RectF::TrimBottom(const float amount) const {
+	return (amount < h) ? RectF{x, y, w, h - amount} : RectF{x, y, w, 0.0f};
+}
+m2::RectF m2::RectF::TrimToAspectRatio(float desired_w, float desired_h) const {
+	auto desired_aspect_ratio = desired_w / desired_h;
+	auto current_aspect_ratio = w / h;
+	if (desired_aspect_ratio == current_aspect_ratio) {
+		return *this;
+	}
+
+	// If desired aspect ratio is wider than current aspect ratio
+	if (current_aspect_ratio < desired_aspect_ratio) {
+		// Trim top and bottom
+		auto desired_height = w / desired_aspect_ratio;
+		auto height_diff = h - desired_height;
+		return this->TrimTop(height_diff / 2.0f).TrimBottom(height_diff / 2.0f);
+	} else {
+		// If desired aspect ratio is longer than current aspect ratio, trim left and right
+		auto desired_width = h * desired_aspect_ratio;
+		auto width_diff = w - desired_width;
+		return this->TrimLeft(width_diff / 2.0f).TrimRight(width_diff / 2.0f);
+	}
+}
+m2::RectF m2::RectF::AlignLeftTo(float _x) const {
+	return {_x, y, w, h};
+}
+m2::RectF m2::RectF::AlignRightTo(float _x2) const {
+	return {_x2 - w, y, w, h};
+}
+m2::RectF m2::RectF::AlignTopTo(float _y) const {
+	return {x, _y, w, h};
+}
+m2::RectF m2::RectF::AlignBottomTo(float _y) const {
+	return {x, _y - h, w, h};
+}
+m2::RectF m2::RectF::AlignCenterTo(float _x, float _y) const {
+	return {_x - w/2.0f, _y - h/2.0f, w, h};
+}
 m2::RectF m2::RectF::Scale(const VecF& axes) const {
 	return {x * axes.GetX(), y * axes.GetY(), w * axes.GetX(), h * axes.GetY()};
 }
@@ -106,6 +153,9 @@ std::vector<m2::VecI> m2::RectF::GetIntersectingCells() const {
 }
 m2::VecF m2::RectF::GetCenterPoint() const {
 	return VecF{x + w / 2.0f, y + h / 2.0f};
+}
+m2::RectF m2::RectF::GetRow(int totalRowCount, int rowIndex) const {
+	return RectF{x, y + h * static_cast<float>(rowIndex) / static_cast<float>(totalRowCount), w, h / static_cast<float>(totalRowCount)};
 }
 
 std::string m2::ToString(const RectF& rect) {

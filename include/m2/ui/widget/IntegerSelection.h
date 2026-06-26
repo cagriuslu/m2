@@ -21,7 +21,7 @@ namespace m2::widget {
 		UiAction SetValue(int value);
 
 	protected:
-		void OnResize(const RectI&, const RectI&) override;
+		void OnResize(const RectF&, const RectF&) override;
 		UiAction OnEvent(Events& events) override;
 		UiAction OnUpdate() override;
 		void OnDraw() override;
@@ -29,7 +29,7 @@ namespace m2::widget {
 	private:
 		[[nodiscard]] const IntegerSelectionBlueprint& VariantBlueprint() const { return std::get<IntegerSelectionBlueprint>(blueprint->variant); }
 
-		[[nodiscard]] RectI CalculateValueDrawArea() const;
-		[[nodiscard]] std::pair<RectI,RectI> CalculatePlusAndMinusButtonDrawArea() const;
+		[[nodiscard]] RectF CalculateValueDrawArea() const;
+		[[nodiscard]] std::pair<RectF,RectF> CalculatePlusAndMinusButtonDrawArea() const;
 	};
 }

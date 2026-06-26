@@ -1,13 +1,13 @@
 #pragma once
 #include <m2/thirdparty/video/Texture.h>
+#include <m2/thirdparty/video/Font.h>
 #include <m2/common/math/VecI.h>
+#include <m2/common/math/RectF.h>
 #include <m2/common/math/RectI.h>
 #include <m2/common/video/Color.h>
 #include <optional>
 #include <string>
 #include <utility>
-
-#include <m2/thirdparty/video/Font.h>
 
 namespace m2::thirdparty::video {
 	class TextTexture {
@@ -23,12 +23,12 @@ namespace m2::thirdparty::video {
 		static expected<TextTexture> CreateWrapped(Renderer& renderer, Font& font, int fontSize, int widthPx, TextHorizontalAlignment horizontalAlignment, const std::string& text, RGBA color = RGBA::White);
 
 		explicit operator bool() const { return _texture.has_value(); }
-		[[nodiscard]] VecI Dimensions() const { return _texture ? _texture->Dimensions() : VecI{}; }
+		[[nodiscard]] VecF Dimensions() const { return _texture ? _texture->Dimensions() : VecF{}; }
 		[[nodiscard]] const std::string& String() const { return _string; }
 
-		void Render(Renderer& renderer, const RectI& dst) const { if (_texture) _texture->Render(renderer, dst); }
-		void RenderWithColorMod(Renderer& renderer, const RectI& dst, const RGB& mod) const { if (_texture) _texture->RenderWithColorMod(renderer, dst, mod); }
+		void Render(Renderer& renderer, const RectF& dst) const { if (_texture) _texture->Render(renderer, dst); }
+		void RenderWithColorMod(Renderer& renderer, const RectF& dst, const RGB& mod) const { if (_texture) _texture->RenderWithColorMod(renderer, dst, mod); }
 	};
 
-	using TextTextureAndDestination = std::pair<TextTexture, RectI>;
+	using TextTextureAndDestination = std::pair<TextTexture, RectF>;
 }

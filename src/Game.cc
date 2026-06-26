@@ -63,7 +63,7 @@ Game::Game() : _windowAndRenderer(CreateWindow2(_proxy.gameFriendlyName.c_str())
 
 	cursor.Load();
 
-	_dimensions.emplace(GetWindow(), GetRenderer(), _proxy.gamePpm, _proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
+	_dimensions.emplace(GetWindow(), _proxy.gamePpm, _proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
 	_dimensions->SetGameHeightM(_proxy.initialGameHeightM);
 
 	_textLabelCache.emplace(GetRenderer(), GetWindow().GetPixelFormat(), font);
@@ -1092,10 +1092,10 @@ void Game::DrawHud() {
 	IF(_level->_semiBlockingUiPanel)->Draw();
 }
 void Game::DrawEnvelopes() {
-	thirdparty::video::FillRectangle(GetRenderer(), _dimensions->TopEnvelope(), RGBA::Black);
-	thirdparty::video::FillRectangle(GetRenderer(), _dimensions->BottomEnvelope(), RGBA::Black);
-	thirdparty::video::FillRectangle(GetRenderer(), _dimensions->LeftEnvelope(), RGBA::Black);
-	thirdparty::video::FillRectangle(GetRenderer(), _dimensions->RightEnvelope(), RGBA::Black);
+	thirdparty::video::FillRectangle(GetRenderer(), RectF{_dimensions->TopEnvelope()}, RGBA::Black);
+	thirdparty::video::FillRectangle(GetRenderer(), RectF{_dimensions->BottomEnvelope()}, RGBA::Black);
+	thirdparty::video::FillRectangle(GetRenderer(), RectF{_dimensions->LeftEnvelope()}, RGBA::Black);
+	thirdparty::video::FillRectangle(GetRenderer(), RectF{_dimensions->RightEnvelope()}, RGBA::Black);
 }
 void Game::FlipBuffers() { GetRenderer().Present(); }
 

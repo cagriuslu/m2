@@ -25,7 +25,7 @@ UiAction IntegerSelection::SetValue(const int value) {
 	return MakeContinueAction();
 }
 
-void IntegerSelection::OnResize(const RectI&, const RectI&) {
+void IntegerSelection::OnResize(const RectF&, const RectF&) {
 	_textTexture = thirdparty::video::TextTextureAndDestination{};
 	_plusTexture = thirdparty::video::TextTextureAndDestination{};
 	_minusTexture = thirdparty::video::TextTextureAndDestination{};
@@ -103,10 +103,10 @@ void IntegerSelection::OnDraw() {
 	draw_border(Rect(), vertical_border_width_px(), horizontal_border_width_px());
 }
 
-RectI IntegerSelection::CalculateValueDrawArea() const {
-	return Rect().TrimRight(Rect().h / 2);
+RectF IntegerSelection::CalculateValueDrawArea() const {
+	return Rect().TrimRight(Rect().h / 2.0f);
 }
-std::pair<RectI,RectI> IntegerSelection::CalculatePlusAndMinusButtonDrawArea() const {
-	const auto buttonsRect = Rect().TrimLeft(Rect().w - Rect().h / 2);
-	return std::make_pair(buttonsRect.TrimBottom(buttonsRect.h / 2), buttonsRect.TrimTop(buttonsRect.h / 2));
+std::pair<RectF,RectF> IntegerSelection::CalculatePlusAndMinusButtonDrawArea() const {
+	const auto buttonsRect = Rect().TrimLeft(Rect().w - Rect().h / 2.0f);
+	return std::make_pair(buttonsRect.TrimBottom(buttonsRect.h / 2.0f), buttonsRect.TrimTop(buttonsRect.h / 2.0f));
 }

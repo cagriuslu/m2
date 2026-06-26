@@ -22,7 +22,7 @@ namespace m2::thirdparty::video {
 
 		[[nodiscard]] void* RawHandle() const { return _font; } // TODO remove
 
-		void SetSize(int pointSize);
+		void SetSize(float pointSize);
 		void SetWrappedAlign(TextHorizontalAlignment horizontalAlignment);
 	};
 }

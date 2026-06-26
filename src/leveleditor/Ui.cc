@@ -407,7 +407,7 @@ namespace {
 		.w = 19, .h = 72,
 		.background_color = {25, 25, 25, 255},
 		.onCreate = [](MAYBE UiPanel& self) {
-			M2_LEVEL.EnablePrimarySelection(M2_GAME.Dimensions().Game());
+			M2_LEVEL.EnablePrimarySelection(RectF{M2_GAME.Dimensions().Game()});
 		},
 		.onDestroy = [] {
 			M2_LEVEL.DisablePrimarySelection();
@@ -480,7 +480,7 @@ namespace {
 		.w = 19, .h = 72,
 		.background_color = {25, 25, 25, 255},
 		.onCreate = [](MAYBE UiPanel& self) {
-			M2_LEVEL.EnablePrimarySelection(M2_GAME.Dimensions().Game());
+			M2_LEVEL.EnablePrimarySelection(RectF{M2_GAME.Dimensions().Game()});
 		},
 		.onDestroy = [] {
 			M2_LEVEL.DisablePrimarySelection();
@@ -596,7 +596,7 @@ namespace {
 		.w = 19, .h = 72,
 		.background_color = {25, 25, 25, 255},
 		.onCreate = [](MAYBE UiPanel& self) {
-			M2_LEVEL.EnablePrimarySelection(M2_GAME.Dimensions().Game());
+			M2_LEVEL.EnablePrimarySelection(RectF{M2_GAME.Dimensions().Game()});
 		},
 		.onDestroy = [] {
 			M2_LEVEL.DisablePrimarySelection();
@@ -653,8 +653,8 @@ namespace {
 		.w = 19, .h = 72,
 		.background_color = {25, 25, 25, 255},
 		.onCreate = [](UiPanel&) {
-			M2_LEVEL.EnablePrimarySelection(M2_GAME.Dimensions().Game());
-			M2_LEVEL.EnableSecondarySelection(M2_GAME.Dimensions().Game());
+			M2_LEVEL.EnablePrimarySelection(RectF{M2_GAME.Dimensions().Game()});
+			M2_LEVEL.EnableSecondarySelection(RectF{M2_GAME.Dimensions().Game()});
 		},
 		.onDestroy = [] {
 			M2_LEVEL.DisablePrimarySelection();
@@ -834,7 +834,7 @@ const UiPanelBlueprint leveleditor::gLeftHudBlueprint = {
         	.variant = TextBlueprint{
         		.text = "Paint Bg",
 				.onAction = [](MAYBE const Text& self) -> UiAction {
-					M2_LEVEL.ReplaceRightHud(&gPaintBgRightHud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().RightHud()));
+					M2_LEVEL.ReplaceRightHud(&gPaintBgRightHud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(RectF{M2_GAME.Dimensions().RightHud()}));
 					return MakeContinueAction();
         		}
         	}
@@ -844,7 +844,7 @@ const UiPanelBlueprint leveleditor::gLeftHudBlueprint = {
         	.variant = TextBlueprint{
         		.text = "Sample Bg",
 				.onAction = [](MAYBE const Text& self) -> UiAction {
-					M2_LEVEL.ReplaceRightHud(&gSampleBgRightHud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().RightHud()));
+					M2_LEVEL.ReplaceRightHud(&gSampleBgRightHud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(RectF{M2_GAME.Dimensions().RightHud()}));
 					return MakeContinueAction();
         		}
         	}
@@ -854,7 +854,7 @@ const UiPanelBlueprint leveleditor::gLeftHudBlueprint = {
         	.variant = TextBlueprint{
         		.text = "Select Bg",
 				.onAction = [](MAYBE const Text& self) -> UiAction {
-					M2_LEVEL.ReplaceRightHud(&gSelectBgRightHud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().RightHud()));
+					M2_LEVEL.ReplaceRightHud(&gSelectBgRightHud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(RectF{M2_GAME.Dimensions().RightHud()}));
 					return MakeContinueAction();
         		}
         	}
@@ -865,7 +865,7 @@ const UiPanelBlueprint leveleditor::gLeftHudBlueprint = {
         	.variant = TextBlueprint{
         		.text = "Place Fg",
 				.onAction = [](MAYBE const Text& self) -> UiAction {
-					M2_LEVEL.ReplaceRightHud(&gPlaceFgRightHud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().RightHud()));
+					M2_LEVEL.ReplaceRightHud(&gPlaceFgRightHud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(RectF{M2_GAME.Dimensions().RightHud()}));
 					return MakeContinueAction();
         		}
         	}
@@ -875,7 +875,7 @@ const UiPanelBlueprint leveleditor::gLeftHudBlueprint = {
             .variant = TextBlueprint{
 				.text = "Sample Fg",
 				.onAction = [](MAYBE const Text& self) -> UiAction {
-					M2_LEVEL.ReplaceRightHud(&gSampleFgRightHud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().RightHud()));
+					M2_LEVEL.ReplaceRightHud(&gSampleFgRightHud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(RectF{M2_GAME.Dimensions().RightHud()}));
 					return MakeContinueAction();
 				}
 			}
@@ -885,7 +885,7 @@ const UiPanelBlueprint leveleditor::gLeftHudBlueprint = {
         	.variant = TextBlueprint{
         		.text = "Select Fg",
 				.onAction = [](MAYBE const Text& self) -> UiAction {
-					M2_LEVEL.ReplaceRightHud(&gSelectFgRightHud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().RightHud()));
+					M2_LEVEL.ReplaceRightHud(&gSelectFgRightHud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(RectF{M2_GAME.Dimensions().RightHud()}));
 					return MakeContinueAction();
         		}
         	}
@@ -905,7 +905,7 @@ const UiPanelBlueprint leveleditor::gLeftHudBlueprint = {
 								M2_LEVEL.ShowMessage("Only one instance of selected object type must be present in the level", 8.0f);
 								return;
 							}
-							M2_LEVEL.ReplaceRightHud(&gDrawFgRightHud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().RightHud()));
+							M2_LEVEL.ReplaceRightHud(&gDrawFgRightHud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(RectF{M2_GAME.Dimensions().RightHud()}));
 							M2_LEVEL.GetRightHud()->state = std::make_unique<DrawFgRightHudState>(typ);
 						});
 					return MakeContinueAction();
@@ -918,7 +918,7 @@ const UiPanelBlueprint leveleditor::gLeftHudBlueprint = {
 			.variant = TextBlueprint{
 				.text = "Cancel",
 				.onAction = [](MAYBE const Text& self) -> UiAction {
-					M2_LEVEL.ReplaceRightHud(&gRightHudBlueprint, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().RightHud()));
+					M2_LEVEL.ReplaceRightHud(&gRightHudBlueprint, UiPanel::RelativeToWindow::CreateAnchoredToPosition(RectF{M2_GAME.Dimensions().RightHud()}));
 					return MakeContinueAction();
 				}
 			}

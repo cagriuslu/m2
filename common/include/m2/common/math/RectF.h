@@ -26,6 +26,8 @@ namespace m2 {
 
 		[[nodiscard]] float GetX2() const { return x + w; }
 		[[nodiscard]] float GetY2() const { return y + h; }
+		[[nodiscard]] float GetXCenter() const { return x + w / 2.0f; }
+		[[nodiscard]] float GetYCenter() const { return y + h / 2.0f; }
 		[[nodiscard]] VecF GetTopLeftPoint() const { return VecF{x, y}; }
 		[[nodiscard]] VecF GetTopRightPoint() const { return VecF{x + w, y}; }
 		[[nodiscard]] VecF GetBottomLeftPoint() const { return VecF{x, y + h}; }
@@ -38,6 +40,16 @@ namespace m2 {
 
 		// Immutable modifiers
 
+		[[nodiscard]] RectF TrimLeft(float amount) const;
+		[[nodiscard]] RectF TrimRight(float amount) const;
+		[[nodiscard]] RectF TrimTop(float amount) const;
+		[[nodiscard]] RectF TrimBottom(float amount) const;
+		[[nodiscard]] RectF TrimToAspectRatio(float w, float h) const;
+		[[nodiscard]] RectF AlignLeftTo(float _x) const;
+		[[nodiscard]] RectF AlignRightTo(float _x2) const;
+		[[nodiscard]] RectF AlignTopTo(float _y) const;
+		[[nodiscard]] RectF AlignBottomTo(float _y) const;
+		[[nodiscard]] RectF AlignCenterTo(float _x, float _y) const;
 		[[nodiscard]] RectF Scale(const VecF& axes) const;
 		[[nodiscard]] RectF Shift(const VecF& direction) const; // Shifts the rect
 		[[nodiscard]] RectF ShiftCoordinateSystemOrigin(const VecF& direction) const; // Shifts the origin of the coordinate system
@@ -45,6 +57,7 @@ namespace m2 {
 		[[nodiscard]] std::optional<RectF> GetIntersection(const RectF& other, float tolerance = 0.001f) const;
 		[[nodiscard]] std::vector<VecI> GetIntersectingCells() const;
 		[[nodiscard]] VecF GetCenterPoint() const;
+		[[nodiscard]] RectF GetRow(int totalRowCount, int rowIndex) const;
 	};
 
 	std::string ToString(const RectF&);

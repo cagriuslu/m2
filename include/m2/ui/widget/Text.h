@@ -22,7 +22,7 @@ namespace m2::widget {
 		void set_color(RGB&& c) { _current_color = c; }
 
 	protected:
-		void OnResize(const RectI& oldRect, const RectI& newRect) override;
+		void OnResize(const RectF& oldRect, const RectF& newRect) override;
 		UiAction OnUpdate() override;
 		void OnDraw() override;
 

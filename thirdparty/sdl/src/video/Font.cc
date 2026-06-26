@@ -22,8 +22,8 @@ Font Font::CreateFromFontFile(const std::filesystem::path& fontFilePath, const i
 	throw M2_ERROR(std::string{"Unable to open font: "} + fontFilePath.string() + ", " + SDL_GetError());
 }
 
-void Font::SetSize(const int pointSize) {
-	TTF_SetFontSize(static_cast<TTF_Font*>(_font), static_cast<float>(pointSize));
+void Font::SetSize(const float pointSize) {
+	TTF_SetFontSize(static_cast<TTF_Font*>(_font), pointSize);
 }
 void Font::SetWrappedAlign(const TextHorizontalAlignment horizontalAlignment) {
 	TTF_SetFontWrapAlignment(static_cast<TTF_Font*>(_font), ToTtfWrapAlignment(horizontalAlignment));

@@ -1,5 +1,6 @@
 #pragma once
 #include <m2/common/Constants.h>
+#include <m2/common/math/VecF.h>
 #include <m2/common/math/VecI.h>
 #include <cstdint>
 #include <optional>
@@ -14,9 +15,9 @@ namespace m2::thirdparty::event {
 	struct WindowResizeEvent {};
 	struct KeyDownEvent   { Scancode scancode; bool isRepeat; };
 	struct KeyUpEvent     { Scancode scancode; bool isRepeat; };
-	struct MouseMotionEvent     { VecI positionPx; };
-	struct MouseButtonDownEvent { MouseButton button; VecI positionPx; };
-	struct MouseButtonUpEvent   { MouseButton button; VecI positionPx; };
+	struct MouseMotionEvent     { VecF positionPx; };
+	struct MouseButtonDownEvent { MouseButton button; VecF positionPx; };
+	struct MouseButtonUpEvent   { MouseButton button; VecF positionPx; };
 	struct MouseWheelEvent      { int32_t horizontal; int32_t vertical; };
 	struct TextInputEvent       { std::string text; };
 
@@ -34,6 +35,6 @@ namespace m2::thirdparty::event {
 	bool IsTextInputActive(void* sdlWindow);
 
 	std::optional<MouseButton> SystemButtonToMouseButton(int sdlButton);
-	VecI GetMousePosition();
+	VecF GetMousePosition();
 	bool IsMouseButtonDown(MouseButton button);
 }

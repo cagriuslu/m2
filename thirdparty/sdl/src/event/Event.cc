@@ -42,15 +42,15 @@ std::optional<Event> m2::thirdparty::event::PollEvent() {
 				return KeyUpEvent{static_cast<Scancode>(sdlEvent.key.scancode),
 						sdlEvent.key.repeat != 0};
 			case SDL_EVENT_MOUSE_MOTION:
-				return MouseMotionEvent{VecI{static_cast<int>(sdlEvent.motion.x), static_cast<int>(sdlEvent.motion.y)}};
+				return MouseMotionEvent{VecF{sdlEvent.motion.x, sdlEvent.motion.y}};
 			case SDL_EVENT_MOUSE_BUTTON_DOWN:
 				if (const auto button = SystemButtonToMouseButton(sdlEvent.button.button)) {
-					return MouseButtonDownEvent{*button, VecI{static_cast<int>(sdlEvent.button.x), static_cast<int>(sdlEvent.button.y)}};
+					return MouseButtonDownEvent{*button, VecF{sdlEvent.button.x, sdlEvent.button.y}};
 				}
 				break;
 			case SDL_EVENT_MOUSE_BUTTON_UP:
 				if (const auto button = SystemButtonToMouseButton(sdlEvent.button.button)) {
-					return MouseButtonUpEvent{*button, VecI{static_cast<int>(sdlEvent.button.x), static_cast<int>(sdlEvent.button.y)}};
+					return MouseButtonUpEvent{*button, VecF{sdlEvent.button.x, sdlEvent.button.y}};
 				}
 				break;
 			case SDL_EVENT_MOUSE_WHEEL:
@@ -81,10 +81,10 @@ void m2::thirdparty::event::StartTextInput(void* sdlWindow)    { SDL_StartTextIn
 void m2::thirdparty::event::StopTextInput(void* sdlWindow)     { SDL_StopTextInput(static_cast<SDL_Window*>(sdlWindow)); }
 bool m2::thirdparty::event::IsTextInputActive(void* sdlWindow) { return SDL_TextInputActive(static_cast<SDL_Window*>(sdlWindow)); }
 
-m2::VecI m2::thirdparty::event::GetMousePosition() {
+m2::VecF m2::thirdparty::event::GetMousePosition() {
 	float x = 0.0f, y = 0.0f;
 	SDL_GetMouseState(&x, &y);
-	return VecI{static_cast<int>(x), static_cast<int>(y)};
+	return VecF{x, y};
 }
 
 bool m2::thirdparty::event::IsMouseButtonDown(const m2::MouseButton button) {

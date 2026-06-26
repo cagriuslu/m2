@@ -25,16 +25,16 @@ m2::VecF m2::CameraToPositionVecPx(const VecF& position) {
 m2::VecF m2::ScreenOriginToPositionVecPx(const VecF& position) {
 	return CameraToPositionVecPx(position) + VecF{M2_GAME.Dimensions().WindowDimensions().x / 2, M2_GAME.Dimensions().WindowDimensions().y / 2 };
 }
-m2::VecF m2::PixelToPositionVecM(const VecI& pixelPosition) {
+m2::VecF m2::PixelToPositionVecM(const VecF& pixelPosition) {
 	if (M2_LEVEL.GetProjectionType() != pb::PARALLEL) {
 		throw M2_ERROR("Unable to calculate pixel position for non-parallel projection");
 	}
 	const auto screenCenterToPixelPositionVectorInPixels =
-			VecI{pixelPosition.x - (M2_GAME.Dimensions().WindowDimensions().x / 2),
-				pixelPosition.y - (M2_GAME.Dimensions().WindowDimensions().y / 2)};
+			VecF{pixelPosition.GetX() - static_cast<float>(M2_GAME.Dimensions().WindowDimensions().x) / 2.0f,
+				pixelPosition.GetY() - static_cast<float>(M2_GAME.Dimensions().WindowDimensions().y) / 2.0f};
 	const auto screenCenterToPixelPositionVectorInMeters =
-			VecF{ToFloat(screenCenterToPixelPositionVectorInPixels.x) / M2_GAME.Dimensions().OutputPixelsPerMeter(),
-				ToFloat(screenCenterToPixelPositionVectorInPixels.y) / M2_GAME.Dimensions().OutputPixelsPerMeter()};
+			VecF{screenCenterToPixelPositionVectorInPixels.GetX() / M2_GAME.Dimensions().OutputPixelsPerMeter(),
+				screenCenterToPixelPositionVectorInPixels.GetY() / M2_GAME.Dimensions().OutputPixelsPerMeter()};
 	const auto camera_position = M2_LEVEL.objects[M2_LEVEL.cameraId].GetPhysique().GetPosition();
 	return screenCenterToPixelPositionVectorInMeters + static_cast<VecF>(camera_position);
 }
@@ -42,8 +42,8 @@ m2::RectF m2::ViewportM() {
 	if (M2_LEVEL.GetProjectionType() != pb::PARALLEL) {
 		throw M2_ERROR("Unable to calculate viewport for non-parallel projection");
 	}
-	const auto top_left = PixelToPositionVecM(VecI{M2_GAME.Dimensions().Game().x, M2_GAME.Dimensions().Game().y});
-	const auto bottom_right = PixelToPositionVecM(VecI{M2_GAME.Dimensions().Game().GetX2(), M2_GAME.Dimensions().Game().GetY2()});
+	const auto top_left = PixelToPositionVecM(VecF{M2_GAME.Dimensions().Game().x, M2_GAME.Dimensions().Game().y});
+	const auto bottom_right = PixelToPositionVecM(VecF{M2_GAME.Dimensions().Game().GetX2(), M2_GAME.Dimensions().Game().GetY2()});
 	return RectF::CreateFromCorners(top_left, bottom_right);
 }
 
@@ -197,11 +197,11 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 
 void m2::Graphic::ColorCell(const VecI& cell, const RGBA& color) {
 	const auto screen_origin_to_cell_center_px = ScreenOriginToPositionVecPx(VecF{cell});
-	const auto rect = RectI{
-		RoundI(screen_origin_to_cell_center_px.GetX() - (M2_GAME.Dimensions().OutputPixelsPerMeter() / 2.0f)),
-		RoundI(screen_origin_to_cell_center_px.GetY() - (M2_GAME.Dimensions().OutputPixelsPerMeter() / 2.0f)),
-		RoundI(M2_GAME.Dimensions().OutputPixelsPerMeter()),
-		RoundI(M2_GAME.Dimensions().OutputPixelsPerMeter())
+	const auto rect = RectF{
+		screen_origin_to_cell_center_px.GetX() - (M2_GAME.Dimensions().OutputPixelsPerMeter() / 2.0f),
+		screen_origin_to_cell_center_px.GetY() - (M2_GAME.Dimensions().OutputPixelsPerMeter() / 2.0f),
+		M2_GAME.Dimensions().OutputPixelsPerMeter(),
+		M2_GAME.Dimensions().OutputPixelsPerMeter()
 	};
 	thirdparty::video::FillRectangle(M2_GAME.GetRenderer(), rect, color);
 }
@@ -211,14 +211,11 @@ void m2::Graphic::ColorRect(const RectF& world_coordinates_m, const RGB& color) 
 void m2::Graphic::ColorRect(const RectF& world_coordinates_m, const RGBA& color) {
 	const auto screen_origin_to_top_left_px = ScreenOriginToPositionVecPx(world_coordinates_m.GetTopLeftPoint());
 	const auto screen_origin_to_bottom_right_px = ScreenOriginToPositionVecPx(world_coordinates_m.GetBottomRightPoint());
-	// TODO using I() and CeilI() is not right, but how not to leave no gaps between sprites?
-	// TODO We can't draw pixel perfect sprites with floating point scaling. Avoid flickering by avoiding highly repeating patterns.
-	// TODO Or, try sub-pixel version with RectF.
-	const auto rect = RectI{
-			I(screen_origin_to_top_left_px.GetX()),
-			I(screen_origin_to_top_left_px.GetY()),
-			CeilI(screen_origin_to_bottom_right_px.GetX() - screen_origin_to_top_left_px.GetX()),
-			CeilI(screen_origin_to_bottom_right_px.GetY() - screen_origin_to_top_left_px.GetY())
+	const auto rect = RectF{
+			screen_origin_to_top_left_px.GetX(),
+			screen_origin_to_top_left_px.GetY(),
+			screen_origin_to_bottom_right_px.GetX() - screen_origin_to_top_left_px.GetX(),
+			screen_origin_to_bottom_right_px.GetY() - screen_origin_to_top_left_px.GetY()
 	};
 	thirdparty::video::FillRectangle(M2_GAME.GetRenderer(), rect, color);
 }
@@ -242,14 +239,14 @@ void m2::Graphic::FillTriangle(const VecF& worldPosition0M, const VecF& worldPos
 		color0, color1, color2);
 }
 void m2::Graphic::DrawCross(const VecF& world_position, const RGBA& color) {
-	const auto draw_position = VecI{ScreenOriginToPositionVecPx(world_position)};
-	thirdparty::video::DrawLine(M2_GAME.GetRenderer(), draw_position + VecI{-9, -9}, draw_position + VecI{10, 10}, color);
-	thirdparty::video::DrawLine(M2_GAME.GetRenderer(), draw_position + VecI{-9, 9}, draw_position + VecI{10, -10}, color);
+	const auto draw_position = ScreenOriginToPositionVecPx(world_position);
+	thirdparty::video::DrawLine(M2_GAME.GetRenderer(), draw_position + VecF{-9, -9}, draw_position + VecF{10, 10}, color);
+	thirdparty::video::DrawLine(M2_GAME.GetRenderer(), draw_position + VecF{-9, 9}, draw_position + VecF{10, -10}, color);
 }
 void m2::Graphic::DrawCross(const VecF& worldPosition, int radiusPx, const RGBA& color) {
-	const auto draw_position = VecI{ScreenOriginToPositionVecPx(worldPosition)};
-	thirdparty::video::DrawLine(M2_GAME.GetRenderer(), draw_position + VecI{-radiusPx, -radiusPx}, draw_position + VecI{radiusPx, radiusPx}, RGBA{color});
-	thirdparty::video::DrawLine(M2_GAME.GetRenderer(), draw_position + VecI{-radiusPx, radiusPx}, draw_position + VecI{radiusPx, -radiusPx}, RGBA{color});
+	const auto draw_position = ScreenOriginToPositionVecPx(worldPosition);
+	thirdparty::video::DrawLine(M2_GAME.GetRenderer(), draw_position + VecF{-radiusPx, -radiusPx}, draw_position + VecF{radiusPx, radiusPx}, RGBA{color});
+	thirdparty::video::DrawLine(M2_GAME.GetRenderer(), draw_position + VecF{-radiusPx, radiusPx}, draw_position + VecF{radiusPx, -radiusPx}, RGBA{color});
 }
 void m2::Graphic::DrawCross(const VecF& worldPosition, const float radiusM, const RGBA& color) {
 	DrawLine(worldPosition + VecF{-radiusM, -radiusM}, worldPosition + VecF{radiusM, radiusM}, color);
@@ -257,8 +254,8 @@ void m2::Graphic::DrawCross(const VecF& worldPosition, const float radiusM, cons
 }
 void m2::Graphic::DrawLine(const VecF& world_position_1, const VecF& world_position_2, const RGBA& color) {
 	if (IsProjectionTypeParallel(M2_LEVEL.GetProjectionType())) {
-		const auto p1 = static_cast<VecI>(ScreenOriginToPositionVecPx(world_position_1));
-		const auto p2 = static_cast<VecI>(ScreenOriginToPositionVecPx(world_position_2));
+		const auto p1 = ScreenOriginToPositionVecPx(world_position_1);
+		const auto p2 = ScreenOriginToPositionVecPx(world_position_2);
 		thirdparty::video::DrawLine(M2_GAME.GetRenderer(), p1, p2, color);
 	} else {
 		const auto p1 = m3::ScreenOriginToProjectionAlongCameraPlaneDstpx(m3::VecF{world_position_1});
@@ -269,8 +266,11 @@ void m2::Graphic::DrawLine(const VecF& world_position_1, const VecF& world_posit
 	}
 }
 void m2::Graphic::DrawVerticalLine(float x, const RGBA& color) {
-	const auto x_px = static_cast<int>(roundf(ScreenOriginToPositionVecPx(VecF{x, 0.0f}).GetX()));
-	thirdparty::video::DrawLine(M2_GAME.GetRenderer(), VecI{x_px, M2_GAME.Dimensions().GameAndHud().y}, VecI{x_px, M2_GAME.Dimensions().GameAndHud().y + M2_GAME.Dimensions().GameAndHud().h}, color);
+	const auto x_px = ScreenOriginToPositionVecPx(VecF{x, 0.0f}).GetX();
+	thirdparty::video::DrawLine(M2_GAME.GetRenderer(),
+		VecF{x_px, static_cast<float>(M2_GAME.Dimensions().GameAndHud().y)},
+		VecF{x_px, static_cast<float>(M2_GAME.Dimensions().GameAndHud().GetY2())},
+		color);
 }
 void m2::Graphic::DrawVerticalLineAbove(const VecF& positionM, const RGBA& color) {
 	const auto positionPx = ScreenOriginToPositionVecPx(positionM);
@@ -287,8 +287,12 @@ void m2::Graphic::DrawVerticalLineBelow(const VecF& positionM, const RGBA& color
 		color);
 }
 void m2::Graphic::DrawHorizontalLine(float y, const RGBA& color) {
-	const auto y_px = static_cast<int>(roundf(ScreenOriginToPositionVecPx(VecF{0.0f, y}).GetY()));
-	thirdparty::video::DrawLine(M2_GAME.GetRenderer(), VecI{M2_GAME.Dimensions().Game().x, y_px}, VecI{M2_GAME.Dimensions().Game().x + M2_GAME.Dimensions().Game().w, y_px}, color);
+	const auto y_px = ScreenOriginToPositionVecPx(VecF{0.0f, y}).GetY();
+	thirdparty::video::DrawLine(
+		M2_GAME.GetRenderer(),
+		VecF{static_cast<float>(M2_GAME.Dimensions().Game().x), y_px},
+		VecF{static_cast<float>(M2_GAME.Dimensions().Game().GetX2()), y_px},
+		color);
 }
 void m2::Graphic::DrawHorizontalLineLeft(const VecF& positionM, const RGBA& color) {
 	const auto positionPx = ScreenOriginToPositionVecPx(positionM);
@@ -307,11 +311,11 @@ void m2::Graphic::DrawHorizontalLineRight(const VecF& positionM, const RGBA& col
 void m2::Graphic::DrawRectangle(const RectF& positionM, const RGBA& color) {
 	const auto screen_origin_to_top_left_px = ScreenOriginToPositionVecPx(positionM.GetTopLeftPoint());
 	const auto screen_origin_to_bottom_right_px = ScreenOriginToPositionVecPx(positionM.GetBottomRightPoint());
-	const auto rect = RectI{
-		I(screen_origin_to_top_left_px.GetX()),
-		I(screen_origin_to_top_left_px.GetY()),
-		CeilI(screen_origin_to_bottom_right_px.GetX() - screen_origin_to_top_left_px.GetX()),
-		CeilI(screen_origin_to_bottom_right_px.GetY() - screen_origin_to_top_left_px.GetY())
+	const auto rect = RectF{
+		screen_origin_to_top_left_px.GetX(),
+		screen_origin_to_top_left_px.GetY(),
+		screen_origin_to_bottom_right_px.GetX() - screen_origin_to_top_left_px.GetX(),
+		screen_origin_to_bottom_right_px.GetY() - screen_origin_to_top_left_px.GetY()
 	};
 	thirdparty::video::DrawRectangle(M2_GAME.GetRenderer(), rect, RGBA{color});
 }
@@ -358,21 +362,17 @@ void m2::DrawTextureIn2dWorld(
 		const VecF& screenOriginToTextureCenterVecInOutputPixels,
 		const float rotationToApplyInRadians) {
 	// Calculate the destination
-	// TODO using I() and ceilf() here is quite problematic, but I couldn't find any other way of ensuring not
-	//  leaving any gaps between sprites
-	// TODO unfortunately, we can't draw pixel perfect sprites with floating point scaling. However, the game can
-	//  avoid flickering by avoiding highly repeating patterns.
-	const auto dstRect = RectI{
-		I(screenOriginToTextureCenterVecInOutputPixels.GetX() - ToFloat(sourceRect.w) * outputToSourcePpmRatio / 2.0f),
-		I(screenOriginToTextureCenterVecInOutputPixels.GetY() - ToFloat(sourceRect.h) * outputToSourcePpmRatio / 2.0f),
-		CeilI(ToFloat(sourceRect.w) * outputToSourcePpmRatio),
-		CeilI(ToFloat(sourceRect.h) * outputToSourcePpmRatio)
+	const auto dstRect = RectF{
+		screenOriginToTextureCenterVecInOutputPixels.GetX() - ToFloat(sourceRect.w) * outputToSourcePpmRatio / 2.0f,
+		screenOriginToTextureCenterVecInOutputPixels.GetY() - ToFloat(sourceRect.h) * outputToSourcePpmRatio / 2.0f,
+		ToFloat(sourceRect.w) * outputToSourcePpmRatio,
+		ToFloat(sourceRect.h) * outputToSourcePpmRatio
 	};
 
 	// Calculate the center point used for rotation origin
 	const auto centerPoint = VecI{
-		RoundI(textureCenterToTextureOriginVecInOutputPixels.GetX()) + dstRect.w / 2,
-		RoundI(textureCenterToTextureOriginVecInOutputPixels.GetY()) + dstRect.h / 2
+		RoundI(textureCenterToTextureOriginVecInOutputPixels.GetX() + dstRect.w / 2.0f),
+		RoundI(textureCenterToTextureOriginVecInOutputPixels.GetY() + dstRect.h / 2.0f)
 	};
 
 	sourceTexture.Render(M2_GAME.GetRenderer(), sourceRect, dstRect, ToDegrees(rotationToApplyInRadians - originalRotationOfSourceTextureInRadians), centerPoint);

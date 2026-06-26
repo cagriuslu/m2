@@ -38,15 +38,15 @@ namespace m2 {
 		public:
 			explicit TextLabelGenerator(thirdparty::video::Renderer& renderer, const uint32_t dynamicSheetPixelFormat, thirdparty::video::Font& font) : _dynamicSheet(renderer, dynamicSheetPixelFormat), _font(font) {}
 			[[nodiscard]] const thirdparty::video::Texture& Texture() const { return _dynamicSheet.Texture(); }
-			RectI operator()(const std::tuple<std::string,int>& item);
+			RectI operator()(const std::tuple<std::string,float>& item);
 		};
 		/// Hash function used in Cache
 		struct TextLabelHash {
-			size_t operator()(const std::tuple<std::string,int>& item) const;
+			size_t operator()(const std::tuple<std::string,float>& item) const;
 		};
 
 		Cache<
-			std::tuple<std::string,int>, // Key
+			std::tuple<std::string,float>, // Key
 			RectI, // Value
 			TextLabelGenerator, // Value generator
 			TextLabelHash // Key hash function
@@ -61,6 +61,6 @@ namespace m2 {
 
 		// Modifiers
 
-		RectI Create(const std::string& text, const int fontSize) { return _cache(std::make_tuple(text, fontSize)); }
+		RectI Create(const std::string& text, const float fontSize) { return _cache(std::make_tuple(text, fontSize)); }
 	};
 }

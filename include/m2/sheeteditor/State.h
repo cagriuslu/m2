@@ -14,7 +14,7 @@ namespace m2::sheeteditor {
 
 		m2g::pb::SpriteType _selected_sprite_type{};
 		std::optional<thirdparty::video::Texture> _texture;
-		VecI _textureDimensions;
+		VecF _textureDimensions;
 		int _ppm{};
 
 	public:

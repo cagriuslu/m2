@@ -22,7 +22,7 @@ TextInput::TextInput(UiPanel* parent, const UiWidgetBlueprint* blueprint) : UiWi
 }
 
 UiAction TextInput::OnEvent(Events& events) {
-	if (events.PopMouseButtonPress(MouseButton::PRIMARY, RectI{Rect()})) {
+	if (events.PopMouseButtonPress(MouseButton::PRIMARY, Rect())) {
 		LOG_INFO("Regaining focus");
 		return MakeContinueAction(true);
 	}

@@ -1,22 +1,15 @@
 #include <m2/thirdparty/video/Renderer.h>
+#include <m2/thirdparty/video/Window.h>
 #include "SdlConversions.h"
 #include <SDL3/SDL.h>
 #include <vector>
-#include <format>
 
-m2::expected<m2::thirdparty::video::Renderer> m2::thirdparty::video::Renderer::Create(void* sdlWindow) {
-	auto* rawRenderer = SDL_CreateRenderer(static_cast<SDL_Window*>(sdlWindow), nullptr);
-	if (not rawRenderer) {
-		return make_unexpected(std::format("SDL_CreateRenderer error: {}", SDL_GetError()));
-	}
-	SDL_SetRenderDrawBlendMode(rawRenderer, SDL_BLENDMODE_BLEND);
-	return Renderer{rawRenderer};
-}
-
-m2::thirdparty::video::Renderer::Renderer(Renderer&& other) noexcept : _renderer(other._renderer) {
+m2::thirdparty::video::Renderer::Renderer(Renderer&& other) noexcept : _window(other._window), _renderer(other._renderer) {
+	other._window = nullptr;
 	other._renderer = nullptr;
 }
 m2::thirdparty::video::Renderer& m2::thirdparty::video::Renderer::operator=(Renderer&& other) noexcept {
+	std::swap(_window, other._window);
 	std::swap(_renderer, other._renderer);
 	return *this;
 }
@@ -27,10 +20,18 @@ m2::thirdparty::video::Renderer::~Renderer() {
 	}
 }
 
-m2::VecI m2::thirdparty::video::Renderer::GetOutputSize() const {
-	int w, h;
-	SDL_GetCurrentRenderOutputSize(static_cast<SDL_Renderer*>(_renderer), &w, &h);
-	return {w, h};
+m2::VecF m2::thirdparty::video::Renderer::GetPixelsPerWindowUnit() const {
+	int pixelsX, pixelsY;
+	if (not SDL_GetWindowSizeInPixels(static_cast<SDL_Window*>(_window), &pixelsX, &pixelsY)) {
+		throw M2_ERROR(std::format("SDL_GetWindowSizeInPixels error: {}", SDL_GetError()));
+	}
+
+	int x,y;
+	if (not SDL_GetWindowSize(static_cast<SDL_Window*>(_window), &x, &y)) {
+		throw M2_ERROR(std::format("SDL_GetWindowSize error: {}", SDL_GetError()));
+	}
+
+	return {static_cast<float>(pixelsX) / static_cast<float>(x), static_cast<float>(pixelsY) / static_cast<float>(y)};
 }
 std::string m2::thirdparty::video::Renderer::GetName() const {
 	const char* name = SDL_GetRendererName(static_cast<SDL_Renderer*>(_renderer));
@@ -47,15 +48,17 @@ void m2::thirdparty::video::Renderer::Present() {
 	SDL_RenderPresent(static_cast<SDL_Renderer*>(_renderer));
 }
 
-void m2::thirdparty::video::Renderer::DrawLineStrip(const std::span<const VecF> pointsPx, const RGBA& color) {
+void m2::thirdparty::video::Renderer::DrawLineStrip(const std::span<const VecF> points, const RGBA& color) {
+	const auto pixelsPerUnit = GetPixelsPerWindowUnit();
+
 	auto* sdlRenderer = static_cast<SDL_Renderer*>(_renderer);
 	if (not SDL_SetRenderDrawColor(sdlRenderer, color.r, color.g, color.b, color.a)) {
 		throw M2_ERROR(std::string{"SDL_SetRenderDrawColor error: "} + SDL_GetError());
 	}
 	std::vector<SDL_FPoint> sdlPoints;
-	sdlPoints.reserve(pointsPx.size());
-	for (const auto& point : pointsPx) {
-		sdlPoints.push_back(ToSdlFPoint(point));
+	sdlPoints.reserve(points.size());
+	for (const auto& point : points) {
+		sdlPoints.push_back(ToSdlFPoint(point.Scale(pixelsPerUnit)));
 	}
 	if (not SDL_RenderLines(sdlRenderer, sdlPoints.data(), I(sdlPoints.size()))) {
 		throw M2_ERROR(std::string{"SDL_RenderLines error: "} + SDL_GetError());

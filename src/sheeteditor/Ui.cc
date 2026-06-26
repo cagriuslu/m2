@@ -13,8 +13,8 @@ namespace {
 		.w = 19, .h = 72,
 		.background_color = {0, 0, 0, 255},
 		.onCreate = [](UiPanel&) {
-			M2_LEVEL.EnablePrimarySelection(M2_GAME.Dimensions().Game());
-			M2_LEVEL.EnableSecondarySelection(M2_GAME.Dimensions().Game());
+			M2_LEVEL.EnablePrimarySelection(RectF{M2_GAME.Dimensions().Game()});
+			M2_LEVEL.EnableSecondarySelection(RectF{M2_GAME.Dimensions().Game()});
 		},
 		.onDestroy = [] {
 			M2_LEVEL.DisablePrimarySelection();
@@ -76,8 +76,8 @@ namespace {
 		.w = 19, .h = 72,
 		.background_color = {0, 0, 0, 255},
 		.onCreate = [](UiPanel&) {
-			M2_LEVEL.EnablePrimarySelection(M2_GAME.Dimensions().Game());
-			M2_LEVEL.EnableSecondarySelection(M2_GAME.Dimensions().Game());
+			M2_LEVEL.EnablePrimarySelection(RectF{M2_GAME.Dimensions().Game()});
+			M2_LEVEL.EnableSecondarySelection(RectF{M2_GAME.Dimensions().Game()});
 		},
 		.onDestroy = [] {
 			M2_LEVEL.DisablePrimarySelection();
@@ -139,7 +139,7 @@ namespace {
 		.w = 19, .h = 72,
 		.background_color = {0, 0, 0, 255},
 		.onCreate = [](UiPanel&) {
-			M2_LEVEL.EnablePrimarySelection(M2_GAME.Dimensions().Game());
+			M2_LEVEL.EnablePrimarySelection(RectF{M2_GAME.Dimensions().Game()});
 		},
 		.onDestroy = [] {
 			M2_LEVEL.DisablePrimarySelection();
@@ -267,7 +267,7 @@ const UiPanelBlueprint m2::sheet_editor_left_hud = {
 				.text = "Foreground Companion",
 				.wrapped_font_size_in_units = 2.4f,
 				.onAction = [](MAYBE const widget::Text& self) -> UiAction {
-					M2_LEVEL.ReplaceRightHud(&foregroundCompanionModeRightHud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().RightHud()));
+					M2_LEVEL.ReplaceRightHud(&foregroundCompanionModeRightHud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(RectF{M2_GAME.Dimensions().RightHud()}));
 					return MakeContinueAction();
 				}
 			}
@@ -278,7 +278,7 @@ const UiPanelBlueprint m2::sheet_editor_left_hud = {
 				.text = "Rect",
 				.wrapped_font_size_in_units = 2.4f,
 				.onAction = [](MAYBE const widget::Text& self) -> UiAction {
-					M2_LEVEL.ReplaceRightHud(&rectModeRightHud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().RightHud()));
+					M2_LEVEL.ReplaceRightHud(&rectModeRightHud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(RectF{M2_GAME.Dimensions().RightHud()}));
 					return MakeContinueAction();
 				}
 			}
@@ -289,7 +289,7 @@ const UiPanelBlueprint m2::sheet_editor_left_hud = {
 				.text = "Fixture",
 				.wrapped_font_size_in_units = 2.4f,
 				.onAction = [](MAYBE const widget::Text& self) -> UiAction {
-					M2_LEVEL.ReplaceRightHud(&fixtureModeRightHud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().RightHud()));
+					M2_LEVEL.ReplaceRightHud(&fixtureModeRightHud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(RectF{M2_GAME.Dimensions().RightHud()}));
 					return MakeContinueAction();
 				}
 			}
@@ -300,7 +300,7 @@ const UiPanelBlueprint m2::sheet_editor_left_hud = {
 				.text = "Cancel",
 				.wrapped_font_size_in_units = 2.4f,
 				.onAction = [](MAYBE const widget::Text& self) -> UiAction {
-					M2_LEVEL.ReplaceRightHud(&sheet_editor_right_hud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().RightHud()));
+					M2_LEVEL.ReplaceRightHud(&sheet_editor_right_hud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(RectF{M2_GAME.Dimensions().RightHud()}));
 					return MakeContinueAction();
 				}
 			}
@@ -381,7 +381,7 @@ const UiPanelBlueprint m2::sheet_editor_main_menu = {
 				.onAction = [](MAYBE const widget::Text& self) -> UiAction {
 					if (const auto selections = self.Parent().FindWidget<widget::TextSelection>("SpriteTypeSelection")->GetSelectedOptions();
 							not selections.empty()) {
-						M2_LEVEL.ReplaceRightHud(&sheet_editor_right_hud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(M2_GAME.Dimensions().RightHud()));
+						M2_LEVEL.ReplaceRightHud(&sheet_editor_right_hud, UiPanel::RelativeToWindow::CreateAnchoredToPosition(RectF{M2_GAME.Dimensions().RightHud()}));
 						const auto selectedSprite = static_cast<m2g::pb::SpriteType>(I(selections[0]));
 						std::get<sheeteditor::State>(M2_LEVEL.stateVariant).Select(selectedSprite);
 						return MakeReturnAction();

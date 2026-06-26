@@ -176,7 +176,7 @@ bool Events::PopKeyRelease(const m2g::pb::KeyType key) {
 	return false;
 }
 
-std::optional<VecI> Events::PeekMouseButtonPress(const MouseButton mb) const {
+std::optional<VecF> Events::PeekMouseButtonPress(const MouseButton mb) const {
 	if (_mouseActions[U(mb)].type == MouseActionType::PRESSED) {
 		return _mouseActions[U(mb)].positionPx;
 	}
@@ -189,20 +189,20 @@ bool Events::PopMouseButtonPress(const MouseButton mb) {
 	}
 	return false;
 }
-std::optional<VecI> Events::PeekMouseButtonPress(const MouseButton mb, const RectI& rect) const {
+std::optional<VecF> Events::PeekMouseButtonPress(const MouseButton mb, const RectF& rect) const {
 	if (const auto position = PeekMouseButtonPress(mb); position && rect.DoesContain(*position)) {
 		return position;
 	}
 	return std::nullopt;
 }
-bool Events::PopMouseButtonPress(const MouseButton mb, const RectI& rect) {
+bool Events::PopMouseButtonPress(const MouseButton mb, const RectF& rect) {
 	if (PeekMouseButtonPress(mb) && rect.DoesContain(_mouseActions[U(mb)].positionPx)) {
 		_mouseActions[U(mb)].type = MouseActionType::NO_ACTION;
 		return true;
 	}
 	return false;
 }
-std::optional<VecI> Events::PeekMouseButtonRelease(const MouseButton mb) const {
+std::optional<VecF> Events::PeekMouseButtonRelease(const MouseButton mb) const {
 	if (_mouseActions[U(mb)].type == MouseActionType::RELEASED) {
 		return _mouseActions[U(mb)].positionPx;
 	}
@@ -215,20 +215,20 @@ bool Events::PopMouseButtonRelease(const MouseButton mb) {
 	}
 	return false;
 }
-std::optional<VecI> Events::PeekMouseButtonRelease(const MouseButton mb, const RectI& rect) const {
+std::optional<VecF> Events::PeekMouseButtonRelease(const MouseButton mb, const RectF& rect) const {
 	if (const auto position = PeekMouseButtonRelease(mb); position && rect.DoesContain(*position)) {
 		return position;
 	}
 	return std::nullopt;
 }
-bool Events::PopMouseButtonRelease(const MouseButton mb, const RectI& rect) {
+bool Events::PopMouseButtonRelease(const MouseButton mb, const RectF& rect) {
 	if (PeekMouseButtonRelease(mb) && rect.DoesContain(_mouseActions[U(mb)].positionPx)) {
 		_mouseActions[U(mb)].type = MouseActionType::NO_ACTION;
 		return true;
 	}
 	return false;
 }
-void Events::ClearMouseButtonActions(const RectI& rect) {
+void Events::ClearMouseButtonActions(const RectF& rect) {
 	for (unsigned i = 0; i < U(MouseButton::end); ++i) {
 		if (rect.DoesContain(_mouseActions[i].positionPx)) {
 			_mouseActions[i].type = MouseActionType::NO_ACTION;
@@ -241,7 +241,7 @@ int32_t Events::PopMouseWheelVerticalScroll() {
 	_verticalScrollCount = 0;
 	return value;
 }
-int32_t Events::PopMouseWheelVerticalScroll(const RectI& rect) {
+int32_t Events::PopMouseWheelVerticalScroll(const RectF& rect) {
 	if (rect.DoesContain(MousePosition())) { // TODO instead of MousePosition, store the position of the mouse when the event occurred
 		const auto value = _verticalScrollCount;
 		_verticalScrollCount = 0;
@@ -254,7 +254,7 @@ int32_t Events::PopMouseWheelHorizontalScroll() {
 	_horizontalScrollCount = 0;
 	return value;
 }
-int32_t Events::PopMouseWheelHorizontalScroll(const RectI& rect) {
+int32_t Events::PopMouseWheelHorizontalScroll(const RectF& rect) {
 	if (rect.DoesContain(MousePosition())) { // TODO instead of MousePosition, store the position of the mouse when the event occurred
 		const auto value = _horizontalScrollCount;
 		_horizontalScrollCount = 0;
@@ -262,7 +262,7 @@ int32_t Events::PopMouseWheelHorizontalScroll(const RectI& rect) {
 	}
 	return 0;
 }
-void Events::ClearMouseWheelScrolls(const RectI& rect) {
+void Events::ClearMouseWheelScrolls(const RectF& rect) {
 	if (rect.DoesContain(MousePosition())) { // TODO instead of MousePosition, store the position of the mouse when the event occurred
 		_verticalScrollCount = 0;
 		_horizontalScrollCount = 0;
@@ -277,7 +277,7 @@ std::optional<std::string> Events::PopTextInput() {
 	return {};
 }
 
-void Events::ClearMouseButtonDown(const RectI& rect) {
+void Events::ClearMouseButtonDown(const RectF& rect) {
 	if (rect.DoesContain(MousePosition())) {
 		_downButtons = {};
 	}

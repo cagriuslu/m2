@@ -46,11 +46,11 @@ namespace m2 {
 
 		std::optional<std::set<ObjectId>> _dimmingExceptions;
 		std::optional<Selection> _primarySelection, _secondarySelection;
-		/// If set, the map is being panned by the player. VecI contains the position of the mouse in screen coordinates
-		/// when the panning began. VecF contains the position of the mouse in world coordinates when the panning began.
+		/// If set, the map is being panned by the player. First VecF contains the position of the mouse in screen coordinates
+		/// when the panning began. Second VecF contains the position of the mouse in world coordinates when the panning began.
 		/// In panning mode, mouse states are not cleared by UI elements so that panning the map is possible even
 		/// thought the mouse spills into UI elements.
-		std::optional<std::pair<VecI, VecF>> _panBeginPosition;
+		std::optional<std::pair<VecF, VecF>> _panBeginPosition;
 
 		// UI panels (the order is significant)
 
@@ -138,7 +138,7 @@ namespace m2 {
 		float GetHorizontalFov() const;
 		Object* GetPlayer() { return objects.Get(playerId); }
 		Object* GetCamera() { return objects.Get(cameraId); }
-		VecF GetWorldPositionOfPixel(const VecI&) const;
+		VecF GetWorldPositionOfPixel(const VecF&) const;
 
 		// Modifiers
 
@@ -172,8 +172,8 @@ namespace m2 {
 
 		// Selection control
 
-		void EnablePrimarySelection(RectI screenBoundaryPx) { _primarySelection.emplace(screenBoundaryPx); }
-		void EnableSecondarySelection(RectI screenBoundaryPx) { _secondarySelection.emplace(screenBoundaryPx); }
+		void EnablePrimarySelection(RectF screenBoundaryPx) { _primarySelection.emplace(screenBoundaryPx); }
+		void EnableSecondarySelection(RectF screenBoundaryPx) { _secondarySelection.emplace(screenBoundaryPx); }
 		Selection* GetPrimarySelection() { return _primarySelection ? &*_primarySelection : nullptr; }
 		Selection* GetSecondarySelection() { return _secondarySelection ? &*_secondarySelection : nullptr; }
 		void DisablePrimarySelection() { _primarySelection.reset(); }
@@ -185,7 +185,7 @@ namespace m2 {
 		bool IsPanning() const;
 		/// If set, the map is being panned by the player. VecI contains the position of the mouse in screen coordinates
 		/// when the panning began. VecF contains the position of the mouse in world coordinates when the panning began.
-		std::optional<std::pair<VecI,VecF>> GetPanBeginPosition() const;
+		std::optional<std::pair<VecF,VecF>> GetPanBeginPosition() const;
 		void EndPanning();
 
 		// UI control
@@ -258,7 +258,7 @@ namespace m2 {
 		void_expected ResetBulkSheetEditor();
 
 		/// Returns the position with respect to GameAndHud
-		VecI CalculateMouseHoverUiPanelTopLeftPosition() const;
+		VecF CalculateMouseHoverUiPanelTopLeftPosition() const;
 
 		friend class Game;
 	};

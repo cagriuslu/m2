@@ -88,10 +88,10 @@ Texture Texture::CreateFromImageFile(Renderer& renderer, const std::filesystem::
 	return Texture{texture};
 }
 
-VecI Texture::Dimensions() const {
+VecF Texture::Dimensions() const {
 	float w = 0.0f, h = 0.0f;
 	SDL_GetTextureSize(static_cast<SDL_Texture*>(_texture), &w, &h);
-	return {static_cast<int>(w), static_cast<int>(h)};
+	return {w, h};
 }
 
 void Texture::DrawOnto(Renderer& renderer, const std::function<void()>& draw) {
@@ -105,23 +105,26 @@ void Texture::DrawOnto(Renderer& renderer, const std::function<void()>& draw) {
 void Texture::RenderToWindow(Renderer& renderer) const {
 	SDL_RenderTexture(static_cast<SDL_Renderer*>(renderer.RawHandle()), static_cast<SDL_Texture*>(_texture), nullptr, nullptr);
 }
-void Texture::Render(Renderer& renderer, const RectI& destinationPx) const {
-	const auto sdlRect = ToSdlFRect(destinationPx);
+void Texture::Render(Renderer& renderer, const RectF& destination) const {
+	const auto destPx = destination.Scale(renderer.GetPixelsPerWindowUnit());
+	const auto sdlRect = ToSdlFRect(destPx);
 	SDL_RenderTexture(static_cast<SDL_Renderer*>(renderer.RawHandle()), static_cast<SDL_Texture*>(_texture), nullptr, &sdlRect);
 }
-void Texture::Render(Renderer& renderer, const RectI& sourceRect, const RectI& destinationRect) const {
+void Texture::Render(Renderer& renderer, const RectI& sourceRect, const RectF& destination) const {
+	const auto destPx = destination.Scale(renderer.GetPixelsPerWindowUnit());
 	const auto sdlSrc = ToSdlFRect(sourceRect);
-	const auto sdlDst = ToSdlFRect(destinationRect);
+	const auto sdlDst = ToSdlFRect(destPx);
 	SDL_RenderTexture(static_cast<SDL_Renderer*>(renderer.RawHandle()), static_cast<SDL_Texture*>(_texture), &sdlSrc, &sdlDst);
 }
-void Texture::RenderWithColorMod(Renderer& renderer, const RectI& destinationPx, const RGB& mod) const {
+void Texture::RenderWithColorMod(Renderer& renderer, const RectF& destination, const RGB& mod) const {
 	SDL_SetTextureColorMod(static_cast<SDL_Texture*>(_texture), mod.r, mod.g, mod.b);
-	Texture::Render(renderer, destinationPx);
+	Texture::Render(renderer, destination);
 	SDL_SetTextureColorMod(static_cast<SDL_Texture*>(_texture), 255, 255, 255);
 }
-void Texture::Render(Renderer& renderer, const RectI& sourceRect, const RectI& destinationRect, const double angleDegrees, const VecI& rotationCenter) const {
+void Texture::Render(Renderer& renderer, const RectI& sourceRect, const RectF& destination, const double angleDegrees, const VecI& rotationCenter) const {
 	const auto sdlSrc = ToSdlFRect(sourceRect);
-	const auto sdlDst = ToSdlFRect(destinationRect);
+	const auto destPx = destination.Scale(renderer.GetPixelsPerWindowUnit());
+	const auto sdlDst = ToSdlFRect(destPx);
 	const auto sdlCenter = SDL_FPoint{static_cast<float>(rotationCenter.x), static_cast<float>(rotationCenter.y)};
 	if (not SDL_RenderTextureRotated(static_cast<SDL_Renderer*>(renderer.RawHandle()),
 			static_cast<SDL_Texture*>(_texture), &sdlSrc, &sdlDst, angleDegrees, &sdlCenter,
@@ -129,11 +132,13 @@ void Texture::Render(Renderer& renderer, const RectI& sourceRect, const RectI& d
 		throw M2_ERROR(std::string{"SDL_RenderTextureRotated failed: "} + SDL_GetError());
 	}
 }
-void Texture::RenderGeometry(Renderer& renderer, std::span<const VecF> positionsPx, std::span<const VecF> texCoords, std::span<const int> indices) const {
-	std::vector<SDL_Vertex> vertices(positionsPx.size());
-	for (size_t i = 0; i < positionsPx.size(); ++i) {
+void Texture::RenderGeometry(Renderer& renderer, std::span<const VecF> positions, std::span<const VecF> texCoords, std::span<const int> indices) const {
+	const auto pixelsPerUnit = renderer.GetPixelsPerWindowUnit();
+
+	std::vector<SDL_Vertex> vertices(positions.size());
+	for (size_t i = 0; i < positions.size(); ++i) {
 		vertices[i] = SDL_Vertex{
-			.position = ToSdlFPoint(positionsPx[i]),
+			.position = ToSdlFPoint(positions[i].Scale(pixelsPerUnit)),
 			.color = SDL_FColor{1.0f, 1.0f, 1.0f, 1.0f},
 			.tex_coord = ToSdlFPoint(texCoords[i])};
 	}

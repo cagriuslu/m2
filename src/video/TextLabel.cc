@@ -64,19 +64,19 @@ void m2::SlowDrawSystemTextIn2dWorld(const char* str, const VecF& position) {
 	DrawTextureIn2dWorld(texture, srcRect, 0.0f, 1.0f, {}, ScreenOriginToPositionVecPx(position), 0.0f);
 }
 
-m2::RectI m2::TextLabelCache::TextLabelGenerator::operator()(const std::tuple<std::string,int>& item) {
+m2::RectI m2::TextLabelCache::TextLabelGenerator::operator()(const std::tuple<std::string,float>& item) {
 	// Sets the font size as a side effect, then renders at that size
-	const auto renderedSize = thirdparty::video::CalculateRenderedUtf8Size(_font, I(item), std::get<std::string>(item).c_str());
+	const auto renderedSize = thirdparty::video::CalculateRenderedUtf8Size(_font, std::get<float>(item), std::get<std::string>(item).c_str());
 
 	// Render to new surface
 	auto renderSurface = thirdparty::video::Surface::RenderTextBlended(_font, std::get<std::string>(item), RGBA{255, 255, 255, 255});
 
 	// Blit new surface to allocated surface
-	return *_dynamicSheet.AllocateAndMutate(renderedSize.x, renderedSize.y, [&](thirdparty::video::Surface& surface, const RectI& area) {
+	return *_dynamicSheet.AllocateAndMutate(CeilI(renderedSize.GetX()), CeilI(renderedSize.GetY()), [&](thirdparty::video::Surface& surface, const RectI& area) {
 		m2SucceedOrThrowError(surface.Blit(renderSurface, std::nullopt, area));
 	}, false);
 }
 
-size_t m2::TextLabelCache::TextLabelHash::operator()(const std::tuple<std::string,int>& item) const {
-	return std::hash<std::string>{}(std::get<0>(item)) ^ std::hash<int>{}(std::get<1>(item));
+size_t m2::TextLabelCache::TextLabelHash::operator()(const std::tuple<std::string,float>& item) const {
+	return std::hash<std::string>{}(std::get<0>(item)) ^ std::hash<float>{}(std::get<1>(item));
 }

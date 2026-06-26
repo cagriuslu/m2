@@ -11,10 +11,12 @@ namespace m2::thirdparty::video {
 namespace m2 {
     class GameDimensions final {
         const thirdparty::video::Window& _window;
-        thirdparty::video::Renderer& _renderer;
         int _gamePpm, _gameAspectRatioMul, _gameAspectRatioDiv;
 
         float _scale;
+
+        // All of these numbers are in "window coordinates", not pixel coordinates.
+
         RectI _topEnvelope, _bottomEnvelope, _leftEnvelope, _rightEnvelope;
         RectI _gameAndHud, _game;
         RectI _leftHud, _rightHud;
@@ -22,7 +24,7 @@ namespace m2 {
 
     public:
         /// This constructor assumes the initial aspect ratio of the window is exact, thus requires no envelope.
-        GameDimensions(const thirdparty::video::Window& window, thirdparty::video::Renderer& renderer, int gamePpm, int gameAspectRatioMul, int gameAspectRatioDiv);
+        GameDimensions(const thirdparty::video::Window& window, int gamePpm, int gameAspectRatioMul, int gameAspectRatioDiv);
 
         // Accessors
 

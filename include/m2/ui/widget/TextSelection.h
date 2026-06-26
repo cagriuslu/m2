@@ -41,7 +41,7 @@ namespace m2::widget {
 		void SetUniqueSelectionIndex(int index);
 
 	protected:
-		void OnResize(const RectI& oldRect, const RectI& newRect) override;
+		void OnResize(const RectF& oldRect, const RectF& newRect) override;
 		void OnHover() override;
 		void OffHover() override;
 		UiAction OnEvent(Events& events) override;
@@ -51,11 +51,11 @@ namespace m2::widget {
 	private:
 		[[nodiscard]] const TextSelectionBlueprint& VariantBlueprint() const { return std::get<TextSelectionBlueprint>(blueprint->variant); }
 		/// Returns the coordinates of the whole text area.
-		[[nodiscard]] RectI GetTextRects() const;
+		[[nodiscard]] RectF GetTextRects() const;
 		/// Returns the coordinates of the text area of the given row. Row is ignored if not scrollable list.
-		[[nodiscard]] RectI GetTextRectOfRow(int row = 0) const;
+		[[nodiscard]] RectF GetTextRectOfRow(int row = 0) const;
 		/// Returns option-index-and-text-rect pair of the given row. Row is ignored if not scrollable list.
-		[[nodiscard]] std::optional<std::pair<int,RectI>> GetOptionIndexAndTextRectOfRow(int row = 0) const;
+		[[nodiscard]] std::optional<std::pair<int,RectF>> GetOptionIndexAndTextRectOfRow(int row = 0) const;
 		void RenewHoverIfNecessary();
 		UiAction IncrementSelection();
 		UiAction DecrementSelection();

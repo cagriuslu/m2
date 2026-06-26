@@ -48,7 +48,7 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj, const m2::VecF& positi
 	phy.preStep = [&o = obj](m2::Physique& phy_, const m2::Stopwatch::Duration&) {
 		auto& impl = dynamic_cast<HumanPlayer&>(*std::get<std::unique_ptr<m2::HeapObjectImpl>>(o.impl));
 		// Start map movement with mouse
-		if (M2_GAME.events.PopMouseButtonPress(m2::MouseButton::PRIMARY, M2_GAME.Dimensions().Game())) {
+		if (M2_GAME.events.PopMouseButtonPress(m2::MouseButton::PRIMARY, m2::RectF{M2_GAME.Dimensions().Game()})) {
 			LOG_TRACE("Begin panning");
 			M2_LEVEL.BeginPanning();
 		} else if (M2_LEVEL.IsPanning() && not M2_GAME.events.IsMouseButtonDown(m2::MouseButton::PRIMARY)) {
@@ -64,7 +64,7 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj, const m2::VecF& positi
 		}
 
 		constexpr float zoom_step = 1.2f;
-		if (auto scroll = M2_GAME.events.PopMouseWheelVerticalScroll(M2_GAME.Dimensions().Game()); 0 < scroll) {
+		if (auto scroll = M2_GAME.events.PopMouseWheelVerticalScroll(m2::RectF{M2_GAME.Dimensions().Game()}); 0 < scroll) {
 			if (20.0f < M2_GAME.Dimensions().GameM().GetY()) {
 				M2_GAME.SetScale(M2_GAME.Dimensions().Scale() * zoom_step);
 			}

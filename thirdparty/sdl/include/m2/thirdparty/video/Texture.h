@@ -33,18 +33,18 @@ namespace m2::thirdparty::video {
 		virtual ~Texture();
 
 		[[nodiscard]] void* RawHandle() const { return _texture; } // TODO remove this, this class should do the drawing instead
-		[[nodiscard]] VecI Dimensions() const;
+		[[nodiscard]] VecF Dimensions() const;
 
 		/// Sets this texture as the render target, runs `draw`, then restores the previous render target.
 		void DrawOnto(Renderer& renderer, const std::function<void()>& draw);
 
 		/// Copies this texture over the whole current render target (the window).
 		void RenderToWindow(Renderer& renderer) const;
-		void Render(Renderer& renderer, const RectI& destinationPx) const;
-		void Render(Renderer& renderer, const RectI& sourceRect, const RectI& destinationRect) const;
-		void RenderWithColorMod(Renderer& renderer, const RectI& destinationPx, const RGB& mod) const;
-		void Render(Renderer& renderer, const RectI& sourceRect, const RectI& destinationRect, double angleDegrees, const VecI& rotationCenter) const;
-		void RenderGeometry(Renderer& renderer, std::span<const VecF> positionsPx, std::span<const VecF> texCoords, std::span<const int> indices) const;
+		void Render(Renderer& renderer, const RectF& destination) const;
+		void Render(Renderer& renderer, const RectI& sourceRect, const RectF& destination) const;
+		void RenderWithColorMod(Renderer& renderer, const RectF& destination, const RGB& mod) const;
+		void Render(Renderer& renderer, const RectI& sourceRect, const RectF& destination, double angleDegrees, const VecI& rotationCenter) const;
+		void RenderGeometry(Renderer& renderer, std::span<const VecF> positions, std::span<const VecF> texCoords, std::span<const int> indices) const;
 
 		class [[nodiscard]] ColorModGuard {
 			void* _texture{};

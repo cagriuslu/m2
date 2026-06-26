@@ -146,9 +146,11 @@ void State::Draw() const {
 	const auto offset = VecF{-0.5f, -0.5f};
 	const auto textureTopLeftOutputPosition = ScreenOriginToPositionVecPx(offset);
 	const auto textureBottomRightOutputPosition = ScreenOriginToPositionVecPx(static_cast<VecF>(_textureDimensions) + offset);
-	const RectI dstRect = {RoundI(textureTopLeftOutputPosition.GetX()), RoundI(textureTopLeftOutputPosition.GetY()),
-			RoundI(textureBottomRightOutputPosition.GetX() - textureTopLeftOutputPosition.GetX()),
-			RoundI(textureBottomRightOutputPosition.GetY() - textureTopLeftOutputPosition.GetY())};
+	const RectF dstRect = {
+		textureTopLeftOutputPosition.GetX(),
+		textureTopLeftOutputPosition.GetY(),
+		textureBottomRightOutputPosition.GetX() - textureTopLeftOutputPosition.GetX(),
+		textureBottomRightOutputPosition.GetY() - textureTopLeftOutputPosition.GetY()};
 	if (_texture) { _texture->Render(M2_GAME.GetRenderer(), dstRect); }
 
 	const auto& sprite = SelectedSprite();
@@ -239,8 +241,8 @@ void State::Draw() const {
 	// Draw sheet boundaries
 	Graphic::DrawVerticalLine(-0.5f, {255, 0, 0, 255});
 	Graphic::DrawHorizontalLine(-0.5f, {255, 0, 0, 255});
-	Graphic::DrawVerticalLine(ToFloat(_textureDimensions.x) - 0.5f, {255, 0, 0, 255});
-	Graphic::DrawHorizontalLine(ToFloat(_textureDimensions.y) - 0.5f, {255, 0, 0, 255});
+	Graphic::DrawVerticalLine(_textureDimensions.GetX() - 0.5f, {255, 0, 0, 255});
+	Graphic::DrawHorizontalLine(_textureDimensions.GetY() - 0.5f, {255, 0, 0, 255});
 }
 
 void State::ModifySelectedSprite(const std::function<void(pb::Sprite&)>& modifier) {

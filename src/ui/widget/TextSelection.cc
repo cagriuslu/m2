@@ -86,7 +86,7 @@ void TextSelection::SetUniqueSelectionIndex(const int index) {
 	}
 }
 
-void TextSelection::OnResize(MAYBE const RectI& oldRect, MAYBE const RectI& newRect) {
+void TextSelection::OnResize(const RectF&, const RectF&) {
 	// Invalidate every font texture cache
 	for (auto& option : _options) {
 		option.text_texture_and_destination.reset();
@@ -147,7 +147,7 @@ UiAction TextSelection::OnEvent(Events& events) {
 	} else {
 		// Scrollable selection
 
-		auto scroll_bar_rect = Rect().TrimLeft(Rect().w - Rect().h / I(VariantBlueprint().line_count));
+		auto scroll_bar_rect = Rect().TrimLeft(Rect().w - Rect().h / static_cast<float>(VariantBlueprint().line_count));
 		auto up_arrow_rect = scroll_bar_rect.GetRow(I(VariantBlueprint().line_count), 0);
 		auto down_button_rect = scroll_bar_rect.GetRow(I(VariantBlueprint().line_count), I(VariantBlueprint().line_count) - 1);
 
@@ -238,7 +238,7 @@ void TextSelection::OnDraw() {
 			if (not _plusTexture) {
 				auto fontSize = inc_button_rect.h;
 				auto textTexture = m2MoveOrThrowError(thirdparty::video::TextTexture::CreateNoWrap(M2_GAME.GetRenderer(), M2_GAME.font, fontSize, "+"));
-				auto destination_rect = RectI::CreateCenteredAround(inc_button_rect.GetCenterPoint(), textTexture.Dimensions().x, textTexture.Dimensions().y);
+				auto destination_rect = RectF::CreateCenteredAround(inc_button_rect.GetCenterPoint(), textTexture.Dimensions().GetX(), textTexture.Dimensions().GetY());
 				// TODO we may need to move the texture slightly up, check the font properties
 				_plusTexture = {std::move(textTexture), destination_rect};
 			}
@@ -251,7 +251,7 @@ void TextSelection::OnDraw() {
 			if (not _minusTexture) {
 				auto fontSize = dec_button_rect.h;
 				auto textTexture = m2MoveOrThrowError(thirdparty::video::TextTexture::CreateNoWrap(M2_GAME.GetRenderer(), M2_GAME.font, fontSize, "-"));
-				auto destination_rect = RectI::CreateCenteredAround(dec_button_rect.GetCenterPoint(), textTexture.Dimensions().x, textTexture.Dimensions().y);
+				auto destination_rect = RectF::CreateCenteredAround(dec_button_rect.GetCenterPoint(), textTexture.Dimensions().GetX(), textTexture.Dimensions().GetY());
 				// TODO we may need to move the texture slightly up, check the font properties
 				_minusTexture = {std::move(textTexture), destination_rect};
 			}
@@ -277,7 +277,7 @@ void TextSelection::OnDraw() {
 				if (not current_line.text_texture_and_destination) {
 					// Calculate how many characters can fit into the line
 					const auto fontSize = textRect.h;
-					const auto croppedGlyphCount = thirdparty::video::CalculateMaxRenderedUtf8Length(M2_GAME.font, fontSize, current_line.blueprint_option.text.c_str(), textRect.w);
+					const auto croppedGlyphCount = thirdparty::video::CalculateMaxRenderedUtf8Length(M2_GAME.font, fontSize, current_line.blueprint_option.text.c_str(), FloorI(textRect.w));
 					const auto uncroppedGlyphCount = I(Utf8CodepointCount(current_line.blueprint_option.text.c_str()));
 					const auto textToRender = uncroppedGlyphCount <= croppedGlyphCount ? current_line.blueprint_option.text : current_line.blueprint_option.text.substr(0, croppedGlyphCount - 1) + "…";
 					auto textTexture = m2MoveOrThrowError(thirdparty::video::TextTexture::CreateNoWrap(M2_GAME.GetRenderer(), M2_GAME.font, fontSize, textToRender));
@@ -290,7 +290,7 @@ void TextSelection::OnDraw() {
 		}
 		// Scroll bar
 		if (VariantBlueprint().show_scroll_bar) {
-			auto scroll_bar_rect = Rect().TrimLeft(Rect().w - Rect().h / VariantBlueprint().line_count);
+			auto scroll_bar_rect = Rect().TrimLeft(Rect().w - Rect().h / static_cast<float>(VariantBlueprint().line_count));
 			draw_rectangle(scroll_bar_rect, {0, 0, 0, 255});
 			draw_border(scroll_bar_rect, vertical_border_width_px(), horizontal_border_width_px());
 			// Up arrow
@@ -299,7 +299,7 @@ void TextSelection::OnDraw() {
 				if (not _upArrowTexture) {
 					auto fontSize = up_arrow_rect.h;
 					auto textTexture = m2MoveOrThrowError(thirdparty::video::TextTexture::CreateNoWrap(M2_GAME.GetRenderer(), M2_GAME.font, fontSize, "-"));
-					auto destination_rect = RectI::CreateCenteredAround(up_arrow_rect.GetCenterPoint(), textTexture.Dimensions().x, textTexture.Dimensions().y);
+					auto destination_rect = RectF::CreateCenteredAround(up_arrow_rect.GetCenterPoint(), textTexture.Dimensions().GetX(), textTexture.Dimensions().GetY());
 					// TODO we may need to move the texture slightly up, check the font properties
 					_upArrowTexture = {std::move(textTexture), destination_rect};
 				}
@@ -313,7 +313,7 @@ void TextSelection::OnDraw() {
 				if (not _downArrowTexture) {
 					auto fontSize = down_button_rect.h;
 					auto textTexture = m2MoveOrThrowError(thirdparty::video::TextTexture::CreateNoWrap(M2_GAME.GetRenderer(), M2_GAME.font, fontSize, "+"));
-					auto destination_rect = RectI::CreateCenteredAround(down_button_rect.GetCenterPoint(), textTexture.Dimensions().x, textTexture.Dimensions().y);
+					auto destination_rect = RectF::CreateCenteredAround(down_button_rect.GetCenterPoint(), textTexture.Dimensions().GetX(), textTexture.Dimensions().GetY());
 					// TODO we may need to move the texture slightly up, check the font properties
 					_downArrowTexture = {std::move(textTexture), destination_rect};
 				}
@@ -326,19 +326,19 @@ void TextSelection::OnDraw() {
 	draw_border(Rect(), vertical_border_width_px(), horizontal_border_width_px());
 }
 
-RectI TextSelection::GetTextRects() const {
+RectF TextSelection::GetTextRects() const {
 	if (VariantBlueprint().line_count == 0 || VariantBlueprint().line_count == 1) {
-		return Rect().TrimRight(Rect().h / 2);
+		return Rect().TrimRight(Rect().h / 2.0f);
 	}
-	return Rect().TrimRight(Rect().h / VariantBlueprint().line_count);
+	return Rect().TrimRight(Rect().h / static_cast<float>(VariantBlueprint().line_count));
 }
-RectI TextSelection::GetTextRectOfRow(const int row) const {
+RectF TextSelection::GetTextRectOfRow(const int row) const {
 	if (VariantBlueprint().line_count == 0 || VariantBlueprint().line_count == 1) {
 		return GetTextRects();
 	}
 	return GetTextRects().GetRow(VariantBlueprint().line_count, row);
 }
-std::optional<std::pair<int,RectI>> TextSelection::GetOptionIndexAndTextRectOfRow(const int row) const {
+std::optional<std::pair<int,RectF>> TextSelection::GetOptionIndexAndTextRectOfRow(const int row) const {
 	if (_options.empty()) {
 		return std::nullopt;
 	}
@@ -367,10 +367,10 @@ void TextSelection::RenewHoverIfNecessary() {
 		}
 		const auto widgetY = Rect().y;
 		const auto widgetH = Rect().h;
-		const auto rowH = widgetH / VariantBlueprint().line_count;
-		const auto mouseY = M2_GAME.events.MousePosition().y;
+		const auto rowH = widgetH / static_cast<float>(VariantBlueprint().line_count);
+		const auto mouseY = M2_GAME.events.MousePosition().GetY();
 		const auto mouseYOffset = mouseY - widgetY;
-		if (const auto indexBeingHovered = mouseYOffset / rowH; indexBeingHovered < I(_options.size())) {
+		if (const auto indexBeingHovered = RoundI(mouseYOffset / rowH); indexBeingHovered < I(_options.size())) {
 			return std::clamp(_topIndex + indexBeingHovered, 0, I(_options.size()) - 1) ;
 		}
 		return std::nullopt;

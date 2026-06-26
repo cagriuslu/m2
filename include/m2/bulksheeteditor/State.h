@@ -10,7 +10,7 @@ namespace m2::bulksheeteditor {
 		std::filesystem::path _sprite_sheets_path;
 		std::string _selected_resource;
 		std::optional<thirdparty::video::Texture> _texture;
-		VecI _textureDimensions;
+		VecF _textureDimensions;
 		int _ppm{};
 		std::optional<RectI> _savedSpriteRect;
 

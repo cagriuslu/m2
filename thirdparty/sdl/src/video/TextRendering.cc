@@ -1,7 +1,7 @@
 #include <m2/thirdparty/video/TextRendering.h>
 #include <SDL3_ttf/SDL_ttf.h>
 
-int m2::thirdparty::video::CalculateMaxRenderedUtf8Length(Font& font, const int fontSize, const char* utf8Text, const int widthInPixels) {
+int m2::thirdparty::video::CalculateMaxRenderedUtf8Length(Font& font, const float fontSize, const char* utf8Text, const int widthInPixels) {
 	font.SetSize(fontSize);
 	int measuredWidthPx = 0;
 	size_t measuredLengthBytes = 0;
@@ -11,9 +11,9 @@ int m2::thirdparty::video::CalculateMaxRenderedUtf8Length(Font& font, const int 
 	return static_cast<int>(measuredLengthBytes);
 }
 
-m2::VecI m2::thirdparty::video::CalculateRenderedUtf8Size(Font& font, int fontSize, const char* utf8Text) {
+m2::VecF m2::thirdparty::video::CalculateRenderedUtf8Size(Font& font, const float fontSize, const char* utf8Text) {
 	font.SetSize(fontSize);
 	int weight = 0, heigth = 0;
 	TTF_GetStringSize(static_cast<TTF_Font*>(font.RawHandle()), utf8Text, /*length=*/0, &weight, &heigth);
-	return VecI{weight, heigth};
+	return VecF{weight, heigth};
 }

@@ -4,7 +4,7 @@
 
 using namespace m2;
 
-Selection::Selection(const RectI& screenBoundaryPx) : _screenBoundaryPx(screenBoundaryPx) {
+Selection::Selection(const RectF& screenBoundaryPx) : _screenBoundaryPx(screenBoundaryPx) {
 	LOG_DEBUG("Enabling selection");
 }
 Selection::~Selection() {
@@ -69,13 +69,13 @@ void Selection::Reset() {
 }
 void Selection::SetFirstAndClearSecondPositionM(VecF positionM) {
 	LOG_DEBUG("Storing first point of selection");
-	_positionM.first = std::move(positionM);
+	_positionM.first = positionM;
 	_positionM.second.reset();
 }
 void Selection::SetSecondPositionIfFirstSetM(VecF positionM) {
 	if (_positionM.first) {
 		LOG_DEBUG("Storing second point of selection");
-		_positionM.second = std::move(positionM);
+		_positionM.second = positionM;
 	} else {
 		// Not an error, selection could be reset before the mouse button is lifted.
 	}

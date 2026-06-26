@@ -11,30 +11,36 @@ using namespace m2::thirdparty;
 using namespace m2::thirdparty::video;
 
 void video::FillTriangle(Renderer& renderer, const VecF& point0, const VecF& point1, const VecF& point2, const RGBA& color) {
+	const auto pixelsPerUnit = renderer.GetPixelsPerWindowUnit();
 	const auto sdlColor = ToSdlFColor(color);
 	const SDL_Vertex vertices[3] = {
-		SDL_Vertex{.position = ToSdlFPoint(point0), .color = sdlColor, .tex_coord = {}},
-		SDL_Vertex{.position = ToSdlFPoint(point1), .color = sdlColor, .tex_coord = {}},
-		SDL_Vertex{.position = ToSdlFPoint(point2), .color = sdlColor, .tex_coord = {}},
+		SDL_Vertex{.position = ToSdlFPoint(point0.Scale(pixelsPerUnit)), .color = sdlColor, .tex_coord = {}},
+		SDL_Vertex{.position = ToSdlFPoint(point1.Scale(pixelsPerUnit)), .color = sdlColor, .tex_coord = {}},
+		SDL_Vertex{.position = ToSdlFPoint(point2.Scale(pixelsPerUnit)), .color = sdlColor, .tex_coord = {}},
 	};
 	if (not SDL_RenderGeometry(static_cast<SDL_Renderer*>(renderer.RawHandle()), nullptr, vertices, 3, nullptr, 0)) {
 		throw M2_ERROR(std::string{"SDL_RenderGeometry failed: "} + SDL_GetError());
 	}
 }
 void video::FillTriangle(Renderer& renderer, const VecF& point0, const VecF& point1, const VecF& point2, const RGBA& color0, const RGBA& color1, const RGBA& color2) {
+	const auto pixelsPerUnit = renderer.GetPixelsPerWindowUnit();
 	const auto sdlColor0 = ToSdlFColor(color0);
 	const auto sdlColor1 = ToSdlFColor(color1);
 	const auto sdlColor2 = ToSdlFColor(color2);
 	const SDL_Vertex vertices[3] = {
-		SDL_Vertex{.position = ToSdlFPoint(point0), .color = sdlColor0, .tex_coord = {}},
-		SDL_Vertex{.position = ToSdlFPoint(point1), .color = sdlColor1, .tex_coord = {}},
-		SDL_Vertex{.position = ToSdlFPoint(point2), .color = sdlColor2, .tex_coord = {}},
+		SDL_Vertex{.position = ToSdlFPoint(point0.Scale(pixelsPerUnit)), .color = sdlColor0, .tex_coord = {}},
+		SDL_Vertex{.position = ToSdlFPoint(point1.Scale(pixelsPerUnit)), .color = sdlColor1, .tex_coord = {}},
+		SDL_Vertex{.position = ToSdlFPoint(point2.Scale(pixelsPerUnit)), .color = sdlColor2, .tex_coord = {}},
 	};
 	if (not SDL_RenderGeometry(static_cast<SDL_Renderer*>(renderer.RawHandle()), nullptr, vertices, 3, nullptr, 0)) {
 		throw M2_ERROR(std::string{"SDL_RenderGeometry failed: "} + SDL_GetError());
 	}
 }
-void video::FillCircle(Renderer& renderer, const VecF& centerPx, const RGBA& centerColor, const float radiusPx, const RGBA& edgeColor, const unsigned steps) {
+void video::FillCircle(Renderer& renderer, const VecF& center, const RGBA& centerColor, const float radius, const RGBA& edgeColor, const unsigned steps) {
+	const auto pixelsPerUnit = renderer.GetPixelsPerWindowUnit();
+	const auto centerPx = center.Scale(pixelsPerUnit);
+	const auto radiusPx = radius * pixelsPerUnit.GetY();
+
 	const auto sdlCenterColor = ToSdlFColor(centerColor);
 	const auto sdlEdgeColor = ToSdlFColor(edgeColor);
 	std::vector<SDL_Vertex> vertices(steps * 3);
@@ -53,22 +59,21 @@ void video::FillCircle(Renderer& renderer, const VecF& centerPx, const RGBA& cen
 		throw M2_ERROR(std::string{"SDL_RenderGeometry failed: "} + SDL_GetError());
 	}
 }
-void video::FillRectangle(Renderer& renderer, const RectF& rectPx, const RGBA& color) {
+void video::FillRectangle(Renderer& renderer, const RectF& rect, const RGBA& color) {
+	const auto pixelsPerUnit = renderer.GetPixelsPerWindowUnit();
+	const auto rectPx = rect.Scale(pixelsPerUnit);
+
 	SDL_SetRenderDrawColor(static_cast<SDL_Renderer*>(renderer.RawHandle()), color.r, color.g, color.b, color.a);
-	const SDL_FRect rect{rectPx.x, rectPx.y, rectPx.w, rectPx.h};
-	if (not SDL_RenderFillRect(static_cast<SDL_Renderer*>(renderer.RawHandle()), &rect)) {
-		throw M2_ERROR(std::string{"SDL_RenderFillRect failed: "} + SDL_GetError());
-	}
-}
-void video::FillRectangle(Renderer& renderer, const RectI& rectPx, const RGBA& color) {
-	SDL_SetRenderDrawColor(static_cast<SDL_Renderer*>(renderer.RawHandle()), color.r, color.g, color.b, color.a);
-	const auto rect = ToSdlFRect(rectPx);
-	if (not SDL_RenderFillRect(static_cast<SDL_Renderer*>(renderer.RawHandle()), &rect)) {
+	const SDL_FRect sdlRect{rectPx.x, rectPx.y, rectPx.w, rectPx.h};
+	if (not SDL_RenderFillRect(static_cast<SDL_Renderer*>(renderer.RawHandle()), &sdlRect)) {
 		throw M2_ERROR(std::string{"SDL_RenderFillRect failed: "} + SDL_GetError());
 	}
 }
 
-void video::DrawPoint(Renderer& renderer, const VecF& pointPx, const RGBA& color) {
+void video::DrawPoint(Renderer& renderer, const VecF& point, const RGBA& color) {
+	const auto pixelsPerUnit = renderer.GetPixelsPerWindowUnit();
+	const auto pointPx = point.Scale(pixelsPerUnit);
+
 	SDL_SetRenderDrawColor(static_cast<SDL_Renderer*>(renderer.RawHandle()),
 		color.r, color.g, color.b, color.a);
 	if (not SDL_RenderPoint(static_cast<SDL_Renderer*>(renderer.RawHandle()),
@@ -76,30 +81,21 @@ void video::DrawPoint(Renderer& renderer, const VecF& pointPx, const RGBA& color
 		throw M2_ERROR(std::string{"SDL_RenderPoint failed: "} + SDL_GetError());
 	}
 }
-void video::DrawLine(Renderer& renderer, const VecI& point0, const VecI& point1, const RGBA& color) {
-	SDL_SetRenderDrawColor(static_cast<SDL_Renderer*>(renderer.RawHandle()), color.r, color.g, color.b, color.a);
-	if (not SDL_RenderLine(static_cast<SDL_Renderer*>(renderer.RawHandle()),
-			static_cast<float>(point0.x), static_cast<float>(point0.y),
-			static_cast<float>(point1.x), static_cast<float>(point1.y))) {
-		throw M2_ERROR(std::string{"SDL_RenderLine failed: "} + SDL_GetError());
-	}
-}
 void video::DrawLine(Renderer& renderer, const VecF& point0, const VecF& point1, const RGBA& color) {
+	const auto pixelsPerUnit = renderer.GetPixelsPerWindowUnit();
+	const auto point0Px = point0.Scale(pixelsPerUnit);
+	const auto point1Px = point1.Scale(pixelsPerUnit);
+
 	SDL_SetRenderDrawColor(static_cast<SDL_Renderer*>(renderer.RawHandle()), color.r, color.g, color.b, color.a);
-	if (not SDL_RenderLine(static_cast<SDL_Renderer*>(renderer.RawHandle()), point0.GetX(), point0.GetY(), point1.GetX(), point1.GetY())) {
+	if (not SDL_RenderLine(static_cast<SDL_Renderer*>(renderer.RawHandle()), point0Px.GetX(), point0Px.GetY(), point1Px.GetX(), point1Px.GetY())) {
 		throw M2_ERROR(std::string{"SDL_RenderLine failed: "} + SDL_GetError());
-	}
-}
-void video::DrawRectangle(Renderer& renderer, const RectI& rect, const RGBA& color) {
-	SDL_SetRenderDrawColor(static_cast<SDL_Renderer*>(renderer.RawHandle()), color.r, color.g, color.b, color.a);
-	const auto sdlRect = ToSdlFRect(rect);
-	if (not SDL_RenderRect(static_cast<SDL_Renderer*>(renderer.RawHandle()), &sdlRect)) {
-		throw M2_ERROR(std::string{"SDL_RenderRect failed: "} + SDL_GetError());
 	}
 }
 void video::DrawRectangle(Renderer& renderer, const RectF& rect, const RGBA& color) {
+	const auto pixelsPerUnit = renderer.GetPixelsPerWindowUnit();
+
 	SDL_SetRenderDrawColor(static_cast<SDL_Renderer*>(renderer.RawHandle()), color.r, color.g, color.b, color.a);
-	const auto sdlRect = ToSdlFRect(rect);
+	const auto sdlRect = ToSdlFRect(rect.Scale(pixelsPerUnit));
 	if (not SDL_RenderRect(static_cast<SDL_Renderer*>(renderer.RawHandle()), &sdlRect)) {
 		throw M2_ERROR(std::string{"SDL_RenderRect failed: "} + SDL_GetError());
 	}

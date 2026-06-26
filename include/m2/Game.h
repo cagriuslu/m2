@@ -204,7 +204,7 @@ namespace m2 {
 		std::optional<m2g::pb::SpriteType> GetMainSpriteOfObject(m2g::pb::ObjectType) const;
 		void ForEachObjectWithMainSprite(const std::function<bool(m2g::pb::ObjectType, m2g::pb::SpriteType)>& op) const;
 		[[nodiscard]] bool AreEventsBeingHandled() const { return _eventsAreBeingHandled; }
-		[[nodiscard]] VecI MousePositionPx() const { return events.MousePosition(); }
+		[[nodiscard]] VecF MousePositionPx() const { return events.MousePosition(); }
 		thirdparty::video::Texture DrawGameToTexture(const VecF& camera_position); // TODO move into Level?
 		/// This function can be used to check if the mouse is resting on any UI panels. If not, the mouse must be
 		/// inside the game window.

@@ -36,11 +36,11 @@ void DebugDraw::DrawCircle(const b2Vec2& center, const float radius, const b2Col
 		const RectI srcRect = M2_GAME.GetShapeCache().Create(std::make_shared<Circle>(r));
 		const auto& texture = M2_GAME.GetShapeCache().Texture();
 		const auto screenOriginToSpriteCenter = ScreenOriginToPositionVecPx(ToVecF(center));
-		const RectI dstRect{
-			RoundI(screenOriginToSpriteCenter.GetX()) - srcRect.w / 2,
-			RoundI(screenOriginToSpriteCenter.GetY()) - srcRect.h / 2,
-			srcRect.w,
-			srcRect.h};
+		const RectF dstRect{
+			screenOriginToSpriteCenter.GetX() - static_cast<float>(srcRect.w) / 2.0f,
+			screenOriginToSpriteCenter.GetY() - static_cast<float>(srcRect.h) / 2.0f,
+			static_cast<float>(srcRect.w),
+			static_cast<float>(srcRect.h)};
 		const auto colorModGuard = texture.ScopedColorMod(static_cast<RGB>(ToRgba(color)));
 		texture.Render(M2_GAME.GetRenderer(), srcRect, dstRect);
 	} else {

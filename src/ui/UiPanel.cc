@@ -26,15 +26,15 @@ namespace {
 	constexpr auto is_widget_enabled = [](const auto &w) { return w->enabled; };
 }  // namespace
 
-UiPanel::RelativeToWindow UiPanel::RelativeToWindow::CreateAnchoredToPosition(const RectI& positionWithinToGameAndHud) {
+UiPanel::RelativeToWindow UiPanel::RelativeToWindow::CreateAnchoredToPosition(const RectF& positionWithinToGameAndHud) {
 	// Convert pixel positions to "relativeToGameAndHudDimensions"
 	const auto& gameAndHud = M2_GAME.Dimensions().GameAndHud();
 	return RelativeToWindow{
 		.ratioToGameAndHudDimensions = RectF{
-			ToFloat(positionWithinToGameAndHud.x - gameAndHud.x) / ToFloat(gameAndHud.w),
-			ToFloat(positionWithinToGameAndHud.y - gameAndHud.y) / ToFloat(gameAndHud.h),
-			ToFloat(positionWithinToGameAndHud.w) / ToFloat(gameAndHud.w),
-			ToFloat(positionWithinToGameAndHud.h) / ToFloat(gameAndHud.h)
+			positionWithinToGameAndHud.x - static_cast<float>(gameAndHud.x) / static_cast<float>(gameAndHud.w),
+			positionWithinToGameAndHud.y - static_cast<float> (gameAndHud.y) / static_cast<float>(gameAndHud.h),
+			positionWithinToGameAndHud.w / static_cast<float>(gameAndHud.w),
+			positionWithinToGameAndHud.h / static_cast<float>(gameAndHud.h)
 		}
 	};
 }
@@ -210,22 +210,22 @@ const AnyReturnContainer* UiPanel::PeekReturnValueContainer() const {
 bool UiPanel::IsAutoClean() const {
 	return (blueprint && blueprint->autoClean) || (_undeadContainer && _undeadContainer->wasAutoClose);
 }
-RectI UiPanel::Rect() const {
+RectF UiPanel::Rect() const {
 	const auto& gameAndHud = M2_GAME.Dimensions().GameAndHud();
 	if (std::holds_alternative<Fullscreen>(_panelPosition)) {
-		return gameAndHud;
+		return RectF{gameAndHud};
 	} else if (std::holds_alternative<RelativeToWindow>(_panelPosition)) {
 		const auto& relation = std::get<RelativeToWindow>(_panelPosition).ratioToGameAndHudDimensions;
-		return RectI{
-			RoundI(ToFloat(gameAndHud.x) + relation.x * ToFloat(gameAndHud.w)),
-			RoundI(ToFloat(gameAndHud.y) + relation.y * ToFloat(gameAndHud.h)),
-			RoundI(relation.w * ToFloat(gameAndHud.w)),
-			RoundI(relation.h * ToFloat(gameAndHud.h))};
+		return RectF{
+			ToFloat(gameAndHud.x) + relation.x * ToFloat(gameAndHud.w),
+			ToFloat(gameAndHud.y) + relation.y * ToFloat(gameAndHud.h),
+			relation.w * ToFloat(gameAndHud.w),
+			relation.h * ToFloat(gameAndHud.h)};
 	} else {
 		const auto& [centeredAt, dimensionsRelativeToGameAndHud] = std::get<RelativeToWorld>(_panelPosition);
-		const auto centerOfPanel = ScreenOriginToPositionVecPx(centeredAt).RoundI();
-		return RectI::CreateCenteredAround(centerOfPanel, RoundI(dimensionsRelativeToGameAndHud.GetX() * ToFloat(gameAndHud.w)),
-			RoundI(dimensionsRelativeToGameAndHud.GetY() * ToFloat(gameAndHud.h)));
+		const auto centerOfPanel = ScreenOriginToPositionVecPx(centeredAt);
+		return RectF::CreateCenteredAround(centerOfPanel, dimensionsRelativeToGameAndHud.GetX() * ToFloat(gameAndHud.w),
+			dimensionsRelativeToGameAndHud.GetY() * ToFloat(gameAndHud.h));
 	}
 }
 
@@ -237,14 +237,14 @@ void UiPanel::KillWithReturnValue(AnyReturnContainer&& arc) {
 	new (this) UiPanel(std::move(arc), autoClose);
 }
 
-void UiPanel::SetTopLeftPosition(const VecI& newPosition) {
+void UiPanel::SetTopLeftPosition(const VecF& newPosition) {
 	const auto& gameAndHud = M2_GAME.Dimensions().GameAndHud();
 	if (std::holds_alternative<Fullscreen>(_panelPosition)) {
 		throw M2_ERROR("Cannot move fullscreen UI panel");
 	} else if (std::holds_alternative<RelativeToWindow>(_panelPosition)) {
 		auto& relation = std::get<RelativeToWindow>(_panelPosition).ratioToGameAndHudDimensions;
 		relation = RectF{
-			ToFloat(newPosition.x) / ToFloat(gameAndHud.w), ToFloat(newPosition.y) / ToFloat(gameAndHud.h),
+			newPosition.GetX() / ToFloat(gameAndHud.w), newPosition.GetY() / ToFloat(gameAndHud.h),
 			relation.w, relation.h
 		};
 	} else {
@@ -265,7 +265,7 @@ void UiPanel::ClearTimeout() {
 void UiPanel::UpdatePosition() {
 	if (std::holds_alternative<RelativeToWorld>(_panelPosition)) {
 		const auto& centeredAt = std::get<RelativeToWorld>(_panelPosition).centeredAt;
-		const auto centerOfPanel = ScreenOriginToPositionVecPx(centeredAt).RoundI();
+		const auto centerOfPanel = ScreenOriginToPositionVecPx(centeredAt);
 		_lastScreenPositionOfCenterIfRelativeToWorld = centerOfPanel;
 	}
 
@@ -293,7 +293,7 @@ UiAction UiPanel::HandleEvents(Events& events, bool IsPanning) {
 
 	if (std::holds_alternative<RelativeToWorld>(_panelPosition) && _lastScreenPositionOfCenterIfRelativeToWorld) {
 		const auto& centeredAt = std::get<RelativeToWorld>(_panelPosition).centeredAt;
-		const auto centerOfPanel = ScreenOriginToPositionVecPx(centeredAt).RoundI();
+		const auto centerOfPanel = ScreenOriginToPositionVecPx(centeredAt);
 		if (centerOfPanel != *_lastScreenPositionOfCenterIfRelativeToWorld) {
 			UpdatePosition();
 		}
@@ -435,16 +435,16 @@ void UiPanel::clear_focus() {
 		[&](const auto &it) { set_widget_focus_state(*it, false); });
 }
 
-RectI m2::CalculateWidgetRect(
-    const RectI &root_rect_px, const unsigned root_w, const unsigned root_h, const int child_x, const int child_y,
+RectF m2::CalculateWidgetRect(
+    const RectF &root_rect_px, const unsigned root_w, const unsigned root_h, const int child_x, const int child_y,
     const unsigned child_w, const unsigned child_h) {
-	const auto pixels_per_unit_w = static_cast<float>(root_rect_px.w) / static_cast<float>(root_w);
-	const auto pixels_per_unit_h = static_cast<float>(root_rect_px.h) / static_cast<float>(root_h);
-	return RectI{
-	    root_rect_px.x + static_cast<int>(roundf(static_cast<float>(child_x) * pixels_per_unit_w)),
-	    root_rect_px.y + static_cast<int>(roundf(static_cast<float>(child_y) * pixels_per_unit_h)),
-	    static_cast<int>(roundf(static_cast<float>(child_w) * pixels_per_unit_w)),
-	    static_cast<int>(roundf(static_cast<float>(child_h) * pixels_per_unit_h))};
+	const auto pixels_per_unit_w = root_rect_px.w / static_cast<float>(root_w);
+	const auto pixels_per_unit_h = root_rect_px.h / static_cast<float>(root_h);
+	return RectF{
+	    root_rect_px.x + static_cast<float>(child_x) * pixels_per_unit_w,
+	    root_rect_px.y + static_cast<float>(child_y) * pixels_per_unit_h,
+	    static_cast<float>(child_w) * pixels_per_unit_w,
+	    static_cast<float>(child_h) * pixels_per_unit_h};
 }
 
 m2::UiWidget *m2::FindTextWidget(UiPanel &state, const std::string &text) {

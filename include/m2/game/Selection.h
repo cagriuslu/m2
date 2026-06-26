@@ -1,6 +1,7 @@
 #pragma once
 #include "../Events.h"
 #include <m2/common/math/VecF.h>
+#include <m2/common/math/RectF.h>
 
 namespace m2 {
 	// Base class of all Selection states
@@ -10,19 +11,19 @@ namespace m2 {
 	};
 
 	class Selection {
-		RectI _screenBoundaryPx;
+		RectF _screenBoundaryPx;
 		std::pair<std::optional<VecF>, std::optional<VecF>> _positionM;
 
 	public:
 		/// Pointer to the state. State can be used to store information about the selection, ex. an object held afloat.
 		std::unique_ptr<SelectionStateBase> state{};
 
-		explicit Selection(const RectI& screenBoundaryPx);
+		explicit Selection(const RectF& screenBoundaryPx);
 		~Selection();
 
 		// Accessors
 
-		[[nodiscard]] const RectI& ScreenBoundaryPx() const { return _screenBoundaryPx; }
+		[[nodiscard]] const RectF& ScreenBoundaryPx() const { return _screenBoundaryPx; }
 		/// Signifies that the selection is completed by lifting of the mouse button
 		[[nodiscard]] bool IsComplete() const { return _positionM.first && _positionM.second; }
 

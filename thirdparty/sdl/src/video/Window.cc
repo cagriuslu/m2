@@ -20,8 +20,7 @@ m2::expected<m2::thirdparty::video::Window> m2::thirdparty::video::Window::Creat
 m2::expected<std::pair<Window,Renderer>> Window::Create2(const VecI minDimensions, const char* title) {
 	SDL_Window* window;
 	SDL_Renderer* renderer;
-	// TODO SDL_WINDOW_HIGH_PIXEL_DENSITY
-	if (not SDL_CreateWindowAndRenderer(title, minDimensions.x, minDimensions.y, SDL_WINDOW_RESIZABLE, &window, &renderer)) {
+	if (not SDL_CreateWindowAndRenderer(title, minDimensions.x, minDimensions.y, SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY, &window, &renderer)) {
 		return make_unexpected(std::format("SDL_CreateWindowAndRenderer error: {}", SDL_GetError()));
 	}
 	SDL_SetWindowMinimumSize(window, minDimensions.x, minDimensions.y);
@@ -37,7 +36,7 @@ m2::expected<std::pair<Window,Renderer>> Window::Create2(const VecI minDimension
 	const auto density = SDL_GetWindowPixelDensity(window);
 	std::cerr << "SDL_GetWindowPixelDensity: " << density << std::endl;
 
-	return std::make_pair(Window{window}, Renderer{renderer});
+	return std::make_pair(Window{window}, Renderer{window, renderer});
 }
 
 m2::thirdparty::video::Window::Window(Window&& other) noexcept : _window(other._window) {
@@ -61,4 +60,11 @@ uint32_t m2::thirdparty::video::Window::GetPixelFormat() const {
 	} else {
 		return pixelFormat;
 	}
+}
+VecI Window::GetSize() const {
+	int x,y;
+	if (not SDL_GetWindowSize(static_cast<SDL_Window*>(_window), &x, &y)) {
+		throw M2_ERROR(std::format("SDL_GetWindowSize error: {}", SDL_GetError()));
+	}
+	return {x, y};
 }
