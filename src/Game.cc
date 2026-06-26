@@ -23,19 +23,8 @@ using namespace m2;
 namespace {
 	constexpr auto MAX_LOCKSTEP_CONNECTION_COUNT = 4;
 
-	m2::thirdparty::video::Window CreateWindow(const int gamePpm, const float defaultGameHeightM, const char* gameFriendlyName) {
-		const auto minimumWindowDims = GameDimensions::EstimateMinimumWindowDimensions(gamePpm, defaultGameHeightM);
-		auto windowCreation = thirdparty::video::Window::Create(minimumWindowDims, gameFriendlyName);
-		if (not windowCreation) {
-			throw M2_ERROR("SDL error: " + windowCreation.error());
-		}
-		thirdparty::event::StopTextInput((*windowCreation).RawHandle()); // Text input begins activated (sometimes)
-		return std::move(*windowCreation);
-	}
-
-	std::pair<thirdparty::video::Window, thirdparty::video::Renderer> CreateWindow2(const int initialPointsPerMeter, const float initialGameHeightM, const char* gameFriendlyName) {
-		const auto minimumWindowDims = GameDimensions::EstimateMinimumWindowDimensions(initialPointsPerMeter, initialGameHeightM);
-		auto creation = thirdparty::video::Window::Create2(minimumWindowDims, gameFriendlyName);
+	std::pair<thirdparty::video::Window, thirdparty::video::Renderer> CreateWindow2(const char* gameFriendlyName) {
+		auto creation = thirdparty::video::Window::Create2({160, 90}, gameFriendlyName);
 		if (not creation) {
 			throw M2_ERROR("Window & renderer creation failed: " + creation.error());
 		}
@@ -64,8 +53,7 @@ void Game::DestroyInstance() {
 	_instance = nullptr;
 }
 
-// TODO use _proxy.minimumPointsPerMeter, _proxy.initialGameHeightM
-Game::Game() : _windowAndRenderer(CreateWindow2(_proxy.gamePpm, _proxy.defaultGameHeightM, _proxy.gameFriendlyName.c_str())),
+Game::Game() : _windowAndRenderer(CreateWindow2(_proxy.gameFriendlyName.c_str())),
 		cursor(*thirdparty::video::Cursor::Create()), pixel_format(GetWindow().GetPixelFormat()),
 		font(thirdparty::video::Font::CreateFromFontFile(_resources.GetDefaultFontPath(), _proxy.default_font_size)),
 		systemFont(thirdparty::video::Font::CreateFromFontFile(_resources.GetSystemFontPath(), systemFontSize)) {
@@ -76,6 +64,7 @@ Game::Game() : _windowAndRenderer(CreateWindow2(_proxy.gamePpm, _proxy.defaultGa
 	cursor.Load();
 
 	_dimensions.emplace(GetWindow(), GetRenderer(), _proxy.gamePpm, _proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
+	_dimensions->SetGameHeightM(_proxy.defaultGameHeightM);
 
 	_textLabelCache.emplace(GetRenderer(), GetWindow().GetPixelFormat(), font);
 	_shapeCache.emplace(GetRenderer(), GetWindow().GetPixelFormat());

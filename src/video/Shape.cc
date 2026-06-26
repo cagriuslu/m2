@@ -6,7 +6,7 @@ namespace {
 	void CircleSetPixel(m2::thirdparty::video::Surface& dstSurface, const m2::RectI& dstRect, const int radius, const int x, const int y) {
 		const int px = dstRect.x + radius + x;
 		const int py = dstRect.y + radius + y;
-		dstSurface.SetPixel(px, py, m2::RGBA{255, 255, 255, 255});
+		dstSurface.SetPixel(std::max(px, 0), std::max(py, 0), m2::RGBA{255, 255, 255, 255});
 	}
 
 	// This function requires the location of the pixel only on the first 45 degree of the first quadrant. It'll draw
