@@ -1,6 +1,8 @@
 #pragma once
-#include "m2/common/Meta.h"   // expected
+#include "m2/common/Meta.h"
 #include <m2/common/math/VecI.h>
+#include <m2/common/math/VecF.h>
+#include "Renderer.h"
 #include <cstdint>
 
 namespace m2::thirdparty::video {
@@ -10,6 +12,7 @@ namespace m2::thirdparty::video {
 
 	public:
 		static expected<Window> Create(VecI minDimensions, const char* title);
+		static expected<std::pair<Window,Renderer>> Create2(VecI minDimensions, const char* title);
 
 		Window(const Window&) = delete;
 		Window& operator=(const Window&) = delete;
