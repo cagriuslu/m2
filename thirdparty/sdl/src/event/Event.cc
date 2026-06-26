@@ -31,6 +31,9 @@ std::optional<Event> m2::thirdparty::event::PollEvent() {
 				return QuitEvent{};
 			case SDL_EVENT_WINDOW_RESIZED:
 			case SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED:
+			case SDL_EVENT_WINDOW_METAL_VIEW_RESIZED:
+			case SDL_EVENT_WINDOW_DISPLAY_CHANGED:
+			case SDL_EVENT_WINDOW_DISPLAY_SCALE_CHANGED:
 				return WindowResizeEvent{};
 			case SDL_EVENT_KEY_DOWN:
 				return KeyDownEvent{static_cast<Scancode>(sdlEvent.key.scancode),
