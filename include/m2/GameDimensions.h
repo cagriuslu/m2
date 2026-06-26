@@ -3,10 +3,14 @@
 #include <m2/common/math/VecF.h>
 #include <m2/common/math/VecI.h>
 
-namespace m2::thirdparty::video { class Renderer; }
+namespace m2::thirdparty::video {
+    class Renderer;
+    class Window;
+}
 
 namespace m2 {
     class GameDimensions final {
+        const thirdparty::video::Window& _window;
         thirdparty::video::Renderer& _renderer;
         int _gamePpm, _gameAspectRatioMul, _gameAspectRatioDiv;
 
@@ -18,7 +22,7 @@ namespace m2 {
 
     public:
         /// This constructor assumes the initial aspect ratio of the window is exact, thus requires no envelope.
-        GameDimensions(thirdparty::video::Renderer& renderer, int gamePpm, int gameAspectRatioMul, int gameAspectRatioDiv);
+        GameDimensions(const thirdparty::video::Window& window, thirdparty::video::Renderer& renderer, int gamePpm, int gameAspectRatioMul, int gameAspectRatioDiv);
 
         // Accessors
 

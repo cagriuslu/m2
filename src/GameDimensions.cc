@@ -16,8 +16,8 @@ namespace {
 	}
 }
 
-m2::GameDimensions::GameDimensions(thirdparty::video::Renderer& renderer, const int gamePpm, const int gameAspectRatioMul, const int gameAspectRatioDiv)
-		: _renderer(renderer), _gamePpm(gamePpm), _gameAspectRatioMul(gameAspectRatioMul), _gameAspectRatioDiv(gameAspectRatioDiv) {
+m2::GameDimensions::GameDimensions(const thirdparty::video::Window& window, thirdparty::video::Renderer& renderer, const int gamePpm, const int gameAspectRatioMul, const int gameAspectRatioDiv)
+		: _window(window), _renderer(renderer), _gamePpm(gamePpm), _gameAspectRatioMul(gameAspectRatioMul), _gameAspectRatioDiv(gameAspectRatioDiv) {
 	if (gamePpm < 1) {
 		throw M2_ERROR("Given PPM is not positive: " + m2::ToString(gamePpm));
 	}
