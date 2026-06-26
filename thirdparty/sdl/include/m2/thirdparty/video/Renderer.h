@@ -6,9 +6,12 @@
 #include <span>
 
 namespace m2::thirdparty::video {
+	class Window;
+
 	class Renderer {
 		void* _renderer{};
 
+		friend Window;
 		explicit Renderer(void* renderer) : _renderer(renderer) {}
 
 	public:
