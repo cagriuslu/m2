@@ -19,7 +19,7 @@ namespace m2g {
 		const std::string gameFriendlyName = "OpenBrass";
 		const int gameAspectRatioMul = 3;
 		const int gameAspectRatioDiv = 2;
-		const float defaultGameHeightM = 30.0f;
+		const float initialGameHeightM = 30.0f;
 		const std::string defaultFontPath = "fonts/Roboto_Mono/RobotoMono-VariableFont_wght.ttf";
 		const std::vector<m2::DrawLayer> drawOrder = {
 			pb::BACKGROUND_FLAT,

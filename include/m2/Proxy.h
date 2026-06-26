@@ -35,8 +35,7 @@ namespace m2 {
 		const int gamePpm = 16;
 		const int gameAspectRatioMul = 5;
 		const int gameAspectRatioDiv = 4;
-		/// Determines the initial and minimum window size.
-		const float defaultGameHeightM = 18.0f;
+		const float initialGameHeightM = 18.0f;
 
 		// Mono fonts
 		// const std::string defaultFontPath = "fonts/Courier_Prime/CourierPrime-Regular.ttf";

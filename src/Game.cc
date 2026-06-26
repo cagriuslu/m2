@@ -64,7 +64,7 @@ Game::Game() : _windowAndRenderer(CreateWindow2(_proxy.gameFriendlyName.c_str())
 	cursor.Load();
 
 	_dimensions.emplace(GetWindow(), GetRenderer(), _proxy.gamePpm, _proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
-	_dimensions->SetGameHeightM(_proxy.defaultGameHeightM);
+	_dimensions->SetGameHeightM(_proxy.initialGameHeightM);
 
 	_textLabelCache.emplace(GetRenderer(), GetWindow().GetPixelFormat(), font);
 	_shapeCache.emplace(GetRenderer(), GetWindow().GetPixelFormat());
