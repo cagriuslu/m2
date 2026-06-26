@@ -27,11 +27,6 @@ void m2::thirdparty::video::InitAll() {
 	if (not TTF_Init()) {
 		throw M2_ERROR("TTF_Init error: " + std::string{SDL_GetError()});
 	}
-
-	// Use the driver line API
-	if (SDL_SetHint(SDL_HINT_RENDER_LINE_METHOD, "2") == false) {
-		throw M2_ERROR("Failed to set line render method");
-	}
 }
 void m2::thirdparty::video::DeinitAll() {
 	TTF_Quit();
