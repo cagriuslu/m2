@@ -71,6 +71,7 @@ namespace m2 {
 
 		[[nodiscard]] VecF WithX(const float x) const { return {x, _y}; }
 		[[nodiscard]] VecF WithY(const float y) const { return {_x, y}; }
+		[[nodiscard]] VecF Scale(const VecF& axes) const { return {_x * axes._x, _y * axes._y}; }
 		[[nodiscard]] VecF Normalize() const {
 			float len = GetLength();
 			return len != 0.0f ? VecF{_x / len, _y / len} : VecF{};

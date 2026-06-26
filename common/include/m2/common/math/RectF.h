@@ -38,6 +38,7 @@ namespace m2 {
 
 		// Immutable modifiers
 
+		[[nodiscard]] RectF Scale(const VecF& axes) const;
 		[[nodiscard]] RectF Shift(const VecF& direction) const; // Shifts the rect
 		[[nodiscard]] RectF ShiftCoordinateSystemOrigin(const VecF& direction) const; // Shifts the origin of the coordinate system
 		[[nodiscard]] RectF ExpandAllSides(float amount) const;

@@ -46,6 +46,9 @@ bool m2::RectF::DoesContain(const RectF& other, float tolerance) const {
 		&& IsLessOrEqual(other.y + other.h, y + h, tolerance);
 }
 
+m2::RectF m2::RectF::Scale(const VecF& axes) const {
+	return {x * axes.GetX(), y * axes.GetY(), w * axes.GetX(), h * axes.GetY()};
+}
 m2::RectF m2::RectF::Shift(const VecF& direction) const {
 	return {x + direction.GetX(), y + direction.GetY(), w, h};
 }
