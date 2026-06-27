@@ -61,3 +61,9 @@ Headers in `include/` that require platform-specific implementations are provide
 ## Coding Standards
 
 - Never allow silent failures. Prefer proper error handling or `throw`.
+- In paired header/source files, the order of function and method definitions in the source must match the
+  order of their declarations in the header. The header is the reference; flatten its declarations to a single
+  top-to-bottom sequence, ignoring access-specifiers and nested-class boundaries. Blank lines between consecutive
+  definitions in the source must mirror the header: where the header has no blank line between two declarations
+  (comment lines are transparent and do not count as spacing), the source must have no blank line between their
+  definitions; where the header has one or more blank lines, the source must have exactly one.
