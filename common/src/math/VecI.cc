@@ -43,4 +43,7 @@ m2::VecI m2::VecI::GetDimensionsInAspectRatio(int w, int h) const {
 	return VecI{I(correct_width), I(correct_height)};
 }
 
-std::string m2::ToString(const VecI& v) { return std::format("{{x:{},y{}}}", v.x, v.y); }
+auto std::formatter<m2::VecI>::format(const m2::VecI& vec, std::format_context& ctx) const -> std::format_context::iterator {
+	return std::formatter<std::string>::format(
+		std::format("{{x:{},y:{}}}", vec.x, vec.y), ctx);
+}

@@ -2,6 +2,7 @@
 #include <google/protobuf/generated_enum_reflection.h>
 #include <google/protobuf/util/json_util.h>
 
+#include <format>
 #include <string>
 #include <vector>
 
@@ -148,20 +149,13 @@ namespace m2 {
 		}
 	}  // namespace pb
 
-	template <ProtoEnum T>
-	std::string ToString(const T& enum_val) {
-		return pb::enum_name(enum_val);
-	}
-
-	template <ProtoEnum T>
-	std::string ToString(const std::vector<T>& enum_arr) {
-		std::string s = "[";
-		for (const auto& enum_val : enum_arr) {
-			s = s + ToString(enum_val) + ",";
-		}
-		s += "]";
-		return s;
-	}
 }  // namespace m2
+
+template <m2::ProtoEnum T>
+struct std::formatter<T> : std::formatter<std::string_view> {
+	auto format(const T& enumValue, std::format_context& ctx) const {
+		return std::formatter<std::string_view>::format(m2::pb::enum_name(enumValue), ctx);
+	}
+};
 
 #define m2_pb_enum_value(type, enum_name) (m2::pb::_enum_value<type>(type##_Parse, (enum_name)))

@@ -140,7 +140,7 @@ namespace {
 					.onCreate = [](m2::widget::TextSelection& self) {
 						m2::widget::TextSelectionBlueprint::Options options;
 						for (const auto& interface : m2::network::InferLanAddresses(*m2::network::GetInterfaces())) {
-							options.emplace_back(m2::widget::TextSelectionBlueprint::Option{.text = m2::ToString(interface), .return_value = interface});
+							options.emplace_back(m2::widget::TextSelectionBlueprint::Option{.text = std::format("{}", interface), .return_value = interface});
 						}
 						self.SetOptions(std::move(options));
 					}
@@ -187,7 +187,7 @@ namespace {
 						if (const auto peers = networkDiscovery.GetDiscoveredPeers(); m2::I(peers.size()) != self.GetOptionCount()) {
 							m2::widget::TextSelectionBlueprint::Options options;
 							for (const auto& peer : peers) {
-								options.emplace_back(m2::widget::TextSelectionBlueprint::Option{.text = m2::ToString(peer), .return_value = peer});
+								options.emplace_back(m2::widget::TextSelectionBlueprint::Option{.text = std::format("{}", peer), .return_value = peer});
 							}
 							self.SetOptions(std::move(options));
 						}

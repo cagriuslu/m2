@@ -50,9 +50,14 @@ namespace m2::network {
 	};
 }
 
-namespace m2 {
-	std::string ToString(const std::vector<network::OrderNo>&);
-	std::string ToString(const network::IpAddress&);
-	std::string ToString(const network::Port&);
-	std::string ToString(const network::IpAddressAndPort&);
-}
+
+#include <format>
+template <> struct std::formatter<m2::network::IpAddress> : std::formatter<std::string> {
+	auto format(const m2::network::IpAddress& ip, std::format_context& ctx) const -> std::format_context::iterator;
+};
+template <> struct std::formatter<m2::network::Port> : std::formatter<std::string> {
+	auto format(const m2::network::Port& port, std::format_context& ctx) const -> std::format_context::iterator;
+};
+template <> struct std::formatter<m2::network::IpAddressAndPort> : std::formatter<std::string> {
+	auto format(const m2::network::IpAddressAndPort& addrAndPort, std::format_context& ctx) const -> std::format_context::iterator;
+};

@@ -1,4 +1,5 @@
 #include <m2/sheeteditor/PersistentSpriteSheets.h>
+#include <format>
 
 using namespace m2;
 using namespace m2::sheeteditor;
@@ -38,7 +39,7 @@ const pb::Sprite& PersistentSpriteSheets::SpritePb(const m2g::pb::SpriteType spr
 			}
 		}
 	}
-	throw M2_ERROR("Unable to find sprite: " + ToString(spriteType));
+	throw M2_ERROR(std::format("Unable to find sprite: {}", spriteType));
 }
 const google::protobuf::RepeatedPtrField<pb::Fixture>& PersistentSpriteSheets::SpriteFixtures(m2g::pb::SpriteType spriteType) const {
 	return SpritePb(spriteType).regular().fixtures();

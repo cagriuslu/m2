@@ -139,7 +139,7 @@ UiPanelBlueprint generate_custom_hud_blueprint() {
 				.border_width = 0.0f,
 				.background_color = {42, 42, 42, 255},
 				.variant = TextBlueprint{
-					.text = ToString(PlayerVictoryPoints(chr)),
+					.text = std::format("{}", PlayerVictoryPoints(chr)),
 					.wrapped_font_size_in_units = 0.7f
 				}
 			});
@@ -149,7 +149,7 @@ UiPanelBlueprint generate_custom_hud_blueprint() {
 				.x = x, .y = 2, .w = 1, .h = 1,
 				.border_width = 0.0f,
 				.variant = TextBlueprint{
-					.text = ToString(PlayerLinkCount(chr) + PlayerEstimatedVictoryPoints(chr)),
+					.text = std::format("{}", PlayerLinkCount(chr) + PlayerEstimatedVictoryPoints(chr)),
 					.wrapped_font_size_in_units = 0.7f
 				}
 			});
@@ -160,7 +160,7 @@ UiPanelBlueprint generate_custom_hud_blueprint() {
 				.border_width = 0.0f,
 				.background_color = {42, 42, 42, 255},
 				.variant = TextBlueprint{
-					.text = ToString(PlayerIncomePoints(chr)),
+					.text = std::format("{}", PlayerIncomePoints(chr)),
 					.wrapped_font_size_in_units = 0.7f
 				}
 			});
@@ -170,7 +170,7 @@ UiPanelBlueprint generate_custom_hud_blueprint() {
 				.x = x, .y = 4, .w = 1, .h = 1,
 				.border_width = 0.0f,
 				.variant = TextBlueprint{
-					.text = ToString(IncomeLevelFromIncomePoints(PlayerIncomePoints(chr))),
+					.text = std::format("{}", IncomeLevelFromIncomePoints(PlayerIncomePoints(chr))),
 					.wrapped_font_size_in_units = 0.7f
 				}
 			});
@@ -181,7 +181,7 @@ UiPanelBlueprint generate_custom_hud_blueprint() {
 				.border_width = 0.0f,
 				.background_color = {42, 42, 42, 255},
 				.variant = TextBlueprint{
-					.text = ToString(PlayerMoney(chr)),
+					.text = std::format("{}", PlayerMoney(chr)),
 					.wrapped_font_size_in_units = 0.7f
 				}
 			});
@@ -191,7 +191,7 @@ UiPanelBlueprint generate_custom_hud_blueprint() {
 				.x = x, .y = 6, .w = 1, .h = 1,
 				.border_width = 0.0f,
 				.variant = TextBlueprint{
-					.text = ToString(PlayerUnbuiltRoadCount(chr)),
+					.text = std::format("{}", PlayerUnbuiltRoadCount(chr)),
 					.wrapped_font_size_in_units = 0.7f
 				}
 			});
@@ -202,7 +202,7 @@ UiPanelBlueprint generate_custom_hud_blueprint() {
 				.border_width = 0.0f,
 				.background_color = {42, 42, 42, 255},
 				.variant = TextBlueprint{
-					.text = ToString(PlayerCardCount(chr)),
+					.text = std::format("{}", PlayerCardCount(chr)),
 					.wrapped_font_size_in_units = 0.7f
 				}
 			});
@@ -212,7 +212,7 @@ UiPanelBlueprint generate_custom_hud_blueprint() {
 				.x = x, .y = 8, .w = 1, .h = 1,
 				.border_width = 0.0f,
 				.variant = TextBlueprint{
-					.text = ToString(M2G_PROXY.player_spent_money(playerIndexOfOrder)),
+					.text = std::format("{}", M2G_PROXY.player_spent_money(playerIndexOfOrder)),
 					.wrapped_font_size_in_units = 0.7f
 				}
 			});

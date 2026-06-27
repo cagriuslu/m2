@@ -1,6 +1,7 @@
 #include <m2/network/Select.h>
 #include "PlatformSpecificSocketData.h"
 #include <winsock.h>
+#include <format>
 
 using namespace m2;
 using namespace m2::network;
@@ -28,7 +29,7 @@ expected<std::optional<std::pair<TcpSocketHandles, TcpSocketHandles>>> Select::o
 
     int select_result = ::select(0, &read_set, &write_set, nullptr, &tv);
     if (select_result == SOCKET_ERROR ) {
-        return make_unexpected("select failed: " + m2::ToString(WSAGetLastError()));
+        return make_unexpected(std::format("select failed: {}", WSAGetLastError()));
     } else if (select_result == 0) {
         return std::nullopt; // Timeout occurred
     } else {

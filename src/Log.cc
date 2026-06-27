@@ -1,7 +1,6 @@
 #include <m2/Log.h>
 #include <m2/LogHelpers.h>
 #include <m2/M2.h>
-#include <cstdarg>
 #include <thread>
 #include <csignal>
 #ifdef _WIN32
@@ -81,10 +80,6 @@ void m2::SafeLogStacktrace(const int sig) {
 #endif
 }
 
-const std::string& m2::ToString(const pb::LogLevel& lvl) {
-	return LogLevel_Name(lvl);
-}
-
 void m2::detail::LogHeader(const pb::LogLevel lvl, const char *filePath, const int line) {
 	const auto lvl_int = static_cast<int>(lvl);
 
@@ -114,21 +109,4 @@ void m2::detail::LogHeader(const pb::LogLevel lvl, const char *filePath, const i
 	SimplifyFileName(fileName == nullptr ? filePath : fileName, simplifiedFileName);
 
 	fprintf(stderr, "[%c %010lld %s %03d %s] ", lvl_char, static_cast<long long>(now), simplifiedFileName.data(), line % 1000, LookupThreadName());
-}
-
-#if _MSC_VER > 1400
-void m2::detail::LogF(const pb::LogLevel lvl, const char* file, const int line, _Printf_format_string_ const char* fmt, ...) {
-#else
-void m2::detail::LogF(const pb::LogLevel lvl, const char* file, const int line, const char* fmt, ...) {
-#endif
-	if (lvl < current_log_level) {
-		return;
-	}
-	std::unique_lock lock{gLogMutex};
-	LogHeader(lvl, file, line);
-	va_list args;
-	va_start(args, fmt);
-	vfprintf(stderr, fmt, args);
-	va_end(args);
-	fprintf(stderr, "\n");
 }

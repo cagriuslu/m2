@@ -26,7 +26,7 @@ namespace {
 			// Success
 			return id.str();
 		} else {
-			throw M2_ERROR("Unexpected identifier character: " + m2::ToString(c));
+			throw M2_ERROR(std::format("Unexpected identifier character: {}", c));
 		}
 	}
 
@@ -102,7 +102,7 @@ namespace {
 				return (int) strtol(str.c_str(), nullptr, 10);
 			}
 		} else {
-			throw M2_ERROR("Unexpected digit character: " + m2::ToString(c));
+			throw M2_ERROR(std::format("Unexpected digit character: {}", c));
 		}
 	}
 
@@ -110,7 +110,7 @@ namespace {
 		auto n = fetch_number(ss);
 		return std::visit(m2::overloaded {
 			[](int i) -> int { return i; },
-			[](float f) -> int { throw M2_ERROR("Expected integer: " + m2::ToString(f)); }
+			[](float f) -> int { throw M2_ERROR(std::format("Expected integer: {}", f)); }
 		}, n);
 	}
 
@@ -214,7 +214,7 @@ m2::void_expected m2::Vm::add_script(const std::string& script) {
 				current_labels[label] = current_commands.size();
 			} else if (current_function) {
 				// Save command
-				LOGF_TRACE("Trying to determine the type of instruction '%c'...", c);
+				LOG_TRACE(std::format("Trying to determine the type of instruction '{}'...", c));
 				auto inst_type = determine_instruction_type((char) c);
 				switch (inst_type) {
 					case WHITESPACE:

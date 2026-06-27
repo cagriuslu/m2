@@ -1,5 +1,6 @@
 #include <m2/sheeteditor/Ui.h>
 #include <m2/Game.h>
+#include <format>
 #include <m2/ui/widget/TextSelection.h>
 #include <m2/ui/widget/Text.h>
 #include <m2/ui/widget/Image.h>
@@ -324,7 +325,7 @@ const UiPanelBlueprint m2::sheet_editor_left_hud = {
 				.text = "0.0:0.0",
 				.onUpdate = [](MAYBE widget::Text& self) {
 					const auto mouse_position = M2_GAME.events.GetWorldPositionOfMouse().RoundHalfI();
-					self.set_text(ToString(mouse_position.GetX()) + ':' + ToString(mouse_position.GetY()));
+					self.set_text(std::format("{}:{}", mouse_position.GetX(), mouse_position.GetY()));
 					return MakeContinueAction();
 				}
 			}

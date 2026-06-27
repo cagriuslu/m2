@@ -92,6 +92,7 @@ namespace m2::multiplayer::lockstep {
 	};
 }
 
-namespace m2 {
-	std::string ToString(const google::protobuf::RepeatedPtrField<pb::LockstepSmallMessage>& smallMessages);
-}
+#include <format>
+template <> struct std::formatter<google::protobuf::RepeatedPtrField<m2::pb::LockstepSmallMessage>> : std::formatter<std::string> {
+	auto format(const google::protobuf::RepeatedPtrField<m2::pb::LockstepSmallMessage>& smallMessages, std::format_context& ctx) const -> std::format_context::iterator;
+};

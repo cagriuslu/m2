@@ -133,7 +133,7 @@ void_expected Game::HostTurnBasedGame(unsigned max_connection_count) {
 }
 void_expected Game::HostLockstepGame(unsigned max_connection_count, const network::IpAddress& multicastInterface) {
 	if (MAX_LOCKSTEP_CONNECTION_COUNT < max_connection_count) {
-		return make_unexpected("Given max connection count is higher than the limit: " + ToString(max_connection_count));
+		return make_unexpected(std::format("Given max connection count is higher than the limit: {}", max_connection_count));
 	}
 	if (not std::holds_alternative<std::monostate>(_multiPlayerComponents)) {
 		throw M2_ERROR("Hosting game requires no other multiplayer threads to exist");
@@ -513,16 +513,16 @@ void_expected Game::ReplayLockstep(const std::string& fpath) {
 	if (not expectMetadata.value().has_value()) {
 		return make_unexpected("Save file doesn't contain game metadata");
 	}
-	if (const auto saveGitCommitHash = ToString(expectMetadata.value()->get_git_short_commit_hash()); saveGitCommitHash != GIT_SHORT_COMMIT_HASH) {
+	if (const auto saveGitCommitHash = std::format("{}", expectMetadata.value()->get_git_short_commit_hash()); saveGitCommitHash != GIT_SHORT_COMMIT_HASH) {
 		LOG_WARN("Git short commit hash of save file doesn't match with self", saveGitCommitHash);
 	}
 	const auto playerCount = expectMetadata.value()->get_player_count();
 	if (MAX_LOCKSTEP_CONNECTION_COUNT < playerCount) {
-		return make_unexpected("Save file contains a game with more players than supported: " + ToString(playerCount));
+		return make_unexpected(std::format("Save file contains a game with more players than supported: {}", playerCount));
 	}
 	const auto selfIndex = expectMetadata.value()->get_self_index();
 	if (selfIndex < 0 || playerCount <= selfIndex) {
-		return make_unexpected("Save file contains an out of bounds self index: " + ToString(selfIndex));
+		return make_unexpected(std::format("Save file contains an out of bounds self index: {}", selfIndex));
 	}
 	pb::Level level;
 	{
@@ -540,7 +540,7 @@ void_expected Game::ReplayLockstep(const std::string& fpath) {
 			}
 		}
 	}
-	auto name = ToString(expectMetadata.value()->get_level_name());
+	auto name = std::format("{}", expectMetadata.value()->get_level_name());
 
 	if (not std::holds_alternative<std::monostate>(_multiPlayerComponents)) {
 		throw M2_ERROR("Replaying a lockstep game requires no other multiplayer threads to exist");

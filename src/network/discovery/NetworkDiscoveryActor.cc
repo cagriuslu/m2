@@ -18,8 +18,8 @@ bool NetworkDiscoveryActor::Initialize(MessageBox<NetworkDiscoveryActorInput>&, 
 			return false;
 		}
 		LOG_NETWORK_VERBOSE(std::format("Created UDP socket for sending multicast: groupAddr={} ifAddr={}",
-			ToString(std::get<SpeakerParameters>(_role).multicastAddress),
-			ToString(std::get<SpeakerParameters>(_role).multicastInterface)));
+			std::get<SpeakerParameters>(_role).multicastAddress,
+			std::get<SpeakerParameters>(_role).multicastInterface));
 		_socket = std::move(*expectSocket);
 	} else {
 		auto expectSocket = UdpSocket::CreateReceiveOnlyMulticastSocket(std::get<ListenerParameters>(_role).multicastAddress.ipAddress, std::get<ListenerParameters>(_role).multicastAddress.port);
@@ -28,7 +28,7 @@ bool NetworkDiscoveryActor::Initialize(MessageBox<NetworkDiscoveryActorInput>&, 
 			return false;
 		}
 		LOG_NETWORK_VERBOSE(std::format("Created UDP socket for receiving multicast: groupAddr={}",
-			ToString(std::get<ListenerParameters>(_role).multicastAddress)));
+			std::get<ListenerParameters>(_role).multicastAddress));
 		_socket = std::move(*expectSocket);
 	}
 
@@ -46,14 +46,14 @@ bool NetworkDiscoveryActor::operator()(MessageBox<NetworkDiscoveryActorInput>&, 
 			const auto success = _socket->Send(std::get<SpeakerParameters>(_role).multicastAddress, bytes.data(), bytes.size());
 			if (not success) {
 				LOG_ERROR(std::format("Unable to send multicast: groupAddr={} ifAddr={} err={}",
-					ToString(std::get<SpeakerParameters>(_role).multicastAddress),
-					ToString(std::get<SpeakerParameters>(_role).multicastInterface),
+					std::get<SpeakerParameters>(_role).multicastAddress,
+					std::get<SpeakerParameters>(_role).multicastInterface,
 					success.error()));
 				return false;
 			}
 			LOG_NETWORK_VERBOSE(std::format("Sent multicast: groupAddr={} ifAddr={}",
-				ToString(std::get<SpeakerParameters>(_role).multicastAddress),
-				ToString(std::get<SpeakerParameters>(_role).multicastInterface)));
+				std::get<SpeakerParameters>(_role).multicastAddress,
+				std::get<SpeakerParameters>(_role).multicastInterface));
 
 			_lastHeartbeat.Reset();
 		}
@@ -75,7 +75,7 @@ bool NetworkDiscoveryActor::operator()(MessageBox<NetworkDiscoveryActorInput>&, 
 
 					if (std::ranges::find(_knownSpeakers, speakerKey) == _knownSpeakers.end()) {
 						_knownSpeakers.emplace_back(speakerKey);
-						LOG_INFO(std::format("Discovered new game server: addr={}", ToString(speakerKey)));
+						LOG_INFO(std::format("Discovered new game server: addr={}", speakerKey));
 						outputBox.PushMessage(NetworkDiscoveryActorOutput{
 							.discoveredPeers = _knownSpeakers
 						});

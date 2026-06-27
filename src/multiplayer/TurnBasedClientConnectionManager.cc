@@ -158,7 +158,7 @@ void m2::network::TurnBasedClientConnectionManager::send_outgoing_data() {
 		return;
 	}
 	if (*send_result != multiplayer::turnbased::MessagePasser::SendResult::OK) {
-		throw M2_ERROR("An invalid or too large outgoing message was queued to client: " + ToString(socket_manager_.index()) + " " + ToString(static_cast<int>(*send_result)));
+		throw M2_ERROR(std::format("An invalid or too large outgoing message was queued to client: {} {}", socket_manager_.index(), static_cast<int>(*send_result)));
 	}
 }
 void m2::network::TurnBasedClientConnectionManager::flush_and_shutdown() {

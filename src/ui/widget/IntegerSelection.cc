@@ -1,6 +1,7 @@
 #include <m2/Game.h>
 #include <m2/thirdparty/video/TextTexture.h>
 #include <m2/ui/widget/IntegerSelection.h>
+#include <format>
 
 using namespace m2;
 using namespace m2::widget;
@@ -73,7 +74,7 @@ void IntegerSelection::OnDraw() {
 	{
 		// Draw the integer value
 		if (not _textTexture.first) {
-			const auto valueAsString = ToString(_value);
+			const auto valueAsString = std::format("{}", _value);
 			_textTexture.second = calculate_filled_text_rect(Rect().TrimRight(Rect().h / 2), TextHorizontalAlignment::LEFT, valueAsString.c_str());
 			_textTexture.first = m2MoveOrThrowError(thirdparty::video::TextTexture::CreateNoWrap(M2_GAME.GetRenderer(), M2_GAME.font, _textTexture.second.h, valueAsString));
 		}

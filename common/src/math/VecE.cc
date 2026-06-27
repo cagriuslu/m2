@@ -18,8 +18,7 @@ m2::Exact m2::VecE::GetDistanceToSquaredFE(const VecE& other) const {
 	return (other - *this).GetLengthSquaredFE();
 }
 
-std::string m2::ToString(const VecE& v) {
-	std::stringstream ss;
-	ss << "{x:" << ToString(v.GetX()) << ",y:" << ToString(v.GetY()) << "}";
-	return ss.str();
+auto std::formatter<m2::VecE>::format(const m2::VecE& vec, std::format_context& ctx) const -> std::format_context::iterator {
+	return std::formatter<std::string>::format(
+		std::format("{{x:{},y:{}}}", vec.GetX(), vec.GetY()), ctx);
 }

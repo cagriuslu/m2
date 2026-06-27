@@ -21,12 +21,12 @@ void ObjectDebugOptions::ForEachMonitorValue(const CharacterStorage& chrStorage,
 		}
 		for (const auto& variableValueMonitor : characterMonitor.variableValue) {
 			const auto& value = chrStorage.TryGetVariable(chrId, variableValueMonitor);
-			op(std::format("{} value: {}", pb::enum_name(variableValueMonitor), value ? ToString(*value) : "<NONE>"));
+			op(std::format("{} value: {}", pb::enum_name(variableValueMonitor), value ? std::format("{}", *value) : "<NONE>"));
 		}
 		for (const auto& customStateMonitor : characterMonitor.customStateMonitor) {
 			if (customStateMonitor.second) {
 				const auto value = customStateMonitor.second();
-				const auto str = std::format("{}: {}", customStateMonitor.first, ToString(value));
+				const auto str = std::format("{}: {}", customStateMonitor.first, value);
 				op(str);
 			}
 		}

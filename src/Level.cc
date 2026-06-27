@@ -547,7 +547,7 @@ void_expected Level::InitAnyPlayer(
 						_backgroundBoundary.h = y - _backgroundBoundary.y;
 					}
 
-					LOGF_TRACE("Creating tile from %d sprite at (%d,%d)...", sprite_type, x, y);
+					LOG_TRACE(std::format("Creating tile from {} sprite at ({},{})...", sprite_type, x, y));
 					auto it = obj::CreateTile(static_cast<m2g::pb::FlatGraphicsLayer>(l), VecF{x, y}, sprite_type);
 					M2G_PROXY.post_tile_create(*it, sprite_type);
 					LOG_TRACE("Created tile", it.GetId());

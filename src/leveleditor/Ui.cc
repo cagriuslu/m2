@@ -1007,7 +1007,7 @@ const UiPanelBlueprint leveleditor::gLeftHudBlueprint = {
         		.text = "0:0",
         		.onUpdate = [](MAYBE Text& self) {
         			const auto mouse_position = M2_GAME.events.GetWorldPositionOfMouse().RoundI();
-        			self.set_text(ToString(mouse_position.x) + ':' + m2::ToString(mouse_position.y));
+        			self.set_text(std::format("{}:{}", mouse_position.x, mouse_position.y));
         			return MakeContinueAction();
         		}
         	}

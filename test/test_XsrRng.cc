@@ -24,7 +24,7 @@ TEST(XsrRng, GenerateNextNumber64) {
 	}
 
 	for (auto i = 0; i < 10; ++i) {
-		const auto msg = "Bucket Idx: " + m2::ToString(i) + " Count: " + m2::ToString(buckets[i]);
+		const auto msg = std::format("Bucket Idx: {} Count: {}", i, buckets[i]);
 		LOG_INFO(msg.c_str());
 	}
 }

@@ -118,12 +118,6 @@ m2::Rational m2::Rational::PiMul2() {
 	return Rational{PI_MUL2};
 }
 
-std::string m2::ToString(const Rational& r) {
-	char buffer[20 + 1 + 20 + 1];
-	snprintf(buffer, sizeof(buffer), "%" PRId64 "/%" PRId64, r.GetN(), r.GetD());
-	return buffer;
-}
-
 bool operator==(const m2::Rational& lhs, const m2::Rational& rhs) {
 	if (lhs.GetD() == rhs.GetD()) {
 		return lhs.GetN() == rhs.GetN();
@@ -171,4 +165,10 @@ bool operator>=(const m2::Rational& lhs, const m2::Rational& rhs) {
 		auto rhs_n = rhs.GetN() * lhs.GetD();
 		return lhs_n >= rhs_n;
 	}
+}
+
+auto std::formatter<m2::Rational>::format(const m2::Rational& r, std::format_context& ctx) const -> std::format_context::iterator {
+	char buffer[20 + 1 + 20 + 1];
+	snprintf(buffer, sizeof(buffer), "%" PRId64 "/%" PRId64, r.GetN(), r.GetD());
+	return std::formatter<std::string>::format(buffer, ctx);
 }

@@ -2,7 +2,6 @@
 #include <m2/common/Math.h>
 #include <m2/common/m3/VecF.h>
 #include <m2/common/math/VecI.h>
-#include <sstream>
 
 m2::VecF::VecF(const VecI& v) : VecF(v.x, v.y) {}
 m2::VecI m2::VecF::RoundI() const {
@@ -74,14 +73,9 @@ m3::VecF m3::VecF::rotate_xz(float rads) const {
 	return {xz_rotated.GetX(), y, xz_rotated.GetY()};
 }
 
-std::string m2::ToString(const m2::VecF& v) {
-	std::stringstream ss;
-	ss << "{x:" << v.GetX() << ",y:" << v.GetY() << "}";
-	return ss.str();
+auto std::formatter<m2::VecF>::format(const m2::VecF& vec, std::format_context& ctx) const -> std::format_context::iterator {
+	return std::formatter<std::string>::format(std::format("{{x:{},y:{}}}", vec.GetX(), vec.GetY()), ctx);
 }
-
-std::string m2::ToString(const m3::VecF& v) {
-	std::stringstream ss;
-	ss << "{x:" << v.x << ",y:" << v.y << ",z:" << v.z << "}";
-	return ss.str();
+auto std::formatter<m3::VecF>::format(const m3::VecF& vec, std::format_context& ctx) const -> std::format_context::iterator {
+	return std::formatter<std::string>::format(std::format("{{x:{},y:{},z:{}}}", vec.x, vec.y, vec.z), ctx);
 }

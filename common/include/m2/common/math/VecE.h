@@ -2,6 +2,7 @@
 #include <m2/common/math/Exact.h>
 #include <m2/common/math/Float.h>
 #include <m2/common/BuildOptions.h>
+#include <format>
 
 namespace m2 {
 	class VecF;
@@ -47,11 +48,13 @@ namespace m2 {
 		[[nodiscard]] VecE Normalize() const { const auto len = GetLengthFE(); return len ? VecE{_x / len, _y / len} : VecE{}; }
 	};
 
-	std::string ToString(const VecE&);
-
 	struct VecEHash {
 		size_t operator()(const VecE& a) const {
 			return std::hash<int32_t>{}(a.GetX().ToRawValue()) ^ std::hash<int32_t>{}(a.GetY().ToRawValue());
 		}
 	};
 }
+
+template <> struct std::formatter<m2::VecE> : std::formatter<std::string> {
+	auto format(const m2::VecE& vec, std::format_context& ctx) const -> std::format_context::iterator;
+};

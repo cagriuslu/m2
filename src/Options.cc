@@ -143,7 +143,7 @@ void ExecuteUtility::CompareLockstepSaves::Execute() const {
 	const auto [durationA, durationB] = TransformTuple(metadatas, [](const auto* metadata) {
 		return metadata->get_duration_tc();
 	});
-	if (durationA != durationB) { LOG_INFO("Duration mismatch", durationA ? ToString(*durationA) : "<null>", durationB ? ToString(*durationB) : "<null>"); }
+	if (durationA != durationB) { LOG_INFO("Duration mismatch", durationA ? std::format("{}", *durationA) : "<null>", durationB ? std::format("{}", *durationB) : "<null>"); }
 
 	for (uint64_t rowId = 1; true; ++rowId) {
 		const auto expectPlayerInputA = orm::LockstepPlayerInput::find_by_rowid(*expectDatabaseA, rowId);

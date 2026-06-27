@@ -2,7 +2,6 @@
 #include <m2/common/math/RectI.h>
 #include <m2/common/Meta.h>
 #include <m2/common/Math.h>
-#include <sstream>
 
 m2::RectF::RectF() : x(), y(), w(), h() {}
 m2::RectF::RectF(float x, float y, float w, float h) : x(x), y(y), w(w), h(h) {}
@@ -158,8 +157,6 @@ m2::RectF m2::RectF::GetRow(int totalRowCount, int rowIndex) const {
 	return RectF{x, y + h * static_cast<float>(rowIndex) / static_cast<float>(totalRowCount), w, h / static_cast<float>(totalRowCount)};
 }
 
-std::string m2::ToString(const RectF& rect) {
-	std::stringstream ss;
-	ss << "{x:" << rect.x << ",y:" << rect.y << ",w:" << rect.w << ",h:" << rect.h << "}";
-	return ss.str();
+auto std::formatter<m2::RectF>::format(const m2::RectF& rect, std::format_context& ctx) const -> std::format_context::iterator {
+	return std::formatter<std::string>::format(std::format("{{x:{},y:{},w:{},h:{}}}", rect.x, rect.y, rect.w, rect.h), ctx);
 }

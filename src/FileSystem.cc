@@ -2,6 +2,7 @@
 #include <m2/FileSystem.h>
 #include <sstream>
 #include <algorithm>
+#include <format>
 
 m2::expected<std::string> m2::ReadFile(const std::filesystem::path& path) {
 	FILE* file = fopen(path.string().c_str(), "r");
@@ -26,7 +27,7 @@ m2::void_expected m2::WriteToFile(const std::string& str, const std::filesystem:
 	if (success) {
 		return {};
 	} else {
-		return make_unexpected("Unable to write string of size " + m2::ToString(size));
+		return make_unexpected(std::format("Unable to write string of size {}", size));
 	}
 }
 

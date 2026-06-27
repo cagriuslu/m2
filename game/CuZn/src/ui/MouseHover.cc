@@ -432,8 +432,8 @@ std::pair<UiPanelBlueprint,RectF> GenerateConnectionMouseHoverUiBlueprint(Connec
 						.background_color = {0, 0, 0, 255},
 						.variant = widget::TextBlueprint {
 							.text = road
-									? "Current Link Count: " + ToString(LinkCountOfRoadCharacter(GetCharacter(road->GetCharacterId())))
-									: "Estimated Link Count: " + ToString(LinkCountOfConnectionLocation(loc)),
+									? std::format("Current Link Count: {}", LinkCountOfRoadCharacter(GetCharacter(road->GetCharacterId())))
+									: std::format("Estimated Link Count: {}", LinkCountOfConnectionLocation(loc)),
 							.horizontal_alignment = TextHorizontalAlignment::LEFT,
 							.wrapped_font_size_in_units = 0.75f
 						}

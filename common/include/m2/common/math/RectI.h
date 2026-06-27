@@ -1,11 +1,10 @@
 #pragma once
+#include <m2/common/math/VecI.h>
 #include <RectI.pb.h>
-
 #include <functional>
 #include <optional>
 #include <string>
-
-#include <m2/common/math/VecI.h>
+#include <format>
 
 namespace m2 {
 	struct RectF;
@@ -69,6 +68,8 @@ namespace m2 {
 		[[nodiscard]] std::optional<RectI> GetIntersection(const RectI& other) const;
 		[[nodiscard]] RectI ApplyRatio(const RectF& ratio_rect) const;
 	};
-
-	std::string ToString(const RectI&);
 }  // namespace m2
+
+template <> struct std::formatter<m2::RectI> : std::formatter<std::string> {
+	auto format(const m2::RectI& rect, std::format_context& ctx) const -> std::format_context::iterator;
+};

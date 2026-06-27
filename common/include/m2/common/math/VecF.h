@@ -8,6 +8,7 @@
 #include <array>
 #include <string>
 #include <optional>
+#include <format>
 
 namespace m2 {
 	struct VecI;
@@ -101,8 +102,6 @@ namespace m2 {
 		static VecF CreateUnitVectorWithAngle(const float rads) { return {cosf(rads), sinf(rads)}; }
 	};
 
-	std::string ToString(const VecF&);
-
 	struct VecFCompareRightToLeft {
 		// Reverse sort based on x coordinate
 		bool operator()(const VecF& a, const VecF& b) const { return b.GetX() < a.GetX(); }
@@ -120,3 +119,7 @@ namespace m2 {
 		bool operator()(const VecF& a, const VecF& b) const { return a.GetY() == b.GetY() ? b.GetX() < a.GetX() : b.GetY() < a.GetY(); }
 	};
 }  // namespace m2
+
+template <> struct std::formatter<m2::VecF> : std::formatter<std::string> {
+	auto format(const m2::VecF& vec, std::format_context& ctx) const -> std::format_context::iterator;
+};

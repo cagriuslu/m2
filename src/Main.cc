@@ -176,7 +176,7 @@ int main(const int argc, char **argv) {
 
 		if (TIME_BETWEEN_FPS_LOGS <= prevFpsLogAt->GetDurationSince() - M2_LEVEL.GetTotalPauseDuration()) {
 			prevFpsLogAt->AdvanceStartingPoint(TIME_BETWEEN_FPS_LOGS);
-			LOGF_DEBUG("PHY count %d, GFX count %d, FPS %f", totalPhySimulationCount, totalGfxUpdateCount, totalGfxUpdateCount / 10.0f);
+			LOG_DEBUG(std::format("PHY count {}, GFX count {}, FPS {}", totalPhySimulationCount, totalGfxUpdateCount, totalGfxUpdateCount / 10.0f));
 			totalPhySimulationCount = 0;
 			totalGfxUpdateCount = 0;
 		}

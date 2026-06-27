@@ -2,6 +2,7 @@
 #include <RectI.pb.h>
 #include <m2/common/math/VecF.h>
 #include <optional>
+#include <format>
 
 namespace m2 {
 	struct RectI;
@@ -59,6 +60,8 @@ namespace m2 {
 		[[nodiscard]] VecF GetCenterPoint() const;
 		[[nodiscard]] RectF GetRow(int totalRowCount, int rowIndex) const;
 	};
-
-	std::string ToString(const RectF&);
 }
+
+template <> struct std::formatter<m2::RectF> : std::formatter<std::string> {
+	auto format(const m2::RectF& rect, std::format_context& ctx) const -> std::format_context::iterator;
+};

@@ -1,6 +1,7 @@
 #pragma once
 #include <m2/common/Meta.h>
 #include <string>
+#include <format>
 
 namespace m2 {
 	class Exact final {
@@ -133,11 +134,14 @@ namespace m2 {
 		friend int32_t ToRawValue(const Exact&);
 	};
 
-	std::string ToString(const Exact&);
 	inline int32_t ToRawValue(const Exact& e) { return e._value; }
 	/// Provided for API compatibility. Throws when called.
 	inline int32_t ToRawValue(const float) { throw M2_ERROR("Forbidden raw value conversion on float"); }
 }
+
+template <> struct std::formatter<m2::Exact> : std::formatter<std::string> {
+	auto format(const m2::Exact& value, std::format_context& ctx) const -> std::format_context::iterator;
+};
 
 constexpr m2::expected<m2::Exact> operator ""_closest_exact(const char* str, const std::size_t sz) {
 	return m2::Exact::ClosestExact(std::string_view{str, sz});

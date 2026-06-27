@@ -6,6 +6,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <string>
+#include <format>
 
 namespace m2 {
 	class VecF;
@@ -51,7 +52,6 @@ namespace m2 {
 		/// the integer multiple of the given number
 		[[nodiscard]] VecI GetDimensionsInAspectRatio(int w, int h) const; // TODO too complex of a function, get rid of this, is this really necessary. use RectI::trim_to_aspect_ration instead
 	};
-	std::string ToString(const m2::VecI&);
 
 	struct VecIHash {
 		size_t operator()(const VecI& a) const {
@@ -75,3 +75,7 @@ namespace m2 {
 		bool operator()(const VecI& a, const VecI& b) const { return a.y == b.y ? b.x < a.x : b.y < a.y; }
 	};
 }  // namespace m2
+
+template <> struct std::formatter<m2::VecI> : std::formatter<std::string> {
+	auto format(const m2::VecI& vec, std::format_context& ctx) const -> std::format_context::iterator;
+};

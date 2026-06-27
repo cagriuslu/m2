@@ -328,7 +328,7 @@ m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object&
 		case pb::ObjectType::DOOR:
 			return LoadDoor(obj, position, orientation);
 		default:
-			throw M2_ERROR("Missing loader for type: " + m2::ToString(obj.GetType()));
+			throw M2_ERROR(std::format("Missing loader for type: {}", obj.GetType()));
 	}
 }
 

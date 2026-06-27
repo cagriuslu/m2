@@ -33,7 +33,7 @@ const UiPanelBlueprint right_hud_blueprint = {
 				.wrapped_font_size_in_units = 1.25f,
 				.onUpdate = [](MAYBE Text& self) {
 					auto vp = GetCharacter(M2_PLAYER.GetCharacterId()).GetVariable(VICTORY_POINTS).GetIntOrZero();
-					self.set_text(std::string{"Victory Points: "} + m2::ToString(vp));
+					self.set_text(std::format("Victory Points: {}", vp));
 					return MakeContinueAction();
 				}
 			}
@@ -50,7 +50,7 @@ const UiPanelBlueprint right_hud_blueprint = {
 				.wrapped_font_size_in_units = 1.25f,
 				.onUpdate = [](MAYBE Text& self) {
 					auto vp = GetCharacter(M2_PLAYER.GetCharacterId()).GetVariable(INCOME_POINTS).GetIntOrZero();
-					self.set_text(std::string{"Income Points: "} + m2::ToString(vp));
+					self.set_text(std::format("Income Points: {}", vp));
 					return MakeContinueAction();
 				}
 			}
@@ -68,7 +68,7 @@ const UiPanelBlueprint right_hud_blueprint = {
 				.onUpdate = [](MAYBE Text& self) {
 					const auto income_points = GetCharacter(M2_PLAYER.GetCharacterId()).GetVariable(INCOME_POINTS).GetIntOrZero();
 					const auto income_level = IncomeLevelFromIncomePoints(income_points);
-					self.set_text(std::string{"Income: £"} + m2::ToString(income_level));
+					self.set_text(std::format("Income: £{}", income_level));
 					return MakeContinueAction();
 				}
 			}
@@ -85,7 +85,7 @@ const UiPanelBlueprint right_hud_blueprint = {
 				.wrapped_font_size_in_units = 1.25f,
 				.onUpdate = [](MAYBE Text& self) {
 					auto money = GetCharacter(M2_PLAYER.GetCharacterId()).GetVariable(MONEY).GetIntOrZero();
-					self.set_text(std::string{"Cash: £"} + m2::ToString(money));
+					self.set_text(std::format("Cash: £{}", money));
 					return MakeContinueAction();
 				}
 			}
@@ -164,7 +164,7 @@ const UiPanelBlueprint right_hud_blueprint = {
 				.wrapped_font_size_in_units = 1.25f,
 				.onUpdate = [](MAYBE Text& self) {
 					auto dds = M2G_PROXY.game_state_tracker().GetVariable(DRAW_DECK_SIZE).GetIntOrZero();
-					self.set_text(std::string{"Cards Left in Deck: "} + m2::ToString(dds));
+					self.set_text(std::format("Cards Left in Deck: {}", dds));
 					return MakeContinueAction();
 				}
 			}

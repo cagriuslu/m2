@@ -89,5 +89,9 @@ namespace m2 {
 		void execute_recursively(Stack& stack, const std::string& func) const;
 	};
 
-	std::string ToString(const Vm::StackValue& value);
 }
+
+#include <format>
+template <> struct std::formatter<m2::Vm::StackValue> : std::formatter<std::string> {
+	auto format(const m2::Vm::StackValue& value, std::format_context& ctx) const -> std::format_context::iterator;
+};

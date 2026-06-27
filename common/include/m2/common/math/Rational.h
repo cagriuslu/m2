@@ -1,5 +1,6 @@
 #pragma once
 #include <Rational.pb.h>
+#include <format>
 
 namespace m2 {
 	class Rational {
@@ -32,7 +33,6 @@ namespace m2 {
 		static Rational One() { return Rational{1,1}; }
 		static Rational PiMul2();
 	};
-	std::string ToString(const Rational& r);
 
 	inline float ToFloat(const pb::Rational& r) {
 		return static_cast<float>(r.n()) / static_cast<float>(r.d());
@@ -48,3 +48,7 @@ bool operator<(const m2::Rational& lhs, const m2::Rational& rhs);
 bool operator>(const m2::Rational& lhs, const m2::Rational& rhs);
 bool operator<=(const m2::Rational& lhs, const m2::Rational& rhs);
 bool operator>=(const m2::Rational& lhs, const m2::Rational& rhs);
+
+template <> struct std::formatter<m2::Rational> : std::formatter<std::string> {
+	auto format(const m2::Rational& r, std::format_context& ctx) const -> std::format_context::iterator;
+};

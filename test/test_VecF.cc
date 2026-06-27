@@ -27,10 +27,6 @@ TEST(VecF, basic) {
 	EXPECT_FLOAT_EQ(v5.GetX(), -2.0f);
 	EXPECT_FLOAT_EQ(v5.GetY(), -5.0f);
 
-	VecF v6{b2Vec2{1.5f, -3.5f}};
-	EXPECT_FLOAT_EQ(v6.GetX(), 1.5f);
-	EXPECT_FLOAT_EQ(v6.GetY(), -3.5f);
-
 	VecF v7{2.0f, 4.0f};
 	VecF v8{3.0f, 5.0f};
 
@@ -52,10 +48,6 @@ TEST(VecF, basic) {
 	EXPECT_TRUE(b1);
 	bool b2 = (bool) v1;
 	EXPECT_FALSE(b2);
-
-	auto b2v = (b2Vec2) v12;
-	EXPECT_FLOAT_EQ(b2v.x, 0.5f);
-	EXPECT_FLOAT_EQ(b2v.y, 1.0f);
 
 	VecF v13{NAN, 0.5f};
 	EXPECT_TRUE(v13.IsNan());
@@ -115,7 +107,7 @@ TEST(VecF, basic) {
 	EXPECT_FLOAT_EQ(v30.GetX(), 1.0f / sqrtf(2.0f));
 
 	VecF v31{1.23f, 4.56f};
-	EXPECT_STREQ(ToString(v31).c_str(), "{x:1.23,y:4.56}");
+	EXPECT_STREQ(std::format("{}", v31).c_str(), "{x:1.23,y:4.56}");
 }
 
 TEST(VecF, hround) {

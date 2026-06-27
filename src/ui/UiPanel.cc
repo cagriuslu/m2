@@ -254,7 +254,7 @@ void UiPanel::SetTopLeftPosition(const VecF& newPosition) {
 }
 void UiPanel::SetTimeout(const float timeoutS) {
 	if (timeoutS < 0.0f) {
-		throw M2_ERROR("Given timeout is negative: " + ToString(timeoutS));
+		throw M2_ERROR(std::format("Given timeout is negative: {}", timeoutS));
 	}
 	_timeout_s = timeoutS;
 }

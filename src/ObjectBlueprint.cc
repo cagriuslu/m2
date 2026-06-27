@@ -17,7 +17,7 @@ std::vector<m2::ObjectBlueprint> m2::LoadObjectBlueprints(const std::vector<Obje
 
 		// Check if already loaded
 		if (hasEncountered[objectTypeIndex]) {
-			throw M2_ERROR("ObjectBlueprint has duplicate definition: " + m2::ToString(objectBlueprint.objectType));
+			throw M2_ERROR(std::format("ObjectBlueprint has duplicate definition: {}", objectBlueprint.objectType));
 		}
 
 		// Load

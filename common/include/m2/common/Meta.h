@@ -1,6 +1,5 @@
 #pragma once
 #include <m2/common/Error.h>
-#include <sstream>
 #include <string>
 #include <vector>
 #include <variant>
@@ -48,31 +47,6 @@ namespace m2 {
 	template <typename... Types>
 	constexpr int64_t L(const std::variant<Types...>& v) {
 		return std::get<int64_t>(v);
-	}
-
-	inline std::string ToString(const bool b) { return b ? "true" : "false"; }
-	inline std::string ToString(const short s) { return std::to_string(s); }
-	inline std::string ToString(const unsigned short s) { return std::to_string(s); }
-	inline std::string ToString(const int i) { return std::to_string(i); }
-	inline std::string ToString(const unsigned int u) { return std::to_string(u); }
-	inline std::string ToString(const long l) { return std::to_string(l); }
-	inline std::string ToString(const unsigned long ul) { return std::to_string(ul); }
-	inline std::string ToString(const long long ll) { return std::to_string(ll); }
-	inline std::string ToString(const unsigned long long ull) { return std::to_string(ull); }
-	inline std::string ToString(const float f) { return std::to_string(f); }
-	inline std::string ToString(const double d) { return std::to_string(d); }
-	inline std::string ToString(const char* c) { return {c}; }
-	inline std::string ToString(const std::string& s) { return s; }
-	inline std::string ToString(const std::string_view sv) { return std::string{sv}; }
-	inline std::string ToString(const std::vector<char>& bytearray) { return std::string{bytearray.cbegin(), bytearray.cend()}; }
-	inline std::string ToString(const std::vector<unsigned char>& bytearray) { return std::string{bytearray.cbegin(), bytearray.cend()}; }
-	inline std::string ToString(const std::vector<signed char>& bytearray) { return std::string{bytearray.cbegin(), bytearray.cend()}; }
-	template <typename T, typename U> std::string ToString(const std::pair<T,U>& pair) {
-		return "(" + ToString(pair.first) + "," + ToString(pair.second) + ")";
-	}
-	template <typename T> std::string ToString(const std::vector<T>& vector) {
-		std::stringstream ss; ss << '['; for (const auto& item : vector) { ss << ToString(item) << ','; } ss << ']';
-		return ss.str();
 	}
 
 	/// For types that don't have a constructor or factory functions to properly initialize an instance (like Protobuf

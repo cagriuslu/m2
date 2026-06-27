@@ -1,5 +1,4 @@
 #include <m2/Vm.h>
-#include <sstream>
 
 using namespace m2;
 using namespace m2::vm;
@@ -12,22 +11,22 @@ namespace {
 	}
 	void assert_is_number(const Vm::StackValue& value) {
 		if (not std::holds_alternative<int>(value) && not std::holds_alternative<float>(value)) {
-			throw M2_ERROR("Stack value is not a number: " + ToString(value));
+			throw M2_ERROR(std::format("Stack value is not a number: {}", value));
 		}
 	}
 	void assert_is_int(const Vm::StackValue& value) {
 		if (not std::holds_alternative<int>(value)) {
-			throw M2_ERROR("Stack value is not an integer: " + ToString(value));
+			throw M2_ERROR(std::format("Stack value is not an integer: {}", value));
 		}
 	}
 	void assert_is_index(const Vm::StackValue& value) {
 		if (not std::holds_alternative<int>(value) && not std::holds_alternative<std::string>(value)) {
-			throw M2_ERROR("Stack value is not an index: " + ToString(value));
+			throw M2_ERROR(std::format("Stack value is not an index: {}", value));
 		}
 	}
 	void assert_is_obj(const Vm::StackValue& value) {
 		if (not std::holds_alternative<Vm::Object>(value)) {
-			throw M2_ERROR("Stack value is not an object: " + ToString(value));
+			throw M2_ERROR(std::format("Stack value is not an object: {}", value));
 		}
 	}
 	Vm::InstructionIndex assert_label(const Vm::Labels& labels, const std::string& label_name) {
@@ -68,7 +67,7 @@ namespace {
 	std::string as_index(const Vm::StackValue& value) {
 		// Assumes value is index
 		if (std::holds_alternative<int>(value)) {
-			return ToString(std::get<int>(value));
+			return std::format("{}", std::get<int>(value));
 		} else {
 			return std::get<std::string>(value);
 		}
@@ -140,7 +139,7 @@ namespace {
 		auto index_str = as_index(index);
 		auto it = std::get<Vm::Object>(obj).map.find(index_str);
 		if (it == std::get<Vm::Object>(obj).map.end()) {
-			throw M2_ERROR("Object does not contain member " + index_str + ": " + ToString(obj));
+			throw M2_ERROR(std::format("Object does not contain member {}: {}", index_str, obj));
 		}
 		out = it->second;
 	}
@@ -178,7 +177,7 @@ namespace {
 		assert_is_obj(obj);
 		auto it = std::get<Vm::Object>(obj).map.find(index);
 		if (it == std::get<Vm::Object>(obj).map.end()) {
-			throw M2_ERROR("Object does not contain member " + index + ": " + ToString(obj));
+			throw M2_ERROR(std::format("Object does not contain member {}: {}", index, obj));
 		}
 		out = it->second;
 	}
@@ -339,25 +338,25 @@ void m2::Vm::execute_recursively(Stack& stack, const std::string& func) const {
 					throw M2_ERROR("Unknown instruction");
 			}
 		} catch (const Error& err) {
-			throw M2_ERROR(ToString(err.what()) +  "\n   in function " + func + " instruction " + ToString(i));
+			throw M2_ERROR(std::format("{}\n   in function {} instruction {}", err.what(), func, i));
 		}
 	}
 }
 
-std::string m2::ToString(const Vm::StackValue& value) {
-	return std::visit(m2::overloaded{
-			[](const int& i) -> std::string { return ToString(i); },
-			[](const float& f) -> std::string { return ToString(f); },
+auto std::formatter<m2::Vm::StackValue>::format(const m2::Vm::StackValue& value, std::format_context& ctx) const
+		-> std::format_context::iterator {
+	return std::formatter<std::string>::format(
+		std::visit(m2::overloaded{
+			[](const int& i) -> std::string { return std::format("{}", i); },
+			[](const float& f) -> std::string { return std::format("{}", f); },
 			[](const std::string& s) -> std::string { return s; },
-			[](const Vm::Object& o) -> std::string {
-				std::stringstream ss;
-				ss << "{";
+			[](const m2::Vm::Object& o) -> std::string {
+				std::string result = "{";
 				for (const auto& kv_pair : o.map) {
-					ss << kv_pair.first << "=";
-					ss << ToString(kv_pair.second) << ", ";
+					result += kv_pair.first + "=" + std::format("{}", kv_pair.second) + ", ";
 				}
-				ss << "}";
-				return ss.str();
+				result += "}";
+				return result;
 			},
-	}, value);
+		}, value), ctx);
 }

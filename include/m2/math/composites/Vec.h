@@ -1,6 +1,5 @@
 #pragma once
 #include <utility>
-#include <sstream>
 
 namespace m2 {
 	template <typename Primitive>
@@ -35,10 +34,12 @@ namespace m2 {
 		[[nodiscard]] Primitive MagnitudeSquare() const { return _x * _x + _y * _y; }
 	};
 
-	template <typename Primitive>
-	std::string ToString(const Vec<Primitive>& v) {
-		std::stringstream ss;
-		ss << "{x:" << ToString(v.X()) << ",y:" << ToString(v.Y()) << "}";
-		return ss.str();
-	}
 }
+
+#include <format>
+template <typename Primitive>
+struct std::formatter<m2::Vec<Primitive>> : std::formatter<std::string> {
+	auto format(const m2::Vec<Primitive>& v, std::format_context& ctx) const -> std::format_context::iterator {
+		return std::formatter<std::string>::format(std::format("{{x:{},y:{}}}", v.X(), v.Y()), ctx);
+	}
+};

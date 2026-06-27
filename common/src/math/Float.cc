@@ -9,6 +9,6 @@ std::string m2::Float::ToString() const {
 	return {buffer.data()};
 }
 
-std::string m2::ToString(const Float& f) {
-	return f.ToString();
+auto std::formatter<m2::Float>::format(const m2::Float& value, std::format_context& ctx) const -> std::format_context::iterator {
+	return std::formatter<std::string>::format(value.ToString(), ctx);
 }

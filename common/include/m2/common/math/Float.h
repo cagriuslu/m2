@@ -5,6 +5,7 @@
 #include <cfloat>
 #include <utility>
 #include <cmath>
+#include <format>
 
 namespace m2 {
 	class Float {
@@ -71,7 +72,10 @@ namespace m2 {
 		[[nodiscard]] Float SquareRoot() const { return Float{sqrtf(_value)}; }
 	};
 
-	std::string ToString(const Float&);
 	/// Provided for API compatibility. Throws when called.
 	inline int32_t ToRawValue(const Float&) { throw M2_ERROR("Forbidden raw value conversion on Float"); }
 }
+
+template <> struct std::formatter<m2::Float> : std::formatter<std::string> {
+	auto format(const m2::Float& value, std::format_context& ctx) const -> std::format_context::iterator;
+};

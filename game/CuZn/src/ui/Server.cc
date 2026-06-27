@@ -18,7 +18,7 @@ static TextBlueprint client_count = {
 	.onUpdate = [](MAYBE Text& self) {
 		auto ccount = M2_GAME.ServerThread().GetClientCount();
 		auto ready_client_count = M2_GAME.ServerThread().GetReadyClientCount();
-		auto text = m2::ToString(ready_client_count) + "/" + m2::ToString(ccount);
+		auto text = std::format("{}/{}", ready_client_count, ccount);
 		// Check if ready to start
 		if (ccount != 1 && ccount == ready_client_count) {
 			text += " - START!";
@@ -27,7 +27,7 @@ static TextBlueprint client_count = {
 
 		// Check if the lobby closure is successful
 		if (M2_GAME.ServerThread().IsLobbyClosed()) {
-			const auto expect_success = M2_GAME.LoadTurnBasedMultiPlayerAsHost(M2_GAME.GetResources().GetLevelsDir() / "Map.json", m2::ToString(ccount));
+			const auto expect_success = M2_GAME.LoadTurnBasedMultiPlayerAsHost(M2_GAME.GetResources().GetLevelsDir() / "Map.json", std::format("{}", ccount));
 			m2SucceedOrThrowError(expect_success);
 			return MakeClearStackAction();
 		}
@@ -70,7 +70,7 @@ const UiPanelBlueprint server_lobby = {
 				.onCreate = [](Text& self) {
 					if (auto addresses = m2::network::GetInterfaces()) {
 						auto addresses_str = std::accumulate(addresses->begin(), addresses->end(), std::string{}, [](std::string&& ss, const network::IpAddress& s) {
-							return ss.empty() ? ToString(s) : (ss + " " + ToString(s));
+							return ss.empty() ? std::format("{}", s) : (ss + " " + std::format("{}", s));
 						});
 						self.set_text(addresses_str);
 					}

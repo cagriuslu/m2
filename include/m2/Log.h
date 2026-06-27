@@ -3,12 +3,10 @@
 #include "ObjectId.h"
 #include "M2.h"
 #include "protobuf/Detail.h"
+#include <format>
 #include <mutex>
 #include <string>
 #include <utility>
-#if _MSC_VER > 1400
-#include <sal.h>
-#endif
 
 /// When to use which debug level:
 /// Fatal: Unable to continue, will crash immediately
@@ -36,17 +34,6 @@
 #define LOG_PHYSICS_VERBOSE(msg, ...) ::m2::detail::Log(::m2::pb::LogLevel::PHY, true, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
 #define LOG_NETWORK_VERBOSE(msg, ...) ::m2::detail::Log(::m2::pb::LogLevel::NET, true, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
 
-// TODO remove these, use std::format instead
-#define LOGF_TRACE(fmt, ...) ::m2::detail::LogF(::m2::pb::LogLevel::TRC, __FILE__, __LINE__, (fmt), ##__VA_ARGS__)
-#define LOGF_GRAPHICS(fmt, ...) ::m2::detail::LogF(::m2::pb::LogLevel::GFX, __FILE__, __LINE__, (fmt), ##__VA_ARGS__)
-#define LOGF_PHYSICS(fmt, ...) ::m2::detail::LogF(::m2::pb::LogLevel::PHY, __FILE__, __LINE__, (fmt), ##__VA_ARGS__)
-#define LOGF_NETWORK(fmt, ...) ::m2::detail::LogF(::m2::pb::LogLevel::NET, __FILE__, __LINE__, (fmt), ##__VA_ARGS__)
-#define LOGF_DEBUG(fmt, ...) ::m2::detail::LogF(::m2::pb::LogLevel::DBG, __FILE__, __LINE__, (fmt), ##__VA_ARGS__)
-#define LOGF_INFO(fmt, ...) ::m2::detail::LogF(::m2::pb::LogLevel::INF, __FILE__, __LINE__, (fmt), ##__VA_ARGS__)
-#define LOGF_WARN(fmt, ...) ::m2::detail::LogF(::m2::pb::LogLevel::WRN, __FILE__, __LINE__, (fmt), ##__VA_ARGS__)
-#define LOGF_ERROR(fmt, ...) ::m2::detail::LogF(::m2::pb::LogLevel::ERR, __FILE__, __LINE__, (fmt), ##__VA_ARGS__)
-#define LOGF_FATAL(fmt, ...) ::m2::detail::LogF(::m2::pb::LogLevel::FTL, __FILE__, __LINE__, (fmt), ##__VA_ARGS__)
-
 #define LOG_OBJECT_DEBUG(id, msg, ...) ::m2::detail::LogObject(__FILE__, __LINE__, (id), (msg), ##__VA_ARGS__)
 
 // TODO get rid of these, they are not descriptive enough
@@ -56,8 +43,6 @@
 
 namespace m2 {
 	void SafeLogStacktrace(int sig);
-
-	const std::string& ToString(const pb::LogLevel&);
 
 	namespace detail {
 		extern std::mutex gLogMutex;
@@ -73,18 +58,12 @@ namespace m2 {
 			LogHeader(lvl, file, line);
 			if (constexpr auto argsSize = std::tuple_size_v<std::tuple<Ts...>>) {
 				std::cerr << msg << ": ";
-				((std::cerr << ::m2::ToString(ts) << " "), ...);
+				((std::cerr << std::format("{}", ts) << " "), ...);
 			} else {
 				std::cerr << msg;
 			}
 			std::cerr << std::endl;
 		}
-
-#if _MSC_VER > 1400
-		void LogF(pb::LogLevel lvl, const char* file, int line, _Printf_format_string_ const char* fmt, ...);
-#else
-		void LogF(pb::LogLevel lvl, const char* file, int line, const char* fmt, ...) __attribute__ ((format (printf, 4, 5)));
-#endif
 
 		bool IsDebugLoggingEnabledForObject(ObjectId);
 

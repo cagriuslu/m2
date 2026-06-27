@@ -236,7 +236,7 @@ bool ServerActor::operator()(MessageBox<ServerActorInput>& inbox, MessageBox<Ser
 									}
 									if (stateReport.player_input_hashes(i) != *inputHashCalculatedByServer) {
 										LOG_WARN(std::format("PlayerA reported an input hash for PlayerB that differs from the hash calculated by server, faulting both players: playerA={} playerB={} reportedHash={} calculatedHash={}",
-											ToString(client->GetAddressAndPort()), ToString(clientThatReportRefersTo->GetAddressAndPort()), stateReport.player_input_hashes(i), *inputHashCalculatedByServer).c_str());
+											client->GetAddressAndPort(), clientThatReportRefersTo->GetAddressAndPort(), stateReport.player_input_hashes(i), *inputHashCalculatedByServer));
 										levelStarted.clientList.At(i)->SetFault(pb::LockstepFaultCode::INCORRECT_STATE_REPORT_PLAYER_INPUT_HASH);
 										client->SetFault(pb::LockstepFaultCode::INCORRECT_STATE_REPORT_PLAYER_INPUT_HASH);
 									}

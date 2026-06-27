@@ -1,7 +1,7 @@
 #pragma once
-
 #include <m2/common/math/VecF.h>
 #include <VecF.pb.h>
+#include <format>
 
 namespace m3 {
 	class VecF {
@@ -36,6 +36,6 @@ namespace m3 {
 	};
 }
 
-namespace m2 {
-	std::string ToString(const m3::VecF&);
-}
+template <> struct std::formatter<m3::VecF> : std::formatter<std::string> {
+	auto format(const m3::VecF& vec, std::format_context& ctx) const -> std::format_context::iterator;
+};

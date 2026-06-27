@@ -187,7 +187,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::HandleResourceEnterSignal() {
 					// Get a game drawing centered at the merchant location
 					auto background = M2_GAME.DrawGameToTexture(std::get<m2::VecF>(M2G_PROXY.merchant_positions[merchant_location]));
 					LOG_DEBUG("Asking player if they want to buy coal from the market...");
-					if (ask_for_confirmation_bottom("Buy " + ToString(remainingUnspecifiedCoalCount) + " coal from market for £" + ToString(costOfBuying) + "?", "Yes", "No", std::move(background))) {
+					if (ask_for_confirmation_bottom(std::format("Buy {} coal from market for £{}?", remainingUnspecifiedCoalCount, costOfBuying), "Yes", "No", std::move(background))) {
 						LOG_DEBUG("Player agreed");
 						// Specify resource source
 						std::ranges::for_each(_resource_sources, [merchant_location](auto& resourceSource) {

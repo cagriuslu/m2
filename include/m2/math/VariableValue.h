@@ -57,5 +57,9 @@ namespace m2 {
 
 	constexpr VariableValue NULL_VARIABLE_VALUE{};
 
-	std::string ToString(const VariableValue&);
 }
+
+#include <format>
+template <> struct std::formatter<m2::VariableValue> : std::formatter<std::string> {
+	auto format(const m2::VariableValue& v, std::format_context& ctx) const -> std::format_context::iterator;
+};

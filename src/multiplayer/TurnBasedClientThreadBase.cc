@@ -357,7 +357,7 @@ void m2::network::detail::TurnBasedClientThreadBase::base_client_thread_func(Tur
 					thread_manager->unlocked_set_state(pb::CLIENT_RECONNECTING);
 					continue;
 				} else if (*send_result != multiplayer::turnbased::MessagePasser::SendResult::OK) {
-					throw M2_ERROR("An invalid or too large outgoing message was queued to server: " + m2::ToString(static_cast<int>(*send_result)));
+					throw M2_ERROR(std::format("An invalid or too large outgoing message was queued to server: {}", static_cast<int>(*send_result)));
 				}
 			}
 		}

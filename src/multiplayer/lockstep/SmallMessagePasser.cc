@@ -196,7 +196,7 @@ void SmallMessagePasser::PeerConnectionParameters::ProcessReceivedMessages(googl
 		// Ignore messages whose order number is less or equal to lastOrderlyReceivedOrderNo
 		if (const auto msgOrderNo = msg.order_no(); lastOrderlyReceivedOrderNo < msgOrderNo) {
 			if (const auto [_, inserted] = messagesSinceGap.emplace(msgOrderNo, std::move(msg)); inserted) {
-				LOG_NETWORK_VERBOSE(std::format("Found new small message inside packet from peer: peer={} orderNumber={}", ToString(peerAddress), ToString(msgOrderNo)));
+				LOG_NETWORK_VERBOSE(std::format("Found new small message inside packet from peer: peer={} orderNumber={}", peerAddress, msgOrderNo));
 			}
 		}
 	}
@@ -248,11 +248,11 @@ void_expected SmallMessagePasser::ReadSmallMessages(std::queue<SmallMessageAndSe
 				LOG_NETWORK("Dropping packet from unknown source", recvResult->second);
 				continue;
 			}
-			LOG_NETWORK(std::format("Received packet from an unknown source: source={} size={}", ToString(recvResult->second), ToString(recvResult->first)));
+			LOG_NETWORK(std::format("Received packet from an unknown source: source={} size={}", recvResult->second, recvResult->first));
 			peer = &FindOrCreatePeerConnectionParameters(recvResult->second);
 			isNewConnection = true;
 		} else {
-			LOG_NETWORK_VERBOSE(std::format("Received packet from peer: peer={} size={}", ToString(recvResult->second), ToString(recvResult->first)));
+			LOG_NETWORK_VERBOSE(std::format("Received packet from peer: peer={} size={}", recvResult->second, recvResult->first));
 		}
 
 		if (pb::LockstepUdpPacket packet; packet.ParseFromArray(_recvBuffer, recvResult->first)) {
@@ -364,11 +364,11 @@ SmallMessagePasser::PeerConnectionParameters& SmallMessagePasser::FindOrCreatePe
 	return *existing;
 }
 
-std::string m2::ToString(const google::protobuf::RepeatedPtrField<pb::LockstepSmallMessage>& smallMessages) {
+auto std::formatter<google::protobuf::RepeatedPtrField<m2::pb::LockstepSmallMessage>>::format(const google::protobuf::RepeatedPtrField<m2::pb::LockstepSmallMessage>& smallMessages, std::format_context& ctx) const -> std::format_context::iterator {
 	std::string s = "[";
 	for (const auto& msg : smallMessages) {
-		s += ToString(msg.order_no()) + ",";
+		s += std::format("{}", msg.order_no()) + ",";
 	}
 	s += "]";
-	return s;
+	return std::formatter<std::string>::format(s, ctx);
 }

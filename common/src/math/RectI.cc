@@ -1,7 +1,6 @@
 #include <m2/common/math/RectI.h>
 #include <m2/common/math/RectF.h>
 #include <m2/common/Meta.h>
-#include <sstream>
 
 m2::RectI::RectI() : x(), y(), w(), h() {}
 m2::RectI::RectI(int x, int y, int w, int h) : x(x), y(y), w(w), h(h) {}
@@ -225,8 +224,7 @@ m2::RectI m2::RectI::ApplyRatio(const RectF& ratio_rect) const {
 	};
 }
 
-std::string m2::ToString(const m2::RectI& v) {
-	std::stringstream ss;
-	ss << "{x:" << v.x << ",y:" << v.y << ",w:" << v.w << ",h:" << v.h << "}";
-	return ss.str();
+auto std::formatter<m2::RectI>::format(const m2::RectI& rect, std::format_context& ctx) const -> std::format_context::iterator {
+	return std::formatter<std::string>::format(
+		std::format("{{x:{},y:{},w:{},h:{}}}", rect.x, rect.y, rect.w, rect.h), ctx);
 }

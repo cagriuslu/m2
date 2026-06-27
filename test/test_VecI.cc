@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <m2/common/math/VecI.h>
 #include <m2/common/math/VecF.h>
+#include <format>
 
 TEST(VecI, basic) {
 	using namespace m2;
@@ -85,5 +86,5 @@ TEST(VecI, utils) {
 TEST(VecI, ToString) {
 	using namespace m2;
 
-	EXPECT_STREQ(ToString(VecI{10,20}).c_str(), "{\"y\":\"20\",\"x\":\"10\",}");
+	EXPECT_STREQ(std::format("{}", VecI{10,20}).c_str(), "{x:10,y:20}");
 }

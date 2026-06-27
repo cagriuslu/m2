@@ -168,7 +168,7 @@ std::vector<std::variant<m2::Sprite, m2::pb::TextLabel>> m2::LoadSprites(const s
 			const auto index = pb::enum_index(sprite.type());
 			// Check if the sprite is already loaded
 			if (is_loaded[index]) {
-				throw M2_ERROR("Sprite has duplicate definition: " + m2::ToString(sprite.type()));
+				throw M2_ERROR(std::format("Sprite has duplicate definition: {}", sprite.type()));
 			}
 			// Load sprite
 			sprites_vector[index] = Sprite{spriteSheets, spriteSheet, spriteEffectsSheet, sprite};
@@ -179,7 +179,7 @@ std::vector<std::variant<m2::Sprite, m2::pb::TextLabel>> m2::LoadSprites(const s
 		const auto index = pb::enum_index(textLabel.type());
 		// Check if the sprite is already loaded
 		if (is_loaded[index]) {
-			throw M2_ERROR("Sprite has duplicate definition: " + m2::ToString(textLabel.type()));
+			throw M2_ERROR(std::format("Sprite has duplicate definition: {}", textLabel.type()));
 		}
 		// Load sprite
 		sprites_vector[index] = textLabel;

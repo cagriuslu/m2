@@ -114,16 +114,19 @@ VariableValue VariableValue::Negate() const {
 	}
 }
 
-std::string m2::ToString(const VariableValue& v) {
+auto std::formatter<m2::VariableValue>::format(const m2::VariableValue& v, std::format_context& ctx) const
+		-> std::format_context::iterator {
+	std::string result;
 	if (v.IsNull()) {
-		return "<null>";
+		result = "<null>";
 	} else if (v.IsInt()) {
-		return ToString(v.UnsafeGetInt());
+		result = std::format("{}", v.UnsafeGetInt());
 	} else if (v.IsVariableType()) {
-		return pb::enum_name(v.UnsafeGetVariableType());
+		result = m2::pb::enum_name(v.UnsafeGetVariableType());
 	} else if (v.IsFE()) {
-		return ToString(v.UnsafeGetFE());
+		result = std::format("{}", v.UnsafeGetFE());
 	} else {
-		throw M2_ERROR("ToString not implemented for VariableValue type");
+		throw M2_ERROR("std::formatter not implemented for VariableValue type");
 	}
+	return std::formatter<std::string>::format(result, ctx);
 }

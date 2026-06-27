@@ -3,6 +3,7 @@
 #include <array>
 #include <ranges>
 #include <algorithm>
+#include <format>
 
 namespace {
 	// Look up table where i'th element corresponds to the value of 1/(2^i) multiplied by 10^8.
@@ -119,13 +120,13 @@ m2::expected<m2::Exact> m2::Exact::ClosestExact(const std::string_view str) {
 					const int fractionalDigitSignificance = j - decimalPointIndex - 1;
 					fractionalPart8 += (f - '0') * DECIMAL_PRECISION_POINT_TO_DECIMAL_8[fractionalDigitSignificance];
 				} else {
-					return make_unexpected("Unexpected character: " + m2::ToString(f));
+					return make_unexpected(std::format("Unexpected character: {}", f));
 				}
 			}
 			/// Convert the fractional part from base(10) to base(2)
 			return Compose(wholePart, I(fractionalPart8 * (1ll << PRECISION) / 100000000ll));
 		} else {
-			return make_unexpected("Unexpected character: " + m2::ToString(c));
+			return make_unexpected(std::format("Unexpected character: {}", c));
 		}
 	}
 	throw M2_ERROR("Implementation error: decimal point should have been encountered");
@@ -265,6 +266,6 @@ void m2::Exact::ThrowIfOutOfBounds(const double d) {
 	}
 }
 
-std::string m2::ToString(const Exact& f) {
-	return f.ToString();
+auto std::formatter<m2::Exact>::format(const m2::Exact& value, std::format_context& ctx) const -> std::format_context::iterator {
+	return std::formatter<std::string>::format(value.ToString(), ctx);
 }

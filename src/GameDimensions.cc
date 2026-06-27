@@ -19,13 +19,13 @@ namespace {
 m2::GameDimensions::GameDimensions(const thirdparty::video::Window& window, const int gamePpm, const int gameAspectRatioMul, const int gameAspectRatioDiv)
 		: _window(window), _gamePpm(gamePpm), _gameAspectRatioMul(gameAspectRatioMul), _gameAspectRatioDiv(gameAspectRatioDiv) {
 	if (gamePpm < 1) {
-		throw M2_ERROR("Given PPM is not positive: " + m2::ToString(gamePpm));
+		throw M2_ERROR(std::format("Given PPM is not positive: {}", gamePpm));
 	}
 	if (gameAspectRatioMul < 1) {
-		throw M2_ERROR("Given aspect ration multiplier is not positive: " + m2::ToString(gameAspectRatioMul));
+		throw M2_ERROR(std::format("Given aspect ration multiplier is not positive: {}", gameAspectRatioMul));
 	}
 	if (gameAspectRatioDiv < 1) {
-		throw M2_ERROR("Given aspect ration divider is not positive: " + m2::ToString(gameAspectRatioDiv));
+		throw M2_ERROR(std::format("Given aspect ration divider is not positive: {}", gameAspectRatioDiv));
 	}
 
 	// In the beginning, the scale is 1. We can fit as much as we can into the window using this scale.
@@ -118,7 +118,7 @@ void m2::GameDimensions::OnWindowResize() {
 }
 void m2::GameDimensions::SetScale(const float scale) {
 	if (scale <= 0.0f) {
-		throw M2_ERROR("Given scale is invalid: " + m2::ToString(scale));
+		throw M2_ERROR(std::format("Given scale is invalid: {}", scale));
 	}
 	LOG_DEBUG("Setting scale to", scale);
 
@@ -148,7 +148,7 @@ m2::VecI m2::GameDimensions::EstimateMinimumWindowDimensions(const int gamePpm, 
 }
 int m2::GameDimensions::NextPixelatedScale(int currentScale) {
 	if (currentScale == 0) {
-		throw M2_ERROR("Unexpected scale: " + m2::ToString(currentScale));
+		throw M2_ERROR(std::format("Unexpected scale: {}", currentScale));
 	}
 	if (currentScale == -1) {
 		return 2;
@@ -157,7 +157,7 @@ int m2::GameDimensions::NextPixelatedScale(int currentScale) {
 }
 int m2::GameDimensions::PrevPixelatedScale(int currentScale) {
 	if (currentScale == 0) {
-		throw M2_ERROR("Unexpected scale: " + m2::ToString(currentScale));
+		throw M2_ERROR(std::format("Unexpected scale: {}", currentScale));
 	}
 	if (currentScale == 1) {
 		return -2;
