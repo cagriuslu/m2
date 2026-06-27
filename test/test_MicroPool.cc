@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <m2/containers/MicroPool.h>
+#include <m2/common/containers/MicroPool.h>
 
 TEST(MicroPool, basic) {
 	m2::MicroPool<int, 10> myPool;

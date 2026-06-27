@@ -1,5 +1,5 @@
 #pragma once
-#include "Detail.h"
+#include <m2/common/reflect/Detail.h>
 #include <deque>
 #include <vector>
 #include <list>

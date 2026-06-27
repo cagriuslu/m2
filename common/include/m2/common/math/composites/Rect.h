@@ -1,5 +1,5 @@
 #pragma once
-#include <m2/math/composites/Vec.h>
+#include <m2/common/math/composites/Vec.h>
 
 namespace m2 {
 	template <typename Primitive>

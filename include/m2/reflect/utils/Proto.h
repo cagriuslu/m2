@@ -1,6 +1,6 @@
 #pragma once
-#include "../Detail.h"
-#include <m2/PropagateConst.h>
+#include <m2/common/reflect/Detail.h>
+#include <m2/common/PropagateConst.h>
 #include <Reflective.pb.h>
 
 namespace m2::reflect::util {

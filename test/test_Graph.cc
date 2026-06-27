@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <m2/game/Graph.h>
+#include <m2/common/Graph.h>
 
 TEST(Graph, basic) {
 	int i = 0;

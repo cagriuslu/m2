@@ -1,4 +1,4 @@
-#include <m2/math/RectE.h>
+#include <m2/common/math/RectE.h>
 #include <m2/common/math/RectF.h>
 
 m2::RectE::operator RectF() const {

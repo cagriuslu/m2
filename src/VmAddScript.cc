@@ -1,5 +1,5 @@
 #include <m2/Vm.h>
-#include <m2/FileSystem.h>
+#include <m2/common/FileSystem.h>
 #include <m2/common/Error.h>
 #include <m2/Log.h>
 #include <sstream>

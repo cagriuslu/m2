@@ -2,7 +2,7 @@
 #include "CustomStateUtils.h"
 #include <m2/common/Meta.h>
 #include <m2/component/Character.h>
-#include <m2/math/Hash.h>
+#include <m2/common/math/Hash.h>
 
 namespace m2 {
 	/// A character that can be customized with separate card and variable containers. Additionally, a CustomState can

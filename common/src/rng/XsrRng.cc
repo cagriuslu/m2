@@ -1,5 +1,5 @@
-#include <m2/game/rng/XsrRng.h>
-#include <m2/math/Bit.h>
+#include <m2/common/rng/XsrRng.h>
+#include <m2/common/math/Bit.h>
 #include <m2/common/Meta.h>
 #include <array>
 

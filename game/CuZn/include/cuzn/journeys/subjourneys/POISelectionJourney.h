@@ -1,5 +1,5 @@
 #pragma once
-#include <m2/game/Fsm.h>
+#include <m2/common/Fsm.h>
 #include <cuzn/Detail.h>
 #include "../Common.h"
 #include <set>

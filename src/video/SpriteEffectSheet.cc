@@ -1,5 +1,5 @@
 #include <m2/video/SpriteEffectSheet.h>
-#include <m2/math/Gaussian.h>
+#include <m2/common/math/Gaussian.h>
 #include <m2/Log.h>
 #include <numeric>
 

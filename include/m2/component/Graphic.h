@@ -3,7 +3,7 @@
 #include <m2/video/Sprite.h>
 #include <m2/common/math/VecF.h>
 #include <m2/common/m3/VecF.h>
-#include "../m3/Line.h"
+#include <m2/common/m3/Line.h>
 #include "../m3/Plane.h"
 #include <Level.pb.h>
 #include <m2g_Layers.pb.h>

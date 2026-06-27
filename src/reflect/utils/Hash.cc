@@ -1,5 +1,5 @@
 #include <m2/reflect/utils/Hash.h>
-#include <m2/math/Hash.h>
+#include <m2/common/math/Hash.h>
 
 using namespace m2;
 using namespace m2::reflect;

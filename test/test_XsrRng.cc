@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <m2/game/rng/XsrRng.h>
+#include <m2/common/rng/XsrRng.h>
 #include <m2/Log.h>
 #include <m2/common/Meta.h>
 #include <algorithm>

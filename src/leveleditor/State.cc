@@ -9,7 +9,7 @@
 #include <m2/ui/widget/Text.h>
 #include <m2/ui/widget/TextSelection.h>
 #include <m2/sheeteditor/Ui.h>
-#include <m2/math/Line.h>
+#include <m2/common/math/Line.h>
 #include <m2/Log.h>
 
 namespace {

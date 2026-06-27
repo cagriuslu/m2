@@ -3,7 +3,7 @@
 #include <m2g_CardType.pb.h>
 #include <m2g_SpriteType.pb.h>
 #include <m2/M2.h>
-#include <m2/game/Graph.h>
+#include <m2/common/Graph.h>
 #include <cuzn/Detail.h>
 
 /// Returns industry or merchant locations starting from the given city.

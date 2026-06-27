@@ -25,7 +25,7 @@
 #include <filesystem>
 #include <functional>
 #include <vector>
-#include "math/Hash.h"
+#include <m2/common/math/Hash.h>
 #include "GameDimensions.h"
 #include <m2g_KeyType.pb.h>
 #include <m2/video/Shape.h>

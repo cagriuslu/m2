@@ -1,4 +1,4 @@
-#include <m2/containers/Pool.h>
+#include <m2/common/containers/Pool.h>
 
 m2::ShiftedPoolId m2::NextShiftedPoolId() {
 	static PoolId gPoolId = 1;

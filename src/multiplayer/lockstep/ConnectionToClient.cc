@@ -1,5 +1,5 @@
 #include <m2/multiplayer/lockstep/ConnectionToClient.h>
-#include <m2/math/Hash.h>
+#include <m2/common/math/Hash.h>
 #include <m2/ProxyHelper.h>
 #include <m2/Log.h>
 

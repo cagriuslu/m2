@@ -8,7 +8,7 @@
 #include <m2/component/Graphic.h>
 #include <m2/ui/UiAction.h>
 #include <m2/game/Key.h>
-#include <m2/String.h>
+#include <m2/common/String.h>
 #include <m2/thirdparty/video/Detail.h>
 #include <m2/thirdparty/video/Shapes.h>
 #include <M2.orm.h>

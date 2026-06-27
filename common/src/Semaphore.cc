@@ -1,4 +1,4 @@
-#include <m2/Semaphore.h>
+#include <m2/common/Semaphore.h>
 
 m2::Semaphore::Semaphore(size_t initial_state) : _state(initial_state) {}
 

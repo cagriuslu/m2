@@ -1,6 +1,6 @@
 #pragma once
 #include <m2/network/Types.h>
-#include <m2/Chrono.h>
+#include <m2/common/Chrono.h>
 #include <Lockstep.pb.h>
 #include <utility>
 

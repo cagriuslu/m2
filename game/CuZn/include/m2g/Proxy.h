@@ -7,7 +7,7 @@
 #include <cuzn/journeys/SellJourney.h>
 #include <cuzn/journeys/LiquidationJourney.h>
 #include <cuzn/journeys/subjourneys/POISelectionJourney.h>
-#include <m2/game/Graph.h>
+#include <m2/common/Graph.h>
 #include <list>
 
 namespace m2g {

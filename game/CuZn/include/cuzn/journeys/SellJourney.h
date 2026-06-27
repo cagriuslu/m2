@@ -1,6 +1,6 @@
 #pragma once
 #include <cuzn/Detail.h>
-#include <m2/game/Fsm.h>
+#include <m2/common/Fsm.h>
 #include "subjourneys/POISelectionJourney.h"
 #include "Common.h"
 #include <Network.pb.h>

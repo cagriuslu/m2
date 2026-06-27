@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Line.h"
+#include <m2/common/m3/Line.h>
 #include <m2/common/m3/VecF.h>
 #include <string>
 

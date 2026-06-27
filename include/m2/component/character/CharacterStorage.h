@@ -1,6 +1,6 @@
 #pragma once
 #include <m2g/ProxyEx.h>
-#include <m2/containers/Pool.h>
+#include <m2/common/containers/Pool.h>
 #include <Lockstep.pb.h>
 #include <Network.pb.h>
 

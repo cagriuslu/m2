@@ -169,34 +169,15 @@ if (MSVC)
     target_compile_options(m2_pb PRIVATE "/MP")
 endif()
 
-add_library(m2_common STATIC
-        common/src/Error.cc
-        common/src/Math.cc
-        common/src/math/Exact.cc
-        common/src/math/Float.cc
-        common/src/math/Rational.cc
-        common/src/math/RectF.cc
-        common/src/math/RectI.cc
-        common/src/math/VecE.cc
-        common/src/math/VecF.cc
-        common/src/math/VecI.cc
-        common/src/video/Color.cc
-        common/include/m2/common/BuildOptions.h
-        common/include/m2/common/Constants.h
-        common/include/m2/common/Error.h
-        common/include/m2/common/Math.h
-        common/include/m2/common/Meta.h
-        common/include/m2/common/m3/VecF.h
-        common/include/m2/common/math/Exact.h
-        common/include/m2/common/math/Float.h
-        common/include/m2/common/math/Rational.h
-        common/include/m2/common/math/RectF.h
-        common/include/m2/common/math/RectI.h
-        common/include/m2/common/math/VecE.h
-        common/include/m2/common/math/VecF.h
-        common/include/m2/common/math/VecI.h
-        common/include/m2/common/video/Color.h
+file(GLOB m2_common_SOURCES
+        "common/src/*.cc"
+        "common/src/*/*.cc"
+        "common/src/*/*/*.cc"
+        "common/include/m2/common/*.h"
+        "common/include/m2/common/*/*.h"
+        "common/include/m2/common/*/*/*.h"
 )
+add_library(m2_common STATIC ${m2_common_SOURCES})
 target_include_directories(m2_common PUBLIC common/include)
 target_compile_features(m2_common PUBLIC cxx_std_23)
 target_link_libraries(m2_common PUBLIC m2_pb)
@@ -205,33 +186,18 @@ if (MSVC)
     target_compile_options(m2_common PRIVATE "/MP")
 endif()
 
-add_library(m2_thirdparty_sdl STATIC
-        thirdparty/sdl/src/audio/Device.cc
-        thirdparty/sdl/src/event/Event.cc
-        thirdparty/sdl/src/video/Cursor.cc
-        thirdparty/sdl/src/video/Detail.cc
-        thirdparty/sdl/src/video/Font.cc
-        thirdparty/sdl/src/video/Renderer.cc
-        thirdparty/sdl/src/video/SdlConversions.h
-        thirdparty/sdl/src/video/Shapes.cc
-        thirdparty/sdl/src/video/Surface.cc
-        thirdparty/sdl/src/video/TextRendering.cc
-        thirdparty/sdl/src/video/TextTexture.cc
-        thirdparty/sdl/src/video/Texture.cc
-        thirdparty/sdl/src/video/Window.cc
-        thirdparty/sdl/include/m2/thirdparty/audio/Device.h
-        thirdparty/sdl/include/m2/thirdparty/event/Event.h
-        thirdparty/sdl/include/m2/thirdparty/video/Cursor.h
-        thirdparty/sdl/include/m2/thirdparty/video/Detail.h
-        thirdparty/sdl/include/m2/thirdparty/video/Font.h
-        thirdparty/sdl/include/m2/thirdparty/video/Renderer.h
-        thirdparty/sdl/include/m2/thirdparty/video/Shapes.h
-        thirdparty/sdl/include/m2/thirdparty/video/Surface.h
-        thirdparty/sdl/include/m2/thirdparty/video/TextRendering.h
-        thirdparty/sdl/include/m2/thirdparty/video/TextTexture.h
-        thirdparty/sdl/include/m2/thirdparty/video/Texture.h
-        thirdparty/sdl/include/m2/thirdparty/video/Window.h
+file(GLOB m2_thirdparty_sdl_SOURCES
+        "thirdparty/sdl/src/*.cc"
+        "thirdparty/sdl/src/*/*.cc"
+        "thirdparty/sdl/src/*/*/*.cc"
+        "thirdparty/sdl/src/*.h"
+        "thirdparty/sdl/src/*/*.h"
+        "thirdparty/sdl/src/*/*/*.h"
+        "thirdparty/sdl/include/m2/thirdparty/*.h"
+        "thirdparty/sdl/include/m2/thirdparty/*/*.h"
+        "thirdparty/sdl/include/m2/thirdparty/*/*/*.h"
 )
+add_library(m2_thirdparty_sdl STATIC ${m2_thirdparty_sdl_SOURCES})
 target_include_directories(m2_thirdparty_sdl PUBLIC thirdparty/sdl/include)
 target_compile_features(m2_thirdparty_sdl PUBLIC cxx_std_23)
 target_link_libraries(m2_thirdparty_sdl PUBLIC m2_common)
@@ -339,20 +305,13 @@ if(GTest_FOUND)
     # Tests (Build with Debug)
     file(GLOB TEST_SOURCES "test/*.cc")
     list(APPEND TEST_SOURCES
-            "src/FileSystem.cc"
             "src/Log.cc"
             "src/M2.cc"
             "src/Options.cc"
             "src/physics/Particle.cc"
             "src/physics/RigidBody.cc"
-            "src/String.cc"
             "src/VmAddScript.cc"
             "src/VmExecute.cc"
-            "src/containers/MapF.cc"
-            "src/containers/Pool.cc"
-            "src/game/Graph.cc"
-            "src/game/rng/XsrRng.cc"
-            "src/math/Bit.cc"
             "src/protobuf/Detail.cc"
             "src/thirdparty/compression/Inflate.cc"
             "src/thirdparty/protobuf/Json.cc"

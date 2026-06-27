@@ -1,4 +1,4 @@
-#include <m2/math/Line.h>
+#include <m2/common/math/Line.h>
 #include <m2/common/Math.h>
 
 float m2::Line::GetXIntersect() const {

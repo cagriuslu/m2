@@ -1,5 +1,5 @@
 #include <cuzn/ConsumingCoal.h>
-#include <m2/game/Graph.h>
+#include <m2/common/Graph.h>
 #include <m2/Game.h>
 #include <cuzn/detail/Network.h>
 #include <cuzn/object/Road.h>

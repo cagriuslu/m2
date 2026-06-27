@@ -1,4 +1,4 @@
-#include <m2/math/Bit.h>
+#include <m2/common/math/Bit.h>
 #include <m2/common/Error.h>
 #include <m2/common/Meta.h>
 

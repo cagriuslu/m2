@@ -1,6 +1,6 @@
 #pragma once
 #include <m2/common/math/VecF.h>
-#include <m2/containers/Pool.h>
+#include <m2/common/containers/Pool.h>
 #include <box2d/b2_world_callbacks.h>
 #include <box2d/b2_contact.h>
 #include <functional>

@@ -1,4 +1,4 @@
-#include <m2/game/rng/Distribution.h>
+#include <m2/common/rng/Distribution.h>
 
 using namespace m2;
 

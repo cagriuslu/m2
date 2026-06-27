@@ -1,9 +1,9 @@
 #pragma once
-#include "m2/math/RectE.h"
+#include <m2/common/math/RectE.h>
 #include "m2/common/math/VecF.h"
 #include <m2/common/math/VecE.h>
-#include "rng/Distribution.h"
-#include "rng/Rng.h"
+#include <m2/common/rng/Distribution.h>
+#include <m2/common/rng/Rng.h>
 #include <m2/common/math/VecI.h>
 
 namespace m2 {

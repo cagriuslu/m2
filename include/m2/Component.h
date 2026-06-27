@@ -1,6 +1,6 @@
 #pragma once
 #include <m2/M2.h>
-#include <m2/containers/Pool.h>
+#include <m2/common/containers/Pool.h>
 #include <m2/ObjectId.h>
 
 namespace m2 {

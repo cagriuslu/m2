@@ -1,7 +1,7 @@
 #pragma once
 #include "Group.h"
 #include "ObjectImpl.h"
-#include <m2/containers/Pool.h>
+#include <m2/common/containers/Pool.h>
 #include "component/Character.h"
 #include "component/Graphic.h"
 #include "component/Physique.h"

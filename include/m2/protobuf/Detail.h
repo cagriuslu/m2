@@ -7,7 +7,7 @@
 #include <vector>
 
 #include <m2/common/Error.h>
-#include "../FileSystem.h"
+#include <m2/common/FileSystem.h>
 #include <m2/common/Meta.h>
 
 namespace m2 {

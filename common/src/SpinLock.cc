@@ -1,4 +1,4 @@
-#include <m2/SpinLock.h>
+#include <m2/common/SpinLock.h>
 
 void m2::SpinLock::lock() {
 	for (;;) {

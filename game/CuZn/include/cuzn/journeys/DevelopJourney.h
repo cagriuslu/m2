@@ -2,7 +2,7 @@
 #include "Common.h"
 #include <cuzn/Detail.h>
 #include "subjourneys/POISelectionJourney.h"
-#include <m2/game/Fsm.h>
+#include <m2/common/Fsm.h>
 #include <m2/ui/UiPanel.h>
 #include <Network.pb.h>
 #include <list>

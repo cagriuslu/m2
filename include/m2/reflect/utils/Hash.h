@@ -1,5 +1,5 @@
 #pragma once
-#include "../Detail.h"
+#include <m2/common/reflect/Detail.h>
 #include <m2/reflect/Composite.h>
 #include <m2/reflect/Container.h>
 #include <m2/reflect/Primitive.h>

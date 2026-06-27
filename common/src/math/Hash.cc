@@ -1,4 +1,4 @@
-#include <m2/math/Hash.h>
+#include <m2/common/math/Hash.h>
 #include <m2/common/math/Exact.h>
 
 int32_t m2::HashI(const bool value, const int32_t initialValue) {
