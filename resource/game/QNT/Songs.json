@@ -26,6 +26,285 @@
           }]
         }]
       }
+    },
+    {
+      "type": "SONG_AMBIENT_DEEP_SPACE",
+      "synthSong": {
+        "bpm": 48,
+        "tracks": [
+          {
+            "comment": "Low drone",
+            "shape": "SINE",
+            "volume": 0.30,
+            "balance": 0,
+            "amplitudeEnvelope": {
+              "attackDuration":  {"n": 2, "d": 1},
+              "decayDuration":   {"n": 1, "d": 1},
+              "sustainVolume":   0.9,
+              "releaseDuration": {"n": 1, "d": 1}
+            },
+            "notes": [{
+              "startBeat": {"n": 0, "d": 1},
+              "duration":  {"n": 15, "d": 1},
+              "frequency": 55.00,
+              "volume": 1.0
+            }]
+          },
+          {
+            "comment": "Minor pad",
+            "shape": "TRIANGLE",
+            "volume": 0.18,
+            "balance": 0,
+            "amplitudeEnvelope": {
+              "attackDuration":  {"n": 2, "d": 1},
+              "decayDuration":   {"n": 2, "d": 1},
+              "sustainVolume":   0.8,
+              "releaseDuration": {"n": 3, "d": 1}
+            },
+            "notes": [
+              {"startBeat": {"n": 0, "d": 1}, "duration": {"n": 5, "d": 1}, "frequency": 110.00, "volume": 1.0},
+              {"startBeat": {"n": 0, "d": 1}, "duration": {"n": 5, "d": 1}, "frequency": 130.81, "volume": 1.0},
+              {"startBeat": {"n": 0, "d": 1}, "duration": {"n": 5, "d": 1}, "frequency": 164.81, "volume": 1.0},
+              {"startBeat": {"n": 0, "d": 1}, "duration": {"n": 5, "d": 1}, "frequency": 246.94, "volume": 1.0},
+              {"startBeat": {"n": 8, "d": 1}, "duration": {"n": 5, "d": 1}, "frequency": 110.00, "volume": 1.0},
+              {"startBeat": {"n": 8, "d": 1}, "duration": {"n": 5, "d": 1}, "frequency": 130.81, "volume": 1.0},
+              {"startBeat": {"n": 8, "d": 1}, "duration": {"n": 5, "d": 1}, "frequency": 164.81, "volume": 1.0},
+              {"startBeat": {"n": 8, "d": 1}, "duration": {"n": 5, "d": 1}, "frequency": 246.94, "volume": 1.0}
+            ]
+          },
+          {
+            "comment": "Twinkle pings",
+            "shape": "SINE",
+            "volume": 0.15,
+            "balance": 0,
+            "amplitudeEnvelope": {
+              "attackDuration":  {"n": 1, "d": 64},
+              "decayDuration":   {"n": 1, "d": 8},
+              "sustainVolume":   0.4,
+              "releaseDuration": {"n": 3, "d": 1}
+            },
+            "notes": [
+              {"startBeat": {"n": 3, "d": 1}, "duration": {"n": 1, "d": 2}, "frequency": 1318.51, "volume": 1.0},
+              {"startBeat": {"n": 9, "d": 1}, "duration": {"n": 1, "d": 2}, "frequency": 1760.00, "volume": 1.0},
+              {"startBeat": {"n": 13, "d": 1}, "duration": {"n": 1, "d": 2}, "frequency": 1046.50, "volume": 1.0}
+            ]
+          },
+          {
+            "comment": "Cosmic wind",
+            "shape": "NOISE",
+            "volume": 0.05,
+            "balance": 0,
+            "amplitudeEnvelope": {
+              "attackDuration":  {"n": 4, "d": 1},
+              "decayDuration":   {"n": 1, "d": 1},
+              "sustainVolume":   0.6,
+              "releaseDuration": {"n": 2, "d": 1}
+            },
+            "notes": [{
+              "startBeat": {"n": 0, "d": 1},
+              "duration":  {"n": 13, "d": 1},
+              "frequency": 0,
+              "volume": 1.0
+            }]
+          }
+        ]
+      }
+    },
+    {
+      "type": "SONG_AMBIENT_NEBULA",
+      "synthSong": {
+        "bpm": 52,
+        "tracks": [
+          {
+            "comment": "Warm pad",
+            "shape": "TRIANGLE",
+            "volume": 0.18,
+            "balance": 0,
+            "amplitudeEnvelope": {
+              "attackDuration":  {"n": 2, "d": 1},
+              "decayDuration":   {"n": 2, "d": 1},
+              "sustainVolume":   0.85,
+              "releaseDuration": {"n": 3, "d": 1}
+            },
+            "notes": [
+              {"startBeat": {"n": 0, "d": 1}, "duration": {"n": 7, "d": 1}, "frequency": 130.81, "volume": 1.0},
+              {"startBeat": {"n": 0, "d": 1}, "duration": {"n": 7, "d": 1}, "frequency": 146.83, "volume": 1.0},
+              {"startBeat": {"n": 0, "d": 1}, "duration": {"n": 7, "d": 1}, "frequency": 196.00, "volume": 1.0},
+              {"startBeat": {"n": 8, "d": 1}, "duration": {"n": 7, "d": 1}, "frequency": 174.61, "volume": 1.0},
+              {"startBeat": {"n": 8, "d": 1}, "duration": {"n": 7, "d": 1}, "frequency": 196.00, "volume": 1.0},
+              {"startBeat": {"n": 8, "d": 1}, "duration": {"n": 7, "d": 1}, "frequency": 261.63, "volume": 1.0}
+            ]
+          },
+          {
+            "comment": "Sub bass",
+            "shape": "SINE",
+            "volume": 0.25,
+            "balance": 0,
+            "amplitudeEnvelope": {
+              "attackDuration":  {"n": 1, "d": 1},
+              "decayDuration":   {"n": 1, "d": 1},
+              "sustainVolume":   0.95,
+              "releaseDuration": {"n": 2, "d": 1}
+            },
+            "notes": [
+              {"startBeat": {"n": 0, "d": 1}, "duration": {"n": 7, "d": 1}, "frequency": 65.41, "volume": 1.0},
+              {"startBeat": {"n": 8, "d": 1}, "duration": {"n": 7, "d": 1}, "frequency": 87.31, "volume": 1.0}
+            ]
+          },
+          {
+            "comment": "Bell arp",
+            "shape": "SINE",
+            "volume": 0.16,
+            "balance": 0,
+            "amplitudeEnvelope": {
+              "attackDuration":  {"n": 1, "d": 64},
+              "decayDuration":   {"n": 1, "d": 8},
+              "sustainVolume":   0.35,
+              "releaseDuration": {"n": 2, "d": 1}
+            },
+            "notes": [
+              {"startBeat": {"n": 2,  "d": 1}, "duration": {"n": 1, "d": 2}, "frequency": 783.99,  "volume": 1.0},
+              {"startBeat": {"n": 4,  "d": 1}, "duration": {"n": 1, "d": 2}, "frequency": 1046.50, "volume": 1.0},
+              {"startBeat": {"n": 6,  "d": 1}, "duration": {"n": 1, "d": 2}, "frequency": 1174.66, "volume": 1.0},
+              {"startBeat": {"n": 10, "d": 1}, "duration": {"n": 1, "d": 2}, "frequency": 783.99,  "volume": 1.0},
+              {"startBeat": {"n": 12, "d": 1}, "duration": {"n": 1, "d": 2}, "frequency": 1046.50, "volume": 1.0},
+              {"startBeat": {"n": 14, "d": 1}, "duration": {"n": 1, "d": 2}, "frequency": 1318.51, "volume": 1.0}
+            ]
+          },
+          {
+            "comment": "Air wash",
+            "shape": "NOISE",
+            "volume": 0.03,
+            "balance": 0,
+            "amplitudeEnvelope": {
+              "attackDuration":  {"n": 6, "d": 1},
+              "decayDuration":   {"n": 1, "d": 1},
+              "sustainVolume":   0.5,
+              "releaseDuration": {"n": 4, "d": 1}
+            },
+            "notes": [{
+              "startBeat": {"n": 0, "d": 1},
+              "duration":  {"n": 11, "d": 1},
+              "frequency": 0,
+              "volume": 1.0
+            }]
+          }
+        ]
+      }
+    },
+    {
+      "type": "SONG_AMBIENT_RETRO",
+      "synthSong": {
+        "bpm": 60,
+        "tracks": [
+          {
+            "comment": "Saw pad",
+            "shape": "SAWTOOTH",
+            "volume": 0.12,
+            "balance": 0,
+            "amplitudeEnvelope": {
+              "attackDuration":  {"n": 2, "d": 1},
+              "decayDuration":   {"n": 2, "d": 1},
+              "sustainVolume":   0.8,
+              "releaseDuration": {"n": 2, "d": 1}
+            },
+            "notes": [
+              {"startBeat": {"n": 0, "d": 1}, "duration": {"n": 7, "d": 1}, "frequency": 146.83, "volume": 1.0},
+              {"startBeat": {"n": 0, "d": 1}, "duration": {"n": 7, "d": 1}, "frequency": 174.61, "volume": 1.0},
+              {"startBeat": {"n": 0, "d": 1}, "duration": {"n": 7, "d": 1}, "frequency": 220.00, "volume": 1.0},
+              {"startBeat": {"n": 8, "d": 1}, "duration": {"n": 7, "d": 1}, "frequency": 116.54, "volume": 1.0},
+              {"startBeat": {"n": 8, "d": 1}, "duration": {"n": 7, "d": 1}, "frequency": 146.83, "volume": 1.0},
+              {"startBeat": {"n": 8, "d": 1}, "duration": {"n": 7, "d": 1}, "frequency": 174.61, "volume": 1.0}
+            ]
+          },
+          {
+            "comment": "Pulse bass",
+            "shape": "SQUARE",
+            "volume": 0.16,
+            "balance": 0,
+            "amplitudeEnvelope": {
+              "attackDuration":  {"n": 1, "d": 64},
+              "decayDuration":   {"n": 1, "d": 32},
+              "sustainVolume":   0.4,
+              "releaseDuration": {"n": 1, "d": 32}
+            },
+            "notes": [
+              {"startBeat": {"n": 0,  "d": 2}, "duration": {"n": 1, "d": 2}, "frequency": 73.42, "volume": 1.0},
+              {"startBeat": {"n": 1,  "d": 2}, "duration": {"n": 1, "d": 2}, "frequency": 73.42, "volume": 1.0},
+              {"startBeat": {"n": 2,  "d": 2}, "duration": {"n": 1, "d": 2}, "frequency": 73.42, "volume": 1.0},
+              {"startBeat": {"n": 3,  "d": 2}, "duration": {"n": 1, "d": 2}, "frequency": 73.42, "volume": 1.0},
+              {"startBeat": {"n": 4,  "d": 2}, "duration": {"n": 1, "d": 2}, "frequency": 73.42, "volume": 1.0},
+              {"startBeat": {"n": 5,  "d": 2}, "duration": {"n": 1, "d": 2}, "frequency": 73.42, "volume": 1.0},
+              {"startBeat": {"n": 6,  "d": 2}, "duration": {"n": 1, "d": 2}, "frequency": 73.42, "volume": 1.0},
+              {"startBeat": {"n": 7,  "d": 2}, "duration": {"n": 1, "d": 2}, "frequency": 73.42, "volume": 1.0},
+              {"startBeat": {"n": 8,  "d": 2}, "duration": {"n": 1, "d": 2}, "frequency": 73.42, "volume": 1.0},
+              {"startBeat": {"n": 9,  "d": 2}, "duration": {"n": 1, "d": 2}, "frequency": 73.42, "volume": 1.0},
+              {"startBeat": {"n": 10, "d": 2}, "duration": {"n": 1, "d": 2}, "frequency": 73.42, "volume": 1.0},
+              {"startBeat": {"n": 11, "d": 2}, "duration": {"n": 1, "d": 2}, "frequency": 73.42, "volume": 1.0},
+              {"startBeat": {"n": 12, "d": 2}, "duration": {"n": 1, "d": 2}, "frequency": 73.42, "volume": 1.0},
+              {"startBeat": {"n": 13, "d": 2}, "duration": {"n": 1, "d": 2}, "frequency": 73.42, "volume": 1.0},
+              {"startBeat": {"n": 14, "d": 2}, "duration": {"n": 1, "d": 2}, "frequency": 73.42, "volume": 1.0},
+              {"startBeat": {"n": 15, "d": 2}, "duration": {"n": 1, "d": 2}, "frequency": 73.42, "volume": 1.0},
+              {"startBeat": {"n": 16, "d": 2}, "duration": {"n": 1, "d": 2}, "frequency": 73.42, "volume": 1.0},
+              {"startBeat": {"n": 17, "d": 2}, "duration": {"n": 1, "d": 2}, "frequency": 73.42, "volume": 1.0},
+              {"startBeat": {"n": 18, "d": 2}, "duration": {"n": 1, "d": 2}, "frequency": 73.42, "volume": 1.0},
+              {"startBeat": {"n": 19, "d": 2}, "duration": {"n": 1, "d": 2}, "frequency": 73.42, "volume": 1.0},
+              {"startBeat": {"n": 20, "d": 2}, "duration": {"n": 1, "d": 2}, "frequency": 73.42, "volume": 1.0},
+              {"startBeat": {"n": 21, "d": 2}, "duration": {"n": 1, "d": 2}, "frequency": 73.42, "volume": 1.0},
+              {"startBeat": {"n": 22, "d": 2}, "duration": {"n": 1, "d": 2}, "frequency": 73.42, "volume": 1.0},
+              {"startBeat": {"n": 23, "d": 2}, "duration": {"n": 1, "d": 2}, "frequency": 73.42, "volume": 1.0},
+              {"startBeat": {"n": 24, "d": 2}, "duration": {"n": 1, "d": 2}, "frequency": 73.42, "volume": 1.0},
+              {"startBeat": {"n": 25, "d": 2}, "duration": {"n": 1, "d": 2}, "frequency": 73.42, "volume": 1.0},
+              {"startBeat": {"n": 26, "d": 2}, "duration": {"n": 1, "d": 2}, "frequency": 73.42, "volume": 1.0},
+              {"startBeat": {"n": 27, "d": 2}, "duration": {"n": 1, "d": 2}, "frequency": 73.42, "volume": 1.0},
+              {"startBeat": {"n": 28, "d": 2}, "duration": {"n": 1, "d": 2}, "frequency": 73.42, "volume": 1.0},
+              {"startBeat": {"n": 29, "d": 2}, "duration": {"n": 1, "d": 2}, "frequency": 73.42, "volume": 1.0},
+              {"startBeat": {"n": 30, "d": 2}, "duration": {"n": 1, "d": 2}, "frequency": 73.42, "volume": 1.0},
+              {"startBeat": {"n": 31, "d": 2}, "duration": {"n": 1, "d": 2}, "frequency": 73.42, "volume": 1.0}
+            ]
+          },
+          {
+            "comment": "Blip melody",
+            "shape": "SINE",
+            "volume": 0.18,
+            "balance": 0,
+            "amplitudeEnvelope": {
+              "attackDuration":  {"n": 1, "d": 64},
+              "decayDuration":   {"n": 1, "d": 8},
+              "sustainVolume":   0.5,
+              "releaseDuration": {"n": 1, "d": 2}
+            },
+            "notes": [
+              {"startBeat": {"n": 0,  "d": 1}, "duration": {"n": 2, "d": 1}, "frequency": 587.33, "volume": 1.0},
+              {"startBeat": {"n": 2,  "d": 1}, "duration": {"n": 2, "d": 1}, "frequency": 440.00, "volume": 1.0},
+              {"startBeat": {"n": 4,  "d": 1}, "duration": {"n": 2, "d": 1}, "frequency": 349.23, "volume": 1.0},
+              {"startBeat": {"n": 6,  "d": 1}, "duration": {"n": 2, "d": 1}, "frequency": 440.00, "volume": 1.0},
+              {"startBeat": {"n": 8,  "d": 1}, "duration": {"n": 2, "d": 1}, "frequency": 587.33, "volume": 1.0},
+              {"startBeat": {"n": 10, "d": 1}, "duration": {"n": 2, "d": 1}, "frequency": 659.25, "volume": 1.0},
+              {"startBeat": {"n": 12, "d": 1}, "duration": {"n": 2, "d": 1}, "frequency": 587.33, "volume": 1.0},
+              {"startBeat": {"n": 14, "d": 1}, "duration": {"n": 2, "d": 1}, "frequency": 440.00, "volume": 1.0}
+            ]
+          },
+          {
+            "comment": "Static tick",
+            "shape": "NOISE",
+            "volume": 0.04,
+            "balance": 0,
+            "amplitudeEnvelope": {
+              "attackDuration":  {"n": 1, "d": 64},
+              "decayDuration":   {"n": 1, "d": 32},
+              "sustainVolume":   0.2,
+              "releaseDuration": {"n": 1, "d": 16}
+            },
+            "notes": [
+              {"startBeat": {"n": 0,  "d": 1}, "duration": {"n": 1, "d": 8}, "frequency": 0, "volume": 1.0},
+              {"startBeat": {"n": 4,  "d": 1}, "duration": {"n": 1, "d": 8}, "frequency": 0, "volume": 1.0},
+              {"startBeat": {"n": 8,  "d": 1}, "duration": {"n": 1, "d": 8}, "frequency": 0, "volume": 1.0},
+              {"startBeat": {"n": 12, "d": 1}, "duration": {"n": 1, "d": 8}, "frequency": 0, "volume": 1.0}
+            ]
+          }
+        ]
+      }
     }
   ]
 }
