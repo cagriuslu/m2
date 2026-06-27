@@ -40,10 +40,11 @@ m2::Id m2::obj::CreateCamera() {
 	};
 
 	if (M2G_PROXY.camera_is_listener) {
+		const auto initialListenerPosition = playerPtr ? playerPtr->InferPositionF() : VecF{};
 		M2_LEVEL.leftListener =
-		    SoundListener{.position = M2_PLAYER.InferPositionF(), .direction = PI, .listenAngle = PI_DIV2};
+		    SoundListener{.position = initialListenerPosition, .direction = PI, .listenAngle = PI_DIV2};
 		M2_LEVEL.rightListener =
-		    SoundListener{.position = M2_PLAYER.InferPositionF(), .direction = 0.0f, .listenAngle = PI_DIV2};
+		    SoundListener{.position = initialListenerPosition, .direction = 0.0f, .listenAngle = PI_DIV2};
 	}
 
 	return M2_LEVEL.cameraId = it.GetId();
