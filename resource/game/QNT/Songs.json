@@ -1,0 +1,31 @@
+{
+  "songs": [
+    {
+      "type": "NO_SONG"
+    },
+    {
+      "type": "SONG_STARDUST_HIT_BUCKET",
+      "synthSong": {
+        "bpm": 240,
+        "tracks": [{
+          "comment": "Sand hitting a wall",
+          "shape": "NOISE",
+          "volume": 0.6,
+          "balance": 0,
+          "amplitudeEnvelope": {
+            "attackDuration":  {"n": 1, "d": 256},
+            "decayDuration":   {"n": 1, "d": 32},
+            "sustainVolume":   0.25,
+            "releaseDuration": {"n": 1, "d": 16}
+          },
+          "notes": [{
+            "startBeat": {"n": 0, "d": 1},
+            "duration":  {"n": 1, "d": 8},
+            "frequency": 0,
+            "volume": 1.0
+          }]
+        }]
+      }
+    }
+  ]
+}
