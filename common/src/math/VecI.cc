@@ -1,47 +1,10 @@
 #include <m2/common/Meta.h>
-#include <m2/common/math/Rational.h>
 #include <m2/common/math/VecF.h>
 #include <m2/common/math/VecI.h>
 #include <m2/common/math/VecE.h>
 
 m2::VecI::VecI(const VecF& v) : VecI(v.GetX(), v.GetY()) {}
 m2::VecI::VecI(const VecE& v) : x(v.GetX().Round().ToInteger()), y(v.GetY().Round().ToInteger()) {}
-
-m2::VecI m2::VecI::GetDimensionsInAspectRatio(int w, int h) const {
-	// Simplify the w_ to h_ ratio
-	auto aspect_ratio = Rational{w, h}.Simplify();
-	auto simplified_w = aspect_ratio.GetN();
-	auto simplified_h = aspect_ratio.GetD();
-
-	// Do the math one order above
-	auto dims = *this;
-	auto dims_x1000 = dims * 1000;
-
-	// Assume the height is an integer multiple of the aspect ratio,
-	// find the multiplier that takes the dimension from aspect ratio to full dimensions.
-	auto multiplier_x1000 = dims_x1000.y / simplified_h;
-	// What would the width be if the height was truly an integer multiple of the aspect ratio
-	auto presumed_width_x1000 = simplified_w * multiplier_x1000;
-
-	int64_t correct_width, correct_height;
-	if (presumed_width_x1000 < dims_x1000.x) {
-		// Full dimensions are wider than the presumed width, we need to squeeze from the sides
-		correct_width = presumed_width_x1000 / 1000;  // Presumed width is already squeezed
-		correct_height = dims.y;
-	} else {
-		// Full dimensions are less wide than the presumed width,
-		// we need to assume the width as an integer multiple of the aspect ratio.
-		// Find the new multiplier that takes the dimension from aspect ratio to full dimensions
-		multiplier_x1000 = dims_x1000.x / simplified_w;
-		// What would the height be in this case
-		auto presumed_height_x1000 = simplified_h * multiplier_x1000;
-
-		correct_width = dims.x;
-		correct_height = presumed_height_x1000 / 1000;  // Presumed height is already squeezed
-	}
-
-	return VecI{I(correct_width), I(correct_height)};
-}
 
 auto std::formatter<m2::VecI>::format(const m2::VecI& vec, std::format_context& ctx) const -> std::format_context::iterator {
 	return std::formatter<std::string>::format(
