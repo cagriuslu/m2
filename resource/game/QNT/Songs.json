@@ -28,6 +28,67 @@
       }
     },
     {
+      "type": "SONG_GEIGER_CLICK",
+      "synthSong": {
+        "bpm": 240,
+        "tracks": [
+          {
+            "comment": "Geiger discharge body",
+            "shape": "NOISE",
+            "volume": 0.6,
+            "balance": 0,
+            "amplitudeEnvelope": {
+              "attackDuration":  {"n": 1, "d": 256},
+              "decayDuration":   {"n": 1, "d": 64},
+              "sustainVolume":   0.20,
+              "releaseDuration": {"n": 1, "d": 64}
+            },
+            "notes": [{
+              "startBeat": {"n": 0, "d": 1},
+              "duration":  {"n": 1, "d": 16},
+              "frequency": 0,
+              "volume": 1.0
+            }]
+          },
+          {
+            "comment": "Mechanical snap",
+            "shape": "SQUARE",
+            "volume": 0.4,
+            "amplitudeEnvelope": {
+              "attackDuration":  {"n": 1, "d": 256},
+              "decayDuration":   {"n": 0, "d": 1},
+              "sustainVolume":   1.0,
+              "releaseDuration": {"n": 1, "d": 64}
+            },
+            "notes": [{
+              "startBeat": {"n": 0, "d": 1},
+              "duration":  {"n": 1, "d": 64},
+              "frequency": 3000,
+              "volume": 1.0
+            }]
+          },
+          {
+            "comment": "Empty bottle sound",
+            "shape": "SINE",
+            "volume": 0.25,
+            "balance": 0,
+            "amplitudeEnvelope": {
+              "attackDuration":  {"n": 0, "d": 1},
+              "decayDuration":   {"n": 3, "d": 16},
+              "sustainVolume":   0.0,
+              "releaseDuration": {"n": 0, "d": 1}
+            },
+            "notes": [{
+              "startBeat": {"n": 0, "d": 1},
+              "duration":  {"n": 3, "d": 16},
+              "frequency": 388,
+              "volume": 1.0
+            }]
+          }
+        ]
+      }
+    },
+    {
       "type": "SONG_AMBIENT_DEEP_SPACE",
       "synthSong": {
         "bpm": 48,
