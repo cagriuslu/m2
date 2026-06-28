@@ -67,3 +67,5 @@ Headers in `include/` that require platform-specific implementations are provide
   definitions in the source must mirror the header: where the header has no blank line between two declarations
   (comment lines are transparent and do not count as spacing), the source must have no blank line between their
   definitions; where the header has one or more blank lines, the source must have exactly one.
+- The Rational type can easily grow out of bounds. Thus, any calculation utilizing Rational should be eagerly done while
+  booting the game/engine.

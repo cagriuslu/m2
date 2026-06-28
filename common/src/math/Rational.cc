@@ -1,9 +1,44 @@
 #include <m2/common/math/Rational.h>
 #include <m2/common/Constants.h>
+#include <m2/common/Error.h>
 #include <numeric>
 #include <cinttypes>
+#if defined(_MSC_VER)
+#include <intrin.h>
+#endif
 
 namespace m2::internal {
+
+int64_t UnsafeMultiplyWithBoundsCheck(const int64_t a, const int64_t b) {
+	int64_t result;
+#if defined(_MSC_VER)
+	result = a * b;
+	const int64_t high = __mulh(a, b);
+	if (high != (result >> 63)) {
+		throw M2_ERROR("Rational arithmetic overflow");
+	}
+#else
+	if (__builtin_mul_overflow(a, b, &result)) {
+		throw M2_ERROR("Rational arithmetic overflow");
+	}
+#endif
+	return result;
+}
+
+int64_t UnsafeAddWithBoundsCheck(const int64_t a, const int64_t b) {
+	int64_t result;
+#if defined(_MSC_VER)
+	if ((b > 0 && a > INT64_MAX - b) || (b < 0 && a < INT64_MIN - b)) {
+		throw M2_ERROR("Rational arithmetic overflow");
+	}
+	result = a + b;
+#else
+	if (__builtin_add_overflow(a, b, &result)) {
+		throw M2_ERROR("Rational arithmetic overflow");
+	}
+#endif
+	return result;
+}
 
 m2::Rational simplify(int64_t n, int64_t d) {
 	auto gcd = std::gcd(n, d);
@@ -80,20 +115,20 @@ m2::Rational m2::Rational::Simplify() const {
 	return internal::simplify(_n, _d);
 }
 m2::Rational m2::Rational::Mod(const Rational& other) const {
-	auto lhs = _n * other._d;
-	auto rhs = _d * other._n;
-	auto mod_result = ((lhs % rhs) + rhs) % rhs;
-	return internal::simplify(mod_result, _d * other._d);
+	auto lhs = internal::UnsafeMultiplyWithBoundsCheck(_n, other._d);
+	auto rhs = internal::UnsafeMultiplyWithBoundsCheck(_d, other._n);
+	auto mod_result = internal::UnsafeAddWithBoundsCheck(lhs % rhs, rhs) % rhs;
+	return internal::simplify(mod_result, internal::UnsafeMultiplyWithBoundsCheck(_d, other._d));
 }
 
 m2::Rational m2::Rational::operator+(const Rational& rhs) const {
 	int64_t n, d;
 	if (_d == rhs._d) {
-		n = _n + rhs._n;
+		n = internal::UnsafeAddWithBoundsCheck(_n, rhs._n);
 		d = _d;
 	} else {
-		n = _n * rhs._d + rhs._n * _d;
-		d = _d * rhs._d;
+		n = internal::UnsafeAddWithBoundsCheck(internal::UnsafeMultiplyWithBoundsCheck(_n, rhs._d), internal::UnsafeMultiplyWithBoundsCheck(rhs._n, _d));
+		d = internal::UnsafeMultiplyWithBoundsCheck(_d, rhs._d);
 	}
 	return internal::simplify(n, d);
 }
@@ -102,16 +137,16 @@ m2::Rational& m2::Rational::operator+=(const Rational& rhs) {
 	return *this;
 }
 m2::Rational m2::Rational::operator*(const Rational& rhs) const {
-	return internal::simplify(_n * rhs._n, _d * rhs._d);
+	return internal::simplify(internal::UnsafeMultiplyWithBoundsCheck(_n, rhs._n), internal::UnsafeMultiplyWithBoundsCheck(_d, rhs._d));
 }
 m2::Rational m2::Rational::operator*(int64_t rhs) const {
-	return internal::simplify(_n * rhs, _d);
+	return internal::simplify(internal::UnsafeMultiplyWithBoundsCheck(_n, rhs), _d);
 }
 m2::Rational m2::Rational::operator/(const Rational& rhs) const {
-	return internal::simplify(_n * rhs._d, _d * rhs._n);
+	return internal::simplify(internal::UnsafeMultiplyWithBoundsCheck(_n, rhs._d), internal::UnsafeMultiplyWithBoundsCheck(_d, rhs._n));
 }
 m2::Rational m2::Rational::operator/(int64_t rhs) const {
-	return internal::simplify(_n, _d * rhs);
+	return internal::simplify(_n, internal::UnsafeMultiplyWithBoundsCheck(_d, rhs));
 }
 
 m2::Rational m2::Rational::PiMul2() {
@@ -122,8 +157,8 @@ bool operator==(const m2::Rational& lhs, const m2::Rational& rhs) {
 	if (lhs.GetD() == rhs.GetD()) {
 		return lhs.GetN() == rhs.GetN();
 	} else {
-		auto lhs_n = lhs.GetN() * rhs.GetD();
-		auto rhs_n = rhs.GetN() * lhs.GetD();
+		auto lhs_n = m2::internal::UnsafeMultiplyWithBoundsCheck(lhs.GetN(), rhs.GetD());
+		auto rhs_n = m2::internal::UnsafeMultiplyWithBoundsCheck(rhs.GetN(), lhs.GetD());
 		return lhs_n == rhs_n;
 	}
 }
@@ -134,8 +169,8 @@ bool operator<(const m2::Rational& lhs, const m2::Rational& rhs) {
 	if (lhs.GetD() == rhs.GetD()) {
 		return lhs.GetN() < rhs.GetN();
 	} else {
-		auto lhs_n = lhs.GetN() * rhs.GetD();
-		auto rhs_n = rhs.GetN() * lhs.GetD();
+		auto lhs_n = m2::internal::UnsafeMultiplyWithBoundsCheck(lhs.GetN(), rhs.GetD());
+		auto rhs_n = m2::internal::UnsafeMultiplyWithBoundsCheck(rhs.GetN(), lhs.GetD());
 		return lhs_n < rhs_n;
 	}
 }
@@ -143,8 +178,8 @@ bool operator>(const m2::Rational& lhs, const m2::Rational& rhs) {
 	if (lhs.GetD() == rhs.GetD()) {
 		return lhs.GetN() > rhs.GetN();
 	} else {
-		auto lhs_n = lhs.GetN() * rhs.GetD();
-		auto rhs_n = rhs.GetN() * lhs.GetD();
+		auto lhs_n = m2::internal::UnsafeMultiplyWithBoundsCheck(lhs.GetN(), rhs.GetD());
+		auto rhs_n = m2::internal::UnsafeMultiplyWithBoundsCheck(rhs.GetN(), lhs.GetD());
 		return lhs_n > rhs_n;
 	}
 }
@@ -152,8 +187,8 @@ bool operator<=(const m2::Rational& lhs, const m2::Rational& rhs) {
 	if (lhs.GetD() == rhs.GetD()) {
 		return lhs.GetN() <= rhs.GetN();
 	} else {
-		auto lhs_n = lhs.GetN() * rhs.GetD();
-		auto rhs_n = rhs.GetN() * lhs.GetD();
+		auto lhs_n = m2::internal::UnsafeMultiplyWithBoundsCheck(lhs.GetN(), rhs.GetD());
+		auto rhs_n = m2::internal::UnsafeMultiplyWithBoundsCheck(rhs.GetN(), lhs.GetD());
 		return lhs_n <= rhs_n;
 	}
 }
@@ -161,8 +196,8 @@ bool operator>=(const m2::Rational& lhs, const m2::Rational& rhs) {
 	if (lhs.GetD() == rhs.GetD()) {
 		return lhs.GetN() >= rhs.GetN();
 	} else {
-		auto lhs_n = lhs.GetN() * rhs.GetD();
-		auto rhs_n = rhs.GetN() * lhs.GetD();
+		auto lhs_n = m2::internal::UnsafeMultiplyWithBoundsCheck(lhs.GetN(), rhs.GetD());
+		auto rhs_n = m2::internal::UnsafeMultiplyWithBoundsCheck(rhs.GetN(), lhs.GetD());
 		return lhs_n >= rhs_n;
 	}
 }
