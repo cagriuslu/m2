@@ -4,6 +4,7 @@
 #include <m2/common/Math.h>
 #include <m2/common/Error.h>
 #include <Synth.pb.h>
+#include <cmath>
 #include <type_traits>
 
 namespace m2::audio::synthesizer {
@@ -53,9 +54,17 @@ namespace m2::audio::synthesizer {
 			return AudioSample{.l = unbalancedSample * left_volume, .r = unbalancedSample * right_volume};
 		};
 
-		const Rational frequency{note.frequency()};
-		auto CreateUnitSample = [=](const Rational t) -> SampleType {
-			const auto foc = (frequency * t).Mod(Rational::One()).ToFloat(); // fraction of (the sound wave) cycle
+		// We use an unsigned 32 bit number to track the phase. 0 corresponds to the beginning of the wave and
+		// UINT32_MAX corresponds to the end of one wave cycle. The integer wrapping around to zero is the same as the
+		// phase spilling over to the next wave cycle, but an integer ensures the phase never overflows, which could
+		// happen if floating/rational numbers were used where [0,1) represents one cycle. For each cycle, we must
+		// increment the phase a fixed amount -> phaseIncrement. For higher precision, 64 bit numbers are used for this
+		// calculation.
+		constexpr double phaseMax = 4294967296.0; // UINT32_MAX (2^32)
+		const auto phaseIncrement = static_cast<uint32_t>(std::llround(static_cast<double>(note.frequency()) / SampleRate * phaseMax));
+
+		auto CreateUnitSample = [&](const uint32_t phaseIt) -> SampleType {
+			const auto foc = static_cast<float>(static_cast<double>(phaseIt) / phaseMax); // fraction of (the sound wave) cycle
 			switch (noteShape) {
 				case pb::SINE:
 					return sinf(PI_MUL2 * foc);
@@ -73,9 +82,9 @@ namespace m2::audio::synthesizer {
 		};
 
 		auto it = first;
-		const auto t_step = Rational::One() / SampleRate; // Step size in time axis
-		for (Rational t; it != last; ++it, t += t_step) {
-			const auto unitSample = CreateUnitSample(t);
+		uint32_t phaseIt = 0;
+		for (; it != last; ++it, phaseIt += phaseIncrement) {
+			const auto unitSample = CreateUnitSample(phaseIt);
 			auto sampleScaled = SampleScaler(it - first, unitSample);
 			auto sampleBalanced = SampleBalancer(sampleScaled);
 			(*it) += sampleBalanced;
