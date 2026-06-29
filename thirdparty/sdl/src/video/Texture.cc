@@ -10,7 +10,7 @@ using namespace m2::thirdparty;
 using namespace m2::thirdparty::video;
 
 Texture Texture::Generate(Renderer& renderer, const uint32_t pixelFormat, const int w, const int h, const std::function<RGBA(int x, int y)>& pixelGenerator) {
-	if (SDL_BITSPERPIXEL(pixelFormat) != 32) {
+	if (SDL_BYTESPERPIXEL(pixelFormat) != 4) {
 		throw M2_ERROR("Unsupported window pixel format");
 	}
 
@@ -32,7 +32,7 @@ Texture Texture::Generate(Renderer& renderer, const uint32_t pixelFormat, const 
 	return Texture{texture};
 }
 Texture Texture::CreateTargetableWindowSized(Renderer& renderer, const uint32_t pixelFormat) {
-	if (SDL_BITSPERPIXEL(pixelFormat) != 32) {
+	if (SDL_BYTESPERPIXEL(pixelFormat) != 4) {
 		throw M2_ERROR("Unsupported window pixel format");
 	}
 
@@ -43,7 +43,7 @@ Texture Texture::CreateTargetableWindowSized(Renderer& renderer, const uint32_t 
 	return Texture{texture};
 }
 Texture Texture::CaptureWindow(Renderer& renderer, const uint32_t pixelFormat) {
-	if (SDL_BITSPERPIXEL(pixelFormat) != 32) {
+	if (SDL_BYTESPERPIXEL(pixelFormat) != 4) {
 		throw M2_ERROR("Unsupported window pixel format");
 	}
 

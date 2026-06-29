@@ -22,6 +22,9 @@ Surface Surface::CreateBlank(const int w, const int h, const uint32_t pixelForma
 	}
 	return Surface{surface};
 }
+Surface Surface::CreateBlankWithAlpha(const int w, const int h) {
+	return CreateBlank(w, h, SDL_PIXELFORMAT_RGBA32);
+}
 Surface Surface::RenderTextSolid(const Font& font, const std::string& text, const RGBA& color) {
 	auto* surface = TTF_RenderText_Solid(static_cast<TTF_Font*>(font.RawHandle()), text.c_str(), /*length=*/0, ToSdlColor(color));
 	if (not surface) {

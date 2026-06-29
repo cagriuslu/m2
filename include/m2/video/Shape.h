@@ -41,7 +41,7 @@ namespace m2 {
 		class ShapeGenerator {
 			DynamicSheet _dynamicSheet;
 		public:
-			explicit ShapeGenerator(thirdparty::video::Renderer& renderer, const uint32_t pixelFormat) : _dynamicSheet(renderer, pixelFormat) {}
+			explicit ShapeGenerator(thirdparty::video::Renderer& renderer) : _dynamicSheet(renderer) {}
 			[[nodiscard]] const thirdparty::video::Texture& Texture() const { return _dynamicSheet.Texture(); }
 			RectI operator()(const std::shared_ptr<Shape>&);
 		};
@@ -61,7 +61,7 @@ namespace m2 {
 				> _cache;
 
 	public:
-		explicit ShapeCache(thirdparty::video::Renderer& renderer, const uint32_t pixelFormat) : _cache(ShapeGenerator{renderer, pixelFormat}) {}
+		explicit ShapeCache(thirdparty::video::Renderer& renderer) : _cache(ShapeGenerator{renderer}) {}
 
 		// Accessors
 

@@ -1,4 +1,6 @@
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 #include <m2/multiplayer/lockstep/ServerActor.h>
 #include <m2/multiplayer/lockstep/ConnectionToServer.h>
 #include <m2/network/Select.h>

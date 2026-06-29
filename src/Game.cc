@@ -66,11 +66,11 @@ Game::Game() : _windowAndRenderer(CreateWindow2(_proxy.gameFriendlyName.c_str())
 	_dimensions.emplace(GetWindow(), _proxy.gamePpm, _proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
 	_dimensions->SetGameHeightM(_proxy.initialGameHeightM);
 
-	_textLabelCache.emplace(GetRenderer(), GetWindow().GetPixelFormat(), font);
-	_shapeCache.emplace(GetRenderer(), GetWindow().GetPixelFormat());
+	_textLabelCache.emplace(GetRenderer(), font);
+	_shapeCache.emplace(GetRenderer());
 
 	audio_manager.emplace();
-	spriteEffectsSheet.emplace(GetRenderer(), GetWindow().GetPixelFormat());
+	spriteEffectsSheet.emplace(GetRenderer());
 
 	{
 		auto sheets_pb = pb::json_file_to_message<pb::SpriteSheets>(_resources.GetSpriteSheetsPath());

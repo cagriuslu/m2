@@ -19,6 +19,7 @@ namespace m2::thirdparty::video {
 	public:
 		static Surface CreateFromImageFile(const std::filesystem::path& imageFilePath);
 		static Surface CreateBlank(int w, int h, uint32_t pixelFormat);
+		static Surface CreateBlankWithAlpha(int w, int h);
 		static Surface RenderTextSolid(const Font& font, const std::string& text, const RGBA& color);
 		static Surface RenderTextBlended(const Font& font, const std::string& text, const RGBA& color);
 		static Surface RenderTextBlendedWrapped(const Font& font, const std::string& text, const RGBA& color, int wrapWidthPx);

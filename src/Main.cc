@@ -4,7 +4,9 @@
 #include <m2/Log.h>
 #include <CMakeProject.h>
 #include <csignal>
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 
 #define BREAK_IF_QUIT() if (M2_GAME.quit) break
 

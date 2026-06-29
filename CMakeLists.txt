@@ -73,7 +73,7 @@ if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/genORM/lib")
 endif()
 set(GENORM_CXX_INCLUDE_DIRS "${CMAKE_CURRENT_BINARY_DIR}/lib/genORM/include")
 set(GENORM_CXX_LIBDIR "${CMAKE_CURRENT_BINARY_DIR}/lib/genORM/lib")
-set(GENORM_CXX_LIBRARIES "${CMAKE_CURRENT_BINARY_DIR}/lib/genORM/lib/libgenORM-cxx.a")
+set(GENORM_CXX_LIBRARIES "${GENORM_CXX_LIBDIR}/${CMAKE_STATIC_LIBRARY_PREFIX}genORM-cxx${CMAKE_STATIC_LIBRARY_SUFFIX}")
 
 # png
 if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/png/lib")
@@ -81,7 +81,9 @@ if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/png/lib")
 endif()
 set(png_INCLUDE_DIRS "${CMAKE_CURRENT_BINARY_DIR}/lib/png/include")
 set(png_LIBDIR "${CMAKE_CURRENT_BINARY_DIR}/lib/png/lib")
-set(png_LIBRARIES "${CMAKE_CURRENT_BINARY_DIR}/lib/png/lib/libpng.a")
+# libpng's static library name differs per toolchain (libpng.a vs libpng16_static[d].lib)
+#set(png_LIBRARIES "${CMAKE_CURRENT_BINARY_DIR}/lib/png/lib/libpng.a")
+find_library(png_LIBRARIES NAMES png png16 png16_static png16_staticd PATHS "${png_LIBDIR}" NO_DEFAULT_PATH REQUIRED)
 
 # z
 if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/z/lib")
@@ -89,7 +91,9 @@ if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/z/lib")
 endif()
 set(z_INCLUDE_DIRS "${CMAKE_CURRENT_BINARY_DIR}/lib/z/include")
 set(z_LIBDIR "${CMAKE_CURRENT_BINARY_DIR}/lib/z/lib")
-set(z_LIBRARIES "${CMAKE_CURRENT_BINARY_DIR}/lib/z/lib/libz.a")
+# zlib's static library name differs per toolchain (libz.a vs zlibstatic[d].lib)
+#set(z_LIBRARIES "${CMAKE_CURRENT_BINARY_DIR}/lib/z/lib/libz.a")
+find_library(z_LIBRARIES NAMES z zlibstatic zlibstaticd PATHS "${z_LIBDIR}" NO_DEFAULT_PATH REQUIRED)
 
 if(DEBUG)
     # GTest

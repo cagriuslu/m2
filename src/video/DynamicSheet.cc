@@ -2,8 +2,8 @@
 #include <m2/thirdparty/video/Window.h>
 #include <m2/Log.h>
 
-m2::DynamicSheet::DynamicSheet(thirdparty::video::Renderer& renderer, const uint32_t pixelFormat)
-		: _renderer(renderer), _surface(thirdparty::video::Surface::CreateBlank(1024, 512, pixelFormat)) {
+m2::DynamicSheet::DynamicSheet(thirdparty::video::Renderer& renderer)
+		: _renderer(renderer), _surface(thirdparty::video::Surface::CreateBlankWithAlpha(1024, 512)) {
 	_texture = thirdparty::video::Texture::CreateFromSurface(_renderer, _surface.RawHandle());
 }
 

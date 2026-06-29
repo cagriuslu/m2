@@ -14,6 +14,17 @@ if [ ! -x "$CMAKE" ]; then
     exit 1
 fi
 
+# genORM is built with cargo (Rust). MSBuild invokes cargo via PATH, so make sure
+# the rustup-installed toolchain is reachable even if the shell didn't inherit it.
+if ! command -v cargo >/dev/null 2>&1 && [ -x "$HOME/.cargo/bin/cargo.exe" ]; then
+    export PATH="$HOME/.cargo/bin:$PATH"
+fi
+if ! command -v cargo >/dev/null 2>&1; then
+    echo "error: cargo (Rust) not found on PATH; it is required to build genORM." >&2
+    echo "       Install Rust from https://rustup.rs/ and retry." >&2
+    exit 1
+fi
+
 # Run from the repository root (this script's directory) so the preset names and the
 # build/<GAME>-DEBUG paths resolve correctly regardless of the caller's directory.
 cd "$(dirname "$0")"

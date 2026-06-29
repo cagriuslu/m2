@@ -4,10 +4,10 @@
 
 m2::VecE::VecE(const VecF& v) : _x(v.GetX()), _y(v.GetY()) {}
 
-m2::VecE::operator VecF() const {
+m2::VecE::operator m2::VecF() const {
 	return VecF{_x.ToFloat(), _y.ToFloat()};
 }
-m2::VecE::operator VecI() const {
+m2::VecE::operator m2::VecI() const {
 	return VecI{_x.ToInteger(), _y.ToInteger()};
 }
 

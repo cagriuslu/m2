@@ -143,6 +143,6 @@ template <> struct std::formatter<m2::Exact> : std::formatter<std::string> {
 	auto format(const m2::Exact& value, std::format_context& ctx) const -> std::format_context::iterator;
 };
 
-constexpr m2::expected<m2::Exact> operator ""_closest_exact(const char* str, const std::size_t sz) {
+inline m2::expected<m2::Exact> operator ""_closest_exact(const char* str, const std::size_t sz) {
 	return m2::Exact::ClosestExact(std::string_view{str, sz});
 }

@@ -21,7 +21,7 @@
 #include <queue>
 #include <functional>
 #include <optional>
-#include <flat_map>
+#include <map>
 
 namespace m2 {
 	// Forward declarations
@@ -64,8 +64,8 @@ namespace m2 {
 
 		/// Opaque pointer to box2d::DebugDraw
 		void* _debugDraw{};
-		std::flat_map<ObjectId, ObjectDebugOptions> _objectDebugObjects;
-		std::flat_map<m2g::pb::ObjectType, ObjectDebugOptions> _objectTypeDebugObjects;
+		std::map<ObjectId, ObjectDebugOptions> _objectDebugObjects;
+		std::map<m2g::pb::ObjectType, ObjectDebugOptions> _objectTypeDebugObjects;
 
 	public:
 		~Level();

@@ -14,8 +14,9 @@ namespace m2 {
 		int _lastW{}, _lastH{}, _heightOfCurrentRow{};
 
 	public:
-		/// If pixelFormat is zero, the window pixel format is looked up
-		explicit DynamicSheet(thirdparty::video::Renderer& renderer, uint32_t pixelFormat);
+		/// The backing surface always uses an alpha-capable pixel format, so dynamically generated textures can
+		/// hold transparency regardless of the (possibly alpha-less) window pixel format.
+		explicit DynamicSheet(thirdparty::video::Renderer& renderer);
 
 		// Accessors
 

@@ -6,6 +6,7 @@
 #include "component/Graphic.h"
 #include <m2/common/Meta.h>
 #include <m2g_GroupType.pb.h>
+#include <m2g_Lockstep.pb.h>
 #include <Network.pb.h>
 #include <Level.pb.h>
 #include <string_view>
