@@ -26,6 +26,14 @@
         "CMAKE_BUILD_TYPE": "Release"
       }
     },
+    {
+      "name": "WASM",
+      "hidden": true,
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "$env{EMSDK}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake"
+      }
+    },
 
     {
       "name": "RPG",
@@ -84,7 +92,11 @@
       "inherits": ["RELEASE", "RPG"],
       "binaryDir": "build/RPG-RELEASE"
     },
-
+    {
+      "name": "RPG-WASM-RELEASE",
+      "inherits": ["WASM", "RELEASE", "RPG"],
+      "binaryDir": "build/RPG-WASM"
+    },
 
     {
       "name": "CuZn-POSIX-DEBUG",
@@ -105,6 +117,11 @@
       "name": "CuZn-WIN-RELEASE",
       "inherits": ["RELEASE", "CuZn"],
       "binaryDir": "build/CuZn-RELEASE"
+    },
+    {
+      "name": "CuZn-WASM-RELEASE",
+      "inherits": ["WASM", "RELEASE", "CuZn"],
+      "binaryDir": "build/CuZn-WASM"
     },
 
     {
@@ -168,6 +185,11 @@
       "name": "QNT-WIN-RELEASE",
       "inherits": ["RELEASE", "QNT"],
       "binaryDir": "build/QNT-RELEASE"
+    },
+    {
+      "name": "QNT-WASM-RELEASE",
+      "inherits": ["WASM", "RELEASE", "QNT"],
+      "binaryDir": "build/QNT-WASM"
     }
   ]
 }
