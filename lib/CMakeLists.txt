@@ -22,8 +22,18 @@ macro(BuildDependency dependency)
         return()
     else()
         message("Will build ${dependency}...")
+
+        # When cross-compiling (e.g. for Emscripten/wasm) the toolchain file must be forwarded to the nested cmake
+        # configure call; otherwise the dependency would silently build for the host. When CMAKE_TOOLCHAIN_FILE is empty
+        # (native builds) this list stays empty and the nested configure is unchanged.
+        set(DEPENDENCY_TOOLCHAIN_ARGS)
+        if(CMAKE_TOOLCHAIN_FILE)
+            list(APPEND DEPENDENCY_TOOLCHAIN_ARGS "-DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}")
+        endif()
+
+        # Configure
         execute_process(
-                COMMAND "${CMAKE_COMMAND}" -G ${CMAKE_GENERATOR} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DBUILDING_DEPS=ON -B ${CMAKE_BINARY_DIR} -S ${CMAKE_SOURCE_DIR}
+                COMMAND "${CMAKE_COMMAND}" -G ${CMAKE_GENERATOR} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} ${DEPENDENCY_TOOLCHAIN_ARGS} -DBUILDING_DEPS=ON -B ${CMAKE_BINARY_DIR} -S ${CMAKE_SOURCE_DIR}
                 COMMAND_ECHO STDOUT
                 OUTPUT_FILE ${CMAKE_BINARY_DIR}/${dependency}-cmake.out
                 ERROR_FILE ${CMAKE_BINARY_DIR}/${dependency}-cmake.err
@@ -31,6 +41,8 @@ macro(BuildDependency dependency)
         if(NOT EXIT_CODE EQUAL "0")
             message(FATAL_ERROR "Failed to configure ${dependency}")
         endif()
+
+        # Build
         execute_process(
                 COMMAND "${CMAKE_COMMAND}" --build ${CMAKE_BINARY_DIR} --config ${CMAKE_BUILD_TYPE} --target ${dependency}
                 COMMAND_ECHO STDOUT

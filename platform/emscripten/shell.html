@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>M2</title>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #000;
+        overflow: hidden;
+      }
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      /* The canvas *must not* have any border or padding, or mouse coordinates will be wrong.
+         The canvas is CSS-sized to fill the whole browser viewport. This is load-bearing:
+         SDL3's Emscripten video backend detects this CSS size at window creation (its
+         "external_size" path), sets the WebGL drawing-buffer and the SDL window size to the
+         viewport size, and registers a resize callback that follows the CSS size. Without an
+         explicit CSS size, SDL pins the canvas to the engine's tiny requested window size
+         (160x90) and ignores browser-window resizes entirely. */
+      #canvas {
+        display: block;
+        width: 100vw;
+        height: 100vh;
+        border: 0;
+        padding: 0;
+        outline: none;
+        background-color: #000;
+      }
+      #loading {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: #ddd;
+        font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+        font-size: 1.1rem;
+        text-align: center;
+        pointer-events: none; /* never intercept input meant for the canvas */
+      }
+      #loading.hidden {
+        display: none;
+      }
+      #spinner {
+        width: 48px;
+        height: 48px;
+        margin-bottom: 1rem;
+        border: 6px solid #333;
+        border-top-color: #ddd;
+        border-radius: 50%;
+        animation: spin 0.9s linear infinite;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Simple loading indicator; hidden once all run dependencies (incl. the .data asset
+         preload) are satisfied and the wasm runtime is initialized. -->
+    <div id="loading">
+      <div id="spinner"></div>
+      <div id="loading-text">Downloading...</div>
+    </div>
+
+    <!-- SDL3's Emscripten video driver binds to the "#canvas" selector by default, and Emscripten
+         wires Module.canvas to this same element. Keep id="canvas". -->
+    <canvas id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
+
+    <script type="text/javascript">
+      var loadingElement = document.getElementById('loading');
+      var loadingTextElement = document.getElementById('loading-text');
+      var canvasElement = document.getElementById('canvas');
+
+      function hideLoading() {
+        if (loadingElement) {
+          loadingElement.classList.add('hidden');
+        }
+      }
+
+      // As a default initial behavior, alert when the WebGL context is lost. The Asyncify render
+      // loop cannot recover from this without a page reload.
+      canvasElement.addEventListener('webglcontextlost', function (event) {
+        alert('WebGL context lost. You will need to reload the page.');
+        event.preventDefault();
+      }, false);
+
+      var Module = {
+        canvas: canvasElement,
+        print: function () {
+          return console.log.apply(console, arguments);
+        },
+        printErr: function () {
+          return console.error.apply(console, arguments);
+        },
+        setStatus: function (text) {
+          if (loadingTextElement) {
+            loadingTextElement.textContent = text || 'Loading...';
+          }
+        },
+        totalDependencies: 0,
+        monitorRunDependencies: function (remaining) {
+          this.totalDependencies = Math.max(this.totalDependencies, remaining);
+          if (remaining === 0) {
+            // All downloads (including the preloaded .data asset bundle) are complete.
+            this.setStatus('Starting...');
+          } else {
+            this.setStatus(
+              'Preparing... (' + (this.totalDependencies - remaining) + '/' + this.totalDependencies + ')'
+            );
+          }
+        },
+        onRuntimeInitialized: function () {
+          // The wasm runtime is up and main() is about to run; remove the overlay so the canvas shows.
+          hideLoading();
+        }
+      };
+
+      Module.setStatus('Downloading...');
+      window.onerror = function () {
+        Module.setStatus('Exception thrown, see JavaScript console');
+      };
+    </script>
+    {{{ SCRIPT }}}
+  </body>
+</html>

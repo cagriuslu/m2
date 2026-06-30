@@ -25,6 +25,16 @@ project(m2 C CXX)
 add_subdirectory(lib)
 FetchContent_MakeAvailable(libbox2d)
 
+# When cross-compiling for wasm the Emscripten toolchain restricts find_library/find_path/find_package to the Emscripten
+# sysroot (via CMAKE_FIND_ROOT_PATH_MODE_* = ONLY). Our dependencies are cross-compiled and installed under
+# build/<game>-WASM/lib/... (outside sysroot), so without `BOTH` they are invisible to the find_package() and
+# find_library() calls.
+if(EMSCRIPTEN)
+    set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY BOTH)
+    set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE BOTH)
+    set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE BOTH)
+endif()
+
 # protobuf
 if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/protobuf/bin")
     BuildDependency(libprotobuf)
@@ -34,6 +44,15 @@ if(WIN32)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4251")
 endif()
 set(Protobuf_USE_STATIC_LIBS ON)
+# For Emscripten only libprotobuf is cross-compiled. protoc must come from the native build.
+if(EMSCRIPTEN)
+    set(HOST_PROTOC_EXECUTABLE "${CMAKE_SOURCE_DIR}/build/${GAME}-DEBUG/lib/protobuf/bin/protoc")
+    if(NOT EXISTS "${HOST_PROTOC_EXECUTABLE}")
+        message(FATAL_ERROR "Host protoc not found at ${HOST_PROTOC_EXECUTABLE}. Build native ${GAME} first.")
+    endif()
+    set(Protobuf_PROTOC_EXECUTABLE "${HOST_PROTOC_EXECUTABLE}" CACHE FILEPATH "Host protoc reused by the wasm build" FORCE)
+    message(STATUS "Using host protoc for wasm codegen: ${Protobuf_PROTOC_EXECUTABLE}")
+endif()
 find_package(Protobuf REQUIRED)
 include_directories(SYSTEM ${Protobuf_INCLUDE_DIRS})
 include_directories(SYSTEM ${CMAKE_CURRENT_BINARY_DIR})
@@ -82,7 +101,6 @@ endif()
 set(png_INCLUDE_DIRS "${CMAKE_CURRENT_BINARY_DIR}/lib/png/include")
 set(png_LIBDIR "${CMAKE_CURRENT_BINARY_DIR}/lib/png/lib")
 # libpng's static library name differs per toolchain (libpng.a vs libpng16_static[d].lib)
-#set(png_LIBRARIES "${CMAKE_CURRENT_BINARY_DIR}/lib/png/lib/libpng.a")
 find_library(png_LIBRARIES NAMES png png16 png16_static png16_staticd PATHS "${png_LIBDIR}" NO_DEFAULT_PATH REQUIRED)
 
 # z
@@ -92,10 +110,14 @@ endif()
 set(z_INCLUDE_DIRS "${CMAKE_CURRENT_BINARY_DIR}/lib/z/include")
 set(z_LIBDIR "${CMAKE_CURRENT_BINARY_DIR}/lib/z/lib")
 # zlib's static library name differs per toolchain (libz.a vs zlibstatic[d].lib)
-#set(z_LIBRARIES "${CMAKE_CURRENT_BINARY_DIR}/lib/z/lib/libz.a")
 find_library(z_LIBRARIES NAMES z zlibstatic zlibstaticd PATHS "${z_LIBDIR}" NO_DEFAULT_PATH REQUIRED)
+if(EMSCRIPTEN)
+    # The wasm zlib build emits BOTH a static archive (libz.a) and a wasm side module (libz.so). Force the static
+    # archive so the link stays fully static. Native builds are already static.
+    set(z_LIBRARIES "${z_LIBDIR}/libz.a" CACHE FILEPATH "Static zlib archive for the wasm build" FORCE)
+endif()
 
-if(DEBUG)
+if(DEBUG AND NOT EMSCRIPTEN)
     # GTest
     if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/googletest/lib")
         BuildDependency(libgtest)
@@ -113,6 +135,11 @@ if(WIN32)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+endif()
+if(EMSCRIPTEN)
+    # em++ disables exception catching by default, enable it globally.
+    add_compile_options(-fexceptions)
+    add_link_options(-fexceptions)
 endif()
 
 # Get git commit hash
@@ -215,19 +242,13 @@ if (MSVC)
     target_compile_options(m2_thirdparty_sdl PRIVATE "/MP")
 endif()
 
-# Post-build actions
-#add_custom_command(
-#        OUTPUT ${CMAKE_SOURCE_DIR}/resource.zip
-#        COMMAND ${CMAKE_COMMAND}
-#        ARGS -E tar cf ${CMAKE_SOURCE_DIR}/resource.zip --format=zip ${CMAKE_SOURCE_DIR}/resource/
-#        DEPENDS ${CMAKE_SOURCE_DIR}/resource    # TODO this does not check if a new directory is created inside
-#)
-
 file(GLOB M2_PUBLIC_HEADERS "include/m2/*.h" "include/m2/*/*.h" "include/m2/*/*/*.h" "include/m2/*/*/*/*.h")
 file(GLOB M2_PRIVATE_HEADERS "src/*.h" "src/*/*.h" "src/*/*/*.h")
 file(GLOB M2_SOURCES "src/*.cc" "src/*/*.cc" "src/*/*/*.cc" "src/*/*/*/*.cc" "src/*/*/*/*/*.cc")
 # Add platform specific source files
-if (WIN32)
+if (EMSCRIPTEN)
+    file(GLOB M2_PLATFORM_SPECIFIC_SOURCES "platform/emscripten/*.h" "platform/emscripten/*.cc")
+elseif (WIN32)
     file(GLOB M2_PLATFORM_SPECIFIC_SOURCES "platform/windows/*.h" "platform/windows/*.cc")
 elseif(APPLE)
     file(GLOB M2_PLATFORM_SPECIFIC_SOURCES "platform/macos/*.h" "platform/macos/*.cc" "platform/posix/*.h" "platform/posix/*.cc")
@@ -237,7 +258,7 @@ endif()
 
 if(APPLE)
 	# Put resources into the .app
-	file(GLOB_RECURSE BUNDLE_RESOURCES "${CMAKE_SOURCE_DIR}/resource/default/*" "${CMAKE_SOURCE_DIR}/resource/fonts/*" "${CMAKE_SOURCE_DIR}/resource/RadialGradient-WhiteBlack.png" "${CMAKE_SOURCE_DIR}/resource/game/${GAME}/*")
+	file(GLOB_RECURSE BUNDLE_RESOURCES "${CMAKE_SOURCE_DIR}/resource/default/*" "${CMAKE_SOURCE_DIR}/resource/fonts/*" "${CMAKE_SOURCE_DIR}/resource/game/${GAME}/*")
 	foreach (ABSOLUTE_PATH_TO_RESOURCE ${BUNDLE_RESOURCES})
 		file(RELATIVE_PATH RELATIVE_PATH_TO_RESOURCE "${CMAKE_SOURCE_DIR}/resource" ${ABSOLUTE_PATH_TO_RESOURCE})
 		get_filename_component(RELATIVE_PATH_TO_RESOURCES_DIRECTORY ${RELATIVE_PATH_TO_RESOURCE} DIRECTORY)
@@ -302,6 +323,28 @@ elseif(APPLE)
 else()
     # The following packages must be install before BUILDING SDL3 in Ubuntu: libxext-dev libgl-dev libasound2-dev libpulse-dev
     target_link_libraries(m2 GL)
+endif()
+
+if(EMSCRIPTEN)
+    target_link_options(m2 PRIVATE
+        -sASYNCIFY                # Allow emscripten_sleep() to yield the thread to the browser, suspend/resume the stack
+        -sALLOW_MEMORY_GROWTH=1   # Let the heap grow
+        -sINITIAL_MEMORY=67108864 # 64MiB
+        -sSTACK_SIZE=4194304      # 4MiB
+        -sFULL_ES2=1              # Full GLES2 for the WebGL
+        -sEXIT_RUNTIME=0          # Keep the runtime running
+    )
+
+    # Asset packaging + HTML shell
+    target_link_options(m2 PRIVATE
+        "SHELL:--preload-file ${CMAKE_SOURCE_DIR}/resource/default@resource/default"
+        "SHELL:--preload-file ${CMAKE_SOURCE_DIR}/resource/fonts@resource/fonts"
+        "SHELL:--preload-file ${CMAKE_SOURCE_DIR}/resource/game/${GAME}@resource/game/${GAME}"
+        "SHELL:--shell-file   ${CMAKE_SOURCE_DIR}/platform/emscripten/shell.html"
+    )
+
+    # Give the .html extension to the output
+    set_target_properties(m2 PROPERTIES SUFFIX ".html")
 endif()
 
 if(GTest_FOUND)
