@@ -25,10 +25,8 @@ void m2::Physique::SetOrientation(const FE& orientation) {
 void m2::Physique::DefaultBeginContactCallback(b2Contact& b2_contact) {
 	box2d::Contact contact{b2_contact};
 
-	Id physique_id_a = b2_contact.GetFixtureA()->GetBody()->GetUserData().pointer;
-	Id physique_id_b = b2_contact.GetFixtureB()->GetBody()->GetUserData().pointer;
-	auto& phy_a = M2_LEVEL.physics[physique_id_a];
-	auto& phy_b = M2_LEVEL.physics[physique_id_b];
+	auto& phy_a = *reinterpret_cast<Physique*>(b2_contact.GetFixtureA()->GetBody()->GetUserData().pointer);
+	auto& phy_b = *reinterpret_cast<Physique*>(b2_contact.GetFixtureB()->GetBody()->GetUserData().pointer);
 	if (phy_a.onCollision) {
 		phy_a.onCollision(phy_a, phy_b, contact);
 	}
@@ -37,10 +35,8 @@ void m2::Physique::DefaultBeginContactCallback(b2Contact& b2_contact) {
 	}
 }
 void m2::Physique::DefaultEndContactCallback(b2Contact& b2_contact) {
-	Id physique_id_a = b2_contact.GetFixtureA()->GetBody()->GetUserData().pointer;
-	Id physique_id_b = b2_contact.GetFixtureB()->GetBody()->GetUserData().pointer;
-	auto& phy_a = M2_LEVEL.physics[physique_id_a];
-	auto& phy_b = M2_LEVEL.physics[physique_id_b];
+	auto& phy_a = *reinterpret_cast<Physique*>(b2_contact.GetFixtureA()->GetBody()->GetUserData().pointer);
+	auto& phy_b = *reinterpret_cast<Physique*>(b2_contact.GetFixtureB()->GetBody()->GetUserData().pointer);
 	if (phy_a.offCollision) {
 		phy_a.offCollision(phy_a, phy_b);
 	}

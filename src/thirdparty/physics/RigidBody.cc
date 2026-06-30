@@ -73,7 +73,7 @@ RigidBody RigidBody::CreateFromDefinition(const RigidBodyDefinition& definition,
 	box2dBodyDef.fixedRotation = definition.fixedRotation;
 	box2dBodyDef.bullet = definition.isBullet;
 	box2dBodyDef.enabled = definition.initiallyEnabled;
-	box2dBodyDef.userData.pointer = physiqueId;
+	box2dBodyDef.userData.pointer = reinterpret_cast<uintptr_t>(&M2_LEVEL.physics[physiqueId]);
 	box2dBodyDef.gravityScale = definition.gravityScale;
 	b2Body* body = M2_LEVEL.world->CreateBody(&box2dBodyDef);
 

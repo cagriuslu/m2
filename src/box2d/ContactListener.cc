@@ -1,5 +1,6 @@
 #include <m2/box2d/ContactListener.h>
 #include <m2/thirdparty/physics/box2d/Detail.h>
+#include <m2/Game.h>
 
 m2::box2d::Contact::Contact(const b2Contact& contact) {
 	b2WorldManifold world_manifold{};
@@ -20,9 +21,9 @@ m2::box2d::Contact::Contact(const b2Contact& contact) {
 	}
 	separation = s / static_cast<float>(point_count);
 
-	fixtureIndexes[0].first = contact.GetFixtureA()->GetBody()->GetUserData().pointer;
+	fixtureIndexes[0].first = M2_LEVEL.physics.GetId(reinterpret_cast<m2::Physique*>(contact.GetFixtureA()->GetBody()->GetUserData().pointer));
 	fixtureIndexes[0].second = contact.GetChildIndexA();
-	fixtureIndexes[1].first = contact.GetFixtureB()->GetBody()->GetUserData().pointer;
+	fixtureIndexes[1].first = M2_LEVEL.physics.GetId(reinterpret_cast<m2::Physique*>(contact.GetFixtureB()->GetBody()->GetUserData().pointer));
 	fixtureIndexes[1].second = contact.GetChildIndexB();
 }
 

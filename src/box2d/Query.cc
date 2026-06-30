@@ -7,8 +7,7 @@ class QueryCallbackType : public b2QueryCallback {
 public:
     explicit QueryCallbackType(m2::box2d::PhysiqueQueryCallback&& cb) : _callback(cb) {}
     bool ReportFixture(b2Fixture* fixture) override {
-        m2::Id physique_id = fixture->GetBody()->GetUserData().pointer;
-        return (_callback)(M2_LEVEL.physics[physique_id]);
+        return (_callback)(*reinterpret_cast<m2::Physique*>(fixture->GetBody()->GetUserData().pointer));
     }
 };
 void m2::box2d::Query(b2World& world, const AABB& aabb, PhysiqueQueryCallback&& query_callback) {
