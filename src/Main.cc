@@ -2,6 +2,9 @@
 #include <m2/Proxy.h>
 #include <m2/Game.h>
 #include <m2/Log.h>
+#include <m2/LogHelpers.h>
+#include <m2/thirdparty/video/Detail.h>
+#include <m2/mt/CooperativeSleep.h>
 #include <CMakeProject.h>
 #include <csignal>
 #ifndef _WIN32
@@ -13,27 +16,26 @@
 using namespace m2;
 
 namespace {
-#ifdef _WIN32
-	// Not yet supported
+#if defined(_WIN32) || defined(__EMSCRIPTEN__)
+	// Not yet supported on Windows and signals are meaningless under Emscripten
+	void SetSignalHandler() {}
 #else
 	extern "C" void SignalHandler(const int sig) {
 		SafeLogStacktrace(sig);
 		_exit(EXIT_FAILURE); // Exit immediately without running global destructors (which may hang)
 	}
+	void SetSignalHandler() {
+		std::signal(SIGTERM, SignalHandler);
+		std::signal(SIGSEGV, SignalHandler);
+		std::signal(SIGILL, SignalHandler);
+		std::signal(SIGABRT, SignalHandler);
+		std::signal(SIGFPE, SignalHandler);
+	}
 #endif
 }
 
 int main(const int argc, char **argv) {
-#ifdef _WIN32
-	// Not yet supported
-#else
-	std::signal(SIGTERM, SignalHandler);
-	std::signal(SIGSEGV, SignalHandler);
-	std::signal(SIGILL, SignalHandler);
-	std::signal(SIGABRT, SignalHandler);
-	std::signal(SIGFPE, SignalHandler);
-#endif
-
+	SetSignalHandler();
 	Error::SetLogger([](const char* file, int line, const std::string& msg) {
 		detail::Log(pb::LogLevel::ERR, false, file, line, msg.c_str());
 	});
@@ -174,6 +176,7 @@ int main(const int argc, char **argv) {
 		M2_GAME.DrawHud();
 		M2_GAME.DrawEnvelopes();
 		M2_GAME.FlipBuffers();
+		detail::StepActorsOnceAndWaitCooperatively(0);
 		++totalGfxUpdateCount;
 
 		if (TIME_BETWEEN_FPS_LOGS <= prevFpsLogAt->GetDurationSince() - M2_LEVEL.GetTotalPauseDuration()) {

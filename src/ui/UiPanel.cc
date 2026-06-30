@@ -14,7 +14,7 @@
 #include <m2/ui/widget/Text.h>
 #include <m2/ui/widget/TextInput.h>
 #include <m2/ui/widget/TextSelection.h>
-
+#include <m2/mt/CooperativeSleep.h>
 #include <ranges>
 #include <regex>
 
@@ -127,8 +127,7 @@ UiAction UiPanel::run_blocking() {
 
 		// Present
 		M2_GAME.GetRenderer().Present();
-		/////////////////////////// END OF GRAPHICS ////////////////////////////
-		////////////////////////////////////////////////////////////////////////
+		detail::StepActorsOnceAndWaitCooperatively(0);
 	}
 }
 

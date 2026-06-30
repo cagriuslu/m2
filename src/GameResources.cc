@@ -12,7 +12,10 @@ std::filesystem::path m2::GetResourceDir() {
 	if (not m2::gOverrideResourceDir.empty()) {
 		return m2::gOverrideResourceDir;
 	}
-#if defined(__APPLE__)
+#if defined(__EMSCRIPTEN__)
+	// On the web build, the configured game's assets are preloaded into MEMFS mounted at "resource" via --preload-file.
+	return "resource";
+#elif defined(__APPLE__)
 	const auto main_bundle_handle = CFBundleGetMainBundle();
 	const auto resources_directory_url_ref = CFBundleCopyResourcesDirectoryURL(main_bundle_handle);
 	const auto resources_directory_absolute_url_ref = CFURLCopyAbsoluteURL(resources_directory_url_ref);

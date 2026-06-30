@@ -6,7 +6,9 @@
 #ifdef _WIN32
 // Not yet supported
 #else
+#ifndef __EMSCRIPTEN__
 #include <execinfo.h>
+#endif
 #include <unistd.h>
 #endif
 
@@ -61,8 +63,8 @@ void m2::SetThreadNameForLogging(const char* thread_name) {
 }
 
 void m2::SafeLogStacktrace(const int sig) {
-#ifdef _WIN32
-	// Not yet supported
+#if defined(_WIN32) || defined(__EMSCRIPTEN__)
+	// Not yet supported on Windows. No available under Emscripten.
 #else
 	void* buffer[64];
 	const int size = backtrace(buffer, 64);
