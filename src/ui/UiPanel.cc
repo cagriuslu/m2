@@ -31,8 +31,8 @@ UiPanel::RelativeToWindow UiPanel::RelativeToWindow::CreateAnchoredToPosition(co
 	const auto& gameAndHud = M2_GAME.Dimensions().GameAndHud();
 	return RelativeToWindow{
 		.ratioToGameAndHudDimensions = RectF{
-			positionWithinToGameAndHud.x - static_cast<float>(gameAndHud.x) / static_cast<float>(gameAndHud.w),
-			positionWithinToGameAndHud.y - static_cast<float> (gameAndHud.y) / static_cast<float>(gameAndHud.h),
+			(positionWithinToGameAndHud.x - static_cast<float>(gameAndHud.x)) / static_cast<float>(gameAndHud.w),
+			(positionWithinToGameAndHud.y - static_cast<float>(gameAndHud.y)) / static_cast<float>(gameAndHud.h),
 			positionWithinToGameAndHud.w / static_cast<float>(gameAndHud.w),
 			positionWithinToGameAndHud.h / static_cast<float>(gameAndHud.h)
 		}
