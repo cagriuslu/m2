@@ -1,7 +1,6 @@
 #pragma once
 #include "Type.h"
 #include "TurnBasedClientConnectionManager.h"
-#include <m2/network/PingBroadcastThread.h>
 #include <m2/network/Select.h>
 #include <m2/network/TcpSocket.h>
 #include <m2/mt/actor/ActorBase.h>
@@ -44,7 +43,6 @@ namespace m2 {
 		const int _maxConnCount;
 
 		expected<network::TcpSocket> _connectionListeningSocket{unexpect_t{}, "Uninitialized"};
-		std::optional<network::PingBroadcastThread> _pingBroadcastThread;
 		pb::ServerThreadState _state{pb::SERVER_INITIAL_STATE};
 		std::vector<network::TurnBasedClientConnectionManager> _clients;
 		int _turnHolderIndex{};
@@ -68,7 +66,6 @@ namespace m2 {
 		void CreateSocket();
 		void BindSocket();
 		void StartListening(MessageBox<TurnBasedServerActorOutput>&);
-		void StartPingBroadcast();
 
 		// Polling steps
 

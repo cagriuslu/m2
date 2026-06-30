@@ -10,7 +10,6 @@ bool m2::TurnBasedServerActor::Initialize(MessageBox<TurnBasedServerActorInput>&
 	CreateSocket();
 	BindSocket();
 	StartListening(outbox);
-	StartPingBroadcast();
 	return true;
 }
 
@@ -64,13 +63,6 @@ void m2::TurnBasedServerActor::StartListening(MessageBox<TurnBasedServerActorOut
 	LOG_INFO("TcpSocket listening on port", options::GetPort());
 	SetStateAndPublish(outbox, pb::SERVER_LOBBY_OPEN);
 }
-void m2::TurnBasedServerActor::StartPingBroadcast() {
-	// Only implemented for macOS
-#ifndef _WIN32
-	// Start ping broadcast
-	_pingBroadcastThread.emplace();
-#endif
-}
 
 void m2::TurnBasedServerActor::ProcessInbox(MessageBox<TurnBasedServerActorInput>& inbox, MessageBox<TurnBasedServerActorOutput>& outbox) {
 	// Process only one message
@@ -82,7 +74,6 @@ void m2::TurnBasedServerActor::ProcessInbox(MessageBox<TurnBasedServerActorInput
 			if (not std::ranges::all_of(_clients, &network::TurnBasedClientConnectionManager::is_ready)) {
 				LOG_WARN("Unable to close lobby, not every client is ready");
 			} else {
-				_pingBroadcastThread.reset();
 				SetStateAndPublish(outbox, pb::SERVER_LOBBY_CLOSED);
 			}
 		} else if (std::holds_alternative<TurnBasedServerActorInput::UpdateTurnHolder>(msg->variant)) {
