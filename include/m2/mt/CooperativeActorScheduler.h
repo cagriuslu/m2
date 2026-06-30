@@ -8,7 +8,7 @@ namespace m2 {
         virtual ~CooperativelyExecutable() = default;
 
         /// Executes exactly one iteration
-        virtual void Step() = 0;
+        virtual void Step() {}
     };
 
     /// Advances every registered cooperative actor by one Step(). No-op on native builds.

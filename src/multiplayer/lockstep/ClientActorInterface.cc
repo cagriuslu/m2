@@ -2,6 +2,7 @@
 #include <m2/multiplayer/lockstep/ConnectionToServer.h>
 #include <m2/ProxyHelper.h>
 #include <m2/common/Meta.h>
+#include <m2/mt/CooperativeSleep.h>
 #include <m2/Log.h>
 
 using namespace m2;
@@ -98,8 +99,8 @@ ClientActorInterface::SwapResult ClientActorInterface::SwapInputsIfTimeHasCome()
 			});
 			// Switch to lagging state and check inputs to simulate
 			_state.emplace<Lagging>();
-			// Give some time for client actor to publish the inputs to simulate
-			std::this_thread::sleep_for(std::chrono::milliseconds{5}); // TODO try without this delay, or possibly yield
+			// Give some time for the client actor to publish the inputs to simulate (by yielding)
+			CooperativeSleepFor(std::chrono::milliseconds{});
 		} else {
 			return SimulatePhysics{};
 		}

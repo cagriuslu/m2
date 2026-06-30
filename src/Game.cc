@@ -121,9 +121,7 @@ void_expected Game::HostTurnBasedGame(unsigned max_connection_count) {
 	LOG_DEBUG("Real ServerThread created");
 
 	// Wait until the server is up
-	while (not ServerThread().IsListening()) {
-		std::this_thread::sleep_for(std::chrono::milliseconds(25));
-	}
+	CooperativeSleepUntil([this] { return ServerThread().IsListening(); });
 	// TODO prevent other clients from joining until the host client joins
 
 	LOG_INFO("Server is listening, joining the game as host client...");
@@ -158,9 +156,7 @@ void_expected Game::HostLockstepGame(unsigned max_connection_count, const networ
 	LOG_INFO("Server created");
 
 	// Wait until the lobby is open
-	while (not GetLockstepServerActor().IsLobbyOpen()) {
-		std::this_thread::sleep_for(std::chrono::milliseconds(25));
-	}
+	CooperativeSleepUntil([this] { return GetLockstepServerActor().IsLobbyOpen(); });
 	// TODO prevent other clients from joining until the host client joins
 
 	LOG_INFO("Server is listening, joining the game as host client...");
@@ -171,15 +167,18 @@ void_expected Game::HostLockstepGame(unsigned max_connection_count, const networ
 	LOG_DEBUG("Host client created");
 
 	// Wait until the host client connects to the server
-	while (GetLockstepHostClientActor().IsSearchingForServer()) {
-		std::this_thread::sleep_for(std::chrono::milliseconds(25));
-	}
+	CooperativeSleepUntil([this] { return not GetLockstepHostClientActor().IsSearchingForServer(); });
 
 	GetLockstepHostClientActor().SetReadyState(true);
 
 	return {};
 }
 void_expected Game::EnableLevelSaver(const std::string& fpath) {
+#ifdef __EMSCRIPTEN__
+	LOG_INFO("Attempt to enable level saver in web build");
+	return {};
+#endif
+
 	if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)) {
 		return _level->EmplaceLevelSaver(std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).levelSaverInterface, fpath);
 	}

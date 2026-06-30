@@ -14,18 +14,18 @@ m2::CooperativeActorScheduler& m2::CooperativeActorScheduler::Instance() {
     return schedulerInstance;
 }
 
-void m2::CooperativeActorScheduler::Register(CooperativelyExecutable* actor) {
+void m2::CooperativeActorScheduler::Register([[maybe_unused]] CooperativelyExecutable* actor) {
 #ifdef __EMSCRIPTEN__
     _registeredActors.emplace_back(actor);
 #lese
-    throw M2_ERROR("Actors in non-web builds shouldn't register themselves with the scheduler");
+    // No-op for native builds
 #endif
 }
-void m2::CooperativeActorScheduler::Unregister(CooperativelyExecutable* actor) {
+void m2::CooperativeActorScheduler::Unregister([[maybe_unused]] CooperativelyExecutable* actor) {
 #ifdef __EMSCRIPTEN__
     std::erase(_registeredActors, actor);
 #lese
-    throw M2_ERROR("Actors in non-web builds shouldn't unregister themselves from the scheduler");
+    // No-op for native builds
 #endif
 }
 
