@@ -54,24 +54,22 @@ bool ClientActor::operator()(MessageBox<ClientActorInput>& inbox, MessageBox<Cli
 		// If input streaming hasn't yet started and inputs from this player have been committed, mark game as started
 		// on this client.
 		_serverConnection->MarkGameAsStarted();
-		const auto timecode = _nextTimecode++;
-		if (timecode != 0) {
+		if (_nextTimecode != 0) {
 			throw M2_ERROR("First timecode should have been zero");
 		}
+		++_nextTimecode;
+
 		if (not _unsentThisPlayerInputs->empty()) {
 			// First set of inputs are sent automatically by the game engine to signal the beginning of the simulation.
 			// It shouldn't contain a meaningful input.
 			throw M2_ERROR("First set of player inputs should have been empty");
 		}
-		LOG_NETWORK("First player inputs are available with timecode, sending to peers...", timecode);
-		_serverConnection->QueueOutgoingMessages(timecode, &*_unsentThisPlayerInputs, _lastReceivedGameStateHash);
-
-		LOG_NETWORK("Waiting for main thread to begin simulation after sending first player inputs...");
-		std::this_thread::sleep_for(std::chrono::seconds{1});
+		LOG_NETWORK("First player inputs are available, sending to peers...");
+		_serverConnection->QueueOutgoingMessages(0, &*_unsentThisPlayerInputs, _lastReceivedGameStateHash);
 
 		// Even though the first set of player inputs are empty, we still simulate it. Store them until the next tick.
 		// Stored timecode becomes the expected timecode for inputs of the peers.
-		_nextSelfPlayerInputsToSimulate = std::make_pair(timecode, std::move(*_unsentThisPlayerInputs));
+		_nextSelfPlayerInputsToSimulate = std::make_pair(0, std::move(*_unsentThisPlayerInputs));
 		_unsentThisPlayerInputs.reset();
 		_lastPlayerInputsSentAt = Stopwatch{};
 	} else if (HasNextPlayerInputsToSimulate() && _unsentThisPlayerInputs) {
