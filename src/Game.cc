@@ -8,6 +8,7 @@
 #include <m2/component/Graphic.h>
 #include <m2/ui/UiAction.h>
 #include <m2/game/Key.h>
+#include <m2/mt/CooperativeSleep.h>
 #include <m2/common/String.h>
 #include <m2/thirdparty/video/Detail.h>
 #include <m2/thirdparty/video/Shapes.h>
@@ -230,21 +231,15 @@ bool Game::AddBot() {
 
 	// Create an instance at the end of the list
 	auto& botList = std::get<TurnBasedServerComponents>(_multiPlayerComponents).botClientThreads;
-	const auto it = botList.emplace(botList.end());
 	LOG_INFO("Joining the game as bot client...");
-
-	LOG_DEBUG("Destroying temporary TurnBasedBotClientThread...");
-	it->~TurnBasedBotClientThread(); // Destruct the default object
-	LOG_DEBUG("Temporary TurnBasedBotClientThread destroyed, creating real TurnBasedBotClientThread");
-
-	new (&*it) network::TurnBasedBotClientThread(std::in_place);
+	auto& bot = botList.emplace_back(std::in_place);
 	LOG_DEBUG("Real TurnBasedBotClientThread created");
 
-	if (it->is_active()) {
+	if (bot.is_active()) {
 		return true;
 	}
 	LOG_WARN("TurnBasedBotClientThread failed to connect, destroying client");
-	botList.erase(it);
+	botList.pop_back();
 	return false;
 }
 bool Game::AddLockstepBot() {
@@ -266,14 +261,10 @@ bool Game::AddLockstepBot() {
 
 	// Wait until the bot reaches the lobby, with a timeout. The server accepts a join only while there's room; if the
 	// lobby is full the bot never reaches the lobby, so a timeout means the player limit was reached.
-	const auto botJoinDeadline = std::chrono::steady_clock::now() + std::chrono::seconds{5};
-	while (not bot.IsWaitingInLobby()) {
-		if (botJoinDeadline < std::chrono::steady_clock::now()) {
-			LOG_WARN("Bot client failed to reach the lobby, destroying it");
-			botList.pop_back();
-			return false;
-		}
-		std::this_thread::sleep_for(std::chrono::milliseconds{25});
+	if (not CooperativeSleepUntilOrTimeout([&bot] { return bot.IsWaitingInLobby(); }, 5000)) {
+		LOG_WARN("Bot client failed to reach the lobby, destroying it");
+		botList.pop_back();
+		return false;
 	}
 
 	bot.SetReadyState(true);
@@ -419,9 +410,11 @@ void_expected Game::LoadTurnBasedMultiPlayerAsHost(
 	// Manually set the TurnBasedHostClientThread state to STARTED, because it doesn't receive ServerUpdates
 	M2_GAME.TurnBasedHostClientThread().start_if_ready();
 	// If there are bots, we need to handle the first server update
-	LOG_DEBUG("Waiting 1s until the first server update is delivered to bots");
-	std::this_thread::sleep_for(std::chrono::seconds(1));
+	LOG_DEBUG("Waiting until the first server update is delivered to bots");
 	auto& botList = std::get<TurnBasedServerComponents>(_multiPlayerComponents).botClientThreads;
+	CooperativeSleepUntilOrTimeout([&botList] {
+		return std::ranges::all_of(botList, [](auto& bot) { return bot.HasServerUpdate(); });
+	}, 1000);
 	for (auto& bot : botList) {
 		if (const auto server_update = bot.pop_server_update(); not server_update) {
 			throw M2_ERROR("Bot hasn't received the TurnBasedServerUpdate");
@@ -438,8 +431,10 @@ void_expected Game::LoadTurnBasedMultiPlayerAsHost(
 	_proxy.post_server_update(*_lastSentOrReceivedServerUpdateSequenceNo, false);
 
 	// If there are bots, we need to consume the second server update as bots are never the first turn holder.
-	LOG_DEBUG("Waiting 1s until the second server update is delivered to bots");
-	std::this_thread::sleep_for(std::chrono::seconds(1));
+	LOG_DEBUG("Waiting until the second server update is delivered to bots");
+	CooperativeSleepUntilOrTimeout([&botList] {
+		return std::ranges::all_of(botList, [](auto& bot) { return bot.HasServerUpdate(); });
+	}, 1000);
 	for (auto& bot : botList) {
 		if (const auto server_update = bot.pop_server_update(); not server_update) {
 			throw M2_ERROR("Bot hasn't received the TurnBasedServerUpdate");
@@ -495,10 +490,8 @@ void_expected Game::LoadLockstep(const std::variant<std::filesystem::path, pb::L
 	if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)) {
 		for (auto& bot : std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).botClientActorInterfaces) {
 			// The server freezes every client together, so the bot's freeze (and game init params) arrives shortly after
-			// the host's. Wait for it before starting the bot's input streaming.
-			while (not bot.IsLobbyFrozen()) {
-				std::this_thread::sleep_for(std::chrono::milliseconds{25});
-			}
+			// the host's. Wait for it before starting the bot's input streaming. Pumped cooperatively on the web build.
+			CooperativeSleepUntil([&bot] { return bot.IsLobbyFrozen(); });
 			bot.StartInputStreaming();
 		}
 	}
@@ -1340,7 +1333,8 @@ Game::CommandResult Game::ExecuteCommand(const std::string& cmd) {
 		} else {
 			return CommandFail{.error = "Missing argument"};
 		}
-	} else if (*command == "ReplayLockstep") {
+	}
+	else if (*command == "ReplayLockstep") {
 		if (not argument[0].empty()) {
 			if (const auto result = M2_GAME.ReplayLockstep(std::string{argument[0]})) {
 				return CommandSuccess{.levelReplaced = true};
