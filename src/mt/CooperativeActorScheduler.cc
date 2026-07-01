@@ -17,14 +17,14 @@ m2::CooperativeActorScheduler& m2::CooperativeActorScheduler::Instance() {
 void m2::CooperativeActorScheduler::Register([[maybe_unused]] CooperativelyExecutable* actor) {
 #ifdef __EMSCRIPTEN__
     _registeredActors.emplace_back(actor);
-#lese
+#else
     // No-op for native builds
 #endif
 }
 void m2::CooperativeActorScheduler::Unregister([[maybe_unused]] CooperativelyExecutable* actor) {
 #ifdef __EMSCRIPTEN__
     std::erase(_registeredActors, actor);
-#lese
+#else
     // No-op for native builds
 #endif
 }
