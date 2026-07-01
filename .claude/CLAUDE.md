@@ -1,4 +1,14 @@
-# Overview
+# General rules
+
+- Always be honest. If you don't know something, admit it and ask for clarification.
+- Ask for clarification if my prompt isn't clear enough.
+- Pick verbose names for local variables.
+- If you're asked to make a plan, always use the grill-me skil. When the plan is ready, don't summarize it, and write is as a .md file. The file name should be your recommendation for the git commit message (it can contain space characters).
+- If I forget to provide a verification method for code changes, ask me to give you one.
+- Never commit anything in my behalf.
+- If I ask you to use sug-agents to execute some plan(s), don't validate the sub-agents' work as the plan will already have a validation step.
+
+# Project Overview
 
 - This repo contains a game engine (written in C++, configured with CMake) and some games written for the engine.
 - ./game directory contains the code for several games. Everywhere else contains the engine code.
@@ -66,7 +76,7 @@ Two multiplayer modes:
 
 Some headers in `include/` require platform-specific implementations, provided under `platform/posix/` (shared by macOS and Linux), `platform/windows/`, and `platform/emscripten/` (web builds).
 
-## Coding Standards
+## Coding Guidelines
 
 - Never allow silent failures. Prefer proper error handling or `throw`.
 - In paired header/source files, the order of function and method definitions in the source must match the
