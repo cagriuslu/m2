@@ -46,7 +46,14 @@ endif()
 set(Protobuf_USE_STATIC_LIBS ON)
 # For Emscripten only libprotobuf is cross-compiled. protoc must come from the native build.
 if(EMSCRIPTEN)
-    set(HOST_PROTOC_EXECUTABLE "${CMAKE_SOURCE_DIR}/build/${GAME}-DEBUG/lib/protobuf/bin/protoc")
+    # Mirrors the binaryDir naming in CMakePresets.json: POSIX presets suffix the host OS name
+    # (e.g. build/RPG-Linux-DEBUG), while the Windows presets don't (build/RPG-DEBUG).
+    if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
+        set(HOST_NATIVE_BUILD_DIR "${CMAKE_SOURCE_DIR}/build/${GAME}-DEBUG")
+    else()
+        set(HOST_NATIVE_BUILD_DIR "${CMAKE_SOURCE_DIR}/build/${GAME}-${CMAKE_HOST_SYSTEM_NAME}-DEBUG")
+    endif()
+    set(HOST_PROTOC_EXECUTABLE "${HOST_NATIVE_BUILD_DIR}/lib/protobuf/bin/protoc")
     if(NOT EXISTS "${HOST_PROTOC_EXECUTABLE}")
         message(FATAL_ERROR "Host protoc not found at ${HOST_PROTOC_EXECUTABLE}. Build native ${GAME} first.")
     endif()

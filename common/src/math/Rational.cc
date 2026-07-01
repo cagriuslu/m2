@@ -3,6 +3,7 @@
 #include <m2/common/Error.h>
 #include <numeric>
 #include <cinttypes>
+#include <cmath>
 #if defined(_MSC_VER)
 #include <intrin.h>
 #endif
@@ -56,7 +57,7 @@ m2::Rational::Rational(const pb::Rational& r) : _n(r.n()), _d(!r.n() && !r.d() ?
 m2::Rational::Rational(double d) {
 	int64_t precision;
 	{
-		auto abs_f = fabs(d);
+		auto abs_f = std::fabs(d);
 		// Decide on the precision
 		// It's wrong to calculate precision calculation based on decimal orders.
 		// But most float number is entered as a decimal number.
@@ -106,7 +107,7 @@ m2::Rational::Rational(double d) {
 //		}
 	}
 
-	const auto raised_d = round(d * static_cast<double>(precision));
+	const auto raised_d = std::round(d * static_cast<double>(precision));
 	const auto raised = static_cast<int64_t>(raised_d);
 	*this = internal::simplify(raised, precision);
 }

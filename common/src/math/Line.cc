@@ -3,7 +3,7 @@
 
 float m2::Line::GetXIntersect() const {
 	const auto slope = GetSlope();
-	if (isinf(slope)) {
+	if (std::isinf(slope)) {
 		return _point.GetX();
 	}
 	// 0 = (slope)x + yintersect
@@ -26,11 +26,11 @@ std::optional<m2::VecF> m2::Line::GetIntersectionPointWith(const Line& other) co
 	const auto otherYIntersect = other.GetYIntersect();
 
 	float intersectionX, intersectionY;
-	if (isinf(thisSlope)) {
+	if (std::isinf(thisSlope)) {
 		// This line is vertical
 		intersectionX = this->_point.GetX();
 		intersectionY = otherSlope * intersectionX + otherYIntersect;
-	} else if (isinf(otherSlope)) {
+	} else if (std::isinf(otherSlope)) {
 		// Other line is vertical
 		intersectionX = other._point.GetX();
 		intersectionY = thisSlope * intersectionX + thisYIntersect;

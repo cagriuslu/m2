@@ -49,7 +49,7 @@ namespace m2 {
 
 		[[nodiscard]] float GetX() const { return _x; }
 		[[nodiscard]] float GetY() const { return _y; }
-		[[nodiscard]] bool IsNan() const { return isnan(_x) || isnan(_y); }
+		[[nodiscard]] bool IsNan() const { return std::isnan(_x) || std::isnan(_y); }
 		[[nodiscard]] bool IsNear(const VecF& other, float tolerance) const {
 			return fabsf(other.GetX() - _x) <= tolerance && fabsf(other.GetY() - _y) <= tolerance;
 		}
