@@ -80,15 +80,15 @@ The web version can be built with:
 emcmake cmake --preset <game>-WASM-RELEASE
 cmake --build build/<game>-WASM --target m2
 ```
-This cross-compiles the runtime dependencies and the engine for wasm and writes `m2.html`, `m2.js`, `m2.wasm`, and `m2.data` into `build/<game>-WASM`.
+This cross-compiles the runtime dependencies and the engine for wasm and writes `<game>.html`, `<game>.js`, `<game>.wasm`, and `<game>.data` into `build/<game>-WASM`.
 
 Alternatively, run `web_all.sh` to build all games.
 
-To play it, serve that directory over HTTP and open `m2.html` in a desktop browser:
+To play it, serve that directory over HTTP and open `<game>.html` in a desktop browser:
 ```
 cd build/<game>-WASM
 python3 -m http.server 8000
-# open http://localhost:8000/m2.html
+# open http://localhost:8000/<game>.html
 ```
 
 ### Dependencies

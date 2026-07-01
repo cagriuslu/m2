@@ -273,6 +273,10 @@ set(ORM_SOURCES "${CMAKE_BINARY_DIR}/M2.orm.h;${CMAKE_BINARY_DIR}/M2.orm.cc")
 add_executable(m2 WIN32 MACOSX_BUNDLE ${M2_PUBLIC_HEADERS} ${M2_PRIVATE_HEADERS} ${M2_SOURCES} ${M2_PLATFORM_SPECIFIC_SOURCES} ${GAME_SOURCES} ${ORM_SOURCES} ${BUNDLE_RESOURCES})
 add_dependencies(m2 build_orm_sources)
 
+# Name the produced binary after the game (RPG, RPG.exe, RPG.html, ...) on every platform.
+# The CMake target itself stays "m2" so build scripts and generator expressions keep working.
+set_target_properties(m2 PROPERTIES OUTPUT_NAME "${GAME}")
+
 if (MSVC)
     # Enable parallel build for MSVC
     target_compile_options(m2 PRIVATE "/MP")
@@ -299,7 +303,6 @@ elseif(APPLE)
     target_link_libraries(m2 "-framework Foundation")
 
 	set_target_properties(m2 PROPERTIES
-			OUTPUT_NAME "${GAME}"
 			MACOSX_BUNDLE_BUNDLE_NAME "${GAME}"
 			MACOSX_BUNDLE_BUNDLE_VERSION "0.1.0"
 			MACOSX_BUNDLE_COPYRIGHT "2024 Cagri Uslu"
