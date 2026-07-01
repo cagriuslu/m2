@@ -75,12 +75,12 @@
     {
       "name": "RPG-POSIX-DEBUG",
       "inherits": ["POSIX", "DEBUG", "RPG"],
-      "binaryDir": "build/RPG-DEBUG"
+      "binaryDir": "build/RPG-${hostSystemName}-DEBUG"
     },
     {
       "name": "RPG-POSIX-RELEASE",
       "inherits": ["POSIX", "RELEASE", "RPG"],
-      "binaryDir": "build/RPG-RELEASE"
+      "binaryDir": "build/RPG-${hostSystemName}-RELEASE"
     },
     {
       "name": "RPG-WIN-DEBUG",
@@ -101,12 +101,12 @@
     {
       "name": "CuZn-POSIX-DEBUG",
       "inherits": ["POSIX", "DEBUG", "CuZn"],
-      "binaryDir": "build/CuZn-DEBUG"
+      "binaryDir": "build/CuZn-${hostSystemName}-DEBUG"
     },
     {
       "name": "CuZn-POSIX-RELEASE",
       "inherits": ["POSIX", "RELEASE", "CuZn"],
-      "binaryDir": "build/CuZn-RELEASE"
+      "binaryDir": "build/CuZn-${hostSystemName}-RELEASE"
     },
     {
       "name": "CuZn-WIN-DEBUG",
@@ -127,12 +127,12 @@
     {
       "name": "PINBALL-POSIX-DEBUG",
       "inherits": ["POSIX", "DEBUG", "PINBALL"],
-      "binaryDir": "build/PINBALL-DEBUG"
+      "binaryDir": "build/PINBALL-${hostSystemName}-DEBUG"
     },
     {
       "name": "PINBALL-POSIX-RELEASE",
       "inherits": ["POSIX", "RELEASE", "PINBALL"],
-      "binaryDir": "build/PINBALL-RELEASE"
+      "binaryDir": "build/PINBALL-${hostSystemName}-RELEASE"
     },
     {
       "name": "PINBALL-WIN-DEBUG",
@@ -148,12 +148,12 @@
     {
       "name": "WAR-POSIX-DEBUG",
       "inherits": ["POSIX", "DEBUG", "WAR"],
-      "binaryDir": "build/WAR-DEBUG"
+      "binaryDir": "build/WAR-${hostSystemName}-DEBUG"
     },
     {
       "name": "WAR-POSIX-RELEASE",
       "inherits": ["POSIX", "RELEASE", "WAR"],
-      "binaryDir": "build/WAR-RELEASE"
+      "binaryDir": "build/WAR-${hostSystemName}-RELEASE"
     },
     {
       "name": "WAR-WIN-DEBUG",
@@ -169,12 +169,12 @@
     {
       "name": "QNT-POSIX-DEBUG",
       "inherits": ["POSIX", "DEBUG", "QNT"],
-      "binaryDir": "build/QNT-DEBUG"
+      "binaryDir": "build/QNT-${hostSystemName}-DEBUG"
     },
     {
       "name": "QNT-POSIX-RELEASE",
       "inherits": ["POSIX", "RELEASE", "QNT"],
-      "binaryDir": "build/QNT-RELEASE"
+      "binaryDir": "build/QNT-${hostSystemName}-RELEASE"
     },
     {
       "name": "QNT-WIN-DEBUG",

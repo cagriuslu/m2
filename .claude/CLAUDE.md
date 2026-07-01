@@ -21,16 +21,17 @@
 ```sh
 cmake --preset <GAME>-POSIX-DEBUG
 ```
-where <GAME> is the name of the directory of a game. Build directory will be `build/<GAME>-DEBUG`.
+where <GAME> is the name of the directory of a game. Build directory will be `build/<GAME>-<HOST>-DEBUG`,
+where <HOST> is the host OS name — CMake's `${hostSystemName}` macro, equivalently `$(uname -s)` (e.g. `Linux` or `Darwin`).
 
 ## Build
 
 ```sh
-cd build/<GAME>-DEBUG && ninja m2
+cd build/<GAME>-$(uname -s)-DEBUG && ninja m2
 ```
 or, on POSIX
 ```sh
-./mac_all.sh
+./posix_all.sh
 ```
 or, on Windows
 ```sh

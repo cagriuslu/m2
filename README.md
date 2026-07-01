@@ -63,7 +63,7 @@ After configuring with CMake, go to the build directory and run Ninja to build t
 ninja m2
 ```
 
-Alternatively, run `mac_all.sh` or `win_all.sh` to build all games.
+Alternatively, run `posix_all.sh` or `win_all.sh` to build all games.
 
 ### How to build for web
 

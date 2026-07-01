@@ -139,7 +139,7 @@ separately (e.g. WAR `HighwayCharacterBase`).
 
 ```sh
 cmake --preset <GAME>-POSIX-DEBUG          # re-runs the source glob to pick up new files
-cd build/<GAME>-DEBUG && ninja m2
+cd build/<GAME>-$(uname -s)-DEBUG && ninja m2
 ```
 
 Report success, or surface compile errors and fix them. Common mistakes: forgetting the

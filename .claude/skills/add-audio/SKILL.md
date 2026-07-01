@@ -52,7 +52,7 @@ current.
 Do this yourself; do not ask the user.
 
 1. **Target game.** If the user named one, use it. Otherwise check the configured build under
-   `build/` (e.g. `build/<GAME>-DEBUG`) and/or ask in Step 1.
+   `build/` (e.g. `build/<GAME>-<HOST>-DEBUG`) and/or ask in Step 1.
 2. **Does the game already have its own audio files?**
    - Proto: `game/<GAME>/pb/m2g_SongType.proto` — if missing, the game currently uses the
      default (only `NO_SONG`) and you must **create** this file.
@@ -202,12 +202,12 @@ Pick the right rebuild depth — this is the most common source of "my sound did
   globbed at configure time:
   ```sh
   cmake --preset <GAME>-POSIX-DEBUG
-  cd build/<GAME>-DEBUG && ninja m2
+  cd build/<GAME>-$(uname -s)-DEBUG && ninja m2
   ```
 - **Only edited an existing `Songs.json` and/or `.cc` trigger code:** a plain rebuild is enough
   (on macOS the resource is a bundle source and is re-copied on build):
   ```sh
-  cd build/<GAME>-DEBUG && ninja m2
+  cd build/<GAME>-$(uname -s)-DEBUG && ninja m2
   ```
 
 If the build fails or the game throws at startup, check:
@@ -222,7 +222,7 @@ If the build fails or the game throws at startup, check:
 
 **Always ask the user for a verification method if they didn't give one.** Audio is hard to
 assert programmatically here, so the realistic check is: run the configured game
-(`build/<GAME>-DEBUG`), trigger the event, and listen. Offer to do that, or to add a temporary
+(`build/<GAME>-<HOST>-DEBUG`), trigger the event, and listen. Offer to do that, or to add a temporary
 trigger (e.g. a key binding) so the sound can be auditioned in isolation.
 
 ## Quick reference
