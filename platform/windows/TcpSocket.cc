@@ -48,7 +48,7 @@ expected<TcpSocket> TcpSocket::CreateServerSideSocket(uint16_t port) {
     TcpSocket tcp_socket;
     tcp_socket._serverAddr = IpAddress{};
     tcp_socket._serverPort = Port::CreateFromHostOrder(port);
-    tcp_socket._platform_specific_data = new detail::PlatformSpecificSocketData{.address_info = result, .socket = listen_socket};
+    tcp_socket._platformSpecificTcpData = new detail::PlatformSpecificTcpSocketData{.address_info = result, .socket = listen_socket};
     return std::move(tcp_socket);
 }
 
@@ -84,7 +84,7 @@ expected<TcpSocket> TcpSocket::CreateClientSideSocket(const std::string& server_
     TcpSocket tcp_socket;
     tcp_socket._serverAddr = IpAddress::CreateFromString(server_ip_addr);
     tcp_socket._serverPort = Port::CreateFromHostOrder(server_port);
-    tcp_socket._platform_specific_data = new detail::PlatformSpecificSocketData{.address_info = result, .socket = connect_socket};
+    tcp_socket._platformSpecificTcpData = new detail::PlatformSpecificTcpSocketData{.address_info = result, .socket = connect_socket};
     return std::move(tcp_socket);
 }
 
@@ -93,7 +93,7 @@ TcpSocket::TcpSocket(TcpSocket&& other) noexcept {
 }
 
 TcpSocket& TcpSocket::operator=(TcpSocket&& other) noexcept {
-    std::swap(_platform_specific_data, other._platform_specific_data);
+    std::swap(_platformSpecificTcpData, other._platformSpecificTcpData);
     std::swap(_serverAddr, other._serverAddr);
     std::swap(_clientAddr, other._clientAddr);
     std::swap(_serverPort, other._serverPort);
@@ -102,14 +102,14 @@ TcpSocket& TcpSocket::operator=(TcpSocket&& other) noexcept {
 }
 
 TcpSocket::~TcpSocket() {
-    if (_platform_specific_data) {
-        if (_platform_specific_data->address_info) {
-            freeaddrinfo(_platform_specific_data->address_info);
+    if (_platformSpecificTcpData) {
+        if (_platformSpecificTcpData->address_info) {
+            freeaddrinfo(_platformSpecificTcpData->address_info);
         }
-        if (_platform_specific_data->socket) {
-            closesocket(_platform_specific_data->socket);
+        if (_platformSpecificTcpData->socket) {
+            closesocket(_platformSpecificTcpData->socket);
         }
-        delete _platform_specific_data;
+        delete _platformSpecificTcpData;
     }
 }
 
@@ -119,7 +119,7 @@ expected<bool> TcpSocket::bind() {
     }
 
     // Bind the socket
-    auto bind_result = ::bind(_platform_specific_data->socket, _platform_specific_data->address_info->ai_addr, static_cast<int>(_platform_specific_data->address_info->ai_addrlen));
+    auto bind_result = ::bind(_platformSpecificTcpData->socket, _platformSpecificTcpData->address_info->ai_addr, static_cast<int>(_platformSpecificTcpData->address_info->ai_addrlen));
     if (bind_result == SOCKET_ERROR) {
         auto last_error = WSAGetLastError();
         if (last_error == WSAEADDRINUSE) {
@@ -136,7 +136,7 @@ void_expected TcpSocket::listen(int queue_size) {
         throw M2_ERROR("Listen called on a non-listening non-server socket");
     }
 
-    if (::listen(_platform_specific_data->socket, queue_size) == SOCKET_ERROR) {
+    if (::listen(_platformSpecificTcpData->socket, queue_size) == SOCKET_ERROR) {
         return m2::make_unexpected(std::format("listen failed: {}", WSAGetLastError()));
     }
 
@@ -148,7 +148,7 @@ expected<bool> TcpSocket::connect() {
         throw M2_ERROR("Connect called on a non-client socket");
     }
 
-    int connect_result = ::connect(_platform_specific_data->socket, _platform_specific_data->address_info->ai_addr, static_cast<int>(_platform_specific_data->address_info->ai_addrlen));
+    int connect_result = ::connect(_platformSpecificTcpData->socket, _platformSpecificTcpData->address_info->ai_addr, static_cast<int>(_platformSpecificTcpData->address_info->ai_addrlen));
     if (connect_result == SOCKET_ERROR) {
         auto last_error = WSAGetLastError();
         if (last_error == WSAECONNREFUSED || last_error == WSAENETUNREACH || last_error == WSAEHOSTUNREACH || last_error == WSAETIMEDOUT) {
@@ -166,7 +166,7 @@ expected<std::optional<TcpSocket>> TcpSocket::accept() {
 
     sockaddr child_address{};
     int child_address_len = sizeof(child_address);
-    SOCKET new_socket = ::accept(_platform_specific_data->socket, &child_address, &child_address_len);
+    SOCKET new_socket = ::accept(_platformSpecificTcpData->socket, &child_address, &child_address_len);
     if (new_socket == INVALID_SOCKET) {
         if (WSAGetLastError() == WSAECONNRESET) {
             return std::nullopt;
@@ -178,7 +178,7 @@ expected<std::optional<TcpSocket>> TcpSocket::accept() {
     child_socket._clientAddr = IpAddress::CreateFromNetworkOrder(reinterpret_cast<sockaddr_in*>(&child_address)->sin_addr.S_un.S_addr);
     child_socket._serverPort = _serverPort;
     child_socket._clientPort = Port::CreateFromNetworkOrder(reinterpret_cast<sockaddr_in*>(&child_address)->sin_port);
-    child_socket._platform_specific_data = new detail::PlatformSpecificSocketData{.socket = new_socket};
+    child_socket._platformSpecificTcpData = new detail::PlatformSpecificTcpSocketData{.socket = new_socket};
     return std::move(child_socket);
 }
 
@@ -187,7 +187,7 @@ expected<int> TcpSocket::send(const uint8_t* buffer, size_t length) {
         throw M2_ERROR("Send called on a non-connected socket");
     }
 
-    auto send_result = ::send(_platform_specific_data->socket, reinterpret_cast<const char*>(buffer), I(length), 0);
+    auto send_result = ::send(_platformSpecificTcpData->socket, reinterpret_cast<const char*>(buffer), I(length), 0);
     if (send_result == SOCKET_ERROR) {
         auto last_error = WSAGetLastError();
         if (last_error == WSAEWOULDBLOCK) {
@@ -205,7 +205,7 @@ expected<int> TcpSocket::recv(uint8_t* buffer, size_t length) {
         throw M2_ERROR("Recv called on a non-connected socket");
     }
 
-    auto recv_result = ::recv(_platform_specific_data->socket, reinterpret_cast<char*>(buffer), I(length), 0);
+    auto recv_result = ::recv(_platformSpecificTcpData->socket, reinterpret_cast<char*>(buffer), I(length), 0);
     if (recv_result == SOCKET_ERROR) {
         auto last_error = WSAGetLastError();
         if (last_error == WSAEWOULDBLOCK) {

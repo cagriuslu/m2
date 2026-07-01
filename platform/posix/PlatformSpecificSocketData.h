@@ -1,7 +1,10 @@
 #pragma once
 
 namespace m2::network::detail {
-	struct PlatformSpecificSocketData {
+	struct PlatformSpecificTcpSocketData {
+		int fd{};
+	};
+	struct PlatformSpecificUdpSocketData {
 		int fd{};
 	};
 }

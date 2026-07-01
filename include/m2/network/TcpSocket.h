@@ -6,12 +6,12 @@ namespace m2::network {
 	// Forward declarations
 	struct Select;
 	namespace detail {
-		struct PlatformSpecificSocketData;
+		struct PlatformSpecificTcpSocketData;
 	}
 
 	/// \brief Platform-agnostic TCP socket object.
 	class TcpSocket {
-		detail::PlatformSpecificSocketData* _platform_specific_data{};
+		detail::PlatformSpecificTcpSocketData* _platformSpecificTcpData{};
 		network::IpAddress _serverAddr{}, _clientAddr{};
 		Port _serverPort{}, _clientPort{};
 

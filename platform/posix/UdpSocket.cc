@@ -26,7 +26,7 @@ m2::expected<m2::network::UdpSocket> m2::network::UdpSocket::CreateServerSideSoc
 
 	UdpSocket udpSocket;
 	udpSocket._selfPort = port;
-	udpSocket._platformSpecificData = new detail::PlatformSpecificSocketData{.fd = socketResult};
+	udpSocket._platformSpecificUdpData = new detail::PlatformSpecificUdpSocketData{.fd = socketResult};
 	return std::move(udpSocket);
 }
 m2::expected<m2::network::UdpSocket> m2::network::UdpSocket::CreateClientSideSocket() {
@@ -36,7 +36,7 @@ m2::expected<m2::network::UdpSocket> m2::network::UdpSocket::CreateClientSideSoc
 	}
 
 	UdpSocket udpSocket;
-	udpSocket._platformSpecificData = new detail::PlatformSpecificSocketData{.fd = socketResult};
+	udpSocket._platformSpecificUdpData = new detail::PlatformSpecificUdpSocketData{.fd = socketResult};
 	return std::move(udpSocket);
 }
 m2::expected<m2::network::UdpSocket> m2::network::UdpSocket::CreateSendOnlyMulticastSocket(const IpAddress& interfaceAddr) {
@@ -69,7 +69,7 @@ m2::expected<m2::network::UdpSocket> m2::network::UdpSocket::CreateSendOnlyMulti
 	}
 
 	UdpSocket udpSocket;
-	udpSocket._platformSpecificData = new detail::PlatformSpecificSocketData{.fd = socketResult};
+	udpSocket._platformSpecificUdpData = new detail::PlatformSpecificUdpSocketData{.fd = socketResult};
 	return std::move(udpSocket);
 }
 m2::expected<m2::network::UdpSocket> m2::network::UdpSocket::CreateReceiveOnlyMulticastSocket(const IpAddress& groupAddr, const Port& port) {
@@ -106,23 +106,23 @@ m2::expected<m2::network::UdpSocket> m2::network::UdpSocket::CreateReceiveOnlyMu
 
 	UdpSocket udpSocket;
 	udpSocket._selfPort = port;
-	udpSocket._platformSpecificData = new detail::PlatformSpecificSocketData{.fd = socketResult};
+	udpSocket._platformSpecificUdpData = new detail::PlatformSpecificUdpSocketData{.fd = socketResult};
 	return std::move(udpSocket);
 }
 m2::network::UdpSocket::UdpSocket(UdpSocket&& other) noexcept {
 	*this = std::move(other);
 }
 m2::network::UdpSocket& m2::network::UdpSocket::operator=(UdpSocket&& other) noexcept {
-	std::swap(_platformSpecificData, other._platformSpecificData);
+	std::swap(_platformSpecificUdpData, other._platformSpecificUdpData);
 	std::swap(_selfPort, other._selfPort);
 	return *this;
 }
 m2::network::UdpSocket::~UdpSocket() {
-	if (_platformSpecificData) {
-		if (0 <= _platformSpecificData->fd) {
-			close(_platformSpecificData->fd);
+	if (_platformSpecificUdpData) {
+		if (0 <= _platformSpecificUdpData->fd) {
+			close(_platformSpecificUdpData->fd);
 		}
-		delete _platformSpecificData;
+		delete _platformSpecificUdpData;
 	}
 }
 
@@ -135,7 +135,7 @@ m2::void_expected m2::network::UdpSocket::Send(const IpAddressAndPort& peerAddrA
 	sin.sin_port = peerAddrAndPort.port.GetInNetworkOrder();
 	sin.sin_addr.s_addr = peerAddrAndPort.ipAddress.GetInNetworkOrder();
 
-	const auto sendResult = ::sendto(_platformSpecificData->fd, buffer, length, 0, reinterpret_cast<sockaddr*>(&sin), sizeof(sin));
+	const auto sendResult = ::sendto(_platformSpecificUdpData->fd, buffer, length, 0, reinterpret_cast<sockaddr*>(&sin), sizeof(sin));
 	if (sendResult == -1) {
 		if (errno == EAGAIN || errno == EWOULDBLOCK) {
 			return make_unexpected("Blocked socket returned EAGAIN");
@@ -152,7 +152,7 @@ m2::expected<std::pair<int, m2::network::IpAddressAndPort>> m2::network::UdpSock
 	// Prepare source address
 	sockaddr_in sin{};
 	socklen_t slen = sizeof(sin);
-	const auto recvResult = ::recvfrom(_platformSpecificData->fd, buffer, length, 0, reinterpret_cast<sockaddr*>(&sin), &slen);
+	const auto recvResult = ::recvfrom(_platformSpecificUdpData->fd, buffer, length, 0, reinterpret_cast<sockaddr*>(&sin), &slen);
 	if (recvResult == -1) {
 		if (errno == EAGAIN || errno == EWOULDBLOCK) {
 			throw M2_ERROR("Blocking socket returned EAGAIN for recv");

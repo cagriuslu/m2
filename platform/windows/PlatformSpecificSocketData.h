@@ -2,7 +2,11 @@
 #include <WinSock2.h>
 
 namespace m2::network::detail {
-	struct PlatformSpecificSocketData {
+	struct PlatformSpecificTcpSocketData {
+        addrinfo *address_info{};
+        SOCKET socket{INVALID_SOCKET};
+	};
+	struct PlatformSpecificUdpSocketData {
         addrinfo *address_info{};
         SOCKET socket{INVALID_SOCKET};
 	};

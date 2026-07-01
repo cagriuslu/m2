@@ -6,11 +6,11 @@ namespace m2::network {
 	// Forward declarations
 	struct Select;
 	namespace detail {
-		struct PlatformSpecificSocketData;
+		struct PlatformSpecificUdpSocketData;
 	}
 
 	class UdpSocket {
-		detail::PlatformSpecificSocketData* _platformSpecificData{};
+		detail::PlatformSpecificUdpSocketData* _platformSpecificUdpData{};
 		Port _selfPort{};
 
 		/// \details Platform specific data should be initialized after calling this constructor

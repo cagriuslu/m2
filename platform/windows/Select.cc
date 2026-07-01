@@ -58,13 +58,13 @@ namespace {
 expected<std::optional<SelectResult<TcpSocket>>> Select::WaitUntilSocketsReady(const TcpSocketHandles& readSockets,
 		const TcpSocketHandles& writeSockets, const uint64_t timeoutMs) {
 	return WaitUntilSocketsReadyTemplate<TcpSocket>(readSockets, writeSockets, timeoutMs,
-		[](const TcpSocket* s) -> SOCKET { return s->_platform_specific_data->socket; });
+		[](const TcpSocket* s) -> SOCKET { return s->_platformSpecificTcpData->socket; });
 }
 
 expected<std::optional<SelectResult<UdpSocket>>> Select::WaitUntilSocketsReady(const UdpSocketHandles& readSockets,
 		const UdpSocketHandles& writeSockets, const uint64_t timeoutMs) {
 	return WaitUntilSocketsReadyTemplate<UdpSocket>(readSockets, writeSockets, timeoutMs,
-		[](const UdpSocket* s) -> SOCKET { return s->_platformSpecificData->socket; });
+		[](const UdpSocket* s) -> SOCKET { return s->_platformSpecificUdpData->socket; });
 }
 
 expected<bool> Select::IsSocketReadable(UdpSocket* socket) {
