@@ -4,14 +4,11 @@
 namespace m2::network {
 	class TurnBasedHostClientThread final : private detail::TurnBasedClientThreadBase {
 	public:
-		TurnBasedHostClientThread() = default;
 		explicit TurnBasedHostClientThread(std::in_place_t);
 		TurnBasedHostClientThread(const TurnBasedHostClientThread& other) = delete;
 		TurnBasedHostClientThread& operator=(const TurnBasedHostClientThread& other) = delete;
 		TurnBasedHostClientThread(TurnBasedHostClientThread&& other) = delete;
 		TurnBasedHostClientThread& operator=(TurnBasedHostClientThread&& other) = delete;
-
-		const char* thread_name() const override;
 
 		// Accessors
 		bool is_shutdown();

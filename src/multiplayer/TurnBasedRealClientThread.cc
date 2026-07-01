@@ -1,16 +1,10 @@
-#include <../../include/m2/multiplayer/TurnBasedRealClientThread.h>
+#include <m2/multiplayer/TurnBasedRealClientThread.h>
 #include <m2/Game.h>
 #include <m2/math/VariableValue.h>
 #include <m2/Log.h>
 
 m2::network::TurnBasedRealClientThread::TurnBasedRealClientThread(std::string addr)
-	: detail::TurnBasedClientThreadBase{std::move(addr), true} {
-	latch();
-}
-
-const char* m2::network::TurnBasedRealClientThread::thread_name() const {
-	return "RC";
-}
+	: TurnBasedClientThreadBase{std::move(addr), "RC"} {}
 
 int m2::network::TurnBasedRealClientThread::total_player_count() {
 	if (_last_processed_server_update) {

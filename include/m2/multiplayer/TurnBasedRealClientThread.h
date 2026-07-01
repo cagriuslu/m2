@@ -12,10 +12,10 @@ namespace m2::network {
 	};
 
 	class TurnBasedRealClientThread final : private detail::TurnBasedClientThreadBase {
-		/// When a TurnBasedServerUpdate is received from the server, it's placed in TurnBasedClientThreadBase::_received_server_update.
+		/// When a TurnBasedServerUpdate is received from the server, it's placed in the shared receivedServerUpdate.
 		/// peek_unprocessed_server_update() can be used to take a peek at it.
 		/// When process_server_update() is called, TurnBasedServerUpdate is shifted as follows:
-		/// _prev_processed_server_update << _last_processed_server_update << TurnBasedClientThreadBase::_received_server_update
+		/// _prev_processed_server_update << _last_processed_server_update << shared receivedServerUpdate
 		std::optional<std::pair<SequenceNo,pb::TurnBasedServerUpdate>> _prev_processed_server_update, _last_processed_server_update;
 
 		/// Mapping of server object IDs to local object IDs. The boolean represents if the object has been visited during
@@ -28,8 +28,6 @@ namespace m2::network {
 		TurnBasedRealClientThread& operator=(const TurnBasedRealClientThread& other) = delete;
 		TurnBasedRealClientThread(TurnBasedRealClientThread&& other) = delete;
 		TurnBasedRealClientThread& operator=(TurnBasedRealClientThread&& other) = delete;
-
-		const char* thread_name() const override;
 
 		// Accessors
 

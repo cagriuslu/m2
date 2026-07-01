@@ -1,51 +1,21 @@
 #pragma once
-#include "Type.h"
-#include <thread>
-#include <deque>
-#include <mutex>
-#include "../Object.h"
-#include "../network/PingBroadcastThread.h"
-#include "turnbased/MessagePasser.h"
-#include <m2/network/Types.h>
-#include <latch>
+#include "TurnBasedClientActor.h"
+#include <m2/mt/actor/ActorInterfaceBase.h>
 
 namespace m2::network::detail {
-	/// Base class of ClientThreads
-	class TurnBasedClientThreadBase {
-		// Main thread variables
-		const std::string _addr;
-		const bool _ping_broadcast{};
+	/// Base class of turn based client threads // TODO use message boxes instead of shared state
+	/// Base classes are constructed in declaration order, the shared state is fully constructed before
+	/// ActorInterfaceBase builds the actor.
+	class TurnBasedClientThreadBase : TurnBasedClientSharedStateOwner, public ActorInterfaceBase<TurnBasedClientActor> {
 		uint64_t _ready_token{};
 		SequenceNo _nextClientCommandSequenceNo{};
 
-		// Shared variables
-		std::latch _latch{1};
-		std::mutex _mutex;
-		pb::ClientThreadState _state{pb::ClientThreadState::CLIENT_INITIAL_STATE};
-		std::queue<pb::TurnBasedNetworkMessage> _outgoing_queue, _incoming_queue;
-		std::optional<std::pair<SequenceNo,pb::TurnBasedServerUpdate>> _received_server_update;
-		std::optional<std::pair<SequenceNo,m2g::pb::TurnBasedServerCommand>> _received_server_command;
-
-		// Inner thread variables
-		SequenceNo _expectedServerUpdateSequenceNo{}, _expectedServerCommandSequenceNo{};
-		uint64_t _level_token{};
-
-		// Initialize the thread after the shared variables
-		std::thread _thread;
-
-	protected:
-		void latch() { _latch.count_down(); } // This function must be called from the inherited class' constructor
-
 	public:
-		TurnBasedClientThreadBase() = default; // Does nothing
-		TurnBasedClientThreadBase(std::string addr, bool ping_broadcast);
+		TurnBasedClientThreadBase(std::string addr, const char* threadNameForLogging);
 		TurnBasedClientThreadBase(const TurnBasedClientThreadBase& other) = delete;
 		TurnBasedClientThreadBase& operator=(const TurnBasedClientThreadBase& other) = delete;
 		TurnBasedClientThreadBase(TurnBasedClientThreadBase&& other) = delete;
 		TurnBasedClientThreadBase& operator=(TurnBasedClientThreadBase&& other) = delete;
-		virtual ~TurnBasedClientThreadBase();
-
-		virtual const char* thread_name() const = 0;
 
 		// Accessors
 
@@ -68,7 +38,5 @@ namespace m2::network::detail {
 		// Private modifiers
 		void unlocked_set_state(pb::ClientThreadState state);
 		void locked_set_state(pb::ClientThreadState state);
-
-		static void base_client_thread_func(TurnBasedClientThreadBase* thread_manager);
 	};
 }

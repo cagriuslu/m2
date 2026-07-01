@@ -1,23 +1,14 @@
-#include <../../include/m2/multiplayer/TurnBasedHostClientThread.h>
+#include <m2/multiplayer/TurnBasedHostClientThread.h>
 #include <m2/Log.h>
+#include <m2/mt/CooperativeSleep.h>
 
 m2::network::TurnBasedHostClientThread::TurnBasedHostClientThread(std::in_place_t)
-	: detail::TurnBasedClientThreadBase("127.0.0.1", false) {
-	latch();
-
-	// Wait until the client is connected
-	while (not is_connected()) {
-		LOG_NETWORK("Waiting 25ms until the host client is connected");
-		std::this_thread::sleep_for(std::chrono::milliseconds(25));
-	}
+	: TurnBasedClientThreadBase("127.0.0.1", "HC") {
+	CooperativeSleepUntil([this] { return is_connected(); });
 	LOG_INFO("TurnBasedHostClientThread connected, becoming ready...");
 
 	locked_set_ready(true);
 	LOG_INFO("TurnBasedHostClientThread became ready");
-}
-
-const char* m2::network::TurnBasedHostClientThread::thread_name() const {
-	return "HC";
 }
 
 bool m2::network::TurnBasedHostClientThread::is_shutdown() {

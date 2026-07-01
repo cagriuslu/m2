@@ -1,14 +1,12 @@
-#include <../../include/m2/multiplayer/TurnBasedBotClientThread.h>
+#include <m2/multiplayer/TurnBasedBotClientThread.h>
 #include <m2/Log.h>
+#include <m2/mt/CooperativeSleep.h>
 
 m2::network::TurnBasedBotClientThread::TurnBasedBotClientThread(std::in_place_t)
-	: detail::TurnBasedClientThreadBase("127.0.0.1", false) {
-	latch();
-
-	// Wait until the bot is connected. The Bot thread waits 100 millisecond to ensure that the connection to host is not
-	// closed from the host side. Let's wait a bit longer than that.
-	LOG_NETWORK("Waiting 150ms until the bot is connected");
-	std::this_thread::sleep_for(std::chrono::milliseconds(150));
+	: detail::TurnBasedClientThreadBase("127.0.0.1", "BC") {
+	// Wait until the bot is connected
+	LOG_NETWORK("Waiting until the bot is connected");
+	CooperativeSleepUntilOrTimeout([this] { return locked_get_client_state() == pb::CLIENT_CONNECTED; }, 500);
 
 	if (locked_get_client_state() == pb::CLIENT_CONNECTED) {
 		LOG_INFO("TurnBasedBotClientThread connected, becoming ready...");
@@ -17,10 +15,6 @@ m2::network::TurnBasedBotClientThread::TurnBasedBotClientThread(std::in_place_t)
 	} else {
 		LOG_WARN("TurnBasedBotClientThread was unable to connect, player count limit may have reached");
 	}
-}
-
-const char* m2::network::TurnBasedBotClientThread::thread_name() const {
-	return "BC";
 }
 
 bool m2::network::TurnBasedBotClientThread::is_active() {
