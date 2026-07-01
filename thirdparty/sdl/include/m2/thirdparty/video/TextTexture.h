@@ -20,7 +20,7 @@ namespace m2::thirdparty::video {
 		TextTexture() = default;
 
 		static expected<TextTexture> CreateNoWrap(Renderer& renderer, Font& font, int fontSize, const std::string& text, RGBA color = RGBA::White);
-		static expected<TextTexture> CreateWrapped(Renderer& renderer, Font& font, int fontSize, int widthPx, TextHorizontalAlignment horizontalAlignment, const std::string& text, RGBA color = RGBA::White);
+		static expected<TextTexture> CreateWrapped(Renderer& renderer, Font& font, int fontSize, int widthSrcpx, TextHorizontalAlignment horizontalAlignment, const std::string& text, RGBA color = RGBA::White);
 
 		explicit operator bool() const { return _texture.has_value(); }
 		[[nodiscard]] VecF Dimensions() const { return _texture ? _texture->Dimensions() : VecF{}; }

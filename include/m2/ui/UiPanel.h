@@ -32,7 +32,7 @@ namespace m2 {
 		bool _prev_text_input_state{};
 		std::unique_ptr<UiPanelBlueprint> _owned_blueprint; // `blueprint` will point here if this object exists
 		PanelPosition _panelPosition;
-		std::optional<VecF> _lastScreenPositionOfCenterIfRelativeToWorld;
+		std::optional<VecF> _lastScreenPositionOfCenterIfRelativeToWorldLpx;
 		std::optional<thirdparty::video::Texture> _background_texture; // TODO if the screen is resized, background looks bad
 		std::optional<float> _timeout_s;
 
@@ -79,7 +79,7 @@ namespace m2 {
 		void KillWithReturnValue(AnyReturnContainer&&);
 		/// Given position must be with respect to GameAndHUD area, which means {0,0} corresponds to top-left point of
 		/// GameAndHud area.
-		void SetTopLeftPosition(const VecF&);
+		void SetTopLeftPosition(const VecF& topLeftPositionLpx);
 		/// After timeout, the panel is disabled, which effectively also hides it.
 		void SetTimeout(float timeoutS);
 		void ClearTimeout();
@@ -125,7 +125,7 @@ namespace m2 {
 	};
 
 	// Helpers
-	RectF CalculateWidgetRect(const RectF& root_rect_px, unsigned root_w, unsigned root_h, int child_x, int child_y, unsigned child_w, unsigned child_h);
+	RectF CalculateWidgetRect(const RectF& rootRectLpx, unsigned root_w, unsigned root_h, int child_x, int child_y, unsigned child_w, unsigned child_h);
 	UiWidget* FindTextWidget(UiPanel& state, const std::string& text); // TODO is this really necessary?
 
 	extern UiPanelBlueprint console_ui;

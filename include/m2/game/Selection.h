@@ -11,19 +11,19 @@ namespace m2 {
 	};
 
 	class Selection {
-		RectF _screenBoundaryPx;
+		RectF _screenBoundaryLpx;
 		std::pair<std::optional<VecF>, std::optional<VecF>> _positionM;
 
 	public:
 		/// Pointer to the state. State can be used to store information about the selection, ex. an object held afloat.
 		std::unique_ptr<SelectionStateBase> state{};
 
-		explicit Selection(const RectF& screenBoundaryPx);
+		explicit Selection(const RectF& screenBoundaryLpx);
 		~Selection();
 
 		// Accessors
 
-		[[nodiscard]] const RectF& ScreenBoundaryPx() const { return _screenBoundaryPx; }
+		[[nodiscard]] const RectF& ScreenBoundaryLpx() const { return _screenBoundaryLpx; }
 		/// Signifies that the selection is completed by lifting of the mouse button
 		[[nodiscard]] bool IsComplete() const { return _positionM.first && _positionM.second; }
 

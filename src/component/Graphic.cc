@@ -18,23 +18,23 @@ m2::VecF m2::CameraToPositionVecM(const VecF& position) {
 	const auto* camera = M2_LEVEL.objects.Get(M2_LEVEL.cameraId);
 	return position - static_cast<VecF>(camera->GetPhysique().GetPosition());
 }
-m2::VecF m2::CameraToPositionVecPx(const VecF& position) {
-	// Find the vector from camera to position and multiply with output PPM to convert into output pixels
-	return CameraToPositionVecM(position) * M2_GAME.Dimensions().OutputPixelsPerMeter();
+m2::VecF m2::CameraToPositionVecLpx(const VecF& position) {
+	// Find the vector from camera to position and multiply with output PPM to convert into logical pixels
+	return CameraToPositionVecM(position) * M2_GAME.Dimensions().LogicalPixelsPerMeter();
 }
-m2::VecF m2::ScreenOriginToPositionVecPx(const VecF& position) {
-	return CameraToPositionVecPx(position) + VecF{M2_GAME.Dimensions().WindowDimensions().x / 2, M2_GAME.Dimensions().WindowDimensions().y / 2 };
+m2::VecF m2::ScreenOriginToPositionVecLpx(const VecF& position) {
+	return CameraToPositionVecLpx(position) + VecF{M2_GAME.Dimensions().WindowDimensions().x / 2, M2_GAME.Dimensions().WindowDimensions().y / 2 };
 }
-m2::VecF m2::PixelToPositionVecM(const VecF& pixelPosition) {
+m2::VecF m2::LogicalPixelToPositionVecM(const VecF& positionLpx) {
 	if (M2_LEVEL.GetProjectionType() != pb::PARALLEL) {
 		throw M2_ERROR("Unable to calculate pixel position for non-parallel projection");
 	}
-	const auto screenCenterToPixelPositionVectorInPixels =
-			VecF{pixelPosition.GetX() - static_cast<float>(M2_GAME.Dimensions().WindowDimensions().x) / 2.0f,
-				pixelPosition.GetY() - static_cast<float>(M2_GAME.Dimensions().WindowDimensions().y) / 2.0f};
+	const auto screenCenterToPixelPositionVectorInLogicalPixels =
+			VecF{positionLpx.GetX() - static_cast<float>(M2_GAME.Dimensions().WindowDimensions().x) / 2.0f,
+				positionLpx.GetY() - static_cast<float>(M2_GAME.Dimensions().WindowDimensions().y) / 2.0f};
 	const auto screenCenterToPixelPositionVectorInMeters =
-			VecF{screenCenterToPixelPositionVectorInPixels.GetX() / M2_GAME.Dimensions().OutputPixelsPerMeter(),
-				screenCenterToPixelPositionVectorInPixels.GetY() / M2_GAME.Dimensions().OutputPixelsPerMeter()};
+			VecF{screenCenterToPixelPositionVectorInLogicalPixels.GetX() / M2_GAME.Dimensions().LogicalPixelsPerMeter(),
+				screenCenterToPixelPositionVectorInLogicalPixels.GetY() / M2_GAME.Dimensions().LogicalPixelsPerMeter()};
 	const auto camera_position = M2_LEVEL.objects[M2_LEVEL.cameraId].GetPhysique().GetPosition();
 	return screenCenterToPixelPositionVectorInMeters + static_cast<VecF>(camera_position);
 }
@@ -42,8 +42,8 @@ m2::RectF m2::ViewportM() {
 	if (M2_LEVEL.GetProjectionType() != pb::PARALLEL) {
 		throw M2_ERROR("Unable to calculate viewport for non-parallel projection");
 	}
-	const auto top_left = PixelToPositionVecM(VecF{M2_GAME.Dimensions().Game().x, M2_GAME.Dimensions().Game().y});
-	const auto bottom_right = PixelToPositionVecM(VecF{M2_GAME.Dimensions().Game().GetX2(), M2_GAME.Dimensions().Game().GetY2()});
+	const auto top_left = LogicalPixelToPositionVecM(VecF{M2_GAME.Dimensions().Game().x, M2_GAME.Dimensions().Game().y});
+	const auto bottom_right = LogicalPixelToPositionVecM(VecF{M2_GAME.Dimensions().Game().GetX2(), M2_GAME.Dimensions().Game().GetY2()});
 	return RectF::CreateFromCorners(top_left, bottom_right);
 }
 
@@ -123,7 +123,7 @@ std::optional<m2::VecF> m3::FocusToProjectionInCameraPlaneCoordinatesM(const Vec
 	}
 	return m2::VecF{horizontal_projection, vertical_projection};
 }
-std::optional<m2::VecF> m3::FocusToProjectionInCameraPlaneCoordinatesDstpx(const VecF& position) {
+std::optional<m2::VecF> m3::FocusToProjectionInCameraPlaneCoordinatesLpx(const VecF& position) {
 	const auto focus_to_projection_along_camera_plane = FocusToProjectionInCameraPlaneCoordinatesM(position);
 	if (not focus_to_projection_along_camera_plane) {
 		return {};
@@ -131,8 +131,8 @@ std::optional<m2::VecF> m3::FocusToProjectionInCameraPlaneCoordinatesDstpx(const
 	const auto pixels_per_meter = Ppm();
 	return *focus_to_projection_along_camera_plane * pixels_per_meter;
 }
-std::optional<m2::VecF> m3::ScreenOriginToProjectionAlongCameraPlaneDstpx(const VecF& position) {
-	const auto focus_to_projection_along_camera_plane_px = FocusToProjectionInCameraPlaneCoordinatesDstpx(position);
+std::optional<m2::VecF> m3::ScreenOriginToProjectionAlongCameraPlaneLpx(const VecF& position) {
+	const auto focus_to_projection_along_camera_plane_px = FocusToProjectionInCameraPlaneCoordinatesLpx(position);
 	if (not focus_to_projection_along_camera_plane_px) {
 		return {};
 	}
@@ -172,7 +172,7 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 
 		// Generate the text label if necessary
 		if (not gfx.textLabelRect) {
-			// Font size is the same as text height in output pixels
+			// Font size is the same as text height in logical pixels
 			gfx.textLabelRect = M2_GAME.GetTextLabelCache().Create(textLabel.text(), FontSizeOfTextLabel(textLabel));
 		}
 
@@ -196,12 +196,12 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 }
 
 void m2::Graphic::ColorCell(const VecI& cell, const RGBA& color) {
-	const auto screen_origin_to_cell_center_px = ScreenOriginToPositionVecPx(VecF{cell});
+	const auto screen_origin_to_cell_center_lpx = ScreenOriginToPositionVecLpx(VecF{cell});
 	const auto rect = RectF{
-		screen_origin_to_cell_center_px.GetX() - (M2_GAME.Dimensions().OutputPixelsPerMeter() / 2.0f),
-		screen_origin_to_cell_center_px.GetY() - (M2_GAME.Dimensions().OutputPixelsPerMeter() / 2.0f),
-		M2_GAME.Dimensions().OutputPixelsPerMeter(),
-		M2_GAME.Dimensions().OutputPixelsPerMeter()
+		screen_origin_to_cell_center_lpx.GetX() - (M2_GAME.Dimensions().LogicalPixelsPerMeter() / 2.0f),
+		screen_origin_to_cell_center_lpx.GetY() - (M2_GAME.Dimensions().LogicalPixelsPerMeter() / 2.0f),
+		M2_GAME.Dimensions().LogicalPixelsPerMeter(),
+		M2_GAME.Dimensions().LogicalPixelsPerMeter()
 	};
 	thirdparty::video::FillRectangle(M2_GAME.GetRenderer(), rect, color);
 }
@@ -209,44 +209,44 @@ void m2::Graphic::ColorRect(const RectF& world_coordinates_m, const RGB& color) 
 	ColorRect(world_coordinates_m, RGBA{color.r, color.g, color.b, uint8_t{255}});
 }
 void m2::Graphic::ColorRect(const RectF& world_coordinates_m, const RGBA& color) {
-	const auto screen_origin_to_top_left_px = ScreenOriginToPositionVecPx(world_coordinates_m.GetTopLeftPoint());
-	const auto screen_origin_to_bottom_right_px = ScreenOriginToPositionVecPx(world_coordinates_m.GetBottomRightPoint());
+	const auto screen_origin_to_top_left_lpx = ScreenOriginToPositionVecLpx(world_coordinates_m.GetTopLeftPoint());
+	const auto screen_origin_to_bottom_right_lpx = ScreenOriginToPositionVecLpx(world_coordinates_m.GetBottomRightPoint());
 	const auto rect = RectF{
-			screen_origin_to_top_left_px.GetX(),
-			screen_origin_to_top_left_px.GetY(),
-			screen_origin_to_bottom_right_px.GetX() - screen_origin_to_top_left_px.GetX(),
-			screen_origin_to_bottom_right_px.GetY() - screen_origin_to_top_left_px.GetY()
+			screen_origin_to_top_left_lpx.GetX(),
+			screen_origin_to_top_left_lpx.GetY(),
+			screen_origin_to_bottom_right_lpx.GetX() - screen_origin_to_top_left_lpx.GetX(),
+			screen_origin_to_bottom_right_lpx.GetY() - screen_origin_to_top_left_lpx.GetY()
 	};
 	thirdparty::video::FillRectangle(M2_GAME.GetRenderer(), rect, color);
 }
 void m2::Graphic::FillDisk(const VecF& center_position_m, const float radius_m, const RGBA& color) {
-	const auto center_position_px = ScreenOriginToPositionVecPx(center_position_m);
-	const auto radius_px = radius_m * M2_GAME.Dimensions().OutputPixelsPerMeter();
-	thirdparty::video::FillCircle(M2_GAME.GetRenderer(), center_position_px, color, radius_px, color);
+	const auto center_position_lpx = ScreenOriginToPositionVecLpx(center_position_m);
+	const auto radius_lpx = radius_m * M2_GAME.Dimensions().LogicalPixelsPerMeter();
+	thirdparty::video::FillCircle(M2_GAME.GetRenderer(), center_position_lpx, color, radius_lpx, color);
 }
 void m2::Graphic::FillTriangle(const VecF& worldPosition0M, const VecF& worldPosition1M, const VecF& worldPosition2M, const RGBA& color) {
 	thirdparty::video::FillTriangle(M2_GAME.GetRenderer(),
-		ScreenOriginToPositionVecPx(worldPosition0M),
-		ScreenOriginToPositionVecPx(worldPosition1M),
-		ScreenOriginToPositionVecPx(worldPosition2M),
+		ScreenOriginToPositionVecLpx(worldPosition0M),
+		ScreenOriginToPositionVecLpx(worldPosition1M),
+		ScreenOriginToPositionVecLpx(worldPosition2M),
 		color);
 }
 void m2::Graphic::FillTriangle(const VecF& worldPosition0M, const VecF& worldPosition1M, const VecF& worldPosition2M, const RGBA& color0, const RGBA& color1, const RGBA& color2) {
 	thirdparty::video::FillTriangle(M2_GAME.GetRenderer(),
-		ScreenOriginToPositionVecPx(worldPosition0M),
-		ScreenOriginToPositionVecPx(worldPosition1M),
-		ScreenOriginToPositionVecPx(worldPosition2M),
+		ScreenOriginToPositionVecLpx(worldPosition0M),
+		ScreenOriginToPositionVecLpx(worldPosition1M),
+		ScreenOriginToPositionVecLpx(worldPosition2M),
 		color0, color1, color2);
 }
 void m2::Graphic::DrawCross(const VecF& world_position, const RGBA& color) {
-	const auto draw_position = ScreenOriginToPositionVecPx(world_position);
+	const auto draw_position = ScreenOriginToPositionVecLpx(world_position);
 	thirdparty::video::DrawLine(M2_GAME.GetRenderer(), draw_position + VecF{-9, -9}, draw_position + VecF{10, 10}, color);
 	thirdparty::video::DrawLine(M2_GAME.GetRenderer(), draw_position + VecF{-9, 9}, draw_position + VecF{10, -10}, color);
 }
-void m2::Graphic::DrawCross(const VecF& worldPosition, int radiusPx, const RGBA& color) {
-	const auto draw_position = ScreenOriginToPositionVecPx(worldPosition);
-	thirdparty::video::DrawLine(M2_GAME.GetRenderer(), draw_position + VecF{-radiusPx, -radiusPx}, draw_position + VecF{radiusPx, radiusPx}, RGBA{color});
-	thirdparty::video::DrawLine(M2_GAME.GetRenderer(), draw_position + VecF{-radiusPx, radiusPx}, draw_position + VecF{radiusPx, -radiusPx}, RGBA{color});
+void m2::Graphic::DrawCross(const VecF& worldPosition, int radiusLpx, const RGBA& color) {
+	const auto draw_position = ScreenOriginToPositionVecLpx(worldPosition);
+	thirdparty::video::DrawLine(M2_GAME.GetRenderer(), draw_position + VecF{-radiusLpx, -radiusLpx}, draw_position + VecF{radiusLpx, radiusLpx}, RGBA{color});
+	thirdparty::video::DrawLine(M2_GAME.GetRenderer(), draw_position + VecF{-radiusLpx, radiusLpx}, draw_position + VecF{radiusLpx, -radiusLpx}, RGBA{color});
 }
 void m2::Graphic::DrawCross(const VecF& worldPosition, const float radiusM, const RGBA& color) {
 	DrawLine(worldPosition + VecF{-radiusM, -radiusM}, worldPosition + VecF{radiusM, radiusM}, color);
@@ -254,68 +254,68 @@ void m2::Graphic::DrawCross(const VecF& worldPosition, const float radiusM, cons
 }
 void m2::Graphic::DrawLine(const VecF& world_position_1, const VecF& world_position_2, const RGBA& color) {
 	if (IsProjectionTypeParallel(M2_LEVEL.GetProjectionType())) {
-		const auto p1 = ScreenOriginToPositionVecPx(world_position_1);
-		const auto p2 = ScreenOriginToPositionVecPx(world_position_2);
+		const auto p1 = ScreenOriginToPositionVecLpx(world_position_1);
+		const auto p2 = ScreenOriginToPositionVecLpx(world_position_2);
 		thirdparty::video::DrawLine(M2_GAME.GetRenderer(), p1, p2, color);
 	} else {
-		const auto p1 = m3::ScreenOriginToProjectionAlongCameraPlaneDstpx(m3::VecF{world_position_1});
-		const auto p2 = m3::ScreenOriginToProjectionAlongCameraPlaneDstpx(m3::VecF{world_position_2});
+		const auto p1 = m3::ScreenOriginToProjectionAlongCameraPlaneLpx(m3::VecF{world_position_1});
+		const auto p2 = m3::ScreenOriginToProjectionAlongCameraPlaneLpx(m3::VecF{world_position_2});
 		if (p1 && p2) {
 			thirdparty::video::DrawLine(M2_GAME.GetRenderer(), *p1, *p2, color);
 		}
 	}
 }
 void m2::Graphic::DrawVerticalLine(float x, const RGBA& color) {
-	const auto x_px = ScreenOriginToPositionVecPx(VecF{x, 0.0f}).GetX();
+	const auto x_lpx = ScreenOriginToPositionVecLpx(VecF{x, 0.0f}).GetX();
 	thirdparty::video::DrawLine(M2_GAME.GetRenderer(),
-		VecF{x_px, static_cast<float>(M2_GAME.Dimensions().GameAndHud().y)},
-		VecF{x_px, static_cast<float>(M2_GAME.Dimensions().GameAndHud().GetY2())},
+		VecF{x_lpx, static_cast<float>(M2_GAME.Dimensions().GameAndHud().y)},
+		VecF{x_lpx, static_cast<float>(M2_GAME.Dimensions().GameAndHud().GetY2())},
 		color);
 }
 void m2::Graphic::DrawVerticalLineAbove(const VecF& positionM, const RGBA& color) {
-	const auto positionPx = ScreenOriginToPositionVecPx(positionM);
+	const auto positionLpx = ScreenOriginToPositionVecLpx(positionM);
 	thirdparty::video::DrawLine(M2_GAME.GetRenderer(),
-		VecF{positionPx.GetX(), ToFloat(M2_GAME.Dimensions().GameAndHud().y)},
-		positionPx,
+		VecF{positionLpx.GetX(), ToFloat(M2_GAME.Dimensions().GameAndHud().y)},
+		positionLpx,
 		color);
 }
 void m2::Graphic::DrawVerticalLineBelow(const VecF& positionM, const RGBA& color) {
-	const auto positionPx = ScreenOriginToPositionVecPx(positionM);
+	const auto positionLpx = ScreenOriginToPositionVecLpx(positionM);
 	thirdparty::video::DrawLine(M2_GAME.GetRenderer(),
-		positionPx,
-		VecF{positionPx.GetX(), ToFloat(M2_GAME.Dimensions().GameAndHud().GetY2())},
+		positionLpx,
+		VecF{positionLpx.GetX(), ToFloat(M2_GAME.Dimensions().GameAndHud().GetY2())},
 		color);
 }
 void m2::Graphic::DrawHorizontalLine(float y, const RGBA& color) {
-	const auto y_px = ScreenOriginToPositionVecPx(VecF{0.0f, y}).GetY();
+	const auto y_lpx = ScreenOriginToPositionVecLpx(VecF{0.0f, y}).GetY();
 	thirdparty::video::DrawLine(
 		M2_GAME.GetRenderer(),
-		VecF{static_cast<float>(M2_GAME.Dimensions().Game().x), y_px},
-		VecF{static_cast<float>(M2_GAME.Dimensions().Game().GetX2()), y_px},
+		VecF{static_cast<float>(M2_GAME.Dimensions().Game().x), y_lpx},
+		VecF{static_cast<float>(M2_GAME.Dimensions().Game().GetX2()), y_lpx},
 		color);
 }
 void m2::Graphic::DrawHorizontalLineLeft(const VecF& positionM, const RGBA& color) {
-	const auto positionPx = ScreenOriginToPositionVecPx(positionM);
+	const auto positionLpx = ScreenOriginToPositionVecLpx(positionM);
 	thirdparty::video::DrawLine(M2_GAME.GetRenderer(),
-		VecF{ToFloat(M2_GAME.Dimensions().GameAndHud().x), positionPx.GetY()},
-		positionPx,
+		VecF{ToFloat(M2_GAME.Dimensions().GameAndHud().x), positionLpx.GetY()},
+		positionLpx,
 		color);
 }
 void m2::Graphic::DrawHorizontalLineRight(const VecF& positionM, const RGBA& color) {
-	const auto positionPx = ScreenOriginToPositionVecPx(positionM);
+	const auto positionLpx = ScreenOriginToPositionVecLpx(positionM);
 	thirdparty::video::DrawLine(M2_GAME.GetRenderer(),
-		positionPx,
-		VecF{ToFloat(M2_GAME.Dimensions().GameAndHud().GetX2()), positionPx.GetY()},
+		positionLpx,
+		VecF{ToFloat(M2_GAME.Dimensions().GameAndHud().GetX2()), positionLpx.GetY()},
 		color);
 }
 void m2::Graphic::DrawRectangle(const RectF& positionM, const RGBA& color) {
-	const auto screen_origin_to_top_left_px = ScreenOriginToPositionVecPx(positionM.GetTopLeftPoint());
-	const auto screen_origin_to_bottom_right_px = ScreenOriginToPositionVecPx(positionM.GetBottomRightPoint());
+	const auto screen_origin_to_top_left_lpx = ScreenOriginToPositionVecLpx(positionM.GetTopLeftPoint());
+	const auto screen_origin_to_bottom_right_lpx = ScreenOriginToPositionVecLpx(positionM.GetBottomRightPoint());
 	const auto rect = RectF{
-		screen_origin_to_top_left_px.GetX(),
-		screen_origin_to_top_left_px.GetY(),
-		screen_origin_to_bottom_right_px.GetX() - screen_origin_to_top_left_px.GetX(),
-		screen_origin_to_bottom_right_px.GetY() - screen_origin_to_top_left_px.GetY()
+		screen_origin_to_top_left_lpx.GetX(),
+		screen_origin_to_top_left_lpx.GetY(),
+		screen_origin_to_bottom_right_lpx.GetX() - screen_origin_to_top_left_lpx.GetX(),
+		screen_origin_to_bottom_right_lpx.GetY() - screen_origin_to_top_left_lpx.GetY()
 	};
 	thirdparty::video::DrawRectangle(M2_GAME.GetRenderer(), rect, RGBA{color});
 }
@@ -358,21 +358,21 @@ void m2::DrawTextureIn2dWorld(
 		const RectI& sourceRect,
 		const float originalRotationOfSourceTextureInRadians,
 		const float outputToSourcePpmRatio,
-		const VecF& textureCenterToTextureOriginVecInOutputPixels,
-		const VecF& screenOriginToTextureCenterVecInOutputPixels,
+		const VecF& textureCenterToTextureOriginVecInLogicalPixels,
+		const VecF& screenOriginToTextureCenterVecInLogicalPixels,
 		const float rotationToApplyInRadians) {
 	// Calculate the destination
 	const auto dstRect = RectF{
-		screenOriginToTextureCenterVecInOutputPixels.GetX() - ToFloat(sourceRect.w) * outputToSourcePpmRatio / 2.0f,
-		screenOriginToTextureCenterVecInOutputPixels.GetY() - ToFloat(sourceRect.h) * outputToSourcePpmRatio / 2.0f,
+		screenOriginToTextureCenterVecInLogicalPixels.GetX() - ToFloat(sourceRect.w) * outputToSourcePpmRatio / 2.0f,
+		screenOriginToTextureCenterVecInLogicalPixels.GetY() - ToFloat(sourceRect.h) * outputToSourcePpmRatio / 2.0f,
 		ToFloat(sourceRect.w) * outputToSourcePpmRatio,
 		ToFloat(sourceRect.h) * outputToSourcePpmRatio
 	};
 
 	// Calculate the center point used for rotation origin
 	const auto centerPoint = VecI{
-		RoundI(textureCenterToTextureOriginVecInOutputPixels.GetX() + dstRect.w / 2.0f),
-		RoundI(textureCenterToTextureOriginVecInOutputPixels.GetY() + dstRect.h / 2.0f)
+		RoundI(textureCenterToTextureOriginVecInLogicalPixels.GetX() + dstRect.w / 2.0f),
+		RoundI(textureCenterToTextureOriginVecInLogicalPixels.GetY() + dstRect.h / 2.0f)
 	};
 
 	sourceTexture.Render(M2_GAME.GetRenderer(), sourceRect, dstRect, ToDegrees(rotationToApplyInRadians - originalRotationOfSourceTextureInRadians), centerPoint);
@@ -381,7 +381,7 @@ void m2::DrawTextureIn3dWorld(
 		const thirdparty::video::Texture& sourceTexture,
 		const RectI& sourceRect,
 		const float sourcePpm,
-		const VecF& sourceCenterToOriginVectorInOutputPixels,
+		const VecF& sourceCenterToOriginVectorInLogicalPixels,
 		const float originalRotationOfSourceTextureInRadians,
 		const VecF& sourceTextureSheetDimensions,
 		const VecF& xyPositionInWorldM,
@@ -399,24 +399,24 @@ void m2::DrawTextureIn3dWorld(
 	auto position3 = m3::VecF{xyPositionInWorldM.GetX(), xyPositionInWorldM.GetY(), 0.0f};
 	m3::VecF point_0, point_1, point_2, point_3;
 	if (isForeground) {
-		auto sprite_x_offset_in_dest_px = sourceCenterToOriginVectorInOutputPixels.GetX();
+		auto sprite_x_offset_in_dest_lpx = sourceCenterToOriginVectorInLogicalPixels.GetX();
 		auto point_0_not_rotated = m3::VecF{
-				xyPositionInWorldM.GetX() - ToFloat(sourceRect.w) / sourcePpm / 2.0f - sprite_x_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter(),
+				xyPositionInWorldM.GetX() - ToFloat(sourceRect.w) / sourcePpm / 2.0f - sprite_x_offset_in_dest_lpx / M2_GAME.Dimensions().LogicalPixelsPerMeter(),
 				xyPositionInWorldM.GetY(),
 				ToFloat(sourceRect.h) / sourcePpm
 		};
 		auto point_1_not_rotated = m3::VecF{
-				xyPositionInWorldM.GetX() + ((float)sourceRect.w / sourcePpm / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter()),
+				xyPositionInWorldM.GetX() + ((float)sourceRect.w / sourcePpm / 2.0f) - (sprite_x_offset_in_dest_lpx / M2_GAME.Dimensions().LogicalPixelsPerMeter()),
 				xyPositionInWorldM.GetY(),
 				(float)sourceRect.h / sourcePpm
 		};
 		auto point_2_not_rotated = m3::VecF{
-				xyPositionInWorldM.GetX() - ((float)sourceRect.w / sourcePpm / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter()),
+				xyPositionInWorldM.GetX() - ((float)sourceRect.w / sourcePpm / 2.0f) - (sprite_x_offset_in_dest_lpx / M2_GAME.Dimensions().LogicalPixelsPerMeter()),
 				xyPositionInWorldM.GetY(),
 				0.0f
 		};
 		auto point_3_not_rotated = m3::VecF{
-				xyPositionInWorldM.GetX() + ((float)sourceRect.w / sourcePpm / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter()),
+				xyPositionInWorldM.GetX() + ((float)sourceRect.w / sourcePpm / 2.0f) - (sprite_x_offset_in_dest_lpx / M2_GAME.Dimensions().LogicalPixelsPerMeter()),
 				xyPositionInWorldM.GetY(),
 				0.0f
 		};
@@ -440,26 +440,26 @@ void m2::DrawTextureIn3dWorld(
 		point_3 = (position_to_point_3 + position3).offset_z(zPositionInWorldM);
 	} else {
 		// Background sprite
-		auto sprite_x_offset_in_dest_px = sourceCenterToOriginVectorInOutputPixels.GetX();
-		auto sprite_y_offset_in_dest_px = sourceCenterToOriginVectorInOutputPixels.GetY();
+		auto sprite_x_offset_in_dest_lpx = sourceCenterToOriginVectorInLogicalPixels.GetX();
+		auto sprite_y_offset_in_dest_lpx = sourceCenterToOriginVectorInLogicalPixels.GetY();
 		auto point_0_not_rotated = m3::VecF{
-				xyPositionInWorldM.GetX() - ((float)sourceRect.w / sourcePpm / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter()),
-				xyPositionInWorldM.GetY() - ((float)sourceRect.h / sourcePpm / 2.0f) - (sprite_y_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter()),
+				xyPositionInWorldM.GetX() - ((float)sourceRect.w / sourcePpm / 2.0f) - (sprite_x_offset_in_dest_lpx / M2_GAME.Dimensions().LogicalPixelsPerMeter()),
+				xyPositionInWorldM.GetY() - ((float)sourceRect.h / sourcePpm / 2.0f) - (sprite_y_offset_in_dest_lpx / M2_GAME.Dimensions().LogicalPixelsPerMeter()),
 				0.0f
 		};
 		auto point_1_not_rotated = m3::VecF{
-				xyPositionInWorldM.GetX() + ((float)sourceRect.w / sourcePpm / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter()),
-				xyPositionInWorldM.GetY() - ((float)sourceRect.h / sourcePpm / 2.0f) - (sprite_y_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter()),
+				xyPositionInWorldM.GetX() + ((float)sourceRect.w / sourcePpm / 2.0f) - (sprite_x_offset_in_dest_lpx / M2_GAME.Dimensions().LogicalPixelsPerMeter()),
+				xyPositionInWorldM.GetY() - ((float)sourceRect.h / sourcePpm / 2.0f) - (sprite_y_offset_in_dest_lpx / M2_GAME.Dimensions().LogicalPixelsPerMeter()),
 				0.0f
 		};
 		auto point_2_not_rotated = m3::VecF{
-				xyPositionInWorldM.GetX() - ((float)sourceRect.w / sourcePpm / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter()),
-				xyPositionInWorldM.GetY() + ((float)sourceRect.h / sourcePpm / 2.0f) - (sprite_y_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter()),
+				xyPositionInWorldM.GetX() - ((float)sourceRect.w / sourcePpm / 2.0f) - (sprite_x_offset_in_dest_lpx / M2_GAME.Dimensions().LogicalPixelsPerMeter()),
+				xyPositionInWorldM.GetY() + ((float)sourceRect.h / sourcePpm / 2.0f) - (sprite_y_offset_in_dest_lpx / M2_GAME.Dimensions().LogicalPixelsPerMeter()),
 				0.0f
 		};
 		auto point_3_not_rotated = m3::VecF{
-				xyPositionInWorldM.GetX() + ((float)sourceRect.w / sourcePpm / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter()),
-				xyPositionInWorldM.GetY() + ((float)sourceRect.h / sourcePpm / 2.0f) - (sprite_y_offset_in_dest_px / M2_GAME.Dimensions().OutputPixelsPerMeter()),
+				xyPositionInWorldM.GetX() + ((float)sourceRect.w / sourcePpm / 2.0f) - (sprite_x_offset_in_dest_lpx / M2_GAME.Dimensions().LogicalPixelsPerMeter()),
+				xyPositionInWorldM.GetY() + ((float)sourceRect.h / sourcePpm / 2.0f) - (sprite_y_offset_in_dest_lpx / M2_GAME.Dimensions().LogicalPixelsPerMeter()),
 				0.0f
 		};
 
@@ -481,10 +481,10 @@ void m2::DrawTextureIn3dWorld(
 		point_3 = (position_to_point_3 + position3).offset_z(zPositionInWorldM);
 	}
 
-	const auto projected_point_0 = m3::ScreenOriginToProjectionAlongCameraPlaneDstpx(point_0);
-	const auto projected_point_1 = m3::ScreenOriginToProjectionAlongCameraPlaneDstpx(point_1);
-	const auto projected_point_2 = m3::ScreenOriginToProjectionAlongCameraPlaneDstpx(point_2);
-	const auto projected_point_3 = m3::ScreenOriginToProjectionAlongCameraPlaneDstpx(point_3);
+	const auto projected_point_0 = m3::ScreenOriginToProjectionAlongCameraPlaneLpx(point_0);
+	const auto projected_point_1 = m3::ScreenOriginToProjectionAlongCameraPlaneLpx(point_1);
+	const auto projected_point_2 = m3::ScreenOriginToProjectionAlongCameraPlaneLpx(point_2);
+	const auto projected_point_3 = m3::ScreenOriginToProjectionAlongCameraPlaneLpx(point_3);
 
 	if (projected_point_0 && projected_point_1 && projected_point_2 && projected_point_3) {
 		const auto sx0 = ToFloat(sourceRect.x) / sourceTextureSheetDimensions.GetX();

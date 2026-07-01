@@ -39,8 +39,8 @@ Surface Surface::RenderTextBlended(const Font& font, const std::string& text, co
 	}
 	return Surface{surface};
 }
-Surface Surface::RenderTextBlendedWrapped(const Font& font, const std::string& text, const RGBA& color, const int wrapWidthPx) {
-	auto* surface = TTF_RenderText_Blended_Wrapped(static_cast<TTF_Font*>(font.RawHandle()), text.c_str(), /*length=*/0, ToSdlColor(color), wrapWidthPx);
+Surface Surface::RenderTextBlendedWrapped(const Font& font, const std::string& text, const RGBA& color, const int wrapWidthSrcpx) {
+	auto* surface = TTF_RenderText_Blended_Wrapped(static_cast<TTF_Font*>(font.RawHandle()), text.c_str(), /*length=*/0, ToSdlColor(color), wrapWidthSrcpx);
 	if (not surface) {
 		throw M2_ERROR(std::string{"Unable to render text: "} + SDL_GetError());
 	}

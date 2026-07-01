@@ -82,6 +82,6 @@ namespace m2::leveleditor {
 		static VecF WorldCoordinateToSpriteCoordinate(ForegroundObjectPlaceholderMap::const_iterator fgObject, const VecF& worldCoordinate);
 		void StoreFixturePoint(m2g::pb::SpriteType st, int selectedIndex, const VecF& spriteOriginToPointVec);
 		void StoreArc(int selectedIndex, const VecF& fromPointOffset, const VecF& toPointOffset, float angleInRads, int pieceCount, bool drawTowardsRight);
-		static std::optional<int> FindClosestChainPointInRange(const pb::Fixture_ChainFixture& chain, int spritePpm, const VecF& positionPx);
+		static std::optional<int> FindClosestChainPointInRange(const pb::Fixture_ChainFixture& chain, int spritePpm, const VecF& positionSrcpx);
 	};
 }

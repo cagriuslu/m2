@@ -39,9 +39,9 @@ namespace {
 		drawHorizontalLine(y, -x);
 	}
 
-	void ForEachCirclePoints(const int radiusPx, const std::function<void(int,int)>& action) {
+	void ForEachCirclePoints(const int radiusSrcpx, const std::function<void(int,int)>& action) {
 		// Midpoint circle algorithm
-		int x = radiusPx, y = 0;
+		int x = radiusSrcpx, y = 0;
 
 		// First point is at (r,0)
 		action(x, y);
@@ -56,7 +56,7 @@ namespace {
 
 		// Substituting P = (r - 1/2)^2 + 1^2 - r^2
 		// P = 1.25 - r (before rounding)
-		int nextP = 1 - radiusPx;
+		int nextP = 1 - radiusSrcpx;
 		// When P <= 0, nextP = P + 2(y+1) + 1
 		// Otherwise , nextP = P + 2(y+1) – 2(x–1) + 1
 		// https://www.geeksforgeeks.org/mid-point-circle-drawing-algorithm/
@@ -85,20 +85,20 @@ m2::ShapeType m2::Circle::Type() const {
 	return ShapeType::CIRCLE;
 }
 size_t m2::Circle::Hash() const {
-	return std::hash<int>{}(I(Type())) ^ std::hash<int>{}(radiusPx);
+	return std::hash<int>{}(I(Type())) ^ std::hash<int>{}(radiusSrcpx);
 }
 bool m2::Circle::operator==(const Shape& other) const {
 	if (other.Type() == Type()) {
-		return dynamic_cast<const Circle&>(other).radiusPx == radiusPx;
+		return dynamic_cast<const Circle&>(other).radiusSrcpx == radiusSrcpx;
 	}
 	return false;
 }
 m2::VecI m2::Circle::Dimensions() const {
-	return {2 * radiusPx, 2 * radiusPx};
+	return {2 * radiusSrcpx, 2 * radiusSrcpx};
 }
 void m2::Circle::Draw(thirdparty::video::Surface& dstSurface, const RectI& dstRect) const {
-	ForEachCirclePoints(radiusPx, [&](const int x, const int y) {
-		CircleSetPixelOnFirstHalf(dstSurface, dstRect, radiusPx, x, y);
+	ForEachCirclePoints(radiusSrcpx, [&](const int x, const int y) {
+		CircleSetPixelOnFirstHalf(dstSurface, dstRect, radiusSrcpx, x, y);
 	});
 }
 
@@ -106,20 +106,20 @@ m2::ShapeType m2::Disk::Type() const {
 	return ShapeType::DISK;
 }
 size_t m2::Disk::Hash() const {
-	return std::hash<int>{}(I(Type())) ^ std::hash<int>{}(radiusPx);
+	return std::hash<int>{}(I(Type())) ^ std::hash<int>{}(radiusSrcpx);
 }
 bool m2::Disk::operator==(const Shape& other) const {
 	if (other.Type() == Type()) {
-		return dynamic_cast<const Disk&>(other).radiusPx == radiusPx;
+		return dynamic_cast<const Disk&>(other).radiusSrcpx == radiusSrcpx;
 	}
 	return false;
 }
 m2::VecI m2::Disk::Dimensions() const {
-	return {2 * radiusPx, 2 * radiusPx};
+	return {2 * radiusSrcpx, 2 * radiusSrcpx};
 }
 void m2::Disk::Draw(thirdparty::video::Surface& dstSurface, const RectI& dstRect) const {
-	ForEachCirclePoints(radiusPx, [&](const int x, const int y) {
-		DiskSetPixelOnFirstHalf(dstSurface, dstRect, radiusPx, x, y);
+	ForEachCirclePoints(radiusSrcpx, [&](const int x, const int y) {
+		DiskSetPixelOnFirstHalf(dstSurface, dstRect, radiusSrcpx, x, y);
 	});
 }
 

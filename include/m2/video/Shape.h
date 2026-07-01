@@ -18,8 +18,8 @@ namespace m2 {
 		virtual void Draw(thirdparty::video::Surface& dstSurface, const RectI& dstRect) const = 0;
 	};
 	struct Circle final : Shape {
-		int radiusPx;
-		explicit Circle(const int r) : radiusPx(r) {}
+		int radiusSrcpx;
+		explicit Circle(const int r) : radiusSrcpx(r) {}
 		ShapeType Type() const override;
 		size_t Hash() const override;
 		bool operator==(const Shape& other) const override;
@@ -27,8 +27,8 @@ namespace m2 {
 		void Draw(thirdparty::video::Surface& dstSurface, const RectI& dstRect) const override;
 	};
 	struct Disk final : Shape {
-		int radiusPx;
-		explicit Disk(const int r) : radiusPx(r) {}
+		int radiusSrcpx;
+		explicit Disk(const int r) : radiusSrcpx(r) {}
 		ShapeType Type() const override;
 		size_t Hash() const override;
 		bool operator==(const Shape& other) const override;

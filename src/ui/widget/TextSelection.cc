@@ -368,7 +368,7 @@ void TextSelection::RenewHoverIfNecessary() {
 		const auto widgetY = Rect().y;
 		const auto widgetH = Rect().h;
 		const auto rowH = widgetH / static_cast<float>(VariantBlueprint().line_count);
-		const auto mouseY = M2_GAME.events.MousePosition().GetY();
+		const auto mouseY = M2_GAME.events.MousePositionLpx().GetY();
 		const auto mouseYOffset = mouseY - widgetY;
 		if (const auto indexBeingHovered = RoundI(mouseYOffset / rowH); indexBeingHovered < I(_options.size())) {
 			return std::clamp(_topIndex + indexBeingHovered, 0, I(_options.size()) - 1) ;

@@ -53,28 +53,28 @@ bool Events::Gather() {
 			},
 			[&](const event::MouseMotionEvent& mouseMotionEvent) {
 				mouseMoved = true;
-				_mousePositionPx = mouseMotionEvent.positionPx;
+				_mousePositionLpx = mouseMotionEvent.positionLpx;
 				return false;
 			},
 			[&](const event::MouseButtonDownEvent& mouseButtonDownEvent) {
-				const auto mousePositionPx = mouseButtonDownEvent.positionPx;
+				const auto mousePositionLpx = mouseButtonDownEvent.positionLpx;
 				mouseButtonPressed = true;
 				_mouseActions[U(mouseButtonDownEvent.button)] = MouseAction{
 					.type = MouseActionType::PRESSED,
-					.positionPx = mousePositionPx
+					.positionLpx = mousePositionLpx
 				};
 				// It is possible that the button was pressed after querying mouse state, but before polling this event.
 				// If button down was pressed, also make sure mouse_buttons_down reflects that.
 				_downButtons[U(mouseButtonDownEvent.button)] = true;
 				if (M2_GAME.HasLevel()) {
-					if (auto* primarySelection = M2_LEVEL.GetPrimarySelection(); primarySelection && PeekMouseButtonPress(MouseButton::PRIMARY, primarySelection->ScreenBoundaryPx())) {
-						primarySelection->SetFirstAndClearSecondPositionM(M2_LEVEL.GetWorldPositionOfPixel(mousePositionPx));
+					if (auto* primarySelection = M2_LEVEL.GetPrimarySelection(); primarySelection && PeekMouseButtonPress(MouseButton::PRIMARY, primarySelection->ScreenBoundaryLpx())) {
+						primarySelection->SetFirstAndClearSecondPositionM(M2_LEVEL.GetWorldPositionOfPixel(mousePositionLpx));
 						if (auto* secondarySelection = M2_LEVEL.GetSecondarySelection()) {
 							secondarySelection->Reset();
 						}
 					}
-					if (auto* secondarySelection = M2_LEVEL.GetSecondarySelection(); secondarySelection && PeekMouseButtonPress(MouseButton::SECONDARY, secondarySelection->ScreenBoundaryPx())) {
-						secondarySelection->SetFirstAndClearSecondPositionM(M2_LEVEL.GetWorldPositionOfPixel(mousePositionPx));
+					if (auto* secondarySelection = M2_LEVEL.GetSecondarySelection(); secondarySelection && PeekMouseButtonPress(MouseButton::SECONDARY, secondarySelection->ScreenBoundaryLpx())) {
+						secondarySelection->SetFirstAndClearSecondPositionM(M2_LEVEL.GetWorldPositionOfPixel(mousePositionLpx));
 						if (auto* primarySelection = M2_LEVEL.GetPrimarySelection()) {
 							primarySelection->Reset();
 						}
@@ -83,24 +83,24 @@ bool Events::Gather() {
 				return true;
 			},
 			[&](const event::MouseButtonUpEvent& mouseButtonUpEvent) {
-				const auto mousePositionPx = mouseButtonUpEvent.positionPx;
+				const auto mousePositionLpx = mouseButtonUpEvent.positionLpx;
 				mouseButtonReleased = true;
 				_mouseActions[U(mouseButtonUpEvent.button)] = MouseAction{
 					.type = MouseActionType::RELEASED,
-					.positionPx = mousePositionPx
+					.positionLpx = mousePositionLpx
 				};
 				// It is possible that the button was released after querying mouse state, but before polling this event.
 				// If button down was released, also make sure mouse_buttons_down reflects that.
 				_downButtons[U(mouseButtonUpEvent.button)] = false;
 				if (M2_GAME.HasLevel()) {
-					if (auto* primarySelection = M2_LEVEL.GetPrimarySelection(); primarySelection && PeekMouseButtonRelease(MouseButton::PRIMARY, primarySelection->ScreenBoundaryPx())) {
-						primarySelection->SetSecondPositionIfFirstSetM(M2_LEVEL.GetWorldPositionOfPixel(mousePositionPx));
+					if (auto* primarySelection = M2_LEVEL.GetPrimarySelection(); primarySelection && PeekMouseButtonRelease(MouseButton::PRIMARY, primarySelection->ScreenBoundaryLpx())) {
+						primarySelection->SetSecondPositionIfFirstSetM(M2_LEVEL.GetWorldPositionOfPixel(mousePositionLpx));
 						if (auto* secondarySelection = M2_LEVEL.GetSecondarySelection()) {
 							secondarySelection->Reset();
 						}
 					}
-					if (auto* secondarySelection = M2_LEVEL.GetSecondarySelection(); secondarySelection && PeekMouseButtonRelease(MouseButton::SECONDARY, secondarySelection->ScreenBoundaryPx())) {
-						secondarySelection->SetSecondPositionIfFirstSetM(M2_LEVEL.GetWorldPositionOfPixel(mousePositionPx));
+					if (auto* secondarySelection = M2_LEVEL.GetSecondarySelection(); secondarySelection && PeekMouseButtonRelease(MouseButton::SECONDARY, secondarySelection->ScreenBoundaryLpx())) {
+						secondarySelection->SetSecondPositionIfFirstSetM(M2_LEVEL.GetWorldPositionOfPixel(mousePositionLpx));
 						if (auto* primarySelection = M2_LEVEL.GetPrimarySelection()) {
 							primarySelection->Reset();
 						}
@@ -136,8 +136,8 @@ bool Events::Gather() {
 		}
 	}
 
-	_mousePositionPx = event::GetMousePosition();
-	_mousePositionM = M2_GAME.HasLevel() ? M2_LEVEL.GetWorldPositionOfPixel(_mousePositionPx) : VecF{};
+	_mousePositionLpx = event::GetMousePosition();
+	_mousePositionM = M2_GAME.HasLevel() ? M2_LEVEL.GetWorldPositionOfPixel(_mousePositionLpx) : VecF{};
 	_downButtons[U(MouseButton::PRIMARY)]   = event::IsMouseButtonDown(MouseButton::PRIMARY);
 	_downButtons[U(MouseButton::SECONDARY)] = event::IsMouseButtonDown(MouseButton::SECONDARY);
 	_downButtons[U(MouseButton::MIDDLE)]    = event::IsMouseButtonDown(MouseButton::MIDDLE);
@@ -178,7 +178,7 @@ bool Events::PopKeyRelease(const m2g::pb::KeyType key) {
 
 std::optional<VecF> Events::PeekMouseButtonPress(const MouseButton mb) const {
 	if (_mouseActions[U(mb)].type == MouseActionType::PRESSED) {
-		return _mouseActions[U(mb)].positionPx;
+		return _mouseActions[U(mb)].positionLpx;
 	}
 	return std::nullopt;
 }
@@ -189,14 +189,14 @@ bool Events::PopMouseButtonPress(const MouseButton mb) {
 	}
 	return false;
 }
-std::optional<VecF> Events::PeekMouseButtonPress(const MouseButton mb, const RectF& rect) const {
-	if (const auto position = PeekMouseButtonPress(mb); position && rect.DoesContain(*position)) {
+std::optional<VecF> Events::PeekMouseButtonPress(const MouseButton mb, const RectF& rectLpx) const {
+	if (const auto position = PeekMouseButtonPress(mb); position && rectLpx.DoesContain(*position)) {
 		return position;
 	}
 	return std::nullopt;
 }
-bool Events::PopMouseButtonPress(const MouseButton mb, const RectF& rect) {
-	if (PeekMouseButtonPress(mb) && rect.DoesContain(_mouseActions[U(mb)].positionPx)) {
+bool Events::PopMouseButtonPress(const MouseButton mb, const RectF& rectLpx) {
+	if (PeekMouseButtonPress(mb) && rectLpx.DoesContain(_mouseActions[U(mb)].positionLpx)) {
 		_mouseActions[U(mb)].type = MouseActionType::NO_ACTION;
 		return true;
 	}
@@ -204,7 +204,7 @@ bool Events::PopMouseButtonPress(const MouseButton mb, const RectF& rect) {
 }
 std::optional<VecF> Events::PeekMouseButtonRelease(const MouseButton mb) const {
 	if (_mouseActions[U(mb)].type == MouseActionType::RELEASED) {
-		return _mouseActions[U(mb)].positionPx;
+		return _mouseActions[U(mb)].positionLpx;
 	}
 	return std::nullopt;
 }
@@ -215,22 +215,22 @@ bool Events::PopMouseButtonRelease(const MouseButton mb) {
 	}
 	return false;
 }
-std::optional<VecF> Events::PeekMouseButtonRelease(const MouseButton mb, const RectF& rect) const {
-	if (const auto position = PeekMouseButtonRelease(mb); position && rect.DoesContain(*position)) {
+std::optional<VecF> Events::PeekMouseButtonRelease(const MouseButton mb, const RectF& rectLpx) const {
+	if (const auto position = PeekMouseButtonRelease(mb); position && rectLpx.DoesContain(*position)) {
 		return position;
 	}
 	return std::nullopt;
 }
-bool Events::PopMouseButtonRelease(const MouseButton mb, const RectF& rect) {
-	if (PeekMouseButtonRelease(mb) && rect.DoesContain(_mouseActions[U(mb)].positionPx)) {
+bool Events::PopMouseButtonRelease(const MouseButton mb, const RectF& rectLpx) {
+	if (PeekMouseButtonRelease(mb) && rectLpx.DoesContain(_mouseActions[U(mb)].positionLpx)) {
 		_mouseActions[U(mb)].type = MouseActionType::NO_ACTION;
 		return true;
 	}
 	return false;
 }
-void Events::ClearMouseButtonActions(const RectF& rect) {
+void Events::ClearMouseButtonActions(const RectF& rectLpx) {
 	for (unsigned i = 0; i < U(MouseButton::end); ++i) {
-		if (rect.DoesContain(_mouseActions[i].positionPx)) {
+		if (rectLpx.DoesContain(_mouseActions[i].positionLpx)) {
 			_mouseActions[i].type = MouseActionType::NO_ACTION;
 		}
 	}
@@ -241,8 +241,8 @@ int32_t Events::PopMouseWheelVerticalScroll() {
 	_verticalScrollCount = 0;
 	return value;
 }
-int32_t Events::PopMouseWheelVerticalScroll(const RectF& rect) {
-	if (rect.DoesContain(MousePosition())) { // TODO instead of MousePosition, store the position of the mouse when the event occurred
+int32_t Events::PopMouseWheelVerticalScroll(const RectF& rectLpx) {
+	if (rectLpx.DoesContain(MousePositionLpx())) { // TODO instead of MousePosition, store the position of the mouse when the event occurred
 		const auto value = _verticalScrollCount;
 		_verticalScrollCount = 0;
 		return value;
@@ -254,16 +254,16 @@ int32_t Events::PopMouseWheelHorizontalScroll() {
 	_horizontalScrollCount = 0;
 	return value;
 }
-int32_t Events::PopMouseWheelHorizontalScroll(const RectF& rect) {
-	if (rect.DoesContain(MousePosition())) { // TODO instead of MousePosition, store the position of the mouse when the event occurred
+int32_t Events::PopMouseWheelHorizontalScroll(const RectF& rectLpx) {
+	if (rectLpx.DoesContain(MousePositionLpx())) { // TODO instead of MousePosition, store the position of the mouse when the event occurred
 		const auto value = _horizontalScrollCount;
 		_horizontalScrollCount = 0;
 		return value;
 	}
 	return 0;
 }
-void Events::ClearMouseWheelScrolls(const RectF& rect) {
-	if (rect.DoesContain(MousePosition())) { // TODO instead of MousePosition, store the position of the mouse when the event occurred
+void Events::ClearMouseWheelScrolls(const RectF& rectLpx) {
+	if (rectLpx.DoesContain(MousePositionLpx())) { // TODO instead of MousePosition, store the position of the mouse when the event occurred
 		_verticalScrollCount = 0;
 		_horizontalScrollCount = 0;
 	}
@@ -277,8 +277,8 @@ std::optional<std::string> Events::PopTextInput() {
 	return {};
 }
 
-void Events::ClearMouseButtonDown(const RectF& rect) {
-	if (rect.DoesContain(MousePosition())) {
+void Events::ClearMouseButtonDown(const RectF& rectLpx) {
+	if (rectLpx.DoesContain(MousePositionLpx())) {
 		_downButtons = {};
 	}
 }

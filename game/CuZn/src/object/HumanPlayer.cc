@@ -56,9 +56,9 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj, const m2::VecF& positi
 			M2_LEVEL.EndPanning();
 		}
 		// Map movement is enabled
-		if (const auto panBeginPosition = M2_LEVEL.GetPanBeginPosition(); panBeginPosition && panBeginPosition->first != M2_GAME.events.MousePosition()) {
-			auto diff = panBeginPosition->first - M2_GAME.events.MousePosition();
-			auto diff_m = m2::VecF{diff} / M2_GAME.Dimensions().OutputPixelsPerMeter();
+		if (const auto panBeginPosition = M2_LEVEL.GetPanBeginPosition(); panBeginPosition && panBeginPosition->first != M2_GAME.events.MousePositionLpx()) {
+			auto diff = panBeginPosition->first - M2_GAME.events.MousePositionLpx();
+			auto diff_m = m2::VecF{diff} / M2_GAME.Dimensions().LogicalPixelsPerMeter();
 			phy_.SetPosition(phy_.GetPosition() + diff_m);
 			M2_LEVEL.BeginPanning();
 		}

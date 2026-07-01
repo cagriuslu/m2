@@ -222,8 +222,8 @@ RectF UiPanel::Rect() const {
 			relation.h * ToFloat(gameAndHud.h)};
 	} else {
 		const auto& [centeredAt, dimensionsRelativeToGameAndHud] = std::get<RelativeToWorld>(_panelPosition);
-		const auto centerOfPanel = ScreenOriginToPositionVecPx(centeredAt);
-		return RectF::CreateCenteredAround(centerOfPanel, dimensionsRelativeToGameAndHud.GetX() * ToFloat(gameAndHud.w),
+		const auto centerOfPanelLpx = ScreenOriginToPositionVecLpx(centeredAt);
+		return RectF::CreateCenteredAround(centerOfPanelLpx, dimensionsRelativeToGameAndHud.GetX() * ToFloat(gameAndHud.w),
 			dimensionsRelativeToGameAndHud.GetY() * ToFloat(gameAndHud.h));
 	}
 }
@@ -236,14 +236,14 @@ void UiPanel::KillWithReturnValue(AnyReturnContainer&& arc) {
 	new (this) UiPanel(std::move(arc), autoClose);
 }
 
-void UiPanel::SetTopLeftPosition(const VecF& newPosition) {
+void UiPanel::SetTopLeftPosition(const VecF& topLeftPositionLpx) {
 	const auto& gameAndHud = M2_GAME.Dimensions().GameAndHud();
 	if (std::holds_alternative<Fullscreen>(_panelPosition)) {
 		throw M2_ERROR("Cannot move fullscreen UI panel");
 	} else if (std::holds_alternative<RelativeToWindow>(_panelPosition)) {
 		auto& relation = std::get<RelativeToWindow>(_panelPosition).ratioToGameAndHudDimensions;
 		relation = RectF{
-			newPosition.GetX() / ToFloat(gameAndHud.w), newPosition.GetY() / ToFloat(gameAndHud.h),
+			topLeftPositionLpx.GetX() / ToFloat(gameAndHud.w), topLeftPositionLpx.GetY() / ToFloat(gameAndHud.h),
 			relation.w, relation.h
 		};
 	} else {
@@ -264,8 +264,8 @@ void UiPanel::ClearTimeout() {
 void UiPanel::UpdatePosition() {
 	if (std::holds_alternative<RelativeToWorld>(_panelPosition)) {
 		const auto& centeredAt = std::get<RelativeToWorld>(_panelPosition).centeredAt;
-		const auto centerOfPanel = ScreenOriginToPositionVecPx(centeredAt);
-		_lastScreenPositionOfCenterIfRelativeToWorld = centerOfPanel;
+		const auto centerOfPanelLpx = ScreenOriginToPositionVecLpx(centeredAt);
+		_lastScreenPositionOfCenterIfRelativeToWorldLpx = centerOfPanelLpx;
 	}
 
 
@@ -290,10 +290,10 @@ UiAction UiPanel::HandleEvents(Events& events, bool IsPanning) {
 		return MakeReturnAction();
 	}
 
-	if (std::holds_alternative<RelativeToWorld>(_panelPosition) && _lastScreenPositionOfCenterIfRelativeToWorld) {
+	if (std::holds_alternative<RelativeToWorld>(_panelPosition) && _lastScreenPositionOfCenterIfRelativeToWorldLpx) {
 		const auto& centeredAt = std::get<RelativeToWorld>(_panelPosition).centeredAt;
-		const auto centerOfPanel = ScreenOriginToPositionVecPx(centeredAt);
-		if (centerOfPanel != *_lastScreenPositionOfCenterIfRelativeToWorld) {
+		const auto centerOfPanelLpx = ScreenOriginToPositionVecLpx(centeredAt);
+		if (centerOfPanelLpx != *_lastScreenPositionOfCenterIfRelativeToWorldLpx) {
 			UpdatePosition();
 		}
 	}
@@ -435,13 +435,13 @@ void UiPanel::clear_focus() {
 }
 
 RectF m2::CalculateWidgetRect(
-    const RectF &root_rect_px, const unsigned root_w, const unsigned root_h, const int child_x, const int child_y,
+    const RectF &rootRectLpx, const unsigned root_w, const unsigned root_h, const int child_x, const int child_y,
     const unsigned child_w, const unsigned child_h) {
-	const auto pixels_per_unit_w = root_rect_px.w / static_cast<float>(root_w);
-	const auto pixels_per_unit_h = root_rect_px.h / static_cast<float>(root_h);
+	const auto pixels_per_unit_w = rootRectLpx.w / static_cast<float>(root_w);
+	const auto pixels_per_unit_h = rootRectLpx.h / static_cast<float>(root_h);
 	return RectF{
-	    root_rect_px.x + static_cast<float>(child_x) * pixels_per_unit_w,
-	    root_rect_px.y + static_cast<float>(child_y) * pixels_per_unit_h,
+	    rootRectLpx.x + static_cast<float>(child_x) * pixels_per_unit_w,
+	    rootRectLpx.y + static_cast<float>(child_y) * pixels_per_unit_h,
 	    static_cast<float>(child_w) * pixels_per_unit_w,
 	    static_cast<float>(child_h) * pixels_per_unit_h};
 }

@@ -11,14 +11,14 @@ namespace m2 {
 	/// Returns a vector from the text label's center to the text label's origin in source pixels.
 	VecF TextLabelCenterToOriginVectorInSourcePixels(const pb::TextLabel&);
 
-	/// Returns a vector from the text label's center to the text label's origin in output pixel units.
+	/// Returns a vector from the text label's center to the text label's origin in logical pixel units.
 	/// For text labels, this value is the same as source pixels, because text labels are rendered 1-1.
-	inline VecF TextLabelCenterToOriginVectorInOutputPixels(const pb::TextLabel& tl) {
+	inline VecF TextLabelCenterToOriginVectorInLogicalPixels(const pb::TextLabel& tl) {
 		return TextLabelCenterToOriginVectorInSourcePixels(tl);
 	}
 
-	/// Returns a vector from the screen origin (top-left) to the center of the text label in output pixel units.
-	VecF ScreenOriginToTextLabelCenterVecOutpx(const pb::TextLabel& tl, const VecF& position);
+	/// Returns a vector from the screen origin (top-left) to the center of the text label in logical pixel units.
+	VecF ScreenOriginToTextLabelCenterVecLpx(const pb::TextLabel& tl, const VecF& position);
 
 	int FontSizeOfTextLabel(const pb::TextLabel&);
 

@@ -32,10 +32,10 @@ void DebugDraw::DrawSolidPolygon(const b2Vec2* vertices, const int32 vertexCount
 void DebugDraw::DrawCircle(const b2Vec2& center, const float radius, const b2Color& color) {
 	if (IsProjectionTypeParallel(M2_LEVEL.GetProjectionType())) {
 		// Draw a true circle from the cache
-		const int r = RoundI(M2_GAME.Dimensions().OutputPixelsPerMeter() * radius);
+		const int r = RoundI(M2_GAME.Dimensions().LogicalPixelsPerMeter() * radius);
 		const RectI srcRect = M2_GAME.GetShapeCache().Create(std::make_shared<Circle>(r));
 		const auto& texture = M2_GAME.GetShapeCache().Texture();
-		const auto screenOriginToSpriteCenter = ScreenOriginToPositionVecPx(ToVecF(center));
+		const auto screenOriginToSpriteCenter = ScreenOriginToPositionVecLpx(ToVecF(center));
 		const RectF dstRect{
 			screenOriginToSpriteCenter.GetX() - static_cast<float>(srcRect.w) / 2.0f,
 			screenOriginToSpriteCenter.GetY() - static_cast<float>(srcRect.h) / 2.0f,
@@ -47,14 +47,14 @@ void DebugDraw::DrawCircle(const b2Vec2& center, const float radius, const b2Col
 		const auto centerPosition = m3::VecF{ToVecF(center)};
 		// Draw an octagon instead of circle
 		const auto corner = radius / sqrtf(2.0f);
-		const auto pointTop         = ScreenOriginToProjectionAlongCameraPlaneDstpx(centerPosition.offset_y(-radius));
-		const auto pointTopRight    = ScreenOriginToProjectionAlongCameraPlaneDstpx(centerPosition.offset_x(corner).offset_y(-corner));
-		const auto pointRight       = ScreenOriginToProjectionAlongCameraPlaneDstpx(centerPosition.offset_x(radius));
-		const auto pointBottomRight = ScreenOriginToProjectionAlongCameraPlaneDstpx(centerPosition.offset_x(corner).offset_y(corner));
-		const auto pointBottom      = ScreenOriginToProjectionAlongCameraPlaneDstpx(centerPosition.offset_y(radius));
-		const auto pointBottomLeft  = ScreenOriginToProjectionAlongCameraPlaneDstpx(centerPosition.offset_x(-corner).offset_y(corner));
-		const auto pointLeft        = ScreenOriginToProjectionAlongCameraPlaneDstpx(centerPosition.offset_x(-radius));
-		const auto pointTopLeft     = ScreenOriginToProjectionAlongCameraPlaneDstpx(centerPosition.offset_x(-corner).offset_y(-corner));
+		const auto pointTop         = ScreenOriginToProjectionAlongCameraPlaneLpx(centerPosition.offset_y(-radius));
+		const auto pointTopRight    = ScreenOriginToProjectionAlongCameraPlaneLpx(centerPosition.offset_x(corner).offset_y(-corner));
+		const auto pointRight       = ScreenOriginToProjectionAlongCameraPlaneLpx(centerPosition.offset_x(radius));
+		const auto pointBottomRight = ScreenOriginToProjectionAlongCameraPlaneLpx(centerPosition.offset_x(corner).offset_y(corner));
+		const auto pointBottom      = ScreenOriginToProjectionAlongCameraPlaneLpx(centerPosition.offset_y(radius));
+		const auto pointBottomLeft  = ScreenOriginToProjectionAlongCameraPlaneLpx(centerPosition.offset_x(-corner).offset_y(corner));
+		const auto pointLeft        = ScreenOriginToProjectionAlongCameraPlaneLpx(centerPosition.offset_x(-radius));
+		const auto pointTopLeft     = ScreenOriginToProjectionAlongCameraPlaneLpx(centerPosition.offset_x(-corner).offset_y(-corner));
 		if (pointTop && pointTopRight && pointRight && pointBottomRight && pointBottom && pointBottomLeft && pointLeft && pointTopLeft) {
 			const std::array points = {
 				*pointTop, *pointTopRight, *pointRight, *pointBottomRight,

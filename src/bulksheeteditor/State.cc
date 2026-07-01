@@ -93,13 +93,13 @@ void bulksheeteditor::State::Reset(const m2g::pb::SpriteType sprite) {
 void bulksheeteditor::State::Draw() const {
 	// Draw texture
 	const auto offset = VecF{-0.5f, -0.5f};
-	const auto textureTopLeftOutputPosition = ScreenOriginToPositionVecPx(offset);
-	const auto textureBottomRightOutputPosition = ScreenOriginToPositionVecPx(static_cast<VecF>(_textureDimensions) + offset);
+	const auto textureTopLeftPositionLpx = ScreenOriginToPositionVecLpx(offset);
+	const auto textureBottomRightPositionLpx = ScreenOriginToPositionVecLpx(static_cast<VecF>(_textureDimensions) + offset);
 	const RectF dstRect = {
-		textureTopLeftOutputPosition.GetX(),
-		textureTopLeftOutputPosition.GetY(),
-		textureBottomRightOutputPosition.GetX() - textureTopLeftOutputPosition.GetX(),
-		textureBottomRightOutputPosition.GetY() - textureTopLeftOutputPosition.GetY()};
+		textureTopLeftPositionLpx.GetX(),
+		textureTopLeftPositionLpx.GetY(),
+		textureBottomRightPositionLpx.GetX() - textureTopLeftPositionLpx.GetX(),
+		textureBottomRightPositionLpx.GetY() - textureTopLeftPositionLpx.GetY()};
 	if (_texture) { _texture->Render(M2_GAME.GetRenderer(), dstRect); }
 	// Draw currectly selected sprite's rect
 	if (_savedSpriteRect) {

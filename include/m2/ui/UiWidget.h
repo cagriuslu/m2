@@ -14,7 +14,7 @@ namespace m2 {
 	struct UiWidget {
 	private:
 		UiPanel* _parent;
-		RectF _rect_px{}; // Position on screen
+		RectF _rectLpx{}; // Position on screen
 		bool _focused{};
 		bool _hoverActive{}; // Indicates that the mouse is currently hovering over the widget
 
@@ -28,13 +28,13 @@ namespace m2 {
 		// Accessors
 
 		[[nodiscard]] UiPanel& Parent() const { return *_parent; }
-		[[nodiscard]] const RectF& Rect() const { return _rect_px; }
+		[[nodiscard]] const RectF& Rect() const { return _rectLpx; }
 		[[nodiscard]] bool IsFocused() const { return _focused; }
 		[[nodiscard]] bool IsHoverActive() const { return _hoverActive; }
 
 		// Modifiers
 
-		void SetRect(const RectF& rect_px);
+		void SetRect(const RectF& rectLpx);
 		UiAction HandleEvents(Events&);
 		void SetFocusState(bool);
 		UiAction UpdateContents();
@@ -43,7 +43,7 @@ namespace m2 {
 	protected:
 		// Virtual functions for widgets to implement
 
-		virtual void OnResize(MAYBE const RectF& oldRect, MAYBE const RectF& newRect) {}
+		virtual void OnResize(MAYBE const RectF& oldRectLpx, MAYBE const RectF& newRectLpx) {}
 		virtual void OnHover() {}
 		virtual void OffHover() {}
 		virtual UiAction OnEvent(MAYBE Events& events) { return MakeContinueAction(); }
@@ -66,13 +66,13 @@ namespace m2 {
 
 		/// Calculate the rect of the wrapped text to fill the drawable_area. The width of the text texture is assumed
 		/// to be drawable_area.w because `CreateWrapped` functions generates textures with a desired width.
-		static RectF calculate_wrapped_text_rect(VecF textTextureDimensions, RectF drawable_area, TextHorizontalAlignment align_h, TextVerticalAlignment align_v);
+		static RectF calculate_wrapped_text_rect(VecF textTextureDimensions, RectF drawableAreaLpx, TextHorizontalAlignment align_h, TextVerticalAlignment align_v);
 		/// Calculate the rect of the text to fill the drawable_area
-		static RectF calculate_filled_text_rect(RectF drawable_area, TextHorizontalAlignment align, const char* text);
+		static RectF calculate_filled_text_rect(RectF drawableAreaLpx, TextHorizontalAlignment align, const char* text);
 
-		static void draw_rectangle(const RectF& rect, const RGBA& color);
-		static void DrawSpriteOrTextLabel(const std::variant<Sprite, pb::TextLabel>&, const RectF& dst_rect);
-		static void draw_border(const RectF& rect, float vertical_border_width_px, float horizontal_border_width_px, const RGBA& color = {255, 255, 255, 255});
+		static void draw_rectangle(const RectF& rectLpx, const RGBA& color);
+		static void DrawSpriteOrTextLabel(const std::variant<Sprite, pb::TextLabel>&, const RectF& dstRectLpx);
+		static void draw_border(const RectF& rectLpx, float vertical_border_width_px, float horizontal_border_width_px, const RGBA& color = {255, 255, 255, 255});
 
 		// Allow UiPanel to use the utilities
 		friend struct UiPanel;

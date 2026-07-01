@@ -22,7 +22,7 @@ namespace m2::thirdparty::video {
 		static Surface CreateBlankWithAlpha(int w, int h);
 		static Surface RenderTextSolid(const Font& font, const std::string& text, const RGBA& color);
 		static Surface RenderTextBlended(const Font& font, const std::string& text, const RGBA& color);
-		static Surface RenderTextBlendedWrapped(const Font& font, const std::string& text, const RGBA& color, int wrapWidthPx);
+		static Surface RenderTextBlendedWrapped(const Font& font, const std::string& text, const RGBA& color, int wrapWidthSrcpx);
 
 		/// Copy not allowed
 		Surface(const Surface&) = delete;

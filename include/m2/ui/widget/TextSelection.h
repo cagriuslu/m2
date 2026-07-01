@@ -41,7 +41,7 @@ namespace m2::widget {
 		void SetUniqueSelectionIndex(int index);
 
 	protected:
-		void OnResize(const RectF& oldRect, const RectF& newRect) override;
+		void OnResize(const RectF& oldRectLpx, const RectF& newRectLpx) override;
 		void OnHover() override;
 		void OffHover() override;
 		UiAction OnEvent(Events& events) override;

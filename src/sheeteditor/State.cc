@@ -144,13 +144,13 @@ void State::Save() {
 void State::Draw() const {
 	// Draw texture
 	const auto offset = VecF{-0.5f, -0.5f};
-	const auto textureTopLeftOutputPosition = ScreenOriginToPositionVecPx(offset);
-	const auto textureBottomRightOutputPosition = ScreenOriginToPositionVecPx(static_cast<VecF>(_textureDimensions) + offset);
+	const auto textureTopLeftPositionLpx = ScreenOriginToPositionVecLpx(offset);
+	const auto textureBottomRightPositionLpx = ScreenOriginToPositionVecLpx(static_cast<VecF>(_textureDimensions) + offset);
 	const RectF dstRect = {
-		textureTopLeftOutputPosition.GetX(),
-		textureTopLeftOutputPosition.GetY(),
-		textureBottomRightOutputPosition.GetX() - textureTopLeftOutputPosition.GetX(),
-		textureBottomRightOutputPosition.GetY() - textureTopLeftOutputPosition.GetY()};
+		textureTopLeftPositionLpx.GetX(),
+		textureTopLeftPositionLpx.GetY(),
+		textureBottomRightPositionLpx.GetX() - textureTopLeftPositionLpx.GetX(),
+		textureBottomRightPositionLpx.GetY() - textureTopLeftPositionLpx.GetY()};
 	if (_texture) { _texture->Render(M2_GAME.GetRenderer(), dstRect); }
 
 	const auto& sprite = SelectedSprite();
@@ -170,8 +170,8 @@ void State::Draw() const {
 			Graphic::ColorRect(RectF{rect}.Shift({-0.5f, -0.5f}), CONFIRMED_SELECTION_COLOR);
 		}
 		const auto rectCenter = RectF{rect}.Shift({-0.5f, -0.5f}).GetCenterPoint();
-		const auto centerToOriginVecPx = VecF{sprite.regular().center_to_origin_vec_px()};
-		Graphic::DrawCross(rectCenter + centerToOriginVecPx, CONFIRMED_CROSS_COLOR);
+		const auto centerToOriginVecSrcpx = VecF{sprite.regular().center_to_origin_vec_px()};
+		Graphic::DrawCross(rectCenter + centerToOriginVecSrcpx, CONFIRMED_CROSS_COLOR);
 	} else if (M2_LEVEL.GetRightHud()->Name() == "ForegroundCompanionModeRightHud") {
 		// Draw selection
 		if (const auto cellSelection = M2_LEVEL.GetPrimarySelection()->CellSelectionRectM()) {
@@ -186,8 +186,8 @@ void State::Draw() const {
 		}
 		const auto rect = RectI{sprite.regular().rect()};
 		const auto rectCenter = RectF{rect}.Shift({-0.5f, -0.5f}).GetCenterPoint();
-		const auto fCompCenterToOriginVecPx = VecF{sprite.regular().foreground_companion().center_to_origin_vec_px()};
-		Graphic::DrawCross(rectCenter + fCompCenterToOriginVecPx, CONFIRMED_CROSS_COLOR);
+		const auto fCompCenterToOriginVecSrcpx = VecF{sprite.regular().foreground_companion().center_to_origin_vec_px()};
+		Graphic::DrawCross(rectCenter + fCompCenterToOriginVecSrcpx, CONFIRMED_CROSS_COLOR);
 	} else if (M2_LEVEL.GetRightHud()->Name() == "FixtureModeRightHud") {
 		if (const auto selectedFixtureIndex = M2_LEVEL.GetRightHud()->FindWidget<widget::TextSelection>("FixtureSelection")->GetSelectedIndexes();
 				not selectedFixtureIndex.empty()) {

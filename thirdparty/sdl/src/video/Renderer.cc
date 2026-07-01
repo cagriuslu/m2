@@ -48,7 +48,7 @@ void m2::thirdparty::video::Renderer::Present() {
 	SDL_RenderPresent(static_cast<SDL_Renderer*>(_renderer));
 }
 
-void m2::thirdparty::video::Renderer::DrawLineStrip(const std::span<const VecF> points, const RGBA& color) {
+void m2::thirdparty::video::Renderer::DrawLineStrip(const std::span<const VecF> pointsLpx, const RGBA& color) {
 	const auto pixelsPerUnit = GetPixelsPerWindowUnit();
 
 	auto* sdlRenderer = static_cast<SDL_Renderer*>(_renderer);
@@ -56,8 +56,8 @@ void m2::thirdparty::video::Renderer::DrawLineStrip(const std::span<const VecF> 
 		throw M2_ERROR(std::string{"SDL_SetRenderDrawColor error: "} + SDL_GetError());
 	}
 	std::vector<SDL_FPoint> sdlPoints;
-	sdlPoints.reserve(points.size());
-	for (const auto& point : points) {
+	sdlPoints.reserve(pointsLpx.size());
+	for (const auto& point : pointsLpx) {
 		sdlPoints.push_back(ToSdlFPoint(point.Scale(pixelsPerUnit)));
 	}
 	if (not SDL_RenderLines(sdlRenderer, sdlPoints.data(), I(sdlPoints.size()))) {

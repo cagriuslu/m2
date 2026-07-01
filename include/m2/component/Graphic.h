@@ -19,14 +19,14 @@ namespace m2 {
 
 	/// Returns a vector from camera to given position in meters.
 	VecF CameraToPositionVecM(const VecF& position);
-	/// Returns a vector from camera to given position in output pixels.
+	/// Returns a vector from camera to given position in logical pixels.
 	/// For meters to pixels conversion, Game Output PPM is used.
-	VecF CameraToPositionVecPx(const VecF& position);
-	/// Returns a vector from screen origin (top-left corner) to given position in output pixels.
+	VecF CameraToPositionVecLpx(const VecF& position);
+	/// Returns a vector from screen origin (top-left corner) to given position in logical pixels.
 	/// For meters to pixels conversion, Game Output PPM is used.
-	VecF ScreenOriginToPositionVecPx(const VecF& position);
+	VecF ScreenOriginToPositionVecLpx(const VecF& position);
 	/// Returns the corresponding position of a pixel in 2D world coordiantes. Only applicable to parallel projection.
-	VecF PixelToPositionVecM(const VecF& pixelPosition);
+	VecF LogicalPixelToPositionVecM(const VecF& positionLpx);
 	/// Returns the boundaries of the Game viewport in 2D world coordinates. Only applicable to parallel projection.
 	RectF ViewportM();
 }
@@ -65,12 +65,12 @@ namespace m3 {
 	std::optional<m2::VecF> FocusToProjectionInCameraPlaneCoordinatesM(const VecF& position);
 
 	/// Returns a vector from the focus point to the projection of a given position, but using the camera plane as the
-	/// coordinate system where the focus point sits in the center, in destination pixels.
-	std::optional<m2::VecF> FocusToProjectionInCameraPlaneCoordinatesDstpx(const VecF& position);
+	/// coordinate system where the focus point sits in the center, in logical pixels.
+	std::optional<m2::VecF> FocusToProjectionInCameraPlaneCoordinatesLpx(const VecF& position);
 
 	/// Returns a vector from the screen origins, to the projection of a given position, but using the camera plane as
-	/// the coordinate system where the focus point sits in the center, in destination pixels.
-	std::optional<m2::VecF> ScreenOriginToProjectionAlongCameraPlaneDstpx(const VecF& position);
+	/// the coordinate system where the focus point sits in the center, in logical pixels.
+	std::optional<m2::VecF> ScreenOriginToProjectionAlongCameraPlaneLpx(const VecF& position);
 }
 
 namespace m2 {
@@ -107,7 +107,7 @@ namespace m2 {
 		static void FillTriangle(const VecF& worldPosition0M, const VecF& worldPosition1M, const VecF& worldPosition2M, const RGBA& color);
 		static void FillTriangle(const VecF& worldPosition0M, const VecF& worldPosition1M, const VecF& worldPosition2M, const RGBA& color0, const RGBA& color1, const RGBA& color2);
 		static void DrawCross(const VecF& world_position, const RGBA& color);
-		static void DrawCross(const VecF& worldPosition, int radiusPx, const RGBA& color);
+		static void DrawCross(const VecF& worldPosition, int radiusLpx, const RGBA& color);
 		static void DrawCross(const VecF& worldPosition, float radiusM, const RGBA& color);
 		static void DrawLine(const VecF& world_position_1, const VecF& world_position_2, const RGBA& color);
 		static void DrawVerticalLine(float x, const RGBA& color);
@@ -131,12 +131,12 @@ namespace m2 {
 	/// source texture is corrected in case it has a rotation of its own.
 	void DrawTextureIn2dWorld(const thirdparty::video::Texture& sourceTexture, const RectI& sourceRect,
 			float originalRotationOfSourceTextureInRadians, float outputToSourcePpmRatio,
-			const VecF& textureCenterToTextureOriginVecInOutputPixels,
-			const VecF& screenOriginToTextureCenterVecInOutputPixels, float rotationToApplyInRadians);
+			const VecF& textureCenterToTextureOriginVecInLogicalPixels,
+			const VecF& screenOriginToTextureCenterVecInLogicalPixels, float rotationToApplyInRadians);
 	/// Draws the given texture to the 3D World. Before applying extra rotation to the texture, the rotation of the
 	/// source texture is corrected in case it has a rotation of its own.
 	void DrawTextureIn3dWorld(const thirdparty::video::Texture& sourceTexture, const RectI& sourceRect,
-			float sourcePpm, const VecF& sourceCenterToOriginVectorInOutputPixels,
+			float sourcePpm, const VecF& sourceCenterToOriginVectorInLogicalPixels,
 			float originalRotationOfSourceTextureInRadians, const VecF& sourceTextureSheetDimensions,
 			const VecF& xyPositionInWorldM, float zPositionInWorldM, float rotationToApplyInRadians, bool isForeground);
 }

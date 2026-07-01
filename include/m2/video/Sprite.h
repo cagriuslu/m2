@@ -14,12 +14,12 @@ namespace m2 {
 		const pb::Sprite* _originalPb{};
 
 		std::optional<RectI> _foregroundCompanionSpriteEffectsSheetRect;
-		std::optional<VecF> _foregroundCompanionCenterToOriginVecPx;
+		std::optional<VecF> _foregroundCompanionCenterToOriginVecSrcpx;
 		std::optional<VecF> _foregroundCompanionCenterToOriginVecM;
 		RectI _rect;
 		float _originalRotationRad{};
 		int _ppm{};
-		VecF _centerToOriginVecPx;
+		VecF _centerToOriginVecSrcpx;
 		VecF _centerToOriginVecM;
 		std::vector<m2g::pb::CardType> _cards;
 
@@ -36,11 +36,11 @@ namespace m2 {
 		[[nodiscard]] m2g::pb::SpriteType Type() const { return _pb->type(); }
 		[[nodiscard]] m2g::pb::SpriteType OriginalType() const { return _originalPb->type(); }
 		[[nodiscard]] bool HasForegroundCompanion() const { return _foregroundCompanionCenterToOriginVecM.has_value(); }
-		[[nodiscard]] VecF ForegroundCompanionCenterToOriginVecPx() const { return _foregroundCompanionCenterToOriginVecPx.value(); }
+		[[nodiscard]] VecF ForegroundCompanionCenterToOriginVecSrcpx() const { return _foregroundCompanionCenterToOriginVecSrcpx.value(); }
 		[[nodiscard]] VecF ForegroundCompanionCenterToOriginVecM() const { return _foregroundCompanionCenterToOriginVecM.value(); }
 		[[nodiscard]] float OriginalRotationRadians() const { return _originalRotationRad; }
 		[[nodiscard]] int Ppm() const { return _ppm; }
-		[[nodiscard]] const VecF& CenterToOriginVecPx() const { return _centerToOriginVecPx; }
+		[[nodiscard]] const VecF& UnrotatedCenterToOriginVecSrcpx() const { return _centerToOriginVecSrcpx; }
 		[[nodiscard]] const VecF& CenterToOriginVecM() const { return _centerToOriginVecM; }
 		[[nodiscard]] bool IsBackgroundTile() const { return _originalPb->regular().is_background_tile(); }
 		[[nodiscard]] const std::vector<m2g::pb::CardType>& Cards() const { return _cards; }
@@ -50,20 +50,20 @@ namespace m2 {
 		[[nodiscard]] const RectI& GetRect(bool foregroundCompanion = false) const;
 
 		/// Ratio of screen pixels to sprite pixels
-		/// Multiply sprite dimensions (srcpx) with this number to convert them to screen dimensions (dstpx).
-		[[nodiscard]] float SourceToOutputPixelMultiplier() const;
+		/// Multiply sprite dimensions (srcpx) with this number to convert them to screen dimensions (lpx).
+		[[nodiscard]] float SourceToLogicalPixelMultiplier() const;
 
 		/// Returns a vector from the sprite's center pixel to the sprite's origin.
 		[[nodiscard]] VecF CenterToOriginVecSrcpx(bool foregroundCompanion = false) const;
 
-		/// Returns a vector from the sprite's center to the sprite's origin in output pixel units.
-		[[nodiscard]] VecF CenterToOriginVecOutpx(const bool foregroundCompanion = false) const {
-			// Convert from source pixels to destination pixels
-			return CenterToOriginVecSrcpx(foregroundCompanion) * SourceToOutputPixelMultiplier();
+		/// Returns a vector from the sprite's center to the sprite's origin in logical pixel units.
+		[[nodiscard]] VecF CenterToOriginVecLpx(const bool foregroundCompanion = false) const {
+			// Convert from source pixels to logical pixels
+			return CenterToOriginVecSrcpx(foregroundCompanion) * SourceToLogicalPixelMultiplier();
 		}
 
-		/// Returns a vector from the screen origin (top-left) to the center of this sprite in output pixel units.
-		[[nodiscard]] VecF ScreenOriginToCenterVecOutpx(const VecF& position, bool foregroundCompanion = false) const;
+		/// Returns a vector from the screen origin (top-left) to the center of this sprite in logical pixel units.
+		[[nodiscard]] VecF ScreenOriginToCenterVecLpx(const VecF& position, bool foregroundCompanion = false) const;
 
 		/// Draws the given variant of the sprite with the given angle at world position in 2D mode. is_foreground and
 		/// z parameters are ignored, and only provided for API compatibility with DrawIn3dWorld.

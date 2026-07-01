@@ -53,7 +53,7 @@ m2::GameDimensions::GameDimensions(const thirdparty::video::Window& window, cons
 m2::VecI m2::GameDimensions::WindowDimensions() const {
 	return _window.GetSize();
 }
-float m2::GameDimensions::OutputPixelsPerMeter() const {
+float m2::GameDimensions::LogicalPixelsPerMeter() const {
 	return ToFloat(_gamePpm) * _scale;
 }
 float m2::GameDimensions::GameWidthToGameAndHudWidthRatio() const {
@@ -127,11 +127,11 @@ void m2::GameDimensions::SetScale(const float scale) {
 }
 void m2::GameDimensions::SetGameHeightM(const float heightM) {
 	// GameHeightM determines how much of the word is shown in the game window.
-	// It's notmally calculated with the formula: GameHeightM = GameHeightPx / PPM
-	// We can't change GameHeightPx, because the window isn't resized, thus we must calculate a new PPM instead.
+	// It's notmally calculated with the formula: GameHeightM = GameHeightLpx / PPM
+	// We can't change GameHeightLpx, because the window isn't resized, thus we must calculate a new PPM instead.
 	// We also don't prefer to change the PPM directly, instead we change the scale: PPM = GamePpm * Scale
-	// Thus: GameHeightM = GameHeightPx / (GamePpm * Scale)
-	// Thus: Scale = GameHeightPx / (GamePpm * GameHeightM)
+	// Thus: GameHeightM = GameHeightLpx / (GamePpm * Scale)
+	// Thus: Scale = GameHeightLpx / (GamePpm * GameHeightM)
 	SetScale(ToFloat(_game.h) / (ToFloat(_gamePpm) * heightM));
 }
 
@@ -169,6 +169,6 @@ void m2::GameDimensions::ReadjustAfterScaleChange() {
 	// Scale adjustment is used to adjust the zoom of the game. This means, we must keep envelopes, gameAndHud, game,
 	// leftHud, rightHud, messageBox exactly the same. The portion of the game shown inside the game area, thus
 	// gameAndHudM and gameM, can be adjusted instead.
-	_gameAndHudM = {ToFloat(_gameAndHud.w) / OutputPixelsPerMeter(), ToFloat(_gameAndHud.h) / OutputPixelsPerMeter()};
-	_gameM = {ToFloat(_game.w) / OutputPixelsPerMeter(), ToFloat(_game.h) / OutputPixelsPerMeter()};
+	_gameAndHudM = {ToFloat(_gameAndHud.w) / LogicalPixelsPerMeter(), ToFloat(_gameAndHud.h) / LogicalPixelsPerMeter()};
+	_gameM = {ToFloat(_game.w) / LogicalPixelsPerMeter(), ToFloat(_game.h) / LogicalPixelsPerMeter()};
 }

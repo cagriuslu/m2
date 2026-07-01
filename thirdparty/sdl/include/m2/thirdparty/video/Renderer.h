@@ -23,7 +23,7 @@ namespace m2::thirdparty::video {
 		virtual ~Renderer();
 
 		[[nodiscard]] void* RawHandle() const { return _renderer; } // TODO remove
-		/// Returns the number of pixels in both axes that correspond to unit distance in window coordinates
+		/// Returns the number of pixels in both axes that correspond to unit distance in logical pixels
 		[[nodiscard]] VecF GetPixelsPerWindowUnit() const;
 		[[nodiscard]] std::string GetName() const;
 
@@ -34,7 +34,7 @@ namespace m2::thirdparty::video {
 		/// Presents the back buffer, making everything drawn since the last present visible on the window.
 		void Present();
 
-		/// Draws a connected strip of line segments through the given window coordinate points using the given color.
-		void DrawLineStrip(std::span<const VecF> points, const RGBA& color); // TODO move to Shapes
+		/// Draws a connected strip of line segments through the given logical pixel points using the given color.
+		void DrawLineStrip(std::span<const VecF> pointsLpx, const RGBA& color); // TODO move to Shapes
 	};
 }

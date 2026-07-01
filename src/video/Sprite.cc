@@ -49,8 +49,8 @@ m2::Sprite::Sprite(const std::vector<SpriteSheet>& spriteSheets, const SpriteShe
 	}
 	_originalRotationRad = _originalPb->regular().original_rotation() * PI;
 	_ppm = _originalPb->regular().override_ppm() ? _originalPb->regular().override_ppm() : spriteSheet.Pb().ppm();
-	_centerToOriginVecPx = VecF{_originalPb->regular().center_to_origin_vec_px()};
-	_centerToOriginVecM = _centerToOriginVecPx / static_cast<float>(_ppm);
+	_centerToOriginVecSrcpx = VecF{_originalPb->regular().center_to_origin_vec_px()};
+	_centerToOriginVecM = _centerToOriginVecSrcpx / static_cast<float>(_ppm);
 
 	// Fill named cards
 	for (const auto& card : _originalPb->regular().cards()) {
@@ -67,7 +67,7 @@ m2::Sprite::Sprite(const std::vector<SpriteSheet>& spriteSheets, const SpriteShe
 		_foregroundCompanionSpriteEffectsSheetRect = spriteEffectsSheet.create_foreground_companion_effect(
 		    spriteSheet, _originalPb->regular().rect(),
 		    _originalPb->regular().foreground_companion().rects());
-		_foregroundCompanionCenterToOriginVecPx =
+		_foregroundCompanionCenterToOriginVecSrcpx =
 		    VecF{_originalPb->regular().foreground_companion().center_to_origin_vec_px()};
 		_foregroundCompanionCenterToOriginVecM =
 		    VecF{_originalPb->regular().foreground_companion().center_to_origin_vec_px()} / static_cast<float>(_ppm);
@@ -101,21 +101,21 @@ const m2::RectI& m2::Sprite::GetRect(const bool foregroundCompanion) const {
 	return _rect;
 }
 
-float m2::Sprite::SourceToOutputPixelMultiplier() const {
-	return M2_GAME.Dimensions().OutputPixelsPerMeter() / static_cast<float>(_ppm);
+float m2::Sprite::SourceToLogicalPixelMultiplier() const {
+	return M2_GAME.Dimensions().LogicalPixelsPerMeter() / static_cast<float>(_ppm);
 }
 
 m2::VecF m2::Sprite::CenterToOriginVecSrcpx(const bool foregroundCompanion) const {
 	if (foregroundCompanion) {
-		return ForegroundCompanionCenterToOriginVecPx();
+		return ForegroundCompanionCenterToOriginVecSrcpx();
 	}
 	return OriginalRotationRadians() != 0.0f
-			? CenterToOriginVecPx().Rotate(OriginalRotationRadians())
-			: CenterToOriginVecPx();
+			? UnrotatedCenterToOriginVecSrcpx().Rotate(OriginalRotationRadians())
+			: UnrotatedCenterToOriginVecSrcpx();
 }
 
-m2::VecF m2::Sprite::ScreenOriginToCenterVecOutpx(const VecF& position, const bool foregroundCompanion) const {
-	return ScreenOriginToPositionVecPx(position) - CenterToOriginVecOutpx(foregroundCompanion);
+m2::VecF m2::Sprite::ScreenOriginToCenterVecLpx(const VecF& position, const bool foregroundCompanion) const {
+	return ScreenOriginToPositionVecLpx(position) - CenterToOriginVecLpx(foregroundCompanion);
 }
 
 void m2::Sprite::DrawIn2dWorld(const VecF& position, const bool foregroundCompanion, const float angle, MAYBE bool is_foreground, MAYBE float z) const {
@@ -123,9 +123,9 @@ void m2::Sprite::DrawIn2dWorld(const VecF& position, const bool foregroundCompan
 			GetTexture(foregroundCompanion),
 			GetRect(foregroundCompanion),
 			OriginalRotationRadians(),
-			M2_GAME.Dimensions().OutputPixelsPerMeter() / ToFloat(Ppm()),
-			CenterToOriginVecOutpx(foregroundCompanion),
-			ScreenOriginToCenterVecOutpx(position, foregroundCompanion),
+			M2_GAME.Dimensions().LogicalPixelsPerMeter() / ToFloat(Ppm()),
+			CenterToOriginVecLpx(foregroundCompanion),
+			ScreenOriginToCenterVecLpx(position, foregroundCompanion),
 			angle
 	);
 }
@@ -134,7 +134,7 @@ void m2::Sprite::DrawIn3dWorld(const VecF& position, const bool foregroundCompan
 			GetTexture(foregroundCompanion),
 			GetRect(foregroundCompanion),
 			ToFloat(Ppm()),
-			CenterToOriginVecOutpx(foregroundCompanion),
+			CenterToOriginVecLpx(foregroundCompanion),
 			OriginalRotationRadians(),
 			TextureTotalDims(foregroundCompanion),
 			position,

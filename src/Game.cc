@@ -1036,7 +1036,7 @@ void Game::DebugDraw() {
 		for (int y = 0; y < 20; ++y) {
 			for (int x = 0; x < 20; ++x) {
 				m3::VecF p = {x, y, 0};
-				if (const auto projected_p = ScreenOriginToProjectionAlongCameraPlaneDstpx(p); projected_p) {
+				if (const auto projected_p = ScreenOriginToProjectionAlongCameraPlaneLpx(p); projected_p) {
 					thirdparty::video::DrawPoint(M2_GAME.GetRenderer(), *projected_p, RGBA{255, 255, 255, 127});
 				}
 			}
@@ -1044,7 +1044,7 @@ void Game::DebugDraw() {
 	}
 #endif
 
-	const auto lineHeightM = (ToFloat(systemFontSize) / _dimensions->OutputPixelsPerMeter()) * 1.2f;
+	const auto lineHeightM = (ToFloat(systemFontSize) / _dimensions->LogicalPixelsPerMeter()) * 1.2f;
 	for (const auto& [type, options] : _level->_objectTypeDebugObjects) {
 		for (const auto& obj : _level->objects) {
 			if (obj.GetType() == type) {
@@ -1199,7 +1199,7 @@ bool Game::IsMouseOnAnyUiPanel() const {
 		return true;
 	}
 	// Otherwise, check if the mouse is on top of the other UI panels known to Level
-	const auto mouse_position = events.MousePosition();
+	const auto mouse_position = events.MousePositionLpx();
 	if (_level->_leftHudUiPanel && _level->_leftHudUiPanel->Rect().DoesContain(mouse_position)) {
 		return true;
 	}

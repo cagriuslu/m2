@@ -293,7 +293,7 @@ m3::VecF Level::GetCameraOffset() const {
 float Level::GetHorizontalFov() const { return _lb ? _lb->horizontal_fov() : M2_GAME.Dimensions().GameM().GetX(); }
 VecF Level::GetWorldPositionOfPixel(const VecF& pixelPosition) const {
 	const auto screenCenterToPixelPx = VecF{pixelPosition.GetX() - static_cast<float>(M2_GAME.Dimensions().WindowDimensions().x) / 2.0f, pixelPosition.GetY() - static_cast<float>(M2_GAME.Dimensions().WindowDimensions().y) / 2.0f};
-	const auto screenCenterToPixelM = VecF{screenCenterToPixelPx.GetX() / M2_GAME.Dimensions().OutputPixelsPerMeter(), screenCenterToPixelPx.GetY() / M2_GAME.Dimensions().OutputPixelsPerMeter()};
+	const auto screenCenterToPixelM = VecF{screenCenterToPixelPx.GetX() / M2_GAME.Dimensions().LogicalPixelsPerMeter(), screenCenterToPixelPx.GetY() / M2_GAME.Dimensions().LogicalPixelsPerMeter()};
 
 	if (IsProjectionTypePerspective(GetProjectionType())) {
 		// Mouse moves on the plane centered at the player looking towards the camera
@@ -389,7 +389,7 @@ void Level::DisableDimmingWithExceptions() {
 }
 
 void Level::BeginPanning() {
-	_panBeginPosition = std::make_pair(M2_GAME.events.MousePosition(), M2_GAME.events.GetWorldPositionOfMouse());
+	_panBeginPosition = std::make_pair(M2_GAME.events.MousePositionLpx(), M2_GAME.events.GetWorldPositionOfMouse());
 }
 bool Level::IsPanning() const {
 	return static_cast<bool>(_panBeginPosition);
@@ -604,27 +604,27 @@ VecF Level::CalculateMouseHoverUiPanelTopLeftPosition() const {
 	// Check the height of the panel
 	const auto panelHeight = _mouseHoverUiPanel->Rect().h;
 	// Check if there's enough space below the mouse
-	const auto heightUnderMouse = M2_GAME.Dimensions().GameAndHud().GetY2() - M2_GAME.MousePositionPx().GetY();
+	const auto heightUnderMouse = M2_GAME.Dimensions().GameAndHud().GetY2() - M2_GAME.MousePositionLpx().GetY();
 	float finalY;
 	if (panelHeight <= heightUnderMouse) {
 		// We CAN fit the panel under the mouse
-		finalY = M2_GAME.MousePositionPx().GetY();
+		finalY = M2_GAME.MousePositionLpx().GetY();
 	} else {
 		// We CAN'T fit the panel under the mouse
-		finalY = M2_GAME.MousePositionPx().GetY() - panelHeight;
+		finalY = M2_GAME.MousePositionLpx().GetY() - panelHeight;
 	}
 
 	// Check the width of the panel
 	const auto panelWidth = _mouseHoverUiPanel->Rect().w;
 	// Check if there's enough space to the right of the mouse
-	const auto widthLeftOfTheMouse = M2_GAME.Dimensions().GameAndHud().GetX2() - M2_GAME.MousePositionPx().GetX();
+	const auto widthLeftOfTheMouse = M2_GAME.Dimensions().GameAndHud().GetX2() - M2_GAME.MousePositionLpx().GetX();
 	float finalX;
 	if (panelWidth <= widthLeftOfTheMouse) {
 		// We CAN fit the panel to the right of the mouse
-		finalX = M2_GAME.MousePositionPx().GetX();
+		finalX = M2_GAME.MousePositionLpx().GetX();
 	} else {
 		// We CAN'T fit the panel to the right of the mouse
-		finalX = M2_GAME.MousePositionPx().GetX() - panelWidth;
+		finalX = M2_GAME.MousePositionLpx().GetX() - panelWidth;
 	}
 
 	return {finalX - static_cast<float>(M2_GAME.Dimensions().GameAndHud().x), finalY - static_cast<float>(M2_GAME.Dimensions().GameAndHud().y)};

@@ -15,9 +15,9 @@ namespace m2::thirdparty::event {
 	struct WindowResizeEvent {};
 	struct KeyDownEvent   { Scancode scancode; bool isRepeat; };
 	struct KeyUpEvent     { Scancode scancode; bool isRepeat; };
-	struct MouseMotionEvent     { VecF positionPx; };
-	struct MouseButtonDownEvent { MouseButton button; VecF positionPx; };
-	struct MouseButtonUpEvent   { MouseButton button; VecF positionPx; };
+	struct MouseMotionEvent     { VecF positionLpx; };
+	struct MouseButtonDownEvent { MouseButton button; VecF positionLpx; };
+	struct MouseButtonUpEvent   { MouseButton button; VecF positionLpx; };
 	struct MouseWheelEvent      { int32_t horizontal; int32_t vertical; };
 	struct TextInputEvent       { std::string text; };
 

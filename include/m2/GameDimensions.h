@@ -15,7 +15,7 @@ namespace m2 {
 
         float _scale;
 
-        // All of these numbers are in "window coordinates", not pixel coordinates.
+        // All of these numbers are in logical pixels, not physical (window) pixels.
 
         RectI _topEnvelope, _bottomEnvelope, _leftEnvelope, _rightEnvelope;
         RectI _gameAndHud, _game;
@@ -39,8 +39,8 @@ namespace m2 {
         [[nodiscard]] RectI RightHud() const { return _rightHud; }
         [[nodiscard]] VecF GameAndHudM() const { return _gameAndHudM; }
         [[nodiscard]] VecF GameM() const { return _gameM; }
-        /// Number of pixels in the renderer output that would be occupied by a one-meter object. Applicable to pixelated and non-pixelated games.
-        [[nodiscard]] float OutputPixelsPerMeter() const;
+        /// Number of logical pixels occupied by a one-meter object. Applicable to pixelated and non-pixelated games.
+        [[nodiscard]] float LogicalPixelsPerMeter() const;
         [[nodiscard]] float Scale() const { return _scale; }
         [[nodiscard]] float GameWidthToGameAndHudWidthRatio() const;
         [[nodiscard]] float HudWidthToGameAndHudWidthRatio() const;

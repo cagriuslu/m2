@@ -23,7 +23,7 @@ UiPanelBlueprint generate_status_bar_blueprint() {
 		.w = 70, .h = 8,
 		.border_width = 0.0f,
 		.onEvent = [=](const UiPanel& panel, const Events& events) -> UiAction {
-			if (panel.Rect().DoesContain(events.MousePosition())) {
+			if (panel.Rect().DoesContain(events.MousePositionLpx())) {
 				if (not M2G_PROXY.custom_hud_panel) {
 					M2G_PROXY.custom_hud_panel = M2_LEVEL.AddCustomNonblockingUiPanel(
 							std::make_unique<UiPanelBlueprint>(generate_custom_hud_blueprint()),

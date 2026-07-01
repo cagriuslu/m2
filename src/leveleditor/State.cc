@@ -138,18 +138,18 @@ void m2::leveleditor::State::HandleMousePrimarySelectionComplete(const VecF& fir
 				if (const auto fixtureType = GetSpriteFixtureTypes(drawFgState->SelectedObjectMainSpriteType())[selectedIndex];
 						fixtureType == pb::Fixture::FixtureTypeCase::kChain) {
 					const auto fgObjectIt = GetForegroundObjectsOfType(drawFgState->SelectedObjectType())[0];
-					const auto firstPositionPx = WorldCoordinateToSpriteCoordinate(fgObjectIt, firstPosition);
+					const auto firstPositionSrcpx = WorldCoordinateToSpriteCoordinate(fgObjectIt, firstPosition);
 					const auto spritePpm = ToFloat(SpritePpm(fgObjectIt));
 					const auto& spritePb = GetSpritePb(drawFgState->SelectedObjectMainSpriteType());
 					const auto& chain = spritePb.regular().fixtures(selectedIndex).chain();
-					const auto closestPointIndex = FindClosestChainPointInRange(chain, spritePpm, firstPositionPx);
+					const auto closestPointIndex = FindClosestChainPointInRange(chain, spritePpm, firstPositionSrcpx);
 					if (not closestPointIndex) {
 						return;
 					}
 
 					const auto splitCount = M2_LEVEL.GetLeftHud()->FindWidget<widget::IntegerSelection>("CellSplitCount")->value();
-					const auto binnedSecondPositionPx = secondPosition.RoundToBin(splitCount);
-					const auto pointOffset = WorldCoordinateToSpriteCoordinate(fgObjectIt, binnedSecondPositionPx);
+					const auto binnedSecondPositionSrcpx = secondPosition.RoundToBin(splitCount);
+					const auto pointOffset = WorldCoordinateToSpriteCoordinate(fgObjectIt, binnedSecondPositionSrcpx);
 					_persistentSpriteSheets->ModifySprite(drawFgState->SelectedObjectMainSpriteType(), [&](pb::Sprite& sprite) {
 						if (auto* fixture = sprite.mutable_regular()->mutable_fixtures(selectedIndex); fixture->has_chain()) {
 							auto* chain_ = fixture->mutable_chain();
@@ -414,17 +414,17 @@ void m2::leveleditor::State::Draw() const {
 					if (const auto fixtureType = GetSpriteFixtureTypes(state.SelectedObjectMainSpriteType())[*selectedFixtureIndex];
 							fixtureType == pb::Fixture::FixtureTypeCase::kChain) {
 						const auto fgObjectIt = GetForegroundObjectsOfType(state.SelectedObjectType())[0];
-						const auto firstPositionPx = WorldCoordinateToSpriteCoordinate(fgObjectIt, selection->first);
+						const auto firstPositionSrcpx = WorldCoordinateToSpriteCoordinate(fgObjectIt, selection->first);
 						const auto spritePpm = ToFloat(SpritePpm(fgObjectIt));
 						const auto& spritePb = GetSpritePb(state.SelectedObjectMainSpriteType());
 						const auto& chain = spritePb.regular().fixtures(*selectedFixtureIndex).chain();
-						const auto closestPointIndex = FindClosestChainPointInRange(chain, spritePpm, firstPositionPx);
+						const auto closestPointIndex = FindClosestChainPointInRange(chain, spritePpm, firstPositionSrcpx);
 						if (not closestPointIndex) {
 							return std::nullopt;
 						}
 
-						const auto binnedSecondPositionPx = selection->second.RoundToBin(splitCount);
-						const auto pointOffset = WorldCoordinateToSpriteCoordinate(fgObjectIt, binnedSecondPositionPx);
+						const auto binnedSecondPositionSrcpx = selection->second.RoundToBin(splitCount);
+						const auto pointOffset = WorldCoordinateToSpriteCoordinate(fgObjectIt, binnedSecondPositionSrcpx);
 						return std::make_pair(*closestPointIndex, pointOffset);
 					}
 				}
@@ -613,10 +613,10 @@ void m2::leveleditor::State::StoreArc(const int selectedIndex, const VecF& fromP
 		StoreFixturePoint(state.SelectedObjectMainSpriteType(), selectedIndex, arcPoint);
 	}
 }
-std::optional<int> m2::leveleditor::State::FindClosestChainPointInRange(const pb::Fixture_ChainFixture& chain, const int spritePpm, const VecF& positionPx) {
+std::optional<int> m2::leveleditor::State::FindClosestChainPointInRange(const pb::Fixture_ChainFixture& chain, const int spritePpm, const VecF& positionSrcpx) {
 	std::optional<std::pair<int, float>> closestPointIndexAndDistanceSq;
 	for (int i = 0; i < chain.points_size(); ++i) {
-		if (const auto distanceSq = VecF{chain.points(i)}.GetDistanceToSquared(positionPx); distanceSq < spritePpm) {
+		if (const auto distanceSq = VecF{chain.points(i)}.GetDistanceToSquared(positionSrcpx); distanceSq < spritePpm) {
 			if (not closestPointIndexAndDistanceSq || distanceSq < closestPointIndexAndDistanceSq->second) {
 				closestPointIndexAndDistanceSq = std::make_pair(i, distanceSq);
 			}

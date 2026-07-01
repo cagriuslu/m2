@@ -4,7 +4,7 @@
 
 using namespace m2;
 
-Selection::Selection(const RectF& screenBoundaryPx) : _screenBoundaryPx(screenBoundaryPx) {
+Selection::Selection(const RectF& screenBoundaryLpx) : _screenBoundaryLpx(screenBoundaryLpx) {
 	LOG_DEBUG("Enabling selection");
 }
 Selection::~Selection() {

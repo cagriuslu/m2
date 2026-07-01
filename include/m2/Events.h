@@ -24,7 +24,7 @@ namespace m2 {
 		};
 		struct MouseAction {
 			MouseActionType type{};
-			VecF positionPx;
+			VecF positionLpx;
 		};
 		/// For each button, only one actions is stored per loop
 		std::array<MouseAction, U(MouseButton::end)> _mouseActions{};
@@ -38,8 +38,8 @@ namespace m2 {
 
 		std::vector<bool> _downKeys = std::vector<bool>(pb::enum_value_count<m2g::pb::KeyType>());
 		std::array<bool, U(MouseButton::end)> _downButtons{};
-		/// Mouse position in window coordinates
-		VecF _mousePositionPx;
+		/// Mouse position in logical pixels
+		VecF _mousePositionLpx;
 		/// Mouse position in world coordinates. Non-zero only if there's an active level.
 		VecF _mousePositionM;
 
@@ -63,21 +63,21 @@ namespace m2 {
 
 		std::optional<VecF> PeekMouseButtonPress(MouseButton mb) const;
 		bool PopMouseButtonPress(MouseButton mb);
-		std::optional<VecF> PeekMouseButtonPress(MouseButton mb, const RectF& rect) const;
-		bool PopMouseButtonPress(MouseButton mb, const RectF& rect);
+		std::optional<VecF> PeekMouseButtonPress(MouseButton mb, const RectF& rectLpx) const;
+		bool PopMouseButtonPress(MouseButton mb, const RectF& rectLpx);
 		std::optional<VecF> PeekMouseButtonRelease(MouseButton mb) const;
 		bool PopMouseButtonRelease(MouseButton mb);
-		std::optional<VecF> PeekMouseButtonRelease(MouseButton mb, const RectF& rect) const;
-		bool PopMouseButtonRelease(MouseButton mb, const RectF& rect);
-		void ClearMouseButtonActions(const RectF& rect);
+		std::optional<VecF> PeekMouseButtonRelease(MouseButton mb, const RectF& rectLpx) const;
+		bool PopMouseButtonRelease(MouseButton mb, const RectF& rectLpx);
+		void ClearMouseButtonActions(const RectF& rectLpx);
 
 		// Mouse scroll
 
 		int32_t PopMouseWheelVerticalScroll();
-		int32_t PopMouseWheelVerticalScroll(const RectF& rect);
+		int32_t PopMouseWheelVerticalScroll(const RectF& rectLpx);
 		int32_t PopMouseWheelHorizontalScroll();
-		int32_t PopMouseWheelHorizontalScroll(const RectF& rect);
-		void ClearMouseWheelScrolls(const RectF& rect);
+		int32_t PopMouseWheelHorizontalScroll(const RectF& rectLpx);
+		void ClearMouseWheelScrolls(const RectF& rectLpx);
 
 		std::optional<std::string> PopTextInput();
 
@@ -85,8 +85,8 @@ namespace m2 {
 
 		bool IsKeyDown(const m2g::pb::KeyType key) const { return _downKeys[pb::enum_index(key)]; }
 		bool IsMouseButtonDown(const MouseButton mb) const { return _downButtons[U(mb)]; }
-		void ClearMouseButtonDown(const RectF& rect);
-		VecF MousePosition() const { return _mousePositionPx; }
+		void ClearMouseButtonDown(const RectF& rectLpx);
+		VecF MousePositionLpx() const { return _mousePositionLpx; }
 		VecF GetWorldPositionOfMouse() const { return _mousePositionM; }
 	};
 }
