@@ -56,7 +56,7 @@ Windows build:
 ```
 cmake --preset <game>-WIN-DEBUG
 ```
-Replace `<game>` with either RPG or CuZn.
+Replace `<game>` with the name of a game directory (e.g. RPG or CuZn).
 
 After configuring with CMake, go to the build directory and run Ninja to build the game (which includes the engine): 
 ```
@@ -95,7 +95,7 @@ python3 -m http.server 8000
 
 The following dependencies are included in the repo, and built automatically by the provided CMake script:
 * box2d
-* freetype (required by SDL2_ttf)
+* freetype (required by SDL3_ttf)
 * googletest (aka gtest)
 * libpng
 * protobuf
