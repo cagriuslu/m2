@@ -64,7 +64,7 @@ Two multiplayer modes:
 
 ## Platform Layer (`platform/`)
 
-Headers in `include/` that require platform-specific implementations are provided under `platform/macos/`, `platform/linux/`, `platform/windows/`, and `platform/posix/` (shared by macOS and Linux).
+Some headers in `include/` require platform-specific implementations, provided under `platform/posix/` (shared by macOS and Linux), `platform/windows/`, and `platform/emscripten/` (web builds).
 
 ## Coding Standards
 
