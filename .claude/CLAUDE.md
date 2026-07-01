@@ -43,6 +43,25 @@ or, for web builds
 ```
 to configure & build all games all at once.
 
+## Installing Build Dependencies
+
+On a fresh Ubuntu/Debian Linux host, none of the following are preinstalled and must be installed before `posix_all.sh`/`web_all.sh` can succeed:
+
+```sh
+sudo apt-get install -y cmake ninja-build build-essential libgl1-mesa-dev libglu1-mesa-dev cargo rustc
+```
+
+Web build additionally needs the Emscripten SDK on `PATH`:
+```sh
+git clone https://github.com/emscripten-core/emsdk.git ~/emsdk
+cd ~/emsdk && ./emsdk install latest && ./emsdk activate latest
+source ~/emsdk/emsdk_env.sh   # add to shell init so emcc/emcmake stay on PATH
+```
+Ubuntu 26.04's packaged `cmake` (4.2.3) has a regression with Emscripten. Fix by using a cmake version outside the broken 4.2.0–4.3.3 range, e.g. via pip:
+```sh
+pip install --user --break-system-packages cmake==4.3.4
+```
+
 ## Architecture Overview
 
 For lifecycle hooks, and UI blueprints, the game must provide a class called `m2g::Proxy`, which must be derived from
