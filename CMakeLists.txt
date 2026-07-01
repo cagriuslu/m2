@@ -336,14 +336,17 @@ if(EMSCRIPTEN)
         -sSTACK_SIZE=4194304      # 4MiB
         -sFULL_ES2=1              # Full GLES2 for the WebGL
         -sEXIT_RUNTIME=0          # Keep the runtime running
+        -sSINGLE_FILE=1           # Inline the JS and base64-embed the wasm into the HTML shell
     )
 
     # Asset packaging + HTML shell
+    # --embed-file (rather than --preload-file) stores asset contents inside the wasm/js at link
+    # time instead of a separate .data bundle, which SINGLE_FILE=1 does not fold into the HTML.
     target_link_options(m2 PRIVATE
-        "SHELL:--preload-file ${CMAKE_SOURCE_DIR}/resource/default@resource/default"
-        "SHELL:--preload-file ${CMAKE_SOURCE_DIR}/resource/fonts@resource/fonts"
-        "SHELL:--preload-file ${CMAKE_SOURCE_DIR}/resource/game/${GAME}@resource/game/${GAME}"
-        "SHELL:--shell-file   ${CMAKE_SOURCE_DIR}/platform/emscripten/shell.html"
+        "SHELL:--embed-file ${CMAKE_SOURCE_DIR}/resource/default@resource/default"
+        "SHELL:--embed-file ${CMAKE_SOURCE_DIR}/resource/fonts@resource/fonts"
+        "SHELL:--embed-file ${CMAKE_SOURCE_DIR}/resource/game/${GAME}@resource/game/${GAME}"
+        "SHELL:--shell-file  ${CMAKE_SOURCE_DIR}/platform/emscripten/shell.html"
     )
 
     # Give the .html extension to the output

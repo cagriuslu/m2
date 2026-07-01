@@ -64,8 +64,9 @@
     </style>
   </head>
   <body>
-    <!-- Simple loading indicator; hidden once all run dependencies (incl. the .data asset
-         preload) are satisfied and the wasm runtime is initialized. -->
+    <!-- Simple loading indicator; hidden once all run dependencies (the embedded assets are
+         part of the single file, not a separate download) are satisfied and the wasm runtime
+         is initialized. -->
     <div id="loading">
       <div id="spinner"></div>
       <div id="loading-text">Downloading...</div>
@@ -110,7 +111,7 @@
         monitorRunDependencies: function (remaining) {
           this.totalDependencies = Math.max(this.totalDependencies, remaining);
           if (remaining === 0) {
-            // All downloads (including the preloaded .data asset bundle) are complete.
+            // All run dependencies are satisfied (assets are embedded in the single file, not downloaded separately).
             this.setStatus('Starting...');
           } else {
             this.setStatus(
