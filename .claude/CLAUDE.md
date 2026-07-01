@@ -20,11 +20,15 @@ cd build/<GAME>-DEBUG && ninja m2
 ```
 or, on POSIX
 ```sh
-./build_all.sh
+./mac_all.sh
 ```
 or, on Windows
 ```sh
 ./win_all.sh
+```
+or, for web builds
+```sh
+./web_all.sh
 ```
 to configure & build all games all at once.
 
