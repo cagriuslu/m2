@@ -28,9 +28,9 @@ namespace m2 {
     protected:
         template <typename... Args>
         requires std::is_constructible_v<Actor, Args...> // Make sure the constructor isn't greedy (ie. not acting like move or copy constructor)
-        explicit ActorInterfaceBase(Args&&... args) : _actor(std::forward<Args>(args)...),
+        explicit ActorInterfaceBase(Args&&... args) : _actor(std::forward<Args>(args)...)
 #ifndef __EMSCRIPTEN__
-                _thread(ActorFunc, this)
+                , _thread(ActorFunc, this)
 #endif
         {
             CooperativeActorScheduler::Instance().Register(this);
