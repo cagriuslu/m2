@@ -3,7 +3,7 @@
 - Always be honest. If you don't know something, admit it and ask for clarification.
 - Ask for clarification if my prompt isn't clear enough.
 - Pick verbose names for local variables.
-- If you're asked to make a plan, always use the grill-me skil. When the plan is ready, don't summarize it, and write is as a .md file. The file name should be your recommendation for the git commit message (it can contain space characters).
+- If you're asked to make a plan, always use the grill-me skil. When the plan is ready, don't summarize it, and write is as a .md file under plans/. The file name should be your recommendation for the git commit message (it can contain space characters).
 - If I forget to provide a verification method for code changes, ask me to give you one.
 - Never commit anything in my behalf.
 - If I ask you to use sug-agents to execute some plan(s), don't validate the sub-agents' work as the plan will already have a validation step.
