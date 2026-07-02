@@ -172,7 +172,7 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 
 		// Generate the text label if necessary
 		if (not gfx.textLabelRect) {
-			// Font size is the same as text height in logical pixels
+			// Font size is the text height in physical pixels
 			gfx.textLabelRect = M2_GAME.GetTextLabelCache().Create(textLabel.text(), FontSizeOfTextLabel(textLabel));
 		}
 

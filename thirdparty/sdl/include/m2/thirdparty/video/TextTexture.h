@@ -13,8 +13,10 @@ namespace m2::thirdparty::video {
 	class TextTexture {
 		std::optional<Texture> _texture;
 		std::string _string;
+		float _dpiScale = 1.0f;
 
-		TextTexture(std::optional<Texture> texture, std::string text) : _texture(std::move(texture)), _string(std::move(text)) {}
+		TextTexture(std::optional<Texture> texture, std::string text, float dpiScale = 1.0f) :
+			_texture(std::move(texture)), _string(std::move(text)), _dpiScale(dpiScale) {}
 
 	public:
 		TextTexture() = default;
@@ -23,7 +25,8 @@ namespace m2::thirdparty::video {
 		static expected<TextTexture> CreateWrapped(Renderer& renderer, Font& font, int fontSize, int widthSrcpx, TextHorizontalAlignment horizontalAlignment, const std::string& text, RGBA color = RGBA::White);
 
 		explicit operator bool() const { return _texture.has_value(); }
-		[[nodiscard]] VecF Dimensions() const { return _texture ? _texture->Dimensions() : VecF{}; }
+		/// In logical pixels
+		[[nodiscard]] VecF Dimensions() const { return _texture ? _texture->Dimensions() / _dpiScale : VecF{}; }
 		[[nodiscard]] const std::string& String() const { return _string; }
 
 		void Render(Renderer& renderer, const RectF& dst) const { if (_texture) _texture->Render(renderer, dst); }

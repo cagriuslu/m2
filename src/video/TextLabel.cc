@@ -5,8 +5,9 @@
 
 m2::VecF m2::TextLabelCenterToOriginVectorInSourcePixels(const pb::TextLabel& tl) {
 	const auto centerToOriginM = VecF{-tl.push_dimensions().x(), -tl.push_dimensions().y()};
-	// Text labels are pre-rendered at the same PPM as the game (source PPM is 1), thus we need to multiply only
-	// with the PPM of the game to convert from source pixels to logical pixels.
+	// Despite the name, this returns a vector in logical pixels: it's derived from meters via the game's logical
+	// PPM, independent of the glyph's physical texel count.
+	// TODO fix the name
 	return centerToOriginM * M2_GAME.Dimensions().LogicalPixelsPerMeter();
 }
 
@@ -16,17 +17,20 @@ m2::VecF m2::ScreenOriginToTextLabelCenterVecLpx(const pb::TextLabel& tl, const 
 }
 
 int m2::FontSizeOfTextLabel(const pb::TextLabel& tl) {
-	return I(tl.height_m() * M2_GAME.Dimensions().LogicalPixelsPerMeter());
+	const auto dpiX = M2_GAME.GetRenderer().GetPixelsPerWindowUnit().GetX();
+	return I(tl.height_m() * M2_GAME.Dimensions().LogicalPixelsPerMeter() * dpiX);
 }
 
 void m2::DrawTextLabelBackgroundIn2dWorld(const pb::TextLabel& tl, const RectI& sourceRect, const VecF& position, const bool isDimmed) {
 	const auto backgroundColor = RGBA{tl.background_color()};
 	const auto trueBackgroundColor = isDimmed ? backgroundColor * M2G_PROXY.dimming_factor : backgroundColor;
+	const auto dpiX = M2_GAME.GetRenderer().GetPixelsPerWindowUnit().GetX();
+	const auto srcPxPerMeter = M2_GAME.Dimensions().LogicalPixelsPerMeter() * dpiX;
 	RectF rect{
-		position.GetX() - ToFloat(sourceRect.w) / 2.0f / M2_GAME.Dimensions().LogicalPixelsPerMeter(),
-		position.GetY() - ToFloat(sourceRect.h) / 2.0f / M2_GAME.Dimensions().LogicalPixelsPerMeter(),
-		ToFloat(sourceRect.w) / M2_GAME.Dimensions().LogicalPixelsPerMeter(),
-		ToFloat(sourceRect.h) / M2_GAME.Dimensions().LogicalPixelsPerMeter()
+		position.GetX() - ToFloat(sourceRect.w) / 2.0f / srcPxPerMeter,
+		position.GetY() - ToFloat(sourceRect.h) / 2.0f / srcPxPerMeter,
+		ToFloat(sourceRect.w) / srcPxPerMeter,
+		ToFloat(sourceRect.h) / srcPxPerMeter
 	};
 	// Push the text label
 	rect.x += tl.push_dimensions().x();
@@ -34,20 +38,22 @@ void m2::DrawTextLabelBackgroundIn2dWorld(const pb::TextLabel& tl, const RectI& 
 	Graphic::ColorRect(rect, trueBackgroundColor);
 }
 void m2::DrawTextLabelIn2dWorld(const pb::TextLabel& tl, const RectI& sourceRect, const VecF& position, const float angle, MAYBE bool is_foreground, MAYBE float z) {
+	const auto dpiX = M2_GAME.GetRenderer().GetPixelsPerWindowUnit().GetX();
 	DrawTextureIn2dWorld(
 			M2_GAME.GetTextLabelCache().Texture(),
 			sourceRect,
 			0.0f,
-			1.0f,
+			1.0f / dpiX,
 			TextLabelCenterToOriginVectorInLogicalPixels(tl),
 			ScreenOriginToTextLabelCenterVecLpx(tl, position),
 			angle);
 }
 void m2::DrawTextLabelIn3dWorld(const pb::TextLabel& tl, const RectI& sourceRect, const VecF& position, const float angle, const bool is_foreground, const float z) {
+	const auto dpiX = M2_GAME.GetRenderer().GetPixelsPerWindowUnit().GetX();
 	DrawTextureIn3dWorld(
 			M2_GAME.GetTextLabelCache().Texture(),
 			sourceRect,
-			M2_GAME.Dimensions().LogicalPixelsPerMeter(),
+			M2_GAME.Dimensions().LogicalPixelsPerMeter() * dpiX,
 			TextLabelCenterToOriginVectorInLogicalPixels(tl),
 			0.0f,
 			static_cast<VecF>(M2_GAME.GetTextLabelCache().Texture().Dimensions()),

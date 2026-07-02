@@ -12,7 +12,6 @@ namespace m2 {
 	VecF TextLabelCenterToOriginVectorInSourcePixels(const pb::TextLabel&);
 
 	/// Returns a vector from the text label's center to the text label's origin in logical pixel units.
-	/// For text labels, this value is the same as source pixels, because text labels are rendered 1-1.
 	inline VecF TextLabelCenterToOriginVectorInLogicalPixels(const pb::TextLabel& tl) {
 		return TextLabelCenterToOriginVectorInSourcePixels(tl);
 	}
@@ -23,7 +22,6 @@ namespace m2 {
 	int FontSizeOfTextLabel(const pb::TextLabel&);
 
 	void DrawTextLabelBackgroundIn2dWorld(const pb::TextLabel& tl, const RectI& sourceRect, const VecF& position, bool isDimmed);
-	void DrawTextLabelBackgroundIn3dWorld(const pb::TextLabel& tl, const RectI& sourceRect, const VecF& position, bool isDimmed);
 	void DrawTextLabelIn2dWorld(const pb::TextLabel&, const RectI& sourceRect, const VecF& position, float angle, bool is_foreground = {}, float z = {});
 	void DrawTextLabelIn3dWorld(const pb::TextLabel&, const RectI& sourceRect, const VecF& position, float angle, bool is_foreground = {}, float z = {});
 	void SlowDrawSystemTextIn2dWorld(const char* str, const VecF& position);

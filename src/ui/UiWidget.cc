@@ -136,7 +136,8 @@ void UiWidget::DrawSpriteOrTextLabel(const std::variant<Sprite, pb::TextLabel>& 
 		src_rect = std::get<Sprite>(spriteOrTextLabel).GetRect();
 		texture = &std::get<Sprite>(spriteOrTextLabel).GetTexture();
 	} else {
-		src_rect = M2_GAME.GetTextLabelCache().Create(std::get<pb::TextLabel>(spriteOrTextLabel).text(), M2G_PROXY.default_font_size);
+		const auto dpiX = M2_GAME.GetRenderer().GetPixelsPerWindowUnit().GetX();
+		src_rect = M2_GAME.GetTextLabelCache().Create(std::get<pb::TextLabel>(spriteOrTextLabel).text(), M2G_PROXY.default_font_size * dpiX);
 		texture = &M2_GAME.GetTextLabelCache().Texture();
 	}
 
