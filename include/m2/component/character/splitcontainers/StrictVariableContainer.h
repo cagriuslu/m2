@@ -62,7 +62,7 @@ namespace m2 {
 		}
 
 		template <m2g::pb::VariableType variableType>
-		[[nodiscard]] VariableValue* MutableVariable() const {
+		[[nodiscard]] VariableValue* MutableVariable() {
 			static_assert(CanHoldVariable<variableType>(), "Character can't hold the given VariableType");
 			if constexpr (constexpr auto reservedIndex = ReservedVariableTypeIndex(variableType); reservedIndex != -1) {
 				return &_reservedVariables[reservedIndex];
@@ -72,7 +72,7 @@ namespace m2 {
 				return nullptr;
 			}
 		}
-		[[nodiscard]] VariableValue* MutableVariable(const m2g::pb::VariableType vt) const {
+		[[nodiscard]] VariableValue* MutableVariable(const m2g::pb::VariableType vt) {
 			if (const auto reservedIndex = ReservedVariableTypeIndex(vt); reservedIndex != -1) {
 				return &_reservedVariables[reservedIndex];
 			} else {

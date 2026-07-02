@@ -1,5 +1,4 @@
 #include <m2/containers/DrawList.h>
-#include <m2/Game.h>
 
 bool m2::DrawList::VecFComparator::operator()(const VecF& lhs, const VecF& rhs) const {
 	return lhs.GetY() < rhs.GetY();

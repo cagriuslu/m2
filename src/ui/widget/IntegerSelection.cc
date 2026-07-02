@@ -16,7 +16,7 @@ IntegerSelection::IntegerSelection(UiPanel* parent, const UiWidgetBlueprint* blu
 }
 
 UiAction IntegerSelection::SetValue(const int value) {
-	if (VariantBlueprint().min_value <= value && value < VariantBlueprint().max_value) {
+	if (VariantBlueprint().min_value <= value && value <= VariantBlueprint().max_value) {
 		_value = value;
 		_textTexture = thirdparty::video::TextTextureAndDestination{};
 		if (VariantBlueprint().onAction) {
