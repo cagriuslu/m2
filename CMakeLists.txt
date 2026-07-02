@@ -339,6 +339,9 @@ if(EMSCRIPTEN)
     target_link_options(m2 PRIVATE
         -sASYNCIFY                # Allow emscripten_sleep() to yield the thread to the browser, suspend/resume the stack
         -sALLOW_MEMORY_GROWTH=1   # Let the heap grow
+        -sGROWABLE_ARRAYBUFFERS=0 # Recreate HEAP views on growth instead of a resizable ArrayBuffer;
+                                  # Firefox's TextDecoder.decode() rejects views over resizable buffers,
+                                  # which otherwise crashes UTF8ToString at boot.
         -sINITIAL_MEMORY=67108864 # 64MiB
         -sSTACK_SIZE=4194304      # 4MiB
         -sFULL_ES2=1              # Full GLES2 for the WebGL

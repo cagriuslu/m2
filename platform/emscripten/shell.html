@@ -49,6 +49,15 @@
       #loading.hidden {
         display: none;
       }
+      /* Error state: stop the spinner and show the failure message in red. */
+      #loading.error #spinner {
+        display: none;
+      }
+      #loading.error #loading-text {
+        color: #f66;
+        white-space: pre-wrap; /* honor the newlines in the error text */
+        max-width: 80vw;
+      }
       #spinner {
         width: 48px;
         height: 48px;
@@ -87,6 +96,21 @@
         }
       }
 
+      // Set once a fatal startup/runtime error has been surfaced, so later setStatus() calls
+      // (e.g. the empty status emscripten schedules during run()) can't overwrite the message.
+      var hasFatalError = false;
+      function showError(detail) {
+        hasFatalError = true;
+        if (loadingElement) {
+          loadingElement.classList.remove('hidden'); // re-reveal if onRuntimeInitialized already hid it
+          loadingElement.classList.add('error');
+        }
+        if (loadingTextElement) {
+          loadingTextElement.textContent =
+            'Failed to start.\n\n' + detail + '\n\nSee the browser console for more details.';
+        }
+      }
+
       // As a default initial behavior, alert when the WebGL context is lost. The Asyncify render
       // loop cannot recover from this without a page reload.
       canvasElement.addEventListener('webglcontextlost', function (event) {
@@ -103,9 +127,16 @@
           return console.error.apply(console, arguments);
         },
         setStatus: function (text) {
+          if (hasFatalError) {
+            return; // don't clobber an already-surfaced error message
+          }
           if (loadingTextElement) {
             loadingTextElement.textContent = text || 'Loading...';
           }
+        },
+        // Emscripten calls onAbort with the reason before throwing the fatal RuntimeError.
+        onAbort: function (what) {
+          showError('Aborted(' + what + ')');
         },
         totalDependencies: 0,
         monitorRunDependencies: function (remaining) {
@@ -126,8 +157,18 @@
       };
 
       Module.setStatus('Downloading...');
-      window.onerror = function () {
-        Module.setStatus('Exception thrown, see JavaScript console');
+
+      // The boot chain is promise-based (`createWasm().then(run)` with no catch), so a failure
+      // during wasm instantiation or initRuntime() surfaces as an *unhandled promise rejection* —
+      // which window.onerror does NOT catch. Without the listener below, such a failure leaves the
+      // spinner running forever with the error only in the console. Handle both channels.
+      window.addEventListener('unhandledrejection', function (event) {
+        var reason = event ? event.reason : undefined;
+        var detail = reason == null ? 'unknown reason' : (reason.message || String(reason));
+        showError(detail);
+      });
+      window.onerror = function (message, source, lineno, colno, error) {
+        showError((error && error.message) || message || 'Uncaught error');
       };
     </script>
     {{{ SCRIPT }}}
