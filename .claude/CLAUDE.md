@@ -43,6 +43,13 @@ or, for web builds
 ```
 to configure & build all games all at once.
 
+Web builds should only be built from macOS.
+
+## Visual Testing
+
+With the Claude on Chrome extension installed, games can be tested visually over that connection —
+drive the running game in the browser to observe and verify behavior.
+
 ## Installing Build Dependencies
 
 On a fresh Ubuntu/Debian Linux host, none of the following are preinstalled and must be installed before `posix_all.sh`/`web_all.sh` can succeed:
