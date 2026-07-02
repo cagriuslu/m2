@@ -33,21 +33,32 @@ m2::GameDimensions::GameDimensions(const thirdparty::video::Window& window, cons
 
 	_topEnvelope = _bottomEnvelope = _leftEnvelope = _rightEnvelope = {};
 
+	// The window is not guaranteed to be exactly 16:9. On desktop it is created at a 16:9 size, but on web
+	// builds the window matches the browser viewport, which can have any aspect ratio. Determine the largest
+	// 16:9 game-and-HUD region that fits inside the window, so that _gameAndHudM is seeded with a correct
+	// 16:9 aspect ratio. All subsequent scale/envelope math (OnWindowResize) relies on this invariant.
 	const auto windowDimensions = WindowDimensions();
-	_gameAndHud = RectI{0, 0, windowDimensions.x, windowDimensions.y};
+	const int idealWidthForWindowHeight = windowDimensions.y * GAME_AND_HUD_ASPECT_RATIO_MUL / GAME_AND_HUD_ASPECT_RATIO_DIV;
+	int gameAndHudWidth, gameAndHudHeight;
+	if (windowDimensions.x < idealWidthForWindowHeight) {
+		// Window is taller than 16:9: use the full width and reduce the height.
+		gameAndHudWidth = windowDimensions.x - windowDimensions.x % GAME_AND_HUD_ASPECT_RATIO_MUL;
+		gameAndHudHeight = gameAndHudWidth * GAME_AND_HUD_ASPECT_RATIO_DIV / GAME_AND_HUD_ASPECT_RATIO_MUL;
+	} else {
+		// Window is exactly or wider than 16:9: use the full height and reduce the width.
+		gameAndHudHeight = windowDimensions.y - windowDimensions.y % GAME_AND_HUD_ASPECT_RATIO_DIV;
+		gameAndHudWidth = gameAndHudHeight * GAME_AND_HUD_ASPECT_RATIO_MUL / GAME_AND_HUD_ASPECT_RATIO_DIV;
+	}
 
-	const int gameHeight = _gameAndHud.h;
+	const int gameHeight = gameAndHudHeight;
 	const int gameWidth = gameHeight * _gameAspectRatioMul / _gameAspectRatioDiv;
-	const int hudHeight = gameHeight;
-	const int hudWidth = hudHeight * HudAspectRatioMul(_gameAspectRatioMul, _gameAspectRatioDiv)
-			/ HudAspectRatioDiv(_gameAspectRatioDiv);
 
-	_game = {hudWidth, 0, gameWidth, gameHeight};
-	_leftHud = {0, 0, hudWidth, hudHeight};
-	_rightHud = {windowDimensions.x - hudWidth, 0, hudWidth, hudHeight};
+	_gameAndHudM = {ToFloat(gameAndHudWidth) / ToFloat(_gamePpm), ToFloat(gameAndHudHeight) / ToFloat(_gamePpm)};
+	_gameM = {ToFloat(gameWidth) / ToFloat(_gamePpm), ToFloat(gameHeight) / ToFloat(_gamePpm)};
 
-	_gameAndHudM = {ToFloat(_gameAndHud.w) / ToFloat(_gamePpm), ToFloat(_gameAndHud.h) / ToFloat(_gamePpm)};
-	_gameM = {ToFloat(_game.w) / ToFloat(_gamePpm), ToFloat(_game.h) / ToFloat(_gamePpm)};
+	// Compute the concrete pixel rectangles (envelopes, game-and-HUD, game, HUDs) from the seeded
+	// _gameAndHudM. This also correctly letterboxes a non-16:9 window with top/bottom or left/right envelopes.
+	OnWindowResize();
 }
 
 m2::VecI m2::GameDimensions::WindowDimensions() const {
