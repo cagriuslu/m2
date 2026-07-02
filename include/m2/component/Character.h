@@ -1,13 +1,14 @@
 #pragma once
 #include "../Component.h"
 #include "../Card.h"
-#include <m2/containers/AssociativeList.h>
 #include <m2/math/VariableValue.h>
 #include <m2/Proxy.h>
 #include <m2/reflect/Composite.h>
 #include <m2/reflect/Primitive.h>
 #include <Lockstep.pb.h>
+#include <algorithm>
 #include <functional>
+#include <optional>
 
 namespace m2 {
 	namespace detail {

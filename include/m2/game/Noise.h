@@ -1,15 +1,11 @@
 #pragma once
 #include <m2/common/math/RectE.h>
-#include "m2/common/math/VecF.h"
 #include <m2/common/math/VecE.h>
 #include <m2/common/rng/Distribution.h>
 #include <m2/common/rng/Rng.h>
 #include <m2/common/math/VecI.h>
 
 namespace m2 {
-	// TODO this implementation has a problem
-	float perlin(const VecF& point, float depth); // [0, 1]
-
 	/// Following functions receive their parameters as a struct because these functions are usually called with
 	/// randomly generated numbers. This helps deterministic games as the order of evaluation of struct members is well
 	/// defined (thus the random numbers will be generated in the same order across platforms) whereas the order of

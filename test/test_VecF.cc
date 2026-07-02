@@ -99,8 +99,8 @@ TEST(VecF, basic) {
 	EXPECT_FLOAT_EQ(v27.Lerp(v28, 1.0f / 3.0f).GetX(), 1.0f / 3.0f);
 
 	auto v29 = VecF::Nan();
-	EXPECT_TRUE(isnan(v29.GetX()));
-	EXPECT_TRUE(isnan(v29.GetY()));
+	EXPECT_TRUE(std::isnan(v29.GetX()));
+	EXPECT_TRUE(std::isnan(v29.GetY()));
 
 	auto v30 = VecF::CreateUnitVectorWithAngle(PI / 4.0f);
 	EXPECT_FLOAT_EQ(v30.GetLength(), 1.0f);
