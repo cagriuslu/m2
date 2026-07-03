@@ -12,6 +12,18 @@ namespace {
 			default:                         return 0;
 		}
 	}
+
+	// Convert SDL's normalized [0,1] finger position to logical pixels using the finger event's window.
+	// Returns std::nullopt if the window can't be resolved (should not happen for a single-window app;
+	// guarded so we never emit a bogus (0,0) position).
+	std::optional<m2::VecF> FingerPositionToLpx(const SDL_TouchFingerEvent& touchFingerEvent) {
+		SDL_Window* const window = SDL_GetWindowFromID(touchFingerEvent.windowID);
+		if (not window) { return std::nullopt; }
+		int windowWidthLpx = 0, windowHeightLpx = 0;
+		SDL_GetWindowSize(window, &windowWidthLpx, &windowHeightLpx);
+		return m2::VecF{touchFingerEvent.x * static_cast<float>(windowWidthLpx),
+				touchFingerEvent.y * static_cast<float>(windowHeightLpx)};
+	}
 }
 
 std::optional<m2::MouseButton> m2::thirdparty::event::SystemButtonToMouseButton(const int sdlButton) {
@@ -62,6 +74,26 @@ std::optional<Event> m2::thirdparty::event::PollEvent() {
 				}
 				return TextInputEvent{std::move(text)};
 			}
+			case SDL_EVENT_FINGER_DOWN:
+				if (const auto positionLpx = FingerPositionToLpx(sdlEvent.tfinger)) {
+					return FingerDownEvent{static_cast<FingerId>(sdlEvent.tfinger.fingerID), *positionLpx};
+				}
+				break;
+			case SDL_EVENT_FINGER_MOTION:
+				if (const auto positionLpx = FingerPositionToLpx(sdlEvent.tfinger)) {
+					return FingerMotionEvent{static_cast<FingerId>(sdlEvent.tfinger.fingerID), *positionLpx};
+				}
+				break;
+			case SDL_EVENT_FINGER_UP:
+				if (const auto positionLpx = FingerPositionToLpx(sdlEvent.tfinger)) {
+					return FingerUpEvent{static_cast<FingerId>(sdlEvent.tfinger.fingerID), *positionLpx};
+				}
+				break;
+			case SDL_EVENT_FINGER_CANCELED:
+				if (const auto positionLpx = FingerPositionToLpx(sdlEvent.tfinger)) {
+					return FingerCancelEvent{static_cast<FingerId>(sdlEvent.tfinger.fingerID), *positionLpx};
+				}
+				break;
 			default:
 				break;
 		}

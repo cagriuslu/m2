@@ -21,6 +21,8 @@ m2::thirdparty::video::Ticks m2::thirdparty::video::GetTicksSince(Ticks lastTick
 }
 
 void m2::thirdparty::video::InitAll() {
+	// Touch must be a separate input channel, not synthesized mouse events.
+	SDL_SetHint(SDL_HINT_TOUCH_MOUSE_EVENTS, "0");
 	if (not SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS)) {
 		throw M2_ERROR("SDL_Init error: " + std::string{SDL_GetError()});
 	}

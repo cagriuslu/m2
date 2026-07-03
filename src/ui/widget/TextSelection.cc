@@ -111,6 +111,13 @@ UiAction TextSelection::OnEvent(Events& events) {
 		auto buttons_rect = Rect().TrimLeft(Rect().w - Rect().h / 2);
 		auto inc_button_rect = buttons_rect.TrimBottom(buttons_rect.h / 2);
 		auto dec_button_rect = buttons_rect.TrimTop(buttons_rect.h / 2);
+		// A finger press (touch down) on a +/- button activates it immediately
+		if (not events.PopFingerPresses(inc_button_rect).empty()) {
+			return IncrementSelection();
+		}
+		if (not events.PopFingerPresses(dec_button_rect).empty()) {
+			return DecrementSelection();
+		}
 		if (!_plusDepressed && events.PopMouseButtonPress(MouseButton::PRIMARY, inc_button_rect)) {
 			_plusDepressed = true;
 			_minusDepressed = false;
@@ -151,12 +158,12 @@ UiAction TextSelection::OnEvent(Events& events) {
 		auto up_arrow_rect = scroll_bar_rect.GetRow(I(VariantBlueprint().line_count), 0);
 		auto down_button_rect = scroll_bar_rect.GetRow(I(VariantBlueprint().line_count), I(VariantBlueprint().line_count) - 1);
 
-		// Check if scroll buttons are pressed
-		if (events.PopMouseButtonPress(MouseButton::PRIMARY, up_arrow_rect)) {
+		// Check if scroll buttons are pressed (mouse or touch)
+		if (events.PopMouseButtonPress(MouseButton::PRIMARY, up_arrow_rect) || not events.PopFingerPresses(up_arrow_rect).empty()) {
 			if (0 < _topIndex) {
 				_topIndex--;
 			}
-		} else if (events.PopMouseButtonPress(MouseButton::PRIMARY, down_button_rect)) {
+		} else if (events.PopMouseButtonPress(MouseButton::PRIMARY, down_button_rect) || not events.PopFingerPresses(down_button_rect).empty()) {
 			if (_topIndex + VariantBlueprint().line_count < I(_options.size())) {
 				_topIndex++;
 			}
@@ -180,7 +187,7 @@ UiAction TextSelection::OnEvent(Events& events) {
 			// If the entry is in window
 			if (_topIndex + i < I(_options.size())) {
 				if (auto text_rect = Rect().GetRow(VariantBlueprint().line_count, i).TrimRight(scroll_bar_rect.w);
-						events.PopMouseButtonPress(MouseButton::PRIMARY, text_rect)) {
+						events.PopMouseButtonPress(MouseButton::PRIMARY, text_rect) || not events.PopFingerPresses(text_rect).empty()) {
 					if (int pressed_item = _topIndex + i; _options[pressed_item].is_selected) {
 						// If already selected
 						_options[pressed_item].is_selected = false; // Deselect

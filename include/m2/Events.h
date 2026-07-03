@@ -4,10 +4,12 @@
 #include <m2/common/math/VecF.h>
 #include <m2/protobuf/Detail.h>
 #include <m2/common/Constants.h>
+#include <m2/thirdparty/event/Event.h>
 #include <m2g_KeyType.pb.h>
 #include <array>
 #include <optional>
 #include <sstream>
+#include <vector>
 
 namespace m2 {
 	/// Stateful event manager
@@ -32,6 +34,14 @@ namespace m2 {
 		int32_t _verticalScrollCount{};
 		int32_t _horizontalScrollCount{};
 
+		struct Finger {
+			thirdparty::event::FingerId id;
+			VecF positionLpx;
+		};
+		std::vector<Finger> _fingerPresses;
+		std::vector<Finger> _fingerReleases;
+		std::vector<Finger> _fingerCancels;
+
 		std::stringstream _textInput;
 
 		// Persistent states
@@ -42,6 +52,8 @@ namespace m2 {
 		VecF _mousePositionLpx;
 		/// Mouse position in world coordinates. Non-zero only if there's an active level.
 		VecF _mousePositionM;
+		/// Currently-down fingers and their latest Lpx positions
+		std::vector<Finger> _activeFingers;
 
 	public:
 		Events() = default;
@@ -80,6 +92,18 @@ namespace m2 {
 		void ClearMouseWheelScrolls(const RectF& rectLpx);
 
 		std::optional<std::string> PopTextInput();
+
+		const std::vector<Finger>& ActiveFingers() const { return _activeFingers; }
+		std::vector<Finger> PopFingerPresses();
+		std::vector<Finger> PopFingerReleases();
+		std::vector<Finger> PopFingerCancels();
+		std::vector<Finger> PeekFingerPresses(const RectF& rectLpx) const;
+		std::vector<Finger> PopFingerPresses(const RectF& rectLpx);
+		std::vector<Finger> PeekFingerReleases(const RectF& rectLpx) const;
+		std::vector<Finger> PopFingerReleases(const RectF& rectLpx);
+		std::vector<Finger> PeekFingerCancels(const RectF& rectLpx) const;
+		std::vector<Finger> PopFingerCancels(const RectF& rectLpx);
+		void ClearFingerActions(const RectF& rectLpx);
 
 		// Persistent states
 

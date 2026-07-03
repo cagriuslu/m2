@@ -121,6 +121,29 @@ bool Events::Gather() {
 				}
 				return false;
 			},
+			[&](const event::FingerDownEvent& fingerDownEvent) {
+				_activeFingers.push_back(Finger{fingerDownEvent.finger, fingerDownEvent.positionLpx});
+				_fingerPresses.push_back(Finger{fingerDownEvent.finger, fingerDownEvent.positionLpx});
+				return true;
+			},
+			[&](const event::FingerMotionEvent& fingerMotionEvent) {
+				if (const auto activeFingerIt = std::ranges::find_if(_activeFingers,
+						[&](const Finger& activeFinger) { return activeFinger.id == fingerMotionEvent.finger; });
+						activeFingerIt != _activeFingers.end()) {
+					activeFingerIt->positionLpx = fingerMotionEvent.positionLpx;
+				}
+				return false;
+			},
+			[&](const event::FingerUpEvent& fingerUpEvent) {
+				std::erase_if(_activeFingers, [&](const Finger& activeFinger) { return activeFinger.id == fingerUpEvent.finger; });
+				_fingerReleases.push_back(Finger{fingerUpEvent.finger, fingerUpEvent.positionLpx});
+				return true;
+			},
+			[&](const event::FingerCancelEvent& fingerCancelEvent) {
+				std::erase_if(_activeFingers, [&](const Finger& activeFinger) { return activeFinger.id == fingerCancelEvent.finger; });
+				_fingerCancels.push_back(Finger{fingerCancelEvent.finger, fingerCancelEvent.positionLpx});
+				return true;
+			},
 		}, *polled);
 
 		if (postpone) { break; }
@@ -144,8 +167,10 @@ bool Events::Gather() {
 
 	return _quit || _windowResized || keyPressed || keyReleased || mouseMoved || mouseButtonPressed
 			|| mouseButtonReleased || _verticalScrollCount || _horizontalScrollCount
-			|| not _textInput.str().empty() || std::ranges::any_of(_downKeys, [](auto x) { return x; }) ||
-		    std::ranges::any_of(_downButtons, [](auto x) { return x; });
+			|| not _textInput.str().empty() || std::ranges::any_of(_downKeys, [](auto x) { return x; })
+			|| std::ranges::any_of(_downButtons, [](auto x) { return x; })
+			|| not _fingerPresses.empty() || not _fingerReleases.empty() || not _fingerCancels.empty()
+			|| not _activeFingers.empty();
 }
 
 bool Events::PopQuit() {
@@ -275,6 +300,70 @@ std::optional<std::string> Events::PopTextInput() {
 		return str;
 	}
 	return {};
+}
+
+std::vector<Events::Finger> Events::PopFingerPresses() {
+	auto poppedPresses = std::move(_fingerPresses);
+	_fingerPresses.clear();
+	return poppedPresses;
+}
+std::vector<Events::Finger> Events::PopFingerReleases() {
+	auto poppedReleases = std::move(_fingerReleases);
+	_fingerReleases.clear();
+	return poppedReleases;
+}
+std::vector<Events::Finger> Events::PopFingerCancels() {
+	auto poppedCancels = std::move(_fingerCancels);
+	_fingerCancels.clear();
+	return poppedCancels;
+}
+std::vector<Events::Finger> Events::PeekFingerPresses(const RectF& rectLpx) const {
+	std::vector<Finger> pressesInRect;
+	for (const auto& finger : _fingerPresses) {
+		if (rectLpx.DoesContain(finger.positionLpx)) {
+			pressesInRect.push_back(finger);
+		}
+	}
+	return pressesInRect;
+}
+std::vector<Events::Finger> Events::PopFingerPresses(const RectF& rectLpx) {
+	auto poppedPresses = PeekFingerPresses(rectLpx);
+	std::erase_if(_fingerPresses, [&](const Finger& finger) { return rectLpx.DoesContain(finger.positionLpx); });
+	return poppedPresses;
+}
+std::vector<Events::Finger> Events::PeekFingerReleases(const RectF& rectLpx) const {
+	std::vector<Finger> releasesInRect;
+	for (const auto& finger : _fingerReleases) {
+		if (rectLpx.DoesContain(finger.positionLpx)) {
+			releasesInRect.push_back(finger);
+		}
+	}
+	return releasesInRect;
+}
+std::vector<Events::Finger> Events::PopFingerReleases(const RectF& rectLpx) {
+	auto poppedReleases = PeekFingerReleases(rectLpx);
+	std::erase_if(_fingerReleases, [&](const Finger& finger) { return rectLpx.DoesContain(finger.positionLpx); });
+	return poppedReleases;
+}
+std::vector<Events::Finger> Events::PeekFingerCancels(const RectF& rectLpx) const {
+	std::vector<Finger> cancelsInRect;
+	for (const auto& finger : _fingerCancels) {
+		if (rectLpx.DoesContain(finger.positionLpx)) {
+			cancelsInRect.push_back(finger);
+		}
+	}
+	return cancelsInRect;
+}
+std::vector<Events::Finger> Events::PopFingerCancels(const RectF& rectLpx) {
+	auto poppedCancels = PeekFingerCancels(rectLpx);
+	std::erase_if(_fingerCancels, [&](const Finger& finger) { return rectLpx.DoesContain(finger.positionLpx); });
+	return poppedCancels;
+}
+void Events::ClearFingerActions(const RectF& rectLpx) {
+	const auto isInRect = [&](const Finger& finger) { return rectLpx.DoesContain(finger.positionLpx); };
+	std::erase_if(_fingerPresses, isInRect);
+	std::erase_if(_fingerReleases, isInRect);
+	std::erase_if(_fingerCancels, isInRect);
 }
 
 void Events::ClearMouseButtonDown(const RectF& rectLpx) {

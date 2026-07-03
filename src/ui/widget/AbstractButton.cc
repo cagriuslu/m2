@@ -53,6 +53,10 @@ UiAction AbstractButton::OnEvent(Events &events) {
 	auto run_action = false;
 	if (keyboardShortcut && not m2::thirdparty::event::IsTextInputActive(M2_GAME.GetWindow().RawHandle()) && events.PopKeyPress(keyboardShortcut)) {
 		run_action = true;
+	} else if (not events.PopFingerPresses(Rect()).empty()) {
+		// A finger press (touch down) inside the button activates it immediately. Touch is a separate
+		// input channel from the mouse, so it's handled independently of the depressed/mouse-release flow.
+		run_action = true;
 	} else {
 		if (not depressed) {
 			// Check if mouse pressed inside the rect
