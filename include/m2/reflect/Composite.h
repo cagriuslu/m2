@@ -124,10 +124,10 @@ namespace m2::reflect {
 			using FieldType = std::variant_alternative_t<index, StorageVariant>;
 			if constexpr (UnwrapsToRawType<FieldType>) {
 				if (_storage.index() == index) { return &std::get<index>(_storage).Get(); }
-				return nullptr;
+				return static_cast<decltype(&std::get<index>(_storage).Get())>(nullptr);
 			} else {
 				if (_storage.index() == index) { return &std::get<index>(_storage); }
-				return nullptr;
+				return static_cast<decltype(&std::get<index>(_storage))>(nullptr);
 			}
 		}
 		template <auto FieldId> requires IsScopedEnum<decltype(FieldId)>
