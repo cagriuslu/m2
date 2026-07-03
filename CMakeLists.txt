@@ -377,7 +377,13 @@ if(GTest_FOUND)
             "src/VmExecute.cc"
             "src/protobuf/Detail.cc"
             "src/thirdparty/compression/Inflate.cc"
+            "src/thirdparty/compression/Deflate.cc"
             "src/thirdparty/protobuf/Json.cc"
+            "src/ui/Layout.cc"
+            "src/audio/Song.cc"
+            "src/audio/synthesizer/Detail.cc"
+            "src/reflect/utils/Proto.cc"
+            "src/reflect/utils/Hash.cc"
     )
     add_executable(test ${TEST_SOURCES} ${ORM_SOURCES})
     target_include_directories(test PUBLIC include thirdparty/sdl/include)
