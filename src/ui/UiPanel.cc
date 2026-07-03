@@ -221,10 +221,14 @@ RectF UiPanel::Rect() const {
 			relation.w * ToFloat(gameAndHud.w),
 			relation.h * ToFloat(gameAndHud.h)};
 	} else {
-		const auto& [centeredAt, dimensionsRelativeToGameAndHud] = std::get<RelativeToWorld>(_panelPosition);
-		const auto centerOfPanelLpx = ScreenOriginToPositionVecLpx(centeredAt);
-		return RectF::CreateCenteredAround(centerOfPanelLpx, dimensionsRelativeToGameAndHud.GetX() * ToFloat(gameAndHud.w),
-			dimensionsRelativeToGameAndHud.GetY() * ToFloat(gameAndHud.h));
+		const auto& rtw = std::get<RelativeToWorld>(_panelPosition);
+		const auto anchorScreenLpx = ScreenOriginToPositionVecLpx(rtw.worldAnchor);
+		const float w = rtw.dimensionsRelativeToGameAndHud.GetX() * ToFloat(gameAndHud.w);
+		const float h = rtw.dimensionsRelativeToGameAndHud.GetY() * ToFloat(gameAndHud.h);
+		return RectF{
+			anchorScreenLpx.GetX() - rtw.panelAnchor.GetX() * w,
+			anchorScreenLpx.GetY() - rtw.panelAnchor.GetY() * h,
+			w, h};
 	}
 }
 
@@ -263,9 +267,9 @@ void UiPanel::ClearTimeout() {
 
 void UiPanel::UpdatePosition() {
 	if (std::holds_alternative<RelativeToWorld>(_panelPosition)) {
-		const auto& centeredAt = std::get<RelativeToWorld>(_panelPosition).centeredAt;
-		const auto centerOfPanelLpx = ScreenOriginToPositionVecLpx(centeredAt);
-		_lastScreenPositionOfCenterIfRelativeToWorldLpx = centerOfPanelLpx;
+		const auto& worldAnchor = std::get<RelativeToWorld>(_panelPosition).worldAnchor;
+		const auto worldAnchorScreenLpx = ScreenOriginToPositionVecLpx(worldAnchor);
+		_lastScreenPositionOfWorldAnchorLpx = worldAnchorScreenLpx;
 	}
 
 
@@ -290,10 +294,10 @@ UiAction UiPanel::HandleEvents(Events& events, bool IsPanning) {
 		return MakeReturnAction();
 	}
 
-	if (std::holds_alternative<RelativeToWorld>(_panelPosition) && _lastScreenPositionOfCenterIfRelativeToWorldLpx) {
-		const auto& centeredAt = std::get<RelativeToWorld>(_panelPosition).centeredAt;
-		const auto centerOfPanelLpx = ScreenOriginToPositionVecLpx(centeredAt);
-		if (centerOfPanelLpx != *_lastScreenPositionOfCenterIfRelativeToWorldLpx) {
+	if (std::holds_alternative<RelativeToWorld>(_panelPosition) && _lastScreenPositionOfWorldAnchorLpx) {
+		const auto& worldAnchor = std::get<RelativeToWorld>(_panelPosition).worldAnchor;
+		const auto worldAnchorScreenLpx = ScreenOriginToPositionVecLpx(worldAnchor);
+		if (worldAnchorScreenLpx != *_lastScreenPositionOfWorldAnchorLpx) {
 			UpdatePosition();
 		}
 	}

@@ -14,8 +14,9 @@ namespace m2 {
 			static RelativeToWindow CreateAnchoredToPosition(const RectF& positionWithinToGameAndHud);
 		};
 		struct RelativeToWorld {
-			VecF centeredAt;
+			VecF worldAnchor; /// World point the panel anchor latches onto
 			VecF dimensionsRelativeToGameAndHud;
+			VecF panelAnchor = {0.5f, 0.5f};  // Point on the panel sits at worldAnchor. {0,0}: Top left {1,1}: Bottom right
 		};
 		using PanelPosition = std::variant<Fullscreen, RelativeToWindow, RelativeToWorld>;
 
@@ -32,7 +33,7 @@ namespace m2 {
 		bool _prev_text_input_state{};
 		std::unique_ptr<UiPanelBlueprint> _owned_blueprint; // `blueprint` will point here if this object exists
 		PanelPosition _panelPosition;
-		std::optional<VecF> _lastScreenPositionOfCenterIfRelativeToWorldLpx;
+		std::optional<VecF> _lastScreenPositionOfWorldAnchorLpx;
 		std::optional<thirdparty::video::Texture> _background_texture; // TODO if the screen is resized, background looks bad
 		std::optional<float> _timeout_s;
 
