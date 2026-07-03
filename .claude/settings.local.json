@@ -1,13 +1,13 @@
 {
+  "env": {
+    "CLAUDE_AFK_TIMEOUT_MS": "2147483647",
+    "CLAUDE_AFK_COUNTDOWN_MS": "2147483647"
+  },
   "permissions": {
     "allow": [
       "Bash(./posix_all.sh)",
       "Bash(./web_all.sh)"
     ]
-  },
-  "env": {
-    "CLAUDE_AFK_TIMEOUT_MS": "2147483647",
-    "CLAUDE_AFK_COUNTDOWN_MS": "2147483647"
   },
   "model": "opus",
   "effortLevel": "xhigh",
