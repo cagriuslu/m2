@@ -123,3 +123,30 @@ bool m2::thirdparty::event::IsMouseButtonDown(const m2::MouseButton button) {
 	const SDL_MouseButtonFlags mouseStateBitmask = SDL_GetMouseState(nullptr, nullptr);
 	return (mouseStateBitmask & SDL_BUTTON_MASK(MouseButtonToSystemButton(button))) != 0;
 }
+
+std::vector<std::pair<FingerId, m2::VecF>> m2::thirdparty::event::GetActiveFingers(void* const sdlWindow) {
+	std::vector<std::pair<FingerId, m2::VecF>> activeFingers;
+	auto* const window = static_cast<SDL_Window*>(sdlWindow);
+	if (not window) { return activeFingers; }
+	// Finger positions are normalized [0,1]; scale to logical pixels using the window size, matching
+	// FingerPositionToLpx above (used by the event-based path).
+	int windowWidthLpx = 0, windowHeightLpx = 0;
+	SDL_GetWindowSize(window, &windowWidthLpx, &windowHeightLpx);
+	int deviceCount = 0;
+	SDL_TouchID* const touchDevices = SDL_GetTouchDevices(&deviceCount);
+	if (not touchDevices) { return activeFingers; }
+	for (int deviceIndex = 0; deviceIndex < deviceCount; ++deviceIndex) {
+		int fingerCount = 0;
+		SDL_Finger** const fingers = SDL_GetTouchFingers(touchDevices[deviceIndex], &fingerCount);
+		if (not fingers) { continue; }
+		for (int fingerIndex = 0; fingerIndex < fingerCount; ++fingerIndex) {
+			const SDL_Finger* const finger = fingers[fingerIndex];
+			activeFingers.emplace_back(static_cast<FingerId>(finger->id),
+					m2::VecF{finger->x * static_cast<float>(windowWidthLpx),
+							finger->y * static_cast<float>(windowHeightLpx)});
+		}
+		SDL_free(fingers);
+	}
+	SDL_free(touchDevices);
+	return activeFingers;
+}

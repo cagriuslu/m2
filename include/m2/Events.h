@@ -52,7 +52,7 @@ namespace m2 {
 		VecF _mousePositionLpx;
 		/// Mouse position in world coordinates. Non-zero only if there's an active level.
 		VecF _mousePositionM;
-		/// Currently-down fingers and their latest Lpx positions
+		/// Currently-touching fingers and their latest Lpx positions
 		std::vector<Finger> _activeFingers;
 
 	public:
@@ -99,6 +99,7 @@ namespace m2 {
 		std::vector<Finger> PopFingerCancels();
 		std::vector<Finger> PeekFingerPresses(const RectF& rectLpx) const;
 		std::vector<Finger> PopFingerPresses(const RectF& rectLpx);
+		std::vector<Finger> PopFingerPressesOutside(const RectF& rectLpx);
 		std::vector<Finger> PeekFingerReleases(const RectF& rectLpx) const;
 		std::vector<Finger> PopFingerReleases(const RectF& rectLpx);
 		std::vector<Finger> PeekFingerCancels(const RectF& rectLpx) const;

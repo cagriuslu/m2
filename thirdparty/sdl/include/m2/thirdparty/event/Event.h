@@ -5,7 +5,9 @@
 #include <cstdint>
 #include <optional>
 #include <string>
+#include <utility>
 #include <variant>
+#include <vector>
 
 namespace m2::thirdparty::event {
 	using Scancode = int32_t;
@@ -43,4 +45,5 @@ namespace m2::thirdparty::event {
 	std::optional<MouseButton> SystemButtonToMouseButton(int sdlButton);
 	VecF GetMousePosition();
 	bool IsMouseButtonDown(MouseButton button);
+	std::vector<std::pair<FingerId, VecF>> GetActiveFingers(void* sdlWindow);
 }

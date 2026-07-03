@@ -122,25 +122,17 @@ bool Events::Gather() {
 				return false;
 			},
 			[&](const event::FingerDownEvent& fingerDownEvent) {
-				_activeFingers.push_back(Finger{fingerDownEvent.finger, fingerDownEvent.positionLpx});
 				_fingerPresses.push_back(Finger{fingerDownEvent.finger, fingerDownEvent.positionLpx});
 				return true;
 			},
-			[&](const event::FingerMotionEvent& fingerMotionEvent) {
-				if (const auto activeFingerIt = std::ranges::find_if(_activeFingers,
-						[&](const Finger& activeFinger) { return activeFinger.id == fingerMotionEvent.finger; });
-						activeFingerIt != _activeFingers.end()) {
-					activeFingerIt->positionLpx = fingerMotionEvent.positionLpx;
-				}
+			[&](const event::FingerMotionEvent&) {
 				return false;
 			},
 			[&](const event::FingerUpEvent& fingerUpEvent) {
-				std::erase_if(_activeFingers, [&](const Finger& activeFinger) { return activeFinger.id == fingerUpEvent.finger; });
 				_fingerReleases.push_back(Finger{fingerUpEvent.finger, fingerUpEvent.positionLpx});
 				return true;
 			},
 			[&](const event::FingerCancelEvent& fingerCancelEvent) {
-				std::erase_if(_activeFingers, [&](const Finger& activeFinger) { return activeFinger.id == fingerCancelEvent.finger; });
 				_fingerCancels.push_back(Finger{fingerCancelEvent.finger, fingerCancelEvent.positionLpx});
 				return true;
 			},
@@ -164,6 +156,10 @@ bool Events::Gather() {
 	_downButtons[U(MouseButton::PRIMARY)]   = event::IsMouseButtonDown(MouseButton::PRIMARY);
 	_downButtons[U(MouseButton::SECONDARY)] = event::IsMouseButtonDown(MouseButton::SECONDARY);
 	_downButtons[U(MouseButton::MIDDLE)]    = event::IsMouseButtonDown(MouseButton::MIDDLE);
+	_activeFingers.clear();
+	for (const auto& [fingerId, positionLpx] : event::GetActiveFingers(M2_GAME.GetWindow().RawHandle())) {
+		_activeFingers.push_back(Finger{fingerId, positionLpx});
+	}
 
 	return _quit || _windowResized || keyPressed || keyReleased || mouseMoved || mouseButtonPressed
 			|| mouseButtonReleased || _verticalScrollCount || _horizontalScrollCount
@@ -329,6 +325,16 @@ std::vector<Events::Finger> Events::PeekFingerPresses(const RectF& rectLpx) cons
 std::vector<Events::Finger> Events::PopFingerPresses(const RectF& rectLpx) {
 	auto poppedPresses = PeekFingerPresses(rectLpx);
 	std::erase_if(_fingerPresses, [&](const Finger& finger) { return rectLpx.DoesContain(finger.positionLpx); });
+	return poppedPresses;
+}
+std::vector<Events::Finger> Events::PopFingerPressesOutside(const RectF& rectLpx) {
+	std::vector<Finger> poppedPresses;
+	for (const auto& finger : _fingerPresses) {
+		if (not rectLpx.DoesContain(finger.positionLpx)) {
+			poppedPresses.push_back(finger);
+		}
+	}
+	std::erase_if(_fingerPresses, [&](const Finger& finger) { return not rectLpx.DoesContain(finger.positionLpx); });
 	return poppedPresses;
 }
 std::vector<Events::Finger> Events::PeekFingerReleases(const RectF& rectLpx) const {
