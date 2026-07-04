@@ -55,7 +55,7 @@ drive the running game in the browser to observe and verify behavior.
 On a fresh Ubuntu/Debian Linux host, none of the following are preinstalled and must be installed before `posix_all.sh`/`web_all.sh` can succeed:
 
 ```sh
-sudo apt-get install -y cmake ninja-build build-essential libgl1-mesa-dev libglu1-mesa-dev cargo rustc
+sudo apt-get install -y cmake ninja-build build-essential libgl1-mesa-dev libglu1-mesa-dev cargo rustc ccache
 ```
 
 Web build additionally needs the Emscripten SDK on `PATH`:

@@ -44,7 +44,7 @@ The repo contains some game prototypes to showcase the capabilities of the engin
 
 ## How to build for desktop
 
-A C++ compiler, CMake, and Ninja is required for build. All other dependencies are built on the go.
+A C++ compiler, CMake, Ninja, and ccache are required for build. All other dependencies are built on the go.
 Although the game code (`game/<game>`) is separated from the engine code (`include/`, `src/`), they are build into one statically linked binary.
 `game/` directory contains the game code for different game prototypes. Which game to build is chosen at configure-time.
 

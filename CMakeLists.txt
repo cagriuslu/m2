@@ -21,6 +21,13 @@ set(CMAKE_BUILD_PARALLEL_LEVEL ${PROCESSOR_COUNT})
 
 project(m2 C CXX)
 
+find_program(CCACHE_PROGRAM ccache)
+if(NOT CCACHE_PROGRAM)
+    message(FATAL_ERROR "ccache is required but was not found on PATH. Install it and re-run CMake (e.g. `sudo apt-get install ccache`, `brew install ccache`, or see https://ccache.dev/).")
+endif()
+set(CMAKE_C_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
+set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
+
 # Load external libraries
 add_subdirectory(lib)
 FetchContent_MakeAvailable(libbox2d)
@@ -292,8 +299,13 @@ if (MSVC)
     set_property(TARGET box2d PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
     set_property(TARGET m2 PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 else()
-    # Enable precompiled headers on Posix platforms
-    target_precompile_headers(m2 PRIVATE ${PROTO_HDRS})
+    # Enable precompiled headers on Posix platforms. Beyond the protobuf-generated headers, precompile the heaviest
+    # standard-library headers.
+    target_precompile_headers(m2 PRIVATE
+            ${PROTO_HDRS}
+            <algorithm> <array> <cmath> <cstdint> <filesystem> <format> <functional>
+            <list> <map> <memory> <optional> <span> <string> <string_view> <tuple>
+            <unordered_map> <utility> <variant> <vector>)
 endif()
 
 target_include_directories(m2 PUBLIC include ${GAME_INCLUDE_DIRS})
