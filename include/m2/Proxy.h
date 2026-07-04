@@ -16,8 +16,13 @@
 #include "ObjectBlueprint.h"
 #include "ui/UiPanel.h"
 #include <span>
+#include <variant>
 
 namespace m2 {
+	struct Maximized {};
+	struct WindowRatio { float w; float h; };
+	using InitialWindowSize = std::variant<Maximized, WindowRatio>;
+
 	class Proxy {
 	   public:
 		// TODO make these private, give access to Game, implement getters
@@ -36,6 +41,9 @@ namespace m2 {
 		const int gameAspectRatioMul = 5;
 		const int gameAspectRatioDiv = 4;
 		const float initialGameHeightM = 18.0f;
+
+		/// Window size at launch. Desktop only, ignored on web builds.
+		InitialWindowSize GetInitialWindowSize() { return Maximized{}; }
 
 		// Mono fonts
 		// const std::string defaultFontPath = "fonts/Courier_Prime/CourierPrime-Regular.ttf";

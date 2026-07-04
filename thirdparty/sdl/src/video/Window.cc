@@ -17,14 +17,22 @@ m2::expected<m2::thirdparty::video::Window> m2::thirdparty::video::Window::Creat
 	SDL_SetWindowMinimumSize(window, minDimensions.x, minDimensions.y);
 	return Window{window};
 }
-m2::expected<std::pair<Window,Renderer>> Window::Create2(const VecI minDimensions, const char* title) {
+m2::expected<std::pair<Window,Renderer>> Window::Create2(const VecI initialSize, const VecI minimumSize, const char* title, const bool startMaximized) {
 	SDL_Window* window;
 	SDL_Renderer* renderer;
-	if (not SDL_CreateWindowAndRenderer(title, minDimensions.x, minDimensions.y, SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY, &window, &renderer)) {
+	uint32_t flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY;
+	if (startMaximized) {
+		flags |= SDL_WINDOW_MAXIMIZED;
+	}
+	if (not SDL_CreateWindowAndRenderer(title, initialSize.x, initialSize.y, flags, &window, &renderer)) {
 		return make_unexpected(std::format("SDL_CreateWindowAndRenderer error: {}", SDL_GetError()));
 	}
-	SDL_SetWindowMinimumSize(window, minDimensions.x, minDimensions.y);
+	SDL_SetWindowMinimumSize(window, minimumSize.x, minimumSize.y);
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+	if (not startMaximized) {
+		const auto primary = SDL_GetPrimaryDisplay();
+		SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED_DISPLAY(primary), SDL_WINDOWPOS_CENTERED_DISPLAY(primary));
+	}
 
 	int x,y;
 	SDL_GetWindowSize(window, &x, &y);
@@ -67,4 +75,16 @@ VecI Window::GetSize() const {
 		throw M2_ERROR(std::format("SDL_GetWindowSize error: {}", SDL_GetError()));
 	}
 	return {x, y};
+}
+
+VecI m2::thirdparty::video::GetPrimaryDisplayUsableSize() {
+	const auto primary = SDL_GetPrimaryDisplay();
+	if (primary == 0) {
+		throw M2_ERROR(std::string{"SDL_GetPrimaryDisplay error: "} + SDL_GetError());
+	}
+	SDL_Rect usable;
+	if (not SDL_GetDisplayUsableBounds(primary, &usable)) {
+		throw M2_ERROR(std::string{"SDL_GetDisplayUsableBounds error: "} + SDL_GetError());
+	}
+	return {usable.w, usable.h};
 }

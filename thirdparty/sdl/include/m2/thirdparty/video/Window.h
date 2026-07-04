@@ -39,7 +39,7 @@ namespace m2::thirdparty::video {
 
 	public:
 		static expected<Window> Create(VecI minDimensions, const char* title);
-		static expected<std::pair<Window,Renderer>> Create2(VecI minDimensions, const char* title);
+		static expected<std::pair<Window,Renderer>> Create2(VecI initialSize, VecI minimumSize, const char* title, bool startMaximized);
 
 		Window(const Window&) = delete;
 		Window& operator=(const Window&) = delete;
@@ -51,4 +51,8 @@ namespace m2::thirdparty::video {
 		[[nodiscard]] uint32_t GetPixelFormat() const; // throws on UNKNOWN
 		[[nodiscard]] VecI GetSize() const;
 	};
+
+	/// Usable bounds size (excludes taskbar/menu bar/dock) of the primary display, in screen
+	/// coordinates. Throws on SDL failure.
+	VecI GetPrimaryDisplayUsableSize();
 }

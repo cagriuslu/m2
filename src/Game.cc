@@ -18,14 +18,39 @@
 #include <genORM/genORM.h>
 #include <filesystem>
 #include <ranges>
+#include <cmath>
 
 using namespace m2;
 
 namespace {
 	constexpr auto MAX_LOCKSTEP_CONNECTION_COUNT = 4;
+	const VecI MINIMUM_WINDOW_SIZE{160, 90};
+	constexpr float MAXIMIZED_RESTORE_FRACTION = 0.7f;
 
-	std::pair<thirdparty::video::Window, thirdparty::video::Renderer> CreateWindow2(const char* gameFriendlyName) {
-		auto creation = thirdparty::video::Window::Create2({160, 90}, gameFriendlyName);
+	std::pair<thirdparty::video::Window, thirdparty::video::Renderer> CreateWindow2(
+			const char* gameFriendlyName, const InitialWindowSize& sizePreference) {
+#if defined(__EMSCRIPTEN__)
+		(void)sizePreference; // canvas governs size on web
+		auto creation = thirdparty::video::Window::Create2(MINIMUM_WINDOW_SIZE, MINIMUM_WINDOW_SIZE, gameFriendlyName, /*startMaximized=*/false);
+#else
+		const VecI usable = thirdparty::video::GetPrimaryDisplayUsableSize();
+		VecI initialSize;
+		bool startMaximized;
+		if (std::holds_alternative<Maximized>(sizePreference)) {
+			startMaximized = true;
+			initialSize = {static_cast<int>(std::lround(MAXIMIZED_RESTORE_FRACTION * usable.x)),
+						   static_cast<int>(std::lround(MAXIMIZED_RESTORE_FRACTION * usable.y))};
+		} else {
+			const auto& ratio = std::get<WindowRatio>(sizePreference);
+			if (ratio.w <= 0.0f || ratio.w > 1.0f || ratio.h <= 0.0f || ratio.h > 1.0f) {
+				throw M2_ERROR("Proxy::GetInitialWindowSize WindowRatio components must be in (0, 1]");
+			}
+			startMaximized = false;
+			initialSize = {static_cast<int>(std::lround(ratio.w * usable.x)),
+						   static_cast<int>(std::lround(ratio.h * usable.y))};
+		}
+		auto creation = thirdparty::video::Window::Create2(initialSize, MINIMUM_WINDOW_SIZE, gameFriendlyName, startMaximized);
+#endif
 		if (not creation) {
 			throw M2_ERROR("Window & renderer creation failed: " + creation.error());
 		}
@@ -54,7 +79,7 @@ void Game::DestroyInstance() {
 	_instance = nullptr;
 }
 
-Game::Game() : _windowAndRenderer(CreateWindow2(_proxy.gameFriendlyName.c_str())),
+Game::Game() : _windowAndRenderer(CreateWindow2(_proxy.gameFriendlyName.c_str(), _proxy.GetInitialWindowSize())),
 		cursor(*thirdparty::video::Cursor::Create()), pixel_format(GetWindow().GetPixelFormat()),
 		font(thirdparty::video::Font::CreateFromFontFile(_resources.GetDefaultFontPath(), _proxy.default_font_size)),
 		systemFont(thirdparty::video::Font::CreateFromFontFile(_resources.GetSystemFontPath(), systemFontSize)) {
