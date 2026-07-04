@@ -294,14 +294,6 @@ UiAction UiPanel::HandleEvents(Events& events, bool IsPanning) {
 		return MakeReturnAction();
 	}
 
-	if (std::holds_alternative<RelativeToWorld>(_panelPosition) && _lastScreenPositionOfWorldAnchorLpx) {
-		const auto& worldAnchor = std::get<RelativeToWorld>(_panelPosition).worldAnchor;
-		const auto worldAnchorScreenLpx = ScreenOriginToPositionVecLpx(worldAnchor);
-		if (worldAnchorScreenLpx != *_lastScreenPositionOfWorldAnchorLpx) {
-			UpdatePosition();
-		}
-	}
-
 	std::optional<UiAction> action;
 
 	// First, deliver the event to the panel
@@ -366,6 +358,15 @@ UiAction UiPanel::UpdateContents(float delta_time_s) {
 void UiPanel::Draw() {
 	if (IsKilled() || not enabled) {
 		return;
+	}
+
+	// Keep RelativeToWorld widgets tracking the camera
+	if (std::holds_alternative<RelativeToWorld>(_panelPosition) && _lastScreenPositionOfWorldAnchorLpx) {
+		const auto& worldAnchor = std::get<RelativeToWorld>(_panelPosition).worldAnchor;
+		const auto worldAnchorScreenLpx = ScreenOriginToPositionVecLpx(worldAnchor);
+		if (worldAnchorScreenLpx != *_lastScreenPositionOfWorldAnchorLpx) {
+			UpdatePosition();
+		}
 	}
 
 	auto rect = Rect();
