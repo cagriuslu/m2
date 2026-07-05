@@ -12,38 +12,49 @@ m2::PlaybackId m2::AudioManager::Play(const Song* song, PlayPolicy policy, float
 		throw M2_ERROR("Playing short audio is not supported");
 	}
 
-	std::unique_lock<std::mutex> lock{playbacksMutex};
-	auto it = playbacks.Emplace(song, volume, policy);
+	// Emplace under the lock, but release it before calling into the SDL device. SDL's audio callback thread might
+	// invoke AudioManager::AudioCallback (which takes playbacksMutex) immediately while holding SDL's internal lock.
+	PlaybackId playbackId;
+	{
+		std::unique_lock lock{playbacksMutex};
+		playbackId = playbacks.Emplace(song, volume, policy).GetId();
+	}
 	device.Resume();
-	return it.GetId();
+	return playbackId;
 }
 
 void m2::AudioManager::Stop(PlaybackId id) {
-	std::unique_lock<std::mutex> lock{playbacksMutex};
-	playbacks.Free(id);
-	if (playbacks.Size() == 0) {
+	// Decide whether the device should pause under the lock, but call device.Pause() only after releasing
+	// it, for the same lock-ordering reason as Play().
+	bool shouldPauseDevice;
+	{
+		std::unique_lock lock{playbacksMutex};
+		playbacks.Free(id);
+		shouldPauseDevice = playbacks.Size() == 0;
+	}
+	if (shouldPauseDevice) {
 		device.Pause();
 	}
 }
 
 bool m2::AudioManager::HasPlayback(PlaybackId id) {
-	std::unique_lock<std::mutex> lock{playbacksMutex};
+	std::unique_lock lock{playbacksMutex};
 	return playbacks.Get(id) != nullptr;
 }
 void m2::AudioManager::SetPlaybackVolume(PlaybackId id, float volume) {
-	std::unique_lock<std::mutex> lock{playbacksMutex};
+	std::unique_lock lock{playbacksMutex};
 	if (auto* playback = playbacks.Get(id); playback) {
 		playback->volume = volume;
 	}
 }
 void m2::AudioManager::SetPlaybackLeftVolume(PlaybackId id, float volume) {
-	std::unique_lock<std::mutex> lock{playbacksMutex};
+	std::unique_lock lock{playbacksMutex};
 	if (auto* playback = playbacks.Get(id); playback) {
 		playback->leftVolume = volume;
 	}
 }
 void m2::AudioManager::SetPlaybackRightVolume(PlaybackId id, float volume) {
-	std::unique_lock<std::mutex> lock{playbacksMutex};
+	std::unique_lock lock{playbacksMutex};
 	if (auto* playback = playbacks.Get(id); playback) {
 		playback->rightVolume = volume;
 	}
@@ -52,10 +63,10 @@ void m2::AudioManager::SetPlaybackRightVolume(PlaybackId id, float volume) {
 void m2::AudioManager::AudioCallback(MAYBE void* user_data, uint8_t* stream, int length) {
 	auto& audio_manager = *M2_GAME.audio_manager;
 	auto* out_stream = reinterpret_cast<audio::synthesizer::AudioSample*>(stream);
-	auto out_length = (size_t) length / sizeof(audio::synthesizer::AudioSample); // in samples
+	auto out_length = static_cast<size_t>(length) / sizeof(audio::synthesizer::AudioSample); // in samples
 
 	// Clear buffer
-	std::fill(out_stream, out_stream + out_length, audio::synthesizer::AudioSample{});
+	std::fill_n(out_stream, out_length, audio::synthesizer::AudioSample{});
 
 	auto copy = [=](Playback* playback, size_t copy_count) {
 		const auto* begin = playback->song->Data() + playback->nextSample;
@@ -75,7 +86,7 @@ void m2::AudioManager::AudioCallback(MAYBE void* user_data, uint8_t* stream, int
 		playback->nextSample = (playback->nextSample + copy_count) % playback->song->SampleCount();
 	};
 
-	std::unique_lock<std::mutex> lock{audio_manager.playbacksMutex};
+	std::unique_lock lock{audio_manager.playbacksMutex};
 	for (auto it = audio_manager.playbacks.begin(); it != audio_manager.playbacks.end(); ++it) {
 		// Copy the samples left in the playback buffer
 		auto samples_left_playback_buffer = it->song->SampleCount() - it->nextSample;
