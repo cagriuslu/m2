@@ -1282,8 +1282,9 @@ void Game::ExecuteDeferredActions() {
 }
 
 Game::CommandResult Game::ExecuteCommand(const std::string& cmd) {
-	// Make sure this function is called while the events are being handled
-	if (not _eventsAreBeingHandled) {
+	// If a level is loaded, make sure this function is called only while the events are being handled, because that's
+	// when it is safe to do **everything** related to the level; spawn/kill objects, replace the whole level, etc.
+	if (_level && not _eventsAreBeingHandled) {
 		throw M2_ERROR("Attempt to execute command outside of handling events");
 	}
 

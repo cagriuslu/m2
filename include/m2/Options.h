@@ -9,7 +9,10 @@ namespace m2 {
 
 	extern bool silent;
 
+	/// If non-empty, the console should be opened and prefilled with the given string
 	extern std::string console_command;
+	/// If non-empty, the given command should be executed after initializing the game, but before the main menu.
+	extern std::string background_command;
 
 	extern std::string gOverrideResourceDir;
 

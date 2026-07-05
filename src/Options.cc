@@ -17,6 +17,7 @@ m2::pb::LogLevel m2::current_log_level = pb::LogLevel::INF;
 bool m2::verbose = false;
 bool m2::silent = false;
 std::string m2::console_command;
+std::string m2::background_command;
 std::string m2::gOverrideResourceDir;
 
 namespace {
@@ -239,6 +240,10 @@ expected<ExecutionStrategy> m2::load_options(const int argc, char** argv) {
 	if (auto console_opt = parse_argument(arg_list, "console")) {
 		console_command = *console_opt;
 		LOG_INFO("Console command", *console_opt);
+	}
+	if (auto command_opt = parse_argument(arg_list, "command")) {
+		background_command = *command_opt;
+		LOG_INFO("Executing command", *command_opt);
 	}
 
 	if (const auto resourceDir = parse_argument(arg_list, "resource-dir")) {

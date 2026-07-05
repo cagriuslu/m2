@@ -53,6 +53,11 @@ int main(const int argc, char **argv) {
 	thirdparty::video::InitAll();
 	Game::CreateInstance();
 
+	if (not background_command.empty()) {
+		M2_GAME.QueueCommand(background_command);
+		M2_GAME.ExecuteQueuedCommands();
+	}
+
 	// Used to keep track of when the physics update was last executed. This stopwatch is usually not reset after each
 	// simulation, but its starting point is advanced by physics simulation period, thus the duration will contain the
 	// total pause duration since the beginning of the level, and it must be subtracked before use. Rarely, the
