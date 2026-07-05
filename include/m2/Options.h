@@ -11,8 +11,6 @@ namespace m2 {
 
 	extern std::string console_command;
 
-	extern bool god_mode;
-
 	extern std::string gOverrideResourceDir;
 
 	namespace options {

@@ -17,10 +17,11 @@ m2::pb::LogLevel m2::current_log_level = pb::LogLevel::INF;
 bool m2::verbose = false;
 bool m2::silent = false;
 std::string m2::console_command;
-bool m2::god_mode = false;
 std::string m2::gOverrideResourceDir;
 
 namespace {
+	bool god_mode = false;
+
 	std::vector<std::string_view> to_argument_list(const int argc, char** argv) {
 		std::vector<std::string_view> list;
 		for (int i = 1; i < argc; ++i) {

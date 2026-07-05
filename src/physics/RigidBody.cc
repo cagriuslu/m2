@@ -1,5 +1,10 @@
 #include <m2/physics/RigidBody.h>
 
+namespace m2 {
+	// const auto physicsDefaultGravity = Vec{PhysicsPrimitive{0.0f}, PhysicsPrimitive{9.8f}};
+	const auto physicsDefaultGravity = Vec{PhysicsPrimitive{0.0f}, PhysicsPrimitive{0.0f}};
+}
+
 std::optional<m2::PhysicsPrimitive> m2::RigidBodyPart::CalculateMomentOfInertia(const Vec<PhysicsPrimitive>& offsetOfOverallCenterOfMass) const {
 	// If the body part has infinite mass, immediately return infinite moment of inertia
 	if (inverseMass == PhysicsPrimitive::Zero()) {
