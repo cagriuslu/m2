@@ -20,8 +20,6 @@ std::string m2::console_command;
 std::string m2::gOverrideResourceDir;
 
 namespace {
-	bool god_mode = false;
-
 	std::vector<std::string_view> to_argument_list(const int argc, char** argv) {
 		std::vector<std::string_view> list;
 		for (int i = 1; i < argc; ++i) {
@@ -241,11 +239,6 @@ expected<ExecutionStrategy> m2::load_options(const int argc, char** argv) {
 	if (auto console_opt = parse_argument(arg_list, "console")) {
 		console_command = *console_opt;
 		LOG_INFO("Console command", *console_opt);
-	}
-
-	if (parse_argument(arg_list, "god-mode")) {
-		LOG_INFO("God mode");
-		god_mode = true;
 	}
 
 	if (const auto resourceDir = parse_argument(arg_list, "resource-dir")) {
