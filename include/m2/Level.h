@@ -55,6 +55,7 @@ namespace m2 {
 		// UI panels (the order is significant)
 
 		std::optional<UiPanel> _leftHudUiPanel, _rightHudUiPanel, _messageBoxUiPanel;
+		std::optional<UiPanel> _diagnosticsUiPanel; // Present only when --diagnostics is set
 		std::list<UiPanel> _customNonblockingUiPanels;
 		/// If activated, the panel floats next to the cursor. This panel doesn't receive events, but is updated.
 		std::optional<UiPanel> _mouseHoverUiPanel;

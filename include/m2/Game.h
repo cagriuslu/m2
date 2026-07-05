@@ -69,6 +69,9 @@ namespace m2 {
 
 		std::list<std::string> _queuedCommands;
 
+		unsigned _phySimulationCount{}; // Monotonic count of physics simulations
+		unsigned _gfxUpdateCount{}; // Monotonic count of graphics updates
+
 		////////////////////////////////////////////////////////////////////////
 		////////////////////////////// RESOURCES ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
@@ -209,6 +212,8 @@ namespace m2 {
 		/// This function can be used to check if the mouse is resting on any UI panels. If not, the mouse must be
 		/// inside the game window.
 		[[nodiscard]] bool IsMouseOnAnyUiPanel() const;
+		[[nodiscard]] unsigned GetPhySimulationCount() const { return _phySimulationCount; }
+		[[nodiscard]] unsigned GetGfxUpdateCount() const { return _gfxUpdateCount; }
 
 		// Handlers
 

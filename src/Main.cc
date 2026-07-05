@@ -69,12 +69,8 @@ int main(const int argc, char **argv) {
 	// the last execution, total pause duration during last update and current update are compared.
 	std::optional<Stopwatch> prevGfxUpdateAt;
 	std::optional<Stopwatch::Duration> prevTotalPauseDurationDuringLastGfx;
-	// Used to keep track of when the FPS log was last printed. This stopwatch is never reset, but instead its starting
-	// point is advanced by log period after each execution, thus the duration will contain the total pause duration
-	// since the beginning of the level, and it must be subtracked before use.
-	std::optional<Stopwatch> prevFpsLogAt;
 
-	unsigned totalPhySimulationCount{}, totalGfxUpdateCount{}, prevPhySimulationCount = UINT_MAX;
+	unsigned prevPhySimulationCount = UINT_MAX;
 
 	while (not M2_GAME.quit) {
 		// If the level is marked for deletion, delete it
@@ -101,7 +97,6 @@ int main(const int argc, char **argv) {
 			prevPhyUpdateAt = Stopwatch{}; // Act as-if a physics update was just done
 			prevGfxUpdateAt = Stopwatch{}; // Act as-if a graphics update was just done
 			prevTotalPauseDurationDuringLastGfx = Stopwatch::Duration{};
-			prevFpsLogAt = Stopwatch{}; // Act as-if FPS log was just done
 		}
 
 		////////////////////////////////////////////////////////////////////////
@@ -154,7 +149,6 @@ int main(const int argc, char **argv) {
 
 			// Increment phy counters, subtract period from stopwatch
 			++prevPhySimulationCount;
-			++totalPhySimulationCount;
 		}
 		if (prevPhySimulationCount == 4) {
 			LOG_INFO("Physics can't keep up, will jump forward");
@@ -182,14 +176,6 @@ int main(const int argc, char **argv) {
 		M2_GAME.DrawEnvelopes();
 		M2_GAME.FlipBuffers();
 		detail::StepActorsOnceAndWaitCooperatively(0);
-		++totalGfxUpdateCount;
-
-		if (TIME_BETWEEN_FPS_LOGS <= prevFpsLogAt->GetDurationSince() - M2_LEVEL.GetTotalPauseDuration()) {
-			prevFpsLogAt->AdvanceStartingPoint(TIME_BETWEEN_FPS_LOGS);
-			LOG_DEBUG(std::format("PHY count {}, GFX count {}, FPS {}", totalPhySimulationCount, totalGfxUpdateCount, totalGfxUpdateCount / 10.0f));
-			totalPhySimulationCount = 0;
-			totalGfxUpdateCount = 0;
-		}
 	}
 
 	Game::DestroyInstance();

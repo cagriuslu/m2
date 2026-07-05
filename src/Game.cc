@@ -922,6 +922,7 @@ void Game::ExecuteStep(const Stopwatch::Duration& delta) {
 		// ReSharper disable once CppDFAUnreachableCode
 		_level->pathfinder->clear_cache();
 	}
+	++_phySimulationCount;
 }
 void Game::ExecutePostStep(const Stopwatch::Duration& delta) {
 	if (IsTurnBasedServer()) {
@@ -983,6 +984,7 @@ void Game::UpdateHudContents(const Stopwatch::Duration& delta) {
 	IF(_level->_leftHudUiPanel)->UpdateContents(deltaF);
 	IF(_level->_rightHudUiPanel)->UpdateContents(deltaF);
 	IF(_level->_messageBoxUiPanel)->UpdateContents(deltaF);
+	IF(_level->_diagnosticsUiPanel)->UpdateContents(deltaF);
 	for (auto &panel : _level->_customNonblockingUiPanels) {
 		auto action{panel.UpdateContents(deltaF)};
 		action.IfQuit([this] { quit = true; });
@@ -1043,6 +1045,7 @@ void Game::Draw() {
 			}
 		}
 	}
+	++_gfxUpdateCount;
 }
 void Game::ExecutePostDraw(const Stopwatch::Duration& delta) {
 	for (auto& gfx : _level->uprightGraphics) {
@@ -1107,6 +1110,7 @@ void Game::DrawHud() {
 	}
 	IF(_level->_mouseHoverUiPanel)->Draw();
 	IF(_level->_semiBlockingUiPanel)->Draw();
+	IF(_level->_diagnosticsUiPanel)->Draw();
 }
 void Game::DrawEnvelopes() {
 	thirdparty::video::FillRectangle(GetRenderer(), RectF{_dimensions->TopEnvelope()}, RGBA::Black);
@@ -1127,6 +1131,7 @@ void Game::OnWindowResize() {
 		}
 		IF(_level->_mouseHoverUiPanel)->UpdatePosition();
 		IF (_level->_semiBlockingUiPanel)->UpdatePosition();
+		IF(_level->_diagnosticsUiPanel)->UpdatePosition();
 
 		// Clear text label rectangles so that they are regenerated with new size
 		for (auto& gfx : _level->uprightGraphics) {

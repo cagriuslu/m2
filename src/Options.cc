@@ -16,6 +16,7 @@ using namespace m2;
 m2::pb::LogLevel m2::current_log_level = pb::LogLevel::INF;
 bool m2::verbose = false;
 bool m2::silent = false;
+bool m2::diagnostics = false;
 std::string m2::console_command;
 std::string m2::background_command;
 std::string m2::gOverrideResourceDir;
@@ -235,6 +236,11 @@ expected<ExecutionStrategy> m2::load_options(const int argc, char** argv) {
 	if (parse_argument(arg_list, "silent")) {
 		LOG_INFO("Silent mode activated");
 		silent = true;
+	}
+
+	if (parse_argument(arg_list, "diagnostics")) {
+		LOG_INFO("Diagnostics mode activated");
+		diagnostics = true;
 	}
 
 	if (auto console_opt = parse_argument(arg_list, "console")) {

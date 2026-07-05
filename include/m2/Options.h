@@ -8,6 +8,7 @@ namespace m2 {
 	extern bool verbose;
 
 	extern bool silent;
+	extern bool diagnostics;
 
 	/// If non-empty, the console should be opened and prefilled with the given string
 	extern std::string console_command;

@@ -9,10 +9,12 @@
 #include <m2/game/object/Origin.h>
 #include <m2/game/object/Pointer.h>
 #include <m2/game/object/Tile.h>
+#include <m2/Options.h>
 #include <m2/protobuf/Detail.h>
 #include <m2/sheeteditor/Ui.h>
 #include <m2/thirdparty/physics/box2d/DebugDraw.h>
 #include <m2/thirdparty/physics/box2d/Detail.h>
+#include <m2/ui/DiagnosticsPanel.h>
 #include <m2/ui/widget/Text.h>
 #include <m2/Log.h>
 #include <M2.orm.h>
@@ -514,6 +516,9 @@ void_expected Level::InitAnyPlayer(
 	if (const auto [blueprint, area] = M2G_PROXY.MessageBoxBlueprintAndArea(); blueprint) {
 		_messageBoxUiPanel.emplace(blueprint, area);
 		_messageBoxUiPanel->enabled = false;
+	}
+	if (diagnostics) {
+		_diagnosticsUiPanel.emplace(&DIAGNOSTICS_PANEL_BLUEPRINT, UiPanel::RelativeToWindow{DIAGNOSTICS_PANEL_AREA});
 	}
 
 	if (physical_world) {
