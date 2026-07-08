@@ -1,13 +1,19 @@
 syntax = "proto3";
 package m2g.pb;
 
+// On 2D games, the only difference between Flat and Upright graphics layers is the fact that Flat layers are drawn with
+// an unspecified order whereas the objects in Upright layers are drawn from back to front.
+// On 3D games, in addition to the previous difference, the Flat layers are drawn as laying flat on the ground whereas
+// the objects in Upright layers are drawn perpendicular to the ground.
+
 // Enum must be sequential because Enum_ARRAYSIZE is used as array size.
 enum FlatGraphicsLayer {
-  FLAT_GRAPHICS_DEFAULT_LAYER = 0; // More layers can be added before and/or after the default
-  FLAT_GRAPHICS_FOREGROUND_LAYER = 1; // This should represent the frontmost graphics layer
+  // More layers can be added before and/or after the default.
+  FLAT_GRAPHICS_DEFAULT_LAYER = 0;
 }
 
 // Enum must be sequential because Enum_ARRAYSIZE is used as array size.
 enum UprightGraphicsLayer {
-  UPRIGHT_GRAPHICS_DEFAULT_LAYER = 0; // More layers can be added before and/or after the default
+  // More layers can be added before and/or after the default.
+  UPRIGHT_GRAPHICS_DEFAULT_LAYER = 0;
 }

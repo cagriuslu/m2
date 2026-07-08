@@ -7,7 +7,6 @@
 #include <m2/game/object/Camera.h>
 #include <m2/game/object/God.h>
 #include <m2/game/object/Origin.h>
-#include <m2/game/object/Pointer.h>
 #include <m2/game/object/Tile.h>
 #include <m2/Options.h>
 #include <m2/protobuf/Detail.h>
@@ -214,8 +213,7 @@ pb::LockstepDebugStateReport Level::CalculateLockstepDebugStateReport(const int3
 		// Do not record the position and orientation information for these objects
 		const auto isHumanPlayer = std::ranges::find(multiPlayerObjectIds, phy.GetOwnerId()) != multiPlayerObjectIds.end();
 		const auto isCamera = phy.GetOwnerId() == cameraId;
-		const auto isPointer = phy.GetOwnerId() == pointer_id;
-		if (not isHumanPlayer && not isCamera && not isPointer) {
+		if (not isHumanPlayer && not isCamera) {
 			const auto pos = phy.GetPosition();
 			const auto ori = phy.GetOrientation();
 			physique->set_exact_position_x(ToRawValue(pos.GetX()));
@@ -593,7 +591,6 @@ void_expected Level::InitAnyPlayer(
 
 	// Create default objects
 	obj::CreateCamera();
-	obj::CreatePointer();
 
 	// Init HUD
 	//_leftHudUiPanel->update_contents(); // Update should happen after the level is full initialized

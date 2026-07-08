@@ -87,7 +87,7 @@ namespace m2 {
 		Pool<SoundEmitter> soundEmitters;
 		b2World* world{};
 		box2d::ContactListener* contactListener{};
-		Id cameraId{}, playerId{}, pointer_id{};
+		Id cameraId{}, playerId{};
 		std::optional<SoundListener> leftListener, rightListener;
 		std::optional<Pathfinder> pathfinder; // Pathfinder works only on ForegroundLayer::F0 and background layers.
 

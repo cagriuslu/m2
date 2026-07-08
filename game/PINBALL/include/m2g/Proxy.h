@@ -26,7 +26,6 @@ namespace m2g {
 			pb::ABOVE_GROUND_FLAT, pb::ABOVE_GROUND_UPRIGHT,
 			pb::AIRBORNE_FLAT,   pb::AIRBORNE_UPRIGHT,
 			pb::SPACE_FLAT,      pb::SPACE_UPRIGHT,
-			pb::FLAT_GRAPHICS_FOREGROUND_LAYER,
 		};
 		const std::vector<m2::ObjectBlueprint> objectBlueprints = {
 			{.objectType = pb::BALL, .defaultSpriteType = pb::SPRITE_BASIC_BALL},

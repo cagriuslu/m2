@@ -30,7 +30,6 @@ namespace m2g {
 			pb::ABOVE_GROUND_FLAT, pb::ABOVE_GROUND_UPRIGHT,
 			pb::AIRBORNE_FLAT,   pb::AIRBORNE_UPRIGHT,
 			pb::SPACE_FLAT,      pb::SPACE_UPRIGHT,
-			pb::FLAT_GRAPHICS_FOREGROUND_LAYER,
 		};
 
 		const m2::UiPanelBlueprint* MainMenuBlueprint();

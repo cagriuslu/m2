@@ -11,7 +11,6 @@ enum FlatGraphicsLayer {
   ABOVE_GROUND_FLAT = 5;
   AIRBORNE_FLAT = 6;
   SPACE_FLAT = 7;
-  FLAT_GRAPHICS_FOREGROUND_LAYER = 8;
 }
 
 // Enum must be sequential because Enum_ARRAYSIZE is used as array size.
