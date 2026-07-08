@@ -28,6 +28,8 @@ namespace m2 {
 		explicit VecF(const pb::Dim2f& v) : VecF(v.w(), v.h()) {}
 		explicit VecF(const pb::VecF& v) : VecF(v.x(), v.y()) {}
 		explicit VecF(const pb::VecI& v) : VecF(v.x(), v.y()) {}
+		/// For API-compatibility with VecE
+		static VecF NondeterministicCreate(const VecF& v) { return v; }
 
 		// Operators
 

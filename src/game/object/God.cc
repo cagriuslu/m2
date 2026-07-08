@@ -47,7 +47,7 @@ Id obj::CreateGod() {
 		const auto currentPosition = static_cast<VecF>(phy.GetPosition());
 		// Prevent God from going into negative quadrants
 		const auto newPosition = (currentPosition + moveAmount).Clamp(VecF{0.0f, 0.0f}, std::nullopt);
-		phy.SetPosition(VecFE{newPosition});
+		phy.SetPosition(VecFE::NondeterministicCreate(newPosition));
 
 		// Adjust zoom
 		if (M2_GAME.events.PopKeyPress(m2g::pb::KeyType::ZOOM_OUT)) {

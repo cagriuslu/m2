@@ -2,7 +2,11 @@
 #include <m2/common/math/VecF.h>
 #include <m2/common/math/VecI.h>
 
-m2::VecE::VecE(const VecF& v) : _x(v.GetX()), _y(v.GetY()) {}
+m2::VecE m2::VecE::NondeterministicCreate(const VecF& v) {
+	const auto x = Exact::NondeterministicCreate(v.GetX());
+	const auto y = Exact::NondeterministicCreate(v.GetY());
+	return {x, y};
+}
 
 m2::VecE::operator m2::VecF() const {
 	return VecF{_x.ToFloat(), _y.ToFloat()};

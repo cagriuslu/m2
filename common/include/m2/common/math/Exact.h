@@ -42,6 +42,7 @@ namespace m2 {
 		static expected<Exact> Compose(int32_t wholePart, int32_t fractionalPart);
 		/// Returns the closest Exact number to the given decimal number. This operation is deterministic.
 		static expected<Exact> ClosestExact(std::string_view);
+		static Exact NondeterministicCreate(const float f) { ThrowIfOutOfBounds(f); return Exact{std::in_place, static_cast<int>(roundf(static_cast<float>(LEAST_SIGNIFICANT_INTEGER_BIT_MASK) * f))}; }
 
 		static constexpr int32_t RAW_1DIV2 = 1 << (PRECISION - 1);
 		static constexpr int32_t RAW_1DIV4 = 1 << (PRECISION - 2);
@@ -124,6 +125,7 @@ namespace m2 {
 
 	private:
 		static void ThrowIfOutOfBounds(int i);
+		static void ThrowIfOutOfBounds(float f);
 
 		friend int32_t ToRawValue(const Exact&);
 	};

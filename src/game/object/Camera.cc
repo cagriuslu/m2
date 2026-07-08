@@ -17,11 +17,11 @@ m2::Id m2::obj::CreateCamera() {
 	camera.impl = std::make_unique<m2::obj::Camera>();
 
 	// Position of the camera isn't actually deterministic
-	auto& phy = camera.AddPhysique(VecFE{playerPtr ? playerPtr->InferPositionF() : VecF{}});
+	auto& phy = camera.AddPhysique(VecFE::NondeterministicCreate(playerPtr ? playerPtr->InferPositionF() : VecF{}));
 	phy.postStep = [](MAYBE Physique& phy, const Stopwatch::Duration&) {
 		//		auto* camera_data = dynamic_cast<m2::obj::Camera*>(camera.impl.get());
 		const auto& player = M2_LEVEL.objects[M2_LEVEL.playerId];
-		phy.SetPosition(VecFE{player.InferPositionF()});
+		phy.SetPosition(VecFE::NondeterministicCreate(player.InferPositionF()));
 
 		// Mouse lookahead disabled temporarily
 		//		if (M2_GAME.level->type() == Level::Type::SINGLE_PLAYER) {

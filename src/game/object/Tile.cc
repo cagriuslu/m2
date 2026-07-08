@@ -30,7 +30,7 @@ m2::Pool<m2::Object>::Iterator m2::obj::CreateTile(const m2g::pb::FlatGraphicsLa
 		if (sprite.OriginalPb().regular().fixtures_size()) {
 #ifdef _GAME_IS_DETERMINISTIC
 			// The deterministic body can't hold fixtures
-			it->AddPhysique(VecFE{position});
+			it->AddPhysique(VecFE::NondeterministicCreate(position));
 #else
 			const RigidBodyDefinition rigidBodyDef{
 				.bodyType = RigidBodyType::STATIC,

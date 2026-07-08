@@ -166,13 +166,13 @@ bool RigidBody::IsEnabled() const {
 	return static_cast<b2Body*>(_ptr)->IsEnabled();
 }
 m2::VecFE RigidBody::GetPosition() const {
-	return VecFE{box2d::ToVecF(static_cast<b2Body*>(_ptr)->GetPosition())};
+	return VecFE::NondeterministicCreate(box2d::ToVecF(static_cast<b2Body*>(_ptr)->GetPosition()));
 }
 m2::FE RigidBody::GetAngle() const {
 	return FE{static_cast<b2Body*>(_ptr)->GetAngle()};
 }
 m2::VecFE RigidBody::GetLinearVelocity() const {
-	return VecFE{box2d::ToVecF(static_cast<b2Body*>(_ptr)->GetLinearVelocity())};
+	return VecFE::NondeterministicCreate(box2d::ToVecF(static_cast<b2Body*>(_ptr)->GetLinearVelocity()));
 }
 m2::FE RigidBody::GetAngularVelocity() const {
 	return FE{static_cast<b2Body*>(_ptr)->GetAngularVelocity()};

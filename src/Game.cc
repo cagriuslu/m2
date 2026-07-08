@@ -1210,7 +1210,7 @@ void Game::ForEachObjectWithMainSprite(const std::function<bool(m2g::pb::ObjectT
 thirdparty::video::Texture Game::DrawGameToTexture(const VecF& camera_position) {
 	// Temporarily change camera position
 	const auto prev_camera_position = GetLevel().GetCamera()->GetPhysique().GetPosition();
-	GetLevel().GetCamera()->GetPhysique().SetPosition(VecFE{camera_position});
+	GetLevel().GetCamera()->GetPhysique().SetPosition(VecFE::NondeterministicCreate(camera_position));
 
 	auto render_target = thirdparty::video::Texture::CreateTargetableWindowSized(GetRenderer(), GetWindow().GetPixelFormat());
 	render_target.DrawOnto(GetRenderer(), [this] {

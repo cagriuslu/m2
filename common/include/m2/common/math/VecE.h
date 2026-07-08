@@ -18,7 +18,7 @@ namespace m2 {
 		VecE(const Exact& x, const Exact& y) : _x(x), _y(y) {}
 		VecE(const int x, const int y) : _x(x), _y(y) {}
 		VecE(Exact&& x, Exact&& y) : _x(std::move(x)), _y(std::move(y)) {}
-		explicit VecE(const VecF&);
+		static VecE NondeterministicCreate(const VecF&);
 
 		// Operators
 
