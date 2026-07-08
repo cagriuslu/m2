@@ -20,18 +20,14 @@ namespace m2 {
 	private:
 		int32_t _value{};
 
-		static Exact UnsafeFromInt(const int i)       noexcept { return Exact{std::in_place, i << PRECISION}; }
-		static Exact UnsafeFromFloat(const float f)   noexcept { return Exact{std::in_place, static_cast<int>(roundf(static_cast<float>(LEAST_SIGNIFICANT_INTEGER_BIT_MASK) * f))}; }
-		static Exact UnsafeFromDouble(const double d) noexcept { return Exact{std::in_place, static_cast<int>(round(static_cast<double>(LEAST_SIGNIFICANT_INTEGER_BIT_MASK) * d))}; }
-
 	public:
 		// Constructors
 
 		Exact() = default;
 		explicit Exact(std::in_place_t, const int32_t value) noexcept : _value(value) {}
-		explicit Exact(const    int i) { ThrowIfOutOfBounds(i); *this = UnsafeFromInt(i);    }
-		explicit Exact(const  float f) { ThrowIfOutOfBounds(f); *this = UnsafeFromFloat(f);  }
-		explicit Exact(const double d) { ThrowIfOutOfBounds(d); *this = UnsafeFromDouble(d); }
+		explicit Exact(const int i) : Exact(std::in_place, i << PRECISION) { ThrowIfOutOfBounds(i); }
+		explicit Exact(const float) { throw M2_ERROR("Forbidden float to Exact conversion in deterministic game"); }
+		explicit Exact(const double) { throw M2_ERROR("Forbidden float to Exact conversion in deterministic game"); }
 
 		// Attributes
 
@@ -128,8 +124,6 @@ namespace m2 {
 
 	private:
 		static void ThrowIfOutOfBounds(int i);
-		static void ThrowIfOutOfBounds(float f);
-		static void ThrowIfOutOfBounds(double d);
 
 		friend int32_t ToRawValue(const Exact&);
 	};

@@ -11,27 +11,9 @@ TEST(Exact, constructors) {
 	EXPECT_ANY_THROW(Exact{131072});
 	EXPECT_NO_THROW(Exact{-131072});
 	EXPECT_ANY_THROW(Exact{-131073});
-	EXPECT_EQ(Exact{1.0f}.ToRawValue(), 0b00000000'00000000'01000000'00000000);
-	EXPECT_EQ(Exact{1.1f}.ToRawValue(), 0b00000000'00000000'01000110'01100110);
-	EXPECT_EQ(Exact{-1.0f}.ToRawValue(), 0b11111111'11111111'11000000'00000000);
-	EXPECT_EQ(Exact{-1.1f}.ToRawValue(), 0b11111111'11111111'10111001'10011010);
-	EXPECT_EQ(Exact{1.0}.ToRawValue(), 0b00000000'00000000'01000000'00000000);
-	EXPECT_EQ(Exact{-1.0}.ToRawValue(), 0b11111111'11111111'11000000'00000000);
-	EXPECT_EQ(Exact{1.5}.ToRawValue(), 0b00000000'00000000'01100000'00000000);
-	EXPECT_EQ(Exact{3.75}.ToRawValue(), 0b00000000'00000000'11110000'00000000);
-	EXPECT_EQ(Exact{7.875}.ToRawValue(), 0b00000000'00000001'11111000'00000000);
-	EXPECT_EQ(Exact{15.9375}.ToRawValue(), 0b00000000'00000011'11111100'00000000);
-	EXPECT_EQ(Exact{31.96875}.ToRawValue(), 0b00000000'00000111'11111110'00000000);
-	EXPECT_EQ(Exact{63.984375}.ToRawValue(), 0b00000000'00001111'11111111'00000000);
-	EXPECT_EQ(Exact{127.9921875}.ToRawValue(), 0b00000000'00011111'11111111'10000000);
-	EXPECT_EQ(Exact{255.99609375}.ToRawValue(), 0b00000000'00111111'11111111'11000000);
-	EXPECT_EQ(Exact{511.99804688}.ToRawValue(), 0b00000000'01111111'11111111'11100000);
-	EXPECT_EQ(Exact{1023.99902344}.ToRawValue(), 0b00000000'11111111'11111111'11110000);
-	EXPECT_EQ(Exact{2047.99951172}.ToRawValue(), 0b00000001'11111111'11111111'11111000);
-	EXPECT_EQ(Exact{4095.99975586}.ToRawValue(), 0b00000011'11111111'11111111'11111100);
-	// Number bigger than this cannot be represented by double accurately
-	EXPECT_NO_THROW(Exact{131071.99993896}); // This is the highest number that can be represented
-	EXPECT_NO_THROW(Exact{-131072.0}); // This is the lowest number that can be represented
+	// Float and double to Exact conversion is forbidden in deterministic games
+	EXPECT_ANY_THROW(Exact{1.0f});
+	EXPECT_ANY_THROW(Exact{1.0});
 
 	EXPECT_EQ(Exact::Compose(0, 0)->ToRawValue(), 0b00000000'00000000'00000000'00000000);
 	EXPECT_EQ(Exact::Compose(1, 0)->ToRawValue(), 0b00000000'00000000'01000000'00000000);
@@ -57,23 +39,23 @@ TEST(Exact, constructors) {
 }
 
 TEST(Exact, operators) {
-	EXPECT_EQ((Exact{1.5} + Exact{3.75}).ToString(), "+000005.25000000");
-	EXPECT_EQ((Exact{1.5} + Exact{3.75}), Exact{5.25});
+	EXPECT_EQ((*"1.5"_closest_exact + *"3.75"_closest_exact).ToString(), "+000005.25000000");
+	EXPECT_EQ((*"1.5"_closest_exact + *"3.75"_closest_exact), *"5.25"_closest_exact);
 
-	EXPECT_EQ((Exact{3.75} - Exact{1.5}).ToString(), "+000002.25000000");
-	EXPECT_EQ((Exact{3.75} - Exact{1.5}), Exact{2.25});
+	EXPECT_EQ((*"3.75"_closest_exact - *"1.5"_closest_exact).ToString(), "+000002.25000000");
+	EXPECT_EQ((*"3.75"_closest_exact - *"1.5"_closest_exact), *"2.25"_closest_exact);
 
-	std::cout << Exact{1.2515}.ToString() << std::endl; // Closest number is 1.25152588
-	std::cout << Exact{2.6362}.ToString() << std::endl; // Closest number is 2.63623046
-	std::cout << Exact{3.2993106463}.ToString() << std::endl; // Multiplication of the closest numbers
-	std::cout << (Exact{1.2515} * Exact{2.6362}).ToString() << std::endl; // Expectation: 3.2992043
-	EXPECT_EQ((Exact{1.2515} * Exact{2.6362}).ToString(), "+000003.29925538"); // Close enough
+	std::cout << (*"1.2515"_closest_exact).ToString() << std::endl; // Closest number is 1.25146484
+	std::cout << (*"2.6362"_closest_exact).ToString() << std::endl; // Closest number is 2.63616944
+	std::cout << (*"3.2990733662"_closest_exact).ToString() << std::endl; // Multiplication of the closest numbers
+	std::cout << (*"1.2515"_closest_exact * *"2.6362"_closest_exact).ToString() << std::endl; // Expectation: 3.29907337
+	EXPECT_EQ((*"1.2515"_closest_exact * *"2.6362"_closest_exact).ToString(), "+000003.29907227"); // Close enough
 
-	std::cout << Exact{10.1946}.ToString() << std::endl; // Closest number is 10.19458007
-	std::cout << Exact{70.8069}.ToString() << std::endl; // Closest number is 70.80688476
-	std::cout << Exact{721.8464561931}.ToString() << std::endl; // Multiplication of the closest numbers
-	std::cout << (Exact{10.1946} * Exact{70.8069}).ToString() << std::endl; // Expectation: 721.84802274
-	EXPECT_EQ((Exact{10.1946} * Exact{70.8069}).ToString(), "+000721.84643555"); // Close enough
+	std::cout << (*"10.1946"_closest_exact).ToString() << std::endl; // Closest number is 10.19458008
+	std::cout << (*"70.8069"_closest_exact).ToString() << std::endl; // Closest number is 70.80688477
+	std::cout << (*"721.8464561931"_closest_exact).ToString() << std::endl; // Multiplication of the closest numbers
+	std::cout << (*"10.1946"_closest_exact * *"70.8069"_closest_exact).ToString() << std::endl; // Expectation: 721.84802274
+	EXPECT_EQ((*"10.1946"_closest_exact * *"70.8069"_closest_exact).ToString(), "+000721.84643555"); // Close enough
 }
 
 TEST(Exact, attributes) {
@@ -114,13 +96,6 @@ TEST(Exact, accessors) {
 	EXPECT_EQ(Exact{131070}.ToFloat(), 131070.0f);
 	EXPECT_EQ(Exact{-131072}.ToFloat(), -131072.0f);
 	EXPECT_EQ(Exact{-131071}.ToFloat(), -131071.0f);
-	// The result is accurate close to the origin
-	EXPECT_EQ(Exact{1234.54f}.ToFloat(), 1234.54f);
-	EXPECT_EQ(Exact{1234.56f}.ToFloat(), 1234.56f);
-	EXPECT_EQ(Exact{12345.6f}.ToFloat(), 12345.6f);
-	EXPECT_EQ(Exact{123456.0f}.ToFloat(), 123456.0f);
-	EXPECT_EQ(Exact{123456.0012f}.ToFloat(), 123456.0f);
-	// The result is not accurate far from origin
 
 	EXPECT_EQ(Exact{}.ToDouble(), 0.0);
 	EXPECT_EQ(Exact{1}.ToDouble(), 1.0);
@@ -131,38 +106,38 @@ TEST(Exact, accessors) {
 	EXPECT_EQ((Exact{std::in_place, 0x73a8fcd3}.ToRawValue()), 0x73a8fcd3);
 
 	EXPECT_EQ((Exact{std::in_place, 0x00000001}.ToString()), "+000000.00006104");
-	EXPECT_EQ((Exact{-0.00006104}.ToString()), "-000000.00006104");
+	EXPECT_EQ((Exact{std::in_place, -1}.ToString()), "-000000.00006104");
 	EXPECT_EQ((Exact{std::in_place, 0x7FFFFFFF}.ToString()), "+131071.99993897");
 	EXPECT_EQ((Exact{std::in_place, static_cast<int>(0x80000000)}.ToString()), "-131072.00000000");
 	EXPECT_EQ((Exact{std::in_place, static_cast<int>(0x80000001)}.ToString()), "-131071.99993897");
 
 	EXPECT_EQ((Exact{std::in_place, 0x00000001}.ToFastString()), "+000000.00006104");
-	EXPECT_EQ((Exact{-0.00006104}.ToFastString()), "-000000.00006104");
+	EXPECT_EQ((Exact{std::in_place, -1}.ToFastString()), "-000000.00006104");
 	EXPECT_EQ((Exact{std::in_place, 0x7FFFFFFF}.ToFastString()), "+131071.99993896");
 	EXPECT_EQ((Exact{std::in_place, static_cast<int>(0x80000000)}.ToFastString()), "-131072.00000000");
 	EXPECT_EQ((Exact{std::in_place, static_cast<int>(0x80000001)}.ToFastString()), "-131071.99993896");
 
 	// Fastest string is less accurate
 	EXPECT_EQ((Exact{std::in_place, 0x00000001}.ToFastestString()), "+000000.00006104");
-	EXPECT_EQ((Exact{-0.00006104}.ToFastestString()), "-000000.00006104");
+	EXPECT_EQ((Exact{std::in_place, -1}.ToFastestString()), "-000000.00006104");
 	EXPECT_EQ((Exact{std::in_place, 0x7FFFFFFF}.ToFastestString()), "+131072.00000000");
 	EXPECT_EQ((Exact{std::in_place, static_cast<int>(0x80000000)}.ToFastestString()), "-131072.00000000");
 	EXPECT_EQ((Exact{std::in_place, static_cast<int>(0x80000001)}.ToFastestString()), "-131072.00000000");
 }
 
 TEST(Exact, square_root) {
-	EXPECT_EQ(Exact{0.0}.SquareRoot().ToString(), "+000000.00000000");
-	EXPECT_EQ(Exact{2.0}.SquareRoot().ToString(), "+000001.41418457");
-	EXPECT_EQ(Exact{123.456}.SquareRoot().ToString(), "+000011.11108398");
-	EXPECT_EQ(Exact{12345.6789}.SquareRoot().ToString(), "+000111.11108398");
-	EXPECT_EQ(Exact{99999.9999}.SquareRoot().ToString(), "+000316.22778320");
+	EXPECT_EQ(Exact{0}.SquareRoot().ToString(), "+000000.00000000");
+	EXPECT_EQ(Exact{2}.SquareRoot().ToString(), "+000001.41418457");
+	EXPECT_EQ((*"123.456"_closest_exact).SquareRoot().ToString(), "+000011.11108398");
+	EXPECT_EQ((*"12345.6789"_closest_exact).SquareRoot().ToString(), "+000111.11108398");
+	EXPECT_EQ((*"99999.9999"_closest_exact).SquareRoot().ToString(), "+000316.22778320");
 }
 
 TEST(Exact, round) {
-	EXPECT_EQ(Exact{3.4999}.Round(), Exact{3.0});
-	EXPECT_EQ(Exact{3.5}.Round(), Exact{4.0});
-	EXPECT_EQ(Exact{3.5001}.Round(), Exact{4.0});
-	EXPECT_EQ(Exact{3.9999}.Round(), Exact{4.0});
-	EXPECT_EQ(Exact{4.0}.Round(), Exact{4.0});
-	EXPECT_EQ(Exact{4.0001}.Round(), Exact{4.0});
+	EXPECT_EQ((*"3.4999"_closest_exact).Round(), Exact{3});
+	EXPECT_EQ((*"3.5"_closest_exact).Round(), Exact{4});
+	EXPECT_EQ((*"3.5001"_closest_exact).Round(), Exact{4});
+	EXPECT_EQ((*"3.9999"_closest_exact).Round(), Exact{4});
+	EXPECT_EQ(Exact{4}.Round(), Exact{4});
+	EXPECT_EQ((*"4.0001"_closest_exact).Round(), Exact{4});
 }

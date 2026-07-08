@@ -249,22 +249,6 @@ void m2::Exact::ThrowIfOutOfBounds(const int i) {
 		throw M2_ERROR("Integer is less than what Exact can hold");
 	}
 }
-void m2::Exact::ThrowIfOutOfBounds(const float f) {
-	if (Max().ToFloat() < f) {
-		throw M2_ERROR("Float is more than what Exact can hold");
-	}
-	if (f < Min().ToFloat()) {
-		throw M2_ERROR("Float is less than what Exact can hold");
-	}
-}
-void m2::Exact::ThrowIfOutOfBounds(const double d) {
-	if (Max().ToDouble() < d) {
-		throw M2_ERROR("Double is more than what Exact can hold");
-	}
-	if (d < Min().ToDouble()) {
-		throw M2_ERROR("Double is less than what Exact can hold");
-	}
-}
 
 auto std::formatter<m2::Exact>::format(const m2::Exact& value, std::format_context& ctx) const -> std::format_context::iterator {
 	return std::formatter<std::string>::format(value.ToString(), ctx);

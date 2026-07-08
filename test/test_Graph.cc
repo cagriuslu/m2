@@ -5,37 +5,37 @@ TEST(Graph, basic) {
 	int i = 0;
 	auto generator = [&i]() -> std::optional<m2::Graph<int,int>::Edge> {
 		if (i < 100) {
-			auto edge = m2::Graph<int, int>::Edge{i, i + 1, m2::FE{static_cast<float>(i) / 2.0f}};
+			auto edge = m2::Graph<int, int>::Edge{i, i + 1, m2::FE{i} / m2::FE{2}};
 			i++;
 			return edge; // Generates 0 -> 1 -> 2 -> ... -> 98 -> 99 -> 100
 		} else if (100 <= i && i < 200) {
 			int j = 200 - i; // j: 100, 99, 98, 97
 			i++;
-			return m2::Graph<int,int>::Edge{j, j - 1, m2::FE{static_cast<float>(j) / 2.0f}}; // Generates 100 -> 99 -> ... -> 1 -> 0
+			return m2::Graph<int,int>::Edge{j, j - 1, m2::FE{j} / m2::FE{2}}; // Generates 100 -> 99 -> ... -> 1 -> 0
 		} else {
 			return std::nullopt;
 		}
 	};
 	m2::Graph<int,int> graph{generator};
 
-	auto reachable = graph.FindNodesReachableFrom(50, m2::FE{75.0f});
+	auto reachable = graph.FindNodesReachableFrom(50, m2::FE{75});
 	EXPECT_EQ(reachable.size(), 6);
 }
 
 TEST(Graph, FindNodesReachableFrom) {
 	m2::Graph<int,int> graph;
-	graph.AddEdge({0, 1, m2::FE{1.0f}});
-	graph.AddEdge({1, 2, m2::FE{1.0f}});
-	graph.AddEdge({2, -1, m2::FE{1.0f}});
-	graph.AddEdge({0, -1, m2::FE{1.0f}});
-	graph.AddEdge({-1, 2, m2::FE{1.0f}});
-	graph.AddEdge({-1, 1, m2::FE{1.0f}});
-	graph.AddEdge({-1, 0, m2::FE{1.0f}});
-	graph.AddEdge({-1, -2, m2::FE{1.0f}});
-	graph.AddEdge({2, 3, m2::FE{1.0f}});
-	graph.AddEdge({-2, -3, m2::FE{1.0f}});
+	graph.AddEdge({0, 1, m2::FE::One()});
+	graph.AddEdge({1, 2, m2::FE::One()});
+	graph.AddEdge({2, -1, m2::FE::One()});
+	graph.AddEdge({0, -1, m2::FE::One()});
+	graph.AddEdge({-1, 2, m2::FE::One()});
+	graph.AddEdge({-1, 1, m2::FE::One()});
+	graph.AddEdge({-1, 0, m2::FE::One()});
+	graph.AddEdge({-1, -2, m2::FE::One()});
+	graph.AddEdge({2, 3, m2::FE::One()});
+	graph.AddEdge({-2, -3, m2::FE::One()});
 
-	auto reachable = graph.FindNodesReachableFrom(0, m2::FE{2.0f});
+	auto reachable = graph.FindNodesReachableFrom(0, m2::FE{2});
 	EXPECT_EQ(reachable.size(), 5);
 	EXPECT_TRUE(reachable.contains(1));
 	EXPECT_TRUE(reachable.contains(2));

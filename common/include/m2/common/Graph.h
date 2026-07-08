@@ -29,9 +29,9 @@ namespace m2 {
 
 	public:
 		/// Create empty graph
-		explicit Graph(const FE tolerance = FE{0.001f}) : _tolerance(tolerance) {}
+		explicit Graph(const FE tolerance = FE{1} / FE{1000}) : _tolerance(tolerance) {}
 		/// Create graph by repeatedly calling a generator
-		explicit Graph(const std::function<std::optional<Edge>()>& generator, const FE tolerance = FE{0.001f}) : _tolerance(tolerance) {
+		explicit Graph(const std::function<std::optional<Edge>()>& generator, const FE tolerance = FE{1} / FE{1000}) : _tolerance(tolerance) {
 			while (true) {
 				const auto edge = generator();
 				if (not edge) { break; } // Escape

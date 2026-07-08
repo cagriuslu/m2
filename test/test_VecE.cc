@@ -54,10 +54,6 @@ TEST(VecE, Normalize) {
 }
 
 TEST(VecE, VecFConversion) {
-	VecE v{VecF{1.5f, -2.0f}};
-	EXPECT_NEAR(v.GetX().ToFloat(), 1.5f, 0.001f);
-	EXPECT_NEAR(v.GetY().ToFloat(), -2.0f, 0.001f);
-
 	auto f = static_cast<VecF>(VecE(3, 4));
 	EXPECT_FLOAT_EQ(f.GetX(), 3.0f);
 	EXPECT_FLOAT_EQ(f.GetY(), 4.0f);
