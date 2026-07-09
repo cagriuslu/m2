@@ -19,14 +19,16 @@ bool LevelSaver::operator()(MessageBox<LevelSaverInput>& inbox, MessageBox<Level
 				const auto timecode = std::get<LevelSaverInput::PlayerInputs>(msg->variant).timecode;
 				const auto& playerInputs = std::get<LevelSaverInput::PlayerInputs>(msg->variant).inputs;
 				for (int playerIndex = 0; playerIndex < I(playerInputs.size()); ++playerIndex) {
-					for (const auto& playerInput : playerInputs[playerIndex]) {
-						LOG_NETWORK("Persisting player input for timecode to database", timecode, playerIndex);
-						const auto serialized = playerInput.SerializeAsString();
-						std::vector<uint8_t> bytes{serialized.begin(), serialized.end()};
-						if (const auto createResult = orm::LockstepPlayerInput::create(*_db, I(timecode), playerIndex, std::move(bytes)); not createResult) {
-							LOG_ERROR("Unable to persist LockstepPlayerInput to database", createResult.error());
-							return false;
-						}
+					pb::LockstepPlayerInputs envelope;
+					envelope.set_timecode(timecode);
+					envelope.mutable_player_inputs()->Assign(playerInputs[playerIndex].first.begin(), playerInputs[playerIndex].first.end());
+					envelope.set_rng_seed(static_cast<int64_t>(playerInputs[playerIndex].second));
+					LOG_NETWORK("Persisting player input for timecode to database", timecode, playerIndex);
+					const auto serialized = envelope.SerializeAsString();
+					std::vector<uint8_t> bytes{serialized.begin(), serialized.end()};
+					if (const auto createResult = orm::LockstepPlayerInput::create(*_db, I(timecode), playerIndex, std::move(bytes)); not createResult) {
+						LOG_ERROR("Unable to persist LockstepPlayerInput to database", createResult.error());
+						return false;
 					}
 				}
 			} else if (std::holds_alternative<LevelSaverInput::DebugStateReport>(msg->variant)) {

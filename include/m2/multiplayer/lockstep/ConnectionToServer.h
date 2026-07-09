@@ -25,7 +25,7 @@ namespace m2::multiplayer::lockstep {
 			[[nodiscard]] std::optional<int> GetSelfIndex() const;
 			[[nodiscard]] int GetSize() const { return I(_peers.size()); }
 			[[nodiscard]] bool HasAllPeerInputsForTimecode(network::Timecode) const;
-			[[nodiscard]] std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>> GetPeerPlayerInputsForTimecode(network::Timecode) const;
+			[[nodiscard]] std::optional<std::vector<std::pair<std::deque<m2g::pb::LockstepPlayerInput>, uint64_t>>> GetPeerPlayerInputsForTimecode(network::Timecode) const;
 
 			// Modifiers
 
@@ -70,13 +70,16 @@ namespace m2::multiplayer::lockstep {
 		[[nodiscard]] std::optional<int> GetSelfIndex() const;
 		[[nodiscard]] int GetTotalPlayerCount() const;
 		[[nodiscard]] bool HasAllPeerInputsForTimecode(network::Timecode) const;
-		[[nodiscard]] std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>> GetPeerPlayerInputsForTimecode(network::Timecode) const;
+		[[nodiscard]] std::optional<std::vector<std::pair<std::deque<m2g::pb::LockstepPlayerInput>, uint64_t>>> GetPeerPlayerInputsForTimecode(network::Timecode) const;
 
 		// Modifiers
 
 		void SetReadyState(bool readyState);
 		void MarkGameAsStarted();
-		void QueueOutgoingMessages(std::optional<network::Timecode> timecode, const std::deque<m2g::pb::LockstepPlayerInput>*, std::optional<ClientActorInput::GameStateHash>&);
+		void QueueOutgoingMessages(std::optional<network::Timecode> timecode,
+			const std::deque<m2g::pb::LockstepPlayerInput>*,
+			std::optional<ClientActorInput::GameStateHash>&,
+			const std::optional<uint64_t>& rngSeed_);
 		enum class Status { CONTINUE, STOP };
 		[[nodiscard]] Status DeliverIncomingMessage(pb::LockstepMessage&& msg);
 		void DeliverIncomingMessageToPeer(MessageAndSender&& msg);

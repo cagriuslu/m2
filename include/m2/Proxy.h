@@ -114,7 +114,7 @@ namespace m2 {
 		static constexpr std::chrono::milliseconds LOCKSTEP_GAME_TICK_PERIOD{250};
 		void PreLockstepLevelInit(MAYBE const std::string& name, MAYBE const m2::pb::Level& level, MAYBE const m2g::pb::LockstepGameInitParams& gameInitParams) {}
 		void PostLockstepLevelInit(MAYBE const std::string& name, MAYBE const m2::pb::Level& level, MAYBE const m2g::pb::LockstepGameInitParams& gameInitParams) {}
-		void HandleLockstepPlayerInputs(MAYBE const std::vector<std::deque<m2g::pb::LockstepPlayerInput>>& inputs) {}
+		void HandleLockstepPlayerInputs(MAYBE const std::vector<std::pair<std::deque<m2g::pb::LockstepPlayerInput>, uint64_t>>& inputs) {}
 		/// Called on the host once per game tick, for each bot it owns. Should return the inputs to commit for that
 		/// bot. Empty deque means no action.
 		std::deque<m2g::pb::LockstepPlayerInput> GenerateLockstepBotInput(MAYBE int botPlayerIndex) { return {}; }

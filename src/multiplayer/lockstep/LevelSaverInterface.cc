@@ -6,7 +6,7 @@ using namespace m2;
 using namespace m2::multiplayer;
 using namespace m2::multiplayer::lockstep;
 
-void LevelSaverInterface::StorePlayerInputs(const network::Timecode timecode, std::vector<std::deque<m2g::pb::LockstepPlayerInput>> playerInputs) {
+void LevelSaverInterface::StorePlayerInputs(const network::Timecode timecode, std::vector<std::pair<std::deque<m2g::pb::LockstepPlayerInput>, uint64_t>> playerInputs) {
 	LOG_NETWORK("Sending player inputs to level saver");
 	GetActorInbox().PushMessage(LevelSaverInput{
 		.variant = LevelSaverInput::PlayerInputs{

@@ -25,7 +25,7 @@ bool ConnectionToServer::PeerList::HasAllPeerInputsForTimecode(const network::Ti
 		return not peer || peer->DoPlayerInputsForTimecodeExist(tc);
 	});
 }
-std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>> ConnectionToServer::PeerList::GetPeerPlayerInputsForTimecode(const network::Timecode tc) const {
+std::optional<std::vector<std::pair<std::deque<m2g::pb::LockstepPlayerInput>, uint64_t>>> ConnectionToServer::PeerList::GetPeerPlayerInputsForTimecode(const network::Timecode tc) const {
 	// Check if peers have the inputs before building the containers
 	for (const auto& peer : _peers) {
 		if (peer && not peer->DoPlayerInputsForTimecodeExist(tc)) {
@@ -33,7 +33,7 @@ std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>> ConnectionT
 		}
 	}
 
-	std::vector<std::deque<m2g::pb::LockstepPlayerInput>> peersInputs{_peers.size()};
+	std::vector<std::pair<std::deque<m2g::pb::LockstepPlayerInput>, uint64_t>> peersInputs{_peers.size()};
 	for (int i = 0; i < I(_peers.size()); ++i) {
 		if (_peers[i]) {
 			peersInputs[i] = std::move(*_peers[i]->GetPlayerInputsForTimecode(tc));
@@ -145,10 +145,10 @@ bool ConnectionToServer::HasAllPeerInputsForTimecode(const network::Timecode tc)
 		[](const auto&) { return false; }
 	}, _state.Get());
 }
-std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>> ConnectionToServer::GetPeerPlayerInputsForTimecode(const network::Timecode tc) const {
+std::optional<std::vector<std::pair<std::deque<m2g::pb::LockstepPlayerInput>, uint64_t>>> ConnectionToServer::GetPeerPlayerInputsForTimecode(const network::Timecode tc) const {
 	return std::visit(overloaded{
 		[tc](const StateWithPeerList auto& s) { return s.peerList.GetPeerPlayerInputsForTimecode(tc); },
-		[](const auto&) -> std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>> { return std::nullopt; }
+		[](const auto&) -> std::optional<std::vector<std::pair<std::deque<m2g::pb::LockstepPlayerInput>, uint64_t>>> { return std::nullopt; }
 	}, _state.Get());
 }
 
@@ -181,12 +181,18 @@ void ConnectionToServer::MarkGameAsStarted() {
 		throw M2_ERROR("Attempt to mark game as started outside of frozen lobby state");
 	}
 }
-void ConnectionToServer::QueueOutgoingMessages(const std::optional<network::Timecode> timecode, const std::deque<m2g::pb::LockstepPlayerInput>* unsentPlayerInputs, std::optional<ClientActorInput::GameStateHash>& lastCalculatedGameStateHash) {
-	const auto queuePlayerInputs = [this](const network::Timecode timecode_, const std::deque<m2g::pb::LockstepPlayerInput>& playerInputs) {
+void ConnectionToServer::QueueOutgoingMessages(const std::optional<network::Timecode> timecode,
+		const std::deque<m2g::pb::LockstepPlayerInput>* unsentPlayerInputs,
+		std::optional<ClientActorInput::GameStateHash>& lastCalculatedGameStateHash,
+		const std::optional<uint64_t>& rngSeed_) {
+	const auto queuePlayerInputs = [this](const network::Timecode timecode_, const std::deque<m2g::pb::LockstepPlayerInput>& playerInputs, const std::optional<uint64_t> rngSeed) {
 		pb::LockstepMessage msg;
 		msg.mutable_player_inputs()->set_timecode(timecode_); // Set this option even if there are no inputs
 		for (const auto& playerInput : playerInputs) {
 			msg.mutable_player_inputs()->add_player_inputs()->CopyFrom(playerInput);
+		}
+		if (rngSeed) {
+			msg.mutable_player_inputs()->set_rng_seed(*rngSeed);
 		}
 		QueueOutgoingMessage(msg); // To server
 		QueueOutgoingMessageToPeers(msg); // To peers
@@ -220,9 +226,9 @@ void ConnectionToServer::QueueOutgoingMessages(const std::optional<network::Time
 			}
 		});
 	} else if (std::holds_alternative<LobbyFrozen>(_state.Get()) && timecode && unsentPlayerInputs) {
-		queuePlayerInputs(*timecode, *unsentPlayerInputs);
+		queuePlayerInputs(*timecode, *unsentPlayerInputs, std::nullopt);
 	} else if (std::holds_alternative<GameStarted>(_state.Get()) && timecode && unsentPlayerInputs) {
-		queuePlayerInputs(*timecode, *unsentPlayerInputs);
+		queuePlayerInputs(*timecode, *unsentPlayerInputs, rngSeed_);
 
 		// If timecode is multiple of report period, publish the hashes from (timecode - report period).
 		if (GAME_STATE_REPORT_PERIOD_IN_TICKS < *timecode && (*timecode % GAME_STATE_REPORT_PERIOD_IN_TICKS == 0)) {

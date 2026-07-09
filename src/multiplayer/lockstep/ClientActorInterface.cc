@@ -94,7 +94,8 @@ ClientActorInterface::SwapResult ClientActorInterface::SwapInputsIfTimeHasCome()
 			LOG_NETWORK("Commiting inputs from this player");
 			GetActorInbox().PushMessage(ClientActorInput{
 				.variant = ClientActorInput::QueueThisPlayerInput{
-					.inputs = std::move(simulatingInputs.selfInputs)
+					.inputs = std::move(simulatingInputs.selfInputs),
+					.rngSeed = std::move(simulatingInputs.rngSeed)
 				}
 			});
 			// Switch to lagging state and check inputs to simulate
@@ -144,6 +145,17 @@ void ClientActorInterface::StoreGameStateHash(const network::Timecode tc, const 
 			.hash = hash
 		}
 	});
+}
+void ClientActorInterface::QueueRngSeed(const uint64_t seed) {
+	std::visit(overloaded{
+		[&](SimulatingInputs& simulatingInputs) {
+			LOG_NETWORK(std::format("Queueing RNG seed: {}", seed));
+			simulatingInputs.rngSeed = seed;
+		},
+		[](const auto&) {
+			throw M2_ERROR("Attempt to queue RNG seed during incorrect state");
+		}
+	}, _state);
 }
 
 void ClientActorInterface::ProcessOutbox() {

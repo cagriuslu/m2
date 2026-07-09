@@ -9,7 +9,7 @@ namespace m2::multiplayer::lockstep {
 	struct LevelSaverInput {
 		struct PlayerInputs {
 			network::Timecode timecode;
-			std::vector<std::deque<m2g::pb::LockstepPlayerInput>> inputs;
+			std::vector<std::pair<std::deque<m2g::pb::LockstepPlayerInput>, uint64_t>> inputs;
 		};
 		struct DebugStateReport {
 			network::Timecode timecode;

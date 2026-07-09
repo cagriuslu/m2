@@ -192,6 +192,9 @@ bool ServerActor::operator()(MessageBox<ServerActorInput>& inbox, MessageBox<Ser
 									levelStarted.clientList.Find(msg.sender)->SetFault(pb::LockstepFaultCode::MISSING_STATE_VALIDATION);
 								}
 							}
+							if (const auto rngSeed = msg.message.player_inputs().rng_seed()) {
+								LOG_NETWORK_VERBOSE(std::format("Player sent RNG seed: clientIndex={} seed={}", client->GetIndex(), rngSeed));
+							}
 						}
 					});
 				}

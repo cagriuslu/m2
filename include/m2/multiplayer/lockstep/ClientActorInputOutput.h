@@ -11,6 +11,7 @@ namespace m2::multiplayer::lockstep {
 		};
 		struct QueueThisPlayerInput {
 			std::deque<m2g::pb::LockstepPlayerInput> inputs;
+			std::optional<uint64_t> rngSeed;
 		};
 		struct GameStateHash {
 			network::Timecode timecode;
@@ -27,7 +28,7 @@ namespace m2::multiplayer::lockstep {
 		};
 		struct PlayerInputsToSimulate {
 			network::Timecode timecode;
-			std::vector<std::deque<m2g::pb::LockstepPlayerInput>> playerInputs;
+			std::vector<std::pair<std::deque<m2g::pb::LockstepPlayerInput>, uint64_t>> playerInputs;
 		};
 		std::variant<ConnectionToServerStateUpdate,PlayerInputsToSimulate> variant;
 		std::optional<m2g::pb::LockstepGameInitParams> gameInitParams{};

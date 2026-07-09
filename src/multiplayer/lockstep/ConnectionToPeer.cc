@@ -17,15 +17,19 @@ bool ConnectionToPeer::DoPlayerInputsForTimecodeExist(const network::Timecode tc
 		[](const auto&) { return false; }
 	}, _state);
 }
-std::optional<std::deque<m2g::pb::LockstepPlayerInput>> ConnectionToPeer::GetPlayerInputsForTimecode(const network::Timecode tc) const {
+std::optional<std::pair<std::deque<m2g::pb::LockstepPlayerInput>, uint64_t>> ConnectionToPeer::GetPlayerInputsForTimecode(const network::Timecode tc) const {
 	return std::visit(overloaded{
-		[tc](const ConnectedToPeer& connection) -> std::optional<std::deque<m2g::pb::LockstepPlayerInput>> {
+		[tc](const ConnectedToPeer& connection) -> std::optional<std::pair<std::deque<m2g::pb::LockstepPlayerInput>, uint64_t>> {
 			if (const auto it = connection._inputs.find(tc); it != connection._inputs.end()) {
-				return std::deque<m2g::pb::LockstepPlayerInput>{it->second.playerInputs.player_inputs().begin(), it->second.playerInputs.player_inputs().end()};
+				return std::make_pair(
+					std::deque<m2g::pb::LockstepPlayerInput>{
+						it->second.playerInputs.player_inputs().begin(),
+						it->second.playerInputs.player_inputs().end()},
+					it->second.playerInputs.rng_seed());
 			}
 			return std::nullopt;
 		},
-		[](const auto&) -> std::optional<std::deque<m2g::pb::LockstepPlayerInput>> { return std::nullopt; }
+		[](const auto&) -> std::optional<std::pair<std::deque<m2g::pb::LockstepPlayerInput>, uint64_t>> { return std::nullopt; }
 	}, _state);
 }
 std::optional<int32_t> ConnectionToPeer::GetPlayerInputHashForTimecode(const network::Timecode tc) const {

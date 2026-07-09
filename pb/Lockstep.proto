@@ -34,6 +34,7 @@ message LockstepPeerDetails {
 message LockstepPlayerInputs {
   fixed32 timecode = 1;
   repeated m2g.pb.LockstepPlayerInput player_inputs = 2;
+  fixed64 rng_seed = 3;
 }
 
 message LockstepDebugStateReport {

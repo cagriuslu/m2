@@ -15,13 +15,14 @@ namespace m2::multiplayer::lockstep {
 		std::optional<ConnectionToServer> _serverConnection;
 		/// Player inputs from this instance are collected here, to be sent to every peer each tick.
 		std::optional<std::deque<m2g::pb::LockstepPlayerInput>> _unsentThisPlayerInputs;
+		std::optional<uint64_t> _unsentThisPlayerRngSeed;
 		/// Last timepoint where the previous player inputs are sent to peers.
 		std::optional<Stopwatch> _lastPlayerInputsSentAt;
 		/// Timecode that'll be used for the next set of player inputs that'll be sent to peers.
 		network::Timecode _nextTimecode{};
 		/// Player inputs from this instance that are already sent to peers are stored here until inputs from all other
 		/// peers are received.
-		std::optional<std::pair<network::Timecode,std::deque<m2g::pb::LockstepPlayerInput>>> _nextSelfPlayerInputsToSimulate;
+		std::optional<std::tuple<network::Timecode, std::deque<m2g::pb::LockstepPlayerInput>, std::optional<uint64_t>>> _nextSelfPlayerInputsToSimulate;
 		std::optional<ClientActorInput::GameStateHash> _lastReceivedGameStateHash;
 
 	public:
@@ -38,7 +39,7 @@ namespace m2::multiplayer::lockstep {
 
 	private:
 		bool HasNextPlayerInputsToSimulate() const;
-		std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>> GetNextPlayerInputsToSimulate() const;
+		std::optional<std::vector<std::pair<std::deque<m2g::pb::LockstepPlayerInput>, uint64_t>>> GetNextPlayerInputsToSimulate() const;
 
 		void ProcessOneMessageFromInbox(MessageBox<ClientActorInput>&);
 	};

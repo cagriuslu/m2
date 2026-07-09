@@ -40,8 +40,8 @@ bool ClientActor::operator()(MessageBox<ClientActorInput>& inbox, MessageBox<Cli
 		while (not messages.empty()) {
 			auto msg = std::move(messages.front()); messages.pop();
 			if (msg.sender == _serverConnection->GetAddressAndPort()) {
-				const auto status = _serverConnection->DeliverIncomingMessage(std::move(msg.message));
-				if (status == ConnectionToServer::Status::STOP) {
+				if (const auto status = _serverConnection->DeliverIncomingMessage(std::move(msg.message));
+						status == ConnectionToServer::Status::STOP) {
 					return false;
 				}
 			} else {
@@ -51,8 +51,7 @@ bool ClientActor::operator()(MessageBox<ClientActorInput>& inbox, MessageBox<Cli
 	}
 
 	if (not _lastPlayerInputsSentAt && _unsentThisPlayerInputs) {
-		// If input streaming hasn't yet started and inputs from this player have been committed, mark game as started
-		// on this client.
+		// If input streaming hasn't yet started and inputs from this player have been committed, mark game as started on this client.
 		_serverConnection->MarkGameAsStarted();
 		if (_nextTimecode != 0) {
 			throw M2_ERROR("First timecode should have been zero");
@@ -65,11 +64,11 @@ bool ClientActor::operator()(MessageBox<ClientActorInput>& inbox, MessageBox<Cli
 			throw M2_ERROR("First set of player inputs should have been empty");
 		}
 		LOG_NETWORK("First player inputs are available, sending to peers...");
-		_serverConnection->QueueOutgoingMessages(0, &*_unsentThisPlayerInputs, _lastReceivedGameStateHash);
+		_serverConnection->QueueOutgoingMessages(0, &*_unsentThisPlayerInputs, _lastReceivedGameStateHash, _unsentThisPlayerRngSeed);
 
 		// Even though the first set of player inputs are empty, we still simulate it. Store them until the next tick.
 		// Stored timecode becomes the expected timecode for inputs of the peers.
-		_nextSelfPlayerInputsToSimulate = std::make_pair(0, std::move(*_unsentThisPlayerInputs));
+		_nextSelfPlayerInputsToSimulate = std::make_tuple(0, std::move(*_unsentThisPlayerInputs), std::nullopt);
 		_unsentThisPlayerInputs.reset();
 		_lastPlayerInputsSentAt = Stopwatch{};
 	} else if (HasNextPlayerInputsToSimulate() && _unsentThisPlayerInputs) {
@@ -77,10 +76,10 @@ bool ClientActor::operator()(MessageBox<ClientActorInput>& inbox, MessageBox<Cli
 		// committed. This signifies that previous inputs have been simulated by the game loop completely.
 		const auto timecode = _nextTimecode++;
 		LOG_NETWORK("It is time to send inputs to peers with timecode", timecode);
-		_serverConnection->QueueOutgoingMessages(timecode, &*_unsentThisPlayerInputs, _lastReceivedGameStateHash);
+		_serverConnection->QueueOutgoingMessages(timecode, &*_unsentThisPlayerInputs, _lastReceivedGameStateHash, _unsentThisPlayerRngSeed);
 
 		auto nextPlayerInputsToSimulate = GetNextPlayerInputsToSimulate(); // Available only if the inputs from every player, including the self, is available
-		const auto timecodeToSimulate = _nextSelfPlayerInputsToSimulate->first;
+		const auto timecodeToSimulate = std::get<network::Timecode>(*_nextSelfPlayerInputsToSimulate);
 		LOG_NETWORK("It is time to simulate player inputs with timecode", timecodeToSimulate);
 		outbox.PushMessage(ClientActorOutput{
 			.variant = ClientActorOutput::PlayerInputsToSimulate{
@@ -90,11 +89,12 @@ bool ClientActor::operator()(MessageBox<ClientActorInput>& inbox, MessageBox<Cli
 		});
 
 		// Store this player inputs until the next tick. Stored timecode becomes the expected timecode for inputs of the peers.
-		_nextSelfPlayerInputsToSimulate = std::make_pair(timecode, std::move(*_unsentThisPlayerInputs));
+		_nextSelfPlayerInputsToSimulate = std::make_tuple(timecode, std::move(*_unsentThisPlayerInputs), std::move(*_unsentThisPlayerRngSeed));
 		_unsentThisPlayerInputs.reset();
+		_unsentThisPlayerRngSeed.reset();
 		_lastPlayerInputsSentAt = Stopwatch{};
 	} else {
-		_serverConnection->QueueOutgoingMessages(std::nullopt, nullptr, _lastReceivedGameStateHash); // Do regular housekeeping
+		_serverConnection->QueueOutgoingMessages(std::nullopt, nullptr, _lastReceivedGameStateHash, _unsentThisPlayerRngSeed); // Do regular housekeeping
 	}
 
 	if (not writeableSockets.empty()) {
@@ -109,18 +109,21 @@ bool ClientActor::operator()(MessageBox<ClientActorInput>& inbox, MessageBox<Cli
 
 bool ClientActor::HasNextPlayerInputsToSimulate() const {
 	if (_serverConnection && _nextSelfPlayerInputsToSimulate) {
-		const auto nextTimecodeToSimulate = _nextSelfPlayerInputsToSimulate->first;
+		const auto nextTimecodeToSimulate = std::get<network::Timecode>(*_nextSelfPlayerInputsToSimulate);
 		return _serverConnection->HasAllPeerInputsForTimecode(nextTimecodeToSimulate);
 	}
 	return false;
 }
-std::optional<std::vector<std::deque<m2g::pb::LockstepPlayerInput>>> ClientActor::GetNextPlayerInputsToSimulate() const {
+std::optional<std::vector<std::pair<std::deque<m2g::pb::LockstepPlayerInput>, uint64_t>>> ClientActor::GetNextPlayerInputsToSimulate() const {
 	if (_serverConnection && _nextSelfPlayerInputsToSimulate) {
-		const auto nextTimecodeToSimulate = _nextSelfPlayerInputsToSimulate->first;
+		const auto nextTimecodeToSimulate = std::get<network::Timecode>(*_nextSelfPlayerInputsToSimulate);
 		if (auto peerPlayerInputs = _serverConnection->GetPeerPlayerInputsForTimecode(nextTimecodeToSimulate)) {
 			if (const auto selfIndex = _serverConnection->GetSelfIndex()) {
 				// Add self player inputs to the vector
-				(*peerPlayerInputs)[*selfIndex] = _nextSelfPlayerInputsToSimulate->second;
+				(*peerPlayerInputs)[*selfIndex].first = std::get<std::deque<m2g::pb::LockstepPlayerInput>>(*_nextSelfPlayerInputsToSimulate);
+				if (const auto rngSeed = std::get<std::optional<uint64_t>>(*_nextSelfPlayerInputsToSimulate)) {
+					(*peerPlayerInputs)[*selfIndex].second = *rngSeed;
+				}
 				return peerPlayerInputs;
 			}
 		}
@@ -143,9 +146,13 @@ void ClientActor::ProcessOneMessageFromInbox(MessageBox<ClientActorInput>& inbox
 			if (_unsentThisPlayerInputs) {
 				throw M2_ERROR("Inputs from this player from previous tick are not sent yet");
 			}
+			if (_unsentThisPlayerRngSeed) {
+				throw M2_ERROR("RNG seed from this player from previous tick are not sent yet");
+			}
 			LOG_NETWORK("Received committed inputs from the game loop");
 			auto& playerInput = std::get<ClientActorInput::QueueThisPlayerInput>(msg.variant);
 			_unsentThisPlayerInputs = std::move(playerInput.inputs);
+			_unsentThisPlayerRngSeed = std::move(playerInput.rngSeed);
 		} else if (std::holds_alternative<ClientActorInput::GameStateHash>(msg.variant)) {
 			if (_lastReceivedGameStateHash) {
 				throw M2_ERROR("Previously received game state hash wasn't used");

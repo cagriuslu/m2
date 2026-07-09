@@ -782,7 +782,7 @@ void Game::ExecuteStep(const Stopwatch::Duration& delta) {
 					if (not levelSaverInterface->IsActorRunning()) {
 						throw M2_ERROR("Level saver stopped running prematurely");
 					}
-					if (std::ranges::any_of(simulationInputs->allInputsToSimulate, [](const auto& playerInputs) { return not playerInputs.empty(); })) {
+					if (std::ranges::any_of(simulationInputs->allInputsToSimulate, [](const auto& playerInputs) { return not playerInputs.first.empty() || playerInputs.second; })) {
 						levelSaverInterface->StorePlayerInputs(simulationInputs->timecode, simulationInputs->allInputsToSimulate);
 					}
 				}
@@ -811,6 +811,8 @@ void Game::ExecuteStep(const Stopwatch::Duration& delta) {
 					if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)) {
 						std::get<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents).serverActorInterface->StoreGameStateHash(simulationInputs->timecode, *computedGameStateHash);
 					}
+					// Use this time to also reseed the random number generators of all players
+					GetLockstepClientActor().QueueRngSeed(RandomNonZero64());
 				}
 
 				if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)) {

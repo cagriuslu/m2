@@ -37,7 +37,7 @@ namespace m2::multiplayer::lockstep {
 		[[nodiscard]] const network::IpAddressAndPort& GetAddressAndPort() const { return _addressAndPort; }
 		[[nodiscard]] bool IsConnected() const { return std::holds_alternative<ConnectedToPeer>(_state); }
 		[[nodiscard]] bool DoPlayerInputsForTimecodeExist(network::Timecode) const;
-		[[nodiscard]] std::optional<std::deque<m2g::pb::LockstepPlayerInput>> GetPlayerInputsForTimecode(network::Timecode) const;
+		[[nodiscard]] std::optional<std::pair<std::deque<m2g::pb::LockstepPlayerInput>, uint64_t>> GetPlayerInputsForTimecode(network::Timecode) const;
 		[[nodiscard]] std::optional<int32_t> GetPlayerInputHashForTimecode(network::Timecode) const;
 
 		// Modifiers

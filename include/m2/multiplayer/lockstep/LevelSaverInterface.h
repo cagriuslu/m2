@@ -8,7 +8,7 @@ namespace m2::multiplayer::lockstep {
 	public:
 		explicit LevelSaverInterface(std::unique_ptr<genORM::database> db) : ActorInterfaceBase(std::move(db)) {}
 
-		void StorePlayerInputs(network::Timecode, std::vector<std::deque<m2g::pb::LockstepPlayerInput>> playerInputs);
+		void StorePlayerInputs(network::Timecode, std::vector<std::pair<std::deque<m2g::pb::LockstepPlayerInput>, uint64_t>> playerInputs);
 		void StoreDebugStateReport(network::Timecode, pb::LockstepDebugStateReport&& report);
 	};
 }

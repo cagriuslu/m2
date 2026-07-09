@@ -19,7 +19,7 @@ namespace m2::multiplayer::lockstep {
 
 		struct SimulationInputs {
 			network::Timecode timecode;
-			std::vector<std::deque<m2g::pb::LockstepPlayerInput>> allInputs;
+			std::vector<std::pair<std::deque<m2g::pb::LockstepPlayerInput>, uint64_t>> allInputs;
 		};
 		std::optional<SimulationInputs> GetNextSimulationInputs();
 	};

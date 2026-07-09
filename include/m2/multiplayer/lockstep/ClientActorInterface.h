@@ -16,6 +16,7 @@ namespace m2::multiplayer::lockstep {
 		struct SimulatingInputs {
 			int32_t physicsSimulationsCounter{};
 			std::deque<m2g::pb::LockstepPlayerInput> selfInputs;
+			std::optional<uint64_t> rngSeed;
 		};
 		/// Inputs previously queued by player have been commited, but inputs to simulate haven't been received yet.
 		/// It's not possible to queue further inputs. Only graphics and non-impactful events can be handled.
@@ -25,7 +26,7 @@ namespace m2::multiplayer::lockstep {
 		/// and should be handled right away. This is a transitional state and the interface never settles on it.
 		struct ReadyToSimulate {
 			network::Timecode timecode;
-			std::vector<std::deque<m2g::pb::LockstepPlayerInput>> allInputsToSimulate;
+			std::vector<std::pair<std::deque<m2g::pb::LockstepPlayerInput>, uint64_t>> allInputsToSimulate;
 			/// Since the inputs are received from the actor during ShouldSimulatePhysics(), but they are simulated only
 			/// during ExecuteStep(), the player has the opportunity to queue some inputs during PreStep(). We need to
 			/// hold onto these inputs and move them to SimulationInputs.selfInputs.
@@ -81,6 +82,9 @@ namespace m2::multiplayer::lockstep {
 		std::optional<ReadyToSimulate> PopSimulationInputs();
 		/// Game state hash is needed for the state report that is sent to the server
 		void StoreGameStateHash(network::Timecode, int32_t);
+		/// Queue a number to be sent to all players for them to use it as Rng seed. This function should be called only
+		/// while the state is appropriate to receive inputs, just like TryQueueInput.
+		void QueueRngSeed(uint64_t);
 
 	private:
 		void ProcessOutbox();
