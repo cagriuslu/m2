@@ -14,13 +14,17 @@
 
 namespace {
 	bool gUnexpectedEventOccurred = false;
+	// Guards thread_names against concurrent access. Actor threads register their names as they start up, so
+	// registration and lookup happen from multiple threads at once.
+	std::mutex thread_names_mutex;
 	std::vector<std::pair<std::thread::id, std::string>> thread_names;
 
-	const char* LookupThreadName() {
+	std::string LookupThreadName() {
 		const auto id = std::this_thread::get_id();
+		std::unique_lock lock{thread_names_mutex};
 		for (const auto& pair : thread_names) {
 			if (pair.first == id) {
-				return pair.second.c_str();
+				return pair.second;
 			}
 		}
 		return "  ";
@@ -59,6 +63,7 @@ namespace {
 std::mutex m2::detail::gLogMutex;
 
 void m2::SetThreadNameForLogging(const char* thread_name) {
+	std::unique_lock lock{thread_names_mutex};
 	thread_names.emplace_back(std::this_thread::get_id(), thread_name);
 }
 
@@ -110,5 +115,5 @@ void m2::detail::LogHeader(const pb::LogLevel lvl, const char *filePath, const i
 	std::array<char, 4> simplifiedFileName;
 	SimplifyFileName(fileName == nullptr ? filePath : fileName, simplifiedFileName);
 
-	fprintf(stderr, "[%c %010lld %s %03d %s] ", lvl_char, static_cast<long long>(now), simplifiedFileName.data(), line % 1000, LookupThreadName());
+	fprintf(stderr, "[%c %010lld %s %03d %s] ", lvl_char, static_cast<long long>(now), simplifiedFileName.data(), line % 1000, LookupThreadName().c_str());
 }
