@@ -5,6 +5,7 @@
 #include <m2/ui/Console.h>
 #include <m2/ui/UiPanelBlueprint.h>
 #include <m2/ui/UiWidgetBlueprint.h>
+#include <m2/ui/widget/CheckboxWithImage.h>
 #include <m2/ui/widget/CheckboxWithText.h>
 #include <m2/ui/widget/Hidden.h>
 #include <m2/ui/widget/Image.h>
@@ -417,6 +418,8 @@ std::unique_ptr<UiWidget> UiPanel::create_widget_state(const UiWidgetBlueprint &
 		state = std::make_unique<IntegerSelection>(this, &widget_blueprint);
 	} else if (std::holds_alternative<CheckboxWithTextBlueprint>(widget_blueprint.variant)) {
 		state = std::make_unique<CheckboxWithText>(this, &widget_blueprint);
+	} else if (std::holds_alternative<CheckboxWithImageBlueprint>(widget_blueprint.variant)) {
+		state = std::make_unique<CheckboxWithImage>(this, &widget_blueprint);
 	} else {
 		throw M2_ERROR("Implementation");
 	}

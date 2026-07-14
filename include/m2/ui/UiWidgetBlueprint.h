@@ -1,4 +1,5 @@
 #pragma once
+#include "widget/CheckboxWithImageBlueprint.h"
 #include "widget/CheckboxWithTextBlueprint.h"
 #include "widget/ImageBlueprint.h"
 #include "widget/HiddenBlueprint.h"
@@ -35,7 +36,8 @@ namespace m2 {
 				widget::ImageSelectionBlueprint,
 				widget::TextSelectionBlueprint,
 				widget::IntegerSelectionBlueprint,
-				widget::CheckboxWithTextBlueprint>;
+				widget::CheckboxWithTextBlueprint,
+				widget::CheckboxWithImageBlueprint>;
 		Variant variant;
 	};
 }

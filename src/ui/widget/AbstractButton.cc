@@ -1,4 +1,5 @@
 #include <m2/ui/widget/AbstractButton.h>
+#include <m2/ui/widget/CheckboxWithImage.h>
 #include <m2/ui/widget/CheckboxWithText.h>
 #include <m2/ui/widget/Text.h>
 #include <m2/ui/widget/Image.h>
@@ -17,6 +18,7 @@ AbstractButton::AbstractButton(UiPanel* parent, const UiWidgetBlueprint *bluepri
 						[](const TextBlueprint& v) -> m2g::pb::KeyType { return v.keyboardShortcut; },
 						[](const ImageBlueprint& v) -> m2g::pb::KeyType { return v.keyboardShortcut; },
 						[](const CheckboxWithTextBlueprint& v) -> m2g::pb::KeyType { return v.keyboardShortcut; },
+						[](const CheckboxWithImageBlueprint& v) -> m2g::pb::KeyType { return v.keyboardShortcut; },
 						[](MAYBE const auto& v) -> m2g::pb::KeyType { return {}; }
 				}, blueprint->variant)
 		),
@@ -27,6 +29,7 @@ void AbstractButton::OnHover() {
 			[&](const TextBlueprint& v) { if (v.onHover) v.onHover(dynamic_cast<Text&>(*this)); },
 			[&](const ImageBlueprint& v) { if (v.onHover) v.onHover(dynamic_cast<Image&>(*this)); },
 			[&](const CheckboxWithTextBlueprint& v) { if (v.onHover) v.onHover(dynamic_cast<CheckboxWithText&>(*this)); },
+			[&](const CheckboxWithImageBlueprint& v) { if (v.onHover) v.onHover(dynamic_cast<CheckboxWithImage&>(*this)); },
 			[](MAYBE const auto& v) {}
 	}, blueprint->variant);
 }
@@ -35,6 +38,7 @@ void AbstractButton::OffHover() {
 			[&](const TextBlueprint& v) { if (v.offHover) v.offHover(dynamic_cast<Text&>(*this)); },
 			[&](const ImageBlueprint& v) { if (v.offHover) v.offHover(dynamic_cast<Image&>(*this)); },
 			[&](const CheckboxWithTextBlueprint& v) { if (v.offHover) v.offHover(dynamic_cast<CheckboxWithText&>(*this)); },
+			[&](const CheckboxWithImageBlueprint& v) { if (v.offHover) v.offHover(dynamic_cast<CheckboxWithImage&>(*this)); },
 			[](MAYBE const auto& v) {}
 	}, blueprint->variant);
 }
@@ -44,6 +48,7 @@ UiAction AbstractButton::OnEvent(Events &events) {
 			[](const TextBlueprint& v) -> bool { return static_cast<bool>(v.onAction); },
 			[](const ImageBlueprint& v) -> bool { return static_cast<bool>(v.onAction); },
 			[](MAYBE const CheckboxWithTextBlueprint& v) -> bool { return true; }, // Checkbox might change state even if there isn't an onAction callback.
+			[](MAYBE const CheckboxWithImageBlueprint& v) -> bool { return true; }, // Checkbox might change state even if there isn't an onAction callback.
 			[](MAYBE const auto& v) -> bool { return false; }
 	}, blueprint->variant);
 	if (!has_action_callback) {
@@ -91,6 +96,11 @@ UiAction AbstractButton::trigger_action() {
 				auto& checkbox_with_text_state = dynamic_cast<CheckboxWithText&>(*this);
 				checkbox_with_text_state._state = !checkbox_with_text_state._state;
 				return v.onAction ? v.onAction(checkbox_with_text_state) : MakeContinueAction();
+			},
+			[&](const CheckboxWithImageBlueprint& v) {
+				auto& checkbox_with_image_state = dynamic_cast<CheckboxWithImage&>(*this);
+				checkbox_with_image_state._state = !checkbox_with_image_state._state;
+				return v.onAction ? v.onAction(checkbox_with_image_state) : MakeContinueAction();
 			},
 			[](const auto&) {
 				return MakeContinueAction();
