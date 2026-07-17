@@ -17,7 +17,7 @@ namespace m2g {
 
 		void PreLockstepLevelInit(const std::string& name, const m2::pb::Level& level, const m2g::pb::LockstepGameInitParams& gameInitParams);
 		void PostLockstepLevelInit(const std::string& name, const m2::pb::Level& level, const m2g::pb::LockstepGameInitParams& gameInitParams);
-		void HandleLockstepPlayerInputs(const std::vector<std::deque<pb::LockstepPlayerInput>>&);
+		void HandleLockstepPlayerInputs(const std::vector<std::pair<std::deque<pb::LockstepPlayerInput>, uint64_t>>&);
 		std::deque<pb::LockstepPlayerInput> GenerateLockstepBotInput(int botPlayerIndex);
 
 		class LevelState final : public m2::Proxy::LevelState {

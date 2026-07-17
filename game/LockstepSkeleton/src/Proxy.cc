@@ -269,7 +269,7 @@ void m2g::Proxy::PostLockstepLevelInit(const std::string&, const m2::pb::Level&,
 	M2_LEVEL.GetProxyLevelState().PostLevelInit();
 	M2_GAME.EnableLevelSaver("LockstepSkeleton.db");
 }
-void m2g::Proxy::HandleLockstepPlayerInputs(const std::vector<std::deque<pb::LockstepPlayerInput>>&) {}
+void m2g::Proxy::HandleLockstepPlayerInputs(const std::vector<std::pair<std::deque<pb::LockstepPlayerInput>, uint64_t>>&) {}
 std::deque<m2g::pb::LockstepPlayerInput> m2g::Proxy::GenerateLockstepBotInput(int) {
 	// No-op bot: stays idle. Meaningful AI can read M2_LEVEL here and emit inputs for the bot's player index.
 	return {};
