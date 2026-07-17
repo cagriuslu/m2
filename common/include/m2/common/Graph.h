@@ -55,7 +55,7 @@ namespace m2 {
 				_edges[edge.from] = std::vector{edge}; // Insert to map
 			}
 		}
-		/// This operation is optional because the position information is not used for every functionality.
+		/// This operation is optional because the position information is currently not used by any functionality.
 		void SetNodePosition(NodeT node, const VecFE& position) {
 			_nodePositions[node] = position;
 		}
@@ -128,17 +128,14 @@ namespace m2 {
 			return reachable_nodes;
 		}
 
-		/// Returns the reversed path between two nodes.
+		/// Returns the reversed least-cost path between two nodes.
 		/// Returns empty vector if path not found, or `from` is equal to `to`.
 		using ReversePath = std::vector<Edge>;
-		ReversePath FindPathTo(NodeT from, NodeT to) const {
+		[[nodiscard]] ReversePath FindPathTo(NodeT from, NodeT to) const {
 			if (from == to) { return {}; }
 
-			const auto destinationPositionIt = _nodePositions.find(to);
-			if (destinationPositionIt == _nodePositions.end()) { throw M2_ERROR("Destination node has no position"); }
-			const auto destinationPosition = destinationPositionIt->second;
-
-			// Holds the nodes which will be explored next. Key is the exploration priority, value is the Node to explore.
+			// Holds the nodes which will be explored next. Key is the accumulated cost of reaching the
+			// node (the Dijkstra priority), value is the Node to explore.
 			std::multimap<FE, NodeT> frontiers{{FE::Zero(), from}};
 			// The key Node should be approached via the value Edge.
 			std::unordered_map<NodeT, Edge, NodeHash, NodeEqualityComparator> approachVia;
@@ -150,7 +147,20 @@ namespace m2 {
 				auto firstFrontier = frontiers.begin();
 				auto frontier = firstFrontier->second;
 				// If next location to process is the destination, a path is found. Stop.
+				// Termination-on-pop yields the exact least-cost path for Dijkstra.
 				if (frontier == to) { break; }
+
+				// The popped key is the cost at which this frontier was queued. If a cheaper cost has since
+				// been found for this node, this is a stale duplicate entry left behind by a later
+				// improvement; skip it. The node is guaranteed present; its absence is an implementation error.
+				const auto settledCostIt = provisionalCost.find(frontier);
+				if (settledCostIt == provisionalCost.end()) { throw M2_ERROR("Implementation error, frontier has no provisional cost"); }
+				if (settledCostIt->second < firstFrontier->first) {
+					frontiers.erase(firstFrontier);
+					continue;
+				}
+				// After the stale check, the popped key is the node's settled accumulated cost.
+				const auto frontierCost = firstFrontier->first;
 
 				// Check if the frontier has outgoing edges
 				if (const auto edgesIt = _edges.find(frontier); edgesIt != _edges.end()) {
@@ -161,22 +171,16 @@ namespace m2 {
 						const auto prevCostIt = provisionalCost.find(neighbor);
 						const auto prevCost = (prevCostIt != provisionalCost.end()) ? prevCostIt->second : FE::Max();
 						// Accumulative cost of travelling to the neighbor from **current frontier**
-						auto newCost = provisionalCost[frontier] + edge.cost;
+						auto newCost = frontierCost + edge.cost;
 
 						// If new path to neighbor is cheaper than the old path
 						if (newCost < prevCost) {
 							// Save new cost
 							provisionalCost[neighbor] = newCost;
-							// Calculate priority of neighbor with heuristic parameter
-							const auto neighborPositionIt = _nodePositions.find(neighbor);
-							if (neighborPositionIt == _nodePositions.end()) { throw M2_ERROR("Neighbor node has no position"); }
-							const auto neighborPosition = neighborPositionIt->second;
-							auto neighborPriority = newCost * newCost + neighborPosition.GetDistanceToSquaredFE(destinationPosition);
-							// Insert neighbor into frontiers
-							frontiers.insert({neighborPriority, neighbor});
-							// Set the previous position of neighbor as the current position
-							approachVia.erase(neighbor);
-							approachVia.emplace(neighbor, edge);
+							// Insert neighbor into frontiers with the accumulated cost as its priority
+							frontiers.insert({newCost, neighbor});
+							// Set the edge via which neighbor is approached
+							approachVia.insert_or_assign(neighbor, edge);
 						}
 					}
 				}
