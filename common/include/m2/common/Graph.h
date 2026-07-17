@@ -25,13 +25,12 @@ namespace m2 {
 		/// 2D position of nodes, helps with A* path finding.
 		std::unordered_map<NodeT, VecFE, NodeHash, NodeEqualityComparator> _nodePositions;
 		std::unordered_map<NodeT, std::vector<Edge>, NodeHash, NodeEqualityComparator> _edges;
-		FE _tolerance;
 
 	public:
 		/// Create empty graph
-		explicit Graph(const FE tolerance = FE{1} / FE{1000}) : _tolerance(tolerance) {}
+		Graph() = default;
 		/// Create graph by repeatedly calling a generator
-		explicit Graph(const std::function<std::optional<Edge>()>& generator, const FE tolerance = FE{1} / FE{1000}) : _tolerance(tolerance) {
+		explicit Graph(const std::function<std::optional<Edge>()>& generator) {
 			while (true) {
 				const auto edge = generator();
 				if (not edge) { break; } // Escape
@@ -42,7 +41,7 @@ namespace m2 {
 		/// Add a new edge between two nodes in the graph
 		void AddEdge(Edge edge) {
 			if (edge.from == edge.to) { throw M2_ERROR("Source and destination nodes are the same"); }
-			if (edge.cost.IsLess(FE::Zero(), _tolerance)) { throw M2_ERROR("Negative edge cost"); }
+			if (edge.cost < FE::Zero()) { throw M2_ERROR("Negative edge cost"); }
 			// Check if node already exists
 			if (const auto src_node_it = _edges.find(edge.from); src_node_it != _edges.end()) {
 				// Check if edge already exists
@@ -72,7 +71,7 @@ namespace m2 {
 			// Add the first set of edges from the source into the nodes_to_visit list
 			std::deque<std::pair<NodeT, FE>> nodes_to_visit;
 			for (const auto& edge : source_it->second) {
-				if (edge.cost.IsLessOrEqual(maxCost, _tolerance)) {
+				if (edge.cost <= maxCost) {
 					nodes_to_visit.emplace_back(edge.to, edge.cost);
 				}
 			}
@@ -91,8 +90,8 @@ namespace m2 {
 					was_already_reachable != reachable_nodes.end()) {
 					// If the node was already reachable, pick the least-cost path
 					lowest_cost = std::min(was_already_reachable->second, visit.second);
-					// If the cost has changed, revisit the node later with the new cost
-					if (lowest_cost != was_already_reachable->second) {
+					// If a cheaper path was found, revisit the node later with the new cost
+					if (visit.second < was_already_reachable->second) {
 						nodes_to_visit.emplace_back(visit.first, lowest_cost);
 					}
 					was_already_reachable->second = lowest_cost;
@@ -110,7 +109,7 @@ namespace m2 {
 								already_was_gonna_visit != nodes_to_visit.end()) {
 								// If the node was already going to be visited, update its cost
 								already_was_gonna_visit->second = std::min(already_was_gonna_visit->second, lowest_cost + edge.cost);
-							} else if ((lowest_cost + edge.cost).IsLessOrEqual(maxCost, _tolerance)) {
+							} else if (lowest_cost + edge.cost <= maxCost) {
 								// Check if this next node was already reachable with a lower cost of reaching
 								if (auto edge_node_it = reachable_nodes.find(edge.to); edge_node_it != reachable_nodes.end()) {
 									if (lowest_cost + edge.cost < edge_node_it->second) {
