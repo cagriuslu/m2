@@ -22,6 +22,7 @@ namespace m2 {
 		};
 
 	private:
+		NodeEqualityComparator _nodeEqualityComparator{};
 		/// 2D position of nodes, helps with A* path finding.
 		std::unordered_map<NodeT, VecFE, NodeHash, NodeEqualityComparator> _nodePositions;
 		std::unordered_map<NodeT, std::vector<Edge>, NodeHash, NodeEqualityComparator> _edges;
@@ -40,13 +41,13 @@ namespace m2 {
 
 		/// Add a new edge between two nodes in the graph
 		void AddEdge(Edge edge) {
-			if (edge.from == edge.to) { throw M2_ERROR("Source and destination nodes are the same"); }
+			if (_nodeEqualityComparator(edge.from, edge.to)) { throw M2_ERROR("Source and destination nodes are the same"); }
 			if (edge.cost < FE::Zero()) { throw M2_ERROR("Negative edge cost"); }
 			// Check if node already exists
 			if (const auto src_node_it = _edges.find(edge.from); src_node_it != _edges.end()) {
 				// Check if edge already exists
-				const auto dst_node_it = std::ranges::find_if(src_node_it->second, [dst_node = edge.to](const auto& e) {
-					return e.to == dst_node;
+				const auto dst_node_it = std::ranges::find_if(src_node_it->second, [this, dst_node = edge.to](const auto& e) {
+					return _nodeEqualityComparator(e.to, dst_node);
 				});
 				if (dst_node_it != src_node_it->second.end()) { throw M2_ERROR("Edge already exists"); }
 				src_node_it->second.emplace_back(edge); // Add to edges
@@ -104,8 +105,9 @@ namespace m2 {
 				// Add the next edges to nodes_to_visit
 				if (auto next_step_it = _edges.find(visit.first); next_step_it != _edges.end()) {
 					for (const auto& edge : next_step_it->second) {
-						if (edge.to != source) {
-							if (auto already_was_gonna_visit = std::ranges::find_if(nodes_to_visit, IsFirstEquals<NodeT, FE>(edge.to));
+						if (not _nodeEqualityComparator(edge.to, source)) {
+							if (auto already_was_gonna_visit = std::ranges::find_if(nodes_to_visit,
+									[this, target = edge.to](const auto& pair) { return _nodeEqualityComparator(pair.first, target); });
 								already_was_gonna_visit != nodes_to_visit.end()) {
 								// If the node was already going to be visited, update its cost
 								already_was_gonna_visit->second = std::min(already_was_gonna_visit->second, lowest_cost + edge.cost);
@@ -131,7 +133,7 @@ namespace m2 {
 		/// Returns empty vector if path not found, or `from` is equal to `to`.
 		using ReversePath = std::vector<Edge>;
 		[[nodiscard]] ReversePath FindPathTo(NodeT from, NodeT to) const {
-			if (from == to) { return {}; }
+			if (_nodeEqualityComparator(from, to)) { return {}; }
 
 			// Holds the nodes which will be explored next. Key is the accumulated cost of reaching the
 			// node (the Dijkstra priority), value is the Node to explore.
@@ -147,7 +149,7 @@ namespace m2 {
 				auto frontier = firstFrontier->second;
 				// If next location to process is the destination, a path is found. Stop.
 				// Termination-on-pop yields the exact least-cost path for Dijkstra.
-				if (frontier == to) { break; }
+				if (_nodeEqualityComparator(frontier, to)) { break; }
 
 				// The popped key is the cost at which this frontier was queued. If a cheaper cost has since
 				// been found for this node, this is a stale duplicate entry left behind by a later
@@ -192,7 +194,7 @@ namespace m2 {
 			ReversePath path; // Built reverse list of edges
 			while (it != approachVia.end()) {
 				path.emplace_back(it->second);
-				if (it->second.from == from) {
+				if (_nodeEqualityComparator(it->second.from, from)) {
 					return path;
 				}
 				it = approachVia.find(it->second.from);
