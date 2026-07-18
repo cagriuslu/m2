@@ -43,17 +43,15 @@ namespace m2 {
 		void AddEdge(Edge edge) {
 			if (_nodeEqualityComparator(edge.from, edge.to)) { throw M2_ERROR("Source and destination nodes are the same"); }
 			if (edge.cost < FE::Zero()) { throw M2_ERROR("Negative edge cost"); }
-			// Check if node already exists
-			if (const auto src_node_it = _edges.find(edge.from); src_node_it != _edges.end()) {
-				// Check if edge already exists
-				const auto dst_node_it = std::ranges::find_if(src_node_it->second, [this, dst_node = edge.to](const auto& e) {
+			// operator[] default-constructs an empty edge list for a new source node
+			auto& edgesFromSource = _edges[edge.from];
+			// Check if edge already exists (always false for a freshly inserted, empty list)
+			if (std::ranges::any_of(edgesFromSource, [this, dst_node = edge.to](const auto& e) {
 					return _nodeEqualityComparator(e.to, dst_node);
-				});
-				if (dst_node_it != src_node_it->second.end()) { throw M2_ERROR("Edge already exists"); }
-				src_node_it->second.emplace_back(edge); // Add to edges
-			} else {
-				_edges[edge.from] = std::vector{edge}; // Insert to map
+				})) {
+				throw M2_ERROR("Edge already exists");
 			}
+			edgesFromSource.emplace_back(edge); // Add to edges
 		}
 		/// This operation is optional because the position information is currently not used by any functionality.
 		void SetNodePosition(NodeT node, const VecFE& position) {
