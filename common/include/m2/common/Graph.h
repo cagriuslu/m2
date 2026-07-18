@@ -1,8 +1,6 @@
 #pragma once
 #include <m2/common/math/Exact.h>
 #include <m2/common/math/Float.h>
-#include <m2/common/math/VecE.h>
-#include <m2/common/math/VecF.h>
 #include <m2/common/BuildOptions.h>
 #include <unordered_map>
 #include <map>
@@ -13,7 +11,8 @@
 namespace m2 {
 	// A data structure containing nodes and edges, for finding paths between nodes. All edges have an associated cost.
 	// For NodeT and EdgeT, integral types should be used, because they are copied around internally.
-	template <typename NodeT, typename EdgeT = Void, typename NodeHash = std::hash<NodeT>, typename NodeEqualityComparator = std::equal_to<NodeT>> class Graph {
+	template <typename NodeT, typename EdgeT = Void, typename NodeHash = std::hash<NodeT>, typename NodeEqualityComparator = std::equal_to<NodeT>>
+	class Graph {
 	public:
 		struct Edge {
 			NodeT from, to;
@@ -23,8 +22,6 @@ namespace m2 {
 
 	private:
 		NodeEqualityComparator _nodeEqualityComparator{};
-		/// 2D position of nodes, helps with A* path finding.
-		std::unordered_map<NodeT, VecFE, NodeHash, NodeEqualityComparator> _nodePositions;
 		std::unordered_map<NodeT, std::vector<Edge>, NodeHash, NodeEqualityComparator> _edges;
 
 	public:
@@ -52,10 +49,6 @@ namespace m2 {
 				throw M2_ERROR("Edge already exists");
 			}
 			edgesFromSource.emplace_back(edge); // Add to edges
-		}
-		/// This operation is optional because the position information is currently not used by any functionality.
-		void SetNodePosition(NodeT node, const VecFE& position) {
-			_nodePositions[node] = position;
 		}
 
 		/// Returns the nodes that can be reached from the `source` while spending at most `maxCost`.

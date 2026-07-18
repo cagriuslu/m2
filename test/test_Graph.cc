@@ -47,12 +47,8 @@ TEST(Graph, FindPathToSimple) {
 	// 0 --> 1 --> 2 --> 3
 	m2::Graph<int,int> graph;
 	graph.AddEdge({0, 1, m2::FE::One()});
-	graph.SetNodePosition(0, m2::VecFE{m2::FE{}, m2::FE{}});
 	graph.AddEdge({1, 2, m2::FE::One()});
-	graph.SetNodePosition(1, m2::VecFE{m2::FE{1}, m2::FE{}});
 	graph.AddEdge({2, 3, m2::FE::One()});
-	graph.SetNodePosition(2, m2::VecFE{m2::FE{2}, m2::FE{}});
-	graph.SetNodePosition(3, m2::VecFE{m2::FE{3}, m2::FE{}});
 	const auto reversePath = graph.FindPathTo(0, 3);
 	EXPECT_EQ(reversePath[0].from, 2);
 	EXPECT_EQ(reversePath[0].to, 3);
@@ -67,13 +63,9 @@ TEST(Graph, FindPathToComplex) {
 	// 0 --> 3 seemingly short, but expensive route
 	m2::Graph<int,int> graph;
 	graph.AddEdge({0, 1, m2::FE::One()});
-	graph.SetNodePosition(0, m2::VecFE{m2::FE{}, m2::FE{}});
 	graph.AddEdge({1, 2, m2::FE::One()});
-	graph.SetNodePosition(1, m2::VecFE{m2::FE{1}, m2::FE{}});
 	graph.AddEdge({2, 3, m2::FE::One()});
-	graph.SetNodePosition(2, m2::VecFE{m2::FE{2}, m2::FE{}});
 	graph.AddEdge({0, 3, m2::FE{4}});
-	graph.SetNodePosition(3, m2::VecFE{m2::FE{3}, m2::FE{}});
 	const auto reversePath = graph.FindPathTo(0, 3);
 	EXPECT_EQ(reversePath[0].from, 2);
 	EXPECT_EQ(reversePath[0].to, 3);
@@ -88,39 +80,12 @@ TEST(Graph, FindPathToNaive) {
 	// 0 --> 3
 	m2::Graph<int,int> graph;
 	graph.AddEdge({0, 1, m2::FE::One()});
-	graph.SetNodePosition(0, m2::VecFE{m2::FE{}, m2::FE{}});
 	graph.AddEdge({1, 2, m2::FE::One()});
-	graph.SetNodePosition(1, m2::VecFE{m2::FE{1}, m2::FE{}});
 	graph.AddEdge({2, 3, m2::FE::One()});
-	graph.SetNodePosition(2, m2::VecFE{m2::FE{2}, m2::FE{}});
 	graph.AddEdge({0, 3, m2::FE::One()});
-	graph.SetNodePosition(3, m2::VecFE{m2::FE{3}, m2::FE{}});
 	const auto reversePath = graph.FindPathTo(0, 3);
 	EXPECT_EQ(reversePath[0].from, 0);
 	EXPECT_EQ(reversePath[0].to, 3);
-}
-
-TEST(Graph, FindPathToScaledPositions) {
-	// Same topology as FindPathToComplex, but node positions are scaled ×10.
-	// 0 --> 1 --> 2 --> 3 long but cheap route (cost 3)
-	// 0 --> 3 short but expensive route (cost 4)
-	// A position heuristic in world-distance units (unscaled) would wrongly prefer the direct edge.
-	m2::Graph<int,int> graph;
-	graph.AddEdge({0, 1, m2::FE::One()});
-	graph.SetNodePosition(0, m2::VecFE{m2::FE{}, m2::FE{}});
-	graph.AddEdge({1, 2, m2::FE::One()});
-	graph.SetNodePosition(1, m2::VecFE{m2::FE{10}, m2::FE{}});
-	graph.AddEdge({2, 3, m2::FE::One()});
-	graph.SetNodePosition(2, m2::VecFE{m2::FE{20}, m2::FE{}});
-	graph.AddEdge({0, 3, m2::FE{4}});
-	graph.SetNodePosition(3, m2::VecFE{m2::FE{30}, m2::FE{}});
-	const auto reversePath = graph.FindPathTo(0, 3);
-	EXPECT_EQ(reversePath[0].from, 2);
-	EXPECT_EQ(reversePath[0].to, 3);
-	EXPECT_EQ(reversePath[1].from, 1);
-	EXPECT_EQ(reversePath[1].to, 2);
-	EXPECT_EQ(reversePath[2].from, 0);
-	EXPECT_EQ(reversePath[2].to, 1);
 }
 
 TEST(Graph, FindPathToNoPath) {
