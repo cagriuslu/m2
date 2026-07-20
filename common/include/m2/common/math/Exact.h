@@ -11,9 +11,9 @@ namespace m2 {
 		// SIGNIFICANT=18 extends to [-131072, 131071).
 		static constexpr auto SIGNIFICANT = 32 - PRECISION;
 
-		static constexpr int32_t INTEGER_PART_MASK = 0xFFFFFFFF << PRECISION;
+		static constexpr int32_t INTEGER_PART_MASK = 0xFFFFFFFFu << PRECISION;
 		static constexpr int32_t FRACTION_PART_MASK = 0xFFFFFFFFu >> SIGNIFICANT;
-		static constexpr int32_t SIGN_BIT_MASK = 0x80000000;
+		static constexpr int32_t SIGN_BIT_MASK = 0x80000000u;
 		static constexpr int32_t LEAST_SIGNIFICANT_INTEGER_BIT_MASK = 1 << PRECISION;
 		static constexpr int32_t MOST_SIGNIFICANT_FRACTION_BIT_MASK = 1 << (PRECISION - 1);
 
@@ -97,6 +97,7 @@ namespace m2 {
 		[[nodiscard]] bool IsLess(const Exact& other, const Exact& tolerance) const { return tolerance < (other - *this); }
 		/// Tolerance is assumed to be positive. Provided for API compatible with Float.
 		[[nodiscard]] bool IsLessOrEqual(const Exact& other, const Exact& tolerance) const { return IsLess(other, tolerance) || IsEqual(other, tolerance); }
+		[[nodiscard]] bool IsInteger() const { return (_value & INTEGER_PART_MASK) == _value; }
 		/// The result is an approximation because the fractional part of the number will be thrown away
 		[[nodiscard]] int32_t ToInteger() const { return _value >> PRECISION; }
 		/// The result is an approximation because floating point numbers get less accurate away from origin

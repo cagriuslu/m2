@@ -53,6 +53,10 @@ namespace m2 {
 			return std::hash<int32_t>{}(a.GetX().ToRawValue()) ^ std::hash<int32_t>{}(a.GetY().ToRawValue());
 		}
 	};
+	struct VecECompareTopLeftToBottomRight {
+		// Forward sort based on first y, then x coordinate
+		bool operator()(const VecE& a, const VecE& b) const { return a.GetY() == b.GetY() ? a.GetX() < b.GetX() : a.GetY() < b.GetY(); }
+	};
 }
 
 template <> struct std::formatter<m2::VecE> : std::formatter<std::string> {
