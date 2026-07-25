@@ -47,6 +47,10 @@
     {
       "type": "ROTATE_CLOCKWISE",
       "sdlScancodes": [21]
+    },
+    {
+      "type": "COPY_BUILDING",
+      "sdlScancodes": [225, 229]
     }
   ]
 }
