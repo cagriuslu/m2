@@ -3,7 +3,7 @@
 - Always be honest. If you don't know something, admit it and ask for clarification.
 - Ask for clarification if my prompt isn't clear enough.
 - Pick verbose names for local variables.
-- If you're asked to make a plan, always use the grill-me skil. When the plan is ready, don't summarize it, and write is as a .md file under <repo-root>/plans/. The file name should be your recommendation for the git commit message (it can contain space characters).
+- If you're asked to make a plan, always use the grill-me skil. When the plan is ready, don't summarize it, and write is as a .md file under <m2-repo-root>/plans/. The file name should be your recommendation for the git commit message (it can contain space characters).
 - If I don't explicitly mention a verification method, follow these rules:
   - If the changes touch only the game files, build only the game.
   - If the changes touch engine files, build all games.
