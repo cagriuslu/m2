@@ -81,6 +81,23 @@ void video::DrawPoint(Renderer& renderer, const VecF& pointLpx, const RGBA& colo
 		throw M2_ERROR(std::string{"SDL_RenderPoint failed: "} + SDL_GetError());
 	}
 }
+void video::DrawPoints(Renderer& renderer, const std::span<const VecF> pointsLpx, const RGBA& color) {
+	if (pointsLpx.empty()) {
+		return;
+	}
+
+	const auto pixelsPerUnit = renderer.GetPixelsPerWindowUnit();
+	std::vector<SDL_FPoint> pointsPx;
+	pointsPx.reserve(pointsLpx.size());
+	for (const auto& pointLpx : pointsLpx) {
+		pointsPx.emplace_back(ToSdlFPoint(pointLpx.Scale(pixelsPerUnit)));
+	}
+
+	SDL_SetRenderDrawColor(static_cast<SDL_Renderer*>(renderer.RawHandle()), color.r, color.g, color.b, color.a);
+	if (not SDL_RenderPoints(static_cast<SDL_Renderer*>(renderer.RawHandle()), pointsPx.data(), static_cast<int>(pointsPx.size()))) {
+		throw M2_ERROR(std::string{"SDL_RenderPoints failed: "} + SDL_GetError());
+	}
+}
 void video::DrawLine(Renderer& renderer, const VecF& point0Lpx, const VecF& point1Lpx, const RGBA& color) {
 	const auto pixelsPerUnit = renderer.GetPixelsPerWindowUnit();
 	const auto point0Px = point0Lpx.Scale(pixelsPerUnit);

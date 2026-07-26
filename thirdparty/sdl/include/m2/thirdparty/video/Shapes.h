@@ -3,6 +3,7 @@
 #include <m2/common/math/RectI.h>
 #include <m2/common/math/VecF.h>
 #include <m2/common/video/Color.h>
+#include <span>
 
 namespace m2::thirdparty::video {
 	class Renderer;
@@ -18,6 +19,8 @@ namespace m2::thirdparty::video {
 
 	/// Draws a single point. The position is in logical pixels.
 	void DrawPoint(Renderer& renderer, const VecF& pointLpx, const RGBA& color);
+	/// Draws a batch of points with a single color. The positions are in logical pixels.
+	void DrawPoints(Renderer& renderer, std::span<const VecF> pointsLpx, const RGBA& color);
 	/// Draws a line. The positions are in logical pixels.
 	void DrawLine(Renderer& renderer, const VecF& point0Lpx, const VecF& point1Lpx, const RGBA& color);
 	/// Draws a rectangle outline. The positions are in logical pixels.

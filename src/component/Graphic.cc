@@ -6,6 +6,7 @@
 #include <m2/thirdparty/video/Shapes.h>
 #include <array>
 #include <cmath>
+#include <vector>
 
 bool m2::IsProjectionTypeParallel(const pb::ProjectionType pt) {
 	return pt == pb::PARALLEL;
@@ -237,6 +238,22 @@ void m2::Graphic::FillTriangle(const VecF& worldPosition0M, const VecF& worldPos
 		ScreenOriginToPositionVecLpx(worldPosition1M),
 		ScreenOriginToPositionVecLpx(worldPosition2M),
 		color0, color1, color2);
+}
+void m2::Graphic::DrawPoints(const std::span<const VecF> worldPositionsM, const RGBA& color) {
+	std::vector<VecF> pointsLpx;
+	pointsLpx.reserve(worldPositionsM.size());
+	if (IsProjectionTypeParallel(M2_LEVEL.GetProjectionType())) {
+		for (const auto& worldPositionM : worldPositionsM) {
+			pointsLpx.emplace_back(ScreenOriginToPositionVecLpx(worldPositionM));
+		}
+	} else {
+		for (const auto& worldPositionM : worldPositionsM) {
+			if (const auto pointLpx = m3::ScreenOriginToProjectionAlongCameraPlaneLpx(m3::VecF{worldPositionM})) {
+				pointsLpx.emplace_back(*pointLpx);
+			}
+		}
+	}
+	thirdparty::video::DrawPoints(M2_GAME.GetRenderer(), pointsLpx, color);
 }
 void m2::Graphic::DrawCross(const VecF& world_position, const RGBA& color) {
 	const auto draw_position = ScreenOriginToPositionVecLpx(world_position);

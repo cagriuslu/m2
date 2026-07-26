@@ -12,6 +12,7 @@
 #include <m2/thirdparty/video/Renderer.h>
 #include <m2/thirdparty/video/Texture.h>
 #include <m2/common/math/RectI.h>
+#include <span>
 
 namespace m2 {
 	bool IsProjectionTypeParallel(pb::ProjectionType pt);
@@ -106,6 +107,7 @@ namespace m2 {
 		static void FillDisk(const VecF& center_position_m, float radius_m, const RGBA& color);
 		static void FillTriangle(const VecF& worldPosition0M, const VecF& worldPosition1M, const VecF& worldPosition2M, const RGBA& color);
 		static void FillTriangle(const VecF& worldPosition0M, const VecF& worldPosition1M, const VecF& worldPosition2M, const RGBA& color0, const RGBA& color1, const RGBA& color2);
+		static void DrawPoints(std::span<const VecF> worldPositionsM, const RGBA& color);
 		static void DrawCross(const VecF& world_position, const RGBA& color);
 		static void DrawCross(const VecF& worldPosition, int radiusLpx, const RGBA& color);
 		static void DrawCross(const VecF& worldPosition, float radiusM, const RGBA& color);
