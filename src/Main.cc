@@ -113,8 +113,9 @@ int main(const int argc, char **argv) {
 			M2_GAME.HandleWindowResizeEvent();
 			M2_GAME.ExecuteQueuedCommands();
 			M2_GAME.HandleConsoleEvent();
-			M2_GAME.HandlePauseEvent();
+			// HUD receives the events before pause because the pause key (usually Esc) is usually shared with the game.
 			M2_GAME.HandleHudEvents();
+			M2_GAME.HandlePauseEvent();
 			M2_GAME.HandleNetworkEvents();
 			M2_GAME.ExecuteDeferredActions();
 			M2_GAME.StopHandlingEvents();
