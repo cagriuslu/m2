@@ -51,6 +51,10 @@
     {
       "type": "COPY_BUILDING",
       "sdlScancodes": [225, 229]
+    },
+    {
+      "type": "TOGGLE_BUILD_MENU",
+      "sdlScancodes": [8]
     }
   ]
 }
