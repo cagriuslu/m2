@@ -10,6 +10,7 @@
   - If the changes touch files that are being unit tested (`ls test/*.cc`), in addition to building all games, build and run the tests.
 - Never commit anything in my behalf.
 - If I ask you to use sug-agents to execute some plan(s), don't validate the sub-agents' work as the plan should already have a validation step for each.
+- If a file needs to me renamed or moved, use `git mv`.
 
 # Project Overview
 
