@@ -14,6 +14,10 @@ namespace m2::widget {
 
 		[[nodiscard]] bool GetState() const { return _state; }
 
+		// Modifiers
+
+		void SetState(bool state) { _state = state; }
+
 	protected:
 		void OnDraw() override;
 
