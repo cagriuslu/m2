@@ -47,6 +47,22 @@ namespace m2::thirdparty::video {
 		void Lock() const;
 		void Unlock() const;
 
+		/// RAII guard that locks the surface for direct pixel access and unlocks it on scope exit.
+		class [[nodiscard]] LockGuard {
+			friend class Surface;
+			void* _surface{};
+			explicit LockGuard(void* surface);
+		public:
+			LockGuard() = default;
+			LockGuard(const LockGuard&) = delete;
+			LockGuard& operator=(const LockGuard&) = delete;
+			LockGuard(LockGuard&&) noexcept;
+			LockGuard& operator=(LockGuard&&) noexcept;
+			~LockGuard();
+			[[nodiscard]] explicit operator bool() const { return _surface != nullptr; }
+		};
+		[[nodiscard]] LockGuard ScopedLock() const;
+
 		/// Direct pixel access. The surface must be locked. Assumes 4 bytes-per-pixel and width-stride addressing.
 		[[nodiscard]] RGBA GetPixel(int x, int y) const;
 		void SetPixel(int x, int y, const RGBA& color);

@@ -29,6 +29,28 @@ namespace m2 {
 		/// the raw pixels will be mutated. For blitting and similar operations, the surface shouldn't be locked.
 		expected<RectI> AllocateAndMutate(int requestedW, int requestedH, const std::function<void(thirdparty::video::Surface&,const RectI&)>& mutator, bool lockSurface = true);
 
+		class MutableInterface {
+			friend DynamicSheet;
+			DynamicSheet& _sheet;
+			explicit MutableInterface(DynamicSheet&);
+		public:
+			MutableInterface(const MutableInterface&) = delete;
+			MutableInterface& operator=(const MutableInterface&) = delete;
+			MutableInterface(MutableInterface&&) = delete;
+			MutableInterface& operator=(MutableInterface&&) = delete;
+
+			/// Surface must be locked only if the raw pixels will be mutated; for blitting and similar operations, the
+			/// surface shouldn't be locked.
+			expected<RectI> AllocateAndMutateRect(int requestedW, int requestedH, const std::function<void(thirdparty::video::Surface&,const RectI&)>& mutator, bool lockSurface = true);
+		};
+
+		/// Batches any number of allocations into a single GPU texture rebuild. The callback receives a
+		/// MutableInterface it can allocate from repeatedly; the texture is recreated once, after the callback returns.
+		/// Every reference previously obtained from Texture() is invalidated by this call. Rects handed out during the
+		/// callback stay valid even if the surface grows, because they are absolute coordinates and growth preserves
+		/// existing content at the top-left.
+		void MutateSurfaceAndRecreateTexture(const std::function<void(MutableInterface&)>& cb);
+
 	protected:
 		[[nodiscard]] int Width() const { return _surface.Dimensions().x; }
 		[[nodiscard]] int Height() const { return _surface.Dimensions().y; }

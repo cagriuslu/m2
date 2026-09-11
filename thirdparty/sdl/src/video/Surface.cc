@@ -79,6 +79,25 @@ void Surface::Unlock() const {
 	SDL_UnlockSurface(static_cast<SDL_Surface*>(_surface));
 }
 
+Surface::LockGuard::LockGuard(void* surface) : _surface(surface) {
+	SDL_LockSurface(static_cast<SDL_Surface*>(_surface));
+}
+Surface::LockGuard::LockGuard(LockGuard&& other) noexcept : _surface(other._surface) {
+	other._surface = nullptr;
+}
+Surface::LockGuard& Surface::LockGuard::operator=(LockGuard&& other) noexcept {
+	std::swap(_surface, other._surface);
+	return *this;
+}
+Surface::LockGuard::~LockGuard() {
+	if (_surface) {
+		SDL_UnlockSurface(static_cast<SDL_Surface*>(_surface));
+	}
+}
+Surface::LockGuard Surface::ScopedLock() const {
+	return LockGuard{_surface};
+}
+
 RGBA Surface::GetPixel(const int x, const int y) const {
 	auto* const surface = static_cast<SDL_Surface*>(_surface);
 	const auto pixel = *(static_cast<const uint32_t*>(surface->pixels) + (x + y * surface->w));
