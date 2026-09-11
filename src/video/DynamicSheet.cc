@@ -6,10 +6,17 @@ namespace {
 	/// Transparent padding reserved around every glyph allocation, so that bilinear sampling of a
 	/// glyph's sub-rect never bleeds into a neighboring glyph in the shared atlas.
 	constexpr int GLYPH_PADDING_PX = 1;
+
+	/// Fixed width of the atlas. Unlike the height, the width never grows, so this doubles as the hard
+	/// limit on the width of a single allocation.
+	constexpr int ATLAS_WIDTH_PX = 4096;
+
+	/// Initial height of the atlas. Doubles on demand, unlike the width.
+	constexpr int INITIAL_ATLAS_HEIGHT_PX = 512;
 }
 
 m2::DynamicSheet::DynamicSheet(thirdparty::video::Renderer& renderer)
-		: _renderer(renderer), _surface(thirdparty::video::Surface::CreateBlankWithAlpha(1024, 512)) {
+		: _renderer(renderer), _surface(thirdparty::video::Surface::CreateBlankWithAlpha(ATLAS_WIDTH_PX, INITIAL_ATLAS_HEIGHT_PX)) {
 	_texture = thirdparty::video::Texture::CreateFromSurface(_renderer, _surface.RawHandle(), /*linearFilter=*/true);
 }
 
