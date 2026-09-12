@@ -24,11 +24,6 @@ namespace m2 {
 
 		// Modifiers
 
-		/// Tries to allocate the requested area on the dynamic surface, optionally locks the surface, and calls the
-		/// mutator with the surface and the area. The same area is returned at the end. Surface must be locked only if
-		/// the raw pixels will be mutated. For blitting and similar operations, the surface shouldn't be locked.
-		expected<RectI> AllocateAndMutate(int requestedW, int requestedH, const std::function<void(thirdparty::video::Surface&,const RectI&)>& mutator, bool lockSurface = true);
-
 		class MutableInterface {
 			friend DynamicSheet;
 			DynamicSheet& _sheet;

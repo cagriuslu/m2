@@ -3,31 +3,40 @@
 #include <m2/Log.h>
 #include <numeric>
 
-m2::RectI m2::SpriteEffectsSheet::create_mask_effect(const SpriteSheet& sheet, const pb::RectI& rect, const pb::Color& mask_color) {
-	return *AllocateAndMutate(rect.w(), rect.h(), [&](thirdparty::video::Surface& surface, const RectI& area) {
-		FillMaskEffect(sheet.surface(), RectI{rect}, surface, area, RGBA{mask_color});
-	});
+m2::SpriteEffectsSheet::Batch::Batch(MutableInterface& mutableInterface) : _mutableInterface(mutableInterface) {}
+
+m2::RectI m2::SpriteEffectsSheet::Batch::CreateMaskEffect(const SpriteSheet& sheet, const pb::RectI& rect, const pb::Color& maskColor) {
+	return m2MoveOrThrowError(_mutableInterface.AllocateAndMutateRect(rect.w(), rect.h(), [&](thirdparty::video::Surface& dstSurface, const RectI& area) {
+		FillMaskEffect(sheet.surface(), RectI{rect}, dstSurface, area, RGBA{maskColor});
+	}));
 }
-m2::RectI m2::SpriteEffectsSheet::create_foreground_companion_effect(const SpriteSheet& sheet, const pb::RectI& rect,
-	const google::protobuf::RepeatedPtrField<pb::RectI>& rect_pieces) {
-	return *AllocateAndMutate(rect.w(), rect.h(), [&](thirdparty::video::Surface& dstSurface, const RectI& area) {
-		FillForegroundCompanion(sheet.surface(), RectI{rect}, dstSurface, area, rect_pieces);
-	}, false);
+m2::RectI m2::SpriteEffectsSheet::Batch::CreateForegroundCompanionEffect(const SpriteSheet& sheet, const pb::RectI& rect,
+	const google::protobuf::RepeatedPtrField<pb::RectI>& rectPieces) {
+	return m2MoveOrThrowError(_mutableInterface.AllocateAndMutateRect(rect.w(), rect.h(), [&](thirdparty::video::Surface& dstSurface, const RectI& area) {
+		FillForegroundCompanion(sheet.surface(), RectI{rect}, dstSurface, area, rectPieces);
+	}, /*lockSurface=*/false));
 }
-m2::RectI m2::SpriteEffectsSheet::create_grayscale_effect(const SpriteSheet& sheet, const pb::RectI& rect) {
-	return *AllocateAndMutate(rect.w(), rect.h(), [&](thirdparty::video::Surface& dstSurface, const RectI& area) {
+m2::RectI m2::SpriteEffectsSheet::Batch::CreateGrayscaleEffect(const SpriteSheet& sheet, const pb::RectI& rect) {
+	return m2MoveOrThrowError(_mutableInterface.AllocateAndMutateRect(rect.w(), rect.h(), [&](thirdparty::video::Surface& dstSurface, const RectI& area) {
 		FillGrayscaleEffect(sheet.surface(), RectI{rect}, dstSurface, area);
-	});
+	}));
 }
-m2::RectI m2::SpriteEffectsSheet::create_image_adjustment_effect(const SpriteSheet& sheet, const pb::RectI& rect,
+m2::RectI m2::SpriteEffectsSheet::Batch::CreateImageAdjustmentEffect(const SpriteSheet& sheet, const pb::RectI& rect,
 	const pb::ImageAdjustment& imageAdjustment) {
-	return *AllocateAndMutate(rect.w(), rect.h(), [&](thirdparty::video::Surface& dstSurface, const RectI& area) {
+	return m2MoveOrThrowError(_mutableInterface.AllocateAndMutateRect(rect.w(), rect.h(), [&](thirdparty::video::Surface& dstSurface, const RectI& area) {
 		FillImageAdjustmentEffect(sheet.surface(), RectI{rect}, dstSurface, area, imageAdjustment);
-	});
+	}));
 }
-m2::RectI m2::SpriteEffectsSheet::create_blurred_drop_shadow_effect(const SpriteSheet& sheet, const pb::RectI& rect, const pb::BlurredDropShadow& blurredDropShadow) {
-	return *AllocateAndMutate(rect.w(), rect.h(), [&](thirdparty::video::Surface& dstSurface, const RectI& area) {
+m2::RectI m2::SpriteEffectsSheet::Batch::CreateBlurredDropShadowEffect(const SpriteSheet& sheet, const pb::RectI& rect, const pb::BlurredDropShadow& blurredDropShadow) {
+	return m2MoveOrThrowError(_mutableInterface.AllocateAndMutateRect(rect.w(), rect.h(), [&](thirdparty::video::Surface& dstSurface, const RectI& area) {
 		FillBlurredDropShadowEffect(sheet.surface(), RectI{rect}, dstSurface, area, blurredDropShadow);
+	}));
+}
+
+void m2::SpriteEffectsSheet::CreateEffects(const std::function<void(Batch&)>& cb) {
+	MutateSurfaceAndRecreateTexture([&](MutableInterface& mutableInterface) {
+		Batch batch{mutableInterface};
+		cb(batch);
 	});
 }
 
@@ -38,7 +47,6 @@ void m2::FillMaskEffect(const thirdparty::video::Surface& srcSurface, const Rect
 	}
 
 	srcSurface.Lock();
-	dstSurface.Lock();
 	for (int y = srcRect.y; y < srcRect.y + srcRect.h; ++y) {
 		for (int x = srcRect.x; x < srcRect.x + srcRect.w; ++x) {
 			// Read src pixel
@@ -48,7 +56,6 @@ void m2::FillMaskEffect(const thirdparty::video::Surface& srcSurface, const Rect
 			dstSurface.SetPixel(x - srcRect.x + dstRect.x, y - srcRect.y + dstRect.y, src.a ? maskColor : RGBA{0, 0, 0, 0});
 		}
 	}
-	dstSurface.Unlock();
 	srcSurface.Unlock();
 }
 void m2::FillForegroundCompanion(const thirdparty::video::Surface& srcSurface, const RectI& srcRect, thirdparty::video::Surface& dstSurface, const RectI& dstRect, const google::protobuf::RepeatedPtrField<pb::RectI>& rectPieces) {
@@ -65,7 +72,6 @@ void m2::FillGrayscaleEffect(const thirdparty::video::Surface& srcSurface, const
 	}
 
 	srcSurface.Lock();
-	dstSurface.Lock();
 	for (int y = srcRect.y; y < srcRect.y + srcRect.h; ++y) {
 		for (int x = srcRect.x; x < srcRect.x + srcRect.w; ++x) {
 			// Read src pixel
@@ -80,7 +86,6 @@ void m2::FillGrayscaleEffect(const thirdparty::video::Surface& srcSurface, const
 			dstSurface.SetPixel(x - srcRect.x + dstRect.x, y - srcRect.y + dstRect.y, RGBA{bw, bw, bw, src.a});
 		}
 	}
-	dstSurface.Unlock();
 	srcSurface.Unlock();
 }
 void m2::FillImageAdjustmentEffect(const thirdparty::video::Surface& srcSurface, const RectI& srcRect, thirdparty::video::Surface& dstSurface, const RectI& dstRect, const pb::ImageAdjustment& imageAdjustment) {
@@ -90,7 +95,6 @@ void m2::FillImageAdjustmentEffect(const thirdparty::video::Surface& srcSurface,
 	}
 
 	srcSurface.Lock();
-	dstSurface.Lock();
 	for (int y = srcRect.y; y < srcRect.y + srcRect.h; ++y) {
 		for (int x = srcRect.x; x < srcRect.x + srcRect.w; ++x) {
 			// Read src pixel
@@ -107,7 +111,6 @@ void m2::FillImageAdjustmentEffect(const thirdparty::video::Surface& srcSurface,
 			dstSurface.SetPixel(x - srcRect.x + dstRect.x, y - srcRect.y + dstRect.y, RGBA{rn, gn, bn, src.a});
 		}
 	}
-	dstSurface.Unlock();
 	srcSurface.Unlock();
 }
 void m2::FillBlurredDropShadowEffect(const thirdparty::video::Surface& srcSurface, const RectI& srcRect, thirdparty::video::Surface& dstSurface, const RectI& dstRect, const pb::BlurredDropShadow& blurredDropShadow) {
@@ -133,7 +136,6 @@ void m2::FillBlurredDropShadowEffect(const thirdparty::video::Surface& srcSurfac
 	};
 
 	srcSurface.Lock();
-	dstSurface.Lock();
 	for (int y = srcRect.y; y < srcRect.y + srcRect.h; ++y) {
 		for (int x = srcRect.x; x < srcRect.x + srcRect.w; ++x) {
 			// Apply the kernel only to the alpha channel, other channels are full black
@@ -159,6 +161,5 @@ void m2::FillBlurredDropShadowEffect(const thirdparty::video::Surface& srcSurfac
 			dstSurface.SetPixel(x - srcRect.x + dstRect.x, y - srcRect.y + dstRect.y, RGBA{0, 0, 0, an});
 		}
 	}
-	dstSurface.Unlock();
 	srcSurface.Unlock();
 }

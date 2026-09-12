@@ -78,9 +78,15 @@ m2::RectI m2::TextLabelCache::TextLabelGenerator::operator()(const std::tuple<st
 	auto renderSurface = thirdparty::video::Surface::RenderTextBlended(_font, std::get<std::string>(item), RGBA{255, 255, 255, 255});
 
 	// Blit new surface to allocated surface
-	return *_dynamicSheet.AllocateAndMutate(CeilI(renderedSize.GetX()), CeilI(renderedSize.GetY()), [&](thirdparty::video::Surface& surface, const RectI& area) {
-		m2SucceedOrThrowError(surface.Blit(renderSurface, std::nullopt, area));
-	}, false);
+	RectI allocatedRect;
+	_dynamicSheet.MutateSurfaceAndRecreateTexture([&](DynamicSheet::MutableInterface& mutableInterface) {
+		allocatedRect = m2MoveOrThrowError(mutableInterface.AllocateAndMutateRect(
+			CeilI(renderedSize.GetX()), CeilI(renderedSize.GetY()),
+			[&](thirdparty::video::Surface& surface, const RectI& area) {
+				m2SucceedOrThrowError(surface.Blit(renderSurface, std::nullopt, area));
+			}, /*lockSurface=*/false));
+	});
+	return allocatedRect;
 }
 
 size_t m2::TextLabelCache::TextLabelHash::operator()(const std::tuple<std::string,float>& item) const {

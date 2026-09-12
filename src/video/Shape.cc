@@ -126,13 +126,18 @@ void m2::Disk::Draw(thirdparty::video::Surface& dstSurface, const RectI& dstRect
 m2::RectI m2::ShapeCache::ShapeGenerator::operator()(const std::shared_ptr<Shape>& shape) {
 	// Allocate space
 	const auto dims = shape->Dimensions();
-	return *_dynamicSheet.AllocateAndMutate(dims.x, dims.y, [&](thirdparty::video::Surface& surface, const RectI& area) {
-		// Check pixel stride
-		if (surface.BytesPerPixel() != 4) {
-			throw M2_ERROR("Surface has unsupported pixel format");
-		}
-		shape->Draw(surface, area);
+	RectI allocatedRect;
+	_dynamicSheet.MutateSurfaceAndRecreateTexture([&](DynamicSheet::MutableInterface& mutableInterface) {
+		allocatedRect = m2MoveOrThrowError(mutableInterface.AllocateAndMutateRect(dims.x, dims.y,
+			[&](thirdparty::video::Surface& surface, const RectI& area) {
+				// Check pixel stride
+				if (surface.BytesPerPixel() != 4) {
+					throw M2_ERROR("Surface has unsupported pixel format");
+				}
+				shape->Draw(surface, area);
+			}));
 	});
+	return allocatedRect;
 }
 
 bool m2::ShapeCache::ShapeComparator::operator()(const std::shared_ptr<Shape>& lhs, const std::shared_ptr<Shape>& rhs) const {

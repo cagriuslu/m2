@@ -5,7 +5,7 @@
 #include <m2/Log.h>
 
 m2::Sprite::Sprite(const std::vector<SpriteSheet>& spriteSheets, const SpriteSheet& spriteSheet,
-		SpriteEffectsSheet& spriteEffectsSheet, const pb::Sprite& sprite)
+		const SpriteEffectsSheet& spriteEffectsSheet, SpriteEffectsSheet::Batch& batch, const pb::Sprite& sprite)
 		: _spriteSheet(&spriteSheet), _effectsSheet(&spriteEffectsSheet), _pb(&sprite) {
 	// Lookup the original sprite
 	if (sprite.has_duplicate()) {
@@ -30,16 +30,16 @@ m2::Sprite::Sprite(const std::vector<SpriteSheet>& spriteSheets, const SpriteShe
 	if (sprite.has_duplicate() && sprite.duplicate().additional_effects_size()) {
 		// TODO implement multiple effects
 		if (const auto& effect = sprite.duplicate().additional_effects(0); effect.has_color_mask()) {
-			_rect = spriteEffectsSheet.create_mask_effect(spriteSheet, _originalPb->regular().rect(), effect.color_mask());
+			_rect = batch.CreateMaskEffect(spriteSheet, _originalPb->regular().rect(), effect.color_mask());
 			LOG_DEBUG("Created color mask effect for sprite", sprite.type(), _rect);
 		} else if (effect.grayscale()) {
-			_rect = spriteEffectsSheet.create_grayscale_effect(spriteSheet, _originalPb->regular().rect());
+			_rect = batch.CreateGrayscaleEffect(spriteSheet, _originalPb->regular().rect());
 			LOG_DEBUG("Created grayscale effect for sprite", sprite.type(), _rect);
 		} else if (effect.has_image_adjustment()) {
-			_rect = spriteEffectsSheet.create_image_adjustment_effect(spriteSheet, _originalPb->regular().rect(), effect.image_adjustment());
+			_rect = batch.CreateImageAdjustmentEffect(spriteSheet, _originalPb->regular().rect(), effect.image_adjustment());
 			LOG_DEBUG("Created image adjustment effect for sprite", sprite.type(), _rect);
 		} else if (effect.has_blurred_drop_shadow()) {
-			_rect = spriteEffectsSheet.create_blurred_drop_shadow_effect(spriteSheet, _originalPb->regular().rect(), effect.blurred_drop_shadow());
+			_rect = batch.CreateBlurredDropShadowEffect(spriteSheet, _originalPb->regular().rect(), effect.blurred_drop_shadow());
 			LOG_DEBUG("Created blurred drop shadow effect for sprite", sprite.type(), _rect);
 		} else {
 			throw M2_ERROR("Missing or unimplemented sprite effect");
@@ -64,7 +64,7 @@ m2::Sprite::Sprite(const std::vector<SpriteSheet>& spriteSheets, const SpriteShe
 
 	// Create foreground companion
 	if (_originalPb->has_regular() && _originalPb->regular().has_foreground_companion()) {
-		_foregroundCompanionSpriteEffectsSheetRect = spriteEffectsSheet.create_foreground_companion_effect(
+		_foregroundCompanionSpriteEffectsSheetRect = batch.CreateForegroundCompanionEffect(
 		    spriteSheet, _originalPb->regular().rect(),
 		    _originalPb->regular().foreground_companion().rects());
 		_foregroundCompanionCenterToOriginVecSrcpx =
@@ -162,19 +162,21 @@ std::vector<std::variant<m2::Sprite, m2::pb::TextLabel>> m2::LoadSprites(const s
 	std::vector<std::variant<Sprite, pb::TextLabel>> sprites_vector(pb::enum_value_count<m2g::pb::SpriteType>());
 	std::vector<bool> is_loaded(pb::enum_value_count<m2g::pb::SpriteType>());
 
-	// Load sprites
-	for (const auto& spriteSheet : spriteSheets) {
-		for (const auto& sprite : spriteSheet.Pb().sprites()) {
-			const auto index = pb::enum_index(sprite.type());
-			// Check if the sprite is already loaded
-			if (is_loaded[index]) {
-				throw M2_ERROR(std::format("Sprite has duplicate definition: {}", sprite.type()));
+	// Load sprites. Every effect allocated by the sprites shares a single GPU texture rebuild.
+	spriteEffectsSheet.CreateEffects([&](SpriteEffectsSheet::Batch& batch) {
+		for (const auto& spriteSheet : spriteSheets) {
+			for (const auto& sprite : spriteSheet.Pb().sprites()) {
+				const auto index = pb::enum_index(sprite.type());
+				// Check if the sprite is already loaded
+				if (is_loaded[index]) {
+					throw M2_ERROR(std::format("Sprite has duplicate definition: {}", sprite.type()));
+				}
+				// Load sprite
+				sprites_vector[index] = Sprite{spriteSheets, spriteSheet, spriteEffectsSheet, batch, sprite};
+				is_loaded[index] = true;
 			}
-			// Load sprite
-			sprites_vector[index] = Sprite{spriteSheets, spriteSheet, spriteEffectsSheet, sprite};
-			is_loaded[index] = true;
 		}
-	}
+	});
 	for (const auto& textLabel : textLabels) {
 		const auto index = pb::enum_index(textLabel.type());
 		// Check if the sprite is already loaded

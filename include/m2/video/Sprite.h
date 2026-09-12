@@ -26,7 +26,7 @@ namespace m2 {
 	   public:
 		Sprite() = default;
 		Sprite(const std::vector<SpriteSheet>& spriteSheets, const SpriteSheet& spriteSheet,
-				SpriteEffectsSheet& spriteEffectsSheet, const pb::Sprite& sprite);
+			const SpriteEffectsSheet& spriteEffectsSheet, SpriteEffectsSheet::Batch& batch, const pb::Sprite& sprite);
 
 		// Accessors
 

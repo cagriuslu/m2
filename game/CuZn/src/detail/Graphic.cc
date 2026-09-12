@@ -26,12 +26,14 @@ void DrawResources(m2::FastCharacter& chr) {
 	const auto& sprite_drop_shadow = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(sprite_drop_shadow_type));
 
 	{
+		// Generate the text label before taking any dim guard: generating may rebuild the cache's texture, and a guard
+		// taken beforehand would hold the destroyed one.
+		const auto& textLabel = std::get<m2::pb::TextLabel>(M2_GAME.GetSpriteOrTextLabel(count_sprite_type));
+		const auto rect = M2_GAME.GetTextLabelCache().Create(textLabel.text(), m2::FontSizeOfTextLabel(textLabel));
 		// Dim if necessary
 		const auto dimGuard1 = m2::Graphic::DimRenderingIfNecessary(chr.GetOwnerId(), M2_GAME.GetTextLabelCache().Texture());
 		const auto dimGuard2 = m2::Graphic::DimRenderingIfNecessary(chr.GetOwnerId(), sprite.GetTexture());
 		// Draw count
-		const auto& textLabel = std::get<m2::pb::TextLabel>(M2_GAME.GetSpriteOrTextLabel(count_sprite_type));
-		const auto rect = M2_GAME.GetTextLabelCache().Create(textLabel.text(), m2::FontSizeOfTextLabel(textLabel));
 		DrawTextLabelIn2dWorld(textLabel, rect, pos + m2::VecF{0.20f, 1.0f}, 0.0f);
 		// Draw resource
 		// We're not using a graphics component, so we have to draw the drop shadow ourselves.
