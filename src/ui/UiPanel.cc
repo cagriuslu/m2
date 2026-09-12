@@ -120,7 +120,7 @@ UiAction UiPanel::run_blocking() {
 		// Clear screen
 		M2_GAME.GetRenderer().SetDrawColor(RGBA::Black);
 		M2_GAME.GetRenderer().Clear();
-		_background_texture->RenderToWindow(M2_GAME.GetRenderer());
+		_background_texture->RenderOverViewport(M2_GAME.GetRenderer());
 
 		// Draw UI elements
 		Draw();

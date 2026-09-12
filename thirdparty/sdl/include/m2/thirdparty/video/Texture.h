@@ -38,11 +38,13 @@ namespace m2::thirdparty::video {
 		[[nodiscard]] void* RawHandle() const { return _texture; } // TODO remove this, this class should do the drawing instead
 		[[nodiscard]] VecF Dimensions() const;
 
-		/// Sets this texture as the render target, runs `draw`, then restores the previous render target.
+		/// Sets this texture as the render target, runs `draw`, then restores the previous render target. The previous
+		/// render target is restored even if `draw` throws.
 		void DrawOnto(Renderer& renderer, const std::function<void()>& draw);
 
-		/// Copies this texture over the whole current render target (the window).
-		void RenderToWindow(Renderer& renderer) const;
+		/// Copies this texture over the current viewport of the current render target. With no viewport set that is the
+		/// whole target, which for the window target is the whole window.
+		void RenderOverViewport(Renderer& renderer) const;
 		void Render(Renderer& renderer, const RectF& destination) const;
 		void Render(Renderer& renderer, const RectI& sourceRect, const RectF& destination) const;
 		void RenderWithColorMod(Renderer& renderer, const RectF& destination, const RGB& mod) const;
@@ -64,7 +66,12 @@ namespace m2::thirdparty::video {
 		};
 		[[nodiscard]] ColorModGuard ScopedColorMod(const RGB& mod) const;
 
-		enum class BlendMode { NONE, BLEND };
+		enum class BlendMode {
+			NONE,
+			BLEND,
+			/// PREMULTIPLIED is the mode for content whose color channels are already multiplied by their alpha.
+			PREMULTIPLIED
+		};
 
 		/// Sets the blend mode used when this texture is drawn, and restores the previous one on scope exit.
 		class [[nodiscard]] BlendModeGuard {

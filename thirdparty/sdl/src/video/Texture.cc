@@ -15,6 +15,7 @@ namespace {
 		switch (blendMode) {
 			case Texture::BlendMode::NONE: return SDL_BLENDMODE_NONE;
 			case Texture::BlendMode::BLEND: return SDL_BLENDMODE_BLEND;
+			case Texture::BlendMode::PREMULTIPLIED: return SDL_BLENDMODE_BLEND_PREMULTIPLIED;
 		}
 		throw M2_ERROR("Unknown blend mode: " + std::to_string(static_cast<int>(blendMode)));
 	}
@@ -27,12 +28,33 @@ namespace {
 		switch (sdlBlendMode) {
 			case SDL_BLENDMODE_NONE: return Texture::BlendMode::NONE;
 			case SDL_BLENDMODE_BLEND: return Texture::BlendMode::BLEND;
+			case SDL_BLENDMODE_BLEND_PREMULTIPLIED: return Texture::BlendMode::PREMULTIPLIED;
 			default:
 				// The guard remembers the previous mode as a BlendMode, so a mode outside that enum could not
-				// be restored on scope exit. Refuse rather than silently downgrade it to one of the two.
+				// be restored on scope exit. Refuse rather than silently downgrade it to one of the known modes.
 				throw M2_ERROR("Texture holds an unrestorable blend mode: " + std::to_string(sdlBlendMode));
 		}
 	}
+
+	/// Restores the render target that was active when it was constructed, even if the code in between
+	/// throws. Without this, an exception from a DrawOnto callback would leave the renderer pointed at
+	/// the texture forever, and every later frame would paint into it instead of the window.
+	class RenderTargetRestorer {
+		SDL_Renderer* _renderer;
+		SDL_Texture* _previousTarget;
+
+	public:
+		RenderTargetRestorer(SDL_Renderer* renderer, SDL_Texture* previousTarget) : _renderer(renderer), _previousTarget(previousTarget) {}
+		RenderTargetRestorer(const RenderTargetRestorer&) = delete;
+		RenderTargetRestorer& operator=(const RenderTargetRestorer&) = delete;
+		~RenderTargetRestorer() {
+			if (not SDL_SetRenderTarget(_renderer, _previousTarget)) {
+				// A destructor must not throw, but the failure must not pass unnoticed either: every
+				// later draw would land on this texture instead of the restored target.
+				std::cerr << "SDL_SetRenderTarget error while restoring the previous render target: " << SDL_GetError() << std::endl;
+			}
+		}
+	};
 }
 
 Texture Texture::Generate(Renderer& renderer, const uint32_t pixelFormat, const int w, const int h, const std::function<RGBA(int x, int y)>& pixelGenerator) {
@@ -131,12 +153,14 @@ VecF Texture::Dimensions() const {
 void Texture::DrawOnto(Renderer& renderer, const std::function<void()>& draw) {
 	auto* const rawRenderer = static_cast<SDL_Renderer*>(renderer.RawHandle());
 	auto* const previousTarget = SDL_GetRenderTarget(rawRenderer);
-	SDL_SetRenderTarget(rawRenderer, static_cast<SDL_Texture*>(_texture));
+	if (not SDL_SetRenderTarget(rawRenderer, static_cast<SDL_Texture*>(_texture))) {
+		throw M2_ERROR(std::string{"SDL_SetRenderTarget error: "} + SDL_GetError());
+	}
+	const RenderTargetRestorer restorer{rawRenderer, previousTarget};
 	draw();
-	SDL_SetRenderTarget(rawRenderer, previousTarget);
 }
 
-void Texture::RenderToWindow(Renderer& renderer) const {
+void Texture::RenderOverViewport(Renderer& renderer) const {
 	SDL_RenderTexture(static_cast<SDL_Renderer*>(renderer.RawHandle()), static_cast<SDL_Texture*>(_texture), nullptr, nullptr);
 }
 void Texture::Render(Renderer& renderer, const RectF& destination) const {
@@ -220,8 +244,8 @@ Texture::BlendModeGuard& Texture::BlendModeGuard::operator=(BlendModeGuard&& oth
 }
 Texture::BlendModeGuard::~BlendModeGuard() {
 	if (_texture) {
-		// ToSdlBlendMode cannot throw here: _previousBlendMode came from GetCurrentBlendMode, which returns
-		// only the two enumerators.
+		// ToSdlBlendMode cannot throw here: _previousBlendMode came from GetCurrentBlendMode, which returns only the
+		// enumerators of BlendMode.
 		if (not SDL_SetTextureBlendMode(static_cast<SDL_Texture*>(_texture), ToSdlBlendMode(_previousBlendMode))) {
 			// A destructor must not throw, but the failure must not pass unnoticed either: every later draw of
 			// this texture would blend with this guard's mode instead of the restored one.
