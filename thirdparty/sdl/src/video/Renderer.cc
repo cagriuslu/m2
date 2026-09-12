@@ -2,7 +2,24 @@
 #include <m2/thirdparty/video/Window.h>
 #include "SdlConversions.h"
 #include <SDL3/SDL.h>
+#include <iostream>
 #include <vector>
+
+namespace {
+	/// Remembered in place of the previous viewport when no explicit viewport was previously set.
+	const m2::RectI WHOLE_RENDER_TARGET{0, 0, -1, -1};
+
+	m2::RectI GetCurrentViewport(SDL_Renderer* renderer) {
+		if (not SDL_RenderViewportSet(renderer)) {
+			return WHOLE_RENDER_TARGET;
+		}
+		SDL_Rect viewport;
+		if (not SDL_GetRenderViewport(renderer, &viewport)) {
+			throw M2_ERROR(std::string{"SDL_GetRenderViewport error: "} + SDL_GetError());
+		}
+		return m2::RectI{viewport.x, viewport.y, viewport.w, viewport.h};
+	}
+}
 
 m2::thirdparty::video::Renderer::Renderer(Renderer&& other) noexcept : _window(other._window), _renderer(other._renderer) {
 	other._window = nullptr;
@@ -63,4 +80,35 @@ void m2::thirdparty::video::Renderer::DrawLineStrip(const std::span<const VecF> 
 	if (not SDL_RenderLines(sdlRenderer, sdlPoints.data(), I(sdlPoints.size()))) {
 		throw M2_ERROR(std::string{"SDL_RenderLines error: "} + SDL_GetError());
 	}
+}
+
+m2::thirdparty::video::Renderer::ViewportGuard::ViewportGuard(void* renderer, const RectI& viewportPx)
+		: _renderer(renderer), _previousViewportPx(GetCurrentViewport(static_cast<SDL_Renderer*>(renderer))) {
+	const auto sdlViewport = ToSdlRect(viewportPx);
+	if (not SDL_SetRenderViewport(static_cast<SDL_Renderer*>(_renderer), &sdlViewport)) {
+		throw M2_ERROR(std::string{"SDL_SetRenderViewport error: "} + SDL_GetError());
+	}
+}
+m2::thirdparty::video::Renderer::ViewportGuard::ViewportGuard(ViewportGuard&& other) noexcept
+		: _renderer(other._renderer), _previousViewportPx(other._previousViewportPx) {
+	other._renderer = nullptr;
+}
+m2::thirdparty::video::Renderer::ViewportGuard& m2::thirdparty::video::Renderer::ViewportGuard::operator=(ViewportGuard&& other) noexcept {
+	std::swap(_renderer, other._renderer);
+	std::swap(_previousViewportPx, other._previousViewportPx);
+	return *this;
+}
+m2::thirdparty::video::Renderer::ViewportGuard::~ViewportGuard() {
+	if (_renderer) {
+		const auto sdlPreviousViewport = ToSdlRect(_previousViewportPx);
+		const auto* const restoredViewport = _previousViewportPx == WHOLE_RENDER_TARGET ? nullptr : &sdlPreviousViewport;
+		if (not SDL_SetRenderViewport(static_cast<SDL_Renderer*>(_renderer), restoredViewport)) {
+			// A destructor must not throw, but the failure must not pass unnoticed either: every later draw
+			// would be clipped and translated by this guard's viewport instead of the restored one.
+			std::cerr << "SDL_SetRenderViewport error while restoring the previous viewport: " << SDL_GetError() << std::endl;
+		}
+	}
+}
+m2::thirdparty::video::Renderer::ViewportGuard m2::thirdparty::video::Renderer::ScopedViewport(const RectI& viewportPx) {
+	return ViewportGuard{_renderer, viewportPx};
 }

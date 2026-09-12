@@ -1,5 +1,6 @@
 #pragma once
 #include "m2/common/Meta.h"
+#include <m2/common/math/RectI.h>
 #include <m2/common/math/VecF.h>
 #include <m2/common/math/VecI.h>
 #include <m2/common/video/Color.h>
@@ -36,5 +37,23 @@ namespace m2::thirdparty::video {
 
 		/// Draws a connected strip of line segments through the given logical pixel points using the given color.
 		void DrawLineStrip(std::span<const VecF> pointsLpx, const RGBA& color); // TODO move to Shapes
+
+		/// Restricts drawing to `viewportPx` of the current render target, and makes the top-left corner of
+		/// that rectangle the new origin. Restores the previous viewport on scope exit.
+		class [[nodiscard]] ViewportGuard {
+			friend class Renderer;
+			void* _renderer{};
+			RectI _previousViewportPx;
+			ViewportGuard(void* renderer, const RectI& viewportPx);
+		public:
+			ViewportGuard() = default;
+			ViewportGuard(const ViewportGuard&) = delete;
+			ViewportGuard& operator=(const ViewportGuard&) = delete;
+			ViewportGuard(ViewportGuard&&) noexcept;
+			ViewportGuard& operator=(ViewportGuard&&) noexcept;
+			~ViewportGuard();
+			[[nodiscard]] explicit operator bool() const { return _renderer != nullptr; }
+		};
+		[[nodiscard]] ViewportGuard ScopedViewport(const RectI& viewportPx);
 	};
 }
