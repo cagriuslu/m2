@@ -18,6 +18,9 @@ namespace m2::thirdparty::video {
 	public:
 		static Texture Generate(Renderer& renderer, uint32_t pixelFormat, int w, int h, const std::function<RGBA(int x, int y)>&);
 		static Texture CreateTargetableWindowSized(Renderer& renderer, uint32_t pixelFormat);
+		/// Creates a targetable texture of the given size, using an alpha-capable pixel format so that what is drawn
+		/// onto it can hold transparency.
+		static Texture CreateTargetableWithAlpha(Renderer& renderer, int w, int h, bool linearFilter = false);
 		static Texture CaptureWindow(Renderer& renderer, uint32_t pixelFormat);
 		static Texture CreateFromImageFile(Renderer& renderer, const std::filesystem::path& imageFilePath);
 		static Texture AdoptRawTexture(void* rawSdlTexture);
@@ -60,5 +63,24 @@ namespace m2::thirdparty::video {
 			[[nodiscard]] explicit operator bool() const { return _texture != nullptr; }
 		};
 		[[nodiscard]] ColorModGuard ScopedColorMod(const RGB& mod) const;
+
+		enum class BlendMode { NONE, BLEND };
+
+		/// Sets the blend mode used when this texture is drawn, and restores the previous one on scope exit.
+		class [[nodiscard]] BlendModeGuard {
+			friend class Texture;
+			void* _texture{};
+			BlendMode _previousBlendMode{};
+			BlendModeGuard(void* texture, BlendMode mode);
+		public:
+			BlendModeGuard() = default;
+			BlendModeGuard(const BlendModeGuard&) = delete;
+			BlendModeGuard& operator=(const BlendModeGuard&) = delete;
+			BlendModeGuard(BlendModeGuard&&) noexcept;
+			BlendModeGuard& operator=(BlendModeGuard&&) noexcept;
+			~BlendModeGuard();
+			[[nodiscard]] explicit operator bool() const { return _texture != nullptr; }
+		};
+		[[nodiscard]] BlendModeGuard ScopedBlendMode(BlendMode mode) const;
 	};
 }

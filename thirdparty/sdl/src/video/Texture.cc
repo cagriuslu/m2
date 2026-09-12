@@ -3,11 +3,37 @@
 #include <m2/thirdparty/video/Surface.h>
 #include "SdlConversions.h"
 #include <SDL3/SDL.h>
+#include <iostream>
 #include <vector>
 
 using namespace m2;
 using namespace m2::thirdparty;
 using namespace m2::thirdparty::video;
+
+namespace {
+	SDL_BlendMode ToSdlBlendMode(const Texture::BlendMode blendMode) {
+		switch (blendMode) {
+			case Texture::BlendMode::NONE: return SDL_BLENDMODE_NONE;
+			case Texture::BlendMode::BLEND: return SDL_BLENDMODE_BLEND;
+		}
+		throw M2_ERROR("Unknown blend mode: " + std::to_string(static_cast<int>(blendMode)));
+	}
+
+	Texture::BlendMode GetCurrentBlendMode(SDL_Texture* texture) {
+		SDL_BlendMode sdlBlendMode{};
+		if (not SDL_GetTextureBlendMode(texture, &sdlBlendMode)) {
+			throw M2_ERROR(std::string{"SDL_GetTextureBlendMode error: "} + SDL_GetError());
+		}
+		switch (sdlBlendMode) {
+			case SDL_BLENDMODE_NONE: return Texture::BlendMode::NONE;
+			case SDL_BLENDMODE_BLEND: return Texture::BlendMode::BLEND;
+			default:
+				// The guard remembers the previous mode as a BlendMode, so a mode outside that enum could not
+				// be restored on scope exit. Refuse rather than silently downgrade it to one of the two.
+				throw M2_ERROR("Texture holds an unrestorable blend mode: " + std::to_string(sdlBlendMode));
+		}
+	}
+}
 
 Texture Texture::Generate(Renderer& renderer, const uint32_t pixelFormat, const int w, const int h, const std::function<RGBA(int x, int y)>& pixelGenerator) {
 	if (SDL_BYTESPERPIXEL(pixelFormat) != 4) {
@@ -40,6 +66,14 @@ Texture Texture::CreateTargetableWindowSized(Renderer& renderer, const uint32_t 
 	SDL_GetCurrentRenderOutputSize(static_cast<SDL_Renderer*>(renderer.RawHandle()), &w, &h); // Get screen size
 	auto* texture = SDL_CreateTexture(static_cast<SDL_Renderer*>(renderer.RawHandle()), static_cast<SDL_PixelFormat>(pixelFormat), SDL_TEXTUREACCESS_TARGET, w, h);
 	SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_NEAREST);
+	return Texture{texture};
+}
+Texture Texture::CreateTargetableWithAlpha(Renderer& renderer, const int w, const int h, const bool linearFilter) {
+	auto* texture = SDL_CreateTexture(static_cast<SDL_Renderer*>(renderer.RawHandle()), SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_TARGET, w, h);
+	if (not texture) {
+		throw M2_ERROR("Unable to create targetable texture: " + std::string{SDL_GetError()});
+	}
+	SDL_SetTextureScaleMode(texture, linearFilter ? SDL_SCALEMODE_LINEAR : SDL_SCALEMODE_NEAREST);
 	return Texture{texture};
 }
 Texture Texture::CaptureWindow(Renderer& renderer, const uint32_t pixelFormat) {
@@ -167,6 +201,36 @@ Texture::ColorModGuard::~ColorModGuard() {
 }
 Texture::ColorModGuard Texture::ScopedColorMod(const RGB& mod) const {
 	return ColorModGuard{_texture, mod};
+}
+
+Texture::BlendModeGuard::BlendModeGuard(void* texture, const BlendMode mode)
+		: _texture(texture), _previousBlendMode(GetCurrentBlendMode(static_cast<SDL_Texture*>(texture))) {
+	if (not SDL_SetTextureBlendMode(static_cast<SDL_Texture*>(_texture), ToSdlBlendMode(mode))) {
+		throw M2_ERROR(std::string{"SDL_SetTextureBlendMode error: "} + SDL_GetError());
+	}
+}
+Texture::BlendModeGuard::BlendModeGuard(BlendModeGuard&& other) noexcept
+		: _texture(other._texture), _previousBlendMode(other._previousBlendMode) {
+	other._texture = nullptr;
+}
+Texture::BlendModeGuard& Texture::BlendModeGuard::operator=(BlendModeGuard&& other) noexcept {
+	std::swap(_texture, other._texture);
+	std::swap(_previousBlendMode, other._previousBlendMode);
+	return *this;
+}
+Texture::BlendModeGuard::~BlendModeGuard() {
+	if (_texture) {
+		// ToSdlBlendMode cannot throw here: _previousBlendMode came from GetCurrentBlendMode, which returns
+		// only the two enumerators.
+		if (not SDL_SetTextureBlendMode(static_cast<SDL_Texture*>(_texture), ToSdlBlendMode(_previousBlendMode))) {
+			// A destructor must not throw, but the failure must not pass unnoticed either: every later draw of
+			// this texture would blend with this guard's mode instead of the restored one.
+			std::cerr << "SDL_SetTextureBlendMode error while restoring the previous blend mode: " << SDL_GetError() << std::endl;
+		}
+	}
+}
+Texture::BlendModeGuard Texture::ScopedBlendMode(const BlendMode mode) const {
+	return BlendModeGuard{_texture, mode};
 }
 
 Texture::Texture(Texture&& other) noexcept : _texture(other._texture) {
