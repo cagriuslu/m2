@@ -7,7 +7,7 @@
 
 void m2::detail::StepActorsOnceAndWaitCooperatively(const int waitMs) {
 #if defined(__EMSCRIPTEN__)
-    // Under Asyncify emscripten_sleep suspends and later resumes the whole C++ stack. This is necessary to yield the
+    // Under Asyncify, emscripten_sleep suspends and later resumes the whole C++ stack. This is necessary to yield the
     // main thread back to the browser so that the graphics can be drawn.
     StepCooperativeActors();
     emscripten_sleep(static_cast<unsigned int>(waitMs < 0 ? 0 : waitMs));

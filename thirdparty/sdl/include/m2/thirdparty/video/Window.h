@@ -4,30 +4,28 @@
 #include "Renderer.h"
 #include <cstdint>
 
-// # Logical Pixels vs. Window Pixel Coordinate Systems Summary
+// # Logical Pixels vs. Window Pixels
 //
-// Logical Pixels (formerly window coordinates): An arbitrary, unitless floating-point coordinate system. It is used
-//     to define window sizes (`SDL_GetWindowSize`), create windows (`SDL_CreateWindow`), and report input event
-//     coordinates. Drawing logic operates in this system so that elements scale relative to the window borders
-//     rather than physical pixels.
+// Logical Pixels (Window Coordinates): A unitless floating-point coordinate system over the window. User input
+//     coordinates, `SDL_GetWindowSize`, and `SDL_CreateWindow` use this coordinate system. The engine's drawing
+//     utilities use this coordinate system so that drawn elements scale properly with different window sizes.
 // Window Pixels (Render Coordinates): The actual physical pixels on a display. This is the coordinate system that
-//     `SDL_Render` functions and `SDL_GetRenderOutputSize` deal with during the final rendering pass.
+//     `SDL_Render*` functions use during rendering.
 // Window Pixel Density: The ratio defining how many pixels fit into a single unit of the logical pixel coordinate
 //     system.
 //
 // The relationship between logical pixels and physical pixels varies depending on the host operating system:
-// macOS: Logical pixels and physical pixels are separate. The pixel density reflects the scale factor.
-// Windows: Logical pixels always equal physical pixels (`window units == pixel units`). Sizing adjustments rely
-//     on `SDL_WindowDisplayScale` when users request scaled rendering.
-// Linux: Utilizes a hybrid mixture of both approaches depending on whether the system is running under X11 or Wayland.
+//     macOS: Logical and physical pixels are separate. The pixel density reflects the scale factor.
+//     Windows: Logical pixels = physical pixels. `SDL_WindowDisplayScale` reflects the scaling requested by the user.
+//     Linux: Depends on whether the system uses X11 or Wayland.
 //
 // Guidelines:
 // Calculating Density: Don't rely on `SDL_WindowPixelDensity`. Instead, calculate the pixel density manually and more
 //     precisely by comparing the output of `SDL_GetRenderOutputSize` (or `SDL_GetWindowSizeInPixels`) against the
 //     logical pixel dimensions. This guarantees properly rounded calculations.
-// Engine UI Strategy: Display scaling should not change the absolute amount of layout content visible on the screen or
-//     alter the perceived size of the UI. If an element is designed to take up 50% of the window, it must always take
-//     up 50% across all platforms.
+// Engine UI Strategy: Display scaling should not change the amount of content visible on the screen or alter the
+//     perceived size of the UI. If an element is designed to take up 50% of the window, it must always take up 50%
+//     across all platforms.
 //
 
 namespace m2::thirdparty::video {
