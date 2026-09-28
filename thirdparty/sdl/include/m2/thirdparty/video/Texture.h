@@ -48,6 +48,10 @@ namespace m2::thirdparty::video {
 		void Render(Renderer& renderer, const RectF& destination) const;
 		void Render(Renderer& renderer, const RectI& sourceRect, const RectF& destination) const;
 		void RenderWithColorMod(Renderer& renderer, const RectF& destination, const RGB& mod) const;
+		static constexpr double ROTATE_CLOCKWISE_90 = 90.0;
+		static constexpr double ROTATE_180 = 180.0;
+		static constexpr double ROTATE_CLOCKWISE_270 = -90.0;
+		static constexpr double ROTATE_ANTICLOCKWISE_90 = ROTATE_CLOCKWISE_270;
 		void Render(Renderer& renderer, const RectI& sourceRect, const RectF& destination, double angleDegrees, const VecI& rotationCenter) const;
 		void RenderGeometry(Renderer& renderer, std::span<const VecF> positions, std::span<const VecF> texCoords, std::span<const int> indices) const;
 
