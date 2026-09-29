@@ -14,11 +14,5 @@ size_t m2::MultiDensitySpriteCache::DensityHash::operator()(const VecF& density)
 }
 
 m2::SpriteCache& m2::MultiDensitySpriteCache::CreateOrGet(const VecF& density) {
-	if (not std::isfinite(density.GetX()) || not std::isfinite(density.GetY())) {
-		throw M2_ERROR("Window pixel density is not finite");
-	}
-	if (density.GetX() <= 0.0f || density.GetY() <= 0.0f) {
-		throw M2_ERROR("Window pixel density is not positive");
-	}
 	return _cache(density);
 }

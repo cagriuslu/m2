@@ -26,8 +26,8 @@ namespace {
 	constexpr bool USE_LINEAR_FILTER = true;
 }
 
-m2::DynamicTexture::DynamicTexture(thirdparty::video::Renderer& renderer)
-		: _renderer(&renderer), _physicalPixelsPerLogicalPixel(renderer.GetPixelsPerWindowUnit()),
+m2::DynamicTexture::DynamicTexture(thirdparty::video::Renderer& renderer) : _renderer(&renderer),
+		_physicalPixelsPerLogicalPixel(renderer.GetPixelsPerWindowUnit()),
 		_texture(thirdparty::video::Texture::CreateTargetableWithAlpha(renderer, ATLAS_WIDTH_PX, INITIAL_ATLAS_HEIGHT_PX, USE_LINEAR_FILTER)) {
 	// SDL leaves a new target texture's contents undefined, so make them defined once, here. Allocation
 	// is append-only, so this is also the only time a region needs clearing before a painter sees it.
@@ -44,11 +44,10 @@ m2::expected<m2::RectI> m2::DynamicTexture::AllocateAndDraw(const VecF& dimensio
 	m2ReturnUnexpectedUnless(0.0f < dimensionsLpx.GetX() && 0.0f < dimensionsLpx.GetY(),
 			"Sprite dimensions are not positive");
 
-	// One atlas must never mix sprites rasterized at different resolutions. The comparison is exact on
-	// purpose: GetPixelsPerWindowUnit divides the same two integer window sizes every time, so an
-	// unchanged display gives a bit-identical result, and any difference is a real density change.
+	// The painter draws with the live pixel density, so the live pixel density must be equal to the pixel density of
+	// the atlas.
 	m2ReturnUnexpectedUnless(_renderer->GetPixelsPerWindowUnit() == _physicalPixelsPerLogicalPixel,
-			"Display density has changed since the atlas was created");
+		"Live display density differs from the density of the atlas");
 
 	// Logical pixels to physical texture pixels, component-wise, so renderers whose X and Y densities
 	// differ are handled too. Padding is added after the conversion, so it is one physical pixel.

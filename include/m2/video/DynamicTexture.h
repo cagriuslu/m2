@@ -15,14 +15,13 @@ namespace m2 {
 	/// Texture::BlendMode::PREMULTIPLIED when it's eventually drawn onto the screen.
 	class DynamicTexture {
 		thirdparty::video::Renderer* _renderer;
-		/// Physical texture pixels per logical pixel, captured when the atlas is created. Every sprite in
-		/// one atlas must use the same density.
+		/// The texture is created for a certain pixel density. Every sprite in one atlas must use the same density.
 		VecF _physicalPixelsPerLogicalPixel;
 		thirdparty::video::Texture _texture;
 		int _lastW{}, _lastH{}, _heightOfCurrentRow{};
 
 	public:
-		explicit DynamicTexture(thirdparty::video::Renderer& renderer);
+		DynamicTexture(thirdparty::video::Renderer& renderer);
 
 		DynamicTexture(const DynamicTexture&) = delete; /// Copy not allowed
 		DynamicTexture& operator=(const DynamicTexture&) = delete; /// Copy not allowed

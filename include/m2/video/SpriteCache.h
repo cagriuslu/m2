@@ -39,9 +39,9 @@ namespace m2 {
 
 		/// See DynamicTexture::Painter.
 		using Painter = DynamicTexture::Painter;
-		/// Paints a sprite of `dimensionsLpx` logical pixels and stores it under `key`. Throws if `key`
-		/// already holds a sprite, because an existing sprite is never overwritten, and throws if the
-		/// atlas cannot fit the request or its captured display density is stale.
+		/// Paints a sprite of `dimensionsLpx` logical pixels and stores it under `key`. Throws if `key` already holds a
+		/// sprite, because an existing sprite is never overwritten, and throws if the atlas cannot fit the request or
+		/// the live display density differs from the density of the atlas.
 		Entry Create(int key, const VecF& dimensionsLpx, const Painter& painter);
 	};
 }

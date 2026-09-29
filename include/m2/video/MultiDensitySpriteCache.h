@@ -34,7 +34,8 @@ namespace m2 {
 		MultiDensitySpriteCache(MultiDensitySpriteCache&&) noexcept = default; /// Move allowed
 		MultiDensitySpriteCache& operator=(MultiDensitySpriteCache&&) noexcept = default; /// Move allowed
 
-		/// Returns the SpriteCache belonging to `density`, creating an empty one on first use.
+		/// Returns the SpriteCache belonging to `density`, creating an empty one on first use. Density is expected from
+		/// the user instead of being inferred from the renderer to allow the user to cache the density.
 		SpriteCache& CreateOrGet(const VecF& density);
 	};
 }
