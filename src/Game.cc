@@ -974,6 +974,9 @@ void Game::UpdateSounds(const Stopwatch::Duration& delta) {
 	}
 }
 void Game::ExecutePreDraw(const Stopwatch::Duration& delta) {
+	if (not _level->IsEditor()) {
+		_proxy.OnPreDraw();
+	}
 	for (auto& gfx : _level->uprightGraphics) {
 		if (gfx.enabled) {
 			IF(gfx.preDraw)(gfx, delta);
@@ -1054,6 +1057,9 @@ void Game::ExecutePostDraw(const Stopwatch::Duration& delta) {
 		if (gfx.enabled) {
 			IF(gfx.postDraw)(gfx, delta);
 		}
+	}
+	if (not _level->IsEditor()) {
+		_proxy.OnPostDraw();
 	}
 }
 void Game::DebugDraw() {

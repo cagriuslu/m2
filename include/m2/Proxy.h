@@ -173,6 +173,12 @@ namespace m2 {
 		void OnPreStep(MAYBE const Stopwatch::Duration& delta) {}
 		/// A callback that's called every post-step.
 		void OnPostStep(MAYBE const Stopwatch::Duration& delta) {}
+		/// A callback that's called every frame, before the preDraw callbacks of the graphics components. It's not called
+		/// in editor levels.
+		void OnPreDraw() {}
+		/// A callback that's called every frame, after the postDraw callbacks of the graphics components. Debug graphics,
+		/// HUDs, and UI panels are drawn after this callback. It's not called in editor levels.
+		void OnPostDraw() {}
 
 		m2::expected<void> ExecuteGameCommand(const std::span<std::string_view>&) { return make_unexpected("Game doesn't support commands"); }
 
