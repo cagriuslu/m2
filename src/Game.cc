@@ -413,8 +413,9 @@ void_expected Game::LoadSinglePlayer(
 	const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& level_name) {
 	_level.reset();
 	ResetState();
-	// Reinit dimensions with proxy in case an editor was initialized before
+	// Reinit dimensions with proxy in case an editor was initialized before, or the previous level changed the zoom
 	_dimensions->SetGameAspectRatio(_proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
+	_dimensions->SetGameHeightM(_proxy.initialGameHeightM);
 	_level.emplace();
 	return _level->InitSinglePlayer(levelPathOrBlueprint, level_name);
 }
@@ -422,8 +423,9 @@ void_expected Game::LoadTurnBasedMultiPlayerAsHost(
 	const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& level_name) {
 	_level.reset();
 	ResetState();
-	// Reinit dimensions with proxy in case an editor was initialized before
+	// Reinit dimensions with proxy in case an editor was initialized before, or the previous level changed the zoom
 	_dimensions->SetGameAspectRatio(_proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
+	_dimensions->SetGameHeightM(_proxy.initialGameHeightM);
 	_level.emplace();
 
 	auto success = _level->InitTurnBasedMultiPlayerAsHost(levelPathOrBlueprint, level_name);
@@ -471,8 +473,9 @@ void_expected Game::LoadTurnBasedMultiPlayerAsGuest(
 	const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& level_name) {
 	_level.reset();
 	ResetState();
-	// Reinit dimensions with proxy in case an editor was initialized before
+	// Reinit dimensions with proxy in case an editor was initialized before, or the previous level changed the zoom
 	_dimensions->SetGameAspectRatio(_proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
+	_dimensions->SetGameHeightM(_proxy.initialGameHeightM);
 	_level.emplace();
 
 	auto success = _level->InitTurnBasedMultiPlayerAsGuest(levelPathOrBlueprint, level_name);
@@ -488,8 +491,9 @@ void_expected Game::LoadTurnBasedMultiPlayerAsGuest(
 void_expected Game::LoadLockstep(const std::variant<std::filesystem::path, pb::Level>& levelPathOrBlueprint, const std::string& levelName, const m2g::pb::LockstepGameInitParams& gameInitParams) {
 	_level.reset();
 	ResetState();
-	// Reinit dimensions with proxy in case an editor was initialized before
+	// Reinit dimensions with proxy in case an editor was initialized before, or the previous level changed the zoom
 	_dimensions->SetGameAspectRatio(_proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
+	_dimensions->SetGameHeightM(_proxy.initialGameHeightM);
 	_level.emplace();
 
 	if (std::holds_alternative<multiplayer::lockstep::ServerComponents>(_multiPlayerComponents)) {
@@ -566,8 +570,9 @@ void_expected Game::ReplayLockstep(const std::string& fpath) {
 
 	_level.reset();
 	ResetState();
-	// Reinit dimensions with proxy in case an editor was initialized before
+	// Reinit dimensions with proxy in case an editor was initialized before, or the previous level changed the zoom
 	_dimensions->SetGameAspectRatio(_proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
+	_dimensions->SetGameHeightM(_proxy.initialGameHeightM);
 	_level.emplace();
 	return _level->InitLockstepMultiPlayer(level, name, gameInitParams);
 }
