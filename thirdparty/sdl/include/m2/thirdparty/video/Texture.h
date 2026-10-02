@@ -52,6 +52,7 @@ namespace m2::thirdparty::video {
 		static constexpr double ROTATE_180 = 180.0;
 		static constexpr double ROTATE_CLOCKWISE_270 = -90.0;
 		static constexpr double ROTATE_ANTICLOCKWISE_90 = ROTATE_CLOCKWISE_270;
+		void Render(Renderer& renderer, const RectI& sourceRect, const RectF& destination, double angleDegrees) const;
 		void Render(Renderer& renderer, const RectI& sourceRect, const RectF& destination, double angleDegrees, const VecI& rotationCenter) const;
 		void RenderGeometry(Renderer& renderer, std::span<const VecF> positions, std::span<const VecF> texCoords, std::span<const int> indices) const;
 
@@ -69,6 +70,23 @@ namespace m2::thirdparty::video {
 			[[nodiscard]] explicit operator bool() const { return _texture != nullptr; }
 		};
 		[[nodiscard]] ColorModGuard ScopedColorMod(const RGB& mod) const;
+
+		class [[nodiscard]] AlphaModGuard {
+			void* _texture{};
+			friend class Texture;
+			AlphaModGuard(void* texture, uint8_t mod);
+		public:
+			AlphaModGuard() = default;
+			AlphaModGuard(const AlphaModGuard&) = delete;
+			AlphaModGuard& operator=(const AlphaModGuard&) = delete;
+			AlphaModGuard(AlphaModGuard&&) noexcept;
+			AlphaModGuard& operator=(AlphaModGuard&&) noexcept;
+			~AlphaModGuard();
+			[[nodiscard]] explicit operator bool() const { return _texture != nullptr; }
+		};
+		/// Multiplies the alpha channel by `mod`/255 until the guard is destroyed, then resets it to 255. SDL doesn't
+		/// scale the color channels by the alpha mod. For premultiplied content, also take a ScopedColorMod({mod, mod, mod}).
+		[[nodiscard]] AlphaModGuard ScopedAlphaMod(uint8_t mod) const;
 
 		enum class BlendMode {
 			NONE,

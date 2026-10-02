@@ -1156,6 +1156,7 @@ void Game::OnWindowResize() {
 			}
 		}
 	}
+	_proxy.OnWindowResize();
 }
 void Game::SetScale(const float scale) {
 	_dimensions->SetScale(scale);

@@ -168,6 +168,9 @@ namespace m2 {
 		/// Create Group for the given type
 		m2::Group* create_group(MAYBE m2g::pb::GroupType group_type) { throw M2_ERROR("Proxy is missing a group factory"); }
 
+		/// A callback that is called after the window is resized or the display density changes, and after the game
+		/// dimensions are recalculated. The logical pixels per meter and the display density may have changed.
+		void OnWindowResize() {}
 		/// A callback that's called every pre-step. Since this callback is not tied to any object, object creating and
 		/// destruction can be done here safely.
 		void OnPreStep(MAYBE const Stopwatch::Duration& delta) {}

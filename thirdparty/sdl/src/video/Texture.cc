@@ -179,6 +179,17 @@ void Texture::RenderWithColorMod(Renderer& renderer, const RectF& destination, c
 	Texture::Render(renderer, destination);
 	SDL_SetTextureColorMod(static_cast<SDL_Texture*>(_texture), 255, 255, 255);
 }
+void Texture::Render(Renderer& renderer, const RectI& sourceRect, const RectF& destination, const double angleDegrees) const {
+	const auto sdlSrc = ToSdlFRect(sourceRect);
+	const auto destPx = destination.Scale(renderer.GetPixelsPerWindowUnit());
+	const auto sdlDst = ToSdlFRect(destPx);
+	// A null center makes SDL rotate around the center of the destination
+	if (not SDL_RenderTextureRotated(static_cast<SDL_Renderer*>(renderer.RawHandle()),
+			static_cast<SDL_Texture*>(_texture), &sdlSrc, &sdlDst, angleDegrees, nullptr,
+			SDL_FLIP_NONE)) {
+		throw M2_ERROR(std::string{"SDL_RenderTextureRotated failed: "} + SDL_GetError());
+	}
+}
 void Texture::Render(Renderer& renderer, const RectI& sourceRect, const RectF& destination, const double angleDegrees, const VecI& rotationCenter) const {
 	const auto sdlSrc = ToSdlFRect(sourceRect);
 	const auto destPx = destination.Scale(renderer.GetPixelsPerWindowUnit());
@@ -225,6 +236,25 @@ Texture::ColorModGuard::~ColorModGuard() {
 }
 Texture::ColorModGuard Texture::ScopedColorMod(const RGB& mod) const {
 	return ColorModGuard{_texture, mod};
+}
+
+Texture::AlphaModGuard::AlphaModGuard(void* texture, const uint8_t mod) : _texture(texture) {
+	SDL_SetTextureAlphaMod(static_cast<SDL_Texture*>(_texture), mod);
+}
+Texture::AlphaModGuard::AlphaModGuard(AlphaModGuard&& other) noexcept : _texture(other._texture) {
+	other._texture = nullptr;
+}
+Texture::AlphaModGuard& Texture::AlphaModGuard::operator=(AlphaModGuard&& other) noexcept {
+	std::swap(_texture, other._texture);
+	return *this;
+}
+Texture::AlphaModGuard::~AlphaModGuard() {
+	if (_texture) {
+		SDL_SetTextureAlphaMod(static_cast<SDL_Texture*>(_texture), 255);
+	}
+}
+Texture::AlphaModGuard Texture::ScopedAlphaMod(const uint8_t mod) const {
+	return AlphaModGuard{_texture, mod};
 }
 
 Texture::BlendModeGuard::BlendModeGuard(void* texture, const BlendMode mode)
